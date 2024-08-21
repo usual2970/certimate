@@ -1,6 +1,8 @@
 __debug_bin*
 vendor
 pb_data
+main
+certimate
 
 # Editor directories and files
 .vscode/*
