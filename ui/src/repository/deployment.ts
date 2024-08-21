@@ -7,7 +7,7 @@ export const list = async (req: DeploymentListReq) => {
     page = req.page;
   }
 
-  let perPage = 10;
+  let perPage = 50;
   if (req.perPage) {
     perPage = req.perPage;
   }
@@ -19,7 +19,7 @@ export const list = async (req: DeploymentListReq) => {
     .collection("deployments")
     .getList<Deployment>(page, perPage, {
       filter: filter,
-      sort: "-id",
+      sort: "-deployedAt",
       expand: "domain",
     });
 };

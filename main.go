@@ -31,6 +31,8 @@ func main() {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 
+		domains.InitSchedule()
+
 		e.Router.GET(
 			"/*",
 			echo.StaticDirectoryHandler(ui.DistDirFS, false),

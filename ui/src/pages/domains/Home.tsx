@@ -1,19 +1,35 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
+import Show from "@/components/Show";
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from "@/components/ui/use-toast";
 import { Domain } from "@/domain/domain";
 import { convertZulu2Beijing, getDate } from "@/lib/time";
 import { list, remove, save } from "@/repository/domains";
+
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { CircleCheck, CircleX, Earth } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const toast = useToast();
+
   const navigate = useNavigate();
   const handleCreateClick = () => {
     navigate("/edit");
@@ -62,6 +78,37 @@ const Home = () => {
       return domain;
     });
     setDomains(updatedDomains);
+  };
+
+  const handleRightNowClick = async (domain: Domain) => {
+    try {
+      domain.rightnow = true;
+      const resp = await save(domain);
+      const updatedDomains = domains.map((domain) => {
+        if (domain.id === resp.id) {
+          return { ...resp };
+        }
+        return domain;
+      });
+      setDomains(updatedDomains);
+    } catch (e) {
+      toast.toast({
+        title: "执行失败",
+        description: (
+          <>
+            执行失败，请查看
+            <Link
+              to={`/history?domain=${domain.id}`}
+              className="underline text-blue-500"
+            >
+              部署日志
+            </Link>
+            查看详情。
+          </>
+        ),
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -179,16 +226,46 @@ const Home = () => {
                   >
                     部署历史
                   </Button>
+                  <Show when={domain.enabled ? true : false}>
+                    <Separator orientation="vertical" className="h-4 mx-2" />
+                    <Button
+                      variant={"link"}
+                      className="p-0"
+                      onClick={() => handleRightNowClick(domain)}
+                    >
+                      立即执行
+                    </Button>
+                  </Show>
+
                   {!domain.enabled && (
                     <>
                       <Separator orientation="vertical" className="h-4 mx-2" />
-                      <Button
-                        variant={"link"}
-                        className="p-0"
-                        onClick={() => handleDeleteClick(domain.id)}
-                      >
-                        删除
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant={"link"} className="p-0">
+                            删除
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>删除域名</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              确定要删除域名吗？
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>取消</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => {
+                                handleDeleteClick(domain.id);
+                              }}
+                            >
+                              确认
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+
                       <Separator orientation="vertical" className="h-4 mx-2" />
                       <Button
                         variant={"link"}

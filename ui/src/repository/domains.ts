@@ -17,9 +17,9 @@ export const get = async (id: string) => {
 
 export const save = async (data: Domain) => {
   if (data.id) {
-    return await getPb().collection("domains").update(data.id, data);
+    return await getPb().collection("domains").update<Domain>(data.id, data);
   }
-  return await getPb().collection("domains").create(data);
+  return await getPb().collection("domains").create<Domain>(data);
 };
 
 export const remove = async (id: string) => {
