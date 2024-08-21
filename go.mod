@@ -6,6 +6,7 @@ toolchain go1.22.5
 
 require (
 	github.com/alibabacloud-go/cas-20200407/v2 v2.3.0
+	github.com/alibabacloud-go/cdn-20180510/v5 v5.0.0
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.8
 	github.com/alibabacloud-go/tea v1.2.1
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.5

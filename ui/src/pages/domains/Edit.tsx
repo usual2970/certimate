@@ -243,6 +243,9 @@ const Edit = () => {
                             <SelectItem value="aliyun-oss">
                               阿里云-OSS
                             </SelectItem>
+                            <SelectItem value="aliyun-cdn">
+                              阿里云-CDN
+                            </SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>

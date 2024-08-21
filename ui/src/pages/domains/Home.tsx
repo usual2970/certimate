@@ -91,6 +91,13 @@ const Home = () => {
         return domain;
       });
       setDomains(updatedDomains);
+      toast.toast({
+        title: "执行成功",
+        description: "执行成功",
+      });
+      setTimeout(() => {
+        navigate(0);
+      }, 1000);
     } catch (e) {
       toast.toast({
         title: "执行失败",

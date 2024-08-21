@@ -13,7 +13,13 @@ const (
 	configTypeAliyun = "aliyun"
 )
 
+const (
+	targetAliyunOss = "aliyun-oss"
+	targetAliyunCdn = "aliyun-cdn"
+)
+
 type DeployerOption struct {
+	DomainId    string                `json:"domainId"`
 	Domain      string                `json:"domain"`
 	Product     string                `json:"product"`
 	Access      string                `json:"access"`
@@ -26,18 +32,21 @@ type Deployer interface {
 
 func Get(record *models.Record) (Deployer, error) {
 	access := record.ExpandedOne("targetAccess")
-	switch access.GetString("configType") {
-	case configTypeAliyun:
-		option := &DeployerOption{
-			Domain:  record.GetString("domain"),
-			Product: getProduct(record),
-			Access:  access.GetString("config"),
-			Certificate: applicant.Certificate{
-				Certificate: record.GetString("certificate"),
-				PrivateKey:  record.GetString("privateKey"),
-			},
-		}
+	option := &DeployerOption{
+		DomainId: record.Id,
+		Domain:   record.GetString("domain"),
+		Product:  getProduct(record),
+		Access:   access.GetString("config"),
+		Certificate: applicant.Certificate{
+			Certificate: record.GetString("certificate"),
+			PrivateKey:  record.GetString("privateKey"),
+		},
+	}
+	switch record.GetString("targetType") {
+	case targetAliyunOss:
 		return NewAliyun(option)
+	case targetAliyunCdn:
+		return NewAliyunCdn(option)
 	}
 	return nil, errors.New("not implemented")
 }
