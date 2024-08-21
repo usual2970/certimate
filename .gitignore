@@ -3,6 +3,7 @@ vendor
 pb_data
 main
 certimate
+build
 
 # Editor directories and files
 .vscode/*

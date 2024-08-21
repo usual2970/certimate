@@ -14,9 +14,7 @@ func create(ctx context.Context, record *models.Record) error {
 	}
 
 	if record.GetBool("rightnow") {
-		defer func() {
-			setRightnow(ctx, record, false)
-		}()
+
 		if err := deploy(ctx, record); err != nil {
 			return err
 		}
@@ -46,9 +44,7 @@ func update(ctx context.Context, record *models.Record) error {
 	}
 
 	if record.GetBool("rightnow") {
-		defer func() {
-			setRightnow(ctx, record, false)
-		}()
+
 		if err := deploy(ctx, record); err != nil {
 			return err
 		}

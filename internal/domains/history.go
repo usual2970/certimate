@@ -77,6 +77,7 @@ func (a *history) commit() error {
 
 	domainRecord.Set("lastDeployedAt", a.DeployedAt)
 	domainRecord.Set("lastDeployment", record.Id)
+	domainRecord.Set("rightnow", false)
 
 	if err := app.GetApp().Dao().SaveRecord(domainRecord); err != nil {
 		return err
