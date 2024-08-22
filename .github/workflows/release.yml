@@ -24,7 +24,7 @@ jobs:
           go-version: ">=1.22.5"
 
       - name: Build Admin dashboard UI
-        run: npm --prefix=./ui run build
+        run: npm --prefix=./ui ci && npm --prefix=./ui run build
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v3
