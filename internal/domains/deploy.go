@@ -21,7 +21,11 @@ const (
 )
 
 func deploy(ctx context.Context, record *models.Record) error {
-
+	defer func() {
+		if r := recover(); r != nil {
+			app.GetApp().Logger().Error("部署失败", "err", r)
+		}
+	}()
 	currRecord, err := app.GetApp().Dao().FindRecordById("domains", record.Id)
 	history := NewHistory(record)
 	defer history.commit()
@@ -86,7 +90,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	history.record(applyPhase, "保存证书成功", nil, true)
 
 	// ############3.部署证书
-	history.record(deployPhase, "开始部署", nil)
+	history.record(deployPhase, "开始部署", nil, false)
 	deployer, err := deployer.Get(currRecord)
 	if err != nil {
 		history.record(deployPhase, "获取deployer失败", err)

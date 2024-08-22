@@ -34,8 +34,8 @@ func NewHistory(record *models.Record) *history {
 
 func (a *history) record(phase Phase, msg string, err error, pass ...bool) {
 	a.Phase = phase
-	if len(pass) > 0 && pass[0] {
-		a.PhaseSuccess = true
+	if len(pass) > 0 {
+		a.PhaseSuccess = pass[0]
 	}
 
 	errMsg := ""

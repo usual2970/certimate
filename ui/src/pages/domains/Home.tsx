@@ -240,7 +240,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleRightNowClick(domain)}
                     >
-                      立即执行
+                      立即部署
                     </Button>
                   </Show>
 

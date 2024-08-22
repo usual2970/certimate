@@ -16,6 +16,7 @@ const (
 const (
 	targetAliyunOss = "aliyun-oss"
 	targetAliyunCdn = "aliyun-cdn"
+	targetSSH       = "ssh"
 )
 
 type DeployerOption struct {
@@ -47,6 +48,8 @@ func Get(record *models.Record) (Deployer, error) {
 		return NewAliyun(option)
 	case targetAliyunCdn:
 		return NewAliyunCdn(option)
+	case targetSSH:
+		return NewSSH(option)
 	}
 	return nil, errors.New("not implemented")
 }
@@ -54,5 +57,8 @@ func Get(record *models.Record) (Deployer, error) {
 func getProduct(record *models.Record) string {
 	targetType := record.GetString("targetType")
 	rs := strings.Split(targetType, "-")
+	if len(rs) < 2 {
+		return ""
+	}
 	return rs[1]
 }

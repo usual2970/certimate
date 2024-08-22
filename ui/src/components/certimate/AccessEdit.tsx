@@ -17,6 +17,8 @@ import AccessAliyunForm from "./AccessAliyunForm";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
+import AccessSSHForm from "./AccessSSHForm";
+
 type TargetConfigEditProps = {
   op: "add" | "edit";
   className?: string;
@@ -50,6 +52,16 @@ export function AccessEdit({
     case "aliyun":
       form = (
         <AccessAliyunForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "ssh":
+      form = (
+        <AccessSSHForm
           data={data}
           onAfterReq={() => {
             setOpen(false);

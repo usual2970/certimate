@@ -28,6 +28,7 @@ export const getLastDeployment = (domain: Domain): Deployment | undefined => {
 export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["aliyun-cdn", ["阿里云-CDN", "/imgs/providers/aliyun.svg"]],
   ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
+  ["ssh", ["SSH部署", "/imgs/providers/ssh.png"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());
