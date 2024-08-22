@@ -11,18 +11,11 @@ import { useState } from "react";
 import AccessTencentForm from "./AccessTencentForm";
 
 import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+
 import { Access, accessTypeMap } from "@/domain/access";
 import AccessAliyunForm from "./AccessAliyunForm";
 import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -66,6 +59,10 @@ export function AccessEdit({
       break;
   }
 
+  const getOptionCls = (val: string) => {
+    return val == configType ? "border-primary" : "";
+  };
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild className={cn(className)}>
@@ -77,25 +74,28 @@ export function AccessEdit({
         </DialogHeader>
         <div className="container">
           <Label>服务商</Label>
-
-          <Select
-            onValueChange={(value) => {
-              setConfigType(value);
-            }}
+          <RadioGroup
             value={configType}
+            className="flex mt-3 space-x-2"
+            onValueChange={setConfigType}
           >
-            <SelectTrigger className="mt-3">
-              <SelectValue placeholder="选择服务商" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>服务商</SelectLabel>
-                {typeKeys.map((key) => (
-                  <SelectItem value={key}>{accessTypeMap.get(key)}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            {typeKeys.map((key) => (
+              <div className="flex items-center space-x-2" key={key}>
+                <RadioGroupItem value={key} id={key} hidden />
+                <Label htmlFor={key}>
+                  <div
+                    className={cn(
+                      "flex items-center space-x-2 border p-2 rounded cursor-pointer",
+                      getOptionCls(key)
+                    )}
+                  >
+                    <img src={accessTypeMap.get(key)?.[1]} className="h-6" />
+                    <div>{accessTypeMap.get(key)?.[0]}</div>
+                  </div>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
 
           {form}
         </div>

@@ -24,3 +24,10 @@ export type Domain = {
 export const getLastDeployment = (domain: Domain): Deployment | undefined => {
   return domain.expand?.lastDeployment;
 };
+
+export const targetTypeMap: Map<string, [string, string]> = new Map([
+  ["aliyun-cdn", ["阿里云-CDN", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
+]);
+
+export const targetTypeKeys = Array.from(targetTypeMap.keys());

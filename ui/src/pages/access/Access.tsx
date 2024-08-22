@@ -58,8 +58,12 @@ const Access = () => {
               <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
                 {access.name}
               </div>
-              <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center">
-                {accessTypeMap.get(access.configType)}
+              <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
+                <img
+                  src={accessTypeMap.get(access.configType)?.[1]}
+                  className="w-6"
+                />
+                <div>{accessTypeMap.get(access.configType)?.[0]}</div>
               </div>
 
               <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">

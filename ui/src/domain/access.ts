@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const accessTypeMap: Map<string, string> = new Map([
-  ["tencent", "腾讯云"],
-  ["aliyun", "阿里云"],
+export const accessTypeMap: Map<string, [string, string]> = new Map([
+  ["tencent", ["腾讯云", "/imgs/providers/tencent.svg"]],
+  ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
 ]);
 
 export const accessFormType = z.union(
