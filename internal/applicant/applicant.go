@@ -17,6 +17,7 @@ import (
 
 const (
 	configTypeTencent = "tencent"
+	configTypeAliyun  = "aliyun"
 )
 
 type Certificate struct {
@@ -56,13 +57,16 @@ type Applicant interface {
 
 func Get(record *models.Record) (Applicant, error) {
 	access := record.ExpandedOne("access")
+	option := &ApplyOption{
+		Email:  "536464346@qq.com",
+		Domain: record.GetString("domain"),
+		Access: access.GetString("config"),
+	}
 	switch access.GetString("configType") {
 	case configTypeTencent:
-		return NewTencent(&ApplyOption{
-			Email:  "536464346@qq.com",
-			Domain: record.GetString("domain"),
-			Access: access.GetString("config"),
-		}), nil
+		return NewTencent(option), nil
+	case configTypeAliyun:
+		return NewAliyun(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}
