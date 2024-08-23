@@ -24,6 +24,14 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 然后在浏览器中访问 http://127.0.0.1:8090 即可访问 Certimate 管理页面。
 
+默认账号：
+
+```bash
+用户名：admin@essay.com
+密码：1234567890
+```
+
+
 ## 许可证
 
 Certimate 采用 MIT 许可证，详情请查看 [LICENSE](LICENSE.md) 文件。
