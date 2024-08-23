@@ -12,16 +12,17 @@ dependsOn = [
     'install',
     'setup',
 ]
-cmds = ['npm --prefix=./ui run build','go build -o out']
+cmds = ['go build -o out']
 cacheDirectories = ['/root/.cache/go-build']
 
 [phases.install]
 dependsOn = ['setup']
-cmds = ['go mod download',"npm --prefix=./ui ci"]
+cmds = ['go mod download']
 cacheDirectories = ['/root/.cache/go-build']
 
 [phases.setup]
-nixPkgs = ['nodejs_22','go']
+nixPkgs = ['go']
+
 nixOverlays = []
 nixpkgsArchive = '1f13eabcd6f5b00fe9de9575ac52c66a0e887ce6'
 
