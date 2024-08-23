@@ -4,6 +4,6 @@ console.log(apiDomain);
 let pb: PocketBase;
 export const getPb = () => {
   if (pb) return pb;
-  pb = new PocketBase(apiDomain ? apiDomain : "http://127.0.0.1:8090");
+  pb = new PocketBase("/");
   return pb;
 };
