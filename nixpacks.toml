@@ -21,7 +21,8 @@ cmds = ['go mod download',"npm --prefix=./ui ci"]
 cacheDirectories = ['/root/.cache/go-build']
 
 [phases.setup]
-nixPkgs = ['go','nodejs_22']
+nixPkgs = ['go']
+aptPkgs = ['node']
 nixOverlays = []
 nixpkgsArchive = '1f13eabcd6f5b00fe9de9575ac52c66a0e887ce6'
 
