@@ -14,10 +14,12 @@ func create(ctx context.Context, record *models.Record) error {
 	}
 
 	if record.GetBool("rightnow") {
+		go func() {
+			if err := deploy(ctx, record); err != nil {
+				app.GetApp().Logger().Error("deploy failed", "err", err)
+			}
+		}()
 
-		if err := deploy(ctx, record); err != nil {
-			return err
-		}
 	}
 
 	scheduler := app.GetScheduler()
@@ -45,9 +47,11 @@ func update(ctx context.Context, record *models.Record) error {
 
 	if record.GetBool("rightnow") {
 
-		if err := deploy(ctx, record); err != nil {
-			return err
-		}
+		go func() {
+			if err := deploy(ctx, record); err != nil {
+				app.GetApp().Logger().Error("deploy failed", "err", err)
+			}
+		}()
 	}
 
 	err := scheduler.Add(record.Id, record.GetString("crontab"), func() {

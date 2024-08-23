@@ -169,8 +169,20 @@ export default function Dashboard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>
-            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 relative">
               <Outlet />
+
+              <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
+                <div className=""></div>
+                <div className="text-muted-foreground text-sm hover:text-stone-900">
+                  <a
+                    href="https://github.com/usual2970/certimate/releases"
+                    target="_blank"
+                  >
+                    Certimate v0.0.2
+                  </a>
+                </div>
+              </div>
             </main>
           </div>
         </div>

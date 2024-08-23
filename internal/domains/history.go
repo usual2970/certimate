@@ -1,6 +1,7 @@
 package domains
 
 import (
+	"certimate/internal/applicant"
 	"certimate/internal/utils/app"
 	"certimate/internal/utils/xtime"
 	"time"
@@ -20,6 +21,7 @@ type history struct {
 	Phase        Phase                   `json:"phase"`
 	PhaseSuccess bool                    `json:"phaseSuccess"`
 	DeployedAt   string                  `json:"deployedAt"`
+	Cert         *applicant.Certificate  `json:"cert"`
 }
 
 func NewHistory(record *models.Record) *history {
@@ -52,6 +54,10 @@ func (a *history) record(phase Phase, msg string, err error, pass ...bool) {
 
 }
 
+func (a *history) setCert(cert *applicant.Certificate) {
+	a.Cert = cert
+}
+
 func (a *history) commit() error {
 	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("deployments")
 	if err != nil {
@@ -78,6 +84,19 @@ func (a *history) commit() error {
 	domainRecord.Set("lastDeployedAt", a.DeployedAt)
 	domainRecord.Set("lastDeployment", record.Id)
 	domainRecord.Set("rightnow", false)
+	if a.Phase == deployPhase && a.PhaseSuccess {
+		domainRecord.Set("deployed", true)
+	}
+	cert := a.Cert
+	if cert != nil {
+		domainRecord.Set("certUrl", cert.CertUrl)
+		domainRecord.Set("certStableUrl", cert.CertStableUrl)
+		domainRecord.Set("privateKey", cert.PrivateKey)
+		domainRecord.Set("certificate", cert.Certificate)
+		domainRecord.Set("issuerCertificate", cert.IssuerCertificate)
+		domainRecord.Set("csr", cert.Csr)
+		domainRecord.Set("expiredAt", time.Now().Add(time.Hour*24*90))
+	}
 
 	if err := app.GetApp().Dao().SaveRecord(domainRecord); err != nil {
 		return err

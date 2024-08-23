@@ -1,6 +1,7 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import {
   Sheet,
@@ -35,7 +36,7 @@ const History = () => {
   }, [domain]);
 
   return (
-    <div>
+    <ScrollArea className="h-[80vh] overflow-hidden">
       <div className="text-muted-foreground">部署历史</div>
       {!deployments?.length ? (
         <>
@@ -184,7 +185,7 @@ const History = () => {
           ))}
         </>
       )}
-    </div>
+    </ScrollArea>
   );
 };
 

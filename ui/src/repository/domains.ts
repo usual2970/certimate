@@ -25,3 +25,24 @@ export const save = async (data: Domain) => {
 export const remove = async (id: string) => {
   return await getPb().collection("domains").delete(id);
 };
+
+type Callback = (data: Domain) => void;
+export const subscribeId = (id: string, callback: Callback) => {
+  return getPb()
+    .collection("domains")
+    .subscribe<Domain>(
+      id,
+      (e) => {
+        if (e.action === "update") {
+          callback(e.record);
+        }
+      },
+      {
+        expand: "lastDeployment",
+      }
+    );
+};
+
+export const unsubscribeId = (id: string) => {
+  getPb().collection("domains").unsubscribe(id);
+};

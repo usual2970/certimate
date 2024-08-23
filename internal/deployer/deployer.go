@@ -31,18 +31,23 @@ type Deployer interface {
 	Deploy(ctx context.Context) error
 }
 
-func Get(record *models.Record) (Deployer, error) {
+func Get(record *models.Record, cert *applicant.Certificate) (Deployer, error) {
 	access := record.ExpandedOne("targetAccess")
 	option := &DeployerOption{
 		DomainId: record.Id,
 		Domain:   record.GetString("domain"),
 		Product:  getProduct(record),
 		Access:   access.GetString("config"),
-		Certificate: applicant.Certificate{
+	}
+	if cert != nil {
+		option.Certificate = *cert
+	} else {
+		option.Certificate = applicant.Certificate{
 			Certificate: record.GetString("certificate"),
 			PrivateKey:  record.GetString("privateKey"),
-		},
+		}
 	}
+
 	switch record.GetString("targetType") {
 	case targetAliyunOss:
 		return NewAliyun(option)

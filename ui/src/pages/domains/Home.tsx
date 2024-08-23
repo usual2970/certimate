@@ -20,7 +20,13 @@ import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { Domain } from "@/domain/domain";
 import { convertZulu2Beijing, getDate } from "@/lib/time";
-import { list, remove, save } from "@/repository/domains";
+import {
+  list,
+  remove,
+  save,
+  subscribeId,
+  unsubscribeId,
+} from "@/repository/domains";
 
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { CircleCheck, CircleX, Earth } from "lucide-react";
@@ -82,22 +88,25 @@ const Home = () => {
 
   const handleRightNowClick = async (domain: Domain) => {
     try {
+      unsubscribeId(domain.id);
+      subscribeId(domain.id, (resp) => {
+        console.log(resp);
+        const updatedDomains = domains.map((domain) => {
+          if (domain.id === resp.id) {
+            return { ...resp };
+          }
+          return domain;
+        });
+        setDomains(updatedDomains);
+      });
       domain.rightnow = true;
-      const resp = await save(domain);
-      const updatedDomains = domains.map((domain) => {
-        if (domain.id === resp.id) {
-          return { ...resp };
-        }
-        return domain;
-      });
-      setDomains(updatedDomains);
+
+      await save(domain);
+
       toast.toast({
-        title: "执行成功",
-        description: "执行成功",
+        title: "操作成功",
+        description: "已发起部署，请稍后查看部署日志。",
       });
-      setTimeout(() => {
-        navigate(0);
-      }, 1000);
     } catch (e) {
       toast.toast({
         title: "执行失败",

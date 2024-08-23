@@ -26,9 +26,11 @@ func deploy(ctx context.Context, record *models.Record) error {
 			app.GetApp().Logger().Error("部署失败", "err", r)
 		}
 	}()
+	var certificate *applicant.Certificate
 	currRecord, err := app.GetApp().Dao().FindRecordById("domains", record.Id)
 	history := NewHistory(record)
 	defer history.commit()
+
 	// ############1.检查域名配置
 	history.record(checkPhase, "开始检查", nil)
 
@@ -73,25 +75,21 @@ func deploy(ctx context.Context, record *models.Record) error {
 			app.GetApp().Logger().Error("获取applicant失败", "err", err)
 			return err
 		}
-		certificate, err := applicant.Apply()
+		certificate, err = applicant.Apply()
 		if err != nil {
 			history.record(applyPhase, "申请证书失败", err)
 			app.GetApp().Logger().Error("申请证书失败", "err", err)
 			return err
 		}
 		history.record(applyPhase, "申请证书成功", nil)
-		if err = saveCert(ctx, record, certificate); err != nil {
-			history.record(applyPhase, "保存证书失败", err)
-			app.GetApp().Logger().Error("保存证书失败", "err", err)
-			return err
-		}
+		history.setCert(certificate)
 	}
 
 	history.record(applyPhase, "保存证书成功", nil, true)
 
 	// ############3.部署证书
 	history.record(deployPhase, "开始部署", nil, false)
-	deployer, err := deployer.Get(currRecord)
+	deployer, err := deployer.Get(currRecord, certificate)
 	if err != nil {
 		history.record(deployPhase, "获取deployer失败", err)
 		app.GetApp().Logger().Error("获取deployer失败", "err", err)
@@ -99,38 +97,14 @@ func deploy(ctx context.Context, record *models.Record) error {
 	}
 
 	if err = deployer.Deploy(ctx); err != nil {
-		setDeployed(ctx, record, false)
+
 		app.GetApp().Logger().Error("部署失败", "err", err)
 		history.record(deployPhase, "部署失败", err)
 		return err
 	}
 
-	setDeployed(ctx, record, true)
 	app.GetApp().Logger().Info("部署成功")
 	history.record(deployPhase, "部署成功", nil, true)
 
-	return nil
-}
-
-func setDeployed(ctx context.Context, record *models.Record, deployed bool) error {
-	record.Set("deployed", deployed)
-	if err := app.GetApp().Dao().SaveRecord(record); err != nil {
-		return err
-	}
-	return nil
-}
-
-func saveCert(ctx context.Context, record *models.Record, cert *applicant.Certificate) error {
-	record.Set("certUrl", cert.CertUrl)
-	record.Set("certStableUrl", cert.CertStableUrl)
-	record.Set("privateKey", cert.PrivateKey)
-	record.Set("certificate", cert.Certificate)
-	record.Set("issuerCertificate", cert.IssuerCertificate)
-	record.Set("csr", cert.Csr)
-	record.Set("expiredAt", time.Now().Add(time.Hour*24*90))
-
-	if err := app.GetApp().Dao().SaveRecord(record); err != nil {
-		return err
-	}
 	return nil
 }
