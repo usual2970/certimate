@@ -89,12 +89,15 @@ export function AccessEdit({
           <RadioGroup
             value={configType}
             className="flex mt-3 space-x-2"
-            onValueChange={setConfigType}
+            onValueChange={(val) => {
+              console.log(val);
+              setConfigType(val);
+            }}
           >
             {typeKeys.map((key) => (
               <div className="flex items-center space-x-2" key={key}>
-                <RadioGroupItem value={key} id={key} hidden />
-                <Label htmlFor={key}>
+                <Label>
+                  <RadioGroupItem value={key} hidden />
                   <div
                     className={cn(
                       "flex items-center space-x-2 border p-2 rounded cursor-pointer",

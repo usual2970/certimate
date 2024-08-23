@@ -62,11 +62,9 @@ const Edit = () => {
 
   const formSchema = z.object({
     id: z.string().optional(),
-    domain: z
-      .string()
-      .regex(/^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z]{2,6})+$/, {
-        message: "请输入正确的域名",
-      }),
+    domain: z.string().regex(/^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/, {
+      message: "请输入正确的域名",
+    }),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
       message: "请选择DNS服务商授权配置",
     }),
