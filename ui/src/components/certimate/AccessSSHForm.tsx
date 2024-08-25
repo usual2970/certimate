@@ -245,7 +245,11 @@ const AccessSSHForm = ({
                 <FormItem>
                   <FormLabel>密码</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入密码" {...field} />
+                    <Input
+                      placeholder="请输入密码"
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
 
                   <FormMessage />
