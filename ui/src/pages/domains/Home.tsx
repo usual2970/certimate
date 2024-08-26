@@ -19,6 +19,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { Domain } from "@/domain/domain";
+import { CustomFile, saveFiles2ZIP } from "@/lib/file";
 import { convertZulu2Beijing, getDate } from "@/lib/time";
 import {
   list,
@@ -125,6 +126,22 @@ const Home = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleDownloadClick = async (domain: Domain) => {
+    const zipName = `${domain.id}-${domain.domain}.zip`;
+    const files: CustomFile[] = [
+      {
+        name: `${domain.domain}.pem`,
+        content: domain.certificate ? domain.certificate : "",
+      },
+      {
+        name: `${domain.domain}.key`,
+        content: domain.privateKey ? domain.privateKey : "",
+      },
+    ];
+
+    await saveFiles2ZIP(zipName, files);
   };
 
   return (
@@ -250,6 +267,17 @@ const Home = () => {
                       onClick={() => handleRightNowClick(domain)}
                     >
                       立即部署
+                    </Button>
+                  </Show>
+
+                  <Show when={domain.expiredAt ? true : false}>
+                    <Separator orientation="vertical" className="h-4 mx-2" />
+                    <Button
+                      variant={"link"}
+                      className="p-0"
+                      onClick={() => handleDownloadClick(domain)}
+                    >
+                      下载
                     </Button>
                   </Show>
 

@@ -16,6 +16,8 @@ export type Domain = {
   updated?: string;
   deleted?: string;
   rightnow?: boolean;
+  certificate?: string;
+  privateKey?: string;
   expand?: {
     lastDeployment?: Deployment;
   };
