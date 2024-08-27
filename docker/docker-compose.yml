@@ -1,0 +1,10 @@
+version: '3.0'
+services:
+    certimate:
+      image: registry.cn-shanghai.aliyuncs.com/usual2970/certimate:v0.0.4
+      container_name: certimate
+      ports:
+      - 8090:8090
+      volumes:
+      - ./data:/app/pb_data
+      restart: unless-stopped
