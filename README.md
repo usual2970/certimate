@@ -16,6 +16,8 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 ## 安装
 
+### 二进制文件
+
 你可以直接从[Releases 页](https://github.com/usual2970/certimate/releases)下载预先编译好的二进制文件，解压后执行:
 
 ```bash
@@ -23,6 +25,16 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 ```
 
 然后在浏览器中访问 http://127.0.0.1:8090 即可访问 Certimate 管理页面。
+
+### Docker 安装
+
+```bash
+
+git clone git@github.com:usual2970/certimate.git && cd certimate/docker && docker-compose up -d
+
+```
+
+配置
 
 默认账号：
 
@@ -50,7 +62,7 @@ Certimate 的工作流程如下：
 
 给域名申请证书需要证明域名是你的，所以我们手动申请证书的时候一般需要在域名服务商的控制台解析记录中添加一个 TXT 记录。
 
-Certimate 会自动添加一个 TXT 记录，你只需要在Certimate后台中填写你的域名服务商的授权信息即可。
+Certimate 会自动添加一个 TXT 记录，你只需要在 Certimate 后台中填写你的域名服务商的授权信息即可。
 
 比如你在阿里云购买的域名，授权信息如下：
 
@@ -68,18 +80,13 @@ secretKey: TOKEN
 
 ### 部署服务商授权信息
 
-Certimate 申请证书后，会自动将证书部署到你指定的目标上，比如阿里云CDN这时你需要填写阿里云的授权信息。Certimate 会根据你填写的授权信息及域名找到对应的CDN服务,并将证书部署到对应的CDN服务上。 
+Certimate 申请证书后，会自动将证书部署到你指定的目标上，比如阿里云 CDN 这时你需要填写阿里云的授权信息。Certimate 会根据你填写的授权信息及域名找到对应的 CDN 服务,并将证书部署到对应的 CDN 服务上。
 
-部署服务商授权信息和dns服务商授权信息一致，区别在于dns服务商授权信息用于证明域名是你的，部署服务商授权信息用于提供证书部署的授权信息。
-
+部署服务商授权信息和 dns 服务商授权信息一致，区别在于 dns 服务商授权信息用于证明域名是你的，部署服务商授权信息用于提供证书部署的授权信息。
 
 ## 使用
 
 ![Alt text](usage.gif)
-
-
-
-
 
 ## 许可证
 
