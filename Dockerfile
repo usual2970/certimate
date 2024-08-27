@@ -1,3 +1,11 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY ../. /app/
+
+RUN npm --prefix=./ui ci && npm --prefix=./ui run build
+
 FROM golang:1.22-alpine
 
 WORKDIR /app
