@@ -1,17 +1,8 @@
-FROM node:20-alpine as build-ui
-
-WORKDIR /app
-
-COPY ../. /app/
-
-RUN npm --prefix=./ui ci && npm --prefix=./ui run build
-
 FROM golang:1.22-alpine
 
 WORKDIR /app
 
 COPY ../. /app/
-COPY --from=build-ui /app/ui/dist /app/ui/
 
 RUN go build -o certimate
 
