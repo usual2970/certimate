@@ -1,5 +1,7 @@
 FROM golang:1.22-alpine
 
+ENV GOPROXY=https://goproxy.cn
+
 WORKDIR /app
 
 COPY ../. /app/
