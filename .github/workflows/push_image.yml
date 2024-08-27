@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: usual2970/certimate:latest
+          tags: registry.cn-shanghai.aliyuncs.com/usual2970/certimate:latest
