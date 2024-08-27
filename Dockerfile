@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:20-alpine as build-ui
 
 WORKDIR /app
 
@@ -11,6 +11,7 @@ FROM golang:1.22-alpine
 WORKDIR /app
 
 COPY ../. /app/
+COPY from=build-ui /app/ui/dist /app/ui/
 
 RUN go build -o certimate
 
