@@ -1,7 +1,7 @@
 version: '3.0'
 services:
     certimate:
-      image: registry.cn-shanghai.aliyuncs.com/usual2970/certimate:v0.0.4
+      image: registry.cn-shanghai.aliyuncs.com/usual2970/certimate:latest
       container_name: certimate
       ports:
       - 8090:8090

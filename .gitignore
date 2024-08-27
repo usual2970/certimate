@@ -4,6 +4,7 @@ pb_data
 main
 ./certimate
 build
+/docker/data
 
 # Editor directories and files
 .vscode/*
