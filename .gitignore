@@ -17,4 +17,4 @@ build
 *.sln
 *.sw?
 
-dist/
+./dist
