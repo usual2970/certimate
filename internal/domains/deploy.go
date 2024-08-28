@@ -30,7 +30,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	currRecord, err := app.GetApp().Dao().FindRecordById("domains", record.Id)
 	history := NewHistory(record)
 	defer history.commit()
-da
+
 	// ############1.检查域名配置
 	history.record(checkPhase, "开始检查", nil)
 
