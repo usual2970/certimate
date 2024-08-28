@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 import AccessSSHForm from "./AccessSSHForm";
+import WebhookForm from "./AccessWebhookFrom";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -69,6 +70,15 @@ export function AccessEdit({
         />
       );
       break;
+    case "webhook":
+      form = (
+        <WebhookForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
   }
 
   const getOptionCls = (val: string) => {

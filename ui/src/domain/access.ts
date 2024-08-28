@@ -4,10 +4,16 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["tencent", ["腾讯云", "/imgs/providers/tencent.svg"]],
   ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.png"]],
+  ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
 export const accessFormType = z.union(
-  [z.literal("aliyun"), z.literal("tencent"), z.literal("ssh")],
+  [
+    z.literal("aliyun"),
+    z.literal("tencent"),
+    z.literal("ssh"),
+    z.literal("webhook"),
+  ],
   { message: "请选择云服务商" }
 );
 
@@ -15,10 +21,14 @@ export type Access = {
   id: string;
   name: string;
   configType: string;
-  config: TencentConfig | AliyunConfig | SSHConfig;
+  config: TencentConfig | AliyunConfig | SSHConfig | WebhookConfig;
   deleted?: string;
   created?: string;
   updated?: string;
+};
+
+export type WebhookConfig = {
+  url: string;
 };
 
 export type TencentConfig = {
