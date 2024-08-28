@@ -7,6 +7,8 @@ import Access from "./pages/access/Access";
 import History from "./pages/history/History";
 import Login from "./pages/login/Login";
 import LoginLayout from "./pages/LoginLayout";
+import Password from "./pages/setting/Password";
+import SettingLayout from "./pages/SettingLayout";
 
 export const router = createHashRouter([
   {
@@ -28,6 +30,16 @@ export const router = createHashRouter([
       {
         path: "/history",
         element: <History />,
+      },
+      {
+        path: "/setting",
+        element: <SettingLayout />,
+        children: [
+          {
+            path: "/setting/password",
+            element: <Password />,
+          },
+        ],
       },
     ],
   },

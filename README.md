@@ -18,6 +18,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
   - [安装](#安装)
     - [二进制文件](#二进制文件)
     - [Docker 安装](#docker-安装)
+    - [默认账号：](#默认账号)
   - [概念](#概念)
     - [域名](#域名)
     - [dns 服务商授权信息](#dns-服务商授权信息)
@@ -37,19 +38,18 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 ./certimate serve
 ```
 
-然后在浏览器中访问 http://127.0.0.1:8090 即可访问 Certimate 管理页面。
 
 ### Docker 安装
 
 ```bash
 
-git clone git@github.com:usual2970/certimate.git && cd certimate/docker && docker-compose up -d
+git clone git@github.com:usual2970/certimate.git && cd certimate/docker && docker compose up -d
 
 ```
 
-配置
+然后在浏览器中访问 http://127.0.0.1:8090 即可访问 Certimate 管理页面。
 
-默认账号：
+### 默认账号：
 
 ```bash
 用户名：admin@certimate.fun

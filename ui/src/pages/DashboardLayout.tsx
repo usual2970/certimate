@@ -41,6 +41,10 @@ export default function Dashboard() {
     getPb().authStore.clear();
     navigate("/login");
   };
+
+  const handleSettingClick = () => {
+    navigate("/setting/password");
+  };
   return (
     <>
       <ConfigProvider>
@@ -160,11 +164,15 @@ export default function Dashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>账户</DropdownMenuLabel>
                   <DropdownMenuSeparator />
 
+                  <DropdownMenuItem onClick={handleSettingClick}>
+                    设置
+                  </DropdownMenuItem>
+
                   <DropdownMenuItem onClick={handleLogoutClick}>
-                    Logout
+                    退出
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
