@@ -3,6 +3,7 @@ package deployer
 import (
 	"certimate/internal/applicant"
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
@@ -31,6 +32,7 @@ type DeployerOption struct {
 
 type Deployer interface {
 	Deploy(ctx context.Context) error
+	GetInfo() []string
 }
 
 func Get(record *models.Record, cert *applicant.Certificate) (Deployer, error) {
@@ -72,4 +74,12 @@ func getProduct(record *models.Record) string {
 		return ""
 	}
 	return rs[1]
+}
+
+func toStr(tag string, data any) string {
+	if data == nil {
+		return tag
+	}
+	byts, _ := json.Marshal(data)
+	return tag + "：" + string(byts)
 }

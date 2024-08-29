@@ -19,6 +19,7 @@ import (
 type aliyun struct {
 	client *cas20200407.Client
 	option *DeployerOption
+	infos  []string
 }
 
 func NewAliyun(option *DeployerOption) (Deployer, error) {
@@ -26,6 +27,7 @@ func NewAliyun(option *DeployerOption) (Deployer, error) {
 	json.Unmarshal([]byte(option.Access), access)
 	a := &aliyun{
 		option: option,
+		infos:  make([]string, 0),
 	}
 	client, err := a.createClient(access.AccessKeyId, access.AccessKeySecret)
 	if err != nil {
@@ -36,6 +38,10 @@ func NewAliyun(option *DeployerOption) (Deployer, error) {
 
 }
 
+func (a *aliyun) GetInfo() []string {
+	return a.infos
+}
+
 func (a *aliyun) Deploy(ctx context.Context) error {
 
 	// 查询有没有对应的资源
@@ -44,11 +50,15 @@ func (a *aliyun) Deploy(ctx context.Context) error {
 		return err
 	}
 
+	a.infos = append(a.infos, toStr("查询对应的资源", resource))
+
 	// 查询有没有对应的联系人
 	contacts, err := a.contacts()
 	if err != nil {
 		return err
 	}
+
+	a.infos = append(a.infos, toStr("查询联系人", contacts))
 
 	// 上传证书
 	certId, err := a.uploadCert(&a.option.Certificate)
@@ -56,11 +66,15 @@ func (a *aliyun) Deploy(ctx context.Context) error {
 		return err
 	}
 
+	a.infos = append(a.infos, toStr("上传证书", certId))
+
 	// 部署证书
 	jobId, err := a.deploy(resource, certId, contacts)
 	if err != nil {
 		return err
 	}
+
+	a.infos = append(a.infos, toStr("创建部署证书任务", jobId))
 
 	// 等待部署成功
 	err = a.updateDeployStatus(*jobId)
@@ -80,10 +94,11 @@ func (a *aliyun) updateDeployStatus(jobId int64) error {
 		JobId: tea.Int64(jobId),
 	}
 
-	_, err := a.client.UpdateDeploymentJobStatus(req)
+	resp, err := a.client.UpdateDeploymentJobStatus(req)
 	if err != nil {
 		return err
 	}
+	a.infos = append(a.infos, toStr("查询对应的资源", resp))
 	return nil
 }
 

@@ -17,6 +17,7 @@ import (
 type tencentCdn struct {
 	option     *DeployerOption
 	credential *common.Credential
+	infos      []string
 }
 
 func NewTencentCdn(option *DeployerOption) (Deployer, error) {
@@ -34,7 +35,12 @@ func NewTencentCdn(option *DeployerOption) (Deployer, error) {
 	return &tencentCdn{
 		option:     option,
 		credential: credential,
+		infos:      make([]string, 0),
 	}, nil
+}
+
+func (t *tencentCdn) GetInfo() []string {
+	return t.infos
 }
 
 func (t *tencentCdn) Deploy(ctx context.Context) error {
@@ -45,11 +51,14 @@ func (t *tencentCdn) Deploy(ctx context.Context) error {
 		return fmt.Errorf("failed to get resource: %w", err)
 	}
 
+	t.infos = append(t.infos, toStr("查询对应的资源", resource))
+
 	// 上传证书
 	certId, err := t.uploadCert()
 	if err != nil {
 		return fmt.Errorf("failed to upload certificate: %w", err)
 	}
+	t.infos = append(t.infos, toStr("上传证书", certId))
 
 	if err := t.deploy(resource, certId); err != nil {
 		return fmt.Errorf("failed to deploy: %w", err)
@@ -100,11 +109,12 @@ func (t *tencentCdn) deploy(resource *tag.ResourceTagMapping, certId string) err
 	request.Status = common.Int64Ptr(1)
 
 	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
-	_, err = client.DeployCertificateInstance(request)
+	resp, err := client.DeployCertificateInstance(request)
 
 	if err != nil {
 		return fmt.Errorf("failed to deploy certificate: %w", err)
 	}
+	t.infos = append(t.infos, toStr("部署证书", resp.Response))
 	return nil
 }
 

@@ -10,9 +10,15 @@ import (
 )
 
 type historyItem struct {
-	Time    string `json:"time"`
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Time    string   `json:"time"`
+	Message string   `json:"message"`
+	Error   string   `json:"error"`
+	Info    []string `json:"info"`
+}
+
+type RecordInfo struct {
+	Err  error    `json:"err"`
+	Info []string `json:"info"`
 }
 
 type history struct {
@@ -34,21 +40,25 @@ func NewHistory(record *models.Record) *history {
 	}
 }
 
-func (a *history) record(phase Phase, msg string, err error, pass ...bool) {
+func (a *history) record(phase Phase, msg string, info *RecordInfo, pass ...bool) {
+	if info == nil {
+		info = &RecordInfo{}
+	}
 	a.Phase = phase
 	if len(pass) > 0 {
 		a.PhaseSuccess = pass[0]
 	}
 
 	errMsg := ""
-	if err != nil {
-		errMsg = err.Error()
+	if info.Err != nil {
+		errMsg = info.Err.Error()
 		a.PhaseSuccess = false
 	}
 
 	a.Log[phase] = append(a.Log[phase], historyItem{
 		Message: msg,
 		Error:   errMsg,
+		Info:    info.Info,
 		Time:    xtime.BeijingTimeStr(),
 	})
 

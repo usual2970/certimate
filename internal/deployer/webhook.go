@@ -21,13 +21,19 @@ type hookData struct {
 
 type webhook struct {
 	option *DeployerOption
+	infos  []string
 }
 
 func NewWebhook(option *DeployerOption) (Deployer, error) {
 
 	return &webhook{
 		option: option,
+		infos:  make([]string, 0),
 	}, nil
+}
+
+func (w *webhook) GetInfo() []string {
+	return w.infos
 }
 
 func (w *webhook) Deploy(ctx context.Context) error {
@@ -44,12 +50,14 @@ func (w *webhook) Deploy(ctx context.Context) error {
 
 	body, _ := json.Marshal(data)
 
-	_, err := xhttp.Req(access.Url, http.MethodPost, bytes.NewReader(body), map[string]string{
+	resp, err := xhttp.Req(access.Url, http.MethodPost, bytes.NewReader(body), map[string]string{
 		"Content-Type": "application/json",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to send hook request: %w", err)
 	}
+
+	w.infos = append(w.infos, toStr("webhook response", string(resp)))
 
 	return nil
 }

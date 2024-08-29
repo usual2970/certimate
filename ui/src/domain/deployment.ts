@@ -24,6 +24,7 @@ export type Log = {
   time: string;
   message: string;
   error: string;
+  info?: string[];
 };
 
 export type DeploymentListReq = {

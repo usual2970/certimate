@@ -15,6 +15,7 @@ import (
 type AliyunCdn struct {
 	client *cdn20180510.Client
 	option *DeployerOption
+	infos  []string
 }
 
 func NewAliyunCdn(option *DeployerOption) (*AliyunCdn, error) {
@@ -31,7 +32,12 @@ func NewAliyunCdn(option *DeployerOption) (*AliyunCdn, error) {
 	return &AliyunCdn{
 		client: client,
 		option: option,
+		infos:  make([]string, 0),
 	}, nil
+}
+
+func (a *AliyunCdn) GetInfo() []string {
+	return a.infos
 }
 
 func (a *AliyunCdn) Deploy(ctx context.Context) error {
@@ -49,10 +55,12 @@ func (a *AliyunCdn) Deploy(ctx context.Context) error {
 
 	runtime := &util.RuntimeOptions{}
 
-	_, err := a.client.SetCdnDomainSSLCertificateWithOptions(setCdnDomainSSLCertificateRequest, runtime)
+	resp, err := a.client.SetCdnDomainSSLCertificateWithOptions(setCdnDomainSSLCertificateRequest, runtime)
 	if err != nil {
 		return err
 	}
+
+	a.infos = append(a.infos, toStr("cdn设置证书", resp))
 
 	return nil
 }

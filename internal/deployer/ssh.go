@@ -14,6 +14,7 @@ import (
 
 type ssh struct {
 	option *DeployerOption
+	infos  []string
 }
 
 type sshAccess struct {
@@ -30,7 +31,12 @@ type sshAccess struct {
 func NewSSH(option *DeployerOption) (Deployer, error) {
 	return &ssh{
 		option: option,
+		infos:  make([]string, 0),
 	}, nil
+}
+
+func (s *ssh) GetInfo() []string {
+	return s.infos
 }
 
 func (s *ssh) Deploy(ctx context.Context) error {
@@ -45,6 +51,8 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	}
 	defer client.Close()
 
+	s.infos = append(s.infos, toStr("ssh连接成功", nil))
+
 	// 上传
 	session, err := client.NewSession()
 	if err != nil {
@@ -52,15 +60,21 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	}
 	defer session.Close()
 
+	s.infos = append(s.infos, toStr("ssh创建session成功", nil))
+
 	// 上传证书
 	if err := s.upload(client, s.option.Certificate.Certificate, access.CertPath); err != nil {
 		return fmt.Errorf("failed to upload certificate: %w", err)
 	}
 
+	s.infos = append(s.infos, toStr("ssh上传证书成功", nil))
+
 	// 上传私钥
 	if err := s.upload(client, s.option.Certificate.PrivateKey, access.KeyPath); err != nil {
 		return fmt.Errorf("failed to upload private key: %w", err)
 	}
+
+	s.infos = append(s.infos, toStr("ssh上传私钥成功", nil))
 
 	// 执行命令
 	var stdoutBuf bytes.Buffer
@@ -71,6 +85,8 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	if err := session.Run(access.Command); err != nil {
 		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdoutBuf.String(), stderrBuf.String())
 	}
+
+	s.infos = append(s.infos, toStr("ssh执行命令成功", []string{stdoutBuf.String()}))
 
 	return nil
 }
