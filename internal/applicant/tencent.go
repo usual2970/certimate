@@ -1,16 +1,12 @@
 package applicant
 
 import (
+	"certimate/internal/domain"
 	"encoding/json"
 	"os"
 
 	"github.com/go-acme/lego/v4/providers/dns/tencentcloud"
 )
-
-type tencentAccess struct {
-	SecretId  string `json:"secretId"`
-	SecretKey string `json:"secretKey"`
-}
 
 type tencent struct {
 	option *ApplyOption
@@ -24,7 +20,7 @@ func NewTencent(option *ApplyOption) Applicant {
 
 func (t *tencent) Apply() (*Certificate, error) {
 
-	access := &tencentAccess{}
+	access := &domain.TencentAccess{}
 	json.Unmarshal([]byte(t.option.Access), access)
 
 	os.Setenv("TENCENTCLOUD_SECRET_ID", access.SecretId)

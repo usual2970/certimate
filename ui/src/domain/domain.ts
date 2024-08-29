@@ -30,6 +30,7 @@ export const getLastDeployment = (domain: Domain): Deployment | undefined => {
 export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["aliyun-cdn", ["阿里云-CDN", "/imgs/providers/aliyun.svg"]],
   ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
+  ["tencent-cdn", ["腾讯云-CDN", "/imgs/providers/tencent.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.png"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);

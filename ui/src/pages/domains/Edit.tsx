@@ -34,9 +34,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { AccessEdit } from "@/components/certimate/AccessEdit";
 import { accessTypeMap } from "@/domain/access";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 
 const Edit = () => {
   const {
@@ -151,10 +148,6 @@ const Edit = () => {
     }
   };
 
-  const getOptionCls = (val: string) => {
-    return form.getValues().targetType == val ? "border-primary" : "";
-  };
-
   return (
     <>
       <div className="">
@@ -241,37 +234,33 @@ const Edit = () => {
                   <FormItem>
                     <FormLabel>部署服务类型</FormLabel>
                     <FormControl>
-                      <RadioGroup
-                        className="flex mt-3 space-x-2"
-                        onValueChange={(val: string) => {
-                          setTargetType(val);
-                          form.setValue("targetType", val);
-                        }}
+                      <Select
                         {...field}
+                        onValueChange={(value) => {
+                          setTargetType(value);
+                          form.setValue("targetType", value);
+                        }}
                       >
-                        {targetTypeKeys.map((key) => (
-                          <div
-                            className="flex items-center space-x-2"
-                            key={key}
-                          >
-                            <Label>
-                              <RadioGroupItem value={key} id={key} hidden />
-                              <div
-                                className={cn(
-                                  "flex items-center space-x-2 border p-2 rounded cursor-pointer",
-                                  getOptionCls(key)
-                                )}
-                              >
-                                <img
-                                  src={targetTypeMap.get(key)?.[1]}
-                                  className="h-6"
-                                />
-                                <div>{targetTypeMap.get(key)?.[0]}</div>
-                              </div>
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
+                        <SelectTrigger>
+                          <SelectValue placeholder="请选择部署服务类型" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>部署服务类型</SelectLabel>
+                            {targetTypeKeys.map((key) => (
+                              <SelectItem key={key} value={key}>
+                                <div className="flex items-center space-x-2">
+                                  <img
+                                    className="w-6"
+                                    src={targetTypeMap.get(key)?.[1]}
+                                  />
+                                  <div>{targetTypeMap.get(key)?.[0]}</div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
 
                     <FormMessage />

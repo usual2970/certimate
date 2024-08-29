@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"certimate/internal/applicant"
+	"certimate/internal/domain"
 	"certimate/internal/utils/rand"
 	"context"
 	"encoding/json"
@@ -15,18 +16,13 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 )
 
-type aliyunAccess struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	AccessKeySecret string `json:"accessKeySecret"`
-}
-
 type aliyun struct {
 	client *cas20200407.Client
 	option *DeployerOption
 }
 
 func NewAliyun(option *DeployerOption) (Deployer, error) {
-	access := &aliyunAccess{}
+	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 	a := &aliyun{
 		option: option,

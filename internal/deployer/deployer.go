@@ -14,10 +14,11 @@ const (
 )
 
 const (
-	targetAliyunOss = "aliyun-oss"
-	targetAliyunCdn = "aliyun-cdn"
-	targetSSH       = "ssh"
-	targetWebhook   = "webhook"
+	targetAliyunOss  = "aliyun-oss"
+	targetAliyunCdn  = "aliyun-cdn"
+	targetSSH        = "ssh"
+	targetWebhook    = "webhook"
+	targetTencentCdn = "tencent-cdn"
 )
 
 type DeployerOption struct {
@@ -58,6 +59,8 @@ func Get(record *models.Record, cert *applicant.Certificate) (Deployer, error) {
 		return NewSSH(option)
 	case targetWebhook:
 		return NewWebhook(option)
+	case targetTencentCdn:
+		return NewTencentCdn(option)
 	}
 	return nil, errors.New("not implemented")
 }

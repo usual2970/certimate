@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"certimate/internal/domain"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -17,7 +18,7 @@ type AliyunCdn struct {
 }
 
 func NewAliyunCdn(option *DeployerOption) (*AliyunCdn, error) {
-	access := &aliyunAccess{}
+	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 	a := &AliyunCdn{
 		option: option,

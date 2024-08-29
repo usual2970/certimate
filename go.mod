@@ -16,6 +16,9 @@ require (
 	github.com/pkg/sftp v1.13.6
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.992
 	golang.org/x/crypto v0.26.0
 )
 
@@ -90,7 +93,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.898 // indirect
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.898 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
