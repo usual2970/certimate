@@ -12,7 +12,9 @@ var intanceOnce sync.Once
 
 func GetApp() *pocketbase.PocketBase {
 	intanceOnce.Do(func() {
-		instance = pocketbase.New()
+		instance = pocketbase.NewWithConfig(pocketbase.Config{
+			HideStartBanner: true,
+		})
 	})
 
 	return instance
