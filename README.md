@@ -70,9 +70,7 @@ go run main.go serve
 密码：1234567890
 ```
 
-![Alt text](usage.gif)
-
-
+![usage.gif](https://i.imgur.com/zpCoLVM.gif)
 
 
 ## 三、概念
