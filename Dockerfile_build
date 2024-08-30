@@ -1,10 +1,8 @@
-FROM golang:1.22-alpine
+FROM alpine:3.20
 
 
 WORKDIR /app
 
-COPY ../. /app/
-
-RUN go build -o certimate
+COPY certimate /app/certimate
 
 ENTRYPOINT ["./certimate", "serve", "--http", "0.0.0.0:8090"]

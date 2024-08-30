@@ -2,7 +2,7 @@ __debug_bin*
 vendor
 pb_data
 main
-./certimate
+certimate
 build
 /docker/data
 
