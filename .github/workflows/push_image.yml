@@ -46,4 +46,6 @@ jobs:
           file: ./Dockerfile_build
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: registry.cn-shanghai.aliyuncs.com/usual2970/certimate:${{ env.tag }}
+          tags: |
+            registry.cn-shanghai.aliyuncs.com/usual2970/certimate:${{ env.tag }}
+            registry.cn-shanghai.aliyuncs.com/usual2970/certimate:latest
