@@ -99,7 +99,7 @@ func (s *ssh) upload(client *sshPkg.Client, content, path string) error {
 	}
 	defer sftpCli.Close()
 
-	if err := sftpCli.MkdirAll(xpath.Base(path)); err != nil {
+	if err := sftpCli.MkdirAll(xpath.Dir(path)); err != nil {
 		return fmt.Errorf("failed to create remote directory: %w", err)
 	}
 
