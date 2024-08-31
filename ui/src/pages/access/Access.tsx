@@ -39,7 +39,7 @@ const Access = () => {
         </div>
       ) : (
         <>
-          <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b sm:p-2 mt-5">
+          <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
             <div className="w-48">名称</div>
             <div className="w-48">服务商</div>
 
@@ -52,7 +52,7 @@ const Access = () => {
           </div>
           {accesses.map((access) => (
             <div
-              className="flex flex-col sm:flex-row text-secondary-foreground border-b sm:p-2 hover:bg-muted/50 text-sm"
+              className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
               key={access.id}
             >
               <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">

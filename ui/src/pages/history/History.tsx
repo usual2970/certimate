@@ -66,7 +66,7 @@ const History = () => {
         </>
       ) : (
         <>
-          <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b sm:p-2 mt-5">
+          <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
             <div className="w-48">域名</div>
 
             <div className="w-24">状态</div>
@@ -82,7 +82,7 @@ const History = () => {
           {deployments?.map((deployment) => (
             <div
               key={deployment.id}
-              className="flex flex-col sm:flex-row text-secondary-foreground border-b sm:p-2 hover:bg-muted/50 text-sm"
+              className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
             >
               <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
                 {deployment.expand.domain?.domain}

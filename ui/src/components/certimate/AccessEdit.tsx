@@ -90,7 +90,7 @@ export function AccessEdit({
       <DialogTrigger asChild className={cn(className)}>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] w-full">
+      <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
           <DialogTitle>{op == "add" ? "添加" : "编辑"}授权</DialogTitle>
         </DialogHeader>

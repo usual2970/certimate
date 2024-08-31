@@ -21,6 +21,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ConfigProvider } from "@/providers/config";
 import { getPb } from "@/repository/api";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -49,12 +50,12 @@ export default function Dashboard() {
     <>
       <ConfigProvider>
         <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-          <div className="hidden border-r bg-muted/40 md:block">
+          <div className="hidden border-r dark:border-stone-500 bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col gap-2">
-              <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+              <div className="flex h-14 items-center border-b dark:border-stone-500 px-4 lg:h-[60px] lg:px-6">
                 <Link to="/" className="flex items-center gap-2 font-semibold">
                   <img src="/vite.svg" className="w-[36px] h-[36px]" />
-                  <span className="">Certimate</span>
+                  <span className="dark:text-white">Certimate</span>
                 </Link>
               </div>
               <div className="flex-1">
@@ -95,7 +96,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex flex-col">
-            <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+            <header className="flex h-14 items-center gap-4 border-b dark:border-stone-500 bg-muted/40 px-4 lg:h-[60px] lg:px-6">
               <Sheet>
                 <SheetTrigger asChild>
                   <Button
@@ -152,6 +153,7 @@ export default function Dashboard() {
                 </SheetContent>
               </Sheet>
               <div className="w-full flex-1"></div>
+              <ThemeToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -182,12 +184,12 @@ export default function Dashboard() {
 
               <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
                 <div className=""></div>
-                <div className="text-muted-foreground text-sm hover:text-stone-900">
+                <div className="text-muted-foreground text-sm hover:text-stone-900 dark:hover:text-stone-200">
                   <a
                     href="https://github.com/usual2970/certimate/releases"
                     target="_blank"
                   >
-                    Certimate v0.0.9
+                    Certimate v0.0.10
                   </a>
                 </div>
               </div>

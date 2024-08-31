@@ -3,7 +3,7 @@ import { z } from "zod";
 export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["tencent", ["腾讯云", "/imgs/providers/tencent.svg"]],
   ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
-  ["ssh", ["SSH部署", "/imgs/providers/ssh.png"]],
+  ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);
 

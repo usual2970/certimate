@@ -170,7 +170,7 @@ const Home = () => {
           </>
         ) : (
           <>
-            <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b sm:p-2 mt-5">
+            <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
               <div className="w-40">域名</div>
               <div className="w-48">有效期限</div>
               <div className="w-32">最近执行状态</div>
@@ -185,7 +185,7 @@ const Home = () => {
 
             {domains.map((domain) => (
               <div
-                className="flex flex-col sm:flex-row text-secondary-foreground border-b sm:p-2 hover:bg-muted/50 text-sm"
+                className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
                 key={domain.id}
               >
                 <div className="sm:w-40 w-full pt-1 sm:pt-0 flex items-center">

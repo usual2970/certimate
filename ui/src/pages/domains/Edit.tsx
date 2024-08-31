@@ -152,12 +152,15 @@ const Edit = () => {
     <>
       <div className="">
         <Toaster />
-        <div className="border-b h-10 text-muted-foreground">
+        <div className="border-b dark:border-stone-500 h-10 text-muted-foreground">
           {domain?.id ? "编辑" : "新增"}域名
         </div>
         <div className="max-w-[35em] mx-auto mt-10">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8 dark:text-stone-200"
+            >
               <FormField
                 control={form.control}
                 name="domain"
