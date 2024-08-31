@@ -47,12 +47,15 @@ const Login = () => {
 
   const navigage = useNavigate();
   return (
-    <div className="max-w-[35em] border mx-auto mt-32 p-10 rounded-md shadow-md">
+    <div className="max-w-[35em] border dark:border-stone-500 mx-auto mt-32 p-10 rounded-md shadow-md">
       <div className="flex justify-center mb-10">
         <img src="/vite.svg" className="w-16" />
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8 dark:text-stone-200"
+        >
           <FormField
             control={form.control}
             name="username"

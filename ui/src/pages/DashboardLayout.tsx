@@ -104,7 +104,7 @@ export default function Dashboard() {
                     size="icon"
                     className="shrink-0 md:hidden"
                   >
-                    <Menu className="h-5 w-5" />
+                    <Menu className="h-5 w-5 dark:text-white" />
                     <span className="sr-only">Toggle navigation menu</span>
                   </Button>
                 </SheetTrigger>
@@ -115,7 +115,7 @@ export default function Dashboard() {
                       className="flex items-center gap-2 text-lg font-semibold"
                     >
                       <img src="/vite.svg" className="w-[36px] h-[36px]" />
-                      <span className="">Certimate</span>
+                      <span className="dark:text-white">Certimate</span>
                       <span className="sr-only">Certimate</span>
                     </Link>
                     <Link
