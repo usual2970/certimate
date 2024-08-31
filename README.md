@@ -1,6 +1,6 @@
 <p align="center">
     <a href="#" target="_blank" rel="noopener">
-        <img src="https://i.imgur.com/Nno3V5B.jpeg" alt="Certimate - Your Trusted SSL Automation Partner" />
+        <img src="https://i.imgur.com/8cRJqdr.jpeg" alt="Certimate - Your Trusted SSL Automation Partner" />
     </a>
 </p>
 
