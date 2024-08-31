@@ -1,4 +1,5 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
+import Pagination from "@/components/certimate/Pagination";
 import Show from "@/components/Show";
 import {
   AlertDialogAction,
@@ -323,6 +324,14 @@ const Home = () => {
                 </div>
               </div>
             ))}
+
+            <Pagination
+              totalPages={1000}
+              currentPage={3}
+              onPageChange={(page) => {
+                console.log(page);
+              }}
+            />
           </>
         )}
       </div>
