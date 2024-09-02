@@ -1,5 +1,5 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
-import Pagination from "@/components/certimate/Pagination";
+import XPagination from "@/components/certimate/XPagination";
 import Show from "@/components/Show";
 import {
   AlertDialogAction,
@@ -33,14 +33,26 @@ import {
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { CircleCheck, CircleX, Earth } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const toast = useToast();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const page = query.get("page");
+
+  const [totalPage, setTotalPage] = useState(0);
+
   const handleCreateClick = () => {
     navigate("/edit");
+  };
+
+  const setPage = (newPage: number) => {
+    query.set("page", newPage.toString());
+    navigate(`?${query.toString()}`);
   };
 
   const handleEditClick = (id: string) => {
@@ -64,11 +76,16 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await list();
-      setDomains(data);
+      const data = await list({
+        page: page ? Number(page) : 1,
+        perPage: 10,
+      });
+
+      setDomains(data.items);
+      setTotalPage(data.totalPages);
     };
     fetchData();
-  }, []);
+  }, [page]);
 
   const handelCheckedChange = async (id: string) => {
     const checkedDomains = domains.filter((domain) => domain.id === id);
@@ -325,11 +342,11 @@ const Home = () => {
               </div>
             ))}
 
-            <Pagination
-              totalPages={1000}
-              currentPage={3}
+            <XPagination
+              totalPages={totalPage}
+              currentPage={page ? Number(page) : 1}
               onPageChange={(page) => {
-                console.log(page);
+                setPage(page);
               }}
             />
           </>

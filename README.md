@@ -12,7 +12,7 @@ Certimate 是一个开源的 SSL 证书管理工具，具有以下特点：
 2. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在服务商的服务器上，确保数据的安全性。
 3. 操作方便：通过简单的配置即可轻松申请 SSL 证书，并且在证书即将过期时自动续期，无需人工干预。
 
-Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。
+Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。使用文档请访问[https://docs.certimate.me](https://docs.certimate.me)
 
 - [Certimate](#certimate)
   - [一、安装](#一安装)

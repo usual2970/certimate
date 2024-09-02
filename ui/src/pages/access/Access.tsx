@@ -1,4 +1,5 @@
 import { AccessEdit } from "@/components/certimate/AccessEdit";
+import XPagination from "@/components/certimate/XPagination";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Access as AccessType, accessTypeMap } from "@/domain/access";
@@ -6,10 +7,24 @@ import { convertZulu2Beijing } from "@/lib/time";
 import { useConfig } from "@/providers/config";
 import { remove } from "@/repository/access";
 import { Key } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Access = () => {
   const { config, deleteAccess } = useConfig();
   const { accesses } = config;
+
+  const perPage = 10;
+
+  const totalPages = Math.ceil(accesses.length / perPage);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const page = query.get("page");
+  const pageNumber = page ? Number(page) : 1;
+
+  const startIndex = (pageNumber - 1) * perPage;
+  const endIndex = startIndex + perPage;
 
   const handleDelete = async (data: AccessType) => {
     const rs = await remove(data);
@@ -50,7 +65,7 @@ const Access = () => {
           <div className="sm:hidden flex text-sm text-muted-foreground">
             授权列表
           </div>
-          {accesses.map((access) => (
+          {accesses.slice(startIndex, endIndex).map((access) => (
             <div
               className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
               key={access.id}
@@ -95,6 +110,14 @@ const Access = () => {
               </div>
             </div>
           ))}
+          <XPagination
+            totalPages={totalPages}
+            currentPage={pageNumber}
+            onPageChange={(page) => {
+              query.set("page", page.toString());
+              navigate({ search: query.toString() });
+            }}
+          />
         </>
       )}
     </div>

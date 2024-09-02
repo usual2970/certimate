@@ -15,10 +15,19 @@ import { Label } from "../ui/label";
 import { Access, accessTypeMap } from "@/domain/access";
 import AccessAliyunForm from "./AccessAliyunForm";
 import { cn } from "@/lib/utils";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 import AccessSSHForm from "./AccessSSHForm";
 import WebhookForm from "./AccessWebhookFrom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import AccessCloudflareForm from "./AccessCloudflareForm";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -79,6 +88,17 @@ export function AccessEdit({
           }}
         />
       );
+      break;
+    case "cloudflare":
+      form = (
+        <AccessCloudflareForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
   }
 
   const getOptionCls = (val: string) => {
@@ -96,31 +116,38 @@ export function AccessEdit({
         </DialogHeader>
         <div className="container">
           <Label>服务商</Label>
-          <RadioGroup
-            value={configType}
-            className="flex mt-3 space-x-2"
+
+          <Select
             onValueChange={(val) => {
               console.log(val);
               setConfigType(val);
             }}
           >
-            {typeKeys.map((key) => (
-              <div className="flex items-center space-x-2" key={key}>
-                <Label>
-                  <RadioGroupItem value={key} hidden />
-                  <div
-                    className={cn(
-                      "flex items-center space-x-2 border p-2 rounded cursor-pointer",
-                      getOptionCls(key)
-                    )}
-                  >
-                    <img src={accessTypeMap.get(key)?.[1]} className="h-6" />
-                    <div>{accessTypeMap.get(key)?.[0]}</div>
-                  </div>
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
+            <SelectTrigger className="mt-3">
+              <SelectValue placeholder="请选择服务商" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>服务商</SelectLabel>
+                {typeKeys.map((key) => (
+                  <SelectItem value={key}>
+                    <div
+                      className={cn(
+                        "flex items-center space-x-2 rounded cursor-pointer",
+                        getOptionCls(key)
+                      )}
+                    >
+                      <img
+                        src={accessTypeMap.get(key)?.[1]}
+                        className="h-6 w-6"
+                      />
+                      <div>{accessTypeMap.get(key)?.[0]}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
           {form}
         </div>

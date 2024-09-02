@@ -1,4 +1,10 @@
-import { Button } from "../ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "../ui/pagination";
 
 type PaginationProps = {
   totalPages: number;
@@ -8,12 +14,12 @@ type PaginationProps = {
 
 type PageNumber = number | string;
 
-const Pagination = ({
+const XPagination = ({
   totalPages,
   currentPage,
   onPageChange,
 }: PaginationProps) => {
-  const pageNeighbours = 2; // Number of page numbers to show on either side of the current page
+  const pageNeighbours = 1; // Number of page numbers to show on either side of the current page
 
   const getPageNumbers = () => {
     const totalNumbers = pageNeighbours * 2 + 3; // total pages to display (left + right neighbours + current + 2 for start and end)
@@ -60,31 +66,37 @@ const Pagination = ({
   const pages = getPageNumbers();
 
   return (
-    <div className="pagination dark:text-stone-200">
-      {pages.map((page, index) => {
-        if (page === "...") {
-          return (
-            <span key={index} className="pagination-ellipsis">
-              &hellip;
-            </span>
-          );
-        }
+    <>
+      <Pagination className="dark:text-stone-200 justify-end mt-3">
+        <PaginationContent>
+          {pages.map((page, index) => {
+            if (page === "...") {
+              return (
+                <PaginationItem key={index}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            }
 
-        return (
-          <Button
-            key={index}
-            className={`pagination-button ${
-              currentPage === page ? "active" : ""
-            }`}
-            variant={currentPage === page ? "default" : "outline"}
-            onClick={() => onPageChange(page as number)}
-          >
-            {page}
-          </Button>
-        );
-      })}
-    </div>
+            return (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  href="#"
+                  isActive={currentPage == page}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onPageChange(page as number);
+                  }}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          })}
+        </PaginationContent>
+      </Pagination>
+    </>
   );
 };
 
-export default Pagination;
+export default XPagination;
