@@ -1,11 +1,28 @@
 import { Domain } from "@/domain/domain";
 import { getPb } from "./api";
 
-export const list = async () => {
-  const response = getPb().collection("domains").getFullList<Domain>({
-    sort: "-created",
-    expand: "lastDeployment",
-  });
+type DomainListReq = {
+  domain?: string;
+  page?: number;
+  perPage?: number;
+};
+
+export const list = async (req: DomainListReq) => {
+  let page = 1;
+  if (req.page) {
+    page = req.page;
+  }
+
+  let perPage = 2;
+  if (req.perPage) {
+    perPage = req.perPage;
+  }
+  const response = getPb()
+    .collection("domains")
+    .getList<Domain>(page, perPage, {
+      sort: "-created",
+      expand: "lastDeployment",
+    });
 
   return response;
 };

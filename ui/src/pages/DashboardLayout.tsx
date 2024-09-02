@@ -194,7 +194,7 @@ export default function Dashboard() {
                     href="https://github.com/usual2970/certimate/releases"
                     target="_blank"
                   >
-                    Certimate v0.0.13
+                    Certimate v0.0.14
                   </a>
                 </div>
               </div>
