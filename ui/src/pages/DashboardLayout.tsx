@@ -186,7 +186,7 @@ export default function Dashboard() {
               <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
                 <div className=""></div>
                 <div className="text-muted-foreground text-sm hover:text-stone-900 dark:hover:text-stone-200 flex">
-                  <a href="https://docs.certimate.fun" target="_blank">
+                  <a href="https://docs.certimate.me" target="_blank">
                     文档
                   </a>
                   <Separator orientation="vertical" className="mx-2" />
@@ -194,7 +194,7 @@ export default function Dashboard() {
                     href="https://github.com/usual2970/certimate/releases"
                     target="_blank"
                   >
-                    Certimate v0.0.11
+                    Certimate v0.0.12
                   </a>
                 </div>
               </div>
