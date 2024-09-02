@@ -11,5 +11,5 @@ type TencentAccess struct {
 }
 
 type CloudflareAccess struct {
-	CloudflareDnsApiToken string `json:"cloudflareDnsApiToken"`
+	DnsApiToken string `json:"dnsApiToken"`
 }

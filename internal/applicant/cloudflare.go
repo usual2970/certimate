@@ -22,7 +22,7 @@ func (c *cloudflare) Apply() (*Certificate, error) {
 	access := &domain.CloudflareAccess{}
 	json.Unmarshal([]byte(c.option.Access), access)
 
-	os.Setenv("CLOUDFLARE_DNS_API_TOKEN", access.CloudflareDnsApiToken)
+	os.Setenv("CLOUDFLARE_DNS_API_TOKEN", access.DnsApiToken)
 
 	provider, err := cf.NewDNSProvider()
 	if err != nil {
