@@ -11,15 +11,12 @@ import (
 )
 
 const (
-	configTypeAliyun = "aliyun"
-)
-
-const (
 	targetAliyunOss  = "aliyun-oss"
 	targetAliyunCdn  = "aliyun-cdn"
 	targetSSH        = "ssh"
 	targetWebhook    = "webhook"
 	targetTencentCdn = "tencent-cdn"
+	targetQiniuCdn   = "qiniu-cdn"
 )
 
 type DeployerOption struct {
@@ -63,6 +60,8 @@ func Get(record *models.Record, cert *applicant.Certificate) (Deployer, error) {
 		return NewWebhook(option)
 	case targetTencentCdn:
 		return NewTencentCdn(option)
+	case targetQiniuCdn:
+		return NewQiNiu(option)
 	}
 	return nil, errors.New("not implemented")
 }

@@ -16,6 +16,7 @@ require (
 	github.com/pkg/sftp v1.13.6
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
+	github.com/qiniu/go-sdk/v7 v7.22.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.992
@@ -26,6 +27,7 @@ require github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // i
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
+	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect

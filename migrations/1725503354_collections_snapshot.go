@@ -15,7 +15,7 @@ func init() {
 			{
 				"id": "_pb_users_auth_",
 				"created": "2024-07-29 09:44:56.398Z",
-				"updated": "2024-08-30 03:19:22.095Z",
+				"updated": "2024-09-02 14:02:40.191Z",
 				"name": "users",
 				"type": "auth",
 				"system": false,
@@ -78,7 +78,7 @@ func init() {
 			{
 				"id": "z3p974ainxjqlvs",
 				"created": "2024-07-29 10:02:48.334Z",
-				"updated": "2024-08-30 03:19:22.096Z",
+				"updated": "2024-09-04 15:10:19.440Z",
 				"name": "domains",
 				"type": "base",
 				"system": false,
@@ -239,7 +239,8 @@ func init() {
 								"aliyun-cdn",
 								"ssh",
 								"webhook",
-								"tencent-cdn"
+								"tencent-cdn",
+								"qiniu-cdn"
 							]
 						}
 					},
@@ -332,7 +333,7 @@ func init() {
 			{
 				"id": "4yzbv8urny5ja1e",
 				"created": "2024-07-29 10:04:39.685Z",
-				"updated": "2024-09-02 06:05:30.075Z",
+				"updated": "2024-09-04 15:09:46.789Z",
 				"name": "access",
 				"type": "base",
 				"system": false,
@@ -378,7 +379,8 @@ func init() {
 								"tencent",
 								"ssh",
 								"webhook",
-								"cloudflare"
+								"cloudflare",
+								"qiniu"
 							]
 						}
 					},
@@ -409,7 +411,7 @@ func init() {
 			{
 				"id": "0a1o4e6sstp694f",
 				"created": "2024-07-30 06:30:27.801Z",
-				"updated": "2024-08-30 03:19:22.096Z",
+				"updated": "2024-09-02 14:02:40.191Z",
 				"name": "deployments",
 				"type": "base",
 				"system": false,

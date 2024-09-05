@@ -32,6 +32,7 @@ export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
   ["tencent-cdn", ["腾讯云-CDN", "/imgs/providers/tencent.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
+  ["qiniu-cdn", ["七牛云-CDN", "/imgs/providers/qiniu.svg"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);
 

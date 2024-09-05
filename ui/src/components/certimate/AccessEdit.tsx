@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import AccessCloudflareForm from "./AccessCloudflareForm";
+import AccessQiniuForm from "./AccessQiniuForm";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -99,6 +100,16 @@ export function AccessEdit({
         />
       );
       break;
+    case "qiniu":
+      form = (
+        <AccessQiniuForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
   }
 
   const getOptionCls = (val: string) => {
@@ -122,6 +133,7 @@ export function AccessEdit({
               console.log(val);
               setConfigType(val);
             }}
+            defaultValue={configType}
           >
             <SelectTrigger className="mt-3">
               <SelectValue placeholder="请选择服务商" />
@@ -130,7 +142,7 @@ export function AccessEdit({
               <SelectGroup>
                 <SelectLabel>服务商</SelectLabel>
                 {typeKeys.map((key) => (
-                  <SelectItem value={key}>
+                  <SelectItem value={key} key={key}>
                     <div
                       className={cn(
                         "flex items-center space-x-2 rounded cursor-pointer",
