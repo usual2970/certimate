@@ -13,3 +13,8 @@ type TencentAccess struct {
 type CloudflareAccess struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }
+
+type QiniuAccess struct {
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}

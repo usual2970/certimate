@@ -4,6 +4,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["tencent", ["腾讯云", "/imgs/providers/tencent.svg"]],
   ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
   ["cloudflare", ["Cloudflare", "/imgs/providers/cloudflare.svg"]],
+  ["qiniu", ["七牛云", "/imgs/providers/qiniu.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);
@@ -15,6 +16,7 @@ export const accessFormType = z.union(
     z.literal("ssh"),
     z.literal("webhook"),
     z.literal("cloudflare"),
+    z.literal("qiniu"),
   ],
   { message: "请选择云服务商" }
 );
@@ -28,10 +30,16 @@ export type Access = {
     | AliyunConfig
     | SSHConfig
     | WebhookConfig
-    | CloudflareConfig;
+    | CloudflareConfig
+    | QiniuConfig;
   deleted?: string;
   created?: string;
   updated?: string;
+};
+
+export type QiniuConfig = {
+  accessKey: string;
+  secretKey: string;
 };
 
 export type WebhookConfig = {
