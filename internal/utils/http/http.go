@@ -66,9 +66,6 @@ func ToRequest(req *http.Request, opts ...Option) (io.ReadCloser, error) {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		defer res.Body.Close()
-		body, _ := io.ReadAll(res.Body)
-		fmt.Println(string(body))
 		return nil, fmt.Errorf("status code is not 200: %d", res.StatusCode)
 	}
 
