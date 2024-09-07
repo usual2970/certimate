@@ -1,6 +1,6 @@
 <p align="center">
     <a href="#" target="_blank" rel="noopener">
-        <img src="https://i.imgur.com/8cRJqdr.jpeg" alt="Certimate - Your Trusted SSL Automation Partner" />
+        <img src="https://i.imgur.com/bWY8Vsg.jpeg" alt="Certimate - Your Trusted SSL Automation Partner" />
     </a>
 </p>
 
@@ -19,7 +19,7 @@ Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
 Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。使用文档请访问[https://docs.certimate.me](https://docs.certimate.me)
 
-- [Certimate](#certimate)
+- [🔒Certimate](#certimate)
   - [一、安装](#一安装)
     - [1. 二进制文件](#1-二进制文件)
     - [2. Docker 安装](#2-docker-安装)
