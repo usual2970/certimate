@@ -23,6 +23,13 @@ export type Domain = {
   };
 };
 
+export type Statistic = {
+  total: number;
+  expired: number;
+  enabled: number;
+  disabled: number;
+};
+
 export const getLastDeployment = (domain: Domain): Deployment | undefined => {
   return domain.expand?.lastDeployment;
 };

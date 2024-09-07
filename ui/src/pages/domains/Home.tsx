@@ -44,6 +44,8 @@ const Home = () => {
   const query = new URLSearchParams(location.search);
   const page = query.get("page");
 
+  const state = query.get("state");
+
   const [totalPage, setTotalPage] = useState(0);
 
   const handleCreateClick = () => {
@@ -79,13 +81,14 @@ const Home = () => {
       const data = await list({
         page: page ? Number(page) : 1,
         perPage: 10,
+        state: state ? state : "",
       });
 
       setDomains(data.items);
       setTotalPage(data.totalPages);
     };
     fetchData();
-  }, [page]);
+  }, [page, state]);
 
   const handelCheckedChange = async (id: string) => {
     const checkedDomains = domains.filter((domain) => domain.id === id);

@@ -1,10 +1,12 @@
-import { Domain } from "@/domain/domain";
+import { Domain, Statistic } from "@/domain/domain";
 import { getPb } from "./api";
+import { getTimeAfter } from "@/lib/time";
 
 type DomainListReq = {
   domain?: string;
   page?: number;
   perPage?: number;
+  state?: string;
 };
 
 export const list = async (req: DomainListReq) => {
@@ -17,14 +19,49 @@ export const list = async (req: DomainListReq) => {
   if (req.perPage) {
     perPage = req.perPage;
   }
-  const response = getPb()
-    .collection("domains")
-    .getList<Domain>(page, perPage, {
-      sort: "-created",
-      expand: "lastDeployment",
+  const pb = getPb();
+  let filter = "";
+  if (req.state === "enabled") {
+    filter = "enabled=true";
+  } else if (req.state === "disabled") {
+    filter = "enabled=false";
+  } else if (req.state === "expired") {
+    filter = pb.filter("expiredAt<{:expiredAt}", {
+      expiredAt: getTimeAfter(15),
     });
+  }
+
+  const response = pb.collection("domains").getList<Domain>(page, perPage, {
+    sort: "-created",
+    expand: "lastDeployment",
+    filter: filter,
+  });
 
   return response;
+};
+
+export const statistics = async (): Promise<Statistic> => {
+  const pb = getPb();
+  const total = await pb.collection("domains").getList(1, 1, {});
+  const expired = await pb.collection("domains").getList(1, 1, {
+    filter: pb.filter("expiredAt<{:expiredAt}", {
+      expiredAt: getTimeAfter(15),
+    }),
+  });
+
+  const enabled = await pb.collection("domains").getList(1, 1, {
+    filter: "enabled=true",
+  });
+  const disabled = await pb.collection("domains").getList(1, 1, {
+    filter: "enabled=false",
+  });
+
+  return {
+    total: total.totalItems,
+    expired: expired.totalItems,
+    enabled: enabled.totalItems,
+    disabled: disabled.totalItems,
+  };
 };
 
 export const get = async (id: string) => {

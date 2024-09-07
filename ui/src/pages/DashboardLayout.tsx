@@ -5,7 +5,15 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import { CircleUser, Earth, History, Menu, Server } from "lucide-react";
+import {
+  BookOpen,
+  CircleUser,
+  Earth,
+  History,
+  Home,
+  Menu,
+  Server,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -68,6 +76,16 @@ export default function Dashboard() {
                       getClass("/")
                     )}
                   >
+                    <Home className="h-4 w-4" />
+                    控制面板
+                  </Link>
+                  <Link
+                    to="/domains"
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                      getClass("/domains")
+                    )}
+                  >
                     <Earth className="h-4 w-4" />
                     域名列表
                   </Link>
@@ -124,6 +142,16 @@ export default function Dashboard() {
                       className={cn(
                         "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground",
                         getClass("/")
+                      )}
+                    >
+                      <Home className="h-5 w-5" />
+                      控制面板
+                    </Link>
+                    <Link
+                      to="/domains"
+                      className={cn(
+                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground",
+                        getClass("/domains")
                       )}
                     >
                       <Earth className="h-5 w-5" />
@@ -186,15 +214,20 @@ export default function Dashboard() {
               <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
                 <div className=""></div>
                 <div className="text-muted-foreground text-sm hover:text-stone-900 dark:hover:text-stone-200 flex">
-                  <a href="https://docs.certimate.me" target="_blank">
-                    文档
+                  <a
+                    href="https://docs.certimate.me"
+                    target="_blank"
+                    className="flex items-center"
+                  >
+                    <BookOpen size={16} />
+                    <div className="ml-1">文档</div>
                   </a>
                   <Separator orientation="vertical" className="mx-2" />
                   <a
                     href="https://github.com/usual2970/certimate/releases"
                     target="_blank"
                   >
-                    Certimate v0.0.15
+                    Certimate v0.0.16
                   </a>
                 </div>
               </div>

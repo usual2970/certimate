@@ -9,6 +9,7 @@ import Login from "./pages/login/Login";
 import LoginLayout from "./pages/LoginLayout";
 import Password from "./pages/setting/Password";
 import SettingLayout from "./pages/SettingLayout";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 export const router = createHashRouter([
   {
@@ -17,6 +18,10 @@ export const router = createHashRouter([
     children: [
       {
         path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/domains",
         element: <Home />,
       },
       {
