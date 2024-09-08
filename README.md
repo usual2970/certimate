@@ -1,8 +1,4 @@
-<p align="center">
-    <a href="#" target="_blank" rel="noopener">
-        <img src="https://i.imgur.com/bWY8Vsg.jpeg" alt="Certimate - Your Trusted SSL Automation Partner" />
-    </a>
-</p>
+
 
 # 🔒Certimate
 
@@ -13,9 +9,10 @@
 
 Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
-1. 支持私有部署：部署方法简单，只需下载二进制文件并执行即可完成安装。
-2. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在服务商的服务器上，确保数据的安全性。
-3. 操作方便：通过简单的配置即可轻松申请 SSL 证书，并且在证书即将过期时自动续期，无需人工干预。
+1. 操作简单：自动申请、部署 SSL 证书，并且在证书即将过期时自动续期，无需人工干预。
+2. 支持私有部署：部署方法简单，只需下载二进制文件并执行即可完成安装。二进制文件、docker 镜像全部用 github actions 生成，过程透明，可自行审计。
+3. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在服务商的服务器上，确保数据的安全性。
+
 
 Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。使用文档请访问[https://docs.certimate.me](https://docs.certimate.me)
 
@@ -25,6 +22,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
     - [2. Docker 安装](#2-docker-安装)
     - [3. 源代码安装](#3-源代码安装)
   - [二、使用](#二使用)
+  - [三、系统截图](#三系统截图)
   - [三、概念](#三概念)
     - [1. 域名](#1-域名)
     - [2. dns 服务商授权信息](#2-dns-服务商授权信息)
@@ -77,6 +75,18 @@ go run main.go serve
 ```
 
 ![usage.gif](https://i.imgur.com/zpCoLVM.gif)
+
+## 三、系统截图
+
+![login](https://i.imgur.com/SYjjbql.jpeg)
+
+![dashboard](https://i.imgur.com/WMVbBId.jpeg)
+
+![domains](https://i.imgur.com/8wit3ZA.jpeg)
+
+![accesses](https://i.imgur.com/EWtOoJ0.jpeg)
+
+![history](https://i.imgur.com/aaPtSW7.jpeg)
 
 
 ## 三、概念
