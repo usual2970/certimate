@@ -18,3 +18,7 @@ type QiniuAccess struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
 }
+
+type NameSiloAccess struct {
+	ApiKey string `json:"apiKey"`
+}

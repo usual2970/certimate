@@ -131,7 +131,7 @@ const Edit = () => {
         title: "成功",
         description,
       });
-      navigate("/");
+      navigate("/domains");
     } catch (e) {
       const err = e as ClientResponseError;
 

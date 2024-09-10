@@ -29,6 +29,7 @@ import {
 } from "../ui/select";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessQiniuForm from "./AccessQiniuForm";
+import AccessNamesiloForm from "./AccessNamesiloForm";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -103,6 +104,16 @@ export function AccessEdit({
     case "qiniu":
       form = (
         <AccessQiniuForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "namesilo":
+      form = (
+        <AccessNamesiloForm
           data={data}
           onAfterReq={() => {
             setOpen(false);
