@@ -14,6 +14,8 @@ import (
 	"certimate/internal/utils/app"
 	_ "certimate/migrations"
 	"certimate/ui"
+
+	_ "time/tzdata"
 )
 
 func main() {
