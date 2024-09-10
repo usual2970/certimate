@@ -18,6 +18,7 @@ import { save } from "@/repository/access";
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { readFileContent } from "@/lib/file";
+import { useRef, useState } from "react";
 
 const AccessSSHForm = ({
   data,
@@ -27,6 +28,11 @@ const AccessSSHForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [fileName, setFileName] = useState("");
+
   const formSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1).max(64),
@@ -38,7 +44,7 @@ const AccessSSHForm = ({
     username: z.string().min(1).max(64),
     password: z.string().min(0).max(64),
     key: z.string().min(0).max(20480),
-    keyFile: z.string().optional(),
+    keyFile: z.any().optional(),
     command: z.string().min(1).max(2048),
     certPath: z.string().min(0).max(2048),
     keyPath: z.string().min(0).max(2048),
@@ -127,9 +133,16 @@ const AccessSSHForm = ({
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const content = await readFileContent(file);
+    const savedFile = file;
+    setFileName(savedFile.name);
+    const content = await readFileContent(savedFile);
     form.setValue("key", content);
-    form.setValue("keyFile", "");
+  };
+
+  const handleSelectFileClick = () => {
+    console.log(fileInputRef.current);
+
+    fileInputRef.current?.click();
   };
 
   return (
@@ -279,12 +292,26 @@ const AccessSSHForm = ({
                 <FormItem>
                   <FormLabel>Key（使用证书登录）</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="请输入Key"
-                      {...field}
-                      type="file"
-                      onChange={handleFileChange}
-                    />
+                    <div>
+                      <Button
+                        type={"button"}
+                        variant={"secondary"}
+                        size={"sm"}
+                        className="w-48"
+                        onClick={handleSelectFileClick}
+                      >
+                        {fileName ? fileName : "请选择文件"}
+                      </Button>
+                      <Input
+                        placeholder="请输入Key"
+                        {...field}
+                        ref={fileInputRef}
+                        className="hidden"
+                        hidden
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                    </div>
                   </FormControl>
 
                   <FormMessage />

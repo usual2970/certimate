@@ -138,7 +138,7 @@ export function AccessEdit({
           <DialogTitle>{op == "add" ? "添加" : "编辑"}授权</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
-          <div className="container">
+          <div className="container py-3">
             <Label>服务商</Label>
 
             <Select
