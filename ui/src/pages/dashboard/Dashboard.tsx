@@ -58,8 +58,8 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <div className="text-muted-foreground">控制面板</div>
       </div>
-      <div className="flex mt-10 gap-5 flex-col md:flex-row">
-        <div className="w-full md:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
+      <div className="flex mt-10 gap-5 flex-col flex-wrap md:flex-row">
+        <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
           <div className="p-3">
             <SquareSigma size={48} strokeWidth={1} className="text-blue-400" />
           </div>
@@ -80,7 +80,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="w-full md:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
+        <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
           <div className="p-3">
             <CalendarX2 size={48} strokeWidth={1} className="text-red-400" />
           </div>
@@ -101,7 +101,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="border w-full md:w-[300px] flex items-center rounded-md p-3 shadow-lg">
+        <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
           <div className="p-3">
             <LoaderPinwheel
               size={48}
@@ -126,7 +126,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="border w-full md:w-[300px] flex items-center rounded-md p-3 shadow-lg">
+        <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
           <div className="p-3">
             <Ban size={48} strokeWidth={1} className="text-gray-400" />
           </div>

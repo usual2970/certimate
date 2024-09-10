@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useState } from "react";
 
@@ -136,44 +137,46 @@ export function AccessEdit({
         <DialogHeader>
           <DialogTitle>{op == "add" ? "添加" : "编辑"}授权</DialogTitle>
         </DialogHeader>
-        <div className="container">
-          <Label>服务商</Label>
+        <ScrollArea className="max-h-[80vh]">
+          <div className="container">
+            <Label>服务商</Label>
 
-          <Select
-            onValueChange={(val) => {
-              console.log(val);
-              setConfigType(val);
-            }}
-            defaultValue={configType}
-          >
-            <SelectTrigger className="mt-3">
-              <SelectValue placeholder="请选择服务商" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>服务商</SelectLabel>
-                {typeKeys.map((key) => (
-                  <SelectItem value={key} key={key}>
-                    <div
-                      className={cn(
-                        "flex items-center space-x-2 rounded cursor-pointer",
-                        getOptionCls(key)
-                      )}
-                    >
-                      <img
-                        src={accessTypeMap.get(key)?.[1]}
-                        className="h-6 w-6"
-                      />
-                      <div>{accessTypeMap.get(key)?.[0]}</div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+            <Select
+              onValueChange={(val) => {
+                console.log(val);
+                setConfigType(val);
+              }}
+              defaultValue={configType}
+            >
+              <SelectTrigger className="mt-3">
+                <SelectValue placeholder="请选择服务商" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>服务商</SelectLabel>
+                  {typeKeys.map((key) => (
+                    <SelectItem value={key} key={key}>
+                      <div
+                        className={cn(
+                          "flex items-center space-x-2 rounded cursor-pointer",
+                          getOptionCls(key)
+                        )}
+                      >
+                        <img
+                          src={accessTypeMap.get(key)?.[1]}
+                          className="h-6 w-6"
+                        />
+                        <div>{accessTypeMap.get(key)?.[0]}</div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
-          {form}
-        </div>
+            {form}
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
