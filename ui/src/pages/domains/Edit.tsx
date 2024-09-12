@@ -34,10 +34,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { AccessEdit } from "@/components/certimate/AccessEdit";
 import { accessTypeMap } from "@/domain/access";
+import EmailsEdit from "@/components/certimate/EmailsEdit";
 
 const Edit = () => {
   const {
-    config: { accesses },
+    config: { accesses, emails },
   } = useConfig();
 
   const [domain, setDomain] = useState<Domain>();
@@ -62,6 +63,7 @@ const Edit = () => {
     domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
       message: "请输入正确的域名",
     }),
+    email: z.string().email().optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
       message: "请选择DNS服务商授权配置",
     }),
@@ -78,6 +80,7 @@ const Edit = () => {
     defaultValues: {
       id: "",
       domain: "",
+      email: "",
       access: "",
       targetAccess: "",
       targetType: "",
@@ -89,6 +92,7 @@ const Edit = () => {
       form.reset({
         id: domain.id,
         domain: domain.domain,
+        email: domain.email,
         access: domain.access,
         targetAccess: domain.targetAccess,
         targetType: domain.targetType,
@@ -119,6 +123,7 @@ const Edit = () => {
       id: data.id as string,
       crontab: "0 0 * * *",
       domain: data.domain,
+      email: data.email,
       access: data.access,
       targetAccess: data.targetAccess,
       targetType: data.targetType,
@@ -173,6 +178,51 @@ const Edit = () => {
                     <FormLabel>域名</FormLabel>
                     <FormControl>
                       <Input placeholder="请输入域名" {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex w-full justify-between">
+                      <div>Email（申请证书需要提供邮箱）</div>
+                      <EmailsEdit
+                        trigger={
+                          <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                            <Plus size={14} />
+                            新增
+                          </div>
+                        }
+                      />
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        value={field.value}
+                        onValueChange={(value) => {
+                          form.setValue("email", value);
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="请选择邮箱" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectLabel>邮箱列表</SelectLabel>
+                            {emails.content.emails.map((item) => (
+                              <SelectItem key={item} value={item}>
+                                <div>{item}</div>
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
 
                     <FormMessage />

@@ -3,6 +3,7 @@ import { Deployment, Pahse } from "./deployment";
 export type Domain = {
   id: string;
   domain: string;
+  email?: string;
   crontab: string;
   access: string;
   targetAccess: string;

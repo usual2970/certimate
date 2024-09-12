@@ -10,9 +10,12 @@ import {
   useReducer,
 } from "react";
 import { configReducer } from "./reducer";
+import { getEmails } from "@/repository/settings";
+import { Setting } from "@/domain/settings";
 
 export type ConfigData = {
   accesses: Access[];
+  emails: Setting;
 };
 
 export type ConfigContext = {
@@ -20,6 +23,7 @@ export type ConfigContext = {
   deleteAccess: (id: string) => void;
   addAccess: (access: Access) => void;
   updateAccess: (access: Access) => void;
+  setEmails: (email: Setting) => void;
 };
 
 const Context = createContext({} as ConfigContext);
@@ -31,7 +35,10 @@ interface ContainerProps {
 }
 
 export const ConfigProvider = ({ children }: ContainerProps) => {
-  const [config, dispatchConfig] = useReducer(configReducer, { accesses: [] });
+  const [config, dispatchConfig] = useReducer(configReducer, {
+    accesses: [],
+    emails: { content: { emails: [] } },
+  });
 
   useEffect(() => {
     const featchData = async () => {
@@ -39,6 +46,18 @@ export const ConfigProvider = ({ children }: ContainerProps) => {
       dispatchConfig({ type: "SET_ACCESSES", payload: data });
     };
     featchData();
+  }, []);
+
+  useEffect(() => {
+    const featchEmails = async () => {
+      const emails = await getEmails();
+      dispatchConfig({ type: "SET_EMAILS", payload: emails });
+    };
+    featchEmails();
+  }, []);
+
+  const setEmails = useCallback((emails: Setting) => {
+    dispatchConfig({ type: "SET_EMAILS", payload: emails });
   }, []);
 
   const deleteAccess = useCallback((id: string) => {
@@ -58,9 +77,11 @@ export const ConfigProvider = ({ children }: ContainerProps) => {
       value={{
         config: {
           accesses: config.accesses,
+          emails: config.emails,
         },
         deleteAccess,
         addAccess,
+        setEmails,
         updateAccess,
       }}
     >

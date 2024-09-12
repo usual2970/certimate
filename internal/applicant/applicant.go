@@ -23,6 +23,8 @@ const (
 	configTypeGodaddy    = "godaddy"
 )
 
+const defaultEmail = "536464346@qq.com"
+
 type Certificate struct {
 	CertUrl           string `json:"certUrl"`
 	CertStableUrl     string `json:"certStableUrl"`
@@ -60,8 +62,12 @@ type Applicant interface {
 
 func Get(record *models.Record) (Applicant, error) {
 	access := record.ExpandedOne("access")
+	email := record.GetString("email")
+	if email == "" {
+		email = defaultEmail
+	}
 	option := &ApplyOption{
-		Email:  "536464346@qq.com",
+		Email:  email,
 		Domain: record.GetString("domain"),
 		Access: access.GetString("config"),
 	}
