@@ -14,14 +14,18 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, AliyunConfig, getUsageByConfigType } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  getUsageByConfigType,
+  GodaddyConfig,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
-
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 
-const AccessAliyunForm = ({
+const AccessGodaddyFrom = ({
   data,
   onAfterReq,
 }: {
@@ -33,36 +37,37 @@ const AccessAliyunForm = ({
     id: z.string().optional(),
     name: z.string().min(1).max(64),
     configType: accessFormType,
-    accessKeyId: z.string().min(1).max(64),
-    accessSecretId: z.string().min(1).max(64),
+    apiKey: z.string().min(1).max(64),
+    apiSecret: z.string().min(1).max(64),
   });
 
-  let config: AliyunConfig = {
-    accessKeyId: "",
-    accessKeySecret: "",
+  let config: GodaddyConfig = {
+    apiKey: "",
+    apiSecret: "",
   };
-  if (data) config = data.config as AliyunConfig;
+  if (data) config = data.config as GodaddyConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name,
-      configType: "aliyun",
-      accessKeyId: config.accessKeyId,
-      accessSecretId: config.accessKeySecret,
+      configType: "godaddy",
+      apiKey: config.apiKey,
+      apiSecret: config.apiSecret,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    console.log(data);
     const req: Access = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
       usage: getUsageByConfigType(data.configType),
       config: {
-        accessKeyId: data.accessKeyId,
-        accessKeySecret: data.accessSecretId,
+        apiKey: data.apiKey,
+        apiSecret: data.apiSecret,
       },
     };
 
@@ -90,8 +95,6 @@ const AccessAliyunForm = ({
           });
         }
       );
-
-      return;
     }
   };
 
@@ -101,6 +104,7 @@ const AccessAliyunForm = ({
         <Form {...form}>
           <form
             onSubmit={(e) => {
+              console.log(e);
               e.stopPropagation();
               form.handleSubmit(onSubmit)(e);
             }}
@@ -153,12 +157,12 @@ const AccessAliyunForm = ({
 
             <FormField
               control={form.control}
-              name="accessKeyId"
+              name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>AccessKeyId</FormLabel>
+                  <FormLabel>GODADDY_API_KEY</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入AccessKeyId" {...field} />
+                    <Input placeholder="请输入GODADDY_API_KEY" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -168,20 +172,18 @@ const AccessAliyunForm = ({
 
             <FormField
               control={form.control}
-              name="accessSecretId"
+              name="apiSecret"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>AccessKeySecret</FormLabel>
+                  <FormLabel>GODADDY_API_SECRET</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入AccessKeySecret" {...field} />
+                    <Input placeholder="请输入GODADDY_API_SECRET" {...field} />
                   </FormControl>
 
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <FormMessage />
 
             <div className="flex justify-end">
               <Button type="submit">保存</Button>
@@ -193,4 +195,4 @@ const AccessAliyunForm = ({
   );
 };
 
-export default AccessAliyunForm;
+export default AccessGodaddyFrom;

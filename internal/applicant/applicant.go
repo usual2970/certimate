@@ -20,6 +20,7 @@ const (
 	configTypeAliyun     = "aliyun"
 	configTypeCloudflare = "cloudflare"
 	configTypeNamesilo   = "namesilo"
+	configTypeGodaddy    = "godaddy"
 )
 
 type Certificate struct {
@@ -73,6 +74,8 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewCloudflare(option), nil
 	case configTypeNamesilo:
 		return NewNamesilo(option), nil
+	case configTypeGodaddy:
+		return NewGodaddy(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}

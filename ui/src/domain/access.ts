@@ -5,6 +5,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
   ["cloudflare", ["Cloudflare", "/imgs/providers/cloudflare.svg"]],
   ["namesilo", ["Namesilo", "/imgs/providers/namesilo.svg"]],
+  ["godaddy", ["GoDaddy", "/imgs/providers/godaddy.svg"]],
   ["qiniu", ["七牛云", "/imgs/providers/qiniu.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
@@ -19,14 +20,18 @@ export const accessFormType = z.union(
     z.literal("cloudflare"),
     z.literal("qiniu"),
     z.literal("namesilo"),
+    z.literal("godaddy"),
   ],
   { message: "请选择云服务商" }
 );
+
+type AccessUsage = "apply" | "deploy" | "all";
 
 export type Access = {
   id: string;
   name: string;
   configType: string;
+  usage: AccessUsage;
   config:
     | TencentConfig
     | AliyunConfig
@@ -34,7 +39,8 @@ export type Access = {
     | WebhookConfig
     | CloudflareConfig
     | QiniuConfig
-    | NamesiloConfig;
+    | NamesiloConfig
+    | GodaddyConfig;
 
   deleted?: string;
   created?: string;
@@ -67,6 +73,10 @@ export type AliyunConfig = {
 export type NamesiloConfig = {
   apiKey: string;
 };
+export type GodaddyConfig = {
+  apiKey: string;
+  apiSecret: string;
+};
 
 export type SSHConfig = {
   host: string;
@@ -78,4 +88,23 @@ export type SSHConfig = {
   keyFile?: string;
   certPath: string;
   keyPath: string;
+};
+
+export const getUsageByConfigType = (configType: string): AccessUsage => {
+  switch (configType) {
+    case "aliyun":
+    case "tencent":
+      return "all";
+    case "ssh":
+    case "webhook":
+    case "qiniu":
+      return "deploy";
+
+    case "cloudflare":
+    case "namesilo":
+    case "godaddy":
+      return "apply";
+    default:
+      return "all";
+  }
 };

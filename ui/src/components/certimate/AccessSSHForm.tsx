@@ -1,4 +1,4 @@
-import { Access, accessFormType, SSHConfig } from "@/domain/access";
+import { Access, accessFormType, getUsageByConfigType, SSHConfig } from "@/domain/access";
 import { useConfig } from "@/providers/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -87,6 +87,7 @@ const AccessSSHForm = ({
       id: data.id as string,
       name: data.name,
       configType: data.configType,
+      usage: getUsageByConfigType(data.configType),
       config: {
         host: data.host,
         port: data.port,

@@ -22,3 +22,8 @@ type QiniuAccess struct {
 type NameSiloAccess struct {
 	ApiKey string `json:"apiKey"`
 }
+
+type GodaddyAccess struct {
+	ApiKey    string `json:"apiKey"`
+	ApiSecret string `json:"apiSecret"`
+}

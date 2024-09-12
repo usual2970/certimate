@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, TencentConfig } from "@/domain/access";
+import { Access, accessFormType, getUsageByConfigType, TencentConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 import { ClientResponseError } from "pocketbase";
@@ -58,6 +58,7 @@ const AccessTencentForm = ({
       id: data.id as string,
       name: data.name,
       configType: data.configType,
+      usage: getUsageByConfigType(data.configType),
       config: {
         secretId: data.secretId,
         secretKey: data.secretKey,

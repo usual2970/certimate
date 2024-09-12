@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, NamesiloConfig } from "@/domain/access";
+import { Access, accessFormType, getUsageByConfigType, NamesiloConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 import { ClientResponseError } from "pocketbase";
@@ -56,6 +56,7 @@ const AccessNamesiloForm = ({
       id: data.id as string,
       name: data.name,
       configType: data.configType,
+      usage: getUsageByConfigType(data.configType),
       config: {
         apiKey: data.apiKey,
       },

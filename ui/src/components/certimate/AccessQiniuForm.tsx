@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, QiniuConfig } from "@/domain/access";
+import { Access, accessFormType, getUsageByConfigType, QiniuConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
@@ -59,6 +59,7 @@ const AccessQiniuForm = ({
       id: data.id as string,
       name: data.name,
       configType: data.configType,
+      usage: getUsageByConfigType(data.configType),
       config: {
         accessKey: data.accessKey,
         secretKey: data.secretKey,

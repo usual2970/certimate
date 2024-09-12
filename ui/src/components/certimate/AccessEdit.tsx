@@ -31,6 +31,7 @@ import {
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessQiniuForm from "./AccessQiniuForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
+import AccessGodaddyFrom from "./AccessGodaddyForm";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -115,6 +116,16 @@ export function AccessEdit({
     case "namesilo":
       form = (
         <AccessNamesiloForm
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "godaddy":
+      form = (
+        <AccessGodaddyFrom
           data={data}
           onAfterReq={() => {
             setOpen(false);

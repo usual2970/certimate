@@ -99,6 +99,10 @@ const Edit = () => {
   const [targetType, setTargetType] = useState(domain ? domain.targetType : "");
 
   const targetAccesses = accesses.filter((item) => {
+    if (item.usage == "apply") {
+      return false;
+    }
+
     if (targetType == "") {
       return true;
     }
@@ -207,19 +211,21 @@ const Edit = () => {
                         <SelectContent>
                           <SelectGroup>
                             <SelectLabel>服务商授权配置</SelectLabel>
-                            {accesses.map((item) => (
-                              <SelectItem key={item.id} value={item.id}>
-                                <div className="flex items-center space-x-2">
-                                  <img
-                                    className="w-6"
-                                    src={
-                                      accessTypeMap.get(item.configType)?.[1]
-                                    }
-                                  />
-                                  <div>{item.name}</div>
-                                </div>
-                              </SelectItem>
-                            ))}
+                            {accesses
+                              .filter((item) => item.usage != "deploy")
+                              .map((item) => (
+                                <SelectItem key={item.id} value={item.id}>
+                                  <div className="flex items-center space-x-2">
+                                    <img
+                                      className="w-6"
+                                      src={
+                                        accessTypeMap.get(item.configType)?.[1]
+                                      }
+                                    />
+                                    <div>{item.name}</div>
+                                  </div>
+                                </SelectItem>
+                              ))}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
