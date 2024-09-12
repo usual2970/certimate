@@ -171,7 +171,7 @@ const Dashboard = () => {
                 <div className="mt-2 flex justify-end">
                   <Button
                     onClick={() => {
-                      navigate("/");
+                      navigate("/edit");
                     }}
                   >
                     添加域名
