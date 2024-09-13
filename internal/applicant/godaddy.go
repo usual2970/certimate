@@ -24,7 +24,7 @@ func (a *godaddy) Apply() (*Certificate, error) {
 	json.Unmarshal([]byte(a.option.Access), access)
 
 	os.Setenv("GODADDY_API_KEY", access.ApiKey)
-	os.Setenv("GODADDY_API_SECRET", access.ApiKey)
+	os.Setenv("GODADDY_API_SECRET", access.ApiSecret)
 
 	dnsProvider, err := godaddyProvider.NewDNSProvider()
 	if err != nil {
