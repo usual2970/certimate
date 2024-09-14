@@ -39,6 +39,10 @@ func NewTencentCdn(option *DeployerOption) (Deployer, error) {
 	}, nil
 }
 
+func (a *tencentCdn) GetID() string {
+	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+}
+
 func (t *tencentCdn) GetInfo() []string {
 	return t.infos
 }

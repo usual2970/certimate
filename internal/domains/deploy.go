@@ -41,7 +41,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 		return err
 	}
 	history.record(checkPhase, "获取记录成功", nil)
-	if errs := app.GetApp().Dao().ExpandRecord(currRecord, []string{"access", "targetAccess"}, nil); len(errs) > 0 {
+	if errs := app.GetApp().Dao().ExpandRecord(currRecord, []string{"access", "targetAccess", "group"}, nil); len(errs) > 0 {
 
 		errList := make([]error, 0)
 		for name, err := range errs {
@@ -96,24 +96,28 @@ func deploy(ctx context.Context, record *models.Record) error {
 
 	// ############3.部署证书
 	history.record(deployPhase, "开始部署", nil, false)
-	deployer, err := deployer.Get(currRecord, certificate)
+	deployers, err := deployer.Gets(currRecord, certificate)
 	if err != nil {
 		history.record(deployPhase, "获取deployer失败", &RecordInfo{Err: err})
 		app.GetApp().Logger().Error("获取deployer失败", "err", err)
 		return err
 	}
 
-	if err = deployer.Deploy(ctx); err != nil {
+	for _, deployer := range deployers {
+		if err = deployer.Deploy(ctx); err != nil {
 
-		app.GetApp().Logger().Error("部署失败", "err", err)
-		history.record(deployPhase, "部署失败", &RecordInfo{Err: err, Info: deployer.GetInfo()})
-		return err
+			app.GetApp().Logger().Error("部署失败", "err", err)
+			history.record(deployPhase, "部署失败", &RecordInfo{Err: err, Info: deployer.GetInfo()})
+			return err
+		}
+		history.record(deployPhase, fmt.Sprintf("[%s]-部署成功", deployer.GetID()), &RecordInfo{
+			Info: deployer.GetInfo(),
+		}, false)
+
 	}
 
 	app.GetApp().Logger().Info("部署成功")
-	history.record(deployPhase, "部署成功", &RecordInfo{
-		Info: deployer.GetInfo(),
-	}, true)
+	history.record(deployPhase, "部署成功", nil, true)
 
 	return nil
 }

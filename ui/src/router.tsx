@@ -10,6 +10,7 @@ import LoginLayout from "./pages/LoginLayout";
 import Password from "./pages/setting/Password";
 import SettingLayout from "./pages/SettingLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
+import AccessGroups from "./pages/access_groups/AccessGroups";
 
 export const router = createHashRouter([
   {
@@ -31,6 +32,10 @@ export const router = createHashRouter([
       {
         path: "/access",
         element: <Access />,
+      },
+      {
+        path: "/access_groups",
+        element: <AccessGroups />,
       },
       {
         path: "/history",

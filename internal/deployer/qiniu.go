@@ -33,6 +33,10 @@ func NewQiNiu(option *DeployerOption) (*qiuniu, error) {
 	}, nil
 }
 
+func (a *qiuniu) GetID() string {
+	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+}
+
 func (q *qiuniu) GetInfo() []string {
 	return q.info
 }

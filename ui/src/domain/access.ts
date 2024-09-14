@@ -11,6 +11,10 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
+export const getProviderInfo = (t: string) => {
+  return accessTypeMap.get(t);
+};
+
 export const accessFormType = z.union(
   [
     z.literal("aliyun"),
@@ -32,6 +36,7 @@ export type Access = {
   name: string;
   configType: string;
   usage: AccessUsage;
+  group?: string;
   config:
     | TencentConfig
     | AliyunConfig

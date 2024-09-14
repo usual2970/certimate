@@ -6,12 +6,14 @@ export type Domain = {
   email?: string;
   crontab: string;
   access: string;
-  targetAccess: string;
+  targetAccess?: string;
   targetType: string;
   expiredAt?: string;
   phase?: Pahse;
   phaseSuccess?: boolean;
   lastDeployedAt?: string;
+  variables?: string;
+  group?: string;
   enabled?: boolean;
   created?: string;
   updated?: string;

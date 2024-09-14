@@ -1,4 +1,9 @@
-import { Access, accessFormType, getUsageByConfigType, SSHConfig } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  getUsageByConfigType,
+  SSHConfig,
+} from "@/domain/access";
 import { useConfig } from "@/providers/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,6 +24,17 @@ import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { readFileContent } from "@/lib/file";
 import { useRef, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { cn } from "@/lib/utils";
+import AccessGroupEdit from "./AccessGroupEdit";
+import { Plus } from "lucide-react";
+import { updateById } from "@/repository/access_group";
 
 const AccessSSHForm = ({
   data,
@@ -27,11 +43,18 @@ const AccessSSHForm = ({
   data?: Access;
   onAfterReq: () => void;
 }) => {
-  const { addAccess, updateAccess } = useConfig();
+  const {
+    addAccess,
+    updateAccess,
+    reloadAccessGroups,
+    config: { accessGroups },
+  } = useConfig();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [fileName, setFileName] = useState("");
+
+  const originGroup = data ? (data.group ? data.group : "") : "";
 
   const formSchema = z.object({
     id: z.string().optional(),
@@ -40,6 +63,7 @@ const AccessSSHForm = ({
     host: z.string().ip({
       message: "请输入合法的IP地址",
     }),
+    group: z.string().optional(),
     port: z.string().min(1).max(5),
     username: z.string().min(1).max(64),
     password: z.string().min(0).max(64),
@@ -69,6 +93,7 @@ const AccessSSHForm = ({
       id: data?.id,
       name: data?.name,
       configType: "ssh",
+      group: data?.group,
       host: config.host,
       port: config.port,
       username: config.username,
@@ -83,11 +108,15 @@ const AccessSSHForm = ({
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
+    let group = data.group;
+    if (group == "emptyId") group = "";
+
     const req: Access = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
       usage: getUsageByConfigType(data.configType),
+      group: group,
       config: {
         host: data.host,
         port: data.port,
@@ -110,9 +139,28 @@ const AccessSSHForm = ({
       req.updated = rs.updated;
       if (data.id) {
         updateAccess(req);
-        return;
+      } else {
+        addAccess(req);
       }
-      addAccess(req);
+
+      // 同步更新授权组
+      if (group != originGroup) {
+        if (originGroup) {
+          await updateById({
+            id: originGroup,
+            "access-": req.id,
+          });
+        }
+
+        if (group) {
+          await updateById({
+            id: group,
+            "access+": req.id,
+          });
+        }
+      }
+
+      reloadAccessGroups();
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -165,6 +213,67 @@ const AccessSSHForm = ({
                   <FormLabel>名称</FormLabel>
                   <FormControl>
                     <Input placeholder="请输入授权名称" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="group"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="w-full flex justify-between">
+                    <div>授权配置组(用于将一个域名证书部署到多个 ssh 主机)</div>
+                    <AccessGroupEdit
+                      trigger={
+                        <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                          <Plus size={14} />
+                          新增
+                        </div>
+                      }
+                    />
+                  </FormLabel>
+                  <FormControl>
+                    <Select
+                      {...field}
+                      value={field.value}
+                      defaultValue="emptyId"
+                      onValueChange={(value) => {
+                        form.setValue("group", value);
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="请选择分组" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="emptyId">
+                          <div
+                            className={cn(
+                              "flex items-center space-x-2 rounded cursor-pointer"
+                            )}
+                          >
+                            --
+                          </div>
+                        </SelectItem>
+                        {accessGroups.map((item) => (
+                          <SelectItem
+                            value={item.id ? item.id : ""}
+                            key={item.id}
+                          >
+                            <div
+                              className={cn(
+                                "flex items-center space-x-2 rounded cursor-pointer"
+                              )}
+                            >
+                              {item.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
 
                   <FormMessage />
