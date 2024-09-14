@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	xpath "path"
+	"strings"
 
 	"github.com/pkg/sftp"
 	sshPkg "golang.org/x/crypto/ssh"
@@ -35,6 +36,10 @@ func NewSSH(option *DeployerOption) (Deployer, error) {
 	}, nil
 }
 
+func (a *ssh) GetID() string {
+	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+}
+
 func (s *ssh) GetInfo() []string {
 	return s.infos
 }
@@ -44,6 +49,15 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	if err := json.Unmarshal([]byte(s.option.Access), access); err != nil {
 		return err
 	}
+
+	// 将证书路径和命令中的变量替换为实际值
+	for k, v := range s.option.Variables {
+		key := fmt.Sprintf("${%s}", k)
+		access.CertPath = strings.ReplaceAll(access.CertPath, key, v)
+		access.KeyPath = strings.ReplaceAll(access.KeyPath, key, v)
+		access.Command = strings.ReplaceAll(access.Command, key, v)
+	}
+
 	// 连接
 	client, err := s.getClient(access)
 	if err != nil {

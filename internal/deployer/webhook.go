@@ -32,6 +32,10 @@ func NewWebhook(option *DeployerOption) (Deployer, error) {
 	}, nil
 }
 
+func (a *webhook) GetID() string {
+	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+}
+
 func (w *webhook) GetInfo() []string {
 	return w.infos
 }

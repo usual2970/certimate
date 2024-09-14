@@ -36,6 +36,10 @@ func NewAliyunCdn(option *DeployerOption) (*AliyunCdn, error) {
 	}, nil
 }
 
+func (a *AliyunCdn) GetID() string {
+	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+}
+
 func (a *AliyunCdn) GetInfo() []string {
 	return a.infos
 }

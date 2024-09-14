@@ -23,6 +23,8 @@ const Access = () => {
   const page = query.get("page");
   const pageNumber = page ? Number(page) : 1;
 
+  const accessGroupId = query.get("accessGroupId");
+
   const startIndex = (pageNumber - 1) * perPage;
   const endIndex = startIndex + perPage;
 
@@ -65,51 +67,56 @@ const Access = () => {
           <div className="sm:hidden flex text-sm text-muted-foreground">
             授权列表
           </div>
-          {accesses.slice(startIndex, endIndex).map((access) => (
-            <div
-              className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
-              key={access.id}
-            >
-              <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                {access.name}
-              </div>
-              <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
-                <img
-                  src={accessTypeMap.get(access.configType)?.[1]}
-                  className="w-6"
-                />
-                <div>{accessTypeMap.get(access.configType)?.[0]}</div>
-              </div>
+          {accesses
+            .filter((item) => {
+              return accessGroupId ? item.group == accessGroupId : true;
+            })
+            .slice(startIndex, endIndex)
+            .map((access) => (
+              <div
+                className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
+                key={access.id}
+              >
+                <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
+                  {access.name}
+                </div>
+                <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
+                  <img
+                    src={accessTypeMap.get(access.configType)?.[1]}
+                    className="w-6"
+                  />
+                  <div>{accessTypeMap.get(access.configType)?.[0]}</div>
+                </div>
 
-              <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
-                创建于 {access.created && convertZulu2Beijing(access.created)}
+                <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
+                  创建于 {access.created && convertZulu2Beijing(access.created)}
+                </div>
+                <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
+                  更新于 {access.updated && convertZulu2Beijing(access.updated)}
+                </div>
+                <div className="flex items-center grow justify-start pt-1 sm:pt-0">
+                  <AccessEdit
+                    trigger={
+                      <Button variant={"link"} className="p-0">
+                        编辑
+                      </Button>
+                    }
+                    op="edit"
+                    data={access}
+                  />
+                  <Separator orientation="vertical" className="h-4 mx-2" />
+                  <Button
+                    variant={"link"}
+                    className="p-0"
+                    onClick={() => {
+                      handleDelete(access);
+                    }}
+                  >
+                    删除
+                  </Button>
+                </div>
               </div>
-              <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
-                更新于 {access.updated && convertZulu2Beijing(access.updated)}
-              </div>
-              <div className="flex items-center grow justify-start pt-1 sm:pt-0">
-                <AccessEdit
-                  trigger={
-                    <Button variant={"link"} className="p-0">
-                      编辑
-                    </Button>
-                  }
-                  op="edit"
-                  data={access}
-                />
-                <Separator orientation="vertical" className="h-4 mx-2" />
-                <Button
-                  variant={"link"}
-                  className="p-0"
-                  onClick={() => {
-                    handleDelete(access);
-                  }}
-                >
-                  删除
-                </Button>
-              </div>
-            </div>
-          ))}
+            ))}
           <XPagination
             totalPages={totalPages}
             currentPage={pageNumber}
