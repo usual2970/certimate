@@ -13,6 +13,11 @@ Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 2. 支持私有部署：部署方法简单，只需下载二进制文件执行即可。二进制文件、docker 镜像全部用 github actions 生成，过程透明，可自行审计。
 3. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在服务商的服务器，确保数据的安全性。
 
+相关文章：
+
+* [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
+* [域名变量及部署授权组介绍](https://docs.certimate.me/blog/multi-deployer)
+
 
 Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。使用文档请访问[https://docs.certimate.me](https://docs.certimate.me)
 
