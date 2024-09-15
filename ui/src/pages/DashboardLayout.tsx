@@ -9,7 +9,7 @@ import {
   BookOpen,
   CircleUser,
   Earth,
-  Group,
+
   History,
   Home,
   Menu,
@@ -102,17 +102,6 @@ export default function Dashboard() {
                   </Link>
 
                   <Link
-                    to="/access_groups"
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      getClass("/access_groups")
-                    )}
-                  >
-                    <Group className="h-4 w-4" />
-                    部署授权组
-                  </Link>
-
-                  <Link
                     to="/history"
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
@@ -181,17 +170,6 @@ export default function Dashboard() {
                     </Link>
 
                     <Link
-                      to="/access_groups"
-                      className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground",
-                        getClass("/access_groups")
-                      )}
-                    >
-                      <Group className="h-5 w-5" />
-                      部署授权组
-                    </Link>
-
-                    <Link
                       to="/history"
                       className={cn(
                         "mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground",
@@ -250,7 +228,7 @@ export default function Dashboard() {
                     href="https://github.com/usual2970/certimate/releases"
                     target="_blank"
                   >
-                    Certimate v0.1.6
+                    Certimate v0.1.7
                   </a>
                 </div>
               </div>
