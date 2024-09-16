@@ -1,4 +1,5 @@
 import { AccessEdit } from "@/components/certimate/AccessEdit";
+import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
 import AccessGroupList from "@/components/certimate/AccessGroupList";
 import XPagination from "@/components/certimate/XPagination";
 import { Button } from "@/components/ui/button";
@@ -46,7 +47,11 @@ const Access = () => {
     <div className="">
       <div className="flex justify-between items-center">
         <div className="text-muted-foreground">授权管理</div>
-        <AccessEdit trigger={<Button>添加授权</Button>} op="add" />
+        {tab != "access_group" ? (
+          <AccessEdit trigger={<Button>添加授权</Button>} op="add" />
+        ) : (
+          <AccessGroupEdit trigger={<Button>添加授权组</Button>} />
+        )}
       </div>
 
       <Tabs
