@@ -16,6 +16,7 @@ import (
 const (
 	targetAliyunOss  = "aliyun-oss"
 	targetAliyunCdn  = "aliyun-cdn"
+	targetAliyunEsa  = "aliyun-dcdn"
 	targetSSH        = "ssh"
 	targetWebhook    = "webhook"
 	targetTencentCdn = "tencent-cdn"
@@ -117,6 +118,8 @@ func getWithAccess(record *models.Record, cert *applicant.Certificate, access *m
 		return NewAliyun(option)
 	case targetAliyunCdn:
 		return NewAliyunCdn(option)
+	case targetAliyunEsa:
+		return NewAliyunEsa(option)
 	case targetSSH:
 		return NewSSH(option)
 	case targetWebhook:
