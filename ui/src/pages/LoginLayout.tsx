@@ -1,4 +1,7 @@
+import Version from "@/components/certimate/Version";
+
 import { getPb } from "@/repository/api";
+
 import { Navigate, Outlet } from "react-router-dom";
 
 const LoginLayout = () => {
@@ -8,6 +11,8 @@ const LoginLayout = () => {
   return (
     <div className="container">
       <Outlet />
+
+      <Version />
     </div>
   );
 };

@@ -5,16 +5,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
-import {
-  BookOpen,
-  CircleUser,
-  Earth,
-
-  History,
-  Home,
-  Menu,
-  Server,
-} from "lucide-react";
+import { CircleUser, Earth, History, Home, Menu, Server } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -31,7 +22,8 @@ import { cn } from "@/lib/utils";
 import { ConfigProvider } from "@/providers/config";
 import { getPb } from "@/repository/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Separator } from "@/components/ui/separator";
+
+import Version from "@/components/certimate/Version";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -212,26 +204,7 @@ export default function Dashboard() {
             <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 relative">
               <Outlet />
 
-              <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
-                <div className=""></div>
-                <div className="text-muted-foreground text-sm hover:text-stone-900 dark:hover:text-stone-200 flex">
-                  <a
-                    href="https://docs.certimate.me"
-                    target="_blank"
-                    className="flex items-center"
-                  >
-                    <BookOpen size={16} />
-                    <div className="ml-1">文档</div>
-                  </a>
-                  <Separator orientation="vertical" className="mx-2" />
-                  <a
-                    href="https://github.com/usual2970/certimate/releases"
-                    target="_blank"
-                  >
-                    Certimate v0.1.7
-                  </a>
-                </div>
-              </div>
+              <Version />
             </main>
           </div>
         </div>
