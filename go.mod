@@ -7,9 +7,9 @@ toolchain go1.22.5
 require (
 	github.com/alibabacloud-go/cas-20200407/v2 v2.3.0
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.0.0
-	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.8
-	github.com/alibabacloud-go/tea v1.2.1
-	github.com/alibabacloud-go/tea-utils/v2 v2.0.5
+	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.9
+	github.com/alibabacloud-go/tea v1.2.2
+	github.com/alibabacloud-go/tea-utils/v2 v2.0.6
 	github.com/go-acme/lego/v4 v4.17.4
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
@@ -23,16 +23,24 @@ require (
 	golang.org/x/crypto v0.26.0
 )
 
-require github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+require (
+	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
+	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
+	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
+	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+)
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
-	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
+	github.com/alibabacloud-go/darabonba-openapi v0.1.18 // indirect
+    github.com/alibabacloud-go/dcdn-20180115/v3 v3.4.2
+	github.com/alibabacloud-go/debug v1.0.0 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect
-	github.com/alibabacloud-go/tea-utils v1.4.3 // indirect
+	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.62.712 // indirect
 	github.com/aliyun/credentials-go v1.3.1 // indirect
@@ -57,7 +65,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.30.3 // indirect
 	github.com/aws/smithy-go v1.20.3 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
-	github.com/clbanning/mxj/v2 v2.5.5 // indirect
+	github.com/clbanning/mxj/v2 v2.5.6 // indirect
 	github.com/cloudflare/cloudflare-go v0.97.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
