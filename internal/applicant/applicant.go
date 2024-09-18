@@ -6,10 +6,12 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"errors"
+	"strings"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge"
+	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
@@ -35,9 +37,10 @@ type Certificate struct {
 }
 
 type ApplyOption struct {
-	Email  string `json:"email"`
-	Domain string `json:"domain"`
-	Access string `json:"access"`
+	Email       string `json:"email"`
+	Domain      string `json:"domain"`
+	Access      string `json:"access"`
+	Nameservers string `json:"nameservers"`
 }
 
 type MyUser struct {
@@ -67,9 +70,10 @@ func Get(record *models.Record) (Applicant, error) {
 		email = defaultEmail
 	}
 	option := &ApplyOption{
-		Email:  email,
-		Domain: record.GetString("domain"),
-		Access: access.GetString("config"),
+		Email:       email,
+		Domain:      record.GetString("domain"),
+		Access:      access.GetString("config"),
+		Nameservers: record.GetString("nameservers"),
 	}
 	switch access.GetString("configType") {
 	case configTypeTencent:
@@ -111,7 +115,13 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		return nil, err
 	}
 
-	client.Challenge.SetDNS01Provider(provider)
+	challengeOptions := make([]dns01.ChallengeOption, 0)
+	nameservers := ParseNameservers(option.Nameservers)
+	if len(nameservers) > 0 {
+		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(nameservers))
+	}
+
+	client.Challenge.SetDNS01Provider(provider, challengeOptions...)
 
 	// New users will need to register
 	reg, err := client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
@@ -137,4 +147,23 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		IssuerCertificate: string(certificates.IssuerCertificate),
 		Csr:               string(certificates.CSR),
 	}, nil
+}
+
+func ParseNameservers(ns string) []string {
+	nameservers := make([]string, 0)
+
+	lines := strings.Split(ns, ";")
+
+	for _, line := range lines {
+
+		line = strings.TrimSpace(line)
+
+		if line == "" {
+			continue
+		}
+
+		nameservers = append(nameservers, line)
+	}
+
+	return nameservers
 }

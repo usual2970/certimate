@@ -149,6 +149,10 @@ const Home = () => {
     }
   };
 
+  const handleForceClick = async (domain: Domain) => {
+    await handleRightNowClick({ ...domain, deployed: false });
+  };
+
   const handleDownloadClick = async (domain: Domain) => {
     const zipName = `${domain.id}-${domain.domain}.zip`;
     const files: CustomFile[] = [
@@ -288,6 +292,23 @@ const Home = () => {
                       onClick={() => handleRightNowClick(domain)}
                     >
                       立即部署
+                    </Button>
+                  </Show>
+
+                  <Show
+                    when={
+                      (domain.enabled ? true : false) && domain.deployed
+                        ? true
+                        : false
+                    }
+                  >
+                    <Separator orientation="vertical" className="h-4 mx-2" />
+                    <Button
+                      variant={"link"}
+                      className="p-0"
+                      onClick={() => handleForceClick(domain)}
+                    >
+                      强行部署
                     </Button>
                   </Show>
 

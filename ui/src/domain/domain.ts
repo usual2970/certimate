@@ -13,8 +13,10 @@ export type Domain = {
   phaseSuccess?: boolean;
   lastDeployedAt?: string;
   variables?: string;
+  nameservers?: string;
   group?: string;
   enabled?: boolean;
+  deployed?: boolean;
   created?: string;
   updated?: string;
   deleted?: string;
