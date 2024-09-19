@@ -80,6 +80,7 @@ const Edit = () => {
     }),
     variables: z.string().optional(),
     group: z.string().optional(),
+    nameservers: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,6 +94,7 @@ const Edit = () => {
       targetType: "",
       variables: "",
       group: "",
+      nameservers: "",
     },
   });
 
@@ -107,6 +109,7 @@ const Edit = () => {
         targetType: domain.targetType,
         variables: domain.variables,
         group: domain.group,
+        nameservers: domain.nameservers,
       });
     }
   }, [domain, form]);
@@ -153,6 +156,7 @@ const Edit = () => {
       targetAccess: targetAccess,
       targetType: data.targetType,
       variables: data.variables,
+      nameservers: data.nameservers,
     };
 
     try {
@@ -515,6 +519,26 @@ const Edit = () => {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="nameservers"
+                  render={({ field }) => (
+                    <FormItem hidden={tab != "advance"}>
+                      <FormLabel>域名服务器</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder={`自定义域名服务器,多个用分号隔开,如:\n8.8.8.8;\n8.8.4.4;`}
+                          {...field}
+                          className="placeholder:whitespace-pre-wrap"
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="flex justify-end">
                   <Button type="submit">保存</Button>
                 </div>

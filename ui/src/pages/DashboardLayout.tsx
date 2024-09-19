@@ -192,7 +192,7 @@ export default function Dashboard() {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem onClick={handleSettingClick}>
-                    设置
+                    偏好设置
                   </DropdownMenuItem>
 
                   <DropdownMenuItem onClick={handleLogoutClick}>
