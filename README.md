@@ -115,7 +115,7 @@ go run main.go serve
 Certimate 的工作流程如下：
 
 * 用户通过 Certimate 管理页面填写申请证书的信息，包括域名、dns 服务商的授权信息、以及要部署到的服务商的授权信息。
-* Certimate 向证书场商的 API 发起申请请求，获取 SSL 证书。
+* Certimate 向证书厂商的 API 发起申请请求，获取 SSL 证书。
 * Certimate 存储证书信息，包括证书内容、私钥、证书有效期等，并在证书即将过期时自动续期。
 * Certimate 向服务商的 API 发起部署请求，将证书部署到服务商的服务器上。
 
