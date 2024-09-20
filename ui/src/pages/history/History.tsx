@@ -1,4 +1,5 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
+import DeployState from "@/components/certimate/DeployState";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -88,11 +89,7 @@ const History = () => {
                 {deployment.expand.domain?.domain}
               </div>
               <div className="sm:w-24 w-full pt-1 sm:pt-0 flex items-center">
-                {deployment.phase === "deploy" && deployment.phaseSuccess ? (
-                  <CircleCheck size={16} className="text-green-700" />
-                ) : (
-                  <CircleX size={16} className="text-red-700" />
-                )}
+                <DeployState deployment={deployment} />
               </div>
               <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center">
                 <DeployProgress
