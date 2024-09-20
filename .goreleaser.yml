@@ -1,0 +1,55 @@
+project_name: certimate
+
+dist: .builds
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: build_noncgo
+    main: ./
+    binary: certimate
+    ldflags:
+      - -s -w -X github.com/usual2970/certimate.Version={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 7
+    ignore:
+      - goos: windows
+        goarch: arm
+      - goos: darwin
+        goarch: arm
+
+release:
+  draft: true
+
+archives:
+  - id: archive_noncgo
+    builds: [build_noncgo]
+    format: zip
+    files:
+      - CHANGELOG.md
+      - LICENSE.md
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^ui:"

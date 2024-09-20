@@ -1,0 +1,42 @@
+package applicant
+
+import (
+	"certimate/internal/domain"
+	"encoding/json"
+	"os"
+
+	godaddyProvider "github.com/go-acme/lego/v4/providers/dns/godaddy"
+)
+
+type godaddy struct {
+	option *ApplyOption
+}
+
+func NewGodaddy(option *ApplyOption) Applicant {
+	return &godaddy{
+		option: option,
+	}
+}
+
+func (a *godaddy) Apply() (*Certificate, error) {
+
+	access := &domain.GodaddyAccess{}
+	json.Unmarshal([]byte(a.option.Access), access)
+
+	os.Setenv("GODADDY_API_KEY", access.ApiKey)
+	os.Setenv("GODADDY_API_SECRET", access.ApiSecret)
+
+	dnsProvider, err := godaddyProvider.NewDNSProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	switch a.option.SSLprovider {
+	case "letsencrypt":
+		return applyLetsencrypt(a.option, dnsProvider)
+	case "zerossl":
+		return applyZeroSSL(a.option, dnsProvider)
+	default:
+		return applyLetsencrypt(a.option, dnsProvider)
+	}
+}

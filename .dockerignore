@@ -1,0 +1,5 @@
+vendor
+ui/node_modules
+pb_data
+build
+.vscode
