@@ -32,7 +32,7 @@ import {
 } from "@/repository/domains";
 
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
-import { CircleCheck, CircleX, Earth } from "lucide-react";
+import { Earth } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 

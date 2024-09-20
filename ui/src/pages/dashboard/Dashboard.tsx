@@ -18,8 +18,6 @@ import { statistics } from "@/repository/domains";
 import {
   Ban,
   CalendarX2,
-  CircleCheck,
-  CircleX,
   LoaderPinwheel,
   Smile,
   SquareSigma,

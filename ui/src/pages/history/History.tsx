@@ -14,7 +14,7 @@ import {
 import { Deployment, DeploymentListReq, Log } from "@/domain/deployment";
 import { convertZulu2Beijing } from "@/lib/time";
 import { list } from "@/repository/deployment";
-import { CircleCheck, CircleX, Smile } from "lucide-react";
+import { Smile } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
