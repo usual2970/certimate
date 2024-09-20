@@ -84,64 +84,70 @@ const Password = () => {
 
   return (
     <>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 dark:text-stone-200"
-        >
-          <FormField
-            control={form.control}
-            name="oldPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>当前密码</FormLabel>
-                <FormControl>
-                  <Input placeholder="当前密码" {...field} type="password" />
-                </FormControl>
+      <div className="w-full md:max-w-[35em]">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 dark:text-stone-200"
+          >
+            <FormField
+              control={form.control}
+              name="oldPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>当前密码</FormLabel>
+                  <FormControl>
+                    <Input placeholder="当前密码" {...field} type="password" />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="newPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>新密码</FormLabel>
-                <FormControl>
-                  <Input placeholder="newPassword" {...field} type="password" />
-                </FormControl>
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>新密码</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="newPassword"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>确认密码</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="confirmPassword"
-                    {...field}
-                    type="password"
-                  />
-                </FormControl>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>确认密码</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="confirmPassword"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end">
-            <Button type="submit">确认修改</Button>
-          </div>
-        </form>
-      </Form>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end">
+              <Button type="submit">确认修改</Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </>
   );
 };

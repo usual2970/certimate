@@ -1,4 +1,5 @@
 import DeployProgress from "@/components/certimate/DeployProgress";
+import DeployState from "@/components/certimate/DeployState";
 import XPagination from "@/components/certimate/XPagination";
 import Show from "@/components/Show";
 import {
@@ -31,7 +32,7 @@ import {
 } from "@/repository/domains";
 
 import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
-import { CircleCheck, CircleX, Earth } from "lucide-react";
+import { Earth } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -196,12 +197,12 @@ const Home = () => {
         ) : (
           <>
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-              <div className="w-40">域名</div>
-              <div className="w-48">有效期限</div>
+              <div className="w-36">域名</div>
+              <div className="w-40">有效期限</div>
               <div className="w-32">最近执行状态</div>
               <div className="w-64">最近执行阶段</div>
               <div className="w-40 sm:ml-2">最近执行时间</div>
-              <div className="w-32">是否启用</div>
+              <div className="w-24">是否启用</div>
               <div className="grow">操作</div>
             </div>
             <div className="sm:hidden flex text-sm text-muted-foreground">
@@ -213,10 +214,10 @@ const Home = () => {
                 className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
                 key={domain.id}
               >
-                <div className="sm:w-40 w-full pt-1 sm:pt-0 flex items-center">
+                <div className="sm:w-36 w-full pt-1 sm:pt-0 flex items-center">
                   {domain.domain}
                 </div>
-                <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center">
+                <div className="sm:w-40 w-full pt-1 sm:pt-0 flex  items-center">
                   <div>
                     {domain.expiredAt ? (
                       <>
@@ -231,12 +232,7 @@ const Home = () => {
                 <div className="sm:w-32 w-full pt-1 sm:pt-0 flex items-center">
                   {domain.lastDeployedAt && domain.expand?.lastDeployment ? (
                     <>
-                      {domain.expand.lastDeployment?.phase === "deploy" &&
-                      domain.expand.lastDeployment?.phaseSuccess ? (
-                        <CircleCheck size={16} className="text-green-700" />
-                      ) : (
-                        <CircleX size={16} className="text-red-700" />
-                      )}
+                      <DeployState deployment={domain.expand.lastDeployment} />
                     </>
                   ) : (
                     "---"
@@ -257,7 +253,7 @@ const Home = () => {
                     ? convertZulu2Beijing(domain.lastDeployedAt)
                     : "---"}
                 </div>
-                <div className="sm:w-32 flex items-center">
+                <div className="sm:w-24 flex items-center">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>

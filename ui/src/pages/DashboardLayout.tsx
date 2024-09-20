@@ -46,12 +46,12 @@ export default function Dashboard() {
   };
 
   const handleSettingClick = () => {
-    navigate("/setting/password");
+    navigate("/setting/account");
   };
   return (
     <>
       <ConfigProvider>
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <div className="grid min-h-screen w-full md:grid-cols-[180px_1fr] lg:grid-cols-[200px_1fr] 2xl:md:grid-cols-[280px_1fr] ">
           <div className="hidden border-r dark:border-stone-500 bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="flex h-14 items-center border-b dark:border-stone-500 px-4 lg:h-[60px] lg:px-6">
