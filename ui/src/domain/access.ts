@@ -81,7 +81,7 @@ export type AliyunConfig = {
 export type AWSConfig = {
   accessKeyId: string;
   secretAccessKey: string;
-  sslProvider: string;
+  sslProvider: string; //sslprovider
 };
 
 export type NamesiloConfig = {

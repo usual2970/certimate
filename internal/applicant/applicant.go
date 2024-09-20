@@ -28,6 +28,24 @@ const (
 
 const defaultEmail = "536464346@qq.com"
 
+/*
+**
+可以直接调用zerossl api 获取kid 和hmac
+前端就可以让用户填入zerossl apikey就行了
+
+curl --location --request POST 'https://api.zerossl.com/acme/eab-credentials?access_key=xxxx'
+
+	{
+	    "success": 1
+	    "eab_kid": "GD-VvWydSVFuss_GhBwYQQ",
+	    "eab_hmac_key": "MjXU3MH-Z0WQ7piMAnVsCpD1shgMiWx6ggPWiTmydgUaj7dWWWfQfA"
+	}
+
+eab_kid
+eab_hmac_key
+只需要申请一次,可重复使用
+**
+*/
 const (
 	zerosslKid  = "" // ZeroSSL Kid
 	zerosslHMAC = "" // ZeroSSL HMAC Key

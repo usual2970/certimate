@@ -17,7 +17,7 @@ type CloudflareAccess struct {
 type AwsAccess struct {
 	AccessKeyID     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
-	SSLprovider     string `json:"sslprovider"`
+	SSLprovider     string `json:"sslprovider"` //SSL provider 我暂时加这里了
 }
 
 type QiniuAccess struct {

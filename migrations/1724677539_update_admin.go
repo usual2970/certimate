@@ -13,14 +13,14 @@ func init() {
 		dao := daos.New(db)
 
 		admin := &models.Admin{}
-		admin.Email = "admin@devops.com"
+		admin.Email = "admin@certimate.fun"
 		admin.SetPassword("1234567890")
 		return dao.SaveAdmin(admin)
 	}, func(db dbx.Builder) error {
 		// add down queries...
 		dao := daos.New(db)
 
-		admin, _ := dao.FindAdminByEmail("admin@devops.com")
+		admin, _ := dao.FindAdminByEmail("admin@certimate.fun")
 		if admin != nil {
 			return dao.DeleteAdmin(admin)
 		}
