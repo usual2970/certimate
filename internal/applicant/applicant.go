@@ -43,7 +43,7 @@ curl --location --request POST 'https://api.zerossl.com/acme/eab-credentials?acc
 
 eab_kid
 eab_hmac_key
-只需要申请一次,可重复使用
+只需要申请一次,可存入数据库重复使用
 **
 */
 const (
