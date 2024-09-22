@@ -62,7 +62,10 @@ func deploy(ctx context.Context, record *models.Record) error {
 		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
 		}, true)
-		return err
+
+		// 跳过的情况也算成功
+		history.setWholeSuccess(true)
+		return nil
 	}
 	history.record(checkPhase, "检查通过", nil, true)
 
@@ -118,6 +121,8 @@ func deploy(ctx context.Context, record *models.Record) error {
 
 	app.GetApp().Logger().Info("部署成功")
 	history.record(deployPhase, "部署成功", nil, true)
+
+	history.setWholeSuccess(true)
 
 	return nil
 }

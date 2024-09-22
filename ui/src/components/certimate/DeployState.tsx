@@ -22,7 +22,7 @@ const DeployState = ({ deployment }: DeployStateProps) => {
 
   return (
     <>
-      {deployment.phase === "deploy" && deployment.phaseSuccess ? (
+      {(deployment.phase === "deploy" && deployment.phaseSuccess) || deployment.wholeSuccess ? (
         <CircleCheck size={16} className="text-green-700" />
       ) : (
         <>
