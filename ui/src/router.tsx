@@ -11,6 +11,7 @@ import Password from "./pages/setting/Password";
 import SettingLayout from "./pages/SettingLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Account from "./pages/setting/Account";
+import Notify from "./pages/setting/Notify";
 
 export const router = createHashRouter([
   {
@@ -48,6 +49,10 @@ export const router = createHashRouter([
           {
             path: "/setting/account",
             element: <Account />,
+          },
+          {
+            path: "/setting/notify",
+            element: <Notify />,
           },
         ],
       },
