@@ -30,7 +30,7 @@ const SettingLayout = () => {
       <div className="text-muted-foreground border-b dark:border-stone-500 py-5">
         偏好设置
       </div>
-      <div className="w-full mt-5 p-3 flex justify-center">
+      <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
         <Tabs defaultValue="account" className="w-full" value={tabValue}>
           <TabsList className="mx-auto">
             <TabsTrigger
@@ -62,7 +62,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <Megaphone size={14} />
-              <div className="ml-1">推送渠道</div>
+              <div className="ml-1">消息推送</div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value={tabValue}>
