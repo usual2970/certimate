@@ -56,13 +56,22 @@ const AccessSSHForm = ({
 
   const originGroup = data ? (data.group ? data.group : "") : "";
 
+  const domainReg = /^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+  const ipReg =
+    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
   const formSchema = z.object({
     id: z.string().optional(),
     name: z.string().min(1).max(64),
     configType: accessFormType,
-    host: z.string().ip({
-      message: "请输入合法的IP地址",
-    }),
+    host: z.string().refine(
+      (str) => {
+        return ipReg.test(str) || domainReg.test(str);
+      },
+      {
+        message: "请输入正确的域名或IP",
+      }
+    ),
     group: z.string().optional(),
     port: z.string().min(1).max(5),
     username: z.string().min(1).max(64),
@@ -316,7 +325,7 @@ const AccessSSHForm = ({
                 name="host"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <FormLabel>服务器IP</FormLabel>
+                    <FormLabel>服务器HOST</FormLabel>
                     <FormControl>
                       <Input placeholder="请输入Host" {...field} />
                     </FormControl>
