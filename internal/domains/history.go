@@ -28,6 +28,7 @@ type history struct {
 	PhaseSuccess bool                    `json:"phaseSuccess"`
 	DeployedAt   string                  `json:"deployedAt"`
 	Cert         *applicant.Certificate  `json:"cert"`
+	WholeSuccess bool                    `json:"wholeSuccess"`
 }
 
 func NewHistory(record *models.Record) *history {
@@ -68,6 +69,10 @@ func (a *history) setCert(cert *applicant.Certificate) {
 	a.Cert = cert
 }
 
+func (a *history) setWholeSuccess(success bool) {
+	a.WholeSuccess = success
+}
+
 func (a *history) commit() error {
 	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("deployments")
 	if err != nil {
@@ -81,6 +86,7 @@ func (a *history) commit() error {
 	record.Set("log", a.Log)
 	record.Set("phase", string(a.Phase))
 	record.Set("phaseSuccess", a.PhaseSuccess)
+	record.Set("wholeSuccess", a.WholeSuccess)
 
 	if err := app.GetApp().Dao().SaveRecord(record); err != nil {
 		return err

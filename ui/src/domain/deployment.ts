@@ -10,6 +10,7 @@ export type Deployment = {
   };
   phase: Pahse;
   phaseSuccess: boolean;
+  wholeSuccess: boolean;
   deployedAt: string;
   created: string;
   updated: string;

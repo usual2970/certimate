@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"certimate/internal/domain"
+	"certimate/internal/utils/rand"
 	"context"
 	"encoding/json"
 	"errors"
@@ -82,7 +83,7 @@ func (t *tencentCdn) uploadCert() (string, error) {
 
 	request.CertificatePublicKey = common.StringPtr(t.option.Certificate.Certificate)
 	request.CertificatePrivateKey = common.StringPtr(t.option.Certificate.PrivateKey)
-	request.Alias = common.StringPtr(t.option.Domain)
+	request.Alias = common.StringPtr(t.option.Domain + "_" + rand.RandStr(6))
 	request.Repeatable = common.BoolPtr(true)
 
 	response, err := client.UploadCertificate(request)
