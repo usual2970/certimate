@@ -14,6 +14,20 @@ export const getEmails = async () => {
   }
 };
 
+export const getSetting = async (name: string) => {
+  try {
+    const resp = await getPb()
+      .collection("settings")
+      .getFirstListItem<Setting>(`name='${name}'`);
+    return resp;
+  } catch (e) {
+    const rs: Setting = {
+      name: name,
+    };
+    return rs;
+  }
+};
+
 export const update = async (setting: Setting) => {
   const pb = getPb();
   let resp: Setting;

@@ -25,6 +25,7 @@ import { update } from "@/repository/settings";
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { useState } from "react";
+import { EmailsSetting } from "@/domain/settings";
 
 type EmailsEditProps = {
   className?: string;
@@ -51,7 +52,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if (emails.content.emails.includes(data.email)) {
+    if ((emails.content as EmailsSetting).emails.includes(data.email)) {
       form.setError("email", {
         message: "邮箱已存在",
       });
@@ -59,7 +60,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
     }
 
     // 保存到 config
-    const newEmails = [...emails.content.emails, data.email];
+    const newEmails = [...(emails.content as EmailsSetting).emails, data.email];
 
     try {
       const resp = await update({
