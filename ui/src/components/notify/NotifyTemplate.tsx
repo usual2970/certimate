@@ -1,0 +1,104 @@
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { useEffect, useState } from "react";
+import {
+  defaultNotifyTemplate,
+  NotifyTemplates,
+  NotifyTemplate as NotifyTemplateT,
+} from "@/domain/settings";
+import { getSetting, update } from "@/repository/settings";
+import { useToast } from "../ui/use-toast";
+
+const NotifyTemplate = () => {
+  const [id, setId] = useState("");
+  const [templates, setTemplates] = useState<NotifyTemplateT[]>([
+    defaultNotifyTemplate,
+  ]);
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const featchData = async () => {
+      const resp = await getSetting("templates");
+
+      if (resp.content) {
+        setTemplates((resp.content as NotifyTemplates).notifyTemplates);
+        setId(resp.id ? resp.id : "");
+      }
+    };
+    featchData();
+  }, []);
+
+  const handleTitleChange = (val: string) => {
+    const template = templates[0];
+
+    setTemplates([
+      {
+        ...template,
+        title: val,
+      },
+    ]);
+  };
+
+  const handleContentChange = (val: string) => {
+    const template = templates[0];
+
+    setTemplates([
+      {
+        ...template,
+        content: val,
+      },
+    ]);
+  };
+
+  const handleSaveClick = async () => {
+    const resp = await update({
+      id: id,
+      content: {
+        notifyTemplates: templates,
+      },
+      name: "templates",
+    });
+
+    if (resp.id) {
+      setId(resp.id);
+    }
+
+    toast({
+      title: "保存成功",
+      description: "通知模板保存成功",
+    });
+  };
+
+  return (
+    <div>
+      <Input
+        value={templates[0].title}
+        onChange={(e) => {
+          handleTitleChange(e.target.value);
+        }}
+      />
+
+      <div className="text-muted-foreground text-sm mt-1">
+        可选的变量, COUNT:即将过期张数
+      </div>
+
+      <Textarea
+        className="mt-2"
+        value={templates[0].content}
+        onChange={(e) => {
+          handleContentChange(e.target.value);
+        }}
+      ></Textarea>
+      <div className="text-muted-foreground text-sm mt-1">
+        可选的变量, COUNT:即将过期张数，DOMAINS:域名列表
+      </div>
+      <div className="flex justify-end mt-2">
+        <Button onClick={handleSaveClick}>保存</Button>
+      </div>
+    </div>
+  );
+};
+
+export default NotifyTemplate;

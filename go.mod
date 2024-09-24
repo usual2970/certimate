@@ -13,6 +13,7 @@ require (
 	github.com/go-acme/lego/v4 v4.17.4
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
+	github.com/nikoksr/notify v1.0.0
 	github.com/pkg/sftp v1.13.6
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
@@ -28,15 +29,17 @@ require (
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
+	github.com/blinkbean/dingtalk v1.1.3 // indirect
+	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 )
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.7 // indirect
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4 // indirect
-	github.com/alibabacloud-go/darabonba-openapi v0.1.18 // indirect
-    github.com/alibabacloud-go/dcdn-20180115/v3 v3.4.2
+	github.com/alibabacloud-go/dcdn-20180115/v3 v3.4.2
 	github.com/alibabacloud-go/debug v1.0.0 // indirect
 	github.com/alibabacloud-go/endpoint-util v1.1.0 // indirect
 	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect

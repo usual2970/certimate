@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/toaster";
-import { KeyRound, UserRound } from "lucide-react";
+import { KeyRound, Megaphone, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -22,9 +22,9 @@ const SettingLayout = () => {
       <div className="text-muted-foreground border-b dark:border-stone-500 py-5">
         偏好设置
       </div>
-      <div className="w-full mt-5 p-3 flex justify-center">
-        <Tabs defaultValue="account" className="" value={tabValue}>
-          <TabsList>
+      <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
+        <Tabs defaultValue="account" className="w-full" value={tabValue}>
+          <TabsList className="mx-auto">
             <TabsTrigger
               value="account"
               onClick={() => {
@@ -44,6 +44,17 @@ const SettingLayout = () => {
             >
               <KeyRound size={14} />
               <div className="ml-1">密码</div>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="notify"
+              onClick={() => {
+                navigate("/setting/notify");
+              }}
+              className="px-5"
+            >
+              <Megaphone size={14} />
+              <div className="ml-1">消息推送</div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value={tabValue}>

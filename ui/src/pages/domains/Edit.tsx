@@ -37,6 +37,7 @@ import { accessTypeMap } from "@/domain/access";
 import EmailsEdit from "@/components/certimate/EmailsEdit";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { EmailsSetting } from "@/domain/settings";
 
 const Edit = () => {
   const {
@@ -270,11 +271,13 @@ const Edit = () => {
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>邮箱列表</SelectLabel>
-                              {emails.content.emails.map((item) => (
-                                <SelectItem key={item} value={item}>
-                                  <div>{item}</div>
-                                </SelectItem>
-                              ))}
+                              {(emails.content as EmailsSetting).emails.map(
+                                (item) => (
+                                  <SelectItem key={item} value={item}>
+                                    <div>{item}</div>
+                                  </SelectItem>
+                                )
+                              )}
                             </SelectGroup>
                           </SelectContent>
                         </Select>

@@ -1,6 +1,6 @@
 import { Access } from "@/domain/access";
 import { ConfigData } from ".";
-import { Setting } from "@/domain/settings";
+import { EmailsSetting, Setting } from "@/domain/settings";
 import { AccessGroup } from "@/domain/access_groups";
 
 type Action =
@@ -57,7 +57,10 @@ export const configReducer = (
         emails: {
           ...state.emails,
           content: {
-            emails: [...state.emails.content.emails, action.payload],
+            emails: [
+              ...(state.emails.content as EmailsSetting).emails,
+              action.payload,
+            ],
           },
         },
       };
