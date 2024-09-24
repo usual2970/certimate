@@ -13,3 +13,10 @@ func BeijingTimeStr() string {
 	// 格式化为字符串
 	return now.Format("2006-01-02 15:04:05")
 }
+
+func GetTimeAfter(d time.Duration) string {
+
+	t := time.Now().UTC()
+
+	return t.Add(d).Format("2006-01-02 15:04:05")
+}

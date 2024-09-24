@@ -36,6 +36,7 @@ export type NotifyChannelDingTalk = {
 
 export type NotifyChannelTelegram = {
   apiToken: string;
+  chatId: string;
   enabled: boolean;
 };
 

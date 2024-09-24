@@ -23,6 +23,7 @@ const Telegram = () => {
     name: "notifyChannels",
     data: {
       apiToken: "",
+      chatId: "",
       enabled: false,
     },
   });
@@ -31,6 +32,7 @@ const Telegram = () => {
     const getDetailTelegram = () => {
       const df: NotifyChannelTelegram = {
         apiToken: "",
+        chatId: "",
         enabled: false,
       };
       if (!config.content) {
@@ -93,6 +95,20 @@ const Telegram = () => {
             data: {
               ...telegram.data,
               apiToken: e.target.value,
+            },
+          });
+        }}
+      />
+
+      <Input
+        placeholder="ChatId"
+        value={telegram.data.chatId}
+        onChange={(e) => {
+          setTelegram({
+            ...telegram,
+            data: {
+              ...telegram.data,
+              chatId: e.target.value,
             },
           });
         }}

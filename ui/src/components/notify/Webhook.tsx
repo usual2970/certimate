@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { update } from "@/repository/settings";
 import { getErrMessage } from "@/lib/error";
 import { useToast } from "../ui/use-toast";
+import { isValidURL } from "@/lib/url";
 
 type WebhookSetting = {
   id: string;
@@ -55,6 +56,16 @@ const Webhook = () => {
 
   const handleSaveClick = async () => {
     try {
+      webhook.data.url = webhook.data.url.trim();
+      if (!isValidURL(webhook.data.url)) {
+        toast({
+          title: "保存失败",
+          description: "Url格式不正确",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const resp = await update({
         ...config,
         name: "notifyChannels",

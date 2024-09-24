@@ -25,7 +25,7 @@ const Notify = () => {
           </Accordion>
         </div>
         <div className="border rounded-md p-5 mt-7 shadow-lg">
-          <Accordion type={"multiple"} className="dark:text-stone-200">
+          <Accordion type={"single"} className="dark:text-stone-200">
             <AccordionItem value="item-2" className="dark:border-stone-200">
               <AccordionTrigger>钉钉</AccordionTrigger>
               <AccordionContent>

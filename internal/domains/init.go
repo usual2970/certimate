@@ -1,6 +1,7 @@
 package domains
 
 import (
+	"certimate/internal/notify"
 	"certimate/internal/utils/app"
 	"context"
 )
@@ -24,6 +25,11 @@ func InitSchedule() {
 			app.GetApp().Logger().Error("加入到定时任务失败", "err", err)
 		}
 	}
+
+	// 过期提醒
+	app.GetScheduler().Add("expire", "0 0 * * *", func() {
+		notify.PushExpireMsg()
+	})
 
 	// 启动定时任务
 	app.GetScheduler().Start()
