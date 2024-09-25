@@ -30,7 +30,7 @@ Certimate aims to provide users with a secure and user-friendly SSL certificate 
 
 Installing Certimate is very simple, you can choose one of the following methods for installation:
 
-### 1. 二进制文件
+### 1. Binary File
 
 
 You can download the precompiled binary files directly from the [Releases page](https://github.com/usual2970/certimate/releases), and after extracting them, execute:
