@@ -9,15 +9,18 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { NotifyProvider } from "@/providers/notify";
+import { useTranslation } from "react-i18next";
 
 const Notify = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <NotifyProvider>
         <div className="border rounded-sm p-5 shadow-lg">
           <Accordion type={"multiple"} className="dark:text-stone-200">
             <AccordionItem value="item-1" className="dark:border-stone-200">
-              <AccordionTrigger>模板</AccordionTrigger>
+              <AccordionTrigger>{t('template')}</AccordionTrigger>
               <AccordionContent>
                 <NotifyTemplate />
               </AccordionContent>

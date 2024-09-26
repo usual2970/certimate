@@ -35,11 +35,13 @@ import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
 import { Earth } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 
 const Home = () => {
   const toast = useToast();
 
   const navigate = useNavigate();
+  const { t } = useTranslation()
 
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -127,23 +129,22 @@ const Home = () => {
       await save(domain);
 
       toast.toast({
-        title: "操作成功",
-        description: "已发起部署，请稍后查看部署日志。",
+        title: t('operation.succeed'),
+        description: t('domain.management.start.deploy.succeed.tips'),
       });
     } catch (e) {
       toast.toast({
-        title: "执行失败",
+        title: t('domain.management.execution.failed'),
         description: (
-          <>
-            执行失败，请查看
+          // 这里的 text 只是占位作用，实际文案在 src/i18n/locales/[lang].json
+          <Trans i18nKey="domain.management.execution.failed.tips">
+            text1
             <Link
               to={`/history?domain=${domain.id}`}
               className="underline text-blue-500"
-            >
-              部署日志
-            </Link>
-            查看详情。
-          </>
+            >text2</Link>
+            text3
+          </Trans>
         ),
         variant: "destructive",
       });
@@ -175,8 +176,10 @@ const Home = () => {
       <div className="">
         <Toaster />
         <div className="flex justify-between items-center">
-          <div className="text-muted-foreground">域名列表</div>
-          <Button onClick={handleCreateClick}>新增域名</Button>
+          <div className="text-muted-foreground">{t('domain.management.name')}</div>
+          <Button onClick={handleCreateClick}>
+            {t('domain.add')}
+          </Button>
         </div>
 
         {!domains.length ? (
@@ -187,26 +190,26 @@ const Home = () => {
               </span>
 
               <div className="text-center text-sm text-muted-foreground mt-3">
-                请添加域名开始部署证书吧。
+                {t('domain.management.empty')}
               </div>
               <Button onClick={handleCreateClick} className="mt-3">
-                添加域名
+                {t('domain.add')}
               </Button>
             </div>
           </>
         ) : (
           <>
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-              <div className="w-36">域名</div>
-              <div className="w-40">有效期限</div>
-              <div className="w-32">最近执行状态</div>
-              <div className="w-64">最近执行阶段</div>
-              <div className="w-40 sm:ml-2">最近执行时间</div>
-              <div className="w-24">是否启用</div>
-              <div className="grow">操作</div>
+              <div className="w-36">{t('domain')}</div>
+              <div className="w-40">{t('domain.management.expiry.date')}</div>
+              <div className="w-32">{t('domain.management.last.execution.status')}</div>
+              <div className="w-64">{t('domain.management.last.execution.stage')}</div>
+              <div className="w-40 sm:ml-2">{t('domain.management.last.execution.time')}</div>
+              <div className="w-24">{t('domain.management.enable')}</div>
+              <div className="grow">{t('operation')}</div>
             </div>
             <div className="sm:hidden flex text-sm text-muted-foreground">
-              域名
+              {t('domain')}
             </div>
 
             {domains.map((domain) => (
@@ -221,8 +224,8 @@ const Home = () => {
                   <div>
                     {domain.expiredAt ? (
                       <>
-                        <div>有效期90天</div>
-                        <div>{getDate(domain.expiredAt)}到期</div>
+                        <div>{t('domain.management.expiry.date1', { date: 90 })}</div>
+                        <div>{t('domain.management.expiry.date2', { date: getDate(domain.expiredAt) })}</div>
                       </>
                     ) : (
                       "---"
@@ -266,7 +269,7 @@ const Home = () => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <div className="border rounded-sm px-3 bg-background text-muted-foreground text-xs">
-                          {domain.enabled ? "禁用" : "启用"}
+                          {domain.enabled ? t('disable') : t('enable')}
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -278,7 +281,7 @@ const Home = () => {
                     className="p-0"
                     onClick={() => handleHistoryClick(domain.id)}
                   >
-                    部署历史
+                    {t('deployment.log.name')}
                   </Button>
                   <Show when={domain.enabled ? true : false}>
                     <Separator orientation="vertical" className="h-4 mx-2" />
@@ -287,7 +290,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleRightNowClick(domain)}
                     >
-                      立即部署
+                      {t('domain.management.start.deploying')}
                     </Button>
                   </Show>
 
@@ -304,7 +307,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleForceClick(domain)}
                     >
-                      强行部署
+                      {t('domain.management.forced.deployment')}
                     </Button>
                   </Show>
 
@@ -315,7 +318,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleDownloadClick(domain)}
                     >
-                      下载
+                      {t('download')}
                     </Button>
                   </Show>
 
@@ -325,24 +328,24 @@ const Home = () => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant={"link"} className="p-0">
-                            删除
+                            {t('delete')}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>删除域名</AlertDialogTitle>
+                            <AlertDialogTitle>{t('domain.delete')}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              确定要删除域名吗？
+                              {t('domain.management.delete.confirm')}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>取消</AlertDialogCancel>
+                            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => {
                                 handleDeleteClick(domain.id);
                               }}
                             >
-                              确认
+                              {t('confirm')}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -354,7 +357,7 @@ const Home = () => {
                         className="p-0"
                         onClick={() => handleEditClick(domain.id)}
                       >
-                        编辑
+                        {t('edit')}
                       </Button>
                     </>
                   )}

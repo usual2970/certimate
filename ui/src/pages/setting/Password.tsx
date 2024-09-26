@@ -14,29 +14,31 @@ import { getPb } from "@/repository/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { z } from "zod";
 
 const formSchema = z
   .object({
     oldPassword: z.string().min(10, {
-      message: "密码至少10个字符",
+      message: "setting.password.length.message",
     }),
     newPassword: z.string().min(10, {
-      message: "密码至少10个字符",
+      message: "setting.password.length.message",
     }),
     confirmPassword: z.string().min(10, {
-      message: "密码至少10个字符",
+      message: "setting.password.length.message",
     }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "两次密码不一致",
+    message: "setting.password.not.match",
     path: ["confirmPassword"],
   });
 
 const Password = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,8 +68,8 @@ const Password = () => {
 
       getPb().authStore.clear();
       toast({
-        title: "修改密码成功",
-        description: "请重新登录",
+        title: t('setting.password.change.succeed'),
+        description: t("setting.account.log.back.in"),
       });
       setTimeout(() => {
         navigate("/login");
@@ -75,7 +77,7 @@ const Password = () => {
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: "修改密码失败",
+        title: t('setting.password.change.failed'),
         description: message,
         variant: "destructive",
       });
@@ -95,9 +97,9 @@ const Password = () => {
               name="oldPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>当前密码</FormLabel>
+                  <FormLabel>{t('setting.password.current.password')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="当前密码" {...field} type="password" />
+                    <Input placeholder={t('setting.password.current.password')} {...field} type="password" />
                   </FormControl>
 
                   <FormMessage />
@@ -110,7 +112,7 @@ const Password = () => {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>新密码</FormLabel>
+                  <FormLabel>{t('setting.password.new.password')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="newPassword"
@@ -129,7 +131,7 @@ const Password = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>确认密码</FormLabel>
+                  <FormLabel>{t('setting.password.confirm.password')}</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="confirmPassword"
@@ -143,7 +145,7 @@ const Password = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button type="submit">确认修改</Button>
+              <Button type="submit">{t('setting.submit')}</Button>
             </div>
           </form>
         </Form>

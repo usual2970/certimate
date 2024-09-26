@@ -38,6 +38,7 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { EmailsSetting } from "@/domain/settings";
+import { useTranslation } from "react-i18next";
 
 const Edit = () => {
   const {
@@ -47,6 +48,7 @@ const Edit = () => {
   const [domain, setDomain] = useState<Domain>();
 
   const location = useLocation();
+  const { t } = useTranslation();
 
   const [tab, setTab] = useState<"base" | "advance">("base");
 
@@ -69,15 +71,15 @@ const Edit = () => {
   const formSchema = z.object({
     id: z.string().optional(),
     domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: "请输入正确的域名",
+      message: t('domain.management.edit.domain.verify.tips'),
     }),
     email: z.string().email().optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: "请选择DNS服务商授权配置",
+      message: t('domain.management.edit.dns.verify.tips'),
     }),
     targetAccess: z.string().optional(),
     targetType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
-      message: "请选择部署服务类型",
+      message: t('domain.management.edit.target.type.verify.tips'),
     }),
     variables: z.string().optional(),
     group: z.string().optional(),

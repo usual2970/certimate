@@ -6,6 +6,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { CircleUser, Earth, History, Home, Menu, Server } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 
@@ -22,12 +23,14 @@ import { cn } from "@/lib/utils";
 import { ConfigProvider } from "@/providers/config";
 import { getPb } from "@/repository/api";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import LocaleToggle from "@/components/LocaleToggle";
 
 import Version from "@/components/certimate/Version";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation()
 
   if (!getPb().authStore.isValid || !getPb().authStore.isAdmin) {
     return <Navigate to="/login" />;
@@ -70,7 +73,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Home className="h-4 w-4" />
-                    控制面板
+                    {t('dashboard')}
                   </Link>
                   <Link
                     to="/domains"
@@ -80,7 +83,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Earth className="h-4 w-4" />
-                    域名列表
+                    {t('domain.management.name')}
                   </Link>
                   <Link
                     to="/access"
@@ -90,7 +93,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Server className="h-4 w-4" />
-                    授权管理
+                    {t('menu.auth.management')}
                   </Link>
 
                   <Link
@@ -101,7 +104,7 @@ export default function Dashboard() {
                     )}
                   >
                     <History className="h-4 w-4" />
-                    部署历史
+                    {t('deployment.log.name')}
                   </Link>
                 </nav>
               </div>
@@ -138,7 +141,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Home className="h-5 w-5" />
-                      控制面板
+                      {t('dashboard')}
                     </Link>
                     <Link
                       to="/domains"
@@ -148,7 +151,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Earth className="h-5 w-5" />
-                      域名列表
+                      {t('domain.management.name')}
                     </Link>
                     <Link
                       to="/access"
@@ -158,7 +161,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Server className="h-5 w-5" />
-                      授权管理
+                      {t('menu.auth.management')}
                     </Link>
 
                     <Link
@@ -169,13 +172,14 @@ export default function Dashboard() {
                       )}
                     >
                       <History className="h-5 w-5" />
-                      部署历史
+                      {t('deployment.log.name')}
                     </Link>
                   </nav>
                 </SheetContent>
               </Sheet>
               <div className="w-full flex-1"></div>
               <ThemeToggle />
+              <LocaleToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -188,15 +192,15 @@ export default function Dashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>账户</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('account')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem onClick={handleSettingClick}>
-                    偏好设置
+                    {t('setting')}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem onClick={handleLogoutClick}>
-                    退出
+                    {t('logout')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

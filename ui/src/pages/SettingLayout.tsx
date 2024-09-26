@@ -4,11 +4,13 @@ import { KeyRound, Megaphone, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const SettingLayout = () => {
   const location = useLocation();
   const [tabValue, setTabValue] = useState("account");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -20,7 +22,7 @@ const SettingLayout = () => {
     <div>
       <Toaster />
       <div className="text-muted-foreground border-b dark:border-stone-500 py-5">
-        偏好设置
+        {t('setting')}
       </div>
       <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
         <Tabs defaultValue="account" className="w-full" value={tabValue}>
@@ -33,7 +35,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <UserRound size={14} />
-              <div className="ml-1">账户</div>
+              <div className="ml-1">{t('account')}</div>
             </TabsTrigger>
             <TabsTrigger
               value="password"
@@ -43,7 +45,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <KeyRound size={14} />
-              <div className="ml-1">密码</div>
+              <div className="ml-1">{t('password')}</div>
             </TabsTrigger>
 
             <TabsTrigger
@@ -54,7 +56,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <Megaphone size={14} />
-              <div className="ml-1">消息推送</div>
+              <div className="ml-1">{t('setting.notify.menu')}</div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value={tabValue}>
