@@ -163,7 +163,7 @@ Certimate is a free and open-source project, licensed under the [MIT License](LI
 
 You can support the development of Certimate in the following ways:
 
-* **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, you can submit code to us.
+* **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, [you can submit code to us](CONTRIBUTING_EN.md).
 * **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/usual2970/certimate/issues) to us.
 
 Support for more service providers, UI enhancements, bug fixes, and documentation improvements are all welcome. We encourage everyone to submit pull requests (PRs).
@@ -174,4 +174,4 @@ Support for more service providers, UI enhancements, bug fixes, and documentatio
 
 * Wechat Group 
 
-<img src="https://i.imgur.com/lJUfTeD.png" width="400"/>
+<img src="https://i.imgur.com/zSHEoIm.png" width="400"/>

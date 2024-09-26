@@ -161,7 +161,7 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 你可以通过以下方式来支持 Certimate 的开发：
 
-* 提交代码：如果你发现了 bug 或有新的功能需求，而你又有相关经验，可以提交代码给我们。
+* [提交代码：如果你发现了 bug 或有新的功能需求，而你又有相关经验，可以提交代码给我们](CONTRIBUTING.md)。
 * 提交 issue：功能建议或者 bug 可以[提交 issue](https://github.com/usual2970/certimate/issues) 给我们。
 
 支持更多服务商、UI 的优化改进、BUG 修复、文档完善等，欢迎大家提交 PR。
