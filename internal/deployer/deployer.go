@@ -21,6 +21,7 @@ const (
 	targetWebhook    = "webhook"
 	targetTencentCdn = "tencent-cdn"
 	targetQiniuCdn   = "qiniu-cdn"
+	targetLocal      = "local"
 )
 
 type DeployerOption struct {
@@ -127,7 +128,10 @@ func getWithAccess(record *models.Record, cert *applicant.Certificate, access *m
 	case targetTencentCdn:
 		return NewTencentCdn(option)
 	case targetQiniuCdn:
+
 		return NewQiNiu(option)
+	case targetLocal:
+		return NewLocal(option), nil
 	}
 	return nil, errors.New("not implemented")
 }

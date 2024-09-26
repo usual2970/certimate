@@ -9,6 +9,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["qiniu", ["七牛云", "/imgs/providers/qiniu.svg"]],
   ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
   ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
+  ["local", ["本地部署", "/imgs/providers/local.svg"]],
 ]);
 
 export const getProviderInfo = (t: string) => {
@@ -25,6 +26,7 @@ export const accessFormType = z.union(
     z.literal("qiniu"),
     z.literal("namesilo"),
     z.literal("godaddy"),
+    z.literal("local"),
   ],
   { message: "请选择云服务商" }
 );
@@ -45,7 +47,8 @@ export type Access = {
     | CloudflareConfig
     | QiniuConfig
     | NamesiloConfig
-    | GodaddyConfig;
+    | GodaddyConfig
+    | LocalConfig;
 
   deleted?: string;
   created?: string;
@@ -95,6 +98,12 @@ export type SSHConfig = {
   keyPath: string;
 };
 
+export type LocalConfig = {
+  command: string;
+  certPath: string;
+  keyPath: string;
+};
+
 export const getUsageByConfigType = (configType: string): AccessUsage => {
   switch (configType) {
     case "aliyun":
@@ -103,6 +112,7 @@ export const getUsageByConfigType = (configType: string): AccessUsage => {
     case "ssh":
     case "webhook":
     case "qiniu":
+    case "local":
       return "deploy";
 
     case "cloudflare":

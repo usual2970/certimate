@@ -12,6 +12,7 @@ import SettingLayout from "./pages/SettingLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Account from "./pages/setting/Account";
 import Notify from "./pages/setting/Notify";
+import SSLProvider from "./pages/setting/SSLProvider";
 
 export const router = createHashRouter([
   {
@@ -53,6 +54,10 @@ export const router = createHashRouter([
           {
             path: "/setting/notify",
             element: <Notify />,
+          },
+          {
+            path: "/setting/ssl-provider",
+            element: <SSLProvider />,
           },
         ],
       },

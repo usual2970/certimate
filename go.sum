@@ -388,8 +388,6 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.898 h1:LoYv
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.898/go.mod h1:c1j6YQ+vCbeA8kJ59Im4UnMd1GxovlpPBDhGZoewfn8=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992 h1:A6O89OlCJQUpNxGqC/E5By04UNKBryIt5olQIGOx8mg=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992/go.mod h1:BcvC7ZPdSlhRggVq4J1ToJlgv8bmODIAuSo0naFZOLo=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.992 h1:ttCM2rrkGipHMFTavrPExKCWcfNjT7AMQ5ERrPExdI4=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.992/go.mod h1:WtzarrflM+eoyD8vcRuIPd8fT5UXD4IhUry6iSAUnxc=
 github.com/tjfoc/gmsm v1.3.2 h1:7JVkAn5bvUJ7HtU08iW6UiD+UTmJTIToHCfeFzkcCxM=
 github.com/tjfoc/gmsm v1.3.2/go.mod h1:HaUcFuY0auTiaHB9MHFGCPx5IaLhTUd2atbCFBQXn9w=
 github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaOOb6ThwMmTEbhRwtKR97o=

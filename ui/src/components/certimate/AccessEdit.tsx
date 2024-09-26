@@ -32,6 +32,7 @@ import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessQiniuForm from "./AccessQiniuForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
 import AccessGodaddyFrom from "./AccessGodaddyForm";
+import AccessLocalForm from "./AccessLocalForm";
 
 type TargetConfigEditProps = {
   op: "add" | "edit";
@@ -126,6 +127,16 @@ export function AccessEdit({
     case "godaddy":
       form = (
         <AccessGodaddyFrom
+          data={data}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "local":
+      form = (
+        <AccessLocalForm
           data={data}
           onAfterReq={() => {
             setOpen(false);
