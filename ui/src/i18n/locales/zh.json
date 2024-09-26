@@ -1,0 +1,118 @@
+{
+    "username": "用户名",
+    "password": "密码",
+    "email": "邮箱",
+    "logout": "退出登录",
+    "setting": "设置",
+    "account": "账户",
+    "template": "模版",
+    "save": "保存",
+    "no.data": "暂无数据",
+    "status": "状态",
+    "operation": "操作",
+    "enable": "启用",
+    "disable": "禁用",
+    "deploy": "部署",
+    "download": "下载",
+    "delete": "删除",
+    "cancel": "取消",
+    "confirm": "确认",
+    "edit": "编辑",
+    "operation.succeed": "操作成功",
+    "save.succeed": "保存成功",
+    "save.failed": "保存失败",
+    "login.submit": "登录",
+    "login.username.no.empty.message": "请输入正确的邮箱地址",
+    "login.password.length.message": "密码至少10个字符",
+    "menu": {
+        "auth.management": "授权管理"
+    },
+    "theme": {
+        "light": "浅色",
+        "dark": "暗黑",
+        "system": "系统"
+    },
+    "dashboard": "控制面板",
+    "dashboard.all": "所有",
+    "dashboard.near.expired": "即将过期",
+    "dashboard.enabled": "启用中",
+    "dashboard.not.enabled": "未启用",
+    "dashboard.unit": "个",
+    "deployment.log": {
+        "name": "部署历史",
+        "empty": "你暂未创建任何部署，请先添加域名进行部署吧！",
+        "status": "状态",
+        "stage": "阶段",
+        "last.execution.time": "最近执行时间",
+        "detail.button.text": "日志",
+        "detail": "部署详情"
+    },
+    "pagination": {
+        "next": "下一页",
+        "prev": "上一页"
+    },
+    "domain": "域名",
+    "domain.add": "新增域名",
+    "domain.delete": "删除域名",
+    "domain.management": {
+        "name": "域名列表",
+        "start.deploy.succeed.tips": "已发起部署，请稍后查看部署日志。",
+        "execution.failed": "执行失败",
+        "execution.failed.tips": "执行失败，请在 <1>部署历史</1> 查看详情。",
+        "empty": "请添加域名开始部署证书吧。",
+        "expiry.date": "有效期限",
+        "expiry.date1": "有效期 {{date}} 天",
+        "expiry.date2": "{{date}} 到期",
+        "last.execution.time": "最近执行时间",
+        "last.execution.status": "最近执行状态",
+        "last.execution.stage": "最近执行阶段",
+        "enable": "是否启用",
+        "start.deploying": "立即部署",
+        "forced.deployment": "强行部署",
+        "delete.confirm": "确定要删除域名吗？",
+        "edit": {
+            "title": "编辑域名",
+            "domain.verify.tips": "域名",
+            "dns.verify.tips": "请选择DNS服务商授权配置",
+            "target.type.verify.tips": "请选择部署服务类型"
+        }
+    },
+    "setting.notify.menu": "消息推送",
+    "setting.submit": "确认修改",
+    "setting.account.email": {
+        "valid.message": "请输入正确的邮箱地址",
+        "placeholder": "请输入邮箱",
+        "change.succeed": "修改账户邮箱成功",
+        "change.failed": "修改账户邮箱失败"
+    },
+    "setting.account.log.back.in": "请重新登录",
+    "setting.password": {
+        "length.message": "密码至少10个字符",
+        "not.match": "两次密码不一致",
+        "change.succeed": "修改密码成功",
+        "change.failed": "修改密码失败",
+        "current.password": "当前密码",
+        "new.password": "新密码",
+        "confirm.password": "确认密码"
+    },
+    "setting.notify": {
+        "template": {
+            "save.succeed": "通知模板保存成功",
+            "variables.tips": {
+                "title": "可选的变量, COUNT:即将过期张数",
+                "content": "可选的变量, COUNT:即将过期张数，DOMAINS:域名列表"
+            }
+        },
+        "config": {
+            "enable": "是否启用",
+            "save.succeed": "配置保存成功",
+            "save.failed": "配置保存失败",
+            "save.failed.url.not.valid": "Url格式不正确"
+        }
+    },
+    "deploy.progress": {
+        "check": "检查",
+        "apply": "获取",
+        "deploy": "部署"
+    }
+}

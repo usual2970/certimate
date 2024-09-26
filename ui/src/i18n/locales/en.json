@@ -1,0 +1,11 @@
+{
+    "username": "username",
+    "password": "password",
+    "login.submit": "login.submit",
+    "login.username.no.empty.message": "login.username.no.empty.message",
+    "login.password.length.message": "login.password.length.message",
+    "menu.dashboard": "menu.dashboard",
+    "menu.domain.management": "menu.domain.management",
+    "menu.auth.management": "menu.auth.management",
+    "menu.deploy.log": "menu.deploy.log"
+}
