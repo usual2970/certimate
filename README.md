@@ -172,4 +172,4 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 * 微信群聊
 
-<img src="https://i.imgur.com/lJUfTeD.png" width="400"/>
+<img src="https://i.imgur.com/zSHEoIm.png" width="400"/>
