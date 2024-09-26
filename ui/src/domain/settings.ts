@@ -1,7 +1,11 @@
 export type Setting = {
   id?: string;
   name?: string;
-  content?: EmailsSetting | NotifyTemplates | NotifyChannels;
+  content?:
+    | EmailsSetting
+    | NotifyTemplates
+    | NotifyChannels
+    | SSLProviderSetting;
 };
 
 export type EmailsSetting = {
@@ -48,4 +52,15 @@ export type NotifyChannelWebhook = {
 export const defaultNotifyTemplate: NotifyTemplate = {
   title: "您有{COUNT}张证书即将过期",
   content: "有{COUNT}张证书即将过期,域名分别为{DOMAINS},请保持关注！",
+};
+
+export type SSLProvider = "letsencrypt" | "zerossl";
+
+export type SSLProviderSetting = {
+  provider: SSLProvider;
+  config: {
+    [key: string]: {
+      [key: string]: string;
+    };
+  };
 };

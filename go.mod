@@ -20,7 +20,6 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.22.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tag v1.0.992
 	golang.org/x/crypto v0.26.0
 )
 
