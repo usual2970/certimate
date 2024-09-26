@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/toaster";
-import { KeyRound, Megaphone, UserRound } from "lucide-react";
+import { KeyRound, Megaphone, ShieldCheck, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -55,6 +55,16 @@ const SettingLayout = () => {
             >
               <Megaphone size={14} />
               <div className="ml-1">消息推送</div>
+            </TabsTrigger>
+            <TabsTrigger
+              value="ssl-provider"
+              onClick={() => {
+                navigate("/setting/ssl-provider");
+              }}
+              className="px-5"
+            >
+              <ShieldCheck size={14} />
+              <div className="ml-1">证书厂商</div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value={tabValue}>
