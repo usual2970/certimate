@@ -54,6 +54,7 @@ git clone git@github.com:usual2970/certimate.git && cd certimate/docker && docke
 ```bash
 git clone EMAIL:usual2970/certimate.git
 cd certimate
+go mod vendor
 go run main.go serve
 ```
 

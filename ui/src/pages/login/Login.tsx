@@ -78,7 +78,7 @@ const Login = () => {
               <FormItem>
                 <FormLabel>密码</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} type="password" />
+                  <Input placeholder="password" {...field} type="password" />
                 </FormControl>
 
                 <FormMessage />
