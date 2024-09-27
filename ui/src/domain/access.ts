@@ -86,6 +86,7 @@ export type GodaddyConfig = {
 export type SSHConfig = {
   host: string;
   port: string;
+  preCommand?: string;
   command: string;
   username: string;
   password?: string;

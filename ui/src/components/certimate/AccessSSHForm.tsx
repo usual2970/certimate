@@ -79,6 +79,7 @@ const AccessSSHForm = ({
     key: z.string().min(0).max(20480),
     keyFile: z.any().optional(),
     command: z.string().min(1).max(2048),
+    preCommand: z.string().min(0).max(2048).optional(),
     certPath: z.string().min(0).max(2048),
     keyPath: z.string().min(0).max(2048),
   });
@@ -90,6 +91,7 @@ const AccessSSHForm = ({
     password: "",
     key: "",
     keyFile: "",
+    preCommand: "",
     command: "sudo service nginx restart",
     certPath: "/etc/nginx/ssl/certificate.crt",
     keyPath: "/etc/nginx/ssl/private.key",
@@ -112,6 +114,7 @@ const AccessSSHForm = ({
       certPath: config.certPath,
       keyPath: config.keyPath,
       command: config.command,
+      preCommand: config.preCommand,
     },
   });
 
@@ -133,6 +136,7 @@ const AccessSSHForm = ({
         password: data.password,
         key: data.key,
         command: data.command,
+        preCommand: data.preCommand,
         certPath: data.certPath,
         keyPath: data.keyPath,
       },
@@ -461,6 +465,21 @@ const AccessSSHForm = ({
                   <FormLabel>私钥上传路径</FormLabel>
                   <FormControl>
                     <Input placeholder="请输入私钥上传路径" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="preCommand"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>前置 Command</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="请输入要在部署证书前执行的前置命令" {...field} />
                   </FormControl>
 
                   <FormMessage />
