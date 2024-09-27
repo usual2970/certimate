@@ -71,20 +71,9 @@ func (s *ssh) Deploy(ctx context.Context) error {
 
 	// 执行前置命令
 	if access.PreCommand != "" {
-		session, err := client.NewSession()
+		err, stdout, stderr := s.sshExecCommand(client, access.Command)
 		if err != nil {
-			return fmt.Errorf("failed to create session: %w", err)
-		}
-		defer session.Close()
-		var stdoutBuf bytes.Buffer
-		session.Stdout = &stdoutBuf
-		var stderrBuf bytes.Buffer
-		session.Stderr = &stderrBuf
-
-		s.infos = append(s.infos, toStr("ssh为前置命令创建session成功", nil))
-
-		if err := session.Run(access.PreCommand); err != nil {
-			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdoutBuf.String(), stderrBuf.String())
+			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 		}
 	}
 
@@ -103,23 +92,28 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	s.infos = append(s.infos, toStr("ssh上传私钥成功", nil))
 
 	// 执行命令
+	err, stdout, stderr := s.sshExecCommand(client, access.Command)
+	if err != nil {
+		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+	}
+
+	s.infos = append(s.infos, toStr("ssh执行命令成功", stdout))
+
+	return nil
+}
+
+func (s *ssh) sshExecCommand(client *sshPkg.Client, command string) (error, string, string) {
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create session: %w", err)
+		return fmt.Errorf("failed to create ssh session: %w", err), "", ""
 	}
 	defer session.Close()
 	var stdoutBuf bytes.Buffer
 	session.Stdout = &stdoutBuf
 	var stderrBuf bytes.Buffer
 	session.Stderr = &stderrBuf
-	s.infos = append(s.infos, toStr("ssh创建session成功", nil))
-	if err := session.Run(access.Command); err != nil {
-		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdoutBuf.String(), stderrBuf.String())
-	}
-
-	s.infos = append(s.infos, toStr("ssh执行命令成功", []string{stdoutBuf.String()}))
-
-	return nil
+	err = session.Run(command)
+	return err, stdoutBuf.String(), stderrBuf.String()
 }
 
 func (s *ssh) upload(client *sshPkg.Client, content, path string) error {
