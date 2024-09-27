@@ -125,7 +125,7 @@ const Access = () => {
                         src={accessTypeMap.get(access.configType)?.[1]}
                         className="w-6"
                       />
-                      <div>{accessTypeMap.get(access.configType)?.[0]}</div>
+                      <div>{t(accessTypeMap.get(access.configType)?.[0] || '')}</div>
                     </div>
 
                     <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">

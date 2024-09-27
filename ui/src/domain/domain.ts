@@ -40,13 +40,13 @@ export const getLastDeployment = (domain: Domain): Deployment | undefined => {
 };
 
 export const targetTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun-cdn", ["阿里云-CDN", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-dcdn", ["阿里云-DCDN", "/imgs/providers/aliyun.svg"]],
-  ["tencent-cdn", ["腾讯云-CDN", "/imgs/providers/tencent.svg"]],
-  ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
-  ["qiniu-cdn", ["七牛云-CDN", "/imgs/providers/qiniu.svg"]],
-  ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
+  ["aliyun-cdn", ["aliyun.cdn", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-oss", ["aliyun.oss", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-dcdn", ["aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
+  ["tencent-cdn", ["tencent.cdn", "/imgs/providers/tencent.svg"]],
+  ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
+  ["qiniu-cdn", ["qiniu.cdn", "/imgs/providers/qiniu.svg"]],
+  ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());

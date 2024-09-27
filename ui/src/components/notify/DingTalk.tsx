@@ -102,7 +102,7 @@ const DingTalk = () => {
         }}
       />
       <Input
-        placeholder="加签的签名"
+        placeholder={t('access.form.ding.access.token.placeholder')}
         className="mt-2"
         value={dingtalk.data.secret}
         onChange={(e) => {

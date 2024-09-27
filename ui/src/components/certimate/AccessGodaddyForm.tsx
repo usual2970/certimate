@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -33,12 +34,13 @@ const AccessGodaddyFrom = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+  const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
-    apiKey: z.string().min(1).max(64),
-    apiSecret: z.string().min(1).max(64),
+    apiKey: z.string().min(1, 'access.form.go.daddy.api.key.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    apiSecret: z.string().min(1, 'access.form.go.daddy.api.secret.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
   });
 
   let config: GodaddyConfig = {
@@ -51,7 +53,7 @@ const AccessGodaddyFrom = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "godaddy",
       apiKey: config.apiKey,
       apiSecret: config.apiSecret,
@@ -115,9 +117,9 @@ const AccessGodaddyFrom = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -130,7 +132,7 @@ const AccessGodaddyFrom = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -145,7 +147,7 @@ const AccessGodaddyFrom = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -160,9 +162,9 @@ const AccessGodaddyFrom = ({
               name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>GODADDY_API_KEY</FormLabel>
+                  <FormLabel>{t('access.form.go.daddy.api.key')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入GODADDY_API_KEY" {...field} />
+                    <Input placeholder={t('access.form.go.daddy.api.key.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -175,9 +177,9 @@ const AccessGodaddyFrom = ({
               name="apiSecret"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>GODADDY_API_SECRET</FormLabel>
+                  <FormLabel>{t('access.form.go.daddy.api.secret')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入GODADDY_API_SECRET" {...field} />
+                    <Input placeholder={t('access.form.go.daddy.api.secret.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -186,7 +188,7 @@ const AccessGodaddyFrom = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

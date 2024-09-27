@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -29,12 +30,13 @@ const AccessAliyunForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+  const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
-    accessKeyId: z.string().min(1).max(64),
-    accessSecretId: z.string().min(1).max(64),
+    accessKeyId: z.string().min(1, 'access.form.access.key.id.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    accessSecretId: z.string().min(1, 'access.form.access.key.secret.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
   });
 
   let config: AliyunConfig = {
@@ -47,7 +49,7 @@ const AccessAliyunForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "aliyun",
       accessKeyId: config.accessKeyId,
       accessSecretId: config.accessKeySecret,
@@ -111,9 +113,9 @@ const AccessAliyunForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -126,7 +128,7 @@ const AccessAliyunForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -141,7 +143,7 @@ const AccessAliyunForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -156,9 +158,9 @@ const AccessAliyunForm = ({
               name="accessKeyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>AccessKeyId</FormLabel>
+                  <FormLabel>{t('access.form.access.key.id')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入AccessKeyId" {...field} />
+                    <Input placeholder={t('access.form.access.key.id.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -171,9 +173,9 @@ const AccessAliyunForm = ({
               name="accessSecretId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>AccessKeySecret</FormLabel>
+                  <FormLabel>{t('access.form.access.key.secret')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入AccessKeySecret" {...field} />
+                    <Input placeholder={t('access.form.access.key.secret.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -184,7 +186,7 @@ const AccessAliyunForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

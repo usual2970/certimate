@@ -373,7 +373,7 @@ const Edit = () => {
                                       className="w-6"
                                       src={targetTypeMap.get(key)?.[1]}
                                     />
-                                    <div>{targetTypeMap.get(key)?.[0]}</div>
+                                    <div>{t(targetTypeMap.get(key)?.[0] || '')}</div>
                                   </div>
                                 </SelectItem>
                               ))}

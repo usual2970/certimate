@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -28,11 +29,12 @@ const AccessCloudflareForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+  const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
-    dnsApiToken: z.string().min(1).max(64),
+    dnsApiToken: z.string().min(1, 'access.form.cloud.dns.api.token.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
   });
 
   let config: CloudflareConfig = {
@@ -44,7 +46,7 @@ const AccessCloudflareForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "cloudflare",
       dnsApiToken: config.dnsApiToken,
     },
@@ -106,9 +108,9 @@ const AccessCloudflareForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -121,7 +123,7 @@ const AccessCloudflareForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -136,7 +138,7 @@ const AccessCloudflareForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -151,9 +153,9 @@ const AccessCloudflareForm = ({
               name="dnsApiToken"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>CLOUD_DNS_API_TOKEN</FormLabel>
+                  <FormLabel>{t('access.form.cloud.dns.api.token')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入CLOUD_DNS_API_TOKEN" {...field} />
+                    <Input placeholder={t('access.form.cloud.dns.api.token.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -162,7 +164,7 @@ const AccessCloudflareForm = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

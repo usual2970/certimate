@@ -8,6 +8,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import AccessTencentForm from "./AccessTencentForm";
 
@@ -46,6 +47,7 @@ export function AccessEdit({
   className,
 }: TargetConfigEditProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const typeKeys = Array.from(accessTypeMap.keys());
 
@@ -146,25 +148,24 @@ export function AccessEdit({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>{op == "add" ? "添加" : "编辑"}授权</DialogTitle>
+          <DialogTitle>{op == "add" ? t('access.add') : t('access.edit')}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">
-            <Label>服务商</Label>
+            <Label>{t('access.type')}</Label>
 
             <Select
               onValueChange={(val) => {
-                console.log(val);
                 setConfigType(val);
               }}
               defaultValue={configType}
             >
               <SelectTrigger className="mt-3">
-                <SelectValue placeholder="请选择服务商" />
+                <SelectValue placeholder={t('access.type.not.empty')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>服务商</SelectLabel>
+                  <SelectLabel>{t('access.type')}</SelectLabel>
                   {typeKeys.map((key) => (
                     <SelectItem value={key} key={key}>
                       <div
@@ -177,7 +178,7 @@ export function AccessEdit({
                           src={accessTypeMap.get(key)?.[1]}
                           className="h-6 w-6"
                         />
-                        <div>{accessTypeMap.get(key)?.[0]}</div>
+                        <div>{t(accessTypeMap.get(key)?.[0] || '')}</div>
                       </div>
                     </SelectItem>
                   ))}

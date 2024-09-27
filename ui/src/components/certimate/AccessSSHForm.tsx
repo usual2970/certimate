@@ -24,6 +24,7 @@ import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { readFileContent } from "@/lib/file";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   SelectContent,
@@ -53,6 +54,7 @@ const AccessSSHForm = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [fileName, setFileName] = useState("");
+  const { t } = useTranslation();
 
   const originGroup = data ? (data.group ? data.group : "") : "";
 
@@ -62,25 +64,25 @@ const AccessSSHForm = ({
 
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
     host: z.string().refine(
       (str) => {
         return ipReg.test(str) || domainReg.test(str);
       },
       {
-        message: "请输入正确的域名或IP",
+        message: "zod.rule.ssh.host",
       }
     ),
     group: z.string().optional(),
-    port: z.string().min(1).max(5),
-    username: z.string().min(1).max(64),
-    password: z.string().min(0).max(64),
-    key: z.string().min(0).max(20480),
+    port: z.string().min(1, 'access.form.ssh.port.not.empty').max(5, t('zod.rule.string.max', { max: 5 })),
+    username: z.string().min(1, 'username.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    password: z.string().min(0, 'password.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    key: z.string().min(0, 'access.form.ssh.key.not.empty').max(20480, t('zod.rule.string.max', { max: 20480 })),
     keyFile: z.any().optional(),
-    command: z.string().min(1).max(2048),
-    certPath: z.string().min(0).max(2048),
-    keyPath: z.string().min(0).max(2048),
+    command: z.string().min(1, 'access.form.ssh.command.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
+    certPath: z.string().min(0, 'access.form.ssh.cert.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
+    keyPath: z.string().min(0, 'access.form.ssh.key.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
   });
 
   let config: SSHConfig = {
@@ -100,7 +102,7 @@ const AccessSSHForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "ssh",
       group: data?.group,
       host: config.host,
@@ -219,9 +221,9 @@ const AccessSSHForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -235,12 +237,12 @@ const AccessSSHForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="w-full flex justify-between">
-                    <div>授权配置组(用于将一个域名证书部署到多个 ssh 主机)</div>
+                    <div>{t('access.form.ssh.group.label')}</div>
                     <AccessGroupEdit
                       trigger={
                         <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                           <Plus size={14} />
-                          新增
+                          {t('add')}
                         </div>
                       }
                     />
@@ -255,7 +257,7 @@ const AccessSSHForm = ({
                       }}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="请选择分组" />
+                        <SelectValue placeholder={t('access.group.not.empty')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="emptyId">
@@ -295,7 +297,7 @@ const AccessSSHForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -310,7 +312,7 @@ const AccessSSHForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -325,9 +327,9 @@ const AccessSSHForm = ({
                 name="host"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <FormLabel>服务器HOST</FormLabel>
+                    <FormLabel>{t('access.form.ssh.host')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="请输入Host" {...field} />
+                      <Input placeholder={t('access.form.ssh.host.not.empty')} {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -340,10 +342,10 @@ const AccessSSHForm = ({
                 name="port"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>SSH端口</FormLabel>
+                    <FormLabel>{t('access.form.ssh.port')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="请输入Port"
+                        placeholder={t('access.form.ssh.port.not.empty')}
                         {...field}
                         type="number"
                       />
@@ -360,9 +362,9 @@ const AccessSSHForm = ({
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>用户名</FormLabel>
+                  <FormLabel>{t('username')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入用户名" {...field} />
+                    <Input placeholder={t('username.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -375,10 +377,10 @@ const AccessSSHForm = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>密码</FormLabel>
+                  <FormLabel>{t('password')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="请输入密码"
+                      placeholder={t('password.not.empty')}
                       {...field}
                       type="password"
                     />
@@ -394,9 +396,9 @@ const AccessSSHForm = ({
               name="key"
               render={({ field }) => (
                 <FormItem hidden>
-                  <FormLabel>Key（使用证书登录）</FormLabel>
+                  <FormLabel>{t('access.form.ssh.key')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入Key" {...field} />
+                    <Input placeholder={t('access.form.ssh.key.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -409,7 +411,7 @@ const AccessSSHForm = ({
               name="keyFile"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Key（使用证书登录）</FormLabel>
+                  <FormLabel>{t('access.form.ssh.key')}</FormLabel>
                   <FormControl>
                     <div>
                       <Button
@@ -419,10 +421,10 @@ const AccessSSHForm = ({
                         className="w-48"
                         onClick={handleSelectFileClick}
                       >
-                        {fileName ? fileName : "请选择文件"}
+                        {fileName ? fileName : t('access.form.ssh.key.file.not.empty')}
                       </Button>
                       <Input
-                        placeholder="请输入Key"
+                        placeholder={t('access.form.ssh.key.not.empty')}
                         {...field}
                         ref={fileInputRef}
                         className="hidden"
@@ -443,9 +445,9 @@ const AccessSSHForm = ({
               name="certPath"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>证书上传路径</FormLabel>
+                  <FormLabel>{t('access.form.ssh.cert.path')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入证书上传路径" {...field} />
+                    <Input placeholder={t('access.form.ssh.cert.path.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -458,9 +460,9 @@ const AccessSSHForm = ({
               name="keyPath"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>私钥上传路径</FormLabel>
+                  <FormLabel>{t('access.form.ssh.key.path')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入私钥上传路径" {...field} />
+                    <Input placeholder={t('access.form.ssh.key.path.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -473,9 +475,9 @@ const AccessSSHForm = ({
               name="command"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Command</FormLabel>
+                  <FormLabel>{t('access.form.ssh.command')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="请输入要执行的命令" {...field} />
+                    <Textarea placeholder={t('access.form.ssh.command.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -486,7 +488,7 @@ const AccessSSHForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

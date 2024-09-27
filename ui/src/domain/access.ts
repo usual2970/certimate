@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const accessTypeMap: Map<string, [string, string]> = new Map([
-  ["tencent", ["腾讯云", "/imgs/providers/tencent.svg"]],
-  ["aliyun", ["阿里云", "/imgs/providers/aliyun.svg"]],
-  ["cloudflare", ["Cloudflare", "/imgs/providers/cloudflare.svg"]],
-  ["namesilo", ["Namesilo", "/imgs/providers/namesilo.svg"]],
-  ["godaddy", ["GoDaddy", "/imgs/providers/godaddy.svg"]],
-  ["qiniu", ["七牛云", "/imgs/providers/qiniu.svg"]],
-  ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
-  ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
+  ["tencent", ["tencent", "/imgs/providers/tencent.svg"]],
+  ["aliyun", ["aliyun", "/imgs/providers/aliyun.svg"]],
+  ["cloudflare", ["cloudflare", "/imgs/providers/cloudflare.svg"]],
+  ["namesilo", ["namesilo", "/imgs/providers/namesilo.svg"]],
+  ["godaddy", ["go.daddy", "/imgs/providers/godaddy.svg"]],
+  ["qiniu", ["qiniu", "/imgs/providers/qiniu.svg"]],
+  ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
+  ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
 export const getProviderInfo = (t: string) => {
@@ -26,7 +26,7 @@ export const accessFormType = z.union(
     z.literal("namesilo"),
     z.literal("godaddy"),
   ],
-  { message: "请选择云服务商" }
+  { message: "access.not.empty" }
 );
 
 type AccessUsage = "apply" | "deploy" | "all";
