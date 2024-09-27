@@ -136,7 +136,13 @@ func (s *ssh) getClient(access *sshAccess) (*sshPkg.Client, error) {
 	var authMethod sshPkg.AuthMethod
 
 	if access.Key != "" {
-		signer, err := sshPkg.ParsePrivateKey([]byte(access.Key))
+		var signer sshPkg.Signer
+		var err error
+		if access.Password != "" {
+			signer, err = sshPkg.ParsePrivateKeyWithPassphrase([]byte(access.Key), []byte(access.Password))
+		} else {
+			signer, err = sshPkg.ParsePrivateKey([]byte(access.Key))
+		}
 		if err != nil {
 			return nil, err
 		}
