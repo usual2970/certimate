@@ -25,6 +25,7 @@ import { update } from "@/repository/access_group";
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type AccessGroupEditProps = {
   className?: string;
@@ -35,9 +36,10 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
   const { reloadAccessGroups } = useConfig();
 
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const formSchema = z.object({
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.group.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -78,14 +80,13 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>添加分组</DialogTitle>
+          <DialogTitle>{t('access.group.add')}</DialogTitle>
         </DialogHeader>
 
         <div className="container py-3">
           <Form {...form}>
             <form
               onSubmit={(e) => {
-                console.log(e);
                 e.stopPropagation();
                 form.handleSubmit(onSubmit)(e);
               }}
@@ -96,9 +97,9 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>组名</FormLabel>
+                    <FormLabel>{t('access.group.name')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="请输入组名" {...field} type="text" />
+                      <Input placeholder={t('access.group.name.not.empty')} {...field} type="text" />
                     </FormControl>
 
                     <FormMessage />
@@ -107,7 +108,7 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">保存</Button>
+                <Button type="submit">{t('save')}</Button>
               </div>
             </form>
           </Form>

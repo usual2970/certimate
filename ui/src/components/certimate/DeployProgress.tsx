@@ -1,3 +1,8 @@
+import { useTranslation } from "react-i18next";
+
+import { cn } from "@/lib/utils"
+
+
 import { Separator } from "../ui/separator";
 
 type DeployProgressProps = {
@@ -6,80 +11,63 @@ type DeployProgressProps = {
 };
 
 const DeployProgress = ({ phase, phaseSuccess }: DeployProgressProps) => {
-  let rs = <> </>;
+  const { t } = useTranslation();
+
+  let step = 0;
+
   if (phase === "check") {
-    if (phaseSuccess) {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-green-600">检查 </div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap  text-muted-foreground">获取</div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap text-muted-foreground">部署</div>
-        </div>
-      );
-    } else {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-red-600">检查 </div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap  text-muted-foreground">获取</div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap text-muted-foreground">部署</div>
-        </div>
-      );
-    }
+    step = 1
+  } else if (phase === "apply") {
+    step = 2
+  } else if (phase === "deploy") {
+    step = 3
   }
 
-  if (phase === "apply") {
-    if (phaseSuccess) {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-green-600">检查 </div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap  text-green-600">获取</div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap text-muted-foreground">部署</div>
-        </div>
-      );
-    } else {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-green-600">检查 </div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap  text-red-600">获取</div>
-          <Separator className="h-1 grow" />
-          <div className="text-xs text-nowrap text-muted-foreground">部署</div>
-        </div>
-      );
-    }
-  }
-
-  if (phase === "deploy") {
-    if (phaseSuccess) {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-green-600">检查 </div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap  text-green-600">获取</div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap text-green-600">部署</div>
-        </div>
-      );
-    } else {
-      rs = (
-        <div className="flex items-center">
-          <div className="text-xs text-nowrap text-green-600">检查 </div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap  text-green-600">获取</div>
-          <Separator className="h-1 grow bg-green-600" />
-          <div className="text-xs text-nowrap text-red-600">部署</div>
-        </div>
-      );
-    }
-  }
-
-  return rs;
+  return (
+    <div className="flex items-center">
+      <div className={
+        cn(
+          "text-xs text-nowrap",
+          step === 1 ? phaseSuccess ? "text-green-600" : "text-red-600" : "",
+          step > 1 ? "text-green-600" : "",
+        )
+      }>
+        {t('deploy.progress.check')}
+      </div>
+      <Separator className={
+        cn(
+          "h-1 grow max-w-[60px]",
+          step > 1 ? "bg-green-600" : "",
+        )
+      } />
+      <div className={
+        cn(
+          "text-xs text-nowrap",
+          step < 2 ? "text-muted-foreground" : "",
+          step === 2 ? phaseSuccess ? "text-green-600" : "text-red-600" : "",
+          step > 2 ? "text-green-600" : "",
+        )
+      }>
+        {t('deploy.progress.apply')}
+      </div>
+      <Separator className={
+        cn(
+          "h-1 grow max-w-[60px]",
+          step > 2 ? "bg-green-600" : "",
+        )
+      } />
+      <div className={
+        cn(
+          "text-xs text-nowrap",
+          step < 3 ? "text-muted-foreground" : "",
+          step === 3 ? phaseSuccess ? "text-green-600" : "text-red-600" : "",
+          step > 3 ? "text-green-600" : "",
+        )
+      }>
+        {t('deploy.progress.deploy')}
+      </div>
+    </div>
+  )
 };
 
 export default DeployProgress;

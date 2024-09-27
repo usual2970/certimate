@@ -24,12 +24,14 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
   const [statistic, setStatistic] = useState<Statistic>();
   const [deployments, setDeployments] = useState<Deployment[]>();
 
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchStatistic = async () => {
@@ -55,7 +57,7 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">控制面板</div>
+        <div className="text-muted-foreground">{t('dashboard')}</div>
       </div>
       <div className="flex mt-10 gap-5 flex-col flex-wrap md:flex-row">
         <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
@@ -63,7 +65,9 @@ const Dashboard = () => {
             <SquareSigma size={48} strokeWidth={1} className="text-blue-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">所有</div>
+            <div className="text-muted-foreground font-semibold">
+              {t('dashboard.all')}
+            </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.total ? (
@@ -74,7 +78,9 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">个</div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">
+                {t("dashboard.unit")}
+              </div>
             </div>
           </div>
         </div>
@@ -84,7 +90,9 @@ const Dashboard = () => {
             <CalendarX2 size={48} strokeWidth={1} className="text-red-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">即将过期</div>
+            <div className="text-muted-foreground font-semibold">
+              {t('dashboard.near.expired')}
+            </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.expired ? (
@@ -95,7 +103,9 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">个</div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">
+                {t("dashboard.unit")}
+              </div>
             </div>
           </div>
         </div>
@@ -109,7 +119,9 @@ const Dashboard = () => {
             />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">启用中</div>
+            <div className="text-muted-foreground font-semibold">
+              {t('dashboard.enabled')}
+            </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.enabled ? (
@@ -120,7 +132,9 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">个</div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">
+                {t("dashboard.unit")}
+              </div>
             </div>
           </div>
         </div>
@@ -130,7 +144,7 @@ const Dashboard = () => {
             <Ban size={48} strokeWidth={1} className="text-gray-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">未启用</div>
+            <div className="text-muted-foreground font-semibold">{t('dashboard.not.enabled')}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.disabled ? (
@@ -144,19 +158,23 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">个</div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">
+                {t("dashboard.unit")}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div>
-        <div className="text-muted-foreground mt-5 text-sm">部署历史</div>
+        <div className="text-muted-foreground mt-5 text-sm">
+          {t('deployment.log.name')}
+        </div>
 
         {deployments?.length == 0 ? (
           <>
             <Alert className="max-w-[40em] mt-10">
-              <AlertTitle>暂无数据</AlertTitle>
+              <AlertTitle>{t('no.data')}</AlertTitle>
               <AlertDescription>
                 <div className="flex items-center mt-5">
                   <div>
@@ -164,7 +182,7 @@ const Dashboard = () => {
                   </div>
                   <div className="ml-2">
                     {" "}
-                    你暂未创建任何部署，请先添加域名进行部署吧！
+                    {t('deployment.log.empty')}
                   </div>
                 </div>
                 <div className="mt-2 flex justify-end">
@@ -173,7 +191,7 @@ const Dashboard = () => {
                       navigate("/edit");
                     }}
                   >
-                    添加域名
+                    {t('domain.add')}
                   </Button>
                 </div>
               </AlertDescription>
@@ -182,16 +200,16 @@ const Dashboard = () => {
         ) : (
           <>
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-              <div className="w-48">域名</div>
+              <div className="w-48">{t('domain')}</div>
 
-              <div className="w-24">状态</div>
-              <div className="w-56">阶段</div>
-              <div className="w-56 sm:ml-2 text-center">最近执行时间</div>
+              <div className="w-24">{t('deployment.log.status')}</div>
+              <div className="w-56">{t('deployment.log.stage')}</div>
+              <div className="w-56 sm:ml-2 text-center">{t('deployment.log.last.execution.time')}</div>
 
-              <div className="grow">操作</div>
+              <div className="grow">{t('operation')}</div>
             </div>
             <div className="sm:hidden flex text-sm text-muted-foreground">
-              部署历史
+              {t('deployment.log.name')}
             </div>
 
             {deployments?.map((deployment) => (
@@ -218,14 +236,14 @@ const Dashboard = () => {
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button variant={"link"} className="p-0">
-                        日志
+                        {t('deployment.log.detail.button.text')}
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="sm:max-w-5xl">
                       <SheetHeader>
                         <SheetTitle>
                           {deployment.expand.domain?.domain}-{deployment.id}
-                          部署详情
+                          {t('deployment.log.detail')}
                         </SheetTitle>
                       </SheetHeader>
                       <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh]">

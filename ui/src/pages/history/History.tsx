@@ -17,11 +17,13 @@ import { list } from "@/repository/deployment";
 import { Smile } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const History = () => {
   const navigate = useNavigate();
   const [deployments, setDeployments] = useState<Deployment[]>();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   const domain = searchParams.get("domain");
 
   useEffect(() => {
@@ -38,11 +40,11 @@ const History = () => {
 
   return (
     <ScrollArea className="h-[80vh] overflow-hidden">
-      <div className="text-muted-foreground">部署历史</div>
+      <div className="text-muted-foreground">{t('deployment.log.name')}</div>
       {!deployments?.length ? (
         <>
           <Alert className="max-w-[40em] mx-auto mt-20">
-            <AlertTitle>暂无数据</AlertTitle>
+            <AlertTitle>{t('no.data')}</AlertTitle>
             <AlertDescription>
               <div className="flex items-center mt-5">
                 <div>
@@ -50,7 +52,7 @@ const History = () => {
                 </div>
                 <div className="ml-2">
                   {" "}
-                  你暂未创建任何部署，请先添加域名进行部署吧！
+                  {t('deployment.log.empty')}
                 </div>
               </div>
               <div className="mt-2 flex justify-end">
@@ -59,7 +61,7 @@ const History = () => {
                     navigate("/");
                   }}
                 >
-                  添加域名
+                  {t('domain.add')}
                 </Button>
               </div>
             </AlertDescription>
@@ -68,16 +70,16 @@ const History = () => {
       ) : (
         <>
           <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-            <div className="w-48">域名</div>
+            <div className="w-48">{t('domain')}</div>
 
-            <div className="w-24">状态</div>
-            <div className="w-56">阶段</div>
-            <div className="w-56 sm:ml-2 text-center">最近执行时间</div>
+            <div className="w-24">{t('deployment.log.status')}</div>
+            <div className="w-56">{t('deployment.log.stage')}</div>
+            <div className="w-56 sm:ml-2 text-center">{t('deployment.log.last.execution.time')}</div>
 
-            <div className="grow">操作</div>
+            <div className="grow">{t('operation')}</div>
           </div>
           <div className="sm:hidden flex text-sm text-muted-foreground">
-            部署历史
+            {t('deployment.log.name')}
           </div>
 
           {deployments?.map((deployment) => (
@@ -104,14 +106,14 @@ const History = () => {
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant={"link"} className="p-0">
-                      日志
+                      {t('deployment.log.detail.button.text')}
                     </Button>
                   </SheetTrigger>
                   <SheetContent className="sm:max-w-5xl">
                     <SheetHeader>
                       <SheetTitle>
                         {deployment.expand.domain?.domain}-{deployment.id}
-                        部署详情
+                        {t('deployment.log.detail')}
                       </SheetTitle>
                     </SheetHeader>
                     <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh]">

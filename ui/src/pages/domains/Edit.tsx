@@ -38,6 +38,7 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { EmailsSetting } from "@/domain/settings";
+import { useTranslation } from "react-i18next";
 
 const Edit = () => {
   const {
@@ -47,6 +48,7 @@ const Edit = () => {
   const [domain, setDomain] = useState<Domain>();
 
   const location = useLocation();
+  const { t } = useTranslation();
 
   const [tab, setTab] = useState<"base" | "advance">("base");
 
@@ -69,15 +71,15 @@ const Edit = () => {
   const formSchema = z.object({
     id: z.string().optional(),
     domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: "请输入正确的域名",
+      message: 'domain.not.empty.verify.message',
     }),
-    email: z.string().email().optional(),
+    email: z.string().email('email.valid.message').optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: "请选择DNS服务商授权配置",
+      message: 'domain.management.edit.dns.access.not.empty.message',
     }),
     targetAccess: z.string().optional(),
     targetType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
-      message: "请选择部署服务类型",
+      message: 'domain.management.edit.target.type.not.empty.message',
     }),
     variables: z.string().optional(),
     group: z.string().optional(),
@@ -138,11 +140,11 @@ const Edit = () => {
     if (group == "" && targetAccess == "") {
       form.setError("group", {
         type: "manual",
-        message: "部署授权和部署授权组至少选一个",
+        message: 'domain.management.edit.target.access.verify.msg',
       });
       form.setError("targetAccess", {
         type: "manual",
-        message: "部署授权和部署授权组至少选一个",
+        message: 'domain.management.edit.target.access.verify.msg',
       });
       return;
     }
@@ -162,13 +164,13 @@ const Edit = () => {
 
     try {
       await save(req);
-      let description = "域名编辑成功";
+      let description = t('domain.management.edit.succeed.tips');
       if (req.id == "") {
-        description = "域名添加成功";
+        description = t('domain.management.add.succeed.tips');
       }
 
       toast({
-        title: "成功",
+        title: t('succeed'),
         description,
       });
       navigate("/domains");
@@ -193,7 +195,7 @@ const Edit = () => {
       <div className="">
         <Toaster />
         <div className=" h-5 text-muted-foreground">
-          {domain?.id ? "编辑" : "新增"}域名
+          {domain?.id ? t('domain.edit') : t('domain.add')}
         </div>
         <div className="mt-5 flex w-full justify-center md:space-x-10 flex-col md:flex-row">
           <div className="w-full md:w-[200px] text-muted-foreground space-x-3 md:space-y-3 flex-row md:flex-col flex">
@@ -206,7 +208,7 @@ const Edit = () => {
                 setTab("base");
               }}
             >
-              基础设置
+              {t('basic.setting')}
             </div>
             <div
               className={cn(
@@ -217,7 +219,7 @@ const Edit = () => {
                 setTab("advance");
               }}
             >
-              高级设置
+              {t('advanced.setting')}
             </div>
           </div>
 
@@ -232,9 +234,9 @@ const Edit = () => {
                   name="domain"
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
-                      <FormLabel>域名</FormLabel>
+                      <FormLabel>{t('domain')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="请输入域名" {...field} />
+                        <Input placeholder={t('domain.not.empty.verify.message')} {...field} />
                       </FormControl>
 
                       <FormMessage />
@@ -247,12 +249,12 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="flex w-full justify-between">
-                        <div>Email（申请证书需要提供邮箱）</div>
+                        <div>{t('email') + t('domain.management.edit.email.description')}</div>
                         <EmailsEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              新增
+                              {t('add')}
                             </div>
                           }
                         />
@@ -266,11 +268,11 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择邮箱" />
+                            <SelectValue placeholder={t('domain.management.edit.email.not.empty.message')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>邮箱列表</SelectLabel>
+                              <SelectLabel>{t('email.list')}</SelectLabel>
                               {(emails.content as EmailsSetting).emails.map(
                                 (item) => (
                                   <SelectItem key={item} value={item}>
@@ -293,12 +295,12 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="flex w-full justify-between">
-                        <div>DNS 服务商授权配置</div>
+                        <div>{t('domain.management.edit.dns.access.label')}</div>
                         <AccessEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              新增
+                              {t('add')}
                             </div>
                           }
                           op="add"
@@ -313,11 +315,11 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择授权配置" />
+                            <SelectValue placeholder={t('domain.management.edit.access.not.empty.message')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>服务商授权配置</SelectLabel>
+                              <SelectLabel>{t('domain.management.edit.access.label')}</SelectLabel>
                               {accesses
                                 .filter((item) => item.usage != "deploy")
                                 .map((item) => (
@@ -349,7 +351,7 @@ const Edit = () => {
                   name="targetType"
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
-                      <FormLabel>部署服务类型</FormLabel>
+                      <FormLabel>{t('domain.management.edit.target.type')}</FormLabel>
                       <FormControl>
                         <Select
                           {...field}
@@ -359,11 +361,11 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择部署服务类型" />
+                            <SelectValue placeholder={t('domain.management.edit.target.type.not.empty.message')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>部署服务类型</SelectLabel>
+                              <SelectLabel>{t('domain.management.edit.target.type')}</SelectLabel>
                               {targetTypeKeys.map((key) => (
                                 <SelectItem key={key} value={key}>
                                   <div className="flex items-center space-x-2">
@@ -371,7 +373,7 @@ const Edit = () => {
                                       className="w-6"
                                       src={targetTypeMap.get(key)?.[1]}
                                     />
-                                    <div>{targetTypeMap.get(key)?.[0]}</div>
+                                    <div>{t(targetTypeMap.get(key)?.[0] || '')}</div>
                                   </div>
                                 </SelectItem>
                               ))}
@@ -390,12 +392,12 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="w-full flex justify-between">
-                        <div>部署服务商授权配置</div>
+                        <div>{t('domain.management.edit.target.access')}</div>
                         <AccessEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              新增
+                              {t('add')}
                             </div>
                           }
                           op="add"
@@ -409,12 +411,12 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择授权配置" />
+                            <SelectValue placeholder={t('domain.management.edit.target.access.not.empty.message')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>
-                                服务商授权配置{form.getValues().targetAccess}
+                                {t('domain.management.edit.target.access.content.label')} {form.getValues().targetAccess}
                               </SelectLabel>
                               <SelectItem value="emptyId">
                                 <div className="flex items-center space-x-2">
@@ -451,7 +453,7 @@ const Edit = () => {
                     <FormItem hidden={tab != "advance" || targetType != "ssh"}>
                       <FormLabel className="w-full flex justify-between">
                         <div>
-                          部署配置组(用于将一个域名证书部署到多个 ssh 主机)
+                          {t('domain.management.edit.group.label')}
                         </div>
                       </FormLabel>
                       <FormControl>
@@ -464,7 +466,7 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择分组" />
+                            <SelectValue placeholder={t('domain.management.edit.group.not.empty.message')} />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="emptyId">
@@ -509,10 +511,10 @@ const Edit = () => {
                   name="variables"
                   render={({ field }) => (
                     <FormItem hidden={tab != "advance"}>
-                      <FormLabel>变量</FormLabel>
+                      <FormLabel>{t('variables')}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={`可在SSH部署中使用,形如:\nkey=val;\nkey2=val2;`}
+                          placeholder={t('domain.management.edit.variables.placeholder')}
                           {...field}
                           className="placeholder:whitespace-pre-wrap"
                         />
@@ -528,10 +530,10 @@ const Edit = () => {
                   name="nameservers"
                   render={({ field }) => (
                     <FormItem hidden={tab != "advance"}>
-                      <FormLabel>域名服务器</FormLabel>
+                      <FormLabel>{t('dns')}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={`自定义域名服务器,多个用分号隔开,如:\n8.8.8.8;\n8.8.4.4;`}
+                          placeholder={t('domain.management.edit.dns.placeholder')}
                           {...field}
                           className="placeholder:whitespace-pre-wrap"
                         />
@@ -543,7 +545,7 @@ const Edit = () => {
                 />
 
                 <div className="flex justify-end">
-                  <Button type="submit">保存</Button>
+                  <Button type="submit">{t('save')}</Button>
                 </div>
               </form>
             </Form>

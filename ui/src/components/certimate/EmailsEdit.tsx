@@ -10,6 +10,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   FormControl,
@@ -39,9 +40,10 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   } = useConfig();
 
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const formSchema = z.object({
-    email: z.string().email(),
+    email: z.string().email("email.valid.message"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,7 +56,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if ((emails.content as EmailsSetting).emails.includes(data.email)) {
       form.setError("email", {
-        message: "邮箱已存在",
+        message: "email.already.exist",
       });
       return;
     }
@@ -100,7 +102,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>添加邮箱</DialogTitle>
+          <DialogTitle>{t('email.add')}</DialogTitle>
         </DialogHeader>
 
         <div className="container py-3">
@@ -118,9 +120,9 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>邮箱</FormLabel>
+                    <FormLabel>{t('email')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="请输入邮箱" {...field} type="email" />
+                      <Input placeholder={t('email.not.empty.message')} {...field} type="email" />
                     </FormControl>
 
                     <FormMessage />
@@ -129,7 +131,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">保存</Button>
+                <Button type="submit">{t('save')}</Button>
               </div>
             </form>
           </Form>
