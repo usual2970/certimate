@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { update } from "@/repository/settings";
 import { getErrMessage } from "@/lib/error";
 import { useToast } from "../ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 type TelegramSetting = {
   id: string;
@@ -17,6 +18,7 @@ type TelegramSetting = {
 
 const Telegram = () => {
   const { config, setChannels } = useNotify();
+  const { t } = useTranslation();
 
   const [telegram, setTelegram] = useState<TelegramSetting>({
     id: config.id ?? "",
@@ -70,15 +72,15 @@ const Telegram = () => {
 
       setChannels(resp);
       toast({
-        title: "保存成功",
-        description: "配置保存成功",
+        title: t('save.succeed'),
+        description: t('setting.notify.config.save.succeed'),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: "保存失败",
-        description: "配置保存失败：" + msg,
+        title: t('save.failed'),
+        description: `${t('setting.notify.config.save.failed')}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -128,7 +130,7 @@ const Telegram = () => {
             });
           }}
         />
-        <Label htmlFor="airplane-mode">是否启用</Label>
+        <Label htmlFor="airplane-mode">{t('setting.notify.config.enable')}</Label>
       </div>
 
       <div className="flex justify-end mt-2">
@@ -137,7 +139,7 @@ const Telegram = () => {
             handleSaveClick();
           }}
         >
-          保存
+          {t('save')}
         </Button>
       </div>
     </div>

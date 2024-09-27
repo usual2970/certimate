@@ -4,6 +4,7 @@ import "./global.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router.tsx";
 import { ThemeProvider } from "./components/ThemeProvider.tsx";
+import "@/i18n";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

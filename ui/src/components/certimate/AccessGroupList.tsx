@@ -29,6 +29,7 @@ import { Group } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AccessGroupList = () => {
   const {
@@ -39,8 +40,7 @@ const AccessGroupList = () => {
   const { toast } = useToast();
 
   const navigate = useNavigate();
-
-  
+  const { t } = useTranslation();
 
   const handleRemoveClick = async (id: string) => {
     try {
@@ -48,7 +48,7 @@ const AccessGroupList = () => {
       reloadAccessGroups();
     } catch (e) {
       toast({
-        title: "删除失败",
+        title: t('delete.failed'),
         description: getErrMessage(e),
         variant: "destructive",
       });
@@ -69,10 +69,10 @@ const AccessGroupList = () => {
             </span>
 
             <div className="text-center text-sm text-muted-foreground mt-3">
-              请添加域名开始部署证书吧。
+              {t('access.group.domain.empty')}
             </div>
             <AccessGroupEdit
-              trigger={<Button>新增授权组</Button>}
+              trigger={<Button>{t('access.group.add')}</Button>}
               className="mt-3"
             />
           </div>
@@ -86,9 +86,7 @@ const AccessGroupList = () => {
               <CardHeader>
                 <CardTitle>{accessGroup.name}</CardTitle>
                 <CardDescription>
-                  共有
-                  {accessGroup.expand ? accessGroup.expand.access.length : 0}
-                  个部署授权配置
+                  {t('access.group.total', { total: accessGroup.expand ? accessGroup.expand.access.length : 0 })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="min-h-[180px]">
@@ -123,7 +121,7 @@ const AccessGroupList = () => {
                         <Group size={40} />
                       </div>
                       <div className="ml-2">
-                        暂无部署授权配置，请添加后开始使用吧
+                        {t('access.group.empty')}
                       </div>
                     </div>
                   </>
@@ -151,7 +149,7 @@ const AccessGroupList = () => {
                           );
                         }}
                       >
-                        所有授权
+                        {t('access.all')}
                       </Button>
                     </div>
                   </Show>
@@ -159,14 +157,14 @@ const AccessGroupList = () => {
                   <Show
                     when={
                       !accessGroup.expand ||
-                      accessGroup.expand.access.length == 0
+                        accessGroup.expand.access.length == 0
                         ? true
                         : false
                     }
                   >
                     <div>
                       <Button size="sm" onClick={handleAddAccess}>
-                        新增授权
+                        {t('access.add')}
                       </Button>
                     </div>
                   </Show>
@@ -175,21 +173,21 @@ const AccessGroupList = () => {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant={"destructive"} size={"sm"}>
-                          删除
+                          {t('delete')}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle className="dark:text-gray-200">
-                            删除组
+                            {t('access.group.delete')}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            确定要删除部署授权组吗？
+                            {t('access.group.delete.confirm')}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel className="dark:text-gray-200">
-                            取消
+                            {t('cancel')}
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => {
@@ -198,7 +196,7 @@ const AccessGroupList = () => {
                               );
                             }}
                           >
-                            确认
+                            {t('confirm')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

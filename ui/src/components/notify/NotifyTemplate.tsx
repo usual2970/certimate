@@ -9,6 +9,7 @@ import {
 } from "@/domain/settings";
 import { getSetting, update } from "@/repository/settings";
 import { useToast } from "../ui/use-toast";
+import { useTranslation } from 'react-i18next'
 
 const NotifyTemplate = () => {
   const [id, setId] = useState("");
@@ -17,6 +18,7 @@ const NotifyTemplate = () => {
   ]);
 
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const featchData = async () => {
@@ -66,8 +68,8 @@ const NotifyTemplate = () => {
     }
 
     toast({
-      title: "保存成功",
-      description: "通知模板保存成功",
+      title: t('save.succeed'),
+      description: t('setting.notify.template.save.succeed'),
     });
   };
 
@@ -81,7 +83,7 @@ const NotifyTemplate = () => {
       />
 
       <div className="text-muted-foreground text-sm mt-1">
-        可选的变量, COUNT:即将过期张数
+        {t('setting.notify.template.variables.tips.title')}
       </div>
 
       <Textarea
@@ -92,10 +94,10 @@ const NotifyTemplate = () => {
         }}
       ></Textarea>
       <div className="text-muted-foreground text-sm mt-1">
-        可选的变量, COUNT:即将过期张数，DOMAINS:域名列表
+        {t('setting.notify.template.variables.tips.content')}
       </div>
       <div className="flex justify-end mt-2">
-        <Button onClick={handleSaveClick}>保存</Button>
+        <Button onClick={handleSaveClick}>{t('save')}</Button>
       </div>
     </div>
   );

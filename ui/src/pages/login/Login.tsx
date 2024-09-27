@@ -1,3 +1,8 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { useTranslation } from 'react-i18next'
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,20 +16,19 @@ import { Input } from "@/components/ui/input";
 import { getErrMessage } from "@/lib/error";
 import { getPb } from "@/repository/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
 
 const formSchema = z.object({
   username: z.string().email({
-    message: "请输入正确的邮箱地址",
+    message: "login.username.no.empty.message",
   }),
   password: z.string().min(10, {
-    message: "密码至少10个字符",
+    message: "login.password.length.message",
   }),
 });
 
 const Login = () => {
+  const { t } = useTranslation()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,7 +65,7 @@ const Login = () => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>用户名</FormLabel>
+                <FormLabel>{t('username')}</FormLabel>
                 <FormControl>
                   <Input placeholder="email" {...field} />
                 </FormControl>
@@ -76,7 +80,7 @@ const Login = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>密码</FormLabel>
+                <FormLabel>{t('password')}</FormLabel>
                 <FormControl>
                   <Input placeholder="password" {...field} type="password" />
                 </FormControl>
@@ -86,7 +90,7 @@ const Login = () => {
             )}
           />
           <div className="flex justify-end">
-            <Button type="submit">登录</Button>
+            <Button type="submit">{t('login.submit')}</Button>
           </div>
         </form>
       </Form>

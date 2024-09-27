@@ -9,6 +9,7 @@ import { Access as AccessType, accessTypeMap } from "@/domain/access";
 import { convertZulu2Beijing } from "@/lib/time";
 import { useConfig } from "@/providers/config";
 import { remove } from "@/repository/access";
+import { t } from "i18next";
 import { Key } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -46,11 +47,11 @@ const Access = () => {
   return (
     <div className="">
       <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">授权管理</div>
+        <div className="text-muted-foreground">{t("access.management")}</div>
         {tab != "access_group" ? (
-          <AccessEdit trigger={<Button>添加授权</Button>} op="add" />
+          <AccessEdit trigger={<Button>{t("access.add")}</Button>} op="add" />
         ) : (
-          <AccessGroupEdit trigger={<Button>添加授权组</Button>} />
+          <AccessGroupEdit trigger={<Button>{t("access.group.add")}</Button>} />
         )}
       </div>
 
@@ -66,7 +67,7 @@ const Access = () => {
               handleTabItemClick("access");
             }}
           >
-            授权管理
+            {t("access.management")}
           </TabsTrigger>
           <TabsTrigger
             value="access_group"
@@ -74,7 +75,7 @@ const Access = () => {
               handleTabItemClick("access_group");
             }}
           >
-            授权组管理
+            {t("access.group.management")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="access">
@@ -85,10 +86,10 @@ const Access = () => {
               </span>
 
               <div className="text-center text-sm text-muted-foreground mt-3">
-                请添加授权开始部署证书吧。
+                {t("access.empty")}
               </div>
               <AccessEdit
-                trigger={<Button>添加授权</Button>}
+                trigger={<Button>{t("access.add")}</Button>}
                 op="add"
                 className="mt-3"
               />
@@ -96,15 +97,15 @@ const Access = () => {
           ) : (
             <>
               <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-                <div className="w-48">名称</div>
-                <div className="w-48">服务商</div>
+                <div className="w-48">{t("name")}</div>
+                <div className="w-48">{t("access.type")}</div>
 
-                <div className="w-52">创建时间</div>
-                <div className="w-52">更新时间</div>
-                <div className="grow">操作</div>
+                <div className="w-60">{t("create.time")}</div>
+                <div className="w-60">{t("update.time")}</div>
+                <div className="grow">{t("operation")}</div>
               </div>
               <div className="sm:hidden flex text-sm text-muted-foreground">
-                授权列表
+                {t("access.list")}
               </div>
               {accesses
                 .filter((item) => {
@@ -124,22 +125,24 @@ const Access = () => {
                         src={accessTypeMap.get(access.configType)?.[1]}
                         className="w-6"
                       />
-                      <div>{accessTypeMap.get(access.configType)?.[0]}</div>
+                      <div>
+                        {t(accessTypeMap.get(access.configType)?.[0] || "")}
+                      </div>
                     </div>
 
-                    <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
-                      创建于{" "}
+                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
+                      {t("created.in")}{" "}
                       {access.created && convertZulu2Beijing(access.created)}
                     </div>
-                    <div className="sm:w-52 w-full pt-1 sm:pt-0 flex items-center">
-                      更新于{" "}
+                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
+                      {t("updated.in")}{" "}
                       {access.updated && convertZulu2Beijing(access.updated)}
                     </div>
                     <div className="flex items-center grow justify-start pt-1 sm:pt-0">
                       <AccessEdit
                         trigger={
                           <Button variant={"link"} className="p-0">
-                            编辑
+                            {t("edit")}
                           </Button>
                         }
                         op="edit"
@@ -153,7 +156,7 @@ const Access = () => {
                           handleDelete(access);
                         }}
                       >
-                        删除
+                        {t("delete")}
                       </Button>
                     </div>
                   </div>
