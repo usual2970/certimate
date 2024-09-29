@@ -25,6 +25,8 @@ const (
 	configTypeCloudflare = "cloudflare"
 	configTypeNamesilo   = "namesilo"
 	configTypeGodaddy    = "godaddy"
+	configTypeSsh        = "ssh"
+	configTypeQiNiu      = "qiniu"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -59,6 +61,7 @@ type ApplyOption struct {
 	Domain      string `json:"domain"`
 	Access      string `json:"access"`
 	Nameservers string `json:"nameservers"`
+	Extra       map[string]string
 }
 
 type MyUser struct {
@@ -82,7 +85,7 @@ type Applicant interface {
 }
 
 func Get(record *models.Record) (Applicant, error) {
-	access := record.ExpandedOne("access")
+	var access *models.Record = nil
 	email := record.GetString("email")
 	if email == "" {
 		email = defaultEmail
@@ -90,9 +93,28 @@ func Get(record *models.Record) (Applicant, error) {
 	option := &ApplyOption{
 		Email:       email,
 		Domain:      record.GetString("domain"),
-		Access:      access.GetString("config"),
 		Nameservers: record.GetString("nameservers"),
 	}
+
+	if record.GetString("verifyType") == "dns-verify" {
+		access = record.ExpandedOne("access")
+		option.Access = access.GetString("config")
+	} else {
+		access = record.ExpandedOne("verifyFileAccess")
+		option.Access = access.GetString("config")
+		option.Extra = make(map[string]string)
+		option.Extra["verifyFilePath"] = record.GetString("verifyFilePath")
+		switch access.GetString("configType") {
+		case configTypeSsh:
+			return NewSSHApplicant(option)
+		case configTypeQiNiu:
+			return NewQiNiuApplicant(option)
+		default:
+			return nil, errors.New("unknown config type")
+		}
+
+	}
+
 	switch access.GetString("configType") {
 	case configTypeTencent:
 		return NewTencent(option), nil
@@ -178,6 +200,79 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	if strings.HasPrefix(option.Domain, "*.") && len(strings.Split(option.Domain, ".")) == 3 {
 		rootDomain := strings.TrimPrefix(option.Domain, "*.")
 		domains = append(domains, rootDomain)
+	}
+
+	request := certificate.ObtainRequest{
+		Domains: domains,
+		Bundle:  true,
+	}
+	certificates, err := client.Certificate.Obtain(request)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Certificate{
+		CertUrl:           certificates.CertURL,
+		CertStableUrl:     certificates.CertStableURL,
+		PrivateKey:        string(certificates.PrivateKey),
+		Certificate:       string(certificates.Certificate),
+		IssuerCertificate: string(certificates.IssuerCertificate),
+		Csr:               string(certificates.CSR),
+	}, nil
+
+}
+
+func applyWithFile(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
+	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='ssl-provider'")
+
+	sslProvider := &SSLProviderConfig{
+		Config:   SSLProviderConfigContent{},
+		Provider: defaultSSLProvider,
+	}
+	if record != nil {
+		if err := record.UnmarshalJSONField("content", sslProvider); err != nil {
+			return nil, err
+		}
+	}
+
+	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		return nil, err
+	}
+
+	myUser := MyUser{
+		Email: option.Email,
+		key:   privateKey,
+	}
+
+	config := lego.NewConfig(&myUser)
+
+	// This CA URL is configured for a local dev instance of Boulder running in Docker in a VM.
+	config.CADirURL = sslProviderUrls[sslProvider.Provider]
+	config.Certificate.KeyType = certcrypto.RSA2048
+
+	// A client facilitates communication with the CA server.
+	client, err := lego.NewClient(config)
+	if err != nil {
+		return nil, err
+	}
+
+	// challengeOptions := make([]http01.ChallengeOption, 0)
+
+	client.Challenge.SetHTTP01Provider(provider)
+
+	// New users will need to register
+	reg, err := getReg(client, sslProvider)
+	if err != nil {
+		return nil, fmt.Errorf("failed to register: %w", err)
+	}
+	myUser.Registration = reg
+
+	domains := []string{option.Domain}
+
+	// 不支持通配置符域名
+	if strings.HasPrefix(option.Domain, "*.") && len(strings.Split(option.Domain, ".")) == 3 {
+		return nil, fmt.Errorf("file verify does not support wildcard")
 	}
 
 	request := certificate.ObtainRequest{

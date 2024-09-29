@@ -8,6 +8,9 @@ export type Domain = {
   access: string;
   targetAccess?: string;
   targetType: string;
+  verifyType: string,
+  verifyFileAccess?: string,
+  verifyFilePath?: string,
   expiredAt?: string;
   phase?: Pahse;
   phaseSuccess?: boolean;
@@ -51,3 +54,11 @@ export const targetTypeMap: Map<string, [string, string]> = new Map([
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());
+
+
+export const verifyTypeMap: Map<string, [string, string]> = new Map([
+  ["file-verify", ["文件校验", "/imgs/providers/local.svg"]],
+  ["dns-verify", ["DNS校验", "/imgs/providers/webhook.svg"]],
+]);
+
+export const verifyTypeKeys = Array.from(verifyTypeMap.keys());

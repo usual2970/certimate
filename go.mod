@@ -17,21 +17,29 @@ require (
 	github.com/pkg/sftp v1.13.6
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
-	github.com/qiniu/go-sdk/v7 v7.22.0
+	github.com/qiniu/go-sdk/v7 v7.23.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	golang.org/x/crypto v0.26.0
 )
 
 require (
+	github.com/alex-ant/gomath v0.0.0-20160516115720-89013a210a82 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
+	github.com/elastic/go-sysinfo v1.14.2 // indirect
+	github.com/elastic/go-windows v1.0.0 // indirect
+	github.com/gammazero/toposort v0.1.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
+	github.com/gofrs/flock v0.8.1 // indirect
+	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	howett.net/plist v0.0.0-20181124034731-591f970eefbb // indirect
+	modernc.org/fileutil v1.3.0 // indirect
 )
 
 require (
@@ -121,7 +129,7 @@ require (
 	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/oauth2 v0.21.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/term v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.5.0 // indirect

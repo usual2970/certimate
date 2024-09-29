@@ -24,7 +24,13 @@ import {
 } from "@/components/ui/select";
 import { useConfig } from "@/providers/config";
 import { useEffect, useState } from "react";
-import { Domain, targetTypeKeys, targetTypeMap } from "@/domain/domain";
+import {
+  Domain,
+  targetTypeKeys,
+  targetTypeMap,
+  verifyTypeKeys,
+  verifyTypeMap,
+} from "@/domain/domain";
 import { save, get } from "@/repository/domains";
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
@@ -51,6 +57,7 @@ const Edit = () => {
   const [tab, setTab] = useState<"base" | "advance">("base");
 
   const [targetType, setTargetType] = useState(domain ? domain.targetType : "");
+  const [verifyType, setVerifyType] = useState(domain ? domain.verifyType : "");
 
   useEffect(() => {
     // Parsing query parameters
@@ -61,28 +68,41 @@ const Edit = () => {
         const data = await get(id);
         setDomain(data);
         setTargetType(data.targetType);
+        setVerifyType(data.verifyType);
       };
       fetchData();
     }
   }, [location.search]);
 
-  const formSchema = z.object({
-    id: z.string().optional(),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: "请输入正确的域名",
-    }),
-    email: z.string().email().optional(),
-    access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: "请选择DNS服务商授权配置",
-    }),
-    targetAccess: z.string().optional(),
-    targetType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
-      message: "请选择部署服务类型",
-    }),
-    variables: z.string().optional(),
-    group: z.string().optional(),
-    nameservers: z.string().optional(),
-  });
+  const formSchema = z
+    .object({
+      id: z.string().optional(),
+      domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+        message: "请输入正确的域名",
+      }),
+      email: z.string().email().optional(),
+      access: z.string(),
+
+      verifyType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
+        message: "请选择域名验证方法",
+      }),
+      verifyFileAccess: z.string().optional(),
+      verifyFilePath: z.string().optional(),
+      targetAccess: z.string().optional(),
+      targetType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
+        message: "请选择部署服务类型",
+      }),
+      variables: z.string().optional(),
+      group: z.string().optional(),
+      nameservers: z.string().optional(),
+    })
+    .refine(
+      (data) =>
+        data.verifyType == "file-verify" || /^[a-zA-Z0-9]+$/.test(data.access),
+      {
+        message: "请选择DNS服务商授权配置",
+      }
+    );
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,6 +113,9 @@ const Edit = () => {
       access: "",
       targetAccess: "",
       targetType: "",
+      verifyType: "",
+      verifyFileAccess: "",
+      verifyFilePath: "",
       variables: "",
       group: "",
       nameservers: "",
@@ -108,6 +131,9 @@ const Edit = () => {
         access: domain.access,
         targetAccess: domain.targetAccess,
         targetType: domain.targetType,
+        verifyType: domain.verifyType,
+        verifyFileAccess: domain.verifyFileAccess,
+        verifyFilePath: domain.verifyFilePath,
         variables: domain.variables,
         group: domain.group,
         nameservers: domain.nameservers,
@@ -125,6 +151,16 @@ const Edit = () => {
     }
     const types = targetType.split("-");
     return item.configType === types[0];
+  });
+
+  const verifyFileAccesses = accesses.filter((item) => {
+    if (item.usage == "apply") {
+      return false;
+    }
+    if (verifyType == "") {
+      return true;
+    }
+    return item.configType == "qiniu" || item.configType == "ssh";
   });
 
   const { toast } = useToast();
@@ -156,6 +192,9 @@ const Edit = () => {
       group: group,
       targetAccess: targetAccess,
       targetType: data.targetType,
+      verifyType: data.verifyType,
+      verifyFileAccess: data.verifyFileAccess,
+      verifyFilePath: data.verifyFilePath,
       variables: data.variables,
       nameservers: data.nameservers,
     };
@@ -289,38 +328,142 @@ const Edit = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="access"
+                  name="verifyType"
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
-                      <FormLabel className="flex w-full justify-between">
-                        <div>DNS 服务商授权配置</div>
-                        <AccessEdit
-                          trigger={
-                            <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
-                              <Plus size={14} />
-                              新增
-                            </div>
-                          }
-                          op="add"
-                        />
-                      </FormLabel>
+                      <FormLabel>域名验证方法</FormLabel>
                       <FormControl>
                         <Select
                           {...field}
-                          value={field.value}
                           onValueChange={(value) => {
-                            form.setValue("access", value);
+                            setVerifyType(value);
+                            form.setValue("verifyType", value);
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="请选择授权配置" />
+                            <SelectValue placeholder="请选择域名验证方法" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>服务商授权配置</SelectLabel>
-                              {accesses
-                                .filter((item) => item.usage != "deploy")
-                                .map((item) => (
+                              <SelectLabel>域名验证方法</SelectLabel>
+                              {verifyTypeKeys.map((key) => (
+                                <SelectItem key={key} value={key}>
+                                  <div className="flex items-center space-x-2">
+                                    <img
+                                      className="w-6"
+                                      src={verifyTypeMap.get(key)?.[1]}
+                                    />
+                                    <div>{verifyTypeMap.get(key)?.[0]}</div>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {form.getValues("verifyType") == "dns-verify" ? (
+                  <FormField
+                    control={form.control}
+                    name="access"
+                    render={({ field }) => (
+                      <FormItem hidden={tab != "base"}>
+                        <FormLabel className="flex w-full justify-between">
+                          <div>DNS 服务商授权配置</div>
+                          <AccessEdit
+                            trigger={
+                              <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                                <Plus size={14} />
+                                新增
+                              </div>
+                            }
+                            op="add"
+                          />
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            {...field}
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("access", value);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="请选择授权配置" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>服务商授权配置</SelectLabel>
+                                {accesses
+                                  .filter((item) => item.usage != "deploy")
+                                  .map((item) => (
+                                    <SelectItem key={item.id} value={item.id}>
+                                      <div className="flex items-center space-x-2">
+                                        <img
+                                          className="w-6"
+                                          src={
+                                            accessTypeMap.get(
+                                              item.configType
+                                            )?.[1]
+                                          }
+                                        />
+                                        <div>{item.name}</div>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="verifyFileAccess"
+                    render={({ field }) => (
+                      <FormItem hidden={tab != "base"}>
+                        <FormLabel className="w-full flex justify-between">
+                          <div>部署校验文件配置</div>
+                          <AccessEdit
+                            trigger={
+                              <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                                <Plus size={14} />
+                                新增
+                              </div>
+                            }
+                            op="add"
+                          />
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            {...field}
+                            onValueChange={(value) => {
+                              form.setValue("verifyFileAccess", value);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="请选择授权配置" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>
+                                  服务商授权配置
+                                  {form.getValues().verifyFileAccess}
+                                </SelectLabel>
+                                <SelectItem value="emptyId">
+                                  <div className="flex items-center space-x-2">
+                                    --
+                                  </div>
+                                </SelectItem>
+                                {verifyFileAccesses.map((item) => (
                                   <SelectItem key={item.id} value={item.id}>
                                     <div className="flex items-center space-x-2">
                                       <img
@@ -335,15 +478,37 @@ const Edit = () => {
                                     </div>
                                   </SelectItem>
                                 ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {form.getValues("verifyType") == "file-verify" ? (
+                  <FormField
+                    control={form.control}
+                    name="verifyFilePath"
+                    render={({ field }) => (
+                      <FormItem hidden={tab != "base"}>
+                        <FormLabel>校验文件保存位置（如果部署到 OSS 请输入 Bucket 名称）</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="请输入校验文件保存位置"
+                            {...field}
+                          />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : null}
+
                 <FormField
                   control={form.control}
                   name="targetType"
