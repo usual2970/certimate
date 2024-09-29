@@ -120,10 +120,10 @@ func (s *ssh) Present(domain, token, keyAuth string) error {
 	if value, ok := s.option.Extra["challengeFilePath"]; ok {
 		// 上传验证文件
 		if err := s.upload(client, keyAuth, fmt.Sprintf("%s/.well-known/acme-challenge/%s", value, token)); err != nil {
-			return fmt.Errorf("failed to upload verify file: %w", err)
+			return fmt.Errorf("failed to upload challenge file: %w", err)
 		}
 	} else {
-		return fmt.Errorf("verify file path undefined")
+		return fmt.Errorf("challenge file path undefined")
 	}
 
 	return nil

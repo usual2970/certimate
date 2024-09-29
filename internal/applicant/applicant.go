@@ -272,7 +272,7 @@ func applyWithFile(option *ApplyOption, provider challenge.Provider) (*Certifica
 
 	// 不支持通配置符域名
 	if strings.HasPrefix(option.Domain, "*.") && len(strings.Split(option.Domain, ".")) == 3 {
-		return nil, fmt.Errorf("file verify does not support wildcard")
+		return nil, fmt.Errorf("http-01-challenge does not support wildcard")
 	}
 
 	request := certificate.ObtainRequest{
