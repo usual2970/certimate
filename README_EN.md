@@ -47,7 +47,7 @@ You can download the precompiled binary files directly from the [Releases page](
 
 ```bash
 
-git clone git@github.com:usual2970/certimate.git && cd certimate/docker && docker compose up -d
+mkdir -p ~/.certimate && cd ~/.certimate && curl -O https://raw.githubusercontent.com/usual2970/certimate/refs/heads/main/docker/docker-compose.yml && docker compose up -d
 
 ```
 
