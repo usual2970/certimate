@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -28,11 +29,12 @@ const WebhookForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+  const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
-    url: z.string().url(),
+    url: z.string().url('zod.rule.url'),
   });
 
   let config: WebhookConfig = {
@@ -44,14 +46,13 @@ const WebhookForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "webhook",
       url: config.url,
     },
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     const req: Access = {
       id: data.id as string,
       name: data.name,
@@ -106,9 +107,9 @@ const WebhookForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -121,7 +122,7 @@ const WebhookForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -136,7 +137,7 @@ const WebhookForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -151,9 +152,9 @@ const WebhookForm = ({
               name="url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Webhook Url</FormLabel>
+                  <FormLabel>{t('access.form.webhook.url')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入Webhook Url" {...field} />
+                    <Input placeholder={t('access.form.webhook.url.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -162,7 +163,7 @@ const WebhookForm = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

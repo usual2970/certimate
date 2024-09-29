@@ -8,9 +8,9 @@ export type Domain = {
   access: string;
   targetAccess?: string;
   targetType: string;
-  verifyType: string,
-  verifyFileAccess?: string,
-  verifyFilePath?: string,
+  challengeType: string,
+  challengeFileAccess?: string,
+  challengeFilePath?: string,
   expiredAt?: string;
   phase?: Pahse;
   phaseSuccess?: boolean;
@@ -43,22 +43,22 @@ export const getLastDeployment = (domain: Domain): Deployment | undefined => {
 };
 
 export const targetTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun-cdn", ["阿里云-CDN", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-oss", ["阿里云-OSS", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-dcdn", ["阿里云-DCDN", "/imgs/providers/aliyun.svg"]],
-  ["tencent-cdn", ["腾讯云-CDN", "/imgs/providers/tencent.svg"]],
-  ["ssh", ["SSH部署", "/imgs/providers/ssh.svg"]],
-  ["qiniu-cdn", ["七牛云-CDN", "/imgs/providers/qiniu.svg"]],
-  ["webhook", ["Webhook", "/imgs/providers/webhook.svg"]],
-  ["local", ["本地部署", "/imgs/providers/local.svg"]],
+  ["aliyun-cdn", ["aliyun.cdn", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-oss", ["aliyun.oss", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-dcdn", ["aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
+  ["tencent-cdn", ["tencent.cdn", "/imgs/providers/tencent.svg"]],
+  ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
+  ["qiniu-cdn", ["qiniu.cdn", "/imgs/providers/qiniu.svg"]],
+  ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
+  ["local", ["local", "/imgs/providers/local.svg"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());
 
 
-export const verifyTypeMap: Map<string, [string, string]> = new Map([
-  ["file-verify", ["文件校验", "/imgs/providers/local.svg"]],
-  ["dns-verify", ["DNS校验", "/imgs/providers/webhook.svg"]],
+export const challengeTypeMap: Map<string, [string, string]> = new Map([
+  ["http-01-challenge", ["HTTP-01-Challenge", "/imgs/providers/local.svg"]],
+  ["dns-01-challenge", ["DNS-01-Challenge", "/imgs/providers/webhook.svg"]],
 ]);
 
-export const verifyTypeKeys = Array.from(verifyTypeMap.keys());
+export const challengeTypeKeys = Array.from(challengeTypeMap.keys());

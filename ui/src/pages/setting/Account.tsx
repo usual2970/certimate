@@ -15,16 +15,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { z } from "zod";
 
 const formSchema = z.object({
-  email: z.string().email("请输入正确的邮箱"),
+  email: z.string().email("setting.account.email.valid.message"),
 });
 
 const Account = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [changed, setChanged] = useState(false);
 
@@ -43,8 +45,8 @@ const Account = () => {
 
       getPb().authStore.clear();
       toast({
-        title: "修改账户邮箱功",
-        description: "请重新登录",
+        title: t("setting.account.email.change.succeed"),
+        description: t("setting.account.log.back.in"),
       });
       setTimeout(() => {
         navigate("/login");
@@ -52,7 +54,7 @@ const Account = () => {
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: "修改账户邮箱失败",
+        title: t("setting.account.email.change.failed"),
         description: message,
         variant: "destructive",
       });
@@ -72,10 +74,10 @@ const Account = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>邮箱</FormLabel>
+                  <FormLabel>{t('email')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="请输入邮箱"
+                      placeholder={t('setting.email.placeholder')}
                       {...field}
                       type="email"
                       onChange={(e) => {
@@ -92,10 +94,10 @@ const Account = () => {
 
             <div className="flex justify-end">
               {changed ? (
-                <Button type="submit">确认修改</Button>
+                <Button type="submit">{t('setting.submit')}</Button>
               ) : (
                 <Button type="submit" disabled variant={"secondary"}>
-                  确认修改
+                  {t('setting.submit')}
                 </Button>
               )}
             </div>

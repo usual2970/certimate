@@ -41,7 +41,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 		return err
 	}
 	history.record(checkPhase, "获取记录成功", nil)
-	if errs := app.GetApp().Dao().ExpandRecord(currRecord, []string{"access", "targetAccess", "verifyFileAccess", "group"}, nil); len(errs) > 0 {
+	if errs := app.GetApp().Dao().ExpandRecord(currRecord, []string{"access", "targetAccess", "challengeFileAccess", "group"}, nil); len(errs) > 0 {
 
 		errList := make([]error, 0)
 		for name, err := range errs {

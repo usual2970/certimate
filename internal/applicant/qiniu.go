@@ -39,7 +39,7 @@ func NewQiNiuApplicant(option *ApplyOption) (Applicant, error) {
 // Present starts a web server and makes the token available at `ChallengePath(token)` for web requests.
 func (s *qiuniu) Present(domain, token, keyAuth string) error {
 
-	if value, ok := s.option.Extra["verifyFilePath"]; ok {
+	if value, ok := s.option.Extra["challengeFilePath"]; ok {
 		putPolicy := storage.PutPolicy{
 			Scope: value,
 		}

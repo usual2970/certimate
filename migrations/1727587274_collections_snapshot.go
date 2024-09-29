@@ -318,7 +318,7 @@ func init() {
 					{
 						"system": false,
 						"id": "j3e3ixtp",
-						"name": "verifyType",
+						"name": "challengeType",
 						"type": "select",
 						"required": false,
 						"presentable": false,
@@ -326,15 +326,15 @@ func init() {
 						"options": {
 							"maxSelect": 1,
 							"values": [
-								"file-verify",
-								"dns-verify"
+								"http-01-challenge",
+								"dns-01-challenge"
 							]
 						}
 					},
 					{
 						"system": false,
 						"id": "7ljxkwvu",
-						"name": "verifyFileAccess",
+						"name": "challengeFileAccess",
 						"type": "relation",
 						"required": false,
 						"presentable": false,
@@ -350,7 +350,7 @@ func init() {
 					{
 						"system": false,
 						"id": "qytyunsk",
-						"name": "verifyFilePath",
+						"name": "challengeFilePath",
 						"type": "text",
 						"required": false,
 						"presentable": false,

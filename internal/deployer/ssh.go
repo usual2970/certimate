@@ -19,14 +19,15 @@ type ssh struct {
 }
 
 type sshAccess struct {
-	Host     string `json:"host"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Key      string `json:"key"`
-	Port     string `json:"port"`
-	Command  string `json:"command"`
-	CertPath string `json:"certPath"`
-	KeyPath  string `json:"keyPath"`
+	Host       string `json:"host"`
+	Username   string `json:"username"`
+	Password   string `json:"password"`
+	Key        string `json:"key"`
+	Port       string `json:"port"`
+	PreCommand string `json:"preCommand"`
+	Command    string `json:"command"`
+	CertPath   string `json:"certPath"`
+	KeyPath    string `json:"keyPath"`
 }
 
 func NewSSH(option *DeployerOption) (Deployer, error) {
@@ -56,6 +57,7 @@ func (s *ssh) Deploy(ctx context.Context) error {
 		access.CertPath = strings.ReplaceAll(access.CertPath, key, v)
 		access.KeyPath = strings.ReplaceAll(access.KeyPath, key, v)
 		access.Command = strings.ReplaceAll(access.Command, key, v)
+		access.PreCommand = strings.ReplaceAll(access.PreCommand, key, v)
 	}
 
 	// 连接
@@ -67,14 +69,13 @@ func (s *ssh) Deploy(ctx context.Context) error {
 
 	s.infos = append(s.infos, toStr("ssh连接成功", nil))
 
-	// 上传
-	session, err := client.NewSession()
-	if err != nil {
-		return fmt.Errorf("failed to create session: %w", err)
+	// 执行前置命令
+	if access.PreCommand != "" {
+		err, stdout, stderr := s.sshExecCommand(client, access.PreCommand)
+		if err != nil {
+			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+		}
 	}
-	defer session.Close()
-
-	s.infos = append(s.infos, toStr("ssh创建session成功", nil))
 
 	// 上传证书
 	if err := s.upload(client, s.option.Certificate.Certificate, access.CertPath); err != nil {
@@ -91,18 +92,28 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	s.infos = append(s.infos, toStr("ssh上传私钥成功", nil))
 
 	// 执行命令
+	err, stdout, stderr := s.sshExecCommand(client, access.Command)
+	if err != nil {
+		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+	}
+
+	s.infos = append(s.infos, toStr("ssh执行命令成功", stdout))
+
+	return nil
+}
+
+func (s *ssh) sshExecCommand(client *sshPkg.Client, command string) (error, string, string) {
+	session, err := client.NewSession()
+	if err != nil {
+		return fmt.Errorf("failed to create ssh session: %w", err), "", ""
+	}
+	defer session.Close()
 	var stdoutBuf bytes.Buffer
 	session.Stdout = &stdoutBuf
 	var stderrBuf bytes.Buffer
 	session.Stderr = &stderrBuf
-
-	if err := session.Run(access.Command); err != nil {
-		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdoutBuf.String(), stderrBuf.String())
-	}
-
-	s.infos = append(s.infos, toStr("ssh执行命令成功", []string{stdoutBuf.String()}))
-
-	return nil
+	err = session.Run(command)
+	return err, stdoutBuf.String(), stderrBuf.String()
 }
 
 func (s *ssh) upload(client *sshPkg.Client, content, path string) error {

@@ -26,18 +26,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { z } from "zod";
 
-const formSchema = z.object({
-  provider: z.enum(["letsencrypt", "zerossl"], {
-    message: "请选择SSL提供商",
-  }),
-  eabKid: z.string().optional(),
-  eabHmacKey: z.string().optional(),
-});
-
 const SSLProvider = () => {
+  const { t } = useTranslation();
+
+  const formSchema = z.object({
+    provider: z.enum(["letsencrypt", "zerossl"], {
+      message: t("setting.ca.not.empty"),
+    }),
+    eabKid: z.string().optional(),
+    eabHmacKey: z.string().optional(),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -86,12 +89,12 @@ const SSLProvider = () => {
     if (values.provider === "zerossl") {
       if (!values.eabKid) {
         form.setError("eabKid", {
-          message: "请输入EAB_KID和EAB_HMAC_KEY",
+          message: t("setting.ca.eab_kid_hmac_key.not.empty"),
         });
       }
       if (!values.eabHmacKey) {
         form.setError("eabHmacKey", {
-          message: "请输入EAB_KID和EAB_HMAC_KEY",
+          message: t("setting.ca.eab_kid_hmac_key.not.empty"),
         });
       }
       if (!values.eabKid || !values.eabHmacKey) {
@@ -117,13 +120,13 @@ const SSLProvider = () => {
     try {
       await update(setting);
       toast({
-        title: "修改成功",
-        description: "修改成功",
+        title: t("update.succeed"),
+        description: t("update.succeed"),
       });
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: "修改失败",
+        title: t("update.failed"),
         description: message,
         variant: "destructive",
       });
@@ -143,7 +146,7 @@ const SSLProvider = () => {
               name="provider"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>证书厂商</FormLabel>
+                  <FormLabel>{t("ca")}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       {...field}
@@ -199,7 +202,7 @@ const SSLProvider = () => {
                         <FormLabel>EAB_KID</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="请输入EAB_KID"
+                            placeholder={t("setting.ca.eab_kid.not.empty")}
                             {...field}
                             type="text"
                           />
@@ -218,7 +221,7 @@ const SSLProvider = () => {
                         <FormLabel>EAB_HMAC_KEY</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="请输入EAB_HMAC_KEY"
+                            placeholder={t("setting.ca.eab_hmac_key.not.empty")}
                             {...field}
                             type="text"
                           />
@@ -235,7 +238,7 @@ const SSLProvider = () => {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">确认修改</Button>
+              <Button type="submit">{t("setting.submit")}</Button>
             </div>
           </form>
         </Form>

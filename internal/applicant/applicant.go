@@ -96,14 +96,14 @@ func Get(record *models.Record) (Applicant, error) {
 		Nameservers: record.GetString("nameservers"),
 	}
 
-	if record.GetString("verifyType") == "dns-verify" {
+	if record.GetString("challengeType") == "dns-01-challenge" {
 		access = record.ExpandedOne("access")
 		option.Access = access.GetString("config")
 	} else {
-		access = record.ExpandedOne("verifyFileAccess")
+		access = record.ExpandedOne("challengeFileAccess")
 		option.Access = access.GetString("config")
 		option.Extra = make(map[string]string)
-		option.Extra["verifyFilePath"] = record.GetString("verifyFilePath")
+		option.Extra["challengeFilePath"] = record.GetString("challengeFilePath")
 		switch access.GetString("configType") {
 		case configTypeSsh:
 			return NewSSHApplicant(option)

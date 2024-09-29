@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -28,12 +29,13 @@ const AccessTencentForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
+  const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
-    secretId: z.string().min(1).max(64),
-    secretKey: z.string().min(1).max(64),
+    secretId: z.string().min(1, 'access.form.secret.id.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    secretKey: z.string().min(1, 'access.form.secret.key.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
   });
 
   let config: TencentConfig = {
@@ -46,7 +48,7 @@ const AccessTencentForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "tencent",
       secretId: config.secretId,
       secretKey: config.secretKey,
@@ -108,9 +110,9 @@ const AccessTencentForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -123,7 +125,7 @@ const AccessTencentForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -138,7 +140,7 @@ const AccessTencentForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -153,9 +155,9 @@ const AccessTencentForm = ({
               name="secretId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>SecretId</FormLabel>
+                  <FormLabel>{t('access.form.secret.id')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入SecretId" {...field} />
+                    <Input placeholder={t('access.form.secret.id.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -168,9 +170,9 @@ const AccessTencentForm = ({
               name="secretKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>SecretKey</FormLabel>
+                  <FormLabel>{t('access.form.secret.key')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入SecretKey" {...field} />
+                    <Input placeholder={t('access.form.secret.key.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -179,7 +181,7 @@ const AccessTencentForm = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

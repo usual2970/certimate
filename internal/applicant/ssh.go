@@ -117,7 +117,7 @@ func (s *ssh) Present(domain, token, keyAuth string) error {
 
 	s.infos = append(s.infos, toStr("ssh创建session成功", nil))
 
-	if value, ok := s.option.Extra["verifyFilePath"]; ok {
+	if value, ok := s.option.Extra["challengeFilePath"]; ok {
 		// 上传验证文件
 		if err := s.upload(client, keyAuth, fmt.Sprintf("%s/.well-known/acme-challenge/%s", value, token)); err != nil {
 			return fmt.Errorf("failed to upload verify file: %w", err)
