@@ -71,7 +71,7 @@ func (s *ssh) Deploy(ctx context.Context) error {
 
 	// 执行前置命令
 	if access.PreCommand != "" {
-		err, stdout, stderr := s.sshExecCommand(client, access.Command)
+		err, stdout, stderr := s.sshExecCommand(client, access.PreCommand)
 		if err != nil {
 			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 		}
