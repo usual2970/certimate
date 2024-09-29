@@ -9,6 +9,7 @@ import { useConfig } from "@/providers/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import {
   Form,
   FormControl,
@@ -32,15 +33,16 @@ const AccessLocalForm = ({
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess, reloadAccessGroups } = useConfig();
+  const { t } = useTranslation();
 
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1).max(64),
+    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     configType: accessFormType,
 
-    command: z.string().min(1).max(2048),
-    certPath: z.string().min(0).max(2048),
-    keyPath: z.string().min(0).max(2048),
+    command: z.string().min(1, 'access.form.ssh.command.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
+    certPath: z.string().min(0, 'access.form.ssh.cert.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
+    keyPath: z.string().min(0, 'access.form.ssh.key.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
   });
 
   let config: LocalConfig = {
@@ -54,7 +56,7 @@ const AccessLocalForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name,
+      name: data?.name || '',
       configType: "local",
       certPath: config.certPath,
       keyPath: config.keyPath,
@@ -123,9 +125,9 @@ const AccessLocalForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>名称</FormLabel>
+                  <FormLabel>{t('name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入授权名称" {...field} />
+                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -138,7 +140,7 @@ const AccessLocalForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -153,7 +155,7 @@ const AccessLocalForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>配置类型</FormLabel>
+                  <FormLabel>{t('access.form.config.field')}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -168,9 +170,9 @@ const AccessLocalForm = ({
               name="certPath"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>证书保存路径</FormLabel>
+                  <FormLabel>{t('access.form.ssh.cert.path')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入证书上传路径" {...field} />
+                    <Input placeholder={t('access.form.ssh.cert.path.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -183,9 +185,9 @@ const AccessLocalForm = ({
               name="keyPath"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>私钥保存路径</FormLabel>
+                  <FormLabel>{t('access.form.ssh.key.path')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="请输入私钥上传路径" {...field} />
+                    <Input placeholder={t('access.form.ssh.key.path.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -198,9 +200,9 @@ const AccessLocalForm = ({
               name="command"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Command</FormLabel>
+                  <FormLabel>{t('access.form.ssh.command')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="请输入要执行的命令" {...field} />
+                    <Textarea placeholder={t('access.form.ssh.command.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -211,7 +213,7 @@ const AccessLocalForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">保存</Button>
+              <Button type="submit">{t('save')}</Button>
             </div>
           </form>
         </Form>

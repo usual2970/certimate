@@ -80,8 +80,8 @@ const AccessSSHForm = ({
     password: z.string().min(0, 'password.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
     key: z.string().min(0, 'access.form.ssh.key.not.empty').max(20480, t('zod.rule.string.max', { max: 20480 })),
     keyFile: z.any().optional(),
-  
-    preCommand: z.string().min(0).max(2048).optional(), 
+
+    preCommand: z.string().min(0).max(2048, t('zod.rule.string.max', { max: 2048 })).optional(),
     command: z.string().min(1, 'access.form.ssh.command.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
     certPath: z.string().min(0, 'access.form.ssh.cert.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
     keyPath: z.string().min(0, 'access.form.ssh.key.path.not.empty').max(2048, t('zod.rule.string.max', { max: 2048 })),
@@ -122,7 +122,6 @@ const AccessSSHForm = ({
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     let group = data.group;
     if (group == "emptyId") group = "";
 
@@ -480,9 +479,9 @@ const AccessSSHForm = ({
               name="preCommand"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>前置 Command</FormLabel>
+                  <FormLabel>{t('access.form.ssh.pre.command')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="请输入要在部署证书前执行的前置命令" {...field} />
+                    <Textarea placeholder={t('access.form.ssh.pre.command.not.empty')} {...field} />
                   </FormControl>
 
                   <FormMessage />
