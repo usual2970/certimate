@@ -12,6 +12,15 @@ import { remove } from "@/repository/access";
 import { t } from "i18next";
 import { Key } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog.tsx";
 
 const Access = () => {
   const { config, deleteAccess } = useConfig();
@@ -149,15 +158,45 @@ const Access = () => {
                         data={access}
                       />
                       <Separator orientation="vertical" className="h-4 mx-2" />
-                      <Button
-                        variant={"link"}
-                        className="p-0"
-                        onClick={() => {
-                          handleDelete(access);
-                        }}
-                      >
-                        {t("delete")}
-                      </Button>
+                      <AccessEdit
+                          trigger={
+                            <Button variant={"link"} className="p-0">
+                              {t("copy")}
+                            </Button>
+                          }
+                          op="copy"
+                          data={access}
+                      />
+                      <Separator orientation="vertical" className="h-4 mx-2" />
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant={"link"} size={"sm"}>
+                            {t('delete')}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="dark:text-gray-200">
+                              {t('access.group.delete')}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              {t('access.delete.confirm')}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="dark:text-gray-200">
+                              {t('cancel')}
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={() => {
+                                  handleDelete(access);
+                                }}
+                            >
+                              {t('confirm')}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 ))}

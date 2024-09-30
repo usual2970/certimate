@@ -24,9 +24,11 @@ import { PbErrorData } from "@/domain/base";
 
 const AccessAliyunForm = ({
   data,
+  op,
   onAfterReq,
 }: {
   data?: Access;
+  op: "add" | "edit" | "copy";
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
@@ -69,6 +71,7 @@ const AccessAliyunForm = ({
     };
 
     try {
+      req.id =  op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -76,10 +79,11 @@ const AccessAliyunForm = ({
       req.id = rs.id;
       req.created = rs.created;
       req.updated = rs.updated;
-      if (data.id) {
+      if (data.id && op == "edit") {
         updateAccess(req);
         return;
       }
+      console.log(req);
       addAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;

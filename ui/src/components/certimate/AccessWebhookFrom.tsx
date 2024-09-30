@@ -23,9 +23,11 @@ import { PbErrorData } from "@/domain/base";
 
 const WebhookForm = ({
   data,
+  op,
   onAfterReq,
 }: {
   data?: Access;
+  op: "add" | "edit" | "copy";
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
@@ -64,6 +66,7 @@ const WebhookForm = ({
     };
 
     try {
+      req.id =  op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -71,7 +74,7 @@ const WebhookForm = ({
       req.id = rs.id;
       req.created = rs.created;
       req.updated = rs.updated;
-      if (data.id) {
+      if (data.id && op == "edit") {
         updateAccess(req);
         return;
       }

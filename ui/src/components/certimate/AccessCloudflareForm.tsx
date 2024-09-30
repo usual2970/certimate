@@ -23,9 +23,11 @@ import { PbErrorData } from "@/domain/base";
 
 const AccessCloudflareForm = ({
   data,
+  op,
   onAfterReq,
 }: {
   data?: Access;
+  op: "add" | "edit" | "copy";
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
@@ -65,6 +67,7 @@ const AccessCloudflareForm = ({
     };
 
     try {
+      req.id =  op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -72,7 +75,7 @@ const AccessCloudflareForm = ({
       req.id = rs.id;
       req.created = rs.created;
       req.updated = rs.updated;
-      if (data.id) {
+      if (data.id && op == "edit") {
         updateAccess(req);
         return;
       }
