@@ -1,9 +1,8 @@
-[中文](README.md) | [English](README_EN.md) 
+[中文](README.md) | [English](README_EN.md)
 
 # 🔒Certimate
 
 For individuals managing personal projects or those responsible for IT operations in small businesses who need to manage multiple domain names, applying for certificates manually comes with several drawbacks:
-
 
 1. 😱Troublesome: Applying for and deploying certificates isn’t difficult, but it can be quite a hassle, especially when managing multiple domains.
 2. 😭Easily forgotten: The current free certificate has a validity period of only 90 days, requiring regular renewal operations. This increases the workload and makes it easy to forget, which can result in the website becoming inaccessible.
@@ -19,19 +18,13 @@ Related articles:
 * [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
 * [Introduction to Domain Variables and Deployment Authorization Groups](https://docs.certimate.me/blog/multi-deployer)
 
-
 Certimate aims to provide users with a secure and user-friendly SSL certificate management solution. For usage documentation, please visit.[https://docs.certimate.me](https://docs.certimate.me)
-
-
-
-
 
 ## Installation
 
 Installing Certimate is very simple, you can choose one of the following methods for installation:
 
 ### 1. Binary File
-
 
 You can download the precompiled binary files directly from the [Releases page](https://github.com/usual2970/certimate/releases), and after extracting them, execute:
 
@@ -41,7 +34,6 @@ You can download the precompiled binary files directly from the [Releases page](
 
 > [!NOTE]
 > When executing the binary file on macOS, you may see a prompt saying: “Cannot open ‘certimate’ because Apple cannot check it for malicious software.” You can go to System Preferences > Security & Privacy > General, then click “Allow Anyway,” and try executing the binary file again.
-
 
 ### 2. Docker Installation
 
@@ -60,7 +52,6 @@ go mod vendor
 go run main.go serve
 ```
 
-
 ## Usage
 
 After completing the installation steps above, you can access the Certimate management page by visiting http://127.0.0.1:8090 in your browser.
@@ -74,19 +65,16 @@ password：1234567890
 
 ## List of Supported Providers
 
+| Provider      | Domain Registrar | Deployment Service | Remarks                                                                                           |
+| ------------- | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------- |
+| Alibaba Cloud | Yes              | Yes                | Supports domains registered with Alibaba Cloud; supports deployment to Alibaba Cloud CDN and OSS. |
+| Tencent Cloud | Yes              | Yes                | Supports domains registered with Tencent Cloud; supports deployment to Tencent Cloud CDN.         |
+| Qiniu Cloud   | No               | Yes                | Qiniu Cloud does not offer domain registration services; supports deployment to Qiniu Cloud CDN.  |
+| Cloudflare    | Yes              | No                 | Supports domains registered with Cloudflare; Cloudflare services come with SSL certificates.      |
+| SSH           | No               | Yes                | Supports deployment to SSH servers.                                                               |
+| WEBHOOK       | No               | Yes                | Supports callbacks to WEBHOOK.                                                                    |
 
-| Provider     | Domain Registrar | Deployment Service | Remarks                                               |
-|--------------|------------------|--------------------|------------------------------------------------------|
-| Alibaba Cloud| Yes              | Yes                | Supports domains registered with Alibaba Cloud; supports deployment to Alibaba Cloud CDN and OSS. |
-| Tencent Cloud| Yes              | Yes                | Supports domains registered with Tencent Cloud; supports deployment to Tencent Cloud CDN. |
-| Qiniu Cloud  | No               | Yes                | Qiniu Cloud does not offer domain registration services; supports deployment to Qiniu Cloud CDN. |
-| Cloudflare   | Yes              | No                 | Supports domains registered with Cloudflare; Cloudflare services come with SSL certificates. |
-| SSH          | No               | Yes                | Supports deployment to SSH servers.                  |
-| WEBHOOK      | No               | Yes                | Supports callbacks to WEBHOOK.                        |
-
-
-
-## Screenshots 
+## Screenshots
 
 ![login](https://i.imgur.com/SYjjbql.jpeg)
 
@@ -97,7 +85,6 @@ password：1234567890
 ![accesses](https://i.imgur.com/EWtOoJ0.jpeg)
 
 ![history](https://i.imgur.com/aaPtSW7.jpeg)
-
 
 ## Concepts
 
@@ -140,8 +127,7 @@ After Certimate applies for the certificate, it will automatically deploy the ce
 
 The authorization information for the deployment service provider is the same as that for the DNS provider, with the distinction that the DNS provider's authorization information is used to prove that the domain belongs to you, while the deployment service provider's authorization information is used to provide authorization for the certificate deployment.
 
-## FAQ 
-
+## FAQ
 
 Q: Do you provide SaaS services?
 
@@ -154,8 +140,6 @@ Q: Data Security?
 Q: Automatic Certificate Renewal?
 
 > A: Certificates that have already been issued will be automatically renewed 10 days before expiration. The system checks once a day to see if any certificates are nearing expiration, and if so, it will automatically reapply for the certificate and deploy it to the target service.
-
-
 
 ## Contributing
 
@@ -170,8 +154,7 @@ Support for more service providers, UI enhancements, bug fixes, and documentatio
 
 ## Join the Community
 
-* [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl) 
-
-* Wechat Group 
+* [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
+* Wechat Group
 
 <img src="https://i.imgur.com/zSHEoIm.png" width="400"/>
