@@ -39,9 +39,11 @@ import { updateById } from "@/repository/access_group";
 
 const AccessSSHForm = ({
   data,
+  op,
   onAfterReq,
 }: {
   data?: Access;
+  op: "add" | "edit" | "copy";
   onAfterReq: () => void;
 }) => {
   const {
@@ -146,6 +148,7 @@ const AccessSSHForm = ({
     };
 
     try {
+      req.id =  op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -153,7 +156,7 @@ const AccessSSHForm = ({
       req.id = rs.id;
       req.created = rs.created;
       req.updated = rs.updated;
-      if (data.id) {
+      if (data.id && op == "edit") {
         updateAccess(req);
       } else {
         addAccess(req);
