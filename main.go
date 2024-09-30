@@ -1,6 +1,7 @@
 package main
 
 import (
+	"certimate/internal/web"
 	"log"
 	"os"
 	"strings"
@@ -13,8 +14,6 @@ import (
 	"certimate/internal/domains"
 	"certimate/internal/utils/app"
 	_ "certimate/migrations"
-	"certimate/ui"
-
 	_ "time/tzdata"
 )
 
@@ -37,7 +36,7 @@ func main() {
 
 		e.Router.GET(
 			"/*",
-			echo.StaticDirectoryHandler(ui.DistDirFS, false),
+			echo.StaticDirectoryHandler(web.DistDirFS, false),
 			middleware.Gzip(),
 		)
 

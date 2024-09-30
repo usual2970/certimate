@@ -1,16 +1,25 @@
-FROM golang:1.22-alpine as builder
+FROM node:20.11.0-alpine as web_builder
+
+WORKDIR /app/ui
+
+COPY . /app
+
+RUN ["npm", "install"]
+
+RUN ["npm", "run", "build"]
+
+FROM golang:1.22-alpine as bin_builder
 
 WORKDIR /app
 
-COPY ../. /app/
+COPY --from=web_builder /app /app
 
-RUN go build -o certimate
-
+RUN ["go", "build", "-o", "certimate"]
 
 FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/certimate .
+COPY --from=bin_builder /app/certimate .
 
 ENTRYPOINT ["./certimate", "serve", "--http", "0.0.0.0:8090"]

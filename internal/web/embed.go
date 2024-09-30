@@ -1,5 +1,5 @@
 // Package ui handles the PocketBase Admin frontend embedding.
-package ui
+package web
 
 import (
 	"embed"

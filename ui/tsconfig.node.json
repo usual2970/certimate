@@ -9,5 +9,6 @@
     "strict": true,
     "noEmit": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "./src/lib/utils.ts", "./src/lib/typings.d.ts"],
+  "exclude": ["node_modules", "dist", "*.json", "*.md", "**/*.js"]
 }

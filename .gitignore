@@ -18,3 +18,5 @@ build
 *.sw?
 
 ./dist
+
+internal/web/dist
