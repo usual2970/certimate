@@ -61,6 +61,21 @@ func (s *ssh) upload(client *sshPkg.Client, content, targetPath string) error {
 	return nil
 }
 
+func (s *ssh) delete(client *sshPkg.Client, targetPath string) error {
+
+	sftpCli, err := sftp.NewClient(client)
+	if err != nil {
+		return fmt.Errorf("failed to create sftp client: %w", err)
+	}
+	defer sftpCli.Close()
+
+	if err := sftpCli.Remove(targetPath); err != nil {
+		return fmt.Errorf("failed to remove remote file: %w", err)
+	}
+
+	return nil
+}
+
 func (s *ssh) getClient(access *sshAccess) (*sshPkg.Client, error) {
 
 	var authMethod sshPkg.AuthMethod
@@ -131,6 +146,26 @@ func (s *ssh) Present(domain, token, keyAuth string) error {
 
 // CleanUp closes the HTTP server and removes the token from `ChallengePath(token)`.
 func (s *ssh) CleanUp(domain, token, keyAuth string) error {
+	access := &sshAccess{}
+	if err := json.Unmarshal([]byte(s.option.Access), access); err != nil {
+		return err
+	}
+
+	// 连接
+	client, err := s.getClient(access)
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	if value, ok := s.option.Extra["challengeFilePath"]; ok {
+		// 删除文件
+		if err := s.delete(client, fmt.Sprintf("%s/.well-known/acme-challenge/%s", value, token)); err != nil {
+			return fmt.Errorf("failed to delete challenge file: %w", err)
+		}
+	} else {
+		return fmt.Errorf("challenge file path undefined")
+	}
 
 	return nil
 }

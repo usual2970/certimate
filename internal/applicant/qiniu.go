@@ -9,6 +9,8 @@ import (
 
 	"github.com/qiniu/go-sdk/v7/auth"
 	"github.com/qiniu/go-sdk/v7/storage"
+	"github.com/qiniu/go-sdk/v7/storagev2/http_client"
+	"github.com/qiniu/go-sdk/v7/storagev2/objects"
 )
 
 const qiniuGateway = "http://api.qiniu.com"
@@ -64,10 +66,10 @@ func (s *qiuniu) Present(domain, token, keyAuth string) error {
 
 		// 上传验证文件
 		if err != nil {
-			return fmt.Errorf("failed to upload verify file: %w", err)
+			return fmt.Errorf("failed to upload challenge file: %w", err)
 		}
 	} else {
-		return fmt.Errorf("verify file path undefined")
+		return fmt.Errorf("challenge file path undefined")
 	}
 
 	return nil
@@ -75,6 +77,24 @@ func (s *qiuniu) Present(domain, token, keyAuth string) error {
 
 // CleanUp closes the HTTP server and removes the token from `ChallengePath(token)`.
 func (s *qiuniu) CleanUp(domain, token, keyAuth string) error {
+
+	if value, ok := s.option.Extra["challengeFilePath"]; ok {
+
+		objectsManager := objects.NewObjectsManager(&objects.ObjectsManagerOptions{
+			Options: http_client.Options{Credentials: s.credentials},
+		})
+		bucketName := value
+		bucket := objectsManager.Bucket(bucketName)
+
+		err := bucket.Object(fmt.Sprintf(".well-known/acme-challenge/%s", token)).Delete().Call(context.Background())
+
+		// 删除验证文件
+		if err != nil {
+			return fmt.Errorf("failed to delete challenge file: %w", err)
+		}
+	} else {
+		return fmt.Errorf("challenge file path undefined")
+	}
 
 	return nil
 }
