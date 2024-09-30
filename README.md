@@ -152,9 +152,6 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 支持更多服务商、UI 的优化改进、BUG 修复、文档完善等，欢迎大家提交 PR。
 
-Stargazers over time
-[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
-
 ## 八、加入社区
 
 * [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
@@ -162,5 +159,5 @@ Stargazers over time
 
 <img src="https://i.imgur.com/zSHEoIm.png" width="400"/>
 
-## 九、Star
+## 九、Star History
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
