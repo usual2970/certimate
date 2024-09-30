@@ -36,7 +36,7 @@ import AccessGodaddyFrom from "./AccessGodaddyForm";
 import AccessLocalForm from "./AccessLocalForm";
 
 type TargetConfigEditProps = {
-  op: "add" | "edit";
+  op: "add" | "edit" | "copy";
   className?: string;
   trigger: React.ReactNode;
   data?: Access;
@@ -60,6 +60,7 @@ export function AccessEdit({
       form = (
         <AccessTencentForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -70,6 +71,7 @@ export function AccessEdit({
       form = (
         <AccessAliyunForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -80,6 +82,7 @@ export function AccessEdit({
       form = (
         <AccessSSHForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -90,6 +93,7 @@ export function AccessEdit({
       form = (
         <WebhookForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -100,6 +104,7 @@ export function AccessEdit({
       form = (
         <AccessCloudflareForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -110,6 +115,7 @@ export function AccessEdit({
       form = (
         <AccessQiniuForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -120,6 +126,7 @@ export function AccessEdit({
       form = (
         <AccessNamesiloForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -130,6 +137,7 @@ export function AccessEdit({
       form = (
         <AccessGodaddyFrom
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -140,6 +148,7 @@ export function AccessEdit({
       form = (
         <AccessLocalForm
           data={data}
+          op={op}
           onAfterReq={() => {
             setOpen(false);
           }}
@@ -159,7 +168,7 @@ export function AccessEdit({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>{op == "add" ? t('access.add') : t('access.edit')}</DialogTitle>
+          <DialogTitle>{op == "add" ? t('access.add') : op == "edit" ? t('access.edit') : t('access.copy')}</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">

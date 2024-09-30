@@ -28,9 +28,11 @@ import { PbErrorData } from "@/domain/base";
 
 const AccessGodaddyFrom = ({
   data,
+  op,
   onAfterReq,
 }: {
   data?: Access;
+  op: "add" | "edit" | "copy";
   onAfterReq: () => void;
 }) => {
   const { addAccess, updateAccess } = useConfig();
@@ -74,6 +76,7 @@ const AccessGodaddyFrom = ({
     };
 
     try {
+      req.id =  op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -81,7 +84,7 @@ const AccessGodaddyFrom = ({
       req.id = rs.id;
       req.created = rs.created;
       req.updated = rs.updated;
-      if (data.id) {
+      if (data.id && op == "edit") {
         updateAccess(req);
         return;
       }
