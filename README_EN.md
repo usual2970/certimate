@@ -152,6 +152,9 @@ You can support the development of Certimate in the following ways:
 
 Support for more service providers, UI enhancements, bug fixes, and documentation improvements are all welcome. We encourage everyone to submit pull requests (PRs).
 
+Stargazers over time
+[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
+
 ## Join the Community
 
 * [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
