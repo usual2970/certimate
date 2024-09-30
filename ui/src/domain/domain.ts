@@ -50,7 +50,7 @@ export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
   ["qiniu-cdn", ["qiniu.cdn", "/imgs/providers/qiniu.svg"]],
   ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
-  ["local", ["local", "/imgs/providers/local.svg"]],
+  ["local", ["local.deployment", "/imgs/providers/local.svg"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());

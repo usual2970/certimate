@@ -9,7 +9,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["qiniu", ["qiniu", "/imgs/providers/qiniu.svg"]],
   ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
   ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
-  ["local", ["local", "/imgs/providers/local.svg"]],
+  ["local", ["local.deployment", "/imgs/providers/local.svg"]],
 ]);
 
 export const getProviderInfo = (t: string) => {
