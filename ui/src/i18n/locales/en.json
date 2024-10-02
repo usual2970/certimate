@@ -155,6 +155,7 @@
   "access.management": "Authorization Management",
   "access.add": "Add Authorization",
   "access.edit": "Edit Authorization",
+  "access.copy": "Copy Authorization",
   "access.delete.confirm": "Are you sure you want to delete the deployment authorization?",
   "access.all": "All Authorizations",
   "access.list": "Authorization List",
