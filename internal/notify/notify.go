@@ -31,11 +31,12 @@ func Send(title, content string) error {
 		return nil
 	}
 
+	n := notifyPackage.New()
 	// 添加推送渠道
-	notifyPackage.UseServices(notifiers...)
+	n.UseServices(notifiers...)
 
 	// 发送消息
-	return notifyPackage.Send(context.Background(), title, content)
+	return n.Send(context.Background(), title, content)
 }
 
 func getNotifiers() ([]notifyPackage.Notifier, error) {
