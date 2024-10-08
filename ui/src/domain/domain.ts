@@ -26,6 +26,22 @@ export type Domain = {
   expand?: {
     lastDeployment?: Deployment;
   };
+
+  applyConfig?: ApplyConfig;
+  deployConfig?: DeployConfig[];
+};
+
+export type DeployConfig = {
+  access: string;
+  type: string;
+  config?: Record<string, string>;
+};
+
+export type ApplyConfig = {
+  access: string;
+  email: string;
+  timeout?: number;
+  nameservers?: string;
 };
 
 export type Statistic = {

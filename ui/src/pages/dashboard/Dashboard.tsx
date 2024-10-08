@@ -57,7 +57,7 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col">
       <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">{t('dashboard')}</div>
+        <div className="text-muted-foreground">{t("dashboard")}</div>
       </div>
       <div className="flex mt-10 gap-5 flex-col flex-wrap md:flex-row">
         <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
@@ -66,7 +66,7 @@ const Dashboard = () => {
           </div>
           <div>
             <div className="text-muted-foreground font-semibold">
-              {t('dashboard.all')}
+              {t("dashboard.all")}
             </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
@@ -91,7 +91,7 @@ const Dashboard = () => {
           </div>
           <div>
             <div className="text-muted-foreground font-semibold">
-              {t('dashboard.near.expired')}
+              {t("dashboard.near.expired")}
             </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
@@ -120,7 +120,7 @@ const Dashboard = () => {
           </div>
           <div>
             <div className="text-muted-foreground font-semibold">
-              {t('dashboard.enabled')}
+              {t("dashboard.enabled")}
             </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
@@ -144,7 +144,9 @@ const Dashboard = () => {
             <Ban size={48} strokeWidth={1} className="text-gray-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">{t('dashboard.not.enabled')}</div>
+            <div className="text-muted-foreground font-semibold">
+              {t("dashboard.not.enabled")}
+            </div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.disabled ? (
@@ -168,22 +170,19 @@ const Dashboard = () => {
 
       <div>
         <div className="text-muted-foreground mt-5 text-sm">
-          {t('deployment.log.name')}
+          {t("deployment.log.name")}
         </div>
 
         {deployments?.length == 0 ? (
           <>
             <Alert className="max-w-[40em] mt-10">
-              <AlertTitle>{t('no.data')}</AlertTitle>
+              <AlertTitle>{t("no.data")}</AlertTitle>
               <AlertDescription>
                 <div className="flex items-center mt-5">
                   <div>
                     <Smile className="text-yellow-400" size={36} />
                   </div>
-                  <div className="ml-2">
-                    {" "}
-                    {t('deployment.log.empty')}
-                  </div>
+                  <div className="ml-2"> {t("deployment.log.empty")}</div>
                 </div>
                 <div className="mt-2 flex justify-end">
                   <Button
@@ -191,7 +190,7 @@ const Dashboard = () => {
                       navigate("/edit");
                     }}
                   >
-                    {t('domain.add')}
+                    {t("domain.add")}
                   </Button>
                 </div>
               </AlertDescription>
@@ -200,16 +199,18 @@ const Dashboard = () => {
         ) : (
           <>
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-              <div className="w-48">{t('domain')}</div>
+              <div className="w-48">{t("domain")}</div>
 
-              <div className="w-24">{t('deployment.log.status')}</div>
-              <div className="w-56">{t('deployment.log.stage')}</div>
-              <div className="w-56 sm:ml-2 text-center">{t('deployment.log.last.execution.time')}</div>
+              <div className="w-24">{t("deployment.log.status")}</div>
+              <div className="w-56">{t("deployment.log.stage")}</div>
+              <div className="w-56 sm:ml-2 text-center">
+                {t("deployment.log.last.execution.time")}
+              </div>
 
-              <div className="grow">{t('operation')}</div>
+              <div className="grow">{t("operation")}</div>
             </div>
             <div className="sm:hidden flex text-sm text-muted-foreground">
-              {t('deployment.log.name')}
+              {t("deployment.log.name")}
             </div>
 
             {deployments?.map((deployment) => (
@@ -218,7 +219,14 @@ const Dashboard = () => {
                 className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
               >
                 <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                  {deployment.expand.domain?.domain}
+                  {deployment.expand.domain?.domain
+                    .split(";")
+                    .map((domain: string) => (
+                      <>
+                        {domain}
+                        <br />
+                      </>
+                    ))}
                 </div>
                 <div className="sm:w-24 w-full pt-1 sm:pt-0 flex items-center">
                   <DeployState deployment={deployment} />
@@ -236,14 +244,14 @@ const Dashboard = () => {
                   <Sheet>
                     <SheetTrigger asChild>
                       <Button variant={"link"} className="p-0">
-                        {t('deployment.log.detail.button.text')}
+                        {t("deployment.log.detail.button.text")}
                       </Button>
                     </SheetTrigger>
                     <SheetContent className="sm:max-w-5xl">
                       <SheetHeader>
                         <SheetTitle>
                           {deployment.expand.domain?.domain}-{deployment.id}
-                          {t('deployment.log.detail')}
+                          {t("deployment.log.detail")}
                         </SheetTitle>
                       </SheetHeader>
                       <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh]">

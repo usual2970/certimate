@@ -83,6 +83,7 @@
   "pagination.prev": "Previous",
   "domain": "Domain",
   "domain.add": "Add Domain",
+  "domain.edit":"Edit Domain",
   "domain.delete": "Delete Domain",
   "domain.not.empty.verify.message": "Please enter domain",
   "domain.management.name": "Domain List",

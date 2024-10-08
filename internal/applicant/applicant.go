@@ -172,13 +172,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	}
 	myUser.Registration = reg
 
-	domains := []string{option.Domain}
-
-	// 如果是通配置符域名，把根域名也加入
-	if strings.HasPrefix(option.Domain, "*.") && len(strings.Split(option.Domain, ".")) == 3 {
-		rootDomain := strings.TrimPrefix(option.Domain, "*.")
-		domains = append(domains, rootDomain)
-	}
+	domains := strings.Split(option.Domain, ";")
 
 	request := certificate.ObtainRequest{
 		Domains: domains,

@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +38,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { EmailsSetting } from "@/domain/settings";
 import { useTranslation } from "react-i18next";
+import StringList from "@/components/certimate/StringList";
 
 const Edit = () => {
   const {
@@ -70,16 +70,16 @@ const Edit = () => {
 
   const formSchema = z.object({
     id: z.string().optional(),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: 'domain.not.empty.verify.message',
+    domain: z.string().min(1, {
+      message: "domain.not.empty.verify.message",
     }),
-    email: z.string().email('email.valid.message').optional(),
+    email: z.string().email("email.valid.message").optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: 'domain.management.edit.dns.access.not.empty.message',
+      message: "domain.management.edit.dns.access.not.empty.message",
     }),
     targetAccess: z.string().optional(),
     targetType: z.string().regex(/^[a-zA-Z0-9-]+$/, {
-      message: 'domain.management.edit.target.type.not.empty.message',
+      message: "domain.management.edit.target.type.not.empty.message",
     }),
     variables: z.string().optional(),
     group: z.string().optional(),
@@ -140,11 +140,11 @@ const Edit = () => {
     if (group == "" && targetAccess == "") {
       form.setError("group", {
         type: "manual",
-        message: 'domain.management.edit.target.access.verify.msg',
+        message: "domain.management.edit.target.access.verify.msg",
       });
       form.setError("targetAccess", {
         type: "manual",
-        message: 'domain.management.edit.target.access.verify.msg',
+        message: "domain.management.edit.target.access.verify.msg",
       });
       return;
     }
@@ -164,13 +164,13 @@ const Edit = () => {
 
     try {
       await save(req);
-      let description = t('domain.management.edit.succeed.tips');
+      let description = t("domain.management.edit.succeed.tips");
       if (req.id == "") {
-        description = t('domain.management.add.succeed.tips');
+        description = t("domain.management.add.succeed.tips");
       }
 
       toast({
-        title: t('succeed'),
+        title: t("succeed"),
         description,
       });
       navigate("/domains");
@@ -195,7 +195,7 @@ const Edit = () => {
       <div className="">
         <Toaster />
         <div className=" h-5 text-muted-foreground">
-          {domain?.id ? t('domain.edit') : t('domain.add')}
+          {domain?.id ? t("domain.edit") : t("domain.add")}
         </div>
         <div className="mt-5 flex w-full justify-center md:space-x-10 flex-col md:flex-row">
           <div className="w-full md:w-[200px] text-muted-foreground space-x-3 md:space-y-3 flex-row md:flex-col flex">
@@ -208,7 +208,7 @@ const Edit = () => {
                 setTab("base");
               }}
             >
-              {t('basic.setting')}
+              {t("basic.setting")}
             </div>
             <div
               className={cn(
@@ -219,7 +219,7 @@ const Edit = () => {
                 setTab("advance");
               }}
             >
-              {t('advanced.setting')}
+              {t("advanced.setting")}
             </div>
           </div>
 
@@ -234,10 +234,15 @@ const Edit = () => {
                   name="domain"
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
-                      <FormLabel>{t('domain')}</FormLabel>
-                      <FormControl>
-                        <Input placeholder={t('domain.not.empty.verify.message')} {...field} />
-                      </FormControl>
+                      <>
+                        <StringList
+                          value={field.value}
+                          valueType="domain"
+                          onValueChange={(domain: string) => {
+                            form.setValue("domain", domain);
+                          }}
+                        />
+                      </>
 
                       <FormMessage />
                     </FormItem>
@@ -249,12 +254,15 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="flex w-full justify-between">
-                        <div>{t('email') + t('domain.management.edit.email.description')}</div>
+                        <div>
+                          {t("email") +
+                            t("domain.management.edit.email.description")}
+                        </div>
                         <EmailsEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              {t('add')}
+                              {t("add")}
                             </div>
                           }
                         />
@@ -268,11 +276,15 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('domain.management.edit.email.not.empty.message')} />
+                            <SelectValue
+                              placeholder={t(
+                                "domain.management.edit.email.not.empty.message"
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>{t('email.list')}</SelectLabel>
+                              <SelectLabel>{t("email.list")}</SelectLabel>
                               {(emails.content as EmailsSetting).emails.map(
                                 (item) => (
                                   <SelectItem key={item} value={item}>
@@ -295,12 +307,14 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="flex w-full justify-between">
-                        <div>{t('domain.management.edit.dns.access.label')}</div>
+                        <div>
+                          {t("domain.management.edit.dns.access.label")}
+                        </div>
                         <AccessEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              {t('add')}
+                              {t("add")}
                             </div>
                           }
                           op="add"
@@ -315,11 +329,17 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('domain.management.edit.access.not.empty.message')} />
+                            <SelectValue
+                              placeholder={t(
+                                "domain.management.edit.access.not.empty.message"
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>{t('domain.management.edit.access.label')}</SelectLabel>
+                              <SelectLabel>
+                                {t("domain.management.edit.access.label")}
+                              </SelectLabel>
                               {accesses
                                 .filter((item) => item.usage != "deploy")
                                 .map((item) => (
@@ -351,7 +371,9 @@ const Edit = () => {
                   name="targetType"
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
-                      <FormLabel>{t('domain.management.edit.target.type')}</FormLabel>
+                      <FormLabel>
+                        {t("domain.management.edit.target.type")}
+                      </FormLabel>
                       <FormControl>
                         <Select
                           {...field}
@@ -361,11 +383,17 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('domain.management.edit.target.type.not.empty.message')} />
+                            <SelectValue
+                              placeholder={t(
+                                "domain.management.edit.target.type.not.empty.message"
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>{t('domain.management.edit.target.type')}</SelectLabel>
+                              <SelectLabel>
+                                {t("domain.management.edit.target.type")}
+                              </SelectLabel>
                               {targetTypeKeys.map((key) => (
                                 <SelectItem key={key} value={key}>
                                   <div className="flex items-center space-x-2">
@@ -373,7 +401,9 @@ const Edit = () => {
                                       className="w-6"
                                       src={targetTypeMap.get(key)?.[1]}
                                     />
-                                    <div>{t(targetTypeMap.get(key)?.[0] || '')}</div>
+                                    <div>
+                                      {t(targetTypeMap.get(key)?.[0] || "")}
+                                    </div>
                                   </div>
                                 </SelectItem>
                               ))}
@@ -392,12 +422,12 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "base"}>
                       <FormLabel className="w-full flex justify-between">
-                        <div>{t('domain.management.edit.target.access')}</div>
+                        <div>{t("domain.management.edit.target.access")}</div>
                         <AccessEdit
                           trigger={
                             <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                               <Plus size={14} />
-                              {t('add')}
+                              {t("add")}
                             </div>
                           }
                           op="add"
@@ -411,12 +441,19 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('domain.management.edit.target.access.not.empty.message')} />
+                            <SelectValue
+                              placeholder={t(
+                                "domain.management.edit.target.access.not.empty.message"
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>
-                                {t('domain.management.edit.target.access.content.label')} {form.getValues().targetAccess}
+                                {t(
+                                  "domain.management.edit.target.access.content.label"
+                                )}{" "}
+                                {form.getValues().targetAccess}
                               </SelectLabel>
                               <SelectItem value="emptyId">
                                 <div className="flex items-center space-x-2">
@@ -452,9 +489,7 @@ const Edit = () => {
                   render={({ field }) => (
                     <FormItem hidden={tab != "advance" || targetType != "ssh"}>
                       <FormLabel className="w-full flex justify-between">
-                        <div>
-                          {t('domain.management.edit.group.label')}
-                        </div>
+                        <div>{t("domain.management.edit.group.label")}</div>
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -466,7 +501,11 @@ const Edit = () => {
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder={t('domain.management.edit.group.not.empty.message')} />
+                            <SelectValue
+                              placeholder={t(
+                                "domain.management.edit.group.not.empty.message"
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="emptyId">
@@ -511,10 +550,12 @@ const Edit = () => {
                   name="variables"
                   render={({ field }) => (
                     <FormItem hidden={tab != "advance"}>
-                      <FormLabel>{t('variables')}</FormLabel>
+                      <FormLabel>{t("variables")}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={t('domain.management.edit.variables.placeholder')}
+                          placeholder={t(
+                            "domain.management.edit.variables.placeholder"
+                          )}
                           {...field}
                           className="placeholder:whitespace-pre-wrap"
                         />
@@ -530,10 +571,12 @@ const Edit = () => {
                   name="nameservers"
                   render={({ field }) => (
                     <FormItem hidden={tab != "advance"}>
-                      <FormLabel>{t('dns')}</FormLabel>
+                      <FormLabel>{t("dns")}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder={t('domain.management.edit.dns.placeholder')}
+                          placeholder={t(
+                            "domain.management.edit.dns.placeholder"
+                          )}
                           {...field}
                           className="placeholder:whitespace-pre-wrap"
                         />
@@ -545,7 +588,7 @@ const Edit = () => {
                 />
 
                 <div className="flex justify-end">
-                  <Button type="submit">{t('save')}</Button>
+                  <Button type="submit">{t("save")}</Button>
                 </div>
               </form>
             </Form>

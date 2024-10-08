@@ -83,6 +83,7 @@
   "pagination.prev": "上一页",
   "domain": "域名",
   "domain.add": "新增域名",
+  "domain.edit": "编辑域名",
   "domain.delete": "删除域名",
   "domain.not.empty.verify.message": "请输入域名",
   "domain.management.name": "域名列表",
