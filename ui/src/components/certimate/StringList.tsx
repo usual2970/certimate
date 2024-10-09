@@ -111,7 +111,7 @@ const StringList = ({
               </div>
             }
           >
-            <div className="border rounded-md p-3 text-sm mt-2 text-gray-700 space-y-2">
+            <div className="border rounded-md p-3 text-sm mt-2 text-gray-700 space-y-2 dark:text-white dark:border-stone-700 dark:bg-stone-950">
               {list.map((item, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <div>{item}</div>
@@ -122,7 +122,7 @@ const StringList = ({
                       trigger={
                         <Edit
                           size={16}
-                          className="cursor-pointer text-gray-600"
+                          className="cursor-pointer text-gray-600 dark:text-white"
                         />
                       }
                       value={item}
@@ -213,12 +213,15 @@ const StringEdit = ({
       }}
     >
       <DialogTrigger className="text-primary">{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="dark:text-white">
         <DialogHeader>
-          <DialogTitle>{t(titles[valueType])}</DialogTitle>
+          <DialogTitle className="dark:text-white">
+            {t(titles[valueType])}
+          </DialogTitle>
         </DialogHeader>
         <Input
           value={currentValue}
+          className="dark:text-white"
           onChange={(e) => {
             setCurrentValue(e.target.value);
           }}
