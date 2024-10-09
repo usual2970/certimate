@@ -155,7 +155,7 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 ## 八、加入社区
 
 * [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
-* 微信群聊(需要邀请入群，可先加作者好友)
+* 微信群聊(超200人需邀请入群，可先加作者好友)
 
 <img src="https://i.imgur.com/8xwsLTA.png" width="400"/>
 
