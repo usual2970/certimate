@@ -40,6 +40,7 @@ import { EmailsSetting } from "@/domain/settings";
 import { useTranslation } from "react-i18next";
 import StringList from "@/components/certimate/StringList";
 import { Input } from "@/components/ui/input";
+import DeployList from "@/components/certimate/DeployList";
 
 const Edit = () => {
   const {
@@ -420,26 +421,11 @@ const Edit = () => {
 
             <div
               className={cn(
-                "flex flex-col space-y-5",
+                "flex flex-col space-y-5 w-full md:w-[35em]",
                 tab == "apply" && "hidden"
               )}
             >
-              <div className="flex justify-end py-2 border-b">
-                <Button size={"sm"} variant={"secondary"}>
-                  添加部署
-                </Button>
-              </div>
-              <div className="w-full md:w-[35em] rounded mt-5 border">
-                <div className="">
-                  <div className="flex justify-between text-sm p-3 items-center text-stone-700">
-                    <div>ALIYUN-CDN</div>
-                    <div className="flex space-x-2">
-                      <EditIcon size={16} />
-                      <Trash2 size={16} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <DeployList deploys={domain?.deployConfig ?? []} />
             </div>
           </div>
         </div>

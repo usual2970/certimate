@@ -31,7 +31,7 @@ export type Domain = {
   deployConfig?: DeployConfig[];
 };
 
-type KVType = {
+export type KVType = {
   key: string;
   value: string;
 };
