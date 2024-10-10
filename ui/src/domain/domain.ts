@@ -7,7 +7,7 @@ export type Domain = {
   crontab: string;
   access: string;
   targetAccess?: string;
-  targetType: string;
+  targetType?: string;
   expiredAt?: string;
   phase?: Pahse;
   phaseSuccess?: boolean;
@@ -31,10 +31,19 @@ export type Domain = {
   deployConfig?: DeployConfig[];
 };
 
+type KVType = {
+  key: string;
+  value: string;
+};
+
 export type DeployConfig = {
   access: string;
   type: string;
-  config?: Record<string, string>;
+  config?: {
+    [key: string]: string;
+  } & {
+    variables?: KVType[];
+  };
 };
 
 export type ApplyConfig = {

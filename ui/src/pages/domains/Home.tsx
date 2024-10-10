@@ -96,6 +96,7 @@ const Home = () => {
   const handelCheckedChange = async (id: string) => {
     const checkedDomains = domains.filter((domain) => domain.id === id);
     const isChecked = checkedDomains[0].enabled;
+    
 
     const data = checkedDomains[0];
     data.enabled = !isChecked;
