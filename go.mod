@@ -18,7 +18,8 @@ require (
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
 	github.com/qiniu/go-sdk/v7 v7.22.0
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1017
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	golang.org/x/crypto v0.26.0
 )
