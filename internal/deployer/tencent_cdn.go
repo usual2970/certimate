@@ -103,9 +103,9 @@ func (t *tencentCdn) deploy(certId string) error {
 
 	// 如果是泛域名就从cdn列表下获取SSL证书中的可用域名
 	if(strings.Contains(t.option.Domain, "*")){
-		list, err_get_list := t.getDomainList()
-		if err_get_list != nil {
-			return fmt.Errorf("failed to get certificate domain list: %w", err_get_list)
+		list, errGetList := t.getDomainList()
+		if errGetList != nil {
+			return fmt.Errorf("failed to get certificate domain list: %w", errGetList)
 		}
 		if list == nil || len(list) == 0 {
 			return fmt.Errorf("failed to get certificate domain list: empty list.")
