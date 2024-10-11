@@ -15,11 +15,14 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
+import { produce } from "immer";
+
 type KVListProps = {
   variables?: KVType[];
+  onValueChange?: (variables: KVType[]) => void;
 };
 
-const KVList = ({ variables }: KVListProps) => {
+const KVList = ({ variables, onValueChange }: KVListProps) => {
   const [locVariables, setLocVariables] = useState<KVType[]>([]);
 
   const { t } = useTranslation();
@@ -36,25 +39,33 @@ const KVList = ({ variables }: KVListProps) => {
       return item.key === variable.key;
     });
 
-    if (index === -1) {
-      setLocVariables([...locVariables, variable]);
-    } else {
-      const newList = [...locVariables];
-      newList[index] = variable;
-      setLocVariables(newList);
-    }
+    const newList = produce(locVariables, (draft) => {
+      if (index === -1) {
+        draft.push(variable);
+      } else {
+        draft[index] = variable;
+      }
+    });
+
+    setLocVariables(newList);
+
+    onValueChange?.(newList);
   };
 
   const handleDeleteClick = (index: number) => {
     const newList = [...locVariables];
     newList.splice(index, 1);
     setLocVariables(newList);
+
+    onValueChange?.(newList);
   };
 
   const handleEditClick = (index: number, variable: KVType) => {
     const newList = [...locVariables];
     newList[index] = variable;
     setLocVariables(newList);
+
+    onValueChange?.(newList);
   };
 
   return (
@@ -159,6 +170,30 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
 
   const [open, setOpen] = useState<boolean>(false);
 
+  const [err, setErr] = useState<Record<string, string>>({});
+
+  const handleSaveClick = () => {
+    if (!locVariable.key) {
+      setErr({
+        key: t("name.required"),
+      });
+      return;
+    }
+
+    if (!locVariable.value) {
+      setErr({
+        value: t("value.required"),
+      });
+      return;
+    }
+
+    onSave?.(locVariable);
+
+    setOpen(false);
+
+    setErr({});
+  };
+
   return (
     <Dialog
       open={open}
@@ -181,6 +216,7 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
               }}
               className="w-full mt-1"
             />
+            <div className="text-red-500 text-sm mt-1">{err?.key}</div>
           </div>
 
           <div className="pt-2  flex flex-col items-start">
@@ -193,14 +229,15 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
               }}
               className="w-full mt-1"
             />
+
+            <div className="text-red-500 text-sm mt-1">{err?.value}</div>
           </div>
         </DialogHeader>
         <DialogFooter>
           <div className="flex justify-end">
             <Button
               onClick={() => {
-                onSave?.(locVariable);
-                setOpen(false);
+                handleSaveClick();
               }}
             >
               {t("save")}

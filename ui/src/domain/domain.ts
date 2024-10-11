@@ -37,6 +37,7 @@ export type KVType = {
 };
 
 export type DeployConfig = {
+  id?: string;
   access: string;
   type: string;
   config?: {
