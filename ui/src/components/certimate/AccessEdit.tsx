@@ -10,16 +10,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import AccessTencentForm from "./AccessTencentForm";
-
-import { Label } from "../ui/label";
-
 import { Access, accessTypeMap } from "@/domain/access";
-import AccessAliyunForm from "./AccessAliyunForm";
 import { cn } from "@/lib/utils";
 
-import AccessSSHForm from "./AccessSSHForm";
-import WebhookForm from "./AccessWebhookFrom";
+import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
@@ -29,11 +23,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import AccessCloudflareForm from "./AccessCloudflareForm";
+import AccessAliyunForm from "./AccessAliyunForm";
+import AccessTencentForm from "./AccessTencentForm";
+import AccessHuaweicloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
+import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
 import AccessGodaddyFrom from "./AccessGodaddyForm";
 import AccessLocalForm from "./AccessLocalForm";
+import AccessSSHForm from "./AccessSSHForm";
+import AccessWebhookForm from "./AccessWebhookFrom";
 
 type TargetConfigEditProps = {
   op: "add" | "edit" | "copy";
@@ -56,17 +55,6 @@ export function AccessEdit({
 
   let form = <> </>;
   switch (configType) {
-    case "tencent":
-      form = (
-        <AccessTencentForm
-          data={data}
-          op={op}
-          onAfterReq={() => {
-            setOpen(false);
-          }}
-        />
-      );
-      break;
     case "aliyun":
       form = (
         <AccessAliyunForm
@@ -78,9 +66,9 @@ export function AccessEdit({
         />
       );
       break;
-    case "ssh":
+    case "tencent":
       form = (
-        <AccessSSHForm
+        <AccessTencentForm
           data={data}
           op={op}
           onAfterReq={() => {
@@ -89,20 +77,9 @@ export function AccessEdit({
         />
       );
       break;
-    case "webhook":
+    case "huaweicloud":
       form = (
-        <WebhookForm
-          data={data}
-          op={op}
-          onAfterReq={() => {
-            setOpen(false);
-          }}
-        />
-      );
-      break;
-    case "cloudflare":
-      form = (
-        <AccessCloudflareForm
+        <AccessHuaweicloudForm
           data={data}
           op={op}
           onAfterReq={() => {
@@ -114,6 +91,17 @@ export function AccessEdit({
     case "qiniu":
       form = (
         <AccessQiniuForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "cloudflare":
+      form = (
+        <AccessCloudflareForm
           data={data}
           op={op}
           onAfterReq={() => {
@@ -155,6 +143,28 @@ export function AccessEdit({
         />
       );
       break;
+    case "ssh":
+      form = (
+        <AccessSSHForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "webhook":
+      form = (
+        <AccessWebhookForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
   }
 
   const getOptionCls = (val: string) => {
@@ -168,11 +178,17 @@ export function AccessEdit({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>{op == "add" ? t('access.add') : op == "edit" ? t('access.edit') : t('access.copy')}</DialogTitle>
+          <DialogTitle>
+            {op == "add"
+              ? t("access.add")
+              : op == "edit"
+              ? t("access.edit")
+              : t("access.copy")}
+          </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">
-            <Label>{t('access.type')}</Label>
+            <Label>{t("access.type")}</Label>
 
             <Select
               onValueChange={(val) => {
@@ -181,11 +197,11 @@ export function AccessEdit({
               defaultValue={configType}
             >
               <SelectTrigger className="mt-3">
-                <SelectValue placeholder={t('access.type.not.empty')} />
+                <SelectValue placeholder={t("access.type.not.empty")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>{t('access.type')}</SelectLabel>
+                  <SelectLabel>{t("access.type")}</SelectLabel>
                   {typeKeys.map((key) => (
                     <SelectItem value={key} key={key}>
                       <div
@@ -198,7 +214,7 @@ export function AccessEdit({
                           src={accessTypeMap.get(key)?.[1]}
                           className="h-6 w-6"
                         />
-                        <div>{t(accessTypeMap.get(key)?.[0] || '')}</div>
+                        <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
                       </div>
                     </SelectItem>
                   ))}
