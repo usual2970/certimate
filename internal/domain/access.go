@@ -10,6 +10,12 @@ type TencentAccess struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type HuaweiCloudAccess struct {
+	Region          string `json:"region"`
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+}
+
 type CloudflareAccess struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }

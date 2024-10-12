@@ -32,6 +32,12 @@ You can download the precompiled binary files directly from the [Releases page](
 ./certimate serve
 ```
 
+Or run the following command to automatically add a certificate to Certimate itself.
+
+```bash
+./certimate serve yourDomain
+```
+
 > [!NOTE]
 > When executing the binary file on macOS, you may see a prompt saying: “Cannot open ‘certimate’ because Apple cannot check it for malicious software.” You can go to System Preferences > Security & Privacy > General, then click “Allow Anyway,” and try executing the binary file again.
 

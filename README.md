@@ -32,6 +32,11 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 ./certimate serve
 ```
 
+或运行以下命令自动给 Certimate 自身添加证书
+```bash
+./certimate serve 你的域名
+```
+
 > [!NOTE]
 > MacOS 在执行二进制文件时会提示：无法打开“certimate”，因为Apple无法检查其是否包含恶意软件。可在系统设置> 隐私与安全性> 安全性 中点击 "仍然允许"，然后再次尝试执行二进制文件。
 

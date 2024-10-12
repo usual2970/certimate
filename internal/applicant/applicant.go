@@ -20,11 +20,12 @@ import (
 )
 
 const (
-	configTypeTencent    = "tencent"
-	configTypeAliyun     = "aliyun"
-	configTypeCloudflare = "cloudflare"
-	configTypeNamesilo   = "namesilo"
-	configTypeGodaddy    = "godaddy"
+	configTypeAliyun      = "aliyun"
+	configTypeTencent     = "tencent"
+	configTypeHuaweicloud = "huaweicloud"
+	configTypeCloudflare  = "cloudflare"
+	configTypeNamesilo    = "namesilo"
+	configTypeGodaddy     = "godaddy"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -94,10 +95,12 @@ func Get(record *models.Record) (Applicant, error) {
 		Nameservers: record.GetString("nameservers"),
 	}
 	switch access.GetString("configType") {
-	case configTypeTencent:
-		return NewTencent(option), nil
 	case configTypeAliyun:
 		return NewAliyun(option), nil
+	case configTypeTencent:
+		return NewTencent(option), nil
+	case configTypeHuaweicloud:
+		return NewHuaweiCloud(option), nil
 	case configTypeCloudflare:
 		return NewCloudflare(option), nil
 	case configTypeNamesilo:
