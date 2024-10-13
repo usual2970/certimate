@@ -239,5 +239,9 @@
   "deployment.not.added": "Deployment not added yet",
   "deployment.access.type": "Access Type",
   "deployment.access.config": "Access Configuration",
-  "deployment.access.cdn.deploy.to.domain": "Deploy to domain"
+  "deployment.access.cdn.deploy.to.domain": "Deploy to domain",
+
+  "deployment.access.oss.bucket": "Bucket",
+  "deployment.access.oss.bucket.not.empty": "Please enter Bucket",
+  "deployment.access.oss.endpoint": "Endpoint"
 }

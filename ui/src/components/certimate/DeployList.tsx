@@ -479,7 +479,7 @@ const DeployEdit = ({ type }: DeployEditProps) => {
       case "dcdn":
         return <DeployCDN />;
       case "oss":
-        return <DeployCDN />;
+        return <DeployOSS />;
       case "webhook":
         return <DeployWebhook />;
       default:
@@ -623,6 +623,158 @@ const DeployCDN = () => {
   return (
     <div className="flex flex-col space-y-2">
       <div>
+        <Label>{t("deployment.access.cdn.deploy.to.domain")}</Label>
+        <Input
+          placeholder={t("deployment.access.cdn.deploy.to.domain")}
+          className="w-full mt-1"
+          value={data?.config?.domain}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = domainSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                domain: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                domain: "",
+              });
+            }
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.domain = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+      </div>
+    </div>
+  );
+};
+
+const DeployOSS = () => {
+  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setError({});
+  }, []);
+
+  useEffect(() => {
+    const resp = domainSchema.safeParse(data.config?.domain);
+    if (!resp.success) {
+      setError({
+        ...error,
+        domain: JSON.parse(resp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        domain: "",
+      });
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const bucketResp = bucketSchema.safeParse(data.config?.domain);
+    if (!bucketResp.success) {
+      setError({
+        ...error,
+        bucket: JSON.parse(bucketResp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        bucket: "",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          endpoint: "oss-cn-hangzhou.aliyuncs.com",
+          bucket: "",
+          domain: "",
+        },
+      });
+    }
+  }, []);
+
+  const domainSchema = z
+    .string()
+    .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("domain.not.empty.verify.message"),
+    });
+
+  const bucketSchema = z.string().min(1, {
+    message: t("deployment.access.oss.bucket.not.empty"),
+  });
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <div>
+        <Label>{t("deployment.access.oss.endpoint")}</Label>
+
+        <Input
+          className="w-full mt-1"
+          value={data?.config?.endpoint}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.endpoint = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.endpoint}</div>
+
+        <Label>{t("deployment.access.oss.bucket")}</Label>
+        <Input
+          placeholder={t("deployment.access.oss.bucket.not.empty")}
+          className="w-full mt-1"
+          value={data?.config?.bucket}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = bucketSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                bucket: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                bucket: "",
+              });
+            }
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.bucket = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
+
         <Label>{t("deployment.access.cdn.deploy.to.domain")}</Label>
         <Input
           placeholder={t("deployment.access.cdn.deploy.to.domain")}
