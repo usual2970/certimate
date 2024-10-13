@@ -43,10 +43,14 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import KVList from "./KVList";
 import { produce } from "immer";
+import { nanoid } from "nanoid";
+import { z } from "zod";
 
 type DeployEditContextProps = {
   deploy: DeployConfig;
+  error: Record<string, string>;
   setDeploy: (deploy: DeployConfig) => void;
+  setError: (error: Record<string, string>) => void;
 };
 
 const DeployEditContext = createContext<DeployEditContextProps>(
@@ -59,53 +63,92 @@ export const useDeployEditContext = () => {
 
 type DeployListProps = {
   deploys: DeployConfig[];
+  onChange: (deploys: DeployConfig[]) => void;
 };
 
-const DeployList = ({ deploys }: DeployListProps) => {
+const DeployList = ({ deploys, onChange }: DeployListProps) => {
   const [list, setList] = useState<DeployConfig[]>([]);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     setList(deploys);
   }, [deploys]);
+
+  const handleAdd = (deploy: DeployConfig) => {
+    deploy.id = nanoid();
+
+    const newList = [...list, deploy];
+
+    setList(newList);
+
+    onChange(newList);
+  };
+
+  const handleDelete = (id: string) => {
+    const newList = list.filter((item) => item.id !== id);
+
+    setList(newList);
+
+    onChange(newList);
+  };
+
+  const handleSave = (deploy: DeployConfig) => {
+    const newList = list.map((item) => {
+      if (item.id === deploy.id) {
+        return { ...deploy };
+      }
+      return item;
+    });
+
+    setList(newList);
+
+    onChange(newList);
+  };
 
   return (
     <>
       <Show
         when={list.length > 0}
         fallback={
-          <Alert className="w-full">
+          <Alert className="w-full border dark:border-stone-400">
             <AlertDescription className="flex flex-col items-center">
-              <div>暂无部署配置，请添加后开始部署证书吧</div>
+              <div>{t("deployment.not.added")}</div>
               <div className="flex justify-end mt-2">
                 <DeployEditDialog
-                  trigger={<Button size={"sm"}>添加部署</Button>}
+                  onSave={(config: DeployConfig) => {
+                    handleAdd(config);
+                  }}
+                  trigger={<Button size={"sm"}>{t("add")}</Button>}
                 />
               </div>
             </AlertDescription>
           </Alert>
         }
       >
-        <div className="flex justify-end py-2 border-b">
-          <DeployEditDialog trigger={<Button size={"sm"}>添加部署</Button>} />
+        <div className="flex justify-end py-2 border-b dark:border-stone-400">
+          <DeployEditDialog
+            trigger={<Button size={"sm"}>{t("add")}</Button>}
+            onSave={(config: DeployConfig) => {
+              handleAdd(config);
+            }}
+          />
         </div>
 
-        <div className="w-full md:w-[35em] rounded mt-5 border">
+        <div className="w-full md:w-[35em] rounded mt-5 border dark:border-stone-400">
           <div className="">
-            <div className="flex justify-between text-sm p-3 items-center text-stone-700">
-              <div className="flex space-x-2 items-center">
-                <div>
-                  <img src="/imgs/providers/ssh.svg" className="w-9"></img>
-                </div>
-                <div className="text-stone-600 flex-col flex space-y-0">
-                  <div>ssh部署</div>
-                  <div>业务服务器</div>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <EditIcon size={16} className="cursor-pointer" />
-                <Trash2 size={16} className="cursor-pointer" />
-              </div>
-            </div>
+            {list.map((item) => (
+              <DeployItem
+                key={item.id}
+                item={item}
+                onDelete={() => {
+                  handleDelete(item.id ?? "");
+                }}
+                onSave={(deploy: DeployConfig) => {
+                  handleSave(deploy);
+                }}
+              />
+            ))}
           </div>
         </div>
       </Show>
@@ -113,11 +156,87 @@ const DeployList = ({ deploys }: DeployListProps) => {
   );
 };
 
+type DeployItemProps = {
+  item: DeployConfig;
+  onDelete: () => void;
+  onSave: (deploy: DeployConfig) => void;
+};
+const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
+  const {
+    config: { accesses },
+  } = useConfig();
+  const { t } = useTranslation();
+  const access = accesses.find((access) => access.id === item.access);
+  const getImg = () => {
+    if (!access) {
+      return "";
+    }
+
+    const accessType = accessTypeMap.get(access.configType);
+
+    if (accessType) {
+      return accessType[1];
+    }
+
+    return "";
+  };
+
+  const getTypeName = () => {
+    if (!access) {
+      return "";
+    }
+
+    const accessType = targetTypeMap.get(item.type);
+
+    if (accessType) {
+      return t(accessType[0]);
+    }
+
+    return "";
+  };
+
+  return (
+    <div className="flex justify-between text-sm p-3 items-center text-stone-700">
+      <div className="flex space-x-2 items-center">
+        <div>
+          <img src={getImg()} className="w-9"></img>
+        </div>
+        <div className="text-stone-600 flex-col flex space-y-0">
+          <div>{getTypeName()}</div>
+          <div>{access?.name}</div>
+        </div>
+      </div>
+      <div className="flex space-x-2">
+        <DeployEditDialog
+          trigger={<EditIcon size={16} className="cursor-pointer" />}
+          deployConfig={item}
+          onSave={(deploy: DeployConfig) => {
+            onSave(deploy);
+          }}
+        />
+
+        <Trash2
+          size={16}
+          className="cursor-pointer"
+          onClick={() => {
+            onDelete();
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
 type DeployEditDialogProps = {
   trigger: React.ReactNode;
   deployConfig?: DeployConfig;
+  onSave: (deploy: DeployConfig) => void;
 };
-const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
+const DeployEditDialog = ({
+  trigger,
+  deployConfig,
+  onSave,
+}: DeployEditDialogProps) => {
   const {
     config: { accesses },
   } = useConfig();
@@ -128,6 +247,10 @@ const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
     access: "",
     type: "",
   });
+
+  const [error, setError] = useState<Record<string, string>>({});
+
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (deployConfig) {
@@ -150,6 +273,7 @@ const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
       t = locDeployConfig.type;
     }
     setDeployType(t as TargetType);
+    setError({});
   }, [locDeployConfig.type]);
 
   const setDeploy = useCallback(
@@ -177,23 +301,62 @@ const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
     return item.configType === types[0];
   });
 
+  const handleSaveClick = () => {
+    // 验证数据
+    // 保存数据
+    // 清理数据
+    // 关闭弹框
+    const newError = { ...error };
+    if (locDeployConfig.type === "") {
+      newError.type = t("domain.management.edit.access.not.empty.message");
+    } else {
+      newError.type = "";
+    }
+
+    if (locDeployConfig.access === "") {
+      newError.access = t("domain.management.edit.access.not.empty.message");
+    } else {
+      newError.access = "";
+    }
+    setError(newError);
+
+    for (const key in newError) {
+      if (newError[key] !== "") {
+        return;
+      }
+    }
+
+    onSave(locDeployConfig);
+
+    setLocDeployConfig({
+      access: "",
+      type: "",
+    });
+
+    setError({});
+
+    setOpen(false);
+  };
+
   return (
     <DeployEditContext.Provider
       value={{
         deploy: locDeployConfig,
         setDeploy: setDeploy,
+        error: error,
+        setError: setError,
       }}
     >
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger>{trigger}</DialogTrigger>
-        <DialogContent>
+        <DialogContent className="dark:text-stone-200">
           <DialogHeader>
-            <DialogTitle>部署</DialogTitle>
+            <DialogTitle>{t("deployment")}</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
           {/* 授权类型 */}
           <div>
-            <Label>授权类型</Label>
+            <Label>{t("deployment.access.type")}</Label>
 
             <Select
               value={locDeployConfig.type}
@@ -227,11 +390,13 @@ const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+
+            <div className="text-red-500 text-sm mt-1">{error.type}</div>
           </div>
           {/* 授权 */}
           <div>
             <Label className="flex justify-between">
-              <div>授权配置</div>
+              <div>{t("deployment.access.config")}</div>
               <AccessEdit
                 trigger={
                   <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
@@ -275,12 +440,21 @@ const DeployEditDialog = ({ trigger, deployConfig }: DeployEditDialogProps) => {
                 </SelectGroup>
               </SelectContent>
             </Select>
+
+            <div className="text-red-500 text-sm mt-1">{error.access}</div>
           </div>
 
           <DeployEdit type={deployType!} />
 
           <DialogFooter>
-            <Button>保存</Button>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSaveClick();
+              }}
+            >
+              {t("save")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -317,8 +491,27 @@ const DeployEdit = ({ type }: DeployEditProps) => {
 
 const DeploySSH = () => {
   const { t } = useTranslation();
+  const { setError } = useDeployEditContext();
+
+  useEffect(() => {
+    setError({});
+  }, []);
 
   const { deploy: data, setDeploy } = useDeployEditContext();
+
+  useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          certPath: "/etc/nginx/ssl/nginx.crt",
+          keyPath: "/etc/nginx/ssl/nginx.key",
+          preCommand: "",
+          command: "sudo service nginx reload",
+        },
+      });
+    }
+  }, []);
   return (
     <>
       <div className="flex flex-col space-y-2">
@@ -358,10 +551,11 @@ const DeploySSH = () => {
         </div>
 
         <div>
-          <Label>前置命令</Label>
+          <Label>{t("access.form.ssh.pre.command")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.preCommand}
+            placeholder={t("access.form.ssh.pre.command.not.empty")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -375,10 +569,11 @@ const DeploySSH = () => {
         </div>
 
         <div>
-          <Label>命令</Label>
+          <Label>{t("access.form.ssh.command")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.command}
+            placeholder={t("access.form.ssh.command.not.empty")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -396,25 +591,69 @@ const DeploySSH = () => {
 };
 
 const DeployCDN = () => {
-  const { deploy: data, setDeploy } = useDeployEditContext();
+  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setError({});
+  }, []);
+
+  useEffect(() => {
+    const resp = domainSchema.safeParse(data.config?.domain);
+    if (!resp.success) {
+      setError({
+        ...error,
+        domain: JSON.parse(resp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        domain: "",
+      });
+    }
+  }, [data]);
+
+  const domainSchema = z
+    .string()
+    .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("domain.not.empty.verify.message"),
+    });
+
   return (
     <div className="flex flex-col space-y-2">
       <div>
-        <Label>部署至域名</Label>
+        <Label>{t("deployment.access.cdn.deploy.to.domain")}</Label>
         <Input
-          placeholder="部署至域名"
+          placeholder={t("deployment.access.cdn.deploy.to.domain")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = domainSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                domain: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                domain: "",
+              });
+            }
+
             const newData = produce(data, (draft) => {
               if (!draft.config) {
                 draft.config = {};
               }
-              draft.config.domain = e.target.value;
+              draft.config.domain = temp;
             });
             setDeploy(newData);
           }}
         />
+        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
       </div>
     </div>
   );
@@ -422,6 +661,12 @@ const DeployCDN = () => {
 
 const DeployWebhook = () => {
   const { deploy: data, setDeploy } = useDeployEditContext();
+
+  const { setError } = useDeployEditContext();
+
+  useEffect(() => {
+    setError({});
+  }, []);
 
   return (
     <>

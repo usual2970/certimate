@@ -96,7 +96,6 @@ const Home = () => {
   const handelCheckedChange = async (id: string) => {
     const checkedDomains = domains.filter((domain) => domain.id === id);
     const isChecked = checkedDomains[0].enabled;
-    
 
     const data = checkedDomains[0];
     data.enabled = !isChecked;
@@ -114,8 +113,8 @@ const Home = () => {
 
   const handleRightNowClick = async (domain: Domain) => {
     try {
-      unsubscribeId(domain.id);
-      subscribeId(domain.id, (resp) => {
+      unsubscribeId(domain.id ?? "");
+      subscribeId(domain.id ?? "", (resp) => {
         console.log(resp);
         const updatedDomains = domains.map((domain) => {
           if (domain.id === resp.id) {
@@ -283,7 +282,7 @@ const Home = () => {
                         <Switch
                           checked={domain.enabled}
                           onCheckedChange={() => {
-                            handelCheckedChange(domain.id);
+                            handelCheckedChange(domain.id ?? "");
                           }}
                         ></Switch>
                       </TooltipTrigger>
@@ -299,7 +298,7 @@ const Home = () => {
                   <Button
                     variant={"link"}
                     className="p-0"
-                    onClick={() => handleHistoryClick(domain.id)}
+                    onClick={() => handleHistoryClick(domain.id ?? "")}
                   >
                     {t("deployment.log.name")}
                   </Button>
@@ -364,7 +363,7 @@ const Home = () => {
                             <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => {
-                                handleDeleteClick(domain.id);
+                                handleDeleteClick(domain.id ?? "");
                               }}
                             >
                               {t("confirm")}
@@ -377,7 +376,7 @@ const Home = () => {
                       <Button
                         variant={"link"}
                         className="p-0"
-                        onClick={() => handleEditClick(domain.id)}
+                        onClick={() => handleEditClick(domain.id ?? "")}
                       >
                         {t("edit")}
                       </Button>

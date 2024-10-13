@@ -3,6 +3,7 @@ package applicant
 import (
 	"certimate/internal/domain"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	namesiloProvider "github.com/go-acme/lego/v4/providers/dns/namesilo"
@@ -24,6 +25,7 @@ func (a *namesilo) Apply() (*Certificate, error) {
 	json.Unmarshal([]byte(a.option.Access), access)
 
 	os.Setenv("NAMESILO_API_KEY", access.ApiKey)
+	os.Setenv("NAMESILO_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
 
 	dnsProvider, err := namesiloProvider.NewDNSProvider()
 	if err != nil {

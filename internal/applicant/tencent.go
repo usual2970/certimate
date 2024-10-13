@@ -3,6 +3,7 @@ package applicant
 import (
 	"certimate/internal/domain"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/go-acme/lego/v4/providers/dns/tencentcloud"
@@ -25,6 +26,8 @@ func (t *tencent) Apply() (*Certificate, error) {
 
 	os.Setenv("TENCENTCLOUD_SECRET_ID", access.SecretId)
 	os.Setenv("TENCENTCLOUD_SECRET_KEY", access.SecretKey)
+	os.Setenv("TENCENTCLOUD_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", t.option.Timeout))
+	
 	dnsProvider, err := tencentcloud.NewDNSProvider()
 	if err != nil {
 		return nil, err

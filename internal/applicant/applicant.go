@@ -1,6 +1,7 @@
 package applicant
 
 import (
+	"certimate/internal/domain"
 	"certimate/internal/utils/app"
 	"crypto"
 	"crypto/ecdsa"
@@ -46,6 +47,8 @@ var sslProviderUrls = map[string]string{
 
 const defaultEmail = "536464346@qq.com"
 
+const defaultTimeout = 60
+
 type Certificate struct {
 	CertUrl           string `json:"certUrl"`
 	CertStableUrl     string `json:"certStableUrl"`
@@ -60,6 +63,7 @@ type ApplyOption struct {
 	Domain      string `json:"domain"`
 	Access      string `json:"access"`
 	Nameservers string `json:"nameservers"`
+	Timeout     int64  `json:"timeout"`
 }
 
 type MyUser struct {
@@ -83,8 +87,22 @@ type Applicant interface {
 }
 
 func Get(record *models.Record) (Applicant, error) {
-	access := record.ExpandedOne("access")
-	email := record.GetString("email")
+
+	if record.GetString("applyConfig") == "" {
+		return nil, errors.New("apply config is empty")
+	}
+
+	applyConfig := &domain.ApplyConfig{}
+
+	record.UnmarshalJSONField("applyConfig", applyConfig)
+
+	access, err := app.GetApp().Dao().FindRecordById("access", applyConfig.Access)
+
+	if err != nil {
+		return nil, fmt.Errorf("access record not found: %w", err)
+	}
+
+	email := applyConfig.Email
 	if email == "" {
 		email = defaultEmail
 	}
@@ -92,7 +110,8 @@ func Get(record *models.Record) (Applicant, error) {
 		Email:       email,
 		Domain:      record.GetString("domain"),
 		Access:      access.GetString("config"),
-		Nameservers: record.GetString("nameservers"),
+		Nameservers: applyConfig.Nameservers,
+		Timeout:     applyConfig.Timeout,
 	}
 	switch access.GetString("configType") {
 	case configTypeAliyun:

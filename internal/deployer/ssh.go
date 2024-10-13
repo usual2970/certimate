@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	xpath "path"
-	"strings"
 
 	"github.com/pkg/sftp"
 	sshPkg "golang.org/x/crypto/ssh"
@@ -19,15 +18,11 @@ type ssh struct {
 }
 
 type sshAccess struct {
-	Host       string `json:"host"`
-	Username   string `json:"username"`
-	Password   string `json:"password"`
-	Key        string `json:"key"`
-	Port       string `json:"port"`
-	PreCommand string `json:"preCommand"`
-	Command    string `json:"command"`
-	CertPath   string `json:"certPath"`
-	KeyPath    string `json:"keyPath"`
+	Host     string `json:"host"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Key      string `json:"key"`
+	Port     string `json:"port"`
 }
 
 func NewSSH(option *DeployerOption) (Deployer, error) {
@@ -50,16 +45,6 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	if err := json.Unmarshal([]byte(s.option.Access), access); err != nil {
 		return err
 	}
-
-	// 将证书路径和命令中的变量替换为实际值
-	for k, v := range s.option.Variables {
-		key := fmt.Sprintf("${%s}", k)
-		access.CertPath = strings.ReplaceAll(access.CertPath, key, v)
-		access.KeyPath = strings.ReplaceAll(access.KeyPath, key, v)
-		access.Command = strings.ReplaceAll(access.Command, key, v)
-		access.PreCommand = strings.ReplaceAll(access.PreCommand, key, v)
-	}
-
 	// 连接
 	client, err := s.getClient(access)
 	if err != nil {
@@ -70,29 +55,30 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	s.infos = append(s.infos, toStr("ssh连接成功", nil))
 
 	// 执行前置命令
-	if access.PreCommand != "" {
-		err, stdout, stderr := s.sshExecCommand(client, access.PreCommand)
+	preCommand := getDeployString(s.option.DeployConfig, "preCommand")
+	if preCommand != "" {
+		err, stdout, stderr := s.sshExecCommand(client, preCommand)
 		if err != nil {
 			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 		}
 	}
 
 	// 上传证书
-	if err := s.upload(client, s.option.Certificate.Certificate, access.CertPath); err != nil {
+	if err := s.upload(client, s.option.Certificate.Certificate, getDeployString(s.option.DeployConfig, "certPath")); err != nil {
 		return fmt.Errorf("failed to upload certificate: %w", err)
 	}
 
 	s.infos = append(s.infos, toStr("ssh上传证书成功", nil))
 
 	// 上传私钥
-	if err := s.upload(client, s.option.Certificate.PrivateKey, access.KeyPath); err != nil {
+	if err := s.upload(client, s.option.Certificate.PrivateKey, getDeployString(s.option.DeployConfig, "keyPath")); err != nil {
 		return fmt.Errorf("failed to upload private key: %w", err)
 	}
 
 	s.infos = append(s.infos, toStr("ssh上传私钥成功", nil))
 
 	// 执行命令
-	err, stdout, stderr := s.sshExecCommand(client, access.Command)
+	err, stdout, stderr := s.sshExecCommand(client, getDeployString(s.option.DeployConfig, "command"))
 	if err != nil {
 		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 	}

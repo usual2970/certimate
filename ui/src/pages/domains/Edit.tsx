@@ -23,38 +23,43 @@ import {
 } from "@/components/ui/select";
 import { useConfig } from "@/providers/config";
 import { useEffect, useState } from "react";
-import { Domain, targetTypeKeys, targetTypeMap } from "@/domain/domain";
+import { DeployConfig, Domain } from "@/domain/domain";
 import { save, get } from "@/repository/domains";
 import { ClientResponseError } from "pocketbase";
 import { PbErrorData } from "@/domain/base";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Plus, Trash2, Edit as EditIcon } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { AccessEdit } from "@/components/certimate/AccessEdit";
 import { accessTypeMap } from "@/domain/access";
 import EmailsEdit from "@/components/certimate/EmailsEdit";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { EmailsSetting } from "@/domain/settings";
 import { useTranslation } from "react-i18next";
 import StringList from "@/components/certimate/StringList";
 import { Input } from "@/components/ui/input";
 import DeployList from "@/components/certimate/DeployList";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 const Edit = () => {
   const {
-    config: { accesses, emails, accessGroups },
+    config: { accesses, emails },
   } = useConfig();
 
-  const [domain, setDomain] = useState<Domain>();
+  const [domain, setDomain] = useState<Domain>({} as Domain);
 
   const location = useLocation();
   const { t } = useTranslation();
 
   const [tab, setTab] = useState<"apply" | "deploy">("apply");
-
-  const [targetType, setTargetType] = useState(domain ? domain.targetType : "");
 
   useEffect(() => {
     // Parsing query parameters
@@ -64,7 +69,6 @@ const Edit = () => {
       const fetchData = async () => {
         const data = await get(id);
         setDomain(data);
-        setTargetType(data.targetType);
       };
       fetchData();
     }
@@ -109,21 +113,7 @@ const Edit = () => {
     }
   }, [domain, form]);
 
-  const targetAccesses = accesses.filter((item) => {
-    if (item.usage == "apply") {
-      return false;
-    }
-
-    if (targetType == "") {
-      return true;
-    }
-    const types = targetType.split("-");
-    return item.configType === types[0];
-  });
-
   const { toast } = useToast();
-
-  const navigate = useNavigate();
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log(data);
@@ -142,7 +132,7 @@ const Edit = () => {
     };
 
     try {
-      await save(req);
+      const resp = await save(req);
       let description = t("domain.management.edit.succeed.tips");
       if (req.id == "") {
         description = t("domain.management.add.succeed.tips");
@@ -152,7 +142,44 @@ const Edit = () => {
         title: t("succeed"),
         description,
       });
+
       if (!domain?.id) setTab("deploy");
+      setDomain({ ...resp });
+    } catch (e) {
+      const err = e as ClientResponseError;
+
+      Object.entries(err.response.data as PbErrorData).forEach(
+        ([key, value]) => {
+          form.setError(key as keyof z.infer<typeof formSchema>, {
+            type: "manual",
+            message: value.message,
+          });
+        }
+      );
+
+      return;
+    }
+  };
+
+  const handelOnDeployListChange = async (list: DeployConfig[]) => {
+    const req = {
+      ...domain,
+      deployConfig: list,
+    };
+    try {
+      const resp = await save(req);
+      let description = t("domain.management.edit.succeed.tips");
+      if (req.id == "") {
+        description = t("domain.management.add.succeed.tips");
+      }
+
+      toast({
+        title: t("succeed"),
+        description,
+      });
+
+      if (!domain?.id) setTab("deploy");
+      setDomain({ ...resp });
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -174,7 +201,22 @@ const Edit = () => {
       <div className="">
         <Toaster />
         <div className=" h-5 text-muted-foreground">
-          {domain?.id ? t("domain.edit") : t("domain.add")}
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#/domains">
+                  {t("domain.management.name")}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+
+              <BreadcrumbItem>
+                <BreadcrumbPage>
+                  {domain?.id ? t("domain.edit") : t("domain.add")}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
         <div className="mt-5 flex w-full justify-center md:space-x-10 flex-col md:flex-row">
           <div className="w-full md:w-[200px] text-muted-foreground space-x-3 md:space-y-3 flex-row md:flex-col flex md:mt-5">
@@ -425,7 +467,12 @@ const Edit = () => {
                 tab == "apply" && "hidden"
               )}
             >
-              <DeployList deploys={domain?.deployConfig ?? []} />
+              <DeployList
+                deploys={domain?.deployConfig ?? []}
+                onChange={(list: DeployConfig[]) => {
+                  handelOnDeployListChange(list);
+                }}
+              />
             </div>
           </div>
         </div>

@@ -224,5 +224,20 @@
   "access.form.ssh.pre.command.not.empty": "在部署证书前执行的前置命令",
   "access.form.ssh.command": "Command",
   "access.form.ssh.command.not.empty": "请输入要执行的命令",
-  "access.form.ding.access.token.placeholder": "加签的签名"
+  "access.form.ding.access.token.placeholder": "加签的签名",
+
+  "variable": "变量",
+  "variable.name": "变量名",
+  "variable.value": "值",
+  "variable.not.added": "尚未添加变量",
+  "variable.name.required": "变量名不能为空",
+  "variable.value.required": "变量值不能为空",
+  "variable.name.placeholder": "请输入变量名",
+  "variable.value.placeholder": "请输入变量值",
+
+  "deployment": "部署",
+  "deployment.not.added": "暂无部署配置，请添加后开始部署证书吧",
+  "deployment.access.type": "授权类型",
+  "deployment.access.config": "授权配置",
+  "deployment.access.cdn.deploy.to.domain": "部署到域名"
 }

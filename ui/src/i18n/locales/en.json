@@ -224,5 +224,20 @@
   "access.form.ssh.pre.command.not.empty": "Command to be executed before deploying the certificate",
   "access.form.ssh.command": "Command",
   "access.form.ssh.command.not.empty": "Please enter command",
-  "access.form.ding.access.token.placeholder": "Signature for signed addition"
+  "access.form.ding.access.token.placeholder": "Signature for signed addition",
+
+  "variable": "Variable",
+  "variable.name": "Name",
+  "variable.value": "Value",
+  "variable.not.added": "Variable not added yet",
+  "variable.name.required": "Variable name cannot be empty",
+  "variable.value.required": "Variable value cannot be empty",
+  "variable.name.placeholder": "Variable name",
+  "variable.value.placeholder": "Variable value",
+
+  "deployment": "Deployment",
+  "deployment.not.added": "Deployment not added yet",
+  "deployment.access.type": "Access Type",
+  "deployment.access.config": "Access Configuration",
+  "deployment.access.cdn.deploy.to.domain": "Deploy to domain"
 }

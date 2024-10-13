@@ -70,8 +70,8 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
 
   return (
     <>
-      <div className="flex justify-between">
-        <Label>变量</Label>
+      <div className="flex justify-between dark:text-stone-200">
+        <Label>{t("variable")}</Label>
         <Show when={!!locVariables?.length}>
           <KVEdit
             variable={{
@@ -97,7 +97,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
         fallback={
           <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
             <div className="text-muted-foreground">
-              {t("not.added.yet.variable")}
+              {t("variable.not.added")}
             </div>
 
             <KVEdit
@@ -119,7 +119,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
           </div>
         }
       >
-        <div className="border p-3 rounded-md text-stone-700 text-sm">
+        <div className="border p-3 rounded-md text-stone-700 text-sm dark:text-stone-200">
           {locVariables?.map((item, index) => (
             <div key={index} className="flex justify-between items-center">
               <div>
@@ -175,14 +175,14 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
   const handleSaveClick = () => {
     if (!locVariable.key) {
       setErr({
-        key: t("name.required"),
+        key: t("variable.name.required"),
       });
       return;
     }
 
     if (!locVariable.value) {
       setErr({
-        value: t("value.required"),
+        value: t("variable.value.required"),
       });
       return;
     }
@@ -202,14 +202,14 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
       }}
     >
       <DialogTrigger>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="dark:text-stone-200">
         <DialogHeader className="flex flex-col">
-          <DialogTitle>变量</DialogTitle>
+          <DialogTitle>{t("variable")}</DialogTitle>
 
           <div className="pt-5 flex flex-col items-start">
-            <Label>名称</Label>
+            <Label>{t("variable.name")}</Label>
             <Input
-              placeholder="请输入变量名"
+              placeholder={t("variable.name.placeholder")}
               value={locVariable?.key}
               onChange={(e) => {
                 setLocVariable({ ...locVariable, key: e.target.value });
@@ -220,9 +220,9 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
           </div>
 
           <div className="pt-2  flex flex-col items-start">
-            <Label>值</Label>
+            <Label>{t("variable.value")}</Label>
             <Input
-              placeholder="请输入变量值"
+              placeholder={t("variable.value.placeholder")}
               value={locVariable?.value}
               onChange={(e) => {
                 setLocVariable({ ...locVariable, value: e.target.value });
