@@ -239,5 +239,9 @@
   "deployment.not.added": "暂无部署配置，请添加后开始部署证书吧",
   "deployment.access.type": "授权类型",
   "deployment.access.config": "授权配置",
-  "deployment.access.cdn.deploy.to.domain": "部署到域名"
+  "deployment.access.cdn.deploy.to.domain": "部署到域名",
+
+  "deployment.access.oss.bucket": "Bucket",
+  "deployment.access.oss.bucket.not.empty": "请输入 Bucket",
+  "deployment.access.oss.endpoint": "Endpoint"
 }
