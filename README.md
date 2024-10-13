@@ -15,7 +15,7 @@ Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
 相关文章：
 
-* [V0.2.0-第一个不向后兼容的版本](https://docs.certimate.me/blog/v0.2.0)
+* [⚠️⚠️⚠️V0.2.0-第一个不向后兼容的版本](https://docs.certimate.me/blog/v0.2.0)
 * [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
 * [域名变量及部署授权组介绍](https://docs.certimate.me/blog/multi-deployer)
 
