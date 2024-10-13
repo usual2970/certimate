@@ -3,6 +3,7 @@ package applicant
 import (
 	"certimate/internal/domain"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	cf "github.com/go-acme/lego/v4/providers/dns/cloudflare"
@@ -23,6 +24,7 @@ func (c *cloudflare) Apply() (*Certificate, error) {
 	json.Unmarshal([]byte(c.option.Access), access)
 
 	os.Setenv("CLOUDFLARE_DNS_API_TOKEN", access.DnsApiToken)
+	os.Setenv("CLOUDFLARE_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", c.option.Timeout))
 
 	provider, err := cf.NewDNSProvider()
 	if err != nil {

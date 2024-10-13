@@ -5,7 +5,6 @@ import (
 	"certimate/internal/deployer"
 	"certimate/internal/utils/app"
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -41,18 +40,6 @@ func deploy(ctx context.Context, record *models.Record) error {
 		return err
 	}
 	history.record(checkPhase, "获取记录成功", nil)
-	if errs := app.GetApp().Dao().ExpandRecord(currRecord, []string{"access", "targetAccess", "group"}, nil); len(errs) > 0 {
-
-		errList := make([]error, 0)
-		for name, err := range errs {
-			errList = append(errList, fmt.Errorf("展开记录失败,%s: %w", name, err))
-		}
-		err = errors.Join(errList...)
-		app.GetApp().Logger().Error("展开记录失败", "err", err)
-		history.record(checkPhase, "获取授权信息失败", &RecordInfo{Err: err})
-		return err
-	}
-	history.record(checkPhase, "获取授权信息成功", nil)
 
 	cert := currRecord.GetString("certificate")
 	expiredAt := currRecord.GetDateTime("expiredAt").Time()
@@ -104,6 +91,13 @@ func deploy(ctx context.Context, record *models.Record) error {
 		history.record(deployPhase, "获取deployer失败", &RecordInfo{Err: err})
 		app.GetApp().Logger().Error("获取deployer失败", "err", err)
 		return err
+	}
+
+	// 没有部署配置,也算成功
+	if len(deployers) == 0 {
+		history.record(deployPhase, "没有部署配置", &RecordInfo{Info: []string{"没有部署配置"}})
+		history.setWholeSuccess(true)
+		return nil
 	}
 
 	for _, deployer := range deployers {

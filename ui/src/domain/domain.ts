@@ -1,13 +1,13 @@
 import { Deployment, Pahse } from "./deployment";
 
 export type Domain = {
-  id: string;
+  id?: string;
   domain: string;
   email?: string;
   crontab: string;
   access: string;
   targetAccess?: string;
-  targetType: string;
+  targetType?: string;
   expiredAt?: string;
   phase?: Pahse;
   phaseSuccess?: boolean;
@@ -31,10 +31,20 @@ export type Domain = {
   deployConfig?: DeployConfig[];
 };
 
+export type KVType = {
+  key: string;
+  value: string;
+};
+
 export type DeployConfig = {
+  id?: string;
   access: string;
   type: string;
-  config?: Record<string, string>;
+  config?: {
+    [key: string]: string;
+  } & {
+    variables?: KVType[];
+  };
 };
 
 export type ApplyConfig = {

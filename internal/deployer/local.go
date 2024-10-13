@@ -11,9 +11,6 @@ import (
 )
 
 type localAccess struct {
-	Command  string `json:"command"`
-	CertPath string `json:"certPath"`
-	KeyPath  string `json:"keyPath"`
 }
 
 type local struct {
@@ -41,18 +38,27 @@ func (l *local) Deploy(ctx context.Context) error {
 	if err := json.Unmarshal([]byte(l.option.Access), access); err != nil {
 		return err
 	}
+
+	preCommand := getDeployString(l.option.DeployConfig, "preCommand")
+
+	if preCommand != "" {
+		if err := execCmd(preCommand); err != nil {
+			return fmt.Errorf("执行前置命令失败: %w", err)
+		}
+	}
+
 	// 复制文件
-	if err := copyFile(l.option.Certificate.Certificate, access.CertPath); err != nil {
+	if err := copyFile(l.option.Certificate.Certificate, getDeployString(l.option.DeployConfig, "certPath")); err != nil {
 		return fmt.Errorf("复制证书失败: %w", err)
 	}
 
-	if err := copyFile(l.option.Certificate.PrivateKey, access.KeyPath); err != nil {
+	if err := copyFile(l.option.Certificate.PrivateKey, getDeployString(l.option.DeployConfig, "keyPath")); err != nil {
 		return fmt.Errorf("复制私钥失败: %w", err)
 	}
 
 	// 执行命令
 
-	if err := execCmd(access.Command); err != nil {
+	if err := execCmd(getDeployString(l.option.DeployConfig, "command")); err != nil {
 		return fmt.Errorf("执行命令失败: %w", err)
 	}
 

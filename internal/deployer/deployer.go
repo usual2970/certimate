@@ -2,8 +2,8 @@ package deployer
 
 import (
 	"certimate/internal/applicant"
+	"certimate/internal/domain"
 	"certimate/internal/utils/app"
-	"certimate/internal/utils/variables"
 	"context"
 	"encoding/json"
 	"errors"
@@ -30,6 +30,7 @@ type DeployerOption struct {
 	Product      string                `json:"product"`
 	Access       string                `json:"access"`
 	AceessRecord *models.Record        `json:"-"`
+	DeployConfig domain.DeployConfig   `json:"deployConfig"`
 	Certificate  applicant.Certificate `json:"certificate"`
 	Variables    map[string]string     `json:"variables"`
 }
@@ -42,52 +43,29 @@ type Deployer interface {
 
 func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error) {
 	rs := make([]Deployer, 0)
-
-	if record.GetString("targetAccess") != "" {
-		singleDeployer, err := Get(record, cert)
-		if err != nil {
-			return nil, err
-		}
-		rs = append(rs, singleDeployer)
+	if record.GetString("deployConfig") == "" {
+		return rs, nil
 	}
 
-	if record.GetString("group") != "" {
-		group := record.ExpandedOne("group")
+	deployConfigs := make([]domain.DeployConfig, 0)
 
-		if errs := app.GetApp().Dao().ExpandRecord(group, []string{"access"}, nil); len(errs) > 0 {
-
-			errList := make([]error, 0)
-			for name, err := range errs {
-				errList = append(errList, fmt.Errorf("展开记录失败,%s: %w", name, err))
-			}
-			err := errors.Join(errList...)
-			return nil, err
-		}
-
-		records := group.ExpandedAll("access")
-
-		deployers, err := getByGroup(record, cert, records...)
-		if err != nil {
-			return nil, err
-		}
-
-		rs = append(rs, deployers...)
-
+	err := record.UnmarshalJSONField("deployConfig", &deployConfigs)
+	if err != nil {
+		return nil, fmt.Errorf("解析部署配置失败: %w", err)
 	}
 
-	return rs, nil
+	if len(deployConfigs) == 0 {
+		return rs, nil
+	}
 
-}
+	for _, deployConfig := range deployConfigs {
 
-func getByGroup(record *models.Record, cert *applicant.Certificate, accesses ...*models.Record) ([]Deployer, error) {
+		deployer, err := getWithDeployConfig(record, cert, deployConfig)
 
-	rs := make([]Deployer, 0)
-
-	for _, access := range accesses {
-		deployer, err := getWithAccess(record, cert, access)
 		if err != nil {
 			return nil, err
 		}
+
 		rs = append(rs, deployer)
 	}
 
@@ -95,15 +73,21 @@ func getByGroup(record *models.Record, cert *applicant.Certificate, accesses ...
 
 }
 
-func getWithAccess(record *models.Record, cert *applicant.Certificate, access *models.Record) (Deployer, error) {
+func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
+
+	access, err := app.GetApp().Dao().FindRecordById("access", deployConfig.Access)
+
+	if err != nil {
+		return nil, fmt.Errorf("access record not found: %w", err)
+	}
 
 	option := &DeployerOption{
 		DomainId:     record.Id,
 		Domain:       record.GetString("domain"),
-		Product:      getProduct(record),
+		Product:      getProduct(deployConfig.Type),
 		Access:       access.GetString("config"),
 		AceessRecord: access,
-		Variables:    variables.Parse2Map(record.GetString("variables")),
+		DeployConfig: deployConfig,
 	}
 	if cert != nil {
 		option.Certificate = *cert
@@ -114,7 +98,7 @@ func getWithAccess(record *models.Record, cert *applicant.Certificate, access *m
 		}
 	}
 
-	switch record.GetString("targetType") {
+	switch deployConfig.Type {
 	case targetAliyunOss:
 		return NewAliyun(option)
 	case targetAliyunCdn:
@@ -136,16 +120,8 @@ func getWithAccess(record *models.Record, cert *applicant.Certificate, access *m
 	return nil, errors.New("not implemented")
 }
 
-func Get(record *models.Record, cert *applicant.Certificate) (Deployer, error) {
-
-	access := record.ExpandedOne("targetAccess")
-
-	return getWithAccess(record, cert, access)
-}
-
-func getProduct(record *models.Record) string {
-	targetType := record.GetString("targetType")
-	rs := strings.Split(targetType, "-")
+func getProduct(t string) string {
+	rs := strings.Split(t, "-")
 	if len(rs) < 2 {
 		return ""
 	}
@@ -158,4 +134,40 @@ func toStr(tag string, data any) string {
 	}
 	byts, _ := json.Marshal(data)
 	return tag + "：" + string(byts)
+}
+
+func getDeployString(conf domain.DeployConfig, key string) string {
+	if _, ok := conf.Config[key]; !ok {
+		return ""
+	}
+
+	val, ok := conf.Config[key].(string)
+	if !ok {
+		return ""
+	}
+
+	return val
+}
+
+func getDeployVariables(conf domain.DeployConfig) map[string]string {
+	rs := make(map[string]string)
+	data, ok := conf.Config["variables"]
+	if !ok {
+		return rs
+	}
+
+	bts, _ := json.Marshal(data)
+
+	kvData := make([]domain.KV, 0)
+
+	if err := json.Unmarshal(bts, &kvData); err != nil {
+		return rs
+	}
+
+	for _, kv := range kvData {
+		rs[kv.Key] = kv.Value
+	}
+
+	return rs
+
 }

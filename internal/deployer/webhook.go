@@ -14,9 +14,10 @@ type webhookAccess struct {
 }
 
 type hookData struct {
-	Domain      string `json:"domain"`
-	Certificate string `json:"certificate"`
-	PrivateKey  string `json:"privateKey"`
+	Domain      string            `json:"domain"`
+	Certificate string            `json:"certificate"`
+	PrivateKey  string            `json:"privateKey"`
+	Variables   map[string]string `json:"variables"`
 }
 
 type webhook struct {
@@ -50,6 +51,7 @@ func (w *webhook) Deploy(ctx context.Context) error {
 		Domain:      w.option.Domain,
 		Certificate: w.option.Certificate.Certificate,
 		PrivateKey:  w.option.Certificate.PrivateKey,
+		Variables:   getDeployVariables(w.option.DeployConfig),
 	}
 
 	body, _ := json.Marshal(data)

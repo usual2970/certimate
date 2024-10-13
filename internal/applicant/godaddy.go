@@ -3,6 +3,7 @@ package applicant
 import (
 	"certimate/internal/domain"
 	"encoding/json"
+	"fmt"
 	"os"
 
 	godaddyProvider "github.com/go-acme/lego/v4/providers/dns/godaddy"
@@ -25,6 +26,7 @@ func (a *godaddy) Apply() (*Certificate, error) {
 
 	os.Setenv("GODADDY_API_KEY", access.ApiKey)
 	os.Setenv("GODADDY_API_SECRET", access.ApiSecret)
+	os.Setenv("GODADDY_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
 
 	dnsProvider, err := godaddyProvider.NewDNSProvider()
 	if err != nil {

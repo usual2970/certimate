@@ -20,13 +20,14 @@ import { Edit, Plus, Trash2 } from "lucide-react";
 type StringListProps = {
   className?: string;
   value: string;
-  valueType?: "domain" | "ip";
+  valueType?: ValueType;
   onValueChange: (value: string) => void;
 };
 
 const titles: Record<string, string> = {
   domain: "domain",
   ip: "IP",
+  dns: "dns",
 };
 
 const StringList = ({
@@ -100,7 +101,9 @@ const StringList = ({
             when={list.length > 0}
             fallback={
               <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
-                <div className="text-muted-foreground">暂未添加域名</div>
+                <div className="text-muted-foreground">
+                  {t("not.added.yet." + valueType)}
+                </div>
 
                 <StringEdit
                   value={""}
@@ -150,7 +153,7 @@ const StringList = ({
 
 export default StringList;
 
-type ValueType = "domain" | "ip";
+type ValueType = "domain" | "dns" | "host";
 
 type StringEditProps = {
   value: string;
@@ -186,7 +189,8 @@ const StringEdit = ({
 
   const schedules: Record<ValueType, z.ZodString> = {
     domain: domainSchema,
-    ip: ipSchema,
+    dns: ipSchema,
+    host: ipSchema,
   };
 
   const onSaveClick = useCallback(() => {

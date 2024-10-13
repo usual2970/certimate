@@ -2,6 +2,7 @@ package deployer
 
 import (
 	"certimate/internal/domain"
+	"certimate/internal/utils/rand"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -46,9 +47,9 @@ func (a *AliyunCdn) GetInfo() []string {
 
 func (a *AliyunCdn) Deploy(ctx context.Context) error {
 
-	certName := fmt.Sprintf("%s-%s", a.option.Domain, a.option.DomainId)
+	certName := fmt.Sprintf("%s-%s-%s", a.option.Domain, a.option.DomainId, rand.RandStr(6))
 	setCdnDomainSSLCertificateRequest := &cdn20180510.SetCdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(a.option.Domain),
+		DomainName:  tea.String(getDeployString(a.option.DeployConfig, "domain")),
 		CertName:    tea.String(certName),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),

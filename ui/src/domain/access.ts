@@ -91,23 +91,15 @@ export type GodaddyConfig = {
   apiSecret: string;
 };
 
-export type LocalConfig = {
-  command: string;
-  certPath: string;
-  keyPath: string;
-};
+export type LocalConfig = Record<string, string>;
 
 export type SSHConfig = {
   host: string;
   port: string;
-  preCommand?: string;
-  command: string;
   username: string;
   password?: string;
   key?: string;
   keyFile?: string;
-  certPath: string;
-  keyPath: string;
 };
 
 export type WebhookConfig = {

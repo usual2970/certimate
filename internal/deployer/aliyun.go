@@ -190,7 +190,7 @@ func (a *aliyun) resource() (*cas20200407.ListCloudResourcesResponseBodyData, er
 
 	listCloudResourcesRequest := &cas20200407.ListCloudResourcesRequest{
 		CloudProduct: tea.String(a.option.Product),
-		Keyword:      tea.String(a.option.Domain),
+		Keyword:      tea.String(getDeployString(a.option.DeployConfig, "domain")),
 	}
 
 	resp, err := a.client.ListCloudResources(listCloudResourcesRequest)

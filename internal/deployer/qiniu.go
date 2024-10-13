@@ -78,7 +78,7 @@ func (q *qiuniu) Deploy(ctx context.Context) error {
 }
 
 func (q *qiuniu) enableHttps(certId string) error {
-	path := fmt.Sprintf("/domain/%s/sslize", q.option.Domain)
+	path := fmt.Sprintf("/domain/%s/sslize", getDeployString(q.option.DeployConfig, "domain"))
 
 	body := &modifyDomainCertReq{
 		CertID:      certId,
@@ -104,7 +104,7 @@ type domainInfo struct {
 }
 
 func (q *qiuniu) getDomainInfo() (*domainInfo, error) {
-	path := fmt.Sprintf("/domain/%s", q.option.Domain)
+	path := fmt.Sprintf("/domain/%s", getDeployString(q.option.DeployConfig, "domain"))
 
 	res, err := q.req(qiniuGateway+path, http.MethodGet, nil)
 	if err != nil {
@@ -135,8 +135,8 @@ func (q *qiuniu) uploadCert() (string, error) {
 	path := "/sslcert"
 
 	body := &uploadCertReq{
-		Name:       q.option.Domain,
-		CommonName: q.option.Domain,
+		Name:       getDeployString(q.option.DeployConfig, "domain"),
+		CommonName: getDeployString(q.option.DeployConfig, "domain"),
 		Pri:        q.option.Certificate.PrivateKey,
 		Ca:         q.option.Certificate.Certificate,
 	}
@@ -166,7 +166,7 @@ type modifyDomainCertReq struct {
 }
 
 func (q *qiuniu) modifyDomainCert(certId string) error {
-	path := fmt.Sprintf("/domain/%s/httpsconf", q.option.Domain)
+	path := fmt.Sprintf("/domain/%s/httpsconf", getDeployString(q.option.DeployConfig, "domain"))
 
 	body := &modifyDomainCertReq{
 		CertID:      certId,
