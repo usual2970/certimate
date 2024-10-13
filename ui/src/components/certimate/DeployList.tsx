@@ -135,7 +135,7 @@ const DeployList = ({ deploys, onChange }: DeployListProps) => {
           />
         </div>
 
-        <div className="w-full md:w-[35em] rounded mt-5 border dark:border-stone-400">
+        <div className="w-full md:w-[35em] rounded mt-5 border dark:border-stone-400 dark:text-stone-200">
           <div className="">
             {list.map((item) => (
               <DeployItem
@@ -196,12 +196,12 @@ const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
   };
 
   return (
-    <div className="flex justify-between text-sm p-3 items-center text-stone-700">
+    <div className="flex justify-between text-sm p-3 items-center text-stone-700 dark:text-stone-200">
       <div className="flex space-x-2 items-center">
         <div>
           <img src={getImg()} className="w-9"></img>
         </div>
-        <div className="text-stone-600 flex-col flex space-y-0">
+        <div className="text-stone-600 flex-col flex space-y-0 dark:text-stone-200">
           <div>{getTypeName()}</div>
           <div>{access?.name}</div>
         </div>
