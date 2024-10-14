@@ -50,8 +50,8 @@ export type NotifyChannelWebhook = {
 };
 
 export const defaultNotifyTemplate: NotifyTemplate = {
-  title: "您有{COUNT}张证书即将过期",
-  content: "有{COUNT}张证书即将过期,域名分别为{DOMAINS},请保持关注！",
+  title: "您有 {COUNT} 张证书即将过期",
+  content: "有 {COUNT} 张证书即将过期，域名分别为 {DOMAINS}，请保持关注！",
 };
 
 export type SSLProvider = "letsencrypt" | "zerossl";

@@ -1,16 +1,16 @@
 import { z } from "zod";
 
 export const accessTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun", ["aliyun", "/imgs/providers/aliyun.svg"]],
-  ["tencent", ["tencent", "/imgs/providers/tencent.svg"]],
-  ["huaweicloud", ["huaweicloud", "/imgs/providers/huaweicloud.svg"]],
-  ["qiniu", ["qiniu", "/imgs/providers/qiniu.svg"]],
-  ["cloudflare", ["cloudflare", "/imgs/providers/cloudflare.svg"]],
-  ["namesilo", ["namesilo", "/imgs/providers/namesilo.svg"]],
-  ["godaddy", ["go.daddy", "/imgs/providers/godaddy.svg"]],
-  ["local", ["local.deployment", "/imgs/providers/local.svg"]],
-  ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
-  ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
+  ["aliyun", ["common.provider.aliyun", "/imgs/providers/aliyun.svg"]],
+  ["tencent", ["common.provider.tencent", "/imgs/providers/tencent.svg"]],
+  ["huaweicloud", ["common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg"]],
+  ["qiniu", ["common.provider.qiniu", "/imgs/providers/qiniu.svg"]],
+  ["cloudflare", ["common.provider.cloudflare", "/imgs/providers/cloudflare.svg"]],
+  ["namesilo", ["common.provider.namesilo", "/imgs/providers/namesilo.svg"]],
+  ["godaddy", ["common.provider.godaddy", "/imgs/providers/godaddy.svg"]],
+  ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
+  ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
+  ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
 export const getProviderInfo = (t: string) => {
@@ -30,7 +30,7 @@ export const accessFormType = z.union(
     z.literal("ssh"),
     z.literal("webhook"),
   ],
-  { message: "access.not.empty" }
+  { message: "access.common.type.errmsg.empty" }
 );
 
 type AccessUsage = "apply" | "deploy" | "all";

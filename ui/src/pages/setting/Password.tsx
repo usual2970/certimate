@@ -21,17 +21,17 @@ import { z } from "zod";
 const formSchema = z
   .object({
     oldPassword: z.string().min(10, {
-      message: "setting.password.length.message",
+      message: "settings.password.password.errmsg.length",
     }),
     newPassword: z.string().min(10, {
-      message: "setting.password.length.message",
+      message: "settings.password.password.errmsg.length",
     }),
     confirmPassword: z.string().min(10, {
-      message: "setting.password.length.message",
+      message: "settings.password.password.errmsg.length",
     }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "setting.password.not.match",
+    message: "settings.password.password.errmsg.not_matched",
     path: ["confirmPassword"],
   });
 
@@ -68,8 +68,8 @@ const Password = () => {
 
       getPb().authStore.clear();
       toast({
-        title: t('setting.password.change.succeed'),
-        description: t("setting.account.log.back.in"),
+        title: t("settings.password.changed.message"),
+        description: t("settings.account.relogin.message"),
       });
       setTimeout(() => {
         navigate("/login");
@@ -77,7 +77,7 @@ const Password = () => {
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: t('setting.password.change.failed'),
+        title: t("settings.password.failed.message"),
         description: message,
         variant: "destructive",
       });
@@ -97,9 +97,17 @@ const Password = () => {
               name="oldPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('setting.password.current.password')}</FormLabel>
+                  <FormLabel>
+                    {t("settings.password.current_password.label")}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder={t('setting.password.current.password')} {...field} type="password" />
+                    <Input
+                      placeholder={t(
+                        "settings.password.current_password.placeholder"
+                      )}
+                      {...field}
+                      type="password"
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -112,10 +120,14 @@ const Password = () => {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('setting.password.new.password')}</FormLabel>
+                  <FormLabel>
+                    {t("settings.password.new_password.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="newPassword"
+                      placeholder={t(
+                        "settings.password.new_password.placeholder"
+                      )}
                       {...field}
                       type="password"
                     />
@@ -131,10 +143,14 @@ const Password = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('setting.password.confirm.password')}</FormLabel>
+                  <FormLabel>
+                    {t("settings.password.confirm_password.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="confirmPassword"
+                      placeholder={t(
+                        "settings.password.confirm_password.placeholder"
+                      )}
                       {...field}
                       type="password"
                     />
@@ -145,7 +161,7 @@ const Password = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button type="submit">{t('setting.submit')}</Button>
+              <Button type="submit">{t("common.update")}</Button>
             </div>
           </form>
         </Form>

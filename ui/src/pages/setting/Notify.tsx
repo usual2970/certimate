@@ -20,7 +20,9 @@ const Notify = () => {
         <div className="border rounded-sm p-5 shadow-lg">
           <Accordion type={"multiple"} className="dark:text-stone-200">
             <AccordionItem value="item-1" className="dark:border-stone-200">
-              <AccordionTrigger>{t('template')}</AccordionTrigger>
+              <AccordionTrigger>
+                {t("settings.notification.template.label")}
+              </AccordionTrigger>
               <AccordionContent>
                 <NotifyTemplate />
               </AccordionContent>
@@ -30,21 +32,21 @@ const Notify = () => {
         <div className="border rounded-md p-5 mt-7 shadow-lg">
           <Accordion type={"single"} className="dark:text-stone-200">
             <AccordionItem value="item-2" className="dark:border-stone-200">
-              <AccordionTrigger>{t('ding.talk')}</AccordionTrigger>
+              <AccordionTrigger>{t("common.provider.dingtalk")}</AccordionTrigger>
               <AccordionContent>
                 <DingTalk />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-4" className="dark:border-stone-200">
-              <AccordionTrigger>{t('telegram')}</AccordionTrigger>
+              <AccordionTrigger>{t("common.provider.telegram")}</AccordionTrigger>
               <AccordionContent>
                 <Telegram />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-5" className="dark:border-stone-200">
-              <AccordionTrigger>{t('webhook')}</AccordionTrigger>
+              <AccordionTrigger>{t("common.provider.webhook")}</AccordionTrigger>
               <AccordionContent>
                 <Webhook />
               </AccordionContent>

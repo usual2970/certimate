@@ -1,0 +1,16 @@
+﻿{
+  "history.page.title": "Deployment",
+
+  "history.nodata": "You have not created any deployments yet, please add a domain to start deployment!",
+
+  "history.props.domain": "Domain",
+  "history.props.status": "Status",
+  "history.props.stage": "Stage",
+  "history.props.last_execution_time": "Last Execution Time",
+  
+  "history.props.stage.progress.check": "Check",
+  "history.props.stage.progress.apply": "Apply",
+  "history.props.stage.progress.deploy": "Deploy",
+  
+  "history.log": "Log"
+}

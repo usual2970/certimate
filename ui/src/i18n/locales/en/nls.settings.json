@@ -1,0 +1,41 @@
+﻿{
+  "settings.page.title": "Settings",
+
+  "settings.account.relogin.message": "Please login again",
+
+  "settings.account.tab": "Account",
+  "settings.account.email.label": "Email",
+  "settings.account.email.placeholder": "Please enter email",
+  "settings.account.email.errmsg.invalid": "Please enter a valid email address",
+  "settings.account.email.changed.message": "Account email altered successfully",
+  "settings.account.email.failed.message": "Account email alteration failed",
+
+  "settings.password.tab": "Password",
+  "settings.password.current_password.label": "Current Password",
+  "settings.password.current_password.placeholder": "Please enter the current password",
+  "settings.password.new_password.label": "New Password",
+  "settings.password.new_password.placeholder": "Please enter the new password",
+  "settings.password.confirm_password.label": "Confirm Password",
+  "settings.password.confirm_password.placeholder": "Please enter the new password again",
+  "settings.password.password.errmsg.length": "Password should be at least 10 characters",
+  "settings.password.password.errmsg.not_matched": "Passwords do not match",
+  "settings.password.changed.message": "Password changed successfully",
+  "settings.password.failed.message": "Password change failed",
+
+  "settings.notification.tab": "Notification",
+  "settings.notification.template.label": "Template",
+  "settings.notification.template.saved.message": "Notification template saved successfully",
+  "settings.notification.template.variables.tips.title": "Optional variables ({COUNT}: number of expiring soon)",
+  "settings.notification.template.variables.tips.content": "Optional variables ({COUNT}: number of expiring soon. {DOMAINS}: Domain list)",
+  "settings.notification.config.enable": "Enable",
+  "settings.notification.config.saved.message": "Configuration saved successfully",
+  "settings.notification.config.failed.message": "Configuration save failed",
+  "settings.notification.dingtalk.secret.placeholder": "Signature for signed addition",
+  "settings.notification.url.errmsg.invalid": "Invalid Url format",
+
+  "settings.ca.tab": "Certificate Authority",
+  "settings.ca.provider.errmsg.empty": "Please select a Certificate Authority",
+  "settings.ca.eab_kid.errmsg.empty": "Please enter EAB_KID",
+  "settings.ca.eab_hmac_key.errmsg.empty": "Please enter EAB_HMAC_KEY.",
+  "settings.ca.eab_kid_hmac_key.errmsg.empty": "Please enter EAB_KID and EAB_HMAC_KEY"
+}

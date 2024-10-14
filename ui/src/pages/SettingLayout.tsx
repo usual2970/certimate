@@ -22,7 +22,7 @@ const SettingLayout = () => {
     <div>
       <Toaster />
       <div className="text-muted-foreground border-b dark:border-stone-500 py-5">
-        {t("setting")}
+        {t("settings.page.title")}
       </div>
       <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
         <Tabs defaultValue="account" className="w-full" value={tabValue}>
@@ -35,8 +35,9 @@ const SettingLayout = () => {
               className="px-5"
             >
               <UserRound size={14} />
-              <div className="ml-1">{t("account")}</div>
+              <div className="ml-1">{t("settings.account.tab")}</div>
             </TabsTrigger>
+
             <TabsTrigger
               value="password"
               onClick={() => {
@@ -45,7 +46,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <KeyRound size={14} />
-              <div className="ml-1">{t("password")}</div>
+              <div className="ml-1">{t("settings.password.tab")}</div>
             </TabsTrigger>
 
             <TabsTrigger
@@ -56,8 +57,9 @@ const SettingLayout = () => {
               className="px-5"
             >
               <Megaphone size={14} />
-              <div className="ml-1">{t("setting.notify.menu")}</div>
+              <div className="ml-1">{t("settings.notification.tab")}</div>
             </TabsTrigger>
+
             <TabsTrigger
               value="ssl-provider"
               onClick={() => {
@@ -66,7 +68,7 @@ const SettingLayout = () => {
               className="px-5"
             >
               <ShieldCheck size={14} />
-              <div className="ml-1">{t("ca")}</div>
+              <div className="ml-1">{t("settings.ca.tab")}</div>
             </TabsTrigger>
           </TabsList>
           <TabsContent value={tabValue}>

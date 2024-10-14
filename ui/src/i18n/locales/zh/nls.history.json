@@ -1,0 +1,15 @@
+﻿{
+  "history.page.title": "部署",
+
+  "history.nodata": "你暂未创建任何部署，请先添加域名进行部署吧！",
+
+  "history.props.domain": "域名",
+  "history.props.status": "状态",
+  "history.props.stage": "阶段",
+  "history.props.stage.progress.check": "检查",
+  "history.props.stage.progress.apply": "获取",
+  "history.props.stage.progress.deploy": "部署",
+  "history.props.last_execution_time": "最近执行时间",
+  
+  "history.log": "日志"
+}

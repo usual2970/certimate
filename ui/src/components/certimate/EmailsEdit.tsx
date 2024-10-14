@@ -43,7 +43,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    email: z.string().email("email.valid.message"),
+    email: z.string().email("common.errmsg.email_invalid"),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,7 +56,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     if ((emails.content as EmailsSetting).emails.includes(data.email)) {
       form.setError("email", {
-        message: "email.already.exist",
+        message: "common.errmsg.email_duplicate",
       });
       return;
     }
@@ -102,7 +102,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>{t('email.add')}</DialogTitle>
+          <DialogTitle>{t("domain.application.form.email.add")}</DialogTitle>
         </DialogHeader>
 
         <div className="container py-3">
@@ -120,9 +120,13 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('email')}</FormLabel>
+                    <FormLabel>{t("domain.application.form.email.label")}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('email.not.empty.message')} {...field} type="email" />
+                      <Input
+                        placeholder={t("common.errmsg.email_empty")}
+                        {...field}
+                        type="email"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -131,7 +135,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">{t('save')}</Button>
+                <Button type="submit">{t("common.save")}</Button>
               </div>
             </form>
           </Form>

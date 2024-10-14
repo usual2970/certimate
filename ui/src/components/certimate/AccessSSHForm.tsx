@@ -67,34 +67,34 @@ const AccessSSHForm = ({
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.form.name.not.empty")
-      .max(64, t("zod.rule.string.max", { max: 64 })),
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
     host: z.string().refine(
       (str) => {
         return ipReg.test(str) || domainReg.test(str);
       },
       {
-        message: "zod.rule.ssh.host",
+        message: "common.errmsg.host_invalid",
       }
     ),
     group: z.string().optional(),
     port: z
       .string()
-      .min(1, "access.form.ssh.port.not.empty")
-      .max(5, t("zod.rule.string.max", { max: 5 })),
+      .min(1, "access.authorization.form.ssh_port.placeholder")
+      .max(5, t("common.errmsg.string_max", { max: 5 })),
     username: z
       .string()
       .min(1, "username.not.empty")
-      .max(64, t("zod.rule.string.max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     password: z
       .string()
       .min(0, "password.not.empty")
-      .max(64, t("zod.rule.string.max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     key: z
       .string()
-      .min(0, "access.form.ssh.key.not.empty")
-      .max(20480, t("zod.rule.string.max", { max: 20480 })),
+      .min(0, "access.authorization.form.ssh_key.placeholder")
+      .max(20480, t("common.errmsg.string_max", { max: 20480 })),
     keyFile: z.any().optional(),
   });
 
@@ -225,10 +225,14 @@ const AccessSSHForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("name")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.name.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t("access.form.name.not.empty")}
+                      placeholder={t(
+                        "access.authorization.form.name.placeholder"
+                      )}
                       {...field}
                     />
                   </FormControl>
@@ -244,12 +248,12 @@ const AccessSSHForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="w-full flex justify-between">
-                    <div>{t("access.form.ssh.group.label")}</div>
+                    <div>{t("access.authorization.form.ssh_group.label")}</div>
                     <AccessGroupEdit
                       trigger={
                         <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                           <Plus size={14} />
-                          {t("add")}
+                          {t("common.add")}
                         </div>
                       }
                     />
@@ -265,7 +269,9 @@ const AccessSSHForm = ({
                     >
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={t("access.group.not.empty")}
+                          placeholder={t(
+                            "access.authorization.form.access_group.placeholder"
+                          )}
                         />
                       </SelectTrigger>
                       <SelectContent>
@@ -306,7 +312,9 @@ const AccessSSHForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t("access.form.config.field")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.config.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -321,7 +329,9 @@ const AccessSSHForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t("access.form.config.field")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.config.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -336,10 +346,14 @@ const AccessSSHForm = ({
                 name="host"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <FormLabel>{t("access.form.ssh.host")}</FormLabel>
+                    <FormLabel>
+                      {t("access.authorization.form.ssh_host.label")}
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t("access.form.ssh.host.not.empty")}
+                        placeholder={t(
+                          "access.authorization.form.ssh_host.placeholder"
+                        )}
                         {...field}
                       />
                     </FormControl>
@@ -354,10 +368,14 @@ const AccessSSHForm = ({
                 name="port"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t("access.form.ssh.port")}</FormLabel>
+                    <FormLabel>
+                      {t("access.authorization.form.ssh_port.label")}
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={t("access.form.ssh.port.not.empty")}
+                        placeholder={t(
+                          "access.authorization.form.ssh_port.placeholder"
+                        )}
                         {...field}
                         type="number"
                       />
@@ -374,9 +392,16 @@ const AccessSSHForm = ({
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("username")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.username.label")}
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder={t("username.not.empty")} {...field} />
+                    <Input
+                      placeholder={t(
+                        "access.authorization.form.username.placeholder"
+                      )}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -389,10 +414,14 @@ const AccessSSHForm = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("password")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.password.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t("password.not.empty")}
+                      placeholder={t(
+                        "access.authorization.form.password.placeholder"
+                      )}
                       {...field}
                       type="password"
                     />
@@ -408,10 +437,14 @@ const AccessSSHForm = ({
               name="key"
               render={({ field }) => (
                 <FormItem hidden>
-                  <FormLabel>{t("access.form.ssh.key")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.ssh_key.label")}
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t("access.form.ssh.key.not.empty")}
+                      placeholder={t(
+                        "access.authorization.form.ssh_key.placeholder"
+                      )}
                       {...field}
                     />
                   </FormControl>
@@ -426,7 +459,9 @@ const AccessSSHForm = ({
               name="keyFile"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.form.ssh.key")}</FormLabel>
+                  <FormLabel>
+                    {t("access.authorization.form.ssh_key.label")}
+                  </FormLabel>
                   <FormControl>
                     <div>
                       <Button
@@ -438,10 +473,14 @@ const AccessSSHForm = ({
                       >
                         {fileName
                           ? fileName
-                          : t("access.form.ssh.key.file.not.empty")}
+                          : t(
+                              "access.authorization.form.ssh_key_file.placeholder"
+                            )}
                       </Button>
                       <Input
-                        placeholder={t("access.form.ssh.key.not.empty")}
+                        placeholder={t(
+                          "access.authorization.form.ssh_key.placeholder"
+                        )}
                         {...field}
                         ref={fileInputRef}
                         className="hidden"
@@ -460,7 +499,7 @@ const AccessSSHForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">{t("save")}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

@@ -113,13 +113,13 @@ const DeployList = ({ deploys, onChange }: DeployListProps) => {
         fallback={
           <Alert className="w-full border dark:border-stone-400">
             <AlertDescription className="flex flex-col items-center">
-              <div>{t("deployment.not.added")}</div>
+              <div>{t("domain.deployment.nodata")}</div>
               <div className="flex justify-end mt-2">
                 <DeployEditDialog
                   onSave={(config: DeployConfig) => {
                     handleAdd(config);
                   }}
-                  trigger={<Button size={"sm"}>{t("add")}</Button>}
+                  trigger={<Button size={"sm"}>{t("common.add")}</Button>}
                 />
               </div>
             </AlertDescription>
@@ -128,7 +128,7 @@ const DeployList = ({ deploys, onChange }: DeployListProps) => {
       >
         <div className="flex justify-end py-2 border-b dark:border-stone-400">
           <DeployEditDialog
-            trigger={<Button size={"sm"}>{t("add")}</Button>}
+            trigger={<Button size={"sm"}>{t("common.add")}</Button>}
             onSave={(config: DeployConfig) => {
               handleAdd(config);
             }}
@@ -308,13 +308,13 @@ const DeployEditDialog = ({
     // 关闭弹框
     const newError = { ...error };
     if (locDeployConfig.type === "") {
-      newError.type = t("domain.management.edit.access.not.empty.message");
+      newError.type = t("domain.deployment.form.access.placeholder");
     } else {
       newError.type = "";
     }
 
     if (locDeployConfig.access === "") {
-      newError.access = t("domain.management.edit.access.not.empty.message");
+      newError.access = t("domain.deployment.form.access.placeholder");
     } else {
       newError.access = "";
     }
@@ -351,12 +351,13 @@ const DeployEditDialog = ({
         <DialogTrigger>{trigger}</DialogTrigger>
         <DialogContent className="dark:text-stone-200">
           <DialogHeader>
-            <DialogTitle>{t("deployment")}</DialogTitle>
+            <DialogTitle>{t("history.page.title")}</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          {/* 授权类型 */}
+
+          {/* 部署方式 */}
           <div>
-            <Label>{t("deployment.access.type")}</Label>
+            <Label>{t("domain.deployment.form.type.label")}</Label>
 
             <Select
               value={locDeployConfig.type}
@@ -366,15 +367,13 @@ const DeployEditDialog = ({
             >
               <SelectTrigger className="mt-2">
                 <SelectValue
-                  placeholder={t(
-                    "domain.management.edit.access.not.empty.message"
-                  )}
+                  placeholder={t("domain.deployment.form.type.placeholder")}
                 />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>
-                    {t("domain.management.edit.access.label")}
+                    {t("domain.deployment.form.type.list")}
                   </SelectLabel>
                   {targetTypeKeys.map((item) => (
                     <SelectItem key={item} value={item}>
@@ -393,15 +392,16 @@ const DeployEditDialog = ({
 
             <div className="text-red-500 text-sm mt-1">{error.type}</div>
           </div>
-          {/* 授权 */}
+
+          {/* 授权配置 */}
           <div>
             <Label className="flex justify-between">
-              <div>{t("deployment.access.config")}</div>
+              <div>{t("domain.deployment.form.access.label")}</div>
               <AccessEdit
                 trigger={
                   <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                     <Plus size={14} />
-                    {t("add")}
+                    {t("common.add")}
                   </div>
                 }
                 op="add"
@@ -417,14 +417,14 @@ const DeployEditDialog = ({
               <SelectTrigger className="mt-2">
                 <SelectValue
                   placeholder={t(
-                    "domain.management.edit.access.not.empty.message"
+                    "domain.deployment.form.access.placeholder"
                   )}
                 />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>
-                    {t("domain.management.edit.access.label")}
+                    {t("domain.deployment.form.access.list")}
                   </SelectLabel>
                   {targetAccesses.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
@@ -444,6 +444,7 @@ const DeployEditDialog = ({
             <div className="text-red-500 text-sm mt-1">{error.access}</div>
           </div>
 
+          {/* 其他参数 */}
           <DeployEdit type={deployType!} />
 
           <DialogFooter>
@@ -453,7 +454,7 @@ const DeployEditDialog = ({
                 handleSaveClick();
               }}
             >
-              {t("save")}
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -516,9 +517,9 @@ const DeploySSH = () => {
     <>
       <div className="flex flex-col space-y-2">
         <div>
-          <Label>{t("access.form.ssh.cert.path")}</Label>
+          <Label>{t("access.authorization.form.ssh_cert_path.label")}</Label>
           <Input
-            placeholder={t("access.form.ssh.cert.path")}
+            placeholder={t("access.authorization.form.ssh_cert_path.label")}
             className="w-full mt-1"
             value={data?.config?.certPath}
             onChange={(e) => {
@@ -533,9 +534,11 @@ const DeploySSH = () => {
           />
         </div>
         <div>
-          <Label>{t("access.form.ssh.key.path")}</Label>
+          <Label>{t("access.authorization.form.ssh_key_path.label")}</Label>
           <Input
-            placeholder={t("access.form.ssh.key.path")}
+            placeholder={t(
+              "access.authorization.form.ssh_key_path.placeholder"
+            )}
             className="w-full mt-1"
             value={data?.config?.keyPath}
             onChange={(e) => {
@@ -551,11 +554,13 @@ const DeploySSH = () => {
         </div>
 
         <div>
-          <Label>{t("access.form.ssh.pre.command")}</Label>
+          <Label>{t("access.authorization.form.ssh_pre_command.label")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.preCommand}
-            placeholder={t("access.form.ssh.pre.command.not.empty")}
+            placeholder={t(
+              "access.authorization.form.ssh_pre_command.placeholder"
+            )}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -569,11 +574,11 @@ const DeploySSH = () => {
         </div>
 
         <div>
-          <Label>{t("access.form.ssh.command")}</Label>
+          <Label>{t("access.authorization.form.ssh_command.label")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.command}
-            placeholder={t("access.form.ssh.command.not.empty")}
+            placeholder={t("access.authorization.form.ssh_command.placeholder")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -617,15 +622,17 @@ const DeployCDN = () => {
   const domainSchema = z
     .string()
     .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("domain.not.empty.verify.message"),
+      message: t("common.errmsg.domain_invalid"),
     });
 
   return (
     <div className="flex flex-col space-y-2">
       <div>
-        <Label>{t("deployment.access.cdn.deploy.to.domain")}</Label>
+        <Label>{t("domain.deployment.form.cdn_domain.label")}</Label>
         <Input
-          placeholder={t("deployment.access.cdn.deploy.to.domain")}
+          placeholder={t(
+            "domain.deployment.form.cdn_domain.placeholder"
+          )}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
@@ -714,17 +721,17 @@ const DeployOSS = () => {
   const domainSchema = z
     .string()
     .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("domain.not.empty.verify.message"),
+      message: t("common.errmsg.domain_invalid"),
     });
 
   const bucketSchema = z.string().min(1, {
-    message: t("deployment.access.oss.bucket.not.empty"),
+    message: t("domain.deployment.form.oss_bucket.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-2">
       <div>
-        <Label>{t("deployment.access.oss.endpoint")}</Label>
+        <Label>{t("domain.deployment.form.oss_endpoint.label")}</Label>
 
         <Input
           className="w-full mt-1"
@@ -743,9 +750,11 @@ const DeployOSS = () => {
         />
         <div className="text-red-600 text-sm mt-1">{error?.endpoint}</div>
 
-        <Label>{t("deployment.access.oss.bucket")}</Label>
+        <Label>{t("domain.deployment.form.oss_bucket")}</Label>
         <Input
-          placeholder={t("deployment.access.oss.bucket.not.empty")}
+          placeholder={t(
+            "domain.deployment.form.oss_bucket.placeholder"
+          )}
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {
@@ -775,9 +784,9 @@ const DeployOSS = () => {
         />
         <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
 
-        <Label>{t("deployment.access.cdn.deploy.to.domain")}</Label>
+        <Label>{t("domain.deployment.form.cdn_domain.label")}</Label>
         <Input
-          placeholder={t("deployment.access.cdn.deploy.to.domain")}
+          placeholder={t("domain.deployment.form.cdn_domain.label")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {

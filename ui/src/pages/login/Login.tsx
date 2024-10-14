@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,15 +19,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
   username: z.string().email({
-    message: "login.username.no.empty.message",
+    message: "login.username.errmsg.invalid",
   }),
   password: z.string().min(10, {
-    message: "login.password.length.message",
+    message: "login.password.errmsg.invalid",
   }),
 });
 
 const Login = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,9 +65,9 @@ const Login = () => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('username')}</FormLabel>
+                <FormLabel>{t("login.username.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="email" {...field} />
+                  <Input placeholder={t("login.username.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -80,9 +80,9 @@ const Login = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('password')}</FormLabel>
+                <FormLabel>{t("login.password.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="password" {...field} type="password" />
+                  <Input placeholder={t("login.password.placeholder")} {...field} type="password" />
                 </FormControl>
 
                 <FormMessage />
@@ -90,7 +90,7 @@ const Login = () => {
             )}
           />
           <div className="flex justify-end">
-            <Button type="submit">{t('login.submit')}</Button>
+            <Button type="submit">{t("login.submit")}</Button>
           </div>
         </form>
       </Form>

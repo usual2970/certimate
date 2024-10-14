@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, getUsageByConfigType, WebhookConfig } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  getUsageByConfigType,
+  WebhookConfig,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 import { ClientResponseError } from "pocketbase";
@@ -34,9 +39,12 @@ const WebhookForm = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    url: z.string().url('zod.rule.url'),
+    url: z.string().url("common.errmsg.url_invalid"),
   });
 
   let config: WebhookConfig = {
@@ -48,7 +56,7 @@ const WebhookForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "webhook",
       url: config.url,
     },
@@ -66,7 +74,7 @@ const WebhookForm = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -110,9 +118,12 @@ const WebhookForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -125,7 +136,7 @@ const WebhookForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -140,7 +151,7 @@ const WebhookForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -155,9 +166,12 @@ const WebhookForm = ({
               name="url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.webhook.url')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.webhook_url.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.webhook.url.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.webhook_url.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -166,7 +180,7 @@ const WebhookForm = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

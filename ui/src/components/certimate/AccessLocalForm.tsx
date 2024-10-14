@@ -35,8 +35,8 @@ const AccessLocalForm = ({
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.form.name.not.empty")
-      .max(64, t("zod.rule.string.max", { max: 64 })),
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
   });
 
@@ -107,10 +107,10 @@ const AccessLocalForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("name")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t("access.form.name.not.empty")}
+                      placeholder={t("access.authorization.form.name.placeholder")}
                       {...field}
                     />
                   </FormControl>
@@ -125,7 +125,7 @@ const AccessLocalForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t("access.form.config.field")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -140,7 +140,7 @@ const AccessLocalForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t("access.form.config.field")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -153,7 +153,7 @@ const AccessLocalForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">{t("save")}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

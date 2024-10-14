@@ -71,7 +71,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
   return (
     <>
       <div className="flex justify-between dark:text-stone-200">
-        <Label>{t("variable")}</Label>
+        <Label>{t("domain.deployment.form.variables.label")}</Label>
         <Show when={!!locVariables?.length}>
           <KVEdit
             variable={{
@@ -82,7 +82,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
               <div className="flex items-center text-primary">
                 <Plus size={16} className="cursor-pointer " />
 
-                <div className="text-sm ">{t("add")}</div>
+                <div className="text-sm ">{t("common.add")}</div>
               </div>
             }
             onSave={(variable) => {
@@ -97,7 +97,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
         fallback={
           <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
             <div className="text-muted-foreground">
-              {t("variable.not.added")}
+              {t("domain.deployment.form.variables.empty")}
             </div>
 
             <KVEdit
@@ -105,7 +105,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
                 <div className="flex items-center text-primary">
                   <Plus size={16} className="cursor-pointer " />
 
-                  <div className="text-sm ">{t("add")}</div>
+                  <div className="text-sm ">{t("common.add")}</div>
                 </div>
               }
               variable={{
@@ -175,14 +175,14 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
   const handleSaveClick = () => {
     if (!locVariable.key) {
       setErr({
-        key: t("variable.name.required"),
+        key: t("domain.deployment.form.variables.key.required"),
       });
       return;
     }
 
     if (!locVariable.value) {
       setErr({
-        value: t("variable.value.required"),
+        value: t("domain.deployment.form.variables.value.required"),
       });
       return;
     }
@@ -204,12 +204,12 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
       <DialogTrigger>{trigger}</DialogTrigger>
       <DialogContent className="dark:text-stone-200">
         <DialogHeader className="flex flex-col">
-          <DialogTitle>{t("variable")}</DialogTitle>
+          <DialogTitle>{t("domain.deployment.form.variables.label")}</DialogTitle>
 
           <div className="pt-5 flex flex-col items-start">
-            <Label>{t("variable.name")}</Label>
+            <Label>{t("domain.deployment.form.variables.key")}</Label>
             <Input
-              placeholder={t("variable.name.placeholder")}
+              placeholder={t("domain.deployment.form.variables.key.placeholder")}
               value={locVariable?.key}
               onChange={(e) => {
                 setLocVariable({ ...locVariable, key: e.target.value });
@@ -220,9 +220,9 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
           </div>
 
           <div className="pt-2  flex flex-col items-start">
-            <Label>{t("variable.value")}</Label>
+            <Label>{t("domain.deployment.form.variables.value")}</Label>
             <Input
-              placeholder={t("variable.value.placeholder")}
+              placeholder={t("domain.deployment.form.variables.value.placeholder")}
               value={locVariable?.value}
               onChange={(e) => {
                 setLocVariable({ ...locVariable, value: e.target.value });
@@ -240,7 +240,7 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
                 handleSaveClick();
               }}
             >
-              {t("save")}
+              {t("common.save")}
             </Button>
           </div>
         </DialogFooter>

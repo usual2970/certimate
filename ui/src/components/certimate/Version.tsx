@@ -5,7 +5,7 @@ import { Separator } from "../ui/separator";
 import { version } from "@/domain/version";
 
 const Version = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
@@ -17,7 +17,7 @@ const Version = () => {
           className="flex items-center"
         >
           <BookOpen size={16} />
-          <div className="ml-1">{t('document')}</div>
+          <div className="ml-1">{t("common.menu.document")}</div>
         </a>
         <Separator orientation="vertical" className="mx-2" />
         <a

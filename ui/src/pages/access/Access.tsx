@@ -16,10 +16,12 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
 
 const Access = () => {
@@ -56,9 +58,9 @@ const Access = () => {
   return (
     <div className="">
       <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">{t("access.management")}</div>
+        <div className="text-muted-foreground">{t("access.page.title")}</div>
         {tab != "access_group" ? (
-          <AccessEdit trigger={<Button>{t("access.add")}</Button>} op="add" />
+          <AccessEdit trigger={<Button>{t("access.authorization.add")}</Button>} op="add" />
         ) : (
           <AccessGroupEdit trigger={<Button>{t("access.group.add")}</Button>} />
         )}
@@ -76,7 +78,7 @@ const Access = () => {
               handleTabItemClick("access");
             }}
           >
-            {t("access.management")}
+            {t("access.authorization.tab")}
           </TabsTrigger>
           <TabsTrigger
             value="access_group"
@@ -84,7 +86,7 @@ const Access = () => {
               handleTabItemClick("access_group");
             }}
           >
-            {t("access.group.management")}
+            {t("access.group.tab")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="access">
@@ -95,10 +97,10 @@ const Access = () => {
               </span>
 
               <div className="text-center text-sm text-muted-foreground mt-3">
-                {t("access.empty")}
+                {t("access.authorization.nodata")}
               </div>
               <AccessEdit
-                trigger={<Button>{t("access.add")}</Button>}
+                trigger={<Button>{t("access.authorization.add")}</Button>}
                 op="add"
                 className="mt-3"
               />
@@ -106,15 +108,12 @@ const Access = () => {
           ) : (
             <>
               <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-                <div className="w-48">{t("name")}</div>
-                <div className="w-48">{t("access.type")}</div>
+                <div className="w-48">{t("common.text.name")}</div>
+                <div className="w-48">{t("common.text.provider")}</div>
 
-                <div className="w-60">{t("create.time")}</div>
-                <div className="w-60">{t("update.time")}</div>
-                <div className="grow">{t("operation")}</div>
-              </div>
-              <div className="sm:hidden flex text-sm text-muted-foreground">
-                {t("access.list")}
+                <div className="w-60">{t("common.text.created_at")}</div>
+                <div className="w-60">{t("common.text.updated_at")}</div>
+                <div className="grow">{t("common.text.operations")}</div>
               </div>
               {accesses
                 .filter((item) => {
@@ -140,18 +139,16 @@ const Access = () => {
                     </div>
 
                     <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
-                      {t("created.in")}{" "}
                       {access.created && convertZulu2Beijing(access.created)}
                     </div>
                     <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
-                      {t("updated.in")}{" "}
                       {access.updated && convertZulu2Beijing(access.updated)}
                     </div>
                     <div className="flex items-center grow justify-start pt-1 sm:pt-0">
                       <AccessEdit
                         trigger={
                           <Button variant={"link"} className="p-0">
-                            {t("edit")}
+                            {t("common.edit")}
                           </Button>
                         }
                         op="edit"
@@ -159,40 +156,40 @@ const Access = () => {
                       />
                       <Separator orientation="vertical" className="h-4 mx-2" />
                       <AccessEdit
-                          trigger={
-                            <Button variant={"link"} className="p-0">
-                              {t("copy")}
-                            </Button>
-                          }
-                          op="copy"
-                          data={access}
+                        trigger={
+                          <Button variant={"link"} className="p-0">
+                            {t("common.copy")}
+                          </Button>
+                        }
+                        op="copy"
+                        data={access}
                       />
                       <Separator orientation="vertical" className="h-4 mx-2" />
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant={"link"} size={"sm"}>
-                            {t('delete')}
+                          <Button variant={"link"} className="p-0">
+                            {t("common.delete")}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle className="dark:text-gray-200">
-                              {t('access.group.delete')}
+                              {t("access.authorization.delete")}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t('access.delete.confirm')}
+                              {t("access.authorization.delete.confirm")}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel className="dark:text-gray-200">
-                              {t('cancel')}
+                              {t("common.cancel")}
                             </AlertDialogCancel>
                             <AlertDialogAction
-                                onClick={() => {
-                                  handleDelete(access);
-                                }}
+                              onClick={() => {
+                                handleDelete(access);
+                              }}
                             >
-                              {t('confirm')}
+                              {t("common.confirm")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

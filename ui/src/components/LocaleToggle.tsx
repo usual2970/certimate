@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function LocaleToggle() {
-  const { i18n } = useTranslation()
+  const { i18n } = useTranslation();
 
   return (
     <DropdownMenu>
@@ -22,7 +22,7 @@ export default function LocaleToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {Object.keys(i18n.store.data).map(key => (
+        {Object.keys(i18n.store.data).map((key) => (
           <DropdownMenuItem onClick={() => i18n.changeLanguage(key)}>
             {i18n.store.data[key].name as string}
           </DropdownMenuItem>

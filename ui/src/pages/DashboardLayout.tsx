@@ -14,8 +14,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -30,7 +28,7 @@ import Version from "@/components/certimate/Version";
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   if (!getPb().authStore.isValid || !getPb().authStore.isAdmin) {
     return <Navigate to="/login" />;
@@ -73,7 +71,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Home className="h-4 w-4" />
-                    {t('dashboard')}
+                    {t("dashboard.page.title")}
                   </Link>
                   <Link
                     to="/domains"
@@ -83,7 +81,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Earth className="h-4 w-4" />
-                    {t('domain.management.name')}
+                    {t("domain.page.title")}
                   </Link>
                   <Link
                     to="/access"
@@ -93,7 +91,7 @@ export default function Dashboard() {
                     )}
                   >
                     <Server className="h-4 w-4" />
-                    {t('menu.auth.management')}
+                    {t("access.page.title")}
                   </Link>
 
                   <Link
@@ -104,7 +102,7 @@ export default function Dashboard() {
                     )}
                   >
                     <History className="h-4 w-4" />
-                    {t('deployment.log.name')}
+                    {t("history.page.title")}
                   </Link>
                 </nav>
               </div>
@@ -141,7 +139,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Home className="h-5 w-5" />
-                      {t('dashboard')}
+                      {t("dashboard.page.title")}
                     </Link>
                     <Link
                       to="/domains"
@@ -151,7 +149,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Earth className="h-5 w-5" />
-                      {t('domain.management.name')}
+                      {t("domain.page.title")}
                     </Link>
                     <Link
                       to="/access"
@@ -161,7 +159,7 @@ export default function Dashboard() {
                       )}
                     >
                       <Server className="h-5 w-5" />
-                      {t('menu.auth.management')}
+                      {t("access.page.title")}
                     </Link>
 
                     <Link
@@ -172,7 +170,7 @@ export default function Dashboard() {
                       )}
                     >
                       <History className="h-5 w-5" />
-                      {t('deployment.log.name')}
+                      {t("history.page.title")}
                     </Link>
                   </nav>
                 </SheetContent>
@@ -192,15 +190,11 @@ export default function Dashboard() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{t('account')}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-
                   <DropdownMenuItem onClick={handleSettingClick}>
-                    {t('setting')}
+                    {t("common.menu.settings")}
                   </DropdownMenuItem>
-
                   <DropdownMenuItem onClick={handleLogoutClick}>
-                    {t('logout')}
+                    {t("common.menu.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

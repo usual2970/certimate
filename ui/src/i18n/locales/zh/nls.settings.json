@@ -1,0 +1,41 @@
+﻿{
+  "settings.page.title": "系统设置",
+
+  "settings.account.relogin.message": "请重新登录",
+
+  "settings.account.tab": "账号",
+  "settings.account.email.label": "登录邮箱",
+  "settings.account.email.errmsg.invalid": "请输入正确的邮箱地址",
+  "settings.account.email.placeholder": "请输入邮箱",
+  "settings.account.email.changed.message": "修改账户邮箱成功",
+  "settings.account.email.failed.message": "修改账户邮箱失败",
+
+  "settings.password.tab": "密码",
+  "settings.password.password.errmsg.length": "密码至少10个字符",
+  "settings.password.password.errmsg.not_matched": "两次密码不一致",
+  "settings.password.current_password.label": "当前密码",
+  "settings.password.current_password.placeholder": "请输入旧密码",
+  "settings.password.new_password.label": "新密码",
+  "settings.password.new_password.placeholder": "请输入新密码",
+  "settings.password.confirm_password.label": "确认密码",
+  "settings.password.confirm_password.placeholder": "请再次输入新密码",
+  "settings.password.changed.message": "修改密码成功",
+  "settings.password.failed.message": "修改密码失败",
+
+  "settings.notification.tab": "消息推送",
+  "settings.notification.template.label": "内容模板",
+  "settings.notification.template.saved.message": "通知模板保存成功",
+  "settings.notification.template.variables.tips.title": "可选的变量（{COUNT}: 即将过期张数）",
+  "settings.notification.template.variables.tips.content": "可选的变量（{COUNT}: 即将过期张数；{DOMAINS}: 域名列表）",
+  "settings.notification.config.enable": "是否启用",
+  "settings.notification.config.saved.message": "配置保存成功",
+  "settings.notification.config.failed.message": "配置保存失败",
+  "settings.notification.dingtalk.secret.placeholder": "加签的签名",
+  "settings.notification.url.errmsg.invalid": "URL 格式不正确",
+
+  "settings.ca.tab": "证书颁发机构（CA）",
+  "settings.ca.provider.errmsg.empty": "请选择证书分发机构",
+  "settings.ca.eab_kid.errmsg.empty": "请输入EAB_KID",
+  "settings.ca.eab_hmac_key.errmsg.empty": "请输入EAB_HMAC_KEY",
+  "settings.ca.eab_kid_hmac_key.errmsg.empty": "请输入EAB_KID和EAB_HMAC_KEY"
+}

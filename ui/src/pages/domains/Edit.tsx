@@ -77,11 +77,11 @@ const Edit = () => {
   const formSchema = z.object({
     id: z.string().optional(),
     domain: z.string().min(1, {
-      message: "domain.not.empty.verify.message",
+      message: "common.errmsg.domain_invalid",
     }),
-    email: z.string().email("email.valid.message").optional(),
+    email: z.string().email("common.errmsg.email_invalid").optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: "domain.management.edit.dns.access.not.empty.message",
+      message: "domain.application.form.access.errmsg.empty",
     }),
     nameservers: z.string().optional(),
     timeout: z.number().optional(),
@@ -106,7 +106,6 @@ const Edit = () => {
         domain: domain.domain,
         email: domain.applyConfig?.email,
         access: domain.applyConfig?.access,
-
         nameservers: domain.applyConfig?.nameservers,
         timeout: domain.applyConfig?.timeout,
       });
@@ -133,13 +132,13 @@ const Edit = () => {
 
     try {
       const resp = await save(req);
-      let description = t("domain.management.edit.succeed.tips");
+      let description = t("domain.application.form.domain.changed.message");
       if (req.id == "") {
-        description = t("domain.management.add.succeed.tips");
+        description = t("domain.application.form.domain.added.message");
       }
 
       toast({
-        title: t("succeed"),
+        title: t("common.save.succeeded.message"),
         description,
       });
 
@@ -168,13 +167,13 @@ const Edit = () => {
     };
     try {
       const resp = await save(req);
-      let description = t("domain.management.edit.succeed.tips");
+      let description = t("domain.application.form.domain.changed.message");
       if (req.id == "") {
-        description = t("domain.management.add.succeed.tips");
+        description = t("domain.application.form.domain.added.message");
       }
 
       toast({
-        title: t("succeed"),
+        title: t("common.save.succeeded.message"),
         description,
       });
 
@@ -205,7 +204,7 @@ const Edit = () => {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="#/domains">
-                  {t("domain.management.name")}
+                  {t("domain.page.title")}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -229,7 +228,7 @@ const Edit = () => {
                 setTab("apply");
               }}
             >
-              {t("apply.setting")}
+              {t("domain.application.tab")}
             </div>
             <div
               className={cn(
@@ -239,8 +238,8 @@ const Edit = () => {
               onClick={() => {
                 if (!domain?.id) {
                   toast({
-                    title: t("domain.management.edit.deploy.error"),
-                    description: t("domain.management.edit.deploy.error"),
+                    title: t("domain.application.unsaved.message"),
+                    description: t("domain.application.unsaved.message"),
                     variant: "destructive",
                   });
                   return;
@@ -248,7 +247,7 @@ const Edit = () => {
                 setTab("deploy");
               }}
             >
-              {t("deploy.setting")}
+              {t("domain.deployment.tab")}
             </div>
           </div>
           <div className="flex flex-col">
@@ -278,7 +277,6 @@ const Edit = () => {
                             }}
                           />
                         </>
-
                         <FormMessage />
                       </FormItem>
                     )}
@@ -291,14 +289,15 @@ const Edit = () => {
                       <FormItem>
                         <FormLabel className="flex w-full justify-between">
                           <div>
-                            {t("email") +
-                              t("domain.management.edit.email.description")}
+                            {t("domain.application.form.email.label") +
+                              " " +
+                              t("domain.application.form.email.tips")}
                           </div>
                           <EmailsEdit
                             trigger={
                               <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                                 <Plus size={14} />
-                                {t("add")}
+                                {t("common.add")}
                               </div>
                             }
                           />
@@ -314,13 +313,15 @@ const Edit = () => {
                             <SelectTrigger>
                               <SelectValue
                                 placeholder={t(
-                                  "domain.management.edit.email.not.empty.message"
+                                  "domain.application.form.email.errmsg.empty"
                                 )}
                               />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                <SelectLabel>{t("email.list")}</SelectLabel>
+                                <SelectLabel>
+                                  {t("domain.application.form.email.list")}
+                                </SelectLabel>
                                 {(emails.content as EmailsSetting).emails.map(
                                   (item) => (
                                     <SelectItem key={item} value={item}>
@@ -344,14 +345,12 @@ const Edit = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex w-full justify-between">
-                          <div>
-                            {t("domain.management.edit.dns.access.label")}
-                          </div>
+                          <div>{t("domain.application.form.access.label")}</div>
                           <AccessEdit
                             trigger={
                               <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                                 <Plus size={14} />
-                                {t("add")}
+                                {t("common.add")}
                               </div>
                             }
                             op="add"
@@ -368,14 +367,14 @@ const Edit = () => {
                             <SelectTrigger>
                               <SelectValue
                                 placeholder={t(
-                                  "domain.management.edit.access.not.empty.message"
+                                  "domain.application.form.access.placeholder"
                                 )}
                               />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
                                 <SelectLabel>
-                                  {t("domain.management.edit.access.label")}
+                                  {t("domain.application.form.access.list")}
                                 </SelectLabel>
                                 {accesses
                                   .filter((item) => item.usage != "deploy")
@@ -410,12 +409,14 @@ const Edit = () => {
                     name="timeout"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t("timeout")}</FormLabel>
+                        <FormLabel>
+                          {t("domain.application.form.timeout.label")}
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"
                             placeholder={t(
-                              "domain.management.edit.timeout.placeholder"
+                              "ddomain.application.form.timeout.placeholder"
                             )}
                             {...field}
                             value={field.value}
@@ -454,7 +455,7 @@ const Edit = () => {
 
                   <div className="flex justify-end">
                     <Button type="submit">
-                      {domain?.id ? t("save") : t("next")}
+                      {domain?.id ? t("common.save") : t("common.next")}
                     </Button>
                   </div>
                 </form>
