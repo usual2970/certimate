@@ -21,7 +21,7 @@
   "access.authorization.form.access_key_id.label": "AccessKeyId",
   "access.authorization.form.access_key_id.placeholder": "Please enter AccessKeyId",
   "access.authorization.form.access_key_secret.label": "AccessKeySecret",
-  "access.authorization.form.access_key_secret..placeholder": "Please enter AccessKeySecret",
+  "access.authorization.form.access_key_secret.placeholder": "Please enter AccessKeySecret",
   "access.authorization.form.access_key.label": "AccessKey",
   "access.authorization.form.access_key.placeholder": "Please enter AccessKey",
   "access.authorization.form.secret_id.label": "SecretId",
@@ -73,7 +73,5 @@
   "access.group.form.name.errmsg.empty": "Please enter group name",
 
   "access.group.domains": "All Authorizations",
-  "access.group.domains.nodata": "Please add a domain to start deploying the certificate.",
-
-  "access.common.type.errmsg.empty": "Please select a provider"
+  "access.group.domains.nodata": "Please add a domain to start deploying the certificate."
 }

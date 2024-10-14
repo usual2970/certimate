@@ -21,7 +21,7 @@
   "access.authorization.form.access_key_id.label": "AccessKeyId",
   "access.authorization.form.access_key_id.placeholder": "请输入 AccessKeyId",
   "access.authorization.form.access_key_secret.label": "AccessKeySecret",
-  "access.authorization.form.access_key_secret..placeholder": "请输入 AccessKeySecret",
+  "access.authorization.form.access_key_secret.placeholder": "请输入 AccessKeySecret",
   "access.authorization.form.access_key.label": "AccessKey",
   "access.authorization.form.access_key.placeholder": "请输入 AccessKey",
   "access.authorization.form.secret_id.label": "SecretId",
@@ -74,7 +74,5 @@
   "access.group.form.name.errmsg.empty": "请输入组名",
 
   "access.group.domains": "所有授权",
-  "access.group.domains.nodata": "请添加域名开始部署证书吧。",
-
-  "access.common.type.errmsg.empty": "请选择服务商"
+  "access.group.domains.nodata": "请添加域名开始部署证书吧。"
 }

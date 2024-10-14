@@ -30,7 +30,7 @@ export const accessFormType = z.union(
     z.literal("ssh"),
     z.literal("webhook"),
   ],
-  { message: "access.common.type.errmsg.empty" }
+  { message: "access.authorization.form.type.placeholder" }
 );
 
 type AccessUsage = "apply" | "deploy" | "all";

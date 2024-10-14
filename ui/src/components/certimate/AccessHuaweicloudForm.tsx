@@ -55,7 +55,7 @@ const AccessHuaweicloudForm = ({
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
-      .min(1, "access.authorization.form.access_key_secret..placeholder")
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
@@ -225,7 +225,7 @@ const AccessHuaweicloudForm = ({
                   <FormLabel>{t("access.authorization.form.access_key_secret.label")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t("access.authorization.form.access_key_secret..placeholder")}
+                      placeholder={t("access.authorization.form.access_key_secret.placeholder")}
                       {...field}
                     />
                   </FormControl>
