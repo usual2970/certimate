@@ -1,14 +1,7 @@
-__debug_bin*
-vendor
-pb_data
-main
-./certimate
-build
-/docker/data
-
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/settings.tailwind.json
 .idea
 .DS_Store
 *.suo
@@ -17,4 +10,12 @@ build
 *.sln
 *.sw?
 
+__debug_bin*
+vendor
+pb_data
+build
+main
+
 ./dist
+./certimate
+/docker/data
