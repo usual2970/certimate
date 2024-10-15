@@ -76,7 +76,7 @@ func (t *tencentCdn) uploadCert() (string, error) {
 	request.CertificatePublicKey = common.StringPtr(t.option.Certificate.Certificate)
 	request.CertificatePrivateKey = common.StringPtr(t.option.Certificate.PrivateKey)
 	request.Alias = common.StringPtr(t.option.Domain + "_" + rand.RandStr(6))
-	request.Repeatable = common.BoolPtr(true)
+	request.Repeatable = common.BoolPtr(false)
 
 	response, err := client.UploadCertificate(request)
 	if err != nil {
