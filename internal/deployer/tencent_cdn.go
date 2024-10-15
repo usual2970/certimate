@@ -98,7 +98,8 @@ func (t *tencentCdn) deploy(certId string) error {
 	request.Status = common.Int64Ptr(1)
 
 	// 如果是泛域名就从cdn列表下获取SSL证书中的可用域名
-	if strings.Contains(t.option.Domain, "*") {
+	domain := getDeployString(t.option.DeployConfig, "domain")
+	if strings.Contains(domain, "*") {
 		list, errGetList := t.getDomainList()
 		if errGetList != nil {
 			return fmt.Errorf("failed to get certificate domain list: %w", errGetList)
@@ -108,7 +109,7 @@ func (t *tencentCdn) deploy(certId string) error {
 		}
 		request.InstanceIdList = common.StringPtrs(list)
 	} else { // 否则直接使用传入的域名
-		request.InstanceIdList = common.StringPtrs([]string{t.option.Domain})
+		request.InstanceIdList = common.StringPtrs([]string{domain})
 	}
 
 	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
