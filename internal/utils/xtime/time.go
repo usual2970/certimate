@@ -15,7 +15,6 @@ func BeijingTimeStr() string {
 }
 
 func GetTimeAfter(d time.Duration) string {
-
 	t := time.Now().UTC()
 
 	return t.Add(d).Format("2006-01-02 15:04:05")

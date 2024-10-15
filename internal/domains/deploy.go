@@ -1,14 +1,15 @@
 package domains
 
 import (
-	"certimate/internal/applicant"
-	"certimate/internal/deployer"
-	"certimate/internal/utils/app"
 	"context"
 	"fmt"
 	"time"
 
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/applicant"
+	"certimate/internal/deployer"
+	"certimate/internal/utils/app"
 )
 
 type Phase string

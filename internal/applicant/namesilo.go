@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	namesiloProvider "github.com/go-acme/lego/v4/providers/dns/namesilo"
+
+	"certimate/internal/domain"
 )
 
 type namesilo struct {
@@ -20,7 +21,6 @@ func NewNamesilo(option *ApplyOption) Applicant {
 }
 
 func (a *namesilo) Apply() (*Certificate, error) {
-
 	access := &domain.NameSiloAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 

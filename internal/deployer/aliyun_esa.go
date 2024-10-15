@@ -6,8 +6,6 @@
 package deployer
 
 import (
-	"certimate/internal/domain"
-	"certimate/internal/utils/rand"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -16,6 +14,9 @@ import (
 	dcdn20180115 "github.com/alibabacloud-go/dcdn-20180115/v3/client"
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
+
+	"certimate/internal/domain"
+	"certimate/internal/utils/rand"
 )
 
 type AliyunEsa struct {
@@ -51,7 +52,6 @@ func (a *AliyunEsa) GetInfo() []string {
 }
 
 func (a *AliyunEsa) Deploy(ctx context.Context) error {
-
 	certName := fmt.Sprintf("%s-%s-%s", a.option.Domain, a.option.DomainId, rand.RandStr(6))
 	setDcdnDomainSSLCertificateRequest := &dcdn20180115.SetDcdnDomainSSLCertificateRequest{
 		DomainName:  tea.String(getDeployString(a.option.DeployConfig, "domain")),

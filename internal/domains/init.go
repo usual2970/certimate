@@ -1,9 +1,10 @@
 package domains
 
 import (
+	"context"
+
 	"certimate/internal/notify"
 	"certimate/internal/utils/app"
-	"context"
 )
 
 func InitSchedule() {
@@ -34,5 +35,4 @@ func InitSchedule() {
 	// 启动定时任务
 	app.GetScheduler().Start()
 	app.GetApp().Logger().Info("定时任务启动成功", "total", app.GetScheduler().Total())
-
 }

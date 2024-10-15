@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	cf "github.com/go-acme/lego/v4/providers/dns/cloudflare"
+
+	"certimate/internal/domain"
 )
 
 type cloudflare struct {

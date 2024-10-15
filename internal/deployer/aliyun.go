@@ -1,12 +1,13 @@
 package deployer
 
 import (
-	"certimate/internal/domain"
 	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+
+	"certimate/internal/domain"
 )
 
 type aliyun struct {
@@ -28,7 +29,6 @@ func NewAliyun(option *DeployerOption) (Deployer, error) {
 	}
 	a.client = client
 	return a, nil
-
 }
 
 func (a *aliyun) GetID() string {
@@ -48,13 +48,11 @@ func (a *aliyun) Deploy(ctx context.Context) error {
 			Force:       true,
 		},
 	})
-
 	if err != nil {
 		return fmt.Errorf("deploy aliyun oss error: %w", err)
 	}
 
 	return nil
-
 }
 
 func (a *aliyun) createClient(accessKeyId, accessKeySecret string) (*oss.Client, error) {

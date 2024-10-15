@@ -1,12 +1,13 @@
 package domains
 
 import (
-	"certimate/internal/applicant"
-	"certimate/internal/utils/app"
-	"certimate/internal/utils/xtime"
 	"time"
 
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/applicant"
+	"certimate/internal/utils/app"
+	"certimate/internal/utils/xtime"
 )
 
 type historyItem struct {
@@ -62,7 +63,6 @@ func (a *history) record(phase Phase, msg string, info *RecordInfo, pass ...bool
 		Info:    info.Info,
 		Time:    xtime.BeijingTimeStr(),
 	})
-
 }
 
 func (a *history) setCert(cert *applicant.Certificate) {

@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/go-acme/lego/v4/providers/dns/alidns"
+
+	"certimate/internal/domain"
 )
 
 type aliyun struct {
@@ -20,7 +21,6 @@ func NewAliyun(option *ApplyOption) Applicant {
 }
 
 func (a *aliyun) Apply() (*Certificate, error) {
-
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 

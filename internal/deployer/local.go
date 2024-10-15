@@ -10,8 +10,7 @@ import (
 	"runtime"
 )
 
-type localAccess struct {
-}
+type localAccess struct{}
 
 type local struct {
 	option *DeployerOption

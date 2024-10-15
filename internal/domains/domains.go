@@ -1,11 +1,12 @@
 package domains
 
 import (
-	"certimate/internal/utils/app"
 	"context"
 	"fmt"
 
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/utils/app"
 )
 
 func create(ctx context.Context, record *models.Record) error {
@@ -19,7 +20,6 @@ func create(ctx context.Context, record *models.Record) error {
 				app.GetApp().Logger().Error("deploy failed", "err", err)
 			}
 		}()
-
 	}
 
 	scheduler := app.GetScheduler()
@@ -27,7 +27,6 @@ func create(ctx context.Context, record *models.Record) error {
 	err := scheduler.Add(record.Id, record.GetString("crontab"), func() {
 		deploy(ctx, record)
 	})
-
 	if err != nil {
 		app.GetApp().Logger().Error("add cron job failed", "err", err)
 		return fmt.Errorf("add cron job failed: %w", err)
@@ -46,7 +45,6 @@ func update(ctx context.Context, record *models.Record) error {
 	}
 
 	if record.GetBool("rightnow") {
-
 		go func() {
 			if err := deploy(ctx, record); err != nil {
 				app.GetApp().Logger().Error("deploy failed", "err", err)
@@ -57,7 +55,6 @@ func update(ctx context.Context, record *models.Record) error {
 	err := scheduler.Add(record.Id, record.GetString("crontab"), func() {
 		deploy(ctx, record)
 	})
-
 	if err != nil {
 		app.GetApp().Logger().Error("update cron job failed", "err", err)
 		return fmt.Errorf("update cron job failed: %w", err)

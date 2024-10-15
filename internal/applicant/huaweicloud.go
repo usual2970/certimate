@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	huaweicloudProvider "github.com/go-acme/lego/v4/providers/dns/huaweicloud"
+
+	"certimate/internal/domain"
 )
 
 type huaweicloud struct {
@@ -20,7 +21,6 @@ func NewHuaweiCloud(option *ApplyOption) Applicant {
 }
 
 func (t *huaweicloud) Apply() (*Certificate, error) {
-
 	access := &domain.HuaweiCloudAccess{}
 	json.Unmarshal([]byte(t.option.Access), access)
 
@@ -28,7 +28,7 @@ func (t *huaweicloud) Apply() (*Certificate, error) {
 	os.Setenv("HUAWEICLOUD_ACCESS_KEY_ID", access.AccessKeyId)
 	os.Setenv("HUAWEICLOUD_SECRET_ACCESS_KEY", access.SecretAccessKey)
 	os.Setenv("HUAWEICLOUD_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", t.option.Timeout))
-	
+
 	dnsProvider, err := huaweicloudProvider.NewDNSProvider()
 	if err != nil {
 		return nil, err

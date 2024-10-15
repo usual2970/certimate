@@ -1,9 +1,9 @@
 package domains
 
 import (
-	"certimate/internal/utils/app"
-
 	"github.com/pocketbase/pocketbase/core"
+
+	"certimate/internal/utils/app"
 )
 
 const tableName = "domains"
