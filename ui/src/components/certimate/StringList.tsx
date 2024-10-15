@@ -25,9 +25,9 @@ type StringListProps = {
 };
 
 const titles: Record<string, string> = {
-  domain: "domain",
-  ip: "IP",
-  dns: "dns",
+  domain: "common.text.domain",
+  ip: "common.text.ip",
+  dns: "common.text.dns",
 };
 
 const StringList = ({
@@ -90,7 +90,7 @@ const StringList = ({
                 <div className="flex items-center text-primary">
                   <Plus size={16} className="cursor-pointer " />
 
-                  <div className="text-sm ">{t("add")}</div>
+                  <div className="text-sm ">{t("common.add")}</div>
                 </div>
               }
             />
@@ -102,12 +102,12 @@ const StringList = ({
             fallback={
               <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
                 <div className="text-muted-foreground">
-                  {t("not.added.yet." + valueType)}
+                  {t('common.text.' + valueType + '.empty')}
                 </div>
 
                 <StringEdit
                   value={""}
-                  trigger={t("add")}
+                  trigger={t("common.add")}
                   onValueChange={addVal}
                   valueType={valueType}
                 />
@@ -182,10 +182,10 @@ const StringEdit = ({
   const domainSchema = z
     .string()
     .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("domain.not.empty.verify.message"),
+      message: t("common.errmsg.domain_invalid"),
     });
 
-  const ipSchema = z.string().ip({ message: t("ip.not.empty.verify.message") });
+  const ipSchema = z.string().ip({ message: t("common.errmsg.ip_invalid") });
 
   const schedules: Record<ValueType, z.ZodString> = {
     domain: domainSchema,
@@ -240,7 +240,7 @@ const StringEdit = ({
               onSaveClick();
             }}
           >
-            {op === "add" ? t("add") : t("confirm")}
+            {op === "add" ? t("common.add") : t("common.confirm")}
           </Button>
         </DialogFooter>
       </DialogContent>

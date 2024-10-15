@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, HuaweicloudConfig, getUsageByConfigType } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  HuaweicloudConfig,
+  getUsageByConfigType,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
@@ -35,11 +40,23 @@ const AccessHuaweicloudForm = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    region: z.string().min(1, 'access.form.region.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
-    accessKeyId: z.string().min(1, 'access.form.access.key.id.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
-    secretAccessKey: z.string().min(1, 'access.form.access.key.secret.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    region: z
+      .string()
+      .min(1, "access.authorization.form.region.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    accessKeyId: z
+      .string()
+      .min(1, "access.authorization.form.access_key_id.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    secretAccessKey: z
+      .string()
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
   let config: HuaweicloudConfig = {
@@ -53,7 +70,7 @@ const AccessHuaweicloudForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "huaweicloud",
       region: config.region,
       accessKeyId: config.accessKeyId,
@@ -75,7 +92,7 @@ const AccessHuaweicloudForm = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -121,9 +138,12 @@ const AccessHuaweicloudForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -136,7 +156,7 @@ const AccessHuaweicloudForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -151,7 +171,7 @@ const AccessHuaweicloudForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -166,9 +186,12 @@ const AccessHuaweicloudForm = ({
               name="region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.region')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.region.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.region.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -181,9 +204,12 @@ const AccessHuaweicloudForm = ({
               name="accessKeyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.access.key.id')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.access.key.id.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.access_key_id.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -196,9 +222,12 @@ const AccessHuaweicloudForm = ({
               name="secretAccessKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.access.key.secret')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.access_key_secret.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.access.key.secret.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.access_key_secret.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -209,7 +238,7 @@ const AccessHuaweicloudForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

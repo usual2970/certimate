@@ -66,14 +66,14 @@ export const getLastDeployment = (domain: Domain): Deployment | undefined => {
 };
 
 export const targetTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun-cdn", ["aliyun.cdn", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-oss", ["aliyun.oss", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-dcdn", ["aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
-  ["tencent-cdn", ["tencent.cdn", "/imgs/providers/tencent.svg"]],
-  ["ssh", ["ssh", "/imgs/providers/ssh.svg"]],
-  ["qiniu-cdn", ["qiniu.cdn", "/imgs/providers/qiniu.svg"]],
-  ["webhook", ["webhook", "/imgs/providers/webhook.svg"]],
-  ["local", ["local.deployment", "/imgs/providers/local.svg"]],
+  ["aliyun-oss", ["common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-cdn", ["common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"]],
+  ["aliyun-dcdn", ["common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
+  ["tencent-cdn", ["common.provider.tencent.cdn", "/imgs/providers/tencent.svg"]],
+  ["qiniu-cdn", ["common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"]],
+  ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
+  ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
+  ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());

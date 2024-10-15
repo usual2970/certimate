@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, AliyunConfig, getUsageByConfigType } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  AliyunConfig,
+  getUsageByConfigType,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
@@ -35,10 +40,19 @@ const AccessAliyunForm = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    accessKeyId: z.string().min(1, 'access.form.access.key.id.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
-    accessSecretId: z.string().min(1, 'access.form.access.key.secret.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    accessKeyId: z
+      .string()
+      .min(1, "access.authorization.form.access_key_id.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    accessSecretId: z
+      .string()
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
   let config: AliyunConfig = {
@@ -51,7 +65,7 @@ const AccessAliyunForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "aliyun",
       accessKeyId: config.accessKeyId,
       accessSecretId: config.accessKeySecret,
@@ -71,7 +85,7 @@ const AccessAliyunForm = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -117,9 +131,12 @@ const AccessAliyunForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -132,7 +149,7 @@ const AccessAliyunForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -147,7 +164,7 @@ const AccessAliyunForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -162,9 +179,12 @@ const AccessAliyunForm = ({
               name="accessKeyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.access.key.id')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.access.key.id.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.access_key_id.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -177,9 +197,12 @@ const AccessAliyunForm = ({
               name="accessSecretId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.access.key.secret')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.access_key_secret.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.access.key.secret.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.access_key_secret.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -190,7 +213,7 @@ const AccessAliyunForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

@@ -129,15 +129,15 @@ const Home = () => {
       await save(domain);
 
       toast.toast({
-        title: t("operation.succeed"),
-        description: t("domain.management.start.deploy.succeed.tips"),
+        title: t("domain.deploy.started.message"),
+        description: t("domain.deploy.started.tips"),
       });
     } catch (e) {
       toast.toast({
-        title: t("domain.management.execution.failed"),
+        title: t("domain.deploy.failed.message"),
         description: (
           // 这里的 text 只是占位作用，实际文案在 src/i18n/locales/[lang].json
-          <Trans i18nKey="domain.management.execution.failed.tips">
+          <Trans i18nKey="domain.deploy.failed.tips">
             text1
             <Link
               to={`/history?domain=${domain.id}`}
@@ -178,9 +178,7 @@ const Home = () => {
       <div className="">
         <Toaster />
         <div className="flex justify-between items-center">
-          <div className="text-muted-foreground">
-            {t("domain.management.name")}
-          </div>
+          <div className="text-muted-foreground">{t("domain.page.title")}</div>
           <Button onClick={handleCreateClick}>{t("domain.add")}</Button>
         </div>
 
@@ -192,7 +190,7 @@ const Home = () => {
               </span>
 
               <div className="text-center text-sm text-muted-foreground mt-3">
-                {t("domain.management.empty")}
+                {t("domain.nodata")}
               </div>
               <Button onClick={handleCreateClick} className="mt-3">
                 {t("domain.add")}
@@ -202,22 +200,19 @@ const Home = () => {
         ) : (
           <>
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-              <div className="w-36">{t("domain")}</div>
-              <div className="w-40">{t("domain.management.expiry.date")}</div>
+              <div className="w-36">{t("common.text.domain")}</div>
+              <div className="w-40">{t("domain.props.expiry")}</div>
               <div className="w-32">
-                {t("domain.management.last.execution.status")}
+                {t("domain.props.last_execution_status")}
               </div>
               <div className="w-64">
-                {t("domain.management.last.execution.stage")}
+                {t("domain.props.last_execution_stage")}
               </div>
               <div className="w-40 sm:ml-2">
-                {t("domain.management.last.execution.time")}
+                {t("domain.props.last_execution_time")}
               </div>
-              <div className="w-24">{t("domain.management.enable")}</div>
-              <div className="grow">{t("operation")}</div>
-            </div>
-            <div className="sm:hidden flex text-sm text-muted-foreground">
-              {t("domain")}
+              <div className="w-24">{t("domain.props.enable")}</div>
+              <div className="grow">{t("common.text.operations")}</div>
             </div>
 
             {domains.map((domain) => (
@@ -238,10 +233,10 @@ const Home = () => {
                     {domain.expiredAt ? (
                       <>
                         <div>
-                          {t("domain.management.expiry.date1", { date: 90 })}
+                          {t("domain.props.expiry.date1", { date: 90 })}
                         </div>
                         <div>
-                          {t("domain.management.expiry.date2", {
+                          {t("domain.props.expiry.date2", {
                             date: getDate(domain.expiredAt),
                           })}
                         </div>
@@ -288,7 +283,9 @@ const Home = () => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <div className="border rounded-sm px-3 bg-background text-muted-foreground text-xs">
-                          {domain.enabled ? t("disable") : t("enable")}
+                          {domain.enabled
+                            ? t("domain.props.enable.disabled")
+                            : t("domain.props.enable.enabled")}
                         </div>
                       </TooltipContent>
                     </Tooltip>
@@ -300,7 +297,7 @@ const Home = () => {
                     className="p-0"
                     onClick={() => handleHistoryClick(domain.id ?? "")}
                   >
-                    {t("deployment.log.name")}
+                    {t("domain.history")}
                   </Button>
                   <Show when={domain.enabled ? true : false}>
                     <Separator orientation="vertical" className="h-4 mx-2" />
@@ -309,7 +306,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleRightNowClick(domain)}
                     >
-                      {t("domain.management.start.deploying")}
+                      {t("domain.deploy")}
                     </Button>
                   </Show>
 
@@ -326,7 +323,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleForceClick(domain)}
                     >
-                      {t("domain.management.forced.deployment")}
+                      {t("domain.deploy_forced")}
                     </Button>
                   </Show>
 
@@ -337,7 +334,7 @@ const Home = () => {
                       className="p-0"
                       onClick={() => handleDownloadClick(domain)}
                     >
-                      {t("download")}
+                      {t("common.download")}
                     </Button>
                   </Show>
 
@@ -347,7 +344,7 @@ const Home = () => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant={"link"} className="p-0">
-                            {t("delete")}
+                            {t("common.delete")}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
@@ -356,17 +353,19 @@ const Home = () => {
                               {t("domain.delete")}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              {t("domain.management.delete.confirm")}
+                              {t("domain.delete.confirm")}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                            <AlertDialogCancel>
+                              {t("common.cancel")}
+                            </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => {
                                 handleDeleteClick(domain.id ?? "");
                               }}
                             >
-                              {t("confirm")}
+                              {t("common.confirm")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -378,7 +377,7 @@ const Home = () => {
                         className="p-0"
                         onClick={() => handleEditClick(domain.id ?? "")}
                       >
-                        {t("edit")}
+                        {t("common.edit")}
                       </Button>
                     </>
                   )}

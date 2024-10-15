@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, getUsageByConfigType, QiniuConfig } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  getUsageByConfigType,
+  QiniuConfig,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
@@ -35,10 +40,13 @@ const AccessQiniuForm = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    accessKey: z.string().min(1, 'access.form.access.key.not.empty').max(64),
-    secretKey: z.string().min(1, 'access.form.secret.key.not.empty').max(64),
+    accessKey: z.string().min(1, "access.authorization.form.access_key.placeholder").max(64),
+    secretKey: z.string().min(1, "access.authorization.form.secret_key.placeholder").max(64),
   });
 
   let config: QiniuConfig = {
@@ -51,7 +59,7 @@ const AccessQiniuForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "qiniu",
       accessKey: config.accessKey,
       secretKey: config.secretKey,
@@ -71,7 +79,7 @@ const AccessQiniuForm = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -116,9 +124,12 @@ const AccessQiniuForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -131,7 +142,7 @@ const AccessQiniuForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -146,7 +157,7 @@ const AccessQiniuForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -161,9 +172,12 @@ const AccessQiniuForm = ({
               name="accessKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.access.key')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.access_key.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.access.key.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.access_key.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -176,9 +190,12 @@ const AccessQiniuForm = ({
               name="secretKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.secret.key')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.secret_key.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.secret.key.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.secret_key.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -189,7 +206,7 @@ const AccessQiniuForm = ({
             <FormMessage />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

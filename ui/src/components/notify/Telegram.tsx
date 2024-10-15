@@ -50,7 +50,7 @@ const Telegram = () => {
     const data = getDetailTelegram();
     setTelegram({
       id: config.id ?? "",
-      name: "telegram",
+      name: "common.provider.telegram",
       data,
     });
   }, [config]);
@@ -72,15 +72,17 @@ const Telegram = () => {
 
       setChannels(resp);
       toast({
-        title: t('save.succeed'),
-        description: t('setting.notify.config.save.succeed'),
+        title: t("common.save.succeeded.message"),
+        description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t('save.failed'),
-        description: `${t('setting.notify.config.save.failed')}: ${msg}`,
+        title: t("common.save.failed.message"),
+        description: `${t(
+          "settings.notification.config.failed.message"
+        )}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -130,7 +132,9 @@ const Telegram = () => {
             });
           }}
         />
-        <Label htmlFor="airplane-mode">{t('setting.notify.config.enable')}</Label>
+        <Label htmlFor="airplane-mode">
+          {t("settings.notification.config.enable")}
+        </Label>
       </div>
 
       <div className="flex justify-end mt-2">
@@ -139,7 +143,7 @@ const Telegram = () => {
             handleSaveClick();
           }}
         >
-          {t('save')}
+          {t("common.save")}
         </Button>
       </div>
     </div>

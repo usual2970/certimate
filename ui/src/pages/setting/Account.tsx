@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 const formSchema = z.object({
-  email: z.string().email("setting.account.email.valid.message"),
+  email: z.string().email("settings.account.email.errmsg.invalid"),
 });
 
 const Account = () => {
@@ -45,8 +45,8 @@ const Account = () => {
 
       getPb().authStore.clear();
       toast({
-        title: t("setting.account.email.change.succeed"),
-        description: t("setting.account.log.back.in"),
+        title: t("settings.account.email.changed.message"),
+        description: t("settings.account.relogin.message"),
       });
       setTimeout(() => {
         navigate("/login");
@@ -54,7 +54,7 @@ const Account = () => {
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: t("setting.account.email.change.failed"),
+        title: t("settings.account.email.failed.message"),
         description: message,
         variant: "destructive",
       });
@@ -74,10 +74,10 @@ const Account = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('email')}</FormLabel>
+                  <FormLabel>{t("settings.account.email.label")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={t('setting.email.placeholder')}
+                      placeholder={t("settings.account.email.placeholder")}
                       {...field}
                       type="email"
                       onChange={(e) => {
@@ -94,10 +94,10 @@ const Account = () => {
 
             <div className="flex justify-end">
               {changed ? (
-                <Button type="submit">{t('setting.submit')}</Button>
+                <Button type="submit">{t("common.update")}</Button>
               ) : (
                 <Button type="submit" disabled variant={"secondary"}>
-                  {t('setting.submit')}
+                  {t("common.update")}
                 </Button>
               )}
             </div>

@@ -48,7 +48,7 @@ const AccessGroupList = () => {
       reloadAccessGroups();
     } catch (e) {
       toast({
-        title: t('delete.failed'),
+        title: t("common.delete.failed.message"),
         description: getErrMessage(e),
         variant: "destructive",
       });
@@ -69,10 +69,10 @@ const AccessGroupList = () => {
             </span>
 
             <div className="text-center text-sm text-muted-foreground mt-3">
-              {t('access.group.domain.empty')}
+              {t("access.group.domains.nodata")}
             </div>
             <AccessGroupEdit
-              trigger={<Button>{t('access.group.add')}</Button>}
+              trigger={<Button>{t("access.group.add")}</Button>}
               className="mt-3"
             />
           </div>
@@ -86,7 +86,11 @@ const AccessGroupList = () => {
               <CardHeader>
                 <CardTitle>{accessGroup.name}</CardTitle>
                 <CardDescription>
-                  {t('access.group.total', { total: accessGroup.expand ? accessGroup.expand.access.length : 0 })}
+                  {t("access.group.total", {
+                    total: accessGroup.expand
+                      ? accessGroup.expand.access.length
+                      : 0,
+                  })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="min-h-[180px]">
@@ -120,9 +124,7 @@ const AccessGroupList = () => {
                       <div>
                         <Group size={40} />
                       </div>
-                      <div className="ml-2">
-                        {t('access.group.empty')}
-                      </div>
+                      <div className="ml-2">{t("access.group.nodata")}</div>
                     </div>
                   </>
                 )}
@@ -149,7 +151,7 @@ const AccessGroupList = () => {
                           );
                         }}
                       >
-                        {t('access.all')}
+                        {t("access.group.domains")}
                       </Button>
                     </div>
                   </Show>
@@ -157,14 +159,14 @@ const AccessGroupList = () => {
                   <Show
                     when={
                       !accessGroup.expand ||
-                        accessGroup.expand.access.length == 0
+                      accessGroup.expand.access.length == 0
                         ? true
                         : false
                     }
                   >
                     <div>
                       <Button size="sm" onClick={handleAddAccess}>
-                        {t('access.add')}
+                        {t("access.authorization.add")}
                       </Button>
                     </div>
                   </Show>
@@ -173,21 +175,21 @@ const AccessGroupList = () => {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant={"destructive"} size={"sm"}>
-                          {t('delete')}
+                          {t("common.delete")}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle className="dark:text-gray-200">
-                            {t('access.group.delete')}
+                            {t("access.group.delete")}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            {t('access.group.delete.confirm')}
+                            {t("access.group.delete.confirm")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel className="dark:text-gray-200">
-                            {t('cancel')}
+                            {t("common.cancel")}
                           </AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => {
@@ -196,7 +198,7 @@ const AccessGroupList = () => {
                               );
                             }}
                           >
-                            {t('confirm')}
+                            {t("common.confirm")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

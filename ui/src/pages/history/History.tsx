@@ -40,17 +40,17 @@ const History = () => {
 
   return (
     <ScrollArea className="h-[80vh] overflow-hidden">
-      <div className="text-muted-foreground">{t("deployment.log.name")}</div>
+      <div className="text-muted-foreground">{t("history.page.title")}</div>
       {!deployments?.length ? (
         <>
           <Alert className="max-w-[40em] mx-auto mt-20">
-            <AlertTitle>{t("no.data")}</AlertTitle>
+            <AlertTitle>{t("common.text.nodata")}</AlertTitle>
             <AlertDescription>
               <div className="flex items-center mt-5">
                 <div>
                   <Smile className="text-yellow-400" size={36} />
                 </div>
-                <div className="ml-2"> {t("deployment.log.empty")}</div>
+                <div className="ml-2"> {t("history.nodata")}</div>
               </div>
               <div className="mt-2 flex justify-end">
                 <Button
@@ -67,18 +67,15 @@ const History = () => {
       ) : (
         <>
           <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
-            <div className="w-48">{t("domain")}</div>
+            <div className="w-48">{t("history.props.domain")}</div>
 
-            <div className="w-24">{t("deployment.log.status")}</div>
-            <div className="w-56">{t("deployment.log.stage")}</div>
+            <div className="w-24">{t("history.props.status")}</div>
+            <div className="w-56">{t("history.props.stage")}</div>
             <div className="w-56 sm:ml-2 text-center">
-              {t("deployment.log.last.execution.time")}
+              {t("history.props.last_execution_time")}
             </div>
 
-            <div className="grow">{t("operation")}</div>
-          </div>
-          <div className="sm:hidden flex text-sm text-muted-foreground">
-            {t("deployment.log.name")}
+            <div className="grow">{t("common.text.operations")}</div>
           </div>
 
           {deployments?.map((deployment) => (
@@ -112,14 +109,14 @@ const History = () => {
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant={"link"} className="p-0">
-                      {t("deployment.log.detail.button.text")}
+                      {t("history.log")}
                     </Button>
                   </SheetTrigger>
                   <SheetContent className="sm:max-w-5xl">
                     <SheetHeader>
                       <SheetTitle>
                         {deployment.expand.domain?.domain}-{deployment.id}
-                        {t("deployment.log.detail")}
+                        {t("history.log")}
                       </SheetTitle>
                     </SheetHeader>
                     <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh]">

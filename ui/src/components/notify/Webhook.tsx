@@ -9,7 +9,7 @@ import { update } from "@/repository/settings";
 import { getErrMessage } from "@/lib/error";
 import { useToast } from "../ui/use-toast";
 import { isValidURL } from "@/lib/url";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 type WebhookSetting = {
   id: string;
@@ -61,8 +61,8 @@ const Webhook = () => {
       webhook.data.url = webhook.data.url.trim();
       if (!isValidURL(webhook.data.url)) {
         toast({
-          title: t('save.failed'),
-          description: t('setting.notify.config.save.failed.url.not.valid'),
+          title: t("common.save.failed.message"),
+          description: t("settings.notification.url.errmsg.invalid"),
           variant: "destructive",
         });
         return;
@@ -81,15 +81,17 @@ const Webhook = () => {
 
       setChannels(resp);
       toast({
-        title: t('save.succeed'),
-        description: t('setting.notify.config.save.succeed'),
+        title: t("common.save.succeeded.message"),
+        description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t('save.failed'),
-        description: `${t('setting.notify.config.save.failed')}: ${msg}`,
+        title: t("common.save.failed.message"),
+        description: `${t(
+          "settings.notification.config.failed.message"
+        )}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -125,7 +127,9 @@ const Webhook = () => {
             });
           }}
         />
-        <Label htmlFor="airplane-mode">{t('setting.notify.config.enable')}</Label>
+        <Label htmlFor="airplane-mode">
+          {t("settings.notification.config.enable")}
+        </Label>
       </div>
 
       <div className="flex justify-end mt-2">
@@ -134,7 +138,7 @@ const Webhook = () => {
             handleSaveClick();
           }}
         >
-          {t('save')}
+          {t("common.save")}
         </Button>
       </div>
     </div>

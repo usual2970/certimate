@@ -180,15 +180,15 @@ export function AccessEdit({
         <DialogHeader>
           <DialogTitle>
             {op == "add"
-              ? t("access.add")
+              ? t("access.authorization.add")
               : op == "edit"
-              ? t("access.edit")
-              : t("access.copy")}
+              ? t("access.authorization.edit")
+              : t("access.authorization.copy")}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">
-            <Label>{t("access.type")}</Label>
+            <Label>{t("access.authorization.form.type.label")}</Label>
 
             <Select
               onValueChange={(val) => {
@@ -197,11 +197,11 @@ export function AccessEdit({
               defaultValue={configType}
             >
               <SelectTrigger className="mt-3">
-                <SelectValue placeholder={t("access.type.not.empty")} />
+                <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>{t("access.type")}</SelectLabel>
+                  <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
                   {typeKeys.map((key) => (
                     <SelectItem value={key} key={key}>
                       <div

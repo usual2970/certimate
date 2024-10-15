@@ -39,10 +39,19 @@ const AccessGodaddyFrom = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    apiKey: z.string().min(1, 'access.form.go.daddy.api.key.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
-    apiSecret: z.string().min(1, 'access.form.go.daddy.api.secret.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    apiKey: z
+      .string()
+      .min(1, "access.authorization.form.godaddy_api_key.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    apiSecret: z
+      .string()
+      .min(1, "access.authorization.form.godaddy_api_secret.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
   let config: GodaddyConfig = {
@@ -55,7 +64,7 @@ const AccessGodaddyFrom = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "godaddy",
       apiKey: config.apiKey,
       apiSecret: config.apiSecret,
@@ -76,7 +85,7 @@ const AccessGodaddyFrom = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -120,9 +129,12 @@ const AccessGodaddyFrom = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -135,7 +147,7 @@ const AccessGodaddyFrom = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -150,7 +162,7 @@ const AccessGodaddyFrom = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -165,9 +177,12 @@ const AccessGodaddyFrom = ({
               name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.go.daddy.api.key')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.godaddy_api_key.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.go.daddy.api.key.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.godaddy_api_key.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -180,9 +195,14 @@ const AccessGodaddyFrom = ({
               name="apiSecret"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.go.daddy.api.secret')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.godaddy_api_secret.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.go.daddy.api.secret.not.empty')} {...field} />
+                    <Input
+                      placeholder={t(
+                        "access.authorization.form.godaddy_api_secret.placeholder"
+                      )}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -191,7 +211,7 @@ const AccessGodaddyFrom = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

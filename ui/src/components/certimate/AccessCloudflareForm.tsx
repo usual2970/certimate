@@ -15,7 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 
-import { Access, accessFormType, CloudflareConfig, getUsageByConfigType } from "@/domain/access";
+import {
+  Access,
+  accessFormType,
+  CloudflareConfig,
+  getUsageByConfigType,
+} from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 import { ClientResponseError } from "pocketbase";
@@ -34,9 +39,15 @@ const AccessCloudflareForm = ({
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
-    name: z.string().min(1, 'access.form.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.authorization.form.name.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    dnsApiToken: z.string().min(1, 'access.form.cloud.dns.api.token.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    dnsApiToken: z
+      .string()
+      .min(1, "access.authorization.form.cloud_dns_api_token.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
   let config: CloudflareConfig = {
@@ -48,7 +59,7 @@ const AccessCloudflareForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
-      name: data?.name || '',
+      name: data?.name || "",
       configType: "cloudflare",
       dnsApiToken: config.dnsApiToken,
     },
@@ -67,7 +78,7 @@ const AccessCloudflareForm = ({
     };
 
     try {
-      req.id =  op == "copy" ? "" : req.id;
+      req.id = op == "copy" ? "" : req.id;
       const rs = await save(req);
 
       onAfterReq();
@@ -111,9 +122,12 @@ const AccessCloudflareForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('name')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.name.not.empty')} {...field} />
+                    <Input
+                      placeholder={t("access.authorization.form.name.placeholder")}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -126,7 +140,7 @@ const AccessCloudflareForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -141,7 +155,7 @@ const AccessCloudflareForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>{t('access.form.config.field')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -156,9 +170,14 @@ const AccessCloudflareForm = ({
               name="dnsApiToken"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('access.form.cloud.dns.api.token')}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.cloud_dns_api_token.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('access.form.cloud.dns.api.token.not.empty')} {...field} />
+                    <Input
+                      placeholder={t(
+                        "access.authorization.form.cloud_dns_api_token.placeholder"
+                      )}
+                      {...field}
+                    />
                   </FormControl>
 
                   <FormMessage />
@@ -167,7 +186,7 @@ const AccessCloudflareForm = ({
             />
 
             <div className="flex justify-end">
-              <Button type="submit">{t('save')}</Button>
+              <Button type="submit">{t("common.save")}</Button>
             </div>
           </form>
         </Form>

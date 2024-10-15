@@ -35,7 +35,7 @@ const SSLProvider = () => {
 
   const formSchema = z.object({
     provider: z.enum(["letsencrypt", "zerossl"], {
-      message: t("setting.ca.not.empty"),
+      message: t("settings.ca.provider.errmsg.empty"),
     }),
     eabKid: z.string().optional(),
     eabHmacKey: z.string().optional(),
@@ -89,12 +89,12 @@ const SSLProvider = () => {
     if (values.provider === "zerossl") {
       if (!values.eabKid) {
         form.setError("eabKid", {
-          message: t("setting.ca.eab_kid_hmac_key.not.empty"),
+          message: t("settings.ca.eab_kid_hmac_key.errmsg.empty"),
         });
       }
       if (!values.eabHmacKey) {
         form.setError("eabHmacKey", {
-          message: t("setting.ca.eab_kid_hmac_key.not.empty"),
+          message: t("settings.ca.eab_kid_hmac_key.errmsg.empty"),
         });
       }
       if (!values.eabKid || !values.eabHmacKey) {
@@ -120,13 +120,13 @@ const SSLProvider = () => {
     try {
       await update(setting);
       toast({
-        title: t("update.succeed"),
-        description: t("update.succeed"),
+        title: t("common.update.succeeded.message"),
+        description: t("common.update.succeeded.message"),
       });
     } catch (e) {
       const message = getErrMessage(e);
       toast({
-        title: t("update.failed"),
+        title: t("common.update.failed.message"),
         description: message,
         variant: "destructive",
       });
@@ -146,7 +146,7 @@ const SSLProvider = () => {
               name="provider"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("ca")}</FormLabel>
+                  <FormLabel>{t("common.text.ca")}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       {...field}
@@ -202,7 +202,7 @@ const SSLProvider = () => {
                         <FormLabel>EAB_KID</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder={t("setting.ca.eab_kid.not.empty")}
+                            placeholder={t("settings.ca.eab_kid.errmsg.empty")}
                             {...field}
                             type="text"
                           />
@@ -221,7 +221,9 @@ const SSLProvider = () => {
                         <FormLabel>EAB_HMAC_KEY</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder={t("setting.ca.eab_hmac_key.not.empty")}
+                            placeholder={t(
+                              "settings.ca.eab_hmac_key.errmsg.empty"
+                            )}
                             {...field}
                             type="text"
                           />
@@ -238,7 +240,7 @@ const SSLProvider = () => {
             />
 
             <div className="flex justify-end">
-              <Button type="submit">{t("setting.submit")}</Button>
+              <Button type="submit">{t("common.update")}</Button>
             </div>
           </form>
         </Form>

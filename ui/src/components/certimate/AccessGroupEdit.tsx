@@ -39,7 +39,10 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    name: z.string().min(1, 'access.group.name.not.empty').max(64, t('zod.rule.string.max', { max: 64 })),
+    name: z
+      .string()
+      .min(1, "access.group.form.name.errmsg.empty")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,7 +83,7 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
-          <DialogTitle>{t('access.group.add')}</DialogTitle>
+          <DialogTitle>{t("access.group.add")}</DialogTitle>
         </DialogHeader>
 
         <div className="container py-3">
@@ -97,9 +100,13 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t('access.group.name')}</FormLabel>
+                    <FormLabel>{t("access.group.form.name.label")}</FormLabel>
                     <FormControl>
-                      <Input placeholder={t('access.group.name.not.empty')} {...field} type="text" />
+                      <Input
+                        placeholder={t("access.group.form.name.errmsg.empty")}
+                        {...field}
+                        type="text"
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -108,7 +115,7 @@ const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">{t('save')}</Button>
+                <Button type="submit">{t("common.save")}</Button>
               </div>
             </form>
           </Form>

@@ -1,0 +1,11 @@
+﻿{
+  "dashboard.page.title": "仪表盘",
+
+  "dashboard.statistics.all": "所有",
+  "dashboard.statistics.near_expired": "即将过期",
+  "dashboard.statistics.enabled": "启用中",
+  "dashboard.statistics.disabled": "未启用",
+  "dashboard.statistics.unit": "个",
+
+  "dashboard.history": "部署历史"
+}

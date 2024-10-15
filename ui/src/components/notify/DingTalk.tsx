@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { update } from "@/repository/settings";
 import { getErrMessage } from "@/lib/error";
 import { useToast } from "../ui/use-toast";
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from "react-i18next";
 
 type DingTalkSetting = {
   id: string;
@@ -72,15 +72,17 @@ const DingTalk = () => {
 
       setChannels(resp);
       toast({
-        title: t('save.succeed'),
-        description: t('setting.notify.config.save.succeed'),
+        title: t("common.save.succeeded.message"),
+        description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t('save.failed'),
-        description: `${t('setting.notify.config.save.failed')}: ${msg}`,
+        title: t("common.save.failed.message"),
+        description: `${t(
+          "settings.notification.config.failed.message"
+        )}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -102,7 +104,7 @@ const DingTalk = () => {
         }}
       />
       <Input
-        placeholder={t('access.form.ding.access.token.placeholder')}
+        placeholder={t("settings.notification.dingtalk.secret.placeholder")}
         className="mt-2"
         value={dingtalk.data.secret}
         onChange={(e) => {
@@ -129,7 +131,9 @@ const DingTalk = () => {
             });
           }}
         />
-        <Label htmlFor="airplane-mode">{t('setting.notify.config.enable')}</Label>
+        <Label htmlFor="airplane-mode">
+          {t("settings.notification.config.enable")}
+        </Label>
       </div>
 
       <div className="flex justify-end mt-2">
@@ -138,7 +142,7 @@ const DingTalk = () => {
             handleSaveClick();
           }}
         >
-          {t('save')}
+          {t("common.save")}
         </Button>
       </div>
     </div>
