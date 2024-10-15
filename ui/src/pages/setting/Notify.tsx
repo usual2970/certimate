@@ -1,15 +1,11 @@
+import { useTranslation } from "react-i18next";
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DingTalk from "@/components/notify/DingTalk";
 import NotifyTemplate from "@/components/notify/NotifyTemplate";
 import Telegram from "@/components/notify/Telegram";
 import Webhook from "@/components/notify/Webhook";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { NotifyProvider } from "@/providers/notify";
-import { useTranslation } from "react-i18next";
 
 const Notify = () => {
   const { t } = useTranslation();
@@ -20,9 +16,7 @@ const Notify = () => {
         <div className="border rounded-sm p-5 shadow-lg">
           <Accordion type={"multiple"} className="dark:text-stone-200">
             <AccordionItem value="item-1" className="dark:border-stone-200">
-              <AccordionTrigger>
-                {t("settings.notification.template.label")}
-              </AccordionTrigger>
+              <AccordionTrigger>{t("settings.notification.template.label")}</AccordionTrigger>
               <AccordionContent>
                 <NotifyTemplate />
               </AccordionContent>

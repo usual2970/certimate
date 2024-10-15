@@ -1,11 +1,7 @@
-import { Deployment } from "@/domain/deployment";
 import { CircleCheck, CircleX } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Deployment } from "@/domain/deployment";
 
 type DeployStateProps = {
   deployment: Deployment;
@@ -32,9 +28,7 @@ const DeployState = ({ deployment }: DeployStateProps) => {
                 <TooltipTrigger asChild className="cursor-pointer">
                   <CircleX size={16} className="text-red-700" />
                 </TooltipTrigger>
-                <TooltipContent className="max-w-[35em]">
-                  {error(deployment.phase)}
-                </TooltipContent>
+                <TooltipContent className="max-w-[35em]">{error(deployment.phase)}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ) : (

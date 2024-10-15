@@ -1,14 +1,12 @@
+import { Access } from "@/domain/access";
 import { AccessGroup } from "@/domain/access_groups";
 import { getPb } from "./api";
-import { Access } from "@/domain/access";
 
 export const list = async () => {
-  const resp = await getPb()
-    .collection("access_groups")
-    .getFullList<AccessGroup>({
-      sort: "-created",
-      expand: "access",
-    });
+  const resp = await getPb().collection("access_groups").getFullList<AccessGroup>({
+    sort: "-created",
+    expand: "access",
+  });
 
   return resp;
 };
@@ -31,9 +29,7 @@ export const remove = async (id: string) => {
 export const update = async (accessGroup: AccessGroup) => {
   const pb = getPb();
   if (accessGroup.id) {
-    return await pb
-      .collection("access_groups")
-      .update(accessGroup.id, accessGroup);
+    return await pb.collection("access_groups").update(accessGroup.id, accessGroup);
   }
   return await pb.collection("access_groups").create(accessGroup);
 };

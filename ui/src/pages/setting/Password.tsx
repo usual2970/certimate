@@ -1,22 +1,15 @@
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
 import { getPb } from "@/repository/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-
-import { z } from "zod";
 
 const formSchema = z
   .object({
@@ -51,10 +44,7 @@ const Password = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await getPb().admins.authWithPassword(
-        getPb().authStore.model?.email,
-        values.oldPassword
-      );
+      await getPb().admins.authWithPassword(getPb().authStore.model?.email, values.oldPassword);
     } catch (e) {
       const message = getErrMessage(e);
       form.setError("oldPassword", { message });
@@ -88,26 +78,15 @@ const Password = () => {
     <>
       <div className="w-full md:max-w-[35em]">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 dark:text-stone-200"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 dark:text-stone-200">
             <FormField
               control={form.control}
               name="oldPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("settings.password.current_password.label")}
-                  </FormLabel>
+                  <FormLabel>{t("settings.password.current_password.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "settings.password.current_password.placeholder"
-                      )}
-                      {...field}
-                      type="password"
-                    />
+                    <Input placeholder={t("settings.password.current_password.placeholder")} {...field} type="password" />
                   </FormControl>
 
                   <FormMessage />
@@ -120,17 +99,9 @@ const Password = () => {
               name="newPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("settings.password.new_password.label")}
-                  </FormLabel>
+                  <FormLabel>{t("settings.password.new_password.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "settings.password.new_password.placeholder"
-                      )}
-                      {...field}
-                      type="password"
-                    />
+                    <Input placeholder={t("settings.password.new_password.placeholder")} {...field} type="password" />
                   </FormControl>
 
                   <FormMessage />
@@ -143,17 +114,9 @@ const Password = () => {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("settings.password.confirm_password.label")}
-                  </FormLabel>
+                  <FormLabel>{t("settings.password.confirm_password.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "settings.password.confirm_password.placeholder"
-                      )}
-                      {...field}
-                      type="password"
-                    />
+                    <Input placeholder={t("settings.password.confirm_password.placeholder")} {...field} type="password" />
                   </FormControl>
 
                   <FormMessage />

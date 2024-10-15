@@ -1,4 +1,7 @@
-import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Group } from "lucide-react";
+
 import Show from "@/components/Show";
 import {
   AlertDialog,
@@ -12,24 +15,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/components/ui/use-toast";
+import AccessGroupEdit from "./AccessGroupEdit";
 import { getProviderInfo } from "@/domain/access";
 import { getErrMessage } from "@/lib/error";
 import { useConfig } from "@/providers/config";
 import { remove } from "@/repository/access_group";
-import { Group } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 const AccessGroupList = () => {
   const {
@@ -68,13 +61,8 @@ const AccessGroupList = () => {
               <Group size={40} className="text-primary" />
             </span>
 
-            <div className="text-center text-sm text-muted-foreground mt-3">
-              {t("access.group.domains.nodata")}
-            </div>
-            <AccessGroupEdit
-              trigger={<Button>{t("access.group.add")}</Button>}
-              className="mt-3"
-            />
+            <div className="text-center text-sm text-muted-foreground mt-3">{t("access.group.domains.nodata")}</div>
+            <AccessGroupEdit trigger={<Button>{t("access.group.add")}</Button>} className="mt-3" />
           </div>
         </>
       </Show>
@@ -87,9 +75,7 @@ const AccessGroupList = () => {
                 <CardTitle>{accessGroup.name}</CardTitle>
                 <CardDescription>
                   {t("access.group.total", {
-                    total: accessGroup.expand
-                      ? accessGroup.expand.access.length
-                      : 0,
+                    total: accessGroup.expand ? accessGroup.expand.access.length : 0,
                   })}
                 </CardDescription>
               </CardHeader>
@@ -100,19 +86,11 @@ const AccessGroupList = () => {
                       <div key={access.id} className="flex flex-col mb-3">
                         <div className="flex items-center">
                           <div className="">
-                            <img
-                              src={getProviderInfo(access.configType)![1]}
-                              alt="provider"
-                              className="w-8 h-8"
-                            ></img>
+                            <img src={getProviderInfo(access.configType)![1]} alt="provider" className="w-8 h-8"></img>
                           </div>
                           <div className="ml-3">
-                            <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                              {access.name}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {getProviderInfo(access.configType)![0]}
-                            </div>
+                            <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">{access.name}</div>
+                            <div className="text-xs text-muted-foreground">{getProviderInfo(access.configType)![0]}</div>
                           </div>
                         </div>
                       </div>
@@ -131,24 +109,15 @@ const AccessGroupList = () => {
               </CardContent>
               <CardFooter>
                 <div className="flex justify-end w-full">
-                  <Show
-                    when={
-                      accessGroup.expand && accessGroup.expand.access.length > 0
-                        ? true
-                        : false
-                    }
-                  >
+                  <Show when={accessGroup.expand && accessGroup.expand.access.length > 0 ? true : false}>
                     <div>
                       <Button
                         size="sm"
                         variant={"link"}
                         onClick={() => {
-                          navigate(
-                            `/access?accessGroupId=${accessGroup.id}&tab=access`,
-                            {
-                              replace: true,
-                            }
-                          );
+                          navigate(`/access?accessGroupId=${accessGroup.id}&tab=access`, {
+                            replace: true,
+                          });
                         }}
                       >
                         {t("access.group.domains")}
@@ -156,14 +125,7 @@ const AccessGroupList = () => {
                     </div>
                   </Show>
 
-                  <Show
-                    when={
-                      !accessGroup.expand ||
-                      accessGroup.expand.access.length == 0
-                        ? true
-                        : false
-                    }
-                  >
+                  <Show when={!accessGroup.expand || accessGroup.expand.access.length == 0 ? true : false}>
                     <div>
                       <Button size="sm" onClick={handleAddAccess}>
                         {t("access.authorization.add")}
@@ -180,22 +142,14 @@ const AccessGroupList = () => {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="dark:text-gray-200">
-                            {t("access.group.delete")}
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            {t("access.group.delete.confirm")}
-                          </AlertDialogDescription>
+                          <AlertDialogTitle className="dark:text-gray-200">{t("access.group.delete")}</AlertDialogTitle>
+                          <AlertDialogDescription>{t("access.group.delete.confirm")}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel className="dark:text-gray-200">
-                            {t("common.cancel")}
-                          </AlertDialogCancel>
+                          <AlertDialogCancel className="dark:text-gray-200">{t("common.cancel")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => {
-                              handleRemoveClick(
-                                accessGroup.id ? accessGroup.id : ""
-                              );
+                              handleRemoveClick(accessGroup.id ? accessGroup.id : "");
                             }}
                           >
                             {t("common.confirm")}

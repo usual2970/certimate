@@ -1,6 +1,6 @@
+import { getTimeAfter } from "@/lib/time";
 import { Domain, Statistic } from "@/domain/domain";
 import { getPb } from "./api";
-import { getTimeAfter } from "@/lib/time";
 
 type DomainListReq = {
   domain?: string;
@@ -10,6 +10,8 @@ type DomainListReq = {
 };
 
 export const list = async (req: DomainListReq) => {
+  const pb = getPb();
+
   let page = 1;
   if (req.page) {
     page = req.page;
@@ -19,7 +21,7 @@ export const list = async (req: DomainListReq) => {
   if (req.perPage) {
     perPage = req.perPage;
   }
-  const pb = getPb();
+
   let filter = "";
   if (req.state === "enabled") {
     filter = "enabled=true";

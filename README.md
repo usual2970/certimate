@@ -4,8 +4,8 @@
 
 做个人产品或在小企业负责运维的同学，需要管理多个域名，要给域名申请证书。但手动申请证书有以下缺点：
 
-1. 😱麻烦：申请、部署证书虽不困难，但也挺麻烦的，尤其是维护多个域名的时候。
-2. 😭易忘：当前免费证书有效期仅90天，这就要求定期操作，增加工作量的同时，也很容易忘掉，导致网站无法访问。
+1. 😱 麻烦：申请、部署证书虽不困难，但也挺麻烦的，尤其是维护多个域名的时候。
+2. 😭 易忘：当前免费证书有效期仅 90 天，这就要求定期操作，增加工作量的同时，也很容易忘掉，导致网站无法访问。
 
 Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
@@ -15,9 +15,9 @@ Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
 相关文章：
 
-* [⚠️⚠️⚠️V0.2.0-第一个不向后兼容的版本](https://docs.certimate.me/blog/v0.2.0)
-* [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
-* [域名变量及部署授权组介绍](https://docs.certimate.me/blog/multi-deployer)
+- [⚠️⚠️⚠️V0.2.0-第一个不向后兼容的版本](https://docs.certimate.me/blog/v0.2.0)
+- [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
+- [域名变量及部署授权组介绍](https://docs.certimate.me/blog/multi-deployer)
 
 Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决方案。使用文档请访问[https://docs.certimate.me](https://docs.certimate.me)
 
@@ -34,12 +34,13 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 ```
 
 或运行以下命令自动给 Certimate 自身添加证书
+
 ```bash
 ./certimate serve 你的域名
 ```
 
 > [!NOTE]
-> MacOS 在执行二进制文件时会提示：无法打开“certimate”，因为Apple无法检查其是否包含恶意软件。可在系统设置> 隐私与安全性> 安全性 中点击 "仍然允许"，然后再次尝试执行二进制文件。
+> MacOS 在执行二进制文件时会提示：无法打开“certimate”，因为 Apple 无法检查其是否包含恶意软件。可在系统设置> 隐私与安全性> 安全性 中点击 "仍然允许"，然后再次尝试执行二进制文件。
 
 ### 2. Docker 安装
 
@@ -71,14 +72,14 @@ go run main.go serve
 
 ## 三、支持的服务商列表
 
-| 服务商     | 是否域名服务商 | 是否部署服务 | 备注                                                   |
-| ---------- | -------------- | ------------ | ------------------------------------------------------ |
-| 阿里云     | 是             | 是           | 支持阿里云注册的域名，支持部署到阿里云 CDN,OSS         |
-| 腾讯云     | 是             | 是           | 支持腾讯云注册的域名，支持部署到腾讯云 CDN             |
-| 七牛云     | 否             | 是           | 七牛云没有注册域名服务，支持部署到七牛云 CDN           |
-| CloudFlare | 是             | 否           | 支持 CloudFlare 注册的域名，CloudFlare 服务自带SSL证书 |
-| SSH        | 否             | 是           | 支持部署到 SSH 服务器                                  |
-| WEBHOOK    | 否             | 是           | 支持回调到 WEBHOOK                                     |
+| 服务商     | 是否域名服务商 | 是否部署服务 | 备注                                                     |
+| ---------- | -------------- | ------------ | -------------------------------------------------------- |
+| 阿里云     | 是             | 是           | 支持阿里云注册的域名，支持部署到阿里云 CDN,OSS           |
+| 腾讯云     | 是             | 是           | 支持腾讯云注册的域名，支持部署到腾讯云 CDN               |
+| 七牛云     | 否             | 是           | 七牛云没有注册域名服务，支持部署到七牛云 CDN             |
+| CloudFlare | 是             | 否           | 支持 CloudFlare 注册的域名，CloudFlare 服务自带 SSL 证书 |
+| SSH        | 否             | 是           | 支持部署到 SSH 服务器                                    |
+| WEBHOOK    | 否             | 是           | 支持回调到 WEBHOOK                                       |
 
 ## 四、系统截图
 
@@ -96,10 +97,10 @@ go run main.go serve
 
 Certimate 的工作流程如下：
 
-* 用户通过 Certimate 管理页面填写申请证书的信息，包括域名、dns 服务商的授权信息、以及要部署到的服务商的授权信息。
-* Certimate 向证书厂商的 API 发起申请请求，获取 SSL 证书。
-* Certimate 存储证书信息，包括证书内容、私钥、证书有效期等，并在证书即将过期时自动续期。
-* Certimate 向服务商的 API 发起部署请求，将证书部署到服务商的服务器上。
+- 用户通过 Certimate 管理页面填写申请证书的信息，包括域名、dns 服务商的授权信息、以及要部署到的服务商的授权信息。
+- Certimate 向证书厂商的 API 发起申请请求，获取 SSL 证书。
+- Certimate 存储证书信息，包括证书内容、私钥、证书有效期等，并在证书即将过期时自动续期。
+- Certimate 向服务商的 API 发起部署请求，将证书部署到服务商的服务器上。
 
 这就涉及域名、dns 服务商的授权信息、部署服务商的授权信息等。
 
@@ -135,17 +136,17 @@ Certimate 申请证书后，会自动将证书部署到你指定的目标上，�
 
 ## 六、常见问题
 
-Q: 提供saas服务吗？
+Q: 提供 saas 服务吗？
 
-> A: 不提供，目前仅支持self-hosted（私有部署）。
+> A: 不提供，目前仅支持 self-hosted（私有部署）。
 
 Q: 数据安全？
 
-> A: 由于仅支持私有部署，各种数据都保存在用户的服务器上。另外Certimate源码也开源，二进制包及Docker镜像打包过程全部使用Github actions进行，过程透明可见，可自行审计。
+> A: 由于仅支持私有部署，各种数据都保存在用户的服务器上。另外 Certimate 源码也开源，二进制包及 Docker 镜像打包过程全部使用 Github actions 进行，过程透明可见，可自行审计。
 
 Q: 自动续期证书？
 
-> A: 已经申请的证书会在过期前10天自动续期。每天会检查一次证书是否快要过期，快要过期时会自动重新申请证书并部署到目标服务上。
+> A: 已经申请的证书会在过期前 10 天自动续期。每天会检查一次证书是否快要过期，快要过期时会自动重新申请证书并部署到目标服务上。
 
 ## 七、贡献
 
@@ -153,17 +154,18 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 你可以通过以下方式来支持 Certimate 的开发：
 
-* [提交代码：如果你发现了 bug 或有新的功能需求，而你又有相关经验，可以提交代码给我们](CONTRIBUTING.md)。
-* 提交 issue：功能建议或者 bug 可以[提交 issue](https://github.com/usual2970/certimate/issues) 给我们。
+- [提交代码：如果你发现了 bug 或有新的功能需求，而你又有相关经验，可以提交代码给我们](CONTRIBUTING.md)。
+- 提交 issue：功能建议或者 bug 可以[提交 issue](https://github.com/usual2970/certimate/issues) 给我们。
 
 支持更多服务商、UI 的优化改进、BUG 修复、文档完善等，欢迎大家提交 PR。
 
 ## 八、加入社区
 
-* [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
-* 微信群聊(超200人需邀请入群，可先加作者好友)
+- [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
+- 微信群聊(超 200 人需邀请入群，可先加作者好友)
 
 <img src="https://i.imgur.com/8xwsLTA.png" width="400"/>
 
 ## 九、Star History
+
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)

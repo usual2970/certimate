@@ -1,27 +1,15 @@
-import {
-  Link,
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import { CircleUser, Earth, History, Home, Menu, Server } from "lucide-react";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { CircleUser, Earth, History, Home, Menu, Server } from "lucide-react";
 
+import LocaleToggle from "@/components/LocaleToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { ConfigProvider } from "@/providers/config";
 import { getPb } from "@/repository/api";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import LocaleToggle from "@/components/LocaleToggle";
+import { ConfigProvider } from "@/providers/config";
 
 import Version from "@/components/certimate/Version";
 
@@ -33,14 +21,15 @@ export default function Dashboard() {
   if (!getPb().authStore.isValid || !getPb().authStore.isAdmin) {
     return <Navigate to="/login" />;
   }
+
   const currentPath = location.pathname;
   const getClass = (path: string) => {
-    console.log(currentPath);
     if (path == currentPath) {
       return "bg-muted text-primary";
     }
     return "text-muted-foreground";
   };
+
   const handleLogoutClick = () => {
     getPb().authStore.clear();
     navigate("/login");
@@ -49,6 +38,7 @@ export default function Dashboard() {
   const handleSettingClick = () => {
     navigate("/setting/account");
   };
+
   return (
     <>
       <ConfigProvider>
@@ -63,44 +53,20 @@ export default function Dashboard() {
               </div>
               <div className="flex-1">
                 <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                  <Link
-                    to="/"
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      getClass("/")
-                    )}
-                  >
+                  <Link to="/" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/"))}>
                     <Home className="h-4 w-4" />
                     {t("dashboard.page.title")}
                   </Link>
-                  <Link
-                    to="/domains"
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      getClass("/domains")
-                    )}
-                  >
+                  <Link to="/domains" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/domains"))}>
                     <Earth className="h-4 w-4" />
                     {t("domain.page.title")}
                   </Link>
-                  <Link
-                    to="/access"
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      getClass("/access")
-                    )}
-                  >
+                  <Link to="/access" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/access"))}>
                     <Server className="h-4 w-4" />
                     {t("access.page.title")}
                   </Link>
 
-                  <Link
-                    to="/history"
-                    className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
-                      getClass("/history")
-                    )}
-                  >
+                  <Link to="/history" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/history"))}>
                     <History className="h-4 w-4" />
                     {t("history.page.title")}
                   </Link>
@@ -112,51 +78,32 @@ export default function Dashboard() {
             <header className="flex h-14 items-center gap-4 border-b dark:border-stone-500 bg-muted/40 px-4 lg:h-[60px] lg:px-6">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="shrink-0 md:hidden"
-                  >
+                  <Button variant="outline" size="icon" className="shrink-0 md:hidden">
                     <Menu className="h-5 w-5 dark:text-white" />
                     <span className="sr-only">Toggle navigation menu</span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="flex flex-col">
                   <nav className="grid gap-2 text-lg font-medium">
-                    <Link
-                      to="/"
-                      className="flex items-center gap-2 text-lg font-semibold"
-                    >
+                    <Link to="/" className="flex items-center gap-2 text-lg font-semibold">
                       <img src="/vite.svg" className="w-[36px] h-[36px]" />
                       <span className="dark:text-white">Certimate</span>
                       <span className="sr-only">Certimate</span>
                     </Link>
-                    <Link
-                      to="/"
-                      className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground",
-                        getClass("/")
-                      )}
-                    >
+                    <Link to="/" className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/"))}>
                       <Home className="h-5 w-5" />
                       {t("dashboard.page.title")}
                     </Link>
                     <Link
                       to="/domains"
-                      className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground",
-                        getClass("/domains")
-                      )}
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/domains"))}
                     >
                       <Earth className="h-5 w-5" />
                       {t("domain.page.title")}
                     </Link>
                     <Link
                       to="/access"
-                      className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground",
-                        getClass("/access")
-                      )}
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/access"))}
                     >
                       <Server className="h-5 w-5" />
                       {t("access.page.title")}
@@ -164,10 +111,7 @@ export default function Dashboard() {
 
                     <Link
                       to="/history"
-                      className={cn(
-                        "mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground",
-                        getClass("/history")
-                      )}
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/history"))}
                     >
                       <History className="h-5 w-5" />
                       {t("history.page.title")}
@@ -180,22 +124,14 @@ export default function Dashboard() {
               <LocaleToggle />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="rounded-full"
-                  >
+                  <Button variant="secondary" size="icon" className="rounded-full">
                     <CircleUser className="h-5 w-5" />
                     <span className="sr-only">Toggle user menu</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={handleSettingClick}>
-                    {t("common.menu.settings")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogoutClick}>
-                    {t("common.menu.logout")}
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSettingClick}>{t("common.menu.settings")}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogoutClick}>{t("common.menu.logout")}</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </header>

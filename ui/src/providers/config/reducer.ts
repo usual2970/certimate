@@ -1,7 +1,7 @@
 import { Access } from "@/domain/access";
-import { ConfigData } from ".";
-import { EmailsSetting, Setting } from "@/domain/settings";
 import { AccessGroup } from "@/domain/access_groups";
+import { EmailsSetting, Setting } from "@/domain/settings";
+import { ConfigData } from "./";
 
 type Action =
   | { type: "ADD_ACCESS"; payload: Access }
@@ -12,10 +12,7 @@ type Action =
   | { type: "ADD_EMAIL"; payload: string }
   | { type: "SET_ACCESS_GROUPS"; payload: AccessGroup[] };
 
-export const configReducer = (
-  state: ConfigData,
-  action: Action
-): ConfigData => {
+export const configReducer = (state: ConfigData, action: Action): ConfigData => {
   switch (action.type) {
     case "SET_ACCESSES": {
       return {
@@ -32,17 +29,13 @@ export const configReducer = (
     case "DELETE_ACCESS": {
       return {
         ...state,
-        accesses: state.accesses.filter(
-          (access) => access.id !== action.payload
-        ),
+        accesses: state.accesses.filter((access) => access.id !== action.payload),
       };
     }
     case "UPDATE_ACCESS": {
       return {
         ...state,
-        accesses: state.accesses.map((access) =>
-          access.id === action.payload.id ? action.payload : access
-        ),
+        accesses: state.accesses.map((access) => (access.id === action.payload.id ? action.payload : access)),
       };
     }
     case "SET_EMAILS": {
@@ -57,10 +50,7 @@ export const configReducer = (
         emails: {
           ...state.emails,
           content: {
-            emails: [
-              ...(state.emails.content as EmailsSetting).emails,
-              action.payload,
-            ],
+            emails: [...(state.emails.content as EmailsSetting).emails, action.payload],
           },
         },
       };

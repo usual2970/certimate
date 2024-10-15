@@ -1,41 +1,24 @@
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ClientResponseError } from "pocketbase";
 
-import {
-  Access,
-  accessFormType,
-  HuaweicloudConfig,
-  getUsageByConfigType,
-} from "@/domain/access";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { PbErrorData } from "@/domain/base";
+import { Access, accessFormType, HuaweicloudConfig, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
-import { ClientResponseError } from "pocketbase";
-import { PbErrorData } from "@/domain/base";
-
-const AccessHuaweicloudForm = ({
-  data,
-  op,
-  onAfterReq,
-}: {
-  data?: Access;
+type AccessHuaweicloudFormProps = {
   op: "add" | "edit" | "copy";
+  data?: Access;
   onAfterReq: () => void;
-}) => {
+};
+
+const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -104,19 +87,16 @@ const AccessHuaweicloudForm = ({
         updateAccess(req);
         return;
       }
-      console.log(req);
       addAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 
-      Object.entries(err.response.data as PbErrorData).forEach(
-        ([key, value]) => {
-          form.setError(key as keyof z.infer<typeof formSchema>, {
-            type: "manual",
-            message: value.message,
-          });
-        }
-      );
+      Object.entries(err.response.data as PbErrorData).forEach(([key, value]) => {
+        form.setError(key as keyof z.infer<typeof formSchema>, {
+          type: "manual",
+          message: value.message,
+        });
+      });
 
       return;
     }
@@ -140,10 +120,7 @@ const AccessHuaweicloudForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.name.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -188,10 +165,7 @@ const AccessHuaweicloudForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.region.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.region.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -206,10 +180,7 @@ const AccessHuaweicloudForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.access_key_id.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -224,10 +195,7 @@ const AccessHuaweicloudForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.access_key_secret.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.access_key_secret.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.access_key_secret.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />

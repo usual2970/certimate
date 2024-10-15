@@ -1,21 +1,14 @@
-import { KVType } from "@/domain/domain";
 import { useEffect, useState } from "react";
-import { Label } from "../ui/label";
-import { Edit, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import Show from "../Show";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-
 import { produce } from "immer";
+import { Edit, Plus, Trash2 } from "lucide-react";
+
+import Show from "@/components/Show";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { KVType } from "@/domain/domain";
 
 type KVListProps = {
   variables?: KVType[];
@@ -96,9 +89,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
         when={!!locVariables?.length}
         fallback={
           <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
-            <div className="text-muted-foreground">
-              {t("domain.deployment.form.variables.empty")}
-            </div>
+            <div className="text-muted-foreground">{t("domain.deployment.form.variables.empty")}</div>
 
             <KVEdit
               trigger={

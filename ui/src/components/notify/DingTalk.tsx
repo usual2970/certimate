@@ -1,14 +1,15 @@
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
-import { useNotify } from "@/providers/notify";
-import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
 import { useEffect, useState } from "react";
-import { update } from "@/repository/settings";
-import { getErrMessage } from "@/lib/error";
-import { useToast } from "../ui/use-toast";
 import { useTranslation } from "react-i18next";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
+import { getErrMessage } from "@/lib/error";
+import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
+import { useNotify } from "@/providers/notify";
+import { update } from "@/repository/settings";
 
 type DingTalkSetting = {
   id: string;
@@ -80,9 +81,7 @@ const DingTalk = () => {
 
       toast({
         title: t("common.save.failed.message"),
-        description: `${t(
-          "settings.notification.config.failed.message"
-        )}: ${msg}`,
+        description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -131,9 +130,7 @@ const DingTalk = () => {
             });
           }}
         />
-        <Label htmlFor="airplane-mode">
-          {t("settings.notification.config.enable")}
-        </Label>
+        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
       </div>
 
       <div className="flex justify-end mt-2">

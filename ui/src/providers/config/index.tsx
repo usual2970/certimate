@@ -1,18 +1,12 @@
+import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer } from "react";
+
 import { Access } from "@/domain/access";
+import { AccessGroup } from "@/domain/access_groups";
+import { Setting } from "@/domain/settings";
 import { list } from "@/repository/access";
 import { list as getAccessGroups } from "@/repository/access_group";
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-} from "react";
-import { configReducer } from "./reducer";
 import { getEmails } from "@/repository/settings";
-import { Setting } from "@/domain/settings";
-import { AccessGroup } from "@/domain/access_groups";
+import { configReducer } from "./reducer";
 
 export type ConfigData = {
   accesses: Access[];

@@ -1,17 +1,7 @@
-import { AccessEdit } from "@/components/certimate/AccessEdit";
-import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
-import AccessGroupList from "@/components/certimate/AccessGroupList";
-import XPagination from "@/components/certimate/XPagination";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Access as AccessType, accessTypeMap } from "@/domain/access";
-import { convertZulu2Beijing } from "@/lib/time";
-import { useConfig } from "@/providers/config";
-import { remove } from "@/repository/access";
-import { t } from "i18next";
-import { Key } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { Key } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,8 +13,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog.tsx";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AccessEdit from "@/components/certimate/AccessEdit";
+import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
+import AccessGroupList from "@/components/certimate/AccessGroupList";
+import XPagination from "@/components/certimate/XPagination";
+import { convertZulu2Beijing } from "@/lib/time";
+import { Access as AccessType, accessTypeMap } from "@/domain/access";
+import { remove } from "@/repository/access";
+import { useConfig } from "@/providers/config";
 
 const Access = () => {
+  const { t } = useTranslation();
   const { config, deleteAccess } = useConfig();
   const { accesses } = config;
 
@@ -66,11 +68,7 @@ const Access = () => {
         )}
       </div>
 
-      <Tabs
-        defaultValue={tab ? tab : "access"}
-        value={tab ? tab : "access"}
-        className="w-full mt-5"
-      >
+      <Tabs defaultValue={tab ? tab : "access"} value={tab ? tab : "access"} className="w-full mt-5">
         <TabsList className="space-x-5 px-3">
           <TabsTrigger
             value="access"
@@ -96,14 +94,8 @@ const Access = () => {
                 <Key size={40} className="text-primary" />
               </span>
 
-              <div className="text-center text-sm text-muted-foreground mt-3">
-                {t("access.authorization.nodata")}
-              </div>
-              <AccessEdit
-                trigger={<Button>{t("access.authorization.add")}</Button>}
-                op="add"
-                className="mt-3"
-              />
+              <div className="text-center text-sm text-muted-foreground mt-3">{t("access.authorization.nodata")}</div>
+              <AccessEdit trigger={<Button>{t("access.authorization.add")}</Button>} op="add" className="mt-3" />
             </div>
           ) : (
             <>
@@ -125,25 +117,14 @@ const Access = () => {
                     className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
                     key={access.id}
                   >
-                    <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                      {access.name}
-                    </div>
+                    <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">{access.name}</div>
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
-                      <img
-                        src={accessTypeMap.get(access.configType)?.[1]}
-                        className="w-6"
-                      />
-                      <div>
-                        {t(accessTypeMap.get(access.configType)?.[0] || "")}
-                      </div>
+                      <img src={accessTypeMap.get(access.configType)?.[1]} className="w-6" />
+                      <div>{t(accessTypeMap.get(access.configType)?.[0] || "")}</div>
                     </div>
 
-                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
-                      {access.created && convertZulu2Beijing(access.created)}
-                    </div>
-                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">
-                      {access.updated && convertZulu2Beijing(access.updated)}
-                    </div>
+                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">{access.created && convertZulu2Beijing(access.created)}</div>
+                    <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">{access.updated && convertZulu2Beijing(access.updated)}</div>
                     <div className="flex items-center grow justify-start pt-1 sm:pt-0">
                       <AccessEdit
                         trigger={
@@ -173,17 +154,11 @@ const Access = () => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle className="dark:text-gray-200">
-                              {t("access.authorization.delete")}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t("access.authorization.delete.confirm")}
-                            </AlertDialogDescription>
+                            <AlertDialogTitle className="dark:text-gray-200">{t("access.authorization.delete")}</AlertDialogTitle>
+                            <AlertDialogDescription>{t("access.authorization.delete.confirm")}</AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="dark:text-gray-200">
-                              {t("common.cancel")}
-                            </AlertDialogCancel>
+                            <AlertDialogCancel className="dark:text-gray-200">{t("common.cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => {
                                 handleDelete(access);

@@ -58,8 +58,7 @@ Certimate 的管理页面是一个基于 React 和 Vite 构建的单页应用（
 
 你可以通过浏览器访问 `http://localhost:5173` 来查看运行中的管理页面。
 
-由于 Admin UI 只是一个客户端应用，运行时需要 Certimate 的后端服务作为支撑。你可以手动运行Certimate，或者使用预构建的可执行文件。
-
+由于 Admin UI 只是一个客户端应用，运行时需要 Certimate 的后端服务作为支撑。你可以手动运行 Certimate，或者使用预构建的可执行文件。
 
 所有对 Admin UI 的修改将会自动反映在浏览器中，无需手动刷新页面。
 

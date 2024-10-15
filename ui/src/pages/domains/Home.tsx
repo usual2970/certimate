@@ -1,7 +1,13 @@
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
+import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
+import { Earth } from "lucide-react";
+
+import Show from "@/components/Show";
 import DeployProgress from "@/components/certimate/DeployProgress";
 import DeployState from "@/components/certimate/DeployState";
 import XPagination from "@/components/certimate/XPagination";
-import Show from "@/components/Show";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -14,28 +20,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
-import { Domain } from "@/domain/domain";
 import { CustomFile, saveFiles2ZIP } from "@/lib/file";
 import { convertZulu2Beijing, getDate } from "@/lib/time";
-import {
-  list,
-  remove,
-  save,
-  subscribeId,
-  unsubscribeId,
-} from "@/repository/domains";
-
-import { TooltipContent, TooltipProvider } from "@radix-ui/react-tooltip";
-import { Earth } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useTranslation, Trans } from "react-i18next";
+import { Domain } from "@/domain/domain";
+import { list, remove, save, subscribeId, unsubscribeId } from "@/repository/domains";
 
 const Home = () => {
   const toast = useToast();
@@ -115,7 +108,6 @@ const Home = () => {
     try {
       unsubscribeId(domain.id ?? "");
       subscribeId(domain.id ?? "", (resp) => {
-        console.log(resp);
         const updatedDomains = domains.map((domain) => {
           if (domain.id === resp.id) {
             return { ...resp };
@@ -139,10 +131,7 @@ const Home = () => {
           // 这里的 text 只是占位作用，实际文案在 src/i18n/locales/[lang].json
           <Trans i18nKey="domain.deploy.failed.tips">
             text1
-            <Link
-              to={`/history?domain=${domain.id}`}
-              className="underline text-blue-500"
-            >
+            <Link to={`/history?domain=${domain.id}`} className="underline text-blue-500">
               text2
             </Link>
             text3
@@ -189,9 +178,7 @@ const Home = () => {
                 <Earth size={40} className="text-primary" />
               </span>
 
-              <div className="text-center text-sm text-muted-foreground mt-3">
-                {t("domain.nodata")}
-              </div>
+              <div className="text-center text-sm text-muted-foreground mt-3">{t("domain.nodata")}</div>
               <Button onClick={handleCreateClick} className="mt-3">
                 {t("domain.add")}
               </Button>
@@ -202,15 +189,9 @@ const Home = () => {
             <div className="hidden sm:flex sm:flex-row text-muted-foreground text-sm border-b dark:border-stone-500 sm:p-2 mt-5">
               <div className="w-36">{t("common.text.domain")}</div>
               <div className="w-40">{t("domain.props.expiry")}</div>
-              <div className="w-32">
-                {t("domain.props.last_execution_status")}
-              </div>
-              <div className="w-64">
-                {t("domain.props.last_execution_stage")}
-              </div>
-              <div className="w-40 sm:ml-2">
-                {t("domain.props.last_execution_time")}
-              </div>
+              <div className="w-32">{t("domain.props.last_execution_status")}</div>
+              <div className="w-64">{t("domain.props.last_execution_stage")}</div>
+              <div className="w-40 sm:ml-2">{t("domain.props.last_execution_time")}</div>
               <div className="w-24">{t("domain.props.enable")}</div>
               <div className="grow">{t("common.text.operations")}</div>
             </div>
@@ -232,9 +213,7 @@ const Home = () => {
                   <div>
                     {domain.expiredAt ? (
                       <>
-                        <div>
-                          {t("domain.props.expiry.date1", { date: 90 })}
-                        </div>
+                        <div>{t("domain.props.expiry.date1", { date: 90 })}</div>
                         <div>
                           {t("domain.props.expiry.date2", {
                             date: getDate(domain.expiredAt),
@@ -257,18 +236,13 @@ const Home = () => {
                 </div>
                 <div className="sm:w-64 w-full pt-1 sm:pt-0 flex items-center">
                   {domain.lastDeployedAt && domain.expand?.lastDeployment ? (
-                    <DeployProgress
-                      phase={domain.expand.lastDeployment?.phase}
-                      phaseSuccess={domain.expand.lastDeployment?.phaseSuccess}
-                    />
+                    <DeployProgress phase={domain.expand.lastDeployment?.phase} phaseSuccess={domain.expand.lastDeployment?.phaseSuccess} />
                   ) : (
                     "---"
                   )}
                 </div>
                 <div className="sm:w-40 pt-1 sm:pt-0 sm:ml-2 flex items-center">
-                  {domain.lastDeployedAt
-                    ? convertZulu2Beijing(domain.lastDeployedAt)
-                    : "---"}
+                  {domain.lastDeployedAt ? convertZulu2Beijing(domain.lastDeployedAt) : "---"}
                 </div>
                 <div className="sm:w-24 flex items-center">
                   <TooltipProvider>
@@ -283,57 +257,33 @@ const Home = () => {
                       </TooltipTrigger>
                       <TooltipContent>
                         <div className="border rounded-sm px-3 bg-background text-muted-foreground text-xs">
-                          {domain.enabled
-                            ? t("domain.props.enable.disabled")
-                            : t("domain.props.enable.enabled")}
+                          {domain.enabled ? t("domain.props.enable.disabled") : t("domain.props.enable.enabled")}
                         </div>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <div className="flex items-center grow justify-start pt-1 sm:pt-0">
-                  <Button
-                    variant={"link"}
-                    className="p-0"
-                    onClick={() => handleHistoryClick(domain.id ?? "")}
-                  >
+                  <Button variant={"link"} className="p-0" onClick={() => handleHistoryClick(domain.id ?? "")}>
                     {t("domain.history")}
                   </Button>
                   <Show when={domain.enabled ? true : false}>
                     <Separator orientation="vertical" className="h-4 mx-2" />
-                    <Button
-                      variant={"link"}
-                      className="p-0"
-                      onClick={() => handleRightNowClick(domain)}
-                    >
+                    <Button variant={"link"} className="p-0" onClick={() => handleRightNowClick(domain)}>
                       {t("domain.deploy")}
                     </Button>
                   </Show>
 
-                  <Show
-                    when={
-                      (domain.enabled ? true : false) && domain.deployed
-                        ? true
-                        : false
-                    }
-                  >
+                  <Show when={(domain.enabled ? true : false) && domain.deployed ? true : false}>
                     <Separator orientation="vertical" className="h-4 mx-2" />
-                    <Button
-                      variant={"link"}
-                      className="p-0"
-                      onClick={() => handleForceClick(domain)}
-                    >
+                    <Button variant={"link"} className="p-0" onClick={() => handleForceClick(domain)}>
                       {t("domain.deploy_forced")}
                     </Button>
                   </Show>
 
                   <Show when={domain.expiredAt ? true : false}>
                     <Separator orientation="vertical" className="h-4 mx-2" />
-                    <Button
-                      variant={"link"}
-                      className="p-0"
-                      onClick={() => handleDownloadClick(domain)}
-                    >
+                    <Button variant={"link"} className="p-0" onClick={() => handleDownloadClick(domain)}>
                       {t("common.download")}
                     </Button>
                   </Show>
@@ -349,17 +299,11 @@ const Home = () => {
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              {t("domain.delete")}
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {t("domain.delete.confirm")}
-                            </AlertDialogDescription>
+                            <AlertDialogTitle>{t("domain.delete")}</AlertDialogTitle>
+                            <AlertDialogDescription>{t("domain.delete.confirm")}</AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>
-                              {t("common.cancel")}
-                            </AlertDialogCancel>
+                            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => {
                                 handleDeleteClick(domain.id ?? "");
@@ -372,11 +316,7 @@ const Home = () => {
                       </AlertDialog>
 
                       <Separator orientation="vertical" className="h-4 mx-2" />
-                      <Button
-                        variant={"link"}
-                        className="p-0"
-                        onClick={() => handleEditClick(domain.id ?? "")}
-                      >
+                      <Button variant={"link"} className="p-0" onClick={() => handleEditClick(domain.id ?? "")}>
                         {t("common.edit")}
                       </Button>
                     </>

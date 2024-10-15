@@ -1,50 +1,31 @@
-import {
-  Access,
-  accessFormType,
-  getUsageByConfigType,
-  SSHConfig,
-} from "@/domain/access";
-import { useConfig } from "@/providers/config";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { save } from "@/repository/access";
-import { ClientResponseError } from "pocketbase";
-import { PbErrorData } from "@/domain/base";
-import { readFileContent } from "@/lib/file";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { cn } from "@/lib/utils";
-import AccessGroupEdit from "./AccessGroupEdit";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
-import { updateById } from "@/repository/access_group";
+import { ClientResponseError } from "pocketbase";
 
-const AccessSSHForm = ({
-  data,
-  op,
-  onAfterReq,
-}: {
-  data?: Access;
+import { Access, accessFormType, getUsageByConfigType, SSHConfig } from "@/domain/access";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import AccessGroupEdit from "./AccessGroupEdit";
+import { readFileContent } from "@/lib/file";
+import { cn } from "@/lib/utils";
+import { PbErrorData } from "@/domain/base";
+import { save } from "@/repository/access";
+import { updateById } from "@/repository/access_group";
+import { useConfig } from "@/providers/config";
+
+type AccessSSHFormProps = {
   op: "add" | "edit" | "copy";
+  data?: Access;
   onAfterReq: () => void;
-}) => {
+};
+
+const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
   const {
     addAccess,
     updateAccess,
@@ -179,22 +160,18 @@ const AccessSSHForm = ({
     } catch (e) {
       const err = e as ClientResponseError;
 
-      Object.entries(err.response.data as PbErrorData).forEach(
-        ([key, value]) => {
-          form.setError(key as keyof z.infer<typeof formSchema>, {
-            type: "manual",
-            message: value.message,
-          });
-        }
-      );
+      Object.entries(err.response.data as PbErrorData).forEach(([key, value]) => {
+        form.setError(key as keyof z.infer<typeof formSchema>, {
+          type: "manual",
+          message: value.message,
+        });
+      });
 
       return;
     }
   };
 
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     const savedFile = file;
@@ -204,8 +181,6 @@ const AccessSSHForm = ({
   };
 
   const handleSelectFileClick = () => {
-    console.log(fileInputRef.current);
-
     fileInputRef.current?.click();
   };
 
@@ -225,16 +200,9 @@ const AccessSSHForm = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("access.authorization.form.name.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "access.authorization.form.name.placeholder"
-                      )}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -268,34 +236,15 @@ const AccessSSHForm = ({
                       }}
                     >
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={t(
-                            "access.authorization.form.access_group.placeholder"
-                          )}
-                        />
+                        <SelectValue placeholder={t("access.authorization.form.access_group.placeholder")} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="emptyId">
-                          <div
-                            className={cn(
-                              "flex items-center space-x-2 rounded cursor-pointer"
-                            )}
-                          >
-                            --
-                          </div>
+                          <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>--</div>
                         </SelectItem>
                         {accessGroups.map((item) => (
-                          <SelectItem
-                            value={item.id ? item.id : ""}
-                            key={item.id}
-                          >
-                            <div
-                              className={cn(
-                                "flex items-center space-x-2 rounded cursor-pointer"
-                              )}
-                            >
-                              {item.name}
-                            </div>
+                          <SelectItem value={item.id ? item.id : ""} key={item.id}>
+                            <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>{item.name}</div>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -312,9 +261,7 @@ const AccessSSHForm = ({
               name="id"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>
-                    {t("access.authorization.form.config.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -329,9 +276,7 @@ const AccessSSHForm = ({
               name="configType"
               render={({ field }) => (
                 <FormItem className="hidden">
-                  <FormLabel>
-                    {t("access.authorization.form.config.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -346,16 +291,9 @@ const AccessSSHForm = ({
                 name="host"
                 render={({ field }) => (
                   <FormItem className="grow">
-                    <FormLabel>
-                      {t("access.authorization.form.ssh_host.label")}
-                    </FormLabel>
+                    <FormLabel>{t("access.authorization.form.ssh_host.label")}</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={t(
-                          "access.authorization.form.ssh_host.placeholder"
-                        )}
-                        {...field}
-                      />
+                      <Input placeholder={t("access.authorization.form.ssh_host.placeholder")} {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -368,17 +306,9 @@ const AccessSSHForm = ({
                 name="port"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      {t("access.authorization.form.ssh_port.label")}
-                    </FormLabel>
+                    <FormLabel>{t("access.authorization.form.ssh_port.label")}</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={t(
-                          "access.authorization.form.ssh_port.placeholder"
-                        )}
-                        {...field}
-                        type="number"
-                      />
+                      <Input placeholder={t("access.authorization.form.ssh_port.placeholder")} {...field} type="number" />
                     </FormControl>
 
                     <FormMessage />
@@ -392,16 +322,9 @@ const AccessSSHForm = ({
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("access.authorization.form.username.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.username.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "access.authorization.form.username.placeholder"
-                      )}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.username.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -414,17 +337,9 @@ const AccessSSHForm = ({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("access.authorization.form.password.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.password.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "access.authorization.form.password.placeholder"
-                      )}
-                      {...field}
-                      type="password"
-                    />
+                    <Input placeholder={t("access.authorization.form.password.placeholder")} {...field} type="password" />
                   </FormControl>
 
                   <FormMessage />
@@ -437,16 +352,9 @@ const AccessSSHForm = ({
               name="key"
               render={({ field }) => (
                 <FormItem hidden>
-                  <FormLabel>
-                    {t("access.authorization.form.ssh_key.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "access.authorization.form.ssh_key.placeholder"
-                      )}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.ssh_key.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -459,28 +367,14 @@ const AccessSSHForm = ({
               name="keyFile"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>
-                    {t("access.authorization.form.ssh_key.label")}
-                  </FormLabel>
+                  <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
                   <FormControl>
                     <div>
-                      <Button
-                        type={"button"}
-                        variant={"secondary"}
-                        size={"sm"}
-                        className="w-48"
-                        onClick={handleSelectFileClick}
-                      >
-                        {fileName
-                          ? fileName
-                          : t(
-                              "access.authorization.form.ssh_key_file.placeholder"
-                            )}
+                      <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
+                        {fileName ? fileName : t("access.authorization.form.ssh_key_file.placeholder")}
                       </Button>
                       <Input
-                        placeholder={t(
-                          "access.authorization.form.ssh_key.placeholder"
-                        )}
+                        placeholder={t("access.authorization.form.ssh_key.placeholder")}
                         {...field}
                         ref={fileInputRef}
                         className="hidden"

@@ -10,6 +10,6 @@
   "history.props.stage.progress.apply": "Apply",
   "history.props.stage.progress.deploy": "Deploy",
   "history.props.last_execution_time": "Last Execution Time",
-  
+
   "history.log": "Log"
 }

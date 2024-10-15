@@ -1,34 +1,19 @@
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useToast } from "@/components/ui/use-toast";
-
-import {
-  SSLProvider as SSLProviderType,
-  SSLProviderSetting,
-  Setting,
-} from "@/domain/settings";
-import { getErrMessage } from "@/lib/error";
-import { cn } from "@/lib/utils";
-
-import { getSetting, update } from "@/repository/settings";
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/components/ui/use-toast";
+import { getErrMessage } from "@/lib/error";
+import { cn } from "@/lib/utils";
+import { SSLProvider as SSLProviderType, SSLProviderSetting, Setting } from "@/domain/settings";
+import { getSetting, update } from "@/repository/settings";
 
 const SSLProvider = () => {
   const { t } = useTranslation();
@@ -64,10 +49,7 @@ const SSLProvider = () => {
 
         form.setValue("provider", content.provider);
         form.setValue("eabKid", content.config[content.provider].eabKid);
-        form.setValue(
-          "eabHmacKey",
-          content.config[content.provider].eabHmacKey
-        );
+        form.setValue("eabHmacKey", content.config[content.provider].eabHmacKey);
         setProvider(content.provider);
       } else {
         form.setValue("provider", "letsencrypt");
@@ -137,10 +119,7 @@ const SSLProvider = () => {
     <>
       <div className="w-full md:max-w-[35em]">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 dark:text-stone-200"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 dark:text-stone-200">
             <FormField
               control={form.control}
               name="provider"
@@ -160,16 +139,8 @@ const SSLProvider = () => {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="letsencrypt" id="letsencrypt" />
                         <Label htmlFor="letsencrypt">
-                          <div
-                            className={cn(
-                              "flex items-center space-x-2 border p-2 rounded cursor-pointer",
-                              getOptionCls("letsencrypt")
-                            )}
-                          >
-                            <img
-                              src={"/imgs/providers/letsencrypt.svg"}
-                              className="h-6"
-                            />
+                          <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("letsencrypt"))}>
+                            <img src={"/imgs/providers/letsencrypt.svg"} className="h-6" />
                             <div>{"Let's Encrypt"}</div>
                           </div>
                         </Label>
@@ -177,16 +148,8 @@ const SSLProvider = () => {
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="zerossl" id="zerossl" />
                         <Label htmlFor="zerossl">
-                          <div
-                            className={cn(
-                              "flex items-center space-x-2 border p-2 rounded cursor-pointer",
-                              getOptionCls("zerossl")
-                            )}
-                          >
-                            <img
-                              src={"/imgs/providers/zerossl.svg"}
-                              className="h-6"
-                            />
+                          <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("zerossl"))}>
+                            <img src={"/imgs/providers/zerossl.svg"} className="h-6" />
                             <div>{"ZeroSSL"}</div>
                           </div>
                         </Label>
@@ -201,11 +164,7 @@ const SSLProvider = () => {
                       <FormItem hidden={provider !== "zerossl"}>
                         <FormLabel>EAB_KID</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder={t("settings.ca.eab_kid.errmsg.empty")}
-                            {...field}
-                            type="text"
-                          />
+                          <Input placeholder={t("settings.ca.eab_kid.errmsg.empty")} {...field} type="text" />
                         </FormControl>
 
                         <FormMessage />
@@ -220,13 +179,7 @@ const SSLProvider = () => {
                       <FormItem hidden={provider !== "zerossl"}>
                         <FormLabel>EAB_HMAC_KEY</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder={t(
-                              "settings.ca.eab_hmac_key.errmsg.empty"
-                            )}
-                            {...field}
-                            type="text"
-                          />
+                          <Input placeholder={t("settings.ca.eab_hmac_key.errmsg.empty")} {...field} type="text" />
                         </FormControl>
 
                         <FormMessage />
