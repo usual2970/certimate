@@ -4,15 +4,15 @@ import (
 	"certimate/internal/domain"
 	"certimate/internal/utils/rand"
 	"context"
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"strings"
 
+	cdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
-	cdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
 )
 
 type tencentCdn struct {
@@ -92,8 +92,6 @@ func (t *tencentCdn) deploy(certId string) error {
 	// 实例化要请求产品的client对象,clientProfile是可选的
 	client, _ := ssl.NewClient(t.credential, "", cpf)
 
-
-
 	// 实例化一个请求对象,每个接口都会对应一个request对象
 	request := ssl.NewDeployCertificateInstanceRequest()
 
@@ -102,7 +100,8 @@ func (t *tencentCdn) deploy(certId string) error {
 	request.Status = common.Int64Ptr(1)
 
 	// 如果是泛域名就从cdn列表下获取SSL证书中的可用域名
-	if(strings.Contains(t.option.Domain, "*")){
+	domain := getDeployString(t.option.DeployConfig, "domain")
+	if strings.Contains(domain, "*") {
 		list, errGetList := t.getDomainList()
 		if errGetList != nil {
 			return fmt.Errorf("failed to get certificate domain list: %w", errGetList)
@@ -111,8 +110,8 @@ func (t *tencentCdn) deploy(certId string) error {
 			return fmt.Errorf("failed to get certificate domain list: empty list.")
 		}
 		request.InstanceIdList = common.StringPtrs(list)
-	}else{ // 否则直接使用传入的域名
-		request.InstanceIdList = common.StringPtrs([]string{t.option.Domain})
+	} else { // 否则直接使用传入的域名
+		request.InstanceIdList = common.StringPtrs([]string{domain})
 	}
 
 	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
@@ -134,7 +133,6 @@ func (t *tencentCdn) getDomainList() ([]string, error) {
 
 	cert := base64.StdEncoding.EncodeToString([]byte(t.option.Certificate.Certificate))
 	request.Cert = &cert
-	
 
 	response, err := client.DescribeCertDomains(request)
 	if err != nil {
