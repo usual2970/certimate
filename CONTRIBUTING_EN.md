@@ -27,7 +27,9 @@ git clone https://github.com/your_username/certimate.git
 Once you have made changes to the Go code in Certimate, follow these steps to run the project:
 
 1. Navigate to the root directory.
+
 2. Start the service by running:
+
    ```bash
    go run main.go serve
    ```
@@ -35,6 +37,8 @@ Once you have made changes to the Go code in Certimate, follow these steps to ru
 This will start a web server at `http://localhost:8090` using the prebuilt Admin UI located in `ui/dist`.
 
 **Before submitting a PR to the main repository, consider:**
+
+- Format your source code by using [gofumpt](https://github.com/mvdan/gofumpt).
 
 - Adding unit or integration tests for your changes. Certimate uses Go’s standard `testing` package. You can run tests using the following command (while in the root project directory):
 
@@ -49,11 +53,15 @@ Certimate’s Admin UI is a single-page application (SPA) built using React and 
 To start the Admin UI:
 
 1. Navigate to the `ui` project directory.
+
 2. Install the necessary dependencies by running:
+
    ```bash
    npm install
    ```
+
 3. Start the Vite development server:
+
    ```bash
    npm run dev
    ```
