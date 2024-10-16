@@ -50,8 +50,9 @@ export type DeployConfig = {
 export type ApplyConfig = {
   access: string;
   email: string;
-  timeout?: number;
+  keyAlgorithm?: string;
   nameservers?: string;
+  timeout?: number;
 };
 
 export type Statistic = {

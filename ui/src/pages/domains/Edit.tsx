@@ -4,11 +4,12 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
+import { ChevronsUpDown, Plus } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -58,8 +59,9 @@ const Edit = () => {
     }),
     email: z.string().email("common.errmsg.email_invalid").optional(),
     access: z.string().regex(/^[a-zA-Z0-9]+$/, {
-      message: "domain.application.form.access.errmsg.empty",
+      message: "domain.application.form.access.placeholder",
     }),
+    keyAlgorithm: z.string().optional(),
     nameservers: z.string().optional(),
     timeout: z.number().optional(),
   });
@@ -71,6 +73,7 @@ const Edit = () => {
       domain: "",
       email: "",
       access: "",
+      keyAlgorithm: "RSA2048",
       nameservers: "",
       timeout: 60,
     },
@@ -83,6 +86,7 @@ const Edit = () => {
         domain: domain.domain,
         email: domain.applyConfig?.email,
         access: domain.applyConfig?.access,
+        keyAlgorithm: domain.applyConfig?.keyAlgorithm,
         nameservers: domain.applyConfig?.nameservers,
         timeout: domain.applyConfig?.timeout,
       });
@@ -101,6 +105,7 @@ const Edit = () => {
       applyConfig: {
         email: data.email ?? "",
         access: data.access,
+        keyAlgorithm: data.keyAlgorithm,
         nameservers: data.nameservers,
         timeout: data.timeout,
       },
@@ -235,6 +240,7 @@ const Edit = () => {
                       </FormItem>
                     )}
                   />
+
                   {/* 邮箱 */}
                   <FormField
                     control={form.control}
@@ -261,7 +267,7 @@ const Edit = () => {
                             }}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder={t("domain.application.form.email.errmsg.empty")} />
+                              <SelectValue placeholder={t("domain.application.form.email.placeholder")} />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
@@ -280,7 +286,8 @@ const Edit = () => {
                       </FormItem>
                     )}
                   />
-                  {/* 授权 */}
+
+                  {/* DNS 服务商授权 */}
                   <FormField
                     control={form.control}
                     name="access"
@@ -332,48 +339,95 @@ const Edit = () => {
                     )}
                   />
 
-                  {/* 超时时间 */}
-                  <FormField
-                    control={form.control}
-                    name="timeout"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("domain.application.form.timeout.label")}</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder={t("ddomain.application.form.timeout.placeholder")}
-                            {...field}
-                            value={field.value}
-                            onChange={(e) => {
-                              form.setValue("timeout", parseInt(e.target.value));
-                            }}
+                  <div>
+                    <hr />
+                    <Collapsible>
+                      <CollapsibleTrigger className="w-full my-4">
+                        <div className="flex items-center justify-between space-x-4">
+                          <span className="flex-1 text-sm text-gray-600 text-left">{t("domain.application.form.advanced_settings.label")}</span>
+                          <ChevronsUpDown className="h-4 w-4" />
+                        </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="flex flex-col space-y-8">
+                          {/* 证书算法 */}
+                          <FormField
+                            control={form.control}
+                            name="keyAlgorithm"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("domain.application.form.key_algorithm.label")}</FormLabel>
+                                <Select
+                                  {...field}
+                                  value={field.value}
+                                  onValueChange={(value) => {
+                                    form.setValue("keyAlgorithm", value);
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder={t("domain.application.form.key_algorithm.placeholder")} />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectGroup>
+                                      <SelectItem value="RSA2048">RSA2048</SelectItem>
+                                      <SelectItem value="RSA3072">RSA3072</SelectItem>
+                                      <SelectItem value="RSA4096">RSA4096</SelectItem>
+                                      <SelectItem value="RSA8192">RSA8192</SelectItem>
+                                      <SelectItem value="EC256">EC256</SelectItem>
+                                      <SelectItem value="EC384">EC384</SelectItem>
+                                    </SelectGroup>
+                                  </SelectContent>
+                                </Select>
+                              </FormItem>
+                            )}
                           />
-                        </FormControl>
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          {/* DNS */}
+                          <FormField
+                            control={form.control}
+                            name="nameservers"
+                            render={({ field }) => (
+                              <FormItem>
+                                <StringList
+                                  value={field.value ?? ""}
+                                  onValueChange={(val: string) => {
+                                    form.setValue("nameservers", val);
+                                  }}
+                                  valueType="dns"
+                                ></StringList>
 
-                  {/* nameservers */}
-                  <FormField
-                    control={form.control}
-                    name="nameservers"
-                    render={({ field }) => (
-                      <FormItem>
-                        <StringList
-                          value={field.value ?? ""}
-                          onValueChange={(val: string) => {
-                            form.setValue("nameservers", val);
-                          }}
-                          valueType="dns"
-                        ></StringList>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          {/* DNS 超时时间 */}
+                          <FormField
+                            control={form.control}
+                            name="timeout"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("domain.application.form.timeout.label")}</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder={t("domain.application.form.timeout.placeholder")}
+                                    {...field}
+                                    value={field.value}
+                                    onChange={(e) => {
+                                      form.setValue("timeout", parseInt(e.target.value));
+                                    }}
+                                  />
+                                </FormControl>
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
 
                   <div className="flex justify-end">
                     <Button type="submit">{domain?.id ? t("common.save") : t("common.next")}</Button>
