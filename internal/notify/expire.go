@@ -1,14 +1,15 @@
 package notify
 
 import (
-	"certimate/internal/utils/app"
-	"certimate/internal/utils/xtime"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/utils/app"
+	"certimate/internal/utils/xtime"
 )
 
 type msg struct {
@@ -41,7 +42,6 @@ func PushExpireMsg() {
 	if err := Send(msg.subject, msg.message); err != nil {
 		app.GetApp().Logger().Error("send expire msg", "error", err)
 	}
-
 }
 
 type notifyTemplates struct {
@@ -94,5 +94,4 @@ func buildMsg(records []*models.Record) *msg {
 		subject: title,
 		message: content,
 	}
-
 }

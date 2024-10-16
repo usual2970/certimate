@@ -4,7 +4,6 @@ import "strings"
 
 // Parse2Map 将变量赋值字符串解析为map
 func Parse2Map(str string) map[string]string {
-
 	m := make(map[string]string)
 
 	lines := strings.Split(str, ";")

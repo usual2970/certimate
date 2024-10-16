@@ -1,21 +1,14 @@
-import { cn } from "@/lib/utils";
-
-import Show from "../Show";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FormControl, FormLabel } from "../ui/form";
-import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { Input } from "../ui/input";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Edit, Plus, Trash2 } from "lucide-react";
+
+import Show from "@/components/Show";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { FormControl, FormLabel } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 type StringListProps = {
   className?: string;
@@ -30,12 +23,7 @@ const titles: Record<string, string> = {
   dns: "common.text.dns",
 };
 
-const StringList = ({
-  value,
-  className,
-  onValueChange,
-  valueType = "domain",
-}: StringListProps) => {
+const StringList = ({ value, className, onValueChange, valueType = "domain" }: StringListProps) => {
   const [list, setList] = useState<string[]>([]);
 
   const { t } = useTranslation();
@@ -101,16 +89,9 @@ const StringList = ({
             when={list.length > 0}
             fallback={
               <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
-                <div className="text-muted-foreground">
-                  {t('common.text.' + valueType + '.empty')}
-                </div>
+                <div className="text-muted-foreground">{t("common.text." + valueType + ".empty")}</div>
 
-                <StringEdit
-                  value={""}
-                  trigger={t("common.add")}
-                  onValueChange={addVal}
-                  valueType={valueType}
-                />
+                <StringEdit value={""} trigger={t("common.add")} onValueChange={addVal} valueType={valueType} />
               </div>
             }
           >
@@ -122,12 +103,7 @@ const StringList = ({
                     <StringEdit
                       op="edit"
                       valueType={valueType}
-                      trigger={
-                        <Edit
-                          size={16}
-                          className="cursor-pointer text-gray-600 dark:text-white"
-                        />
-                      }
+                      trigger={<Edit size={16} className="cursor-pointer text-gray-600 dark:text-white" />}
                       value={item}
                       onValueChange={(val: string) => {
                         editVal(index, val);
@@ -163,13 +139,7 @@ type StringEditProps = {
   op?: "add" | "edit";
 };
 
-const StringEdit = ({
-  trigger,
-  value,
-  onValueChange,
-  op = "add",
-  valueType,
-}: StringEditProps) => {
+const StringEdit = ({ trigger, value, onValueChange, op = "add", valueType }: StringEditProps) => {
   const [currentValue, setCurrentValue] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -179,11 +149,9 @@ const StringEdit = ({
     setCurrentValue(value);
   }, [value]);
 
-  const domainSchema = z
-    .string()
-    .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    });
+  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+    message: t("common.errmsg.domain_invalid"),
+  });
 
   const ipSchema = z.string().ip({ message: t("common.errmsg.ip_invalid") });
 
@@ -219,9 +187,7 @@ const StringEdit = ({
       <DialogTrigger className="text-primary">{trigger}</DialogTrigger>
       <DialogContent className="dark:text-white">
         <DialogHeader>
-          <DialogTitle className="dark:text-white">
-            {t(titles[valueType])}
-          </DialogTitle>
+          <DialogTitle className="dark:text-white">{t(titles[valueType])}</DialogTitle>
         </DialogHeader>
         <Input
           value={currentValue}

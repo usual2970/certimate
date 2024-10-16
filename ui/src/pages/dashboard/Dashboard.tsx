@@ -1,30 +1,18 @@
-import DeployProgress from "@/components/certimate/DeployProgress";
-import DeployState from "@/components/certimate/DeployState";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Deployment, DeploymentListReq, Log } from "@/domain/deployment";
-import { Statistic } from "@/domain/domain";
-import { convertZulu2Beijing } from "@/lib/time";
-import { list } from "@/repository/deployment";
-import { statistics } from "@/repository/domains";
-
-import {
-  Ban,
-  CalendarX2,
-  LoaderPinwheel,
-  Smile,
-  SquareSigma,
-} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Ban, CalendarX2, LoaderPinwheel, Smile, SquareSigma } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import DeployProgress from "@/components/certimate/DeployProgress";
+import DeployState from "@/components/certimate/DeployState";
+import { convertZulu2Beijing } from "@/lib/time";
+import { Statistic } from "@/domain/domain";
+import { Deployment, DeploymentListReq, Log } from "@/domain/deployment";
+import { statistics } from "@/repository/domains";
+import { list } from "@/repository/deployment";
 
 const Dashboard = () => {
   const [statistic, setStatistic] = useState<Statistic>();
@@ -65,9 +53,7 @@ const Dashboard = () => {
             <SquareSigma size={48} strokeWidth={1} className="text-blue-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">
-              {t("dashboard.statistics.all")}
-            </div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.all")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.total ? (
@@ -78,9 +64,7 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">
-                {t("dashboard.statistics.unit")}
-              </div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
             </div>
           </div>
         </div>
@@ -90,9 +74,7 @@ const Dashboard = () => {
             <CalendarX2 size={48} strokeWidth={1} className="text-red-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">
-              {t("dashboard.statistics.near_expired")}
-            </div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.near_expired")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.expired ? (
@@ -103,25 +85,17 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">
-                {t("dashboard.statistics.unit")}
-              </div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
             </div>
           </div>
         </div>
 
         <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
           <div className="p-3">
-            <LoaderPinwheel
-              size={48}
-              strokeWidth={1}
-              className="text-green-400"
-            />
+            <LoaderPinwheel size={48} strokeWidth={1} className="text-green-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">
-              {t("dashboard.statistics.enabled")}
-            </div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.enabled")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.enabled ? (
@@ -132,9 +106,7 @@ const Dashboard = () => {
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">
-                {t("dashboard.statistics.unit")}
-              </div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
             </div>
           </div>
         </div>
@@ -144,25 +116,18 @@ const Dashboard = () => {
             <Ban size={48} strokeWidth={1} className="text-gray-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">
-              {t("dashboard.statistics.disabled")}
-            </div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.disabled")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.disabled ? (
-                  <Link
-                    to="/domains?state=disabled"
-                    className="hover:underline"
-                  >
+                  <Link to="/domains?state=disabled" className="hover:underline">
                     {statistic?.disabled}
                   </Link>
                 ) : (
                   0
                 )}
               </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">
-                {t("dashboard.statistics.unit")}
-              </div>
+              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
             </div>
           </div>
         </div>
@@ -173,9 +138,7 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <div className="text-muted-foreground mt-5 text-sm">
-          {t("dashboard.history")}
-        </div>
+        <div className="text-muted-foreground mt-5 text-sm">{t("dashboard.history")}</div>
 
         {deployments?.length == 0 ? (
           <>
@@ -207,9 +170,7 @@ const Dashboard = () => {
 
               <div className="w-24">{t("history.props.status")}</div>
               <div className="w-56">{t("history.props.stage")}</div>
-              <div className="w-56 sm:ml-2 text-center">
-                {t("history.props.last_execution_time")}
-              </div>
+              <div className="w-56 sm:ml-2 text-center">{t("history.props.last_execution_time")}</div>
 
               <div className="grow">{t("common.text.operations")}</div>
             </div>
@@ -220,27 +181,20 @@ const Dashboard = () => {
                 className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
               >
                 <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                  {deployment.expand.domain?.domain
-                    .split(";")
-                    .map((domain: string) => (
-                      <>
-                        {domain}
-                        <br />
-                      </>
-                    ))}
+                  {deployment.expand.domain?.domain.split(";").map((domain: string) => (
+                    <>
+                      {domain}
+                      <br />
+                    </>
+                  ))}
                 </div>
                 <div className="sm:w-24 w-full pt-1 sm:pt-0 flex items-center">
                   <DeployState deployment={deployment} />
                 </div>
                 <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center">
-                  <DeployProgress
-                    phase={deployment.phase}
-                    phaseSuccess={deployment.phaseSuccess}
-                  />
+                  <DeployProgress phase={deployment.phase} phaseSuccess={deployment.phaseSuccess} />
                 </div>
-                <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center sm:justify-center">
-                  {convertZulu2Beijing(deployment.deployedAt)}
-                </div>
+                <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center sm:justify-center">{convertZulu2Beijing(deployment.deployedAt)}</div>
                 <div className="flex items-center grow justify-start pt-1 sm:pt-0 sm:ml-2">
                   <Sheet>
                     <SheetTrigger asChild>
@@ -265,11 +219,7 @@ const Dashboard = () => {
                                     <div>[{item.time}]</div>
                                     <div className="ml-2">{item.message}</div>
                                   </div>
-                                  {item.error && (
-                                    <div className="mt-1 text-red-600">
-                                      {item.error}
-                                    </div>
-                                  )}
+                                  {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                                 </div>
                               );
                             })}
@@ -287,17 +237,9 @@ const Dashboard = () => {
                                   </div>
                                   {item.info &&
                                     item.info.map((info: string) => {
-                                      return (
-                                        <div className="mt-1 text-green-600">
-                                          {info}
-                                        </div>
-                                      );
+                                      return <div className="mt-1 text-green-600">{info}</div>;
                                     })}
-                                  {item.error && (
-                                    <div className="mt-1 text-red-600">
-                                      {item.error}
-                                    </div>
-                                  )}
+                                  {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                                 </div>
                               );
                             })}
@@ -313,11 +255,7 @@ const Dashboard = () => {
                                     <div>[{item.time}]</div>
                                     <div className="ml-2">{item.message}</div>
                                   </div>
-                                  {item.error && (
-                                    <div className="mt-1 text-red-600">
-                                      {item.error}
-                                    </div>
-                                  )}
+                                  {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                                 </div>
                               );
                             })}

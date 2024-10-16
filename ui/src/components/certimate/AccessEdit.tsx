@@ -1,51 +1,31 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Access, accessTypeMap } from "@/domain/access";
 import { cn } from "@/lib/utils";
-
-import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweicloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
-import AccessGodaddyFrom from "./AccessGodaddyForm";
+import AccessGodaddyForm from "./AccessGodaddyForm";
 import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
-import AccessWebhookForm from "./AccessWebhookFrom";
+import AccessWebhookForm from "./AccessWebhookForm";
+import { Access, accessTypeMap } from "@/domain/access";
 
-type TargetConfigEditProps = {
+type AccessEditProps = {
   op: "add" | "edit" | "copy";
   className?: string;
   trigger: React.ReactNode;
   data?: Access;
 };
-export function AccessEdit({
-  trigger,
-  op,
-  data,
-  className,
-}: TargetConfigEditProps) {
+
+const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -123,7 +103,7 @@ export function AccessEdit({
       break;
     case "godaddy":
       form = (
-        <AccessGodaddyFrom
+        <AccessGodaddyForm
           data={data}
           op={op}
           onAfterReq={() => {
@@ -179,11 +159,7 @@ export function AccessEdit({
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
           <DialogTitle>
-            {op == "add"
-              ? t("access.authorization.add")
-              : op == "edit"
-              ? t("access.authorization.edit")
-              : t("access.authorization.copy")}
+            {op == "add" ? t("access.authorization.add") : op == "edit" ? t("access.authorization.edit") : t("access.authorization.copy")}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
@@ -204,16 +180,8 @@ export function AccessEdit({
                   <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
                   {typeKeys.map((key) => (
                     <SelectItem value={key} key={key}>
-                      <div
-                        className={cn(
-                          "flex items-center space-x-2 rounded cursor-pointer",
-                          getOptionCls(key)
-                        )}
-                      >
-                        <img
-                          src={accessTypeMap.get(key)?.[1]}
-                          className="h-6 w-6"
-                        />
+                      <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
+                        <img src={accessTypeMap.get(key)?.[1]} className="h-6 w-6" />
                         <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
                       </div>
                     </SelectItem>
@@ -228,4 +196,6 @@ export function AccessEdit({
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default AccessEdit;

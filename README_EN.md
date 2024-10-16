@@ -15,8 +15,8 @@ Certimate was created to solve the above-mentioned issues and has the following 
 
 Related articles:
 
-* [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
-* [Introduction to Domain Variables and Deployment Authorization Groups](https://docs.certimate.me/blog/multi-deployer)
+- [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
+- [Introduction to Domain Variables and Deployment Authorization Groups](https://docs.certimate.me/blog/multi-deployer)
 
 Certimate aims to provide users with a secure and user-friendly SSL certificate management solution. For usage documentation, please visit.[https://docs.certimate.me](https://docs.certimate.me)
 
@@ -96,10 +96,10 @@ password：1234567890
 
 The workflow of Certimate is as follows:
 
-* Users fill in the certificate application information on the Certimate management page, including domain name, authorization information for the DNS provider, and authorization information for the service provider to deploy to.
-* Certimate sends a request to the certificate vendor's API to apply for an SSL certificate.
-* Certimate stores the certificate information, including the certificate content, private key, validity period, etc., and automatically renews the certificate when it is about to expire.
-* Certimate sends a deployment request to the service provider's API to deploy the certificate to the service provider's servers.
+- Users fill in the certificate application information on the Certimate management page, including domain name, authorization information for the DNS provider, and authorization information for the service provider to deploy to.
+- Certimate sends a request to the certificate vendor's API to apply for an SSL certificate.
+- Certimate stores the certificate information, including the certificate content, private key, validity period, etc., and automatically renews the certificate when it is about to expire.
+- Certimate sends a deployment request to the service provider's API to deploy the certificate to the service provider's servers.
 
 This involves authorization information for the domain, DNS provider, and deployment service provider.
 
@@ -153,14 +153,14 @@ Certimate is a free and open-source project, licensed under the [MIT License](LI
 
 You can support the development of Certimate in the following ways:
 
-* **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, [you can submit code to us](CONTRIBUTING_EN.md).
-* **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/usual2970/certimate/issues) to us.
+- **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, [you can submit code to us](CONTRIBUTING_EN.md).
+- **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/usual2970/certimate/issues) to us.
 
 Support for more service providers, UI enhancements, bug fixes, and documentation improvements are all welcome. We encourage everyone to submit pull requests (PRs).
 
 ## Join the Community
 
-* [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
-* Wechat Group
+- [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
+- Wechat Group
 
 <img src="https://i.imgur.com/zSHEoIm.png" width="400"/>

@@ -3,8 +3,7 @@ name: Feature request
 about: 提出一个新功能请求
 title: "[Feature] 简要描述你希望实现的功能"
 labels: enhancement
-assignees: ''
-
+assignees: ""
 ---
 
 **功能描述**

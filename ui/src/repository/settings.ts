@@ -3,9 +3,7 @@ import { getPb } from "./api";
 
 export const getEmails = async () => {
   try {
-    const resp = await getPb()
-      .collection("settings")
-      .getFirstListItem<Setting>("name='emails'");
+    const resp = await getPb().collection("settings").getFirstListItem<Setting>("name='emails'");
     return resp;
   } catch (e) {
     return {
@@ -16,9 +14,7 @@ export const getEmails = async () => {
 
 export const getSetting = async (name: string) => {
   try {
-    const resp = await getPb()
-      .collection("settings")
-      .getFirstListItem<Setting>(`name='${name}'`);
+    const resp = await getPb().collection("settings").getFirstListItem<Setting>(`name='${name}'`);
     return resp;
   } catch (e) {
     const rs: Setting = {

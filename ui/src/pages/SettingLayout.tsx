@@ -1,10 +1,10 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Toaster } from "@/components/ui/toaster";
-import { KeyRound, Megaphone, ShieldCheck, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { KeyRound, Megaphone, ShieldCheck, UserRound } from "lucide-react";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toaster } from "@/components/ui/toaster";
 
 const SettingLayout = () => {
   const location = useLocation();
@@ -21,9 +21,7 @@ const SettingLayout = () => {
   return (
     <div>
       <Toaster />
-      <div className="text-muted-foreground border-b dark:border-stone-500 py-5">
-        {t("settings.page.title")}
-      </div>
+      <div className="text-muted-foreground border-b dark:border-stone-500 py-5">{t("settings.page.title")}</div>
       <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
         <Tabs defaultValue="account" className="w-full" value={tabValue}>
           <TabsList className="mx-auto">

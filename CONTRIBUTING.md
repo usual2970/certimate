@@ -28,6 +28,7 @@ git clone https://github.com/your_username/certimate.git
 
 1. 进入根目录
 2. 运行以下命令启动服务：
+
    ```bash
    go run main.go serve
    ```
@@ -36,11 +37,12 @@ git clone https://github.com/your_username/certimate.git
 
 **在向主仓库提交 PR 之前，建议你：**
 
+- 使用 [gofumpt](https://github.com/mvdan/gofumpt) 对你的代码进行格式化。
+
 - 为你的改动添加单元测试或集成测试（Certimate 使用 Go 的标准 `testing` 包）。你可以通过以下命令运行测试（在项目根目录下）：
 
   ```bash
   go test ./...
-
   ```
 
 ## 修改管理页面 (Admin UI)
@@ -49,17 +51,19 @@ Certimate 的管理页面是一个基于 React 和 Vite 构建的单页应用（
 
 要启动 Admin UI：
 
-1. 进入 `ui` 项目目录
-2. 运行 `npm install` 安装依赖
+1. 进入 `ui` 项目目录。
+
+2. 运行 `npm install` 安装依赖。
+
 3. 启动 Vite 开发服务器：
+
    ```bash
    npm run dev
    ```
 
 你可以通过浏览器访问 `http://localhost:5173` 来查看运行中的管理页面。
 
-由于 Admin UI 只是一个客户端应用，运行时需要 Certimate 的后端服务作为支撑。你可以手动运行Certimate，或者使用预构建的可执行文件。
-
+由于 Admin UI 只是一个客户端应用，运行时需要 Certimate 的后端服务作为支撑。你可以手动运行 Certimate，或者使用预构建的可执行文件。
 
 所有对 Admin UI 的修改将会自动反映在浏览器中，无需手动刷新页面。
 

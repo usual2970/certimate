@@ -1,32 +1,19 @@
-import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useConfig } from "@/providers/config";
-import { update } from "@/repository/settings";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
-import { useState } from "react";
 import { EmailsSetting } from "@/domain/settings";
+import { update } from "@/repository/settings";
+import { useConfig } from "@/providers/config";
 
 type EmailsEditProps = {
   className?: string;
@@ -84,14 +71,12 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
     } catch (e) {
       const err = e as ClientResponseError;
 
-      Object.entries(err.response.data as PbErrorData).forEach(
-        ([key, value]) => {
-          form.setError(key as keyof z.infer<typeof formSchema>, {
-            type: "manual",
-            message: value.message,
-          });
-        }
-      );
+      Object.entries(err.response.data as PbErrorData).forEach(([key, value]) => {
+        form.setError(key as keyof z.infer<typeof formSchema>, {
+          type: "manual",
+          message: value.message,
+        });
+      });
     }
   };
 
@@ -109,7 +94,6 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
           <Form {...form}>
             <form
               onSubmit={(e) => {
-                console.log(e);
                 e.stopPropagation();
                 form.handleSubmit(onSubmit)(e);
               }}
@@ -122,11 +106,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
                   <FormItem>
                     <FormLabel>{t("domain.application.form.email.label")}</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder={t("common.errmsg.email_empty")}
-                        {...field}
-                        type="email"
-                      />
+                      <Input placeholder={t("common.errmsg.email_empty")} {...field} type="email" />
                     </FormControl>
 
                     <FormMessage />

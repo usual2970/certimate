@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	godaddyProvider "github.com/go-acme/lego/v4/providers/dns/godaddy"
+
+	"certimate/internal/domain"
 )
 
 type godaddy struct {
@@ -20,7 +21,6 @@ func NewGodaddy(option *ApplyOption) Applicant {
 }
 
 func (a *godaddy) Apply() (*Certificate, error) {
-
 	access := &domain.GodaddyAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 

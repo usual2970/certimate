@@ -16,7 +16,7 @@
   "common.update": "Update",
   "common.update.succeeded.message": "Update Successful",
   "common.update.failed.message": "Update Failed",
-  
+
   "common.text.domain": "Domain",
   "common.text.domain.empty": "No Domain",
   "common.text.ip": "IP Address",
@@ -42,7 +42,7 @@
   "common.theme.light": "Light",
   "common.theme.dark": "Dark",
   "common.theme.system": "System",
-  
+
   "common.errmsg.string_max": "Please enter no more than {{max}} characters",
   "common.errmsg.email_invalid": "Please enter a valid email address",
   "common.errmsg.email_empty": "Please enter email",
@@ -53,14 +53,14 @@
   "common.errmsg.url_invalid": "Please enter a valid URL",
 
   "common.provider.aliyun": "Alibaba Cloud",
-  "common.provider.aliyun.cdn": "Alibaba Cloud-CDN",
-  "common.provider.aliyun.oss": "Alibaba Cloud-OSS",
-  "common.provider.aliyun.dcdn": "Alibaba Cloud-DCDN",
+  "common.provider.aliyun.oss": "Alibaba Cloud - OSS",
+  "common.provider.aliyun.cdn": "Alibaba Cloud - CDN",
+  "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN",
   "common.provider.tencent": "Tencent",
-  "common.provider.tencent.cdn": "Tencent-CDN",
+  "common.provider.tencent.cdn": "Tencent - CDN",
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.qiniu": "Qiniu",
-  "common.provider.qiniu.cdn": "Qiniu-CDN",
+  "common.provider.qiniu.cdn": "Qiniu - CDN",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",

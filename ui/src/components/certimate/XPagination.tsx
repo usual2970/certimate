@@ -1,10 +1,4 @@
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-} from "../ui/pagination";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink } from "@/components/ui/pagination";
 
 type PaginationProps = {
   totalPages: number;
@@ -14,11 +8,7 @@ type PaginationProps = {
 
 type PageNumber = number | string;
 
-const XPagination = ({
-  totalPages,
-  currentPage,
-  onPageChange,
-}: PaginationProps) => {
+const XPagination = ({ totalPages, currentPage, onPageChange }: PaginationProps) => {
   const pageNeighbours = 1; // Number of page numbers to show on either side of the current page
 
   const getPageNumbers = () => {

@@ -11,15 +11,15 @@ export const list = async (req: DeploymentListReq) => {
   if (req.perPage) {
     perPage = req.perPage;
   }
+
   let filter = "domain!=null";
   if (req.domain) {
     filter = `domain="${req.domain}"`;
   }
-  return await getPb()
-    .collection("deployments")
-    .getList<Deployment>(page, perPage, {
-      filter: filter,
-      sort: "-deployedAt",
-      expand: "domain",
-    });
+
+  return await getPb().collection("deployments").getList<Deployment>(page, perPage, {
+    filter: filter,
+    sort: "-deployedAt",
+    expand: "domain",
+  });
 };

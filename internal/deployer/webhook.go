@@ -2,11 +2,12 @@ package deployer
 
 import (
 	"bytes"
-	xhttp "certimate/internal/utils/http"
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	xhttp "certimate/internal/utils/http"
 )
 
 type webhookAccess struct {
@@ -26,7 +27,6 @@ type webhook struct {
 }
 
 func NewWebhook(option *DeployerOption) (Deployer, error) {
-
 	return &webhook{
 		option: option,
 		infos:  make([]string, 0),

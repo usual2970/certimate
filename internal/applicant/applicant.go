@@ -1,8 +1,6 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -18,6 +16,9 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/domain"
+	"certimate/internal/utils/app"
 )
 
 const (
@@ -66,19 +67,21 @@ type ApplyOption struct {
 	Timeout     int64  `json:"timeout"`
 }
 
-type MyUser struct {
+type ApplyUser struct {
 	Email        string
 	Registration *registration.Resource
 	key          crypto.PrivateKey
 }
 
-func (u *MyUser) GetEmail() string {
+func (u *ApplyUser) GetEmail() string {
 	return u.Email
 }
-func (u MyUser) GetRegistration() *registration.Resource {
+
+func (u ApplyUser) GetRegistration() *registration.Resource {
 	return u.Registration
 }
-func (u *MyUser) GetPrivateKey() crypto.PrivateKey {
+
+func (u *ApplyUser) GetPrivateKey() crypto.PrivateKey {
 	return u.key
 }
 
@@ -87,7 +90,6 @@ type Applicant interface {
 }
 
 func Get(record *models.Record) (Applicant, error) {
-
 	if record.GetString("applyConfig") == "" {
 		return nil, errors.New("apply config is empty")
 	}
@@ -97,7 +99,6 @@ func Get(record *models.Record) (Applicant, error) {
 	record.UnmarshalJSONField("applyConfig", applyConfig)
 
 	access, err := app.GetApp().Dao().FindRecordById("access", applyConfig.Access)
-
 	if err != nil {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
@@ -129,7 +130,6 @@ func Get(record *models.Record) (Applicant, error) {
 	default:
 		return nil, errors.New("unknown config type")
 	}
-
 }
 
 type SSLProviderConfig struct {
@@ -162,7 +162,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		return nil, err
 	}
 
-	myUser := MyUser{
+	myUser := ApplyUser{
 		Email: option.Email,
 		key:   privateKey,
 	}
@@ -213,7 +213,6 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		IssuerCertificate: string(certificates.IssuerCertificate),
 		Csr:               string(certificates.CSR),
 	}, nil
-
 }
 
 func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.Resource, error) {

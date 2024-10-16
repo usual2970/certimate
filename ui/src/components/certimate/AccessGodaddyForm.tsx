@@ -1,40 +1,24 @@
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ClientResponseError } from "pocketbase";
 
-import {
-  Access,
-  accessFormType,
-  getUsageByConfigType,
-  GodaddyConfig,
-} from "@/domain/access";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { PbErrorData } from "@/domain/base";
+import { Access, accessFormType, getUsageByConfigType, GodaddyConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
-import { ClientResponseError } from "pocketbase";
-import { PbErrorData } from "@/domain/base";
 
-const AccessGodaddyFrom = ({
-  data,
-  op,
-  onAfterReq,
-}: {
-  data?: Access;
+type AccessGodaddyFormProps = {
   op: "add" | "edit" | "copy";
+  data?: Access;
   onAfterReq: () => void;
-}) => {
+};
+
+const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -72,7 +56,6 @@ const AccessGodaddyFrom = ({
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log(data);
     const req: Access = {
       id: data.id as string,
       name: data.name,
@@ -101,14 +84,12 @@ const AccessGodaddyFrom = ({
     } catch (e) {
       const err = e as ClientResponseError;
 
-      Object.entries(err.response.data as PbErrorData).forEach(
-        ([key, value]) => {
-          form.setError(key as keyof z.infer<typeof formSchema>, {
-            type: "manual",
-            message: value.message,
-          });
-        }
-      );
+      Object.entries(err.response.data as PbErrorData).forEach(([key, value]) => {
+        form.setError(key as keyof z.infer<typeof formSchema>, {
+          type: "manual",
+          message: value.message,
+        });
+      });
     }
   };
 
@@ -118,7 +99,6 @@ const AccessGodaddyFrom = ({
         <Form {...form}>
           <form
             onSubmit={(e) => {
-              console.log(e);
               e.stopPropagation();
               form.handleSubmit(onSubmit)(e);
             }}
@@ -131,10 +111,7 @@ const AccessGodaddyFrom = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.name.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -179,10 +156,7 @@ const AccessGodaddyFrom = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.godaddy_api_key.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.godaddy_api_key.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.godaddy_api_key.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -197,12 +171,7 @@ const AccessGodaddyFrom = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.godaddy_api_secret.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(
-                        "access.authorization.form.godaddy_api_secret.placeholder"
-                      )}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.godaddy_api_secret.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -220,4 +189,4 @@ const AccessGodaddyFrom = ({
   );
 };
 
-export default AccessGodaddyFrom;
+export default AccessGodaddyForm;

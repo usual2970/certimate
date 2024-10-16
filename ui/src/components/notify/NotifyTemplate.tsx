@@ -1,21 +1,16 @@
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
-import {
-  defaultNotifyTemplate,
-  NotifyTemplates,
-  NotifyTemplate as NotifyTemplateT,
-} from "@/domain/settings";
-import { getSetting, update } from "@/repository/settings";
-import { useToast } from "../ui/use-toast";
 import { useTranslation } from "react-i18next";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
+import { defaultNotifyTemplate, NotifyTemplates, NotifyTemplate as NotifyTemplateT } from "@/domain/settings";
+import { getSetting, update } from "@/repository/settings";
 
 const NotifyTemplate = () => {
   const [id, setId] = useState("");
-  const [templates, setTemplates] = useState<NotifyTemplateT[]>([
-    defaultNotifyTemplate,
-  ]);
+  const [templates, setTemplates] = useState<NotifyTemplateT[]>([defaultNotifyTemplate]);
 
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -82,9 +77,7 @@ const NotifyTemplate = () => {
         }}
       />
 
-      <div className="text-muted-foreground text-sm mt-1">
-        {t("settings.notification.template.variables.tips.title")}
-      </div>
+      <div className="text-muted-foreground text-sm mt-1">{t("settings.notification.template.variables.tips.title")}</div>
 
       <Textarea
         className="mt-2"
@@ -93,9 +86,7 @@ const NotifyTemplate = () => {
           handleContentChange(e.target.value);
         }}
       ></Textarea>
-      <div className="text-muted-foreground text-sm mt-1">
-        {t("settings.notification.template.variables.tips.content")}
-      </div>
+      <div className="text-muted-foreground text-sm mt-1">{t("settings.notification.template.variables.tips.content")}</div>
       <div className="flex justify-end mt-2">
         <Button onClick={handleSaveClick}>{t("common.save")}</Button>
       </div>

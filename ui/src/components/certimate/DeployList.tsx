@@ -1,50 +1,23 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { Button } from "../ui/button";
-import { EditIcon, Plus, Trash2 } from "lucide-react";
-import {
-  DeployConfig,
-  KVType,
-  targetTypeKeys,
-  targetTypeMap,
-} from "@/domain/domain";
-import Show from "../Show";
-import { Alert, AlertDescription } from "../ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-
-import { Label } from "../ui/label";
-import { useConfig } from "@/providers/config";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { accessTypeMap } from "@/domain/access";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AccessEdit } from "./AccessEdit";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import KVList from "./KVList";
+import { z } from "zod";
 import { produce } from "immer";
 import { nanoid } from "nanoid";
-import { z } from "zod";
+import { EditIcon, Plus, Trash2 } from "lucide-react";
+
+import Show from "@/components/Show";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import AccessEdit from "./AccessEdit";
+import KVList from "./KVList";
+import { DeployConfig, KVType, targetTypeKeys, targetTypeMap } from "@/domain/domain";
+import { accessTypeMap } from "@/domain/access";
+import { useConfig } from "@/providers/config";
 
 type DeployEditContextProps = {
   deploy: DeployConfig;
@@ -53,9 +26,7 @@ type DeployEditContextProps = {
   setError: (error: Record<string, string>) => void;
 };
 
-const DeployEditContext = createContext<DeployEditContextProps>(
-  {} as DeployEditContextProps
-);
+const DeployEditContext = createContext<DeployEditContextProps>({} as DeployEditContextProps);
 
 export const useDeployEditContext = () => {
   return useContext(DeployEditContext);
@@ -156,11 +127,14 @@ const DeployList = ({ deploys, onChange }: DeployListProps) => {
   );
 };
 
+export default DeployList;
+
 type DeployItemProps = {
   item: DeployConfig;
   onDelete: () => void;
   onSave: (deploy: DeployConfig) => void;
 };
+
 const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
   const {
     config: { accesses },
@@ -232,11 +206,8 @@ type DeployEditDialogProps = {
   deployConfig?: DeployConfig;
   onSave: (deploy: DeployConfig) => void;
 };
-const DeployEditDialog = ({
-  trigger,
-  deployConfig,
-  onSave,
-}: DeployEditDialogProps) => {
+
+const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogProps) => {
   const {
     config: { accesses },
   } = useConfig();
@@ -265,13 +236,14 @@ const DeployEditDialog = ({
 
   useEffect(() => {
     const temp = locDeployConfig.type.split("-");
-    console.log(temp);
+
     let t;
     if (temp && temp.length > 1) {
       t = temp[1];
     } else {
       t = locDeployConfig.type;
     }
+
     setDeployType(t as TargetType);
     setError({});
   }, [locDeployConfig.type]);
@@ -366,22 +338,15 @@ const DeployEditDialog = ({
               }}
             >
               <SelectTrigger className="mt-2">
-                <SelectValue
-                  placeholder={t("domain.deployment.form.type.placeholder")}
-                />
+                <SelectValue placeholder={t("domain.deployment.form.type.placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>
-                    {t("domain.deployment.form.type.list")}
-                  </SelectLabel>
+                  <SelectLabel>{t("domain.deployment.form.type.list")}</SelectLabel>
                   {targetTypeKeys.map((item) => (
                     <SelectItem key={item} value={item}>
                       <div className="flex items-center space-x-2">
-                        <img
-                          className="w-6"
-                          src={targetTypeMap.get(item)?.[1]}
-                        />
+                        <img className="w-6" src={targetTypeMap.get(item)?.[1]} />
                         <div>{t(targetTypeMap.get(item)?.[0] ?? "")}</div>
                       </div>
                     </SelectItem>
@@ -415,24 +380,15 @@ const DeployEditDialog = ({
               }}
             >
               <SelectTrigger className="mt-2">
-                <SelectValue
-                  placeholder={t(
-                    "domain.deployment.form.access.placeholder"
-                  )}
-                />
+                <SelectValue placeholder={t("domain.deployment.form.access.placeholder")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>
-                    {t("domain.deployment.form.access.list")}
-                  </SelectLabel>
+                  <SelectLabel>{t("domain.deployment.form.access.list")}</SelectLabel>
                   {targetAccesses.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
                       <div className="flex items-center space-x-2">
-                        <img
-                          className="w-6"
-                          src={accessTypeMap.get(item.configType)?.[1]}
-                        />
+                        <img className="w-6" src={accessTypeMap.get(item.configType)?.[1]} />
                         <div>{item.name}</div>
                       </div>
                     </SelectItem>
@@ -468,29 +424,30 @@ type TargetType = "ssh" | "cdn" | "webhook" | "local" | "oss" | "dcdn";
 type DeployEditProps = {
   type: TargetType;
 };
+
 const DeployEdit = ({ type }: DeployEditProps) => {
   const getDeploy = () => {
     switch (type) {
       case "ssh":
-        return <DeploySSH />;
+        return <DeployToSSH />;
       case "local":
-        return <DeploySSH />;
+        return <DeployToSSH />;
       case "cdn":
-        return <DeployCDN />;
+        return <DeployToCDN />;
       case "dcdn":
-        return <DeployCDN />;
+        return <DeployToCDN />;
       case "oss":
-        return <DeployOSS />;
+        return <DeployToOSS />;
       case "webhook":
-        return <DeployWebhook />;
+        return <DeployToWebhook />;
       default:
-        return <DeployCDN />;
+        return <DeployToCDN />;
     }
   };
   return getDeploy();
 };
 
-const DeploySSH = () => {
+const DeployToSSH = () => {
   const { t } = useTranslation();
   const { setError } = useDeployEditContext();
 
@@ -536,9 +493,7 @@ const DeploySSH = () => {
         <div>
           <Label>{t("access.authorization.form.ssh_key_path.label")}</Label>
           <Input
-            placeholder={t(
-              "access.authorization.form.ssh_key_path.placeholder"
-            )}
+            placeholder={t("access.authorization.form.ssh_key_path.placeholder")}
             className="w-full mt-1"
             value={data?.config?.keyPath}
             onChange={(e) => {
@@ -558,9 +513,7 @@ const DeploySSH = () => {
           <Textarea
             className="mt-1"
             value={data?.config?.preCommand}
-            placeholder={t(
-              "access.authorization.form.ssh_pre_command.placeholder"
-            )}
+            placeholder={t("access.authorization.form.ssh_pre_command.placeholder")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -595,7 +548,7 @@ const DeploySSH = () => {
   );
 };
 
-const DeployCDN = () => {
+const DeployToCDN = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   const { t } = useTranslation();
@@ -619,20 +572,16 @@ const DeployCDN = () => {
     }
   }, [data]);
 
-  const domainSchema = z
-    .string()
-    .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    });
+  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+    message: t("common.errmsg.domain_invalid"),
+  });
 
   return (
     <div className="flex flex-col space-y-2">
       <div>
         <Label>{t("domain.deployment.form.cdn_domain.label")}</Label>
         <Input
-          placeholder={t(
-            "domain.deployment.form.cdn_domain.placeholder"
-          )}
+          placeholder={t("domain.deployment.form.cdn_domain.placeholder")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
@@ -666,7 +615,7 @@ const DeployCDN = () => {
   );
 };
 
-const DeployOSS = () => {
+const DeployToOSS = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   const { t } = useTranslation();
@@ -718,11 +667,9 @@ const DeployOSS = () => {
     }
   }, []);
 
-  const domainSchema = z
-    .string()
-    .regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    });
+  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+    message: t("common.errmsg.domain_invalid"),
+  });
 
   const bucketSchema = z.string().min(1, {
     message: t("domain.deployment.form.oss_bucket.placeholder"),
@@ -752,9 +699,7 @@ const DeployOSS = () => {
 
         <Label>{t("domain.deployment.form.oss_bucket")}</Label>
         <Input
-          placeholder={t(
-            "domain.deployment.form.oss_bucket.placeholder"
-          )}
+          placeholder={t("domain.deployment.form.oss_bucket.placeholder")}
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {
@@ -820,7 +765,7 @@ const DeployOSS = () => {
   );
 };
 
-const DeployWebhook = () => {
+const DeployToWebhook = () => {
   const { deploy: data, setDeploy } = useDeployEditContext();
 
   const { setError } = useDeployEditContext();
@@ -846,5 +791,3 @@ const DeployWebhook = () => {
     </>
   );
 };
-
-export default DeployList;

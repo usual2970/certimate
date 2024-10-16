@@ -1,8 +1,6 @@
 package deployer
 
 import (
-	"certimate/internal/domain"
-	"certimate/internal/utils/rand"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -13,6 +11,9 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+
+	"certimate/internal/domain"
+	"certimate/internal/utils/rand"
 )
 
 type tencentCdn struct {
@@ -22,7 +23,6 @@ type tencentCdn struct {
 }
 
 func NewTencentCdn(option *DeployerOption) (Deployer, error) {
-
 	access := &domain.TencentAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal tencent access: %w", err)
@@ -49,7 +49,6 @@ func (t *tencentCdn) GetInfo() []string {
 }
 
 func (t *tencentCdn) Deploy(ctx context.Context) error {
-
 	// 上传证书
 	certId, err := t.uploadCert()
 	if err != nil {
@@ -65,7 +64,6 @@ func (t *tencentCdn) Deploy(ctx context.Context) error {
 }
 
 func (t *tencentCdn) uploadCert() (string, error) {
-
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
 
@@ -116,7 +114,6 @@ func (t *tencentCdn) deploy(certId string) error {
 
 	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
 	resp, err := client.DeployCertificateInstance(request)
-
 	if err != nil {
 		return fmt.Errorf("failed to deploy certificate: %w", err)
 	}

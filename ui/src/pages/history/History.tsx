@@ -1,23 +1,17 @@
-import DeployProgress from "@/components/certimate/DeployProgress";
-import DeployState from "@/components/certimate/DeployState";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Deployment, DeploymentListReq, Log } from "@/domain/deployment";
-import { convertZulu2Beijing } from "@/lib/time";
-import { list } from "@/repository/deployment";
-import { Smile } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Smile } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import DeployProgress from "@/components/certimate/DeployProgress";
+import DeployState from "@/components/certimate/DeployState";
+import { convertZulu2Beijing } from "@/lib/time";
+import { Deployment, DeploymentListReq, Log } from "@/domain/deployment";
+import { list } from "@/repository/deployment";
 
 const History = () => {
   const navigate = useNavigate();
@@ -71,9 +65,7 @@ const History = () => {
 
             <div className="w-24">{t("history.props.status")}</div>
             <div className="w-56">{t("history.props.stage")}</div>
-            <div className="w-56 sm:ml-2 text-center">
-              {t("history.props.last_execution_time")}
-            </div>
+            <div className="w-56 sm:ml-2 text-center">{t("history.props.last_execution_time")}</div>
 
             <div className="grow">{t("common.text.operations")}</div>
           </div>
@@ -84,27 +76,20 @@ const History = () => {
               className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
             >
               <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                {deployment.expand.domain?.domain
-                  .split(";")
-                  .map((domain: string) => (
-                    <>
-                      {domain}
-                      <br />
-                    </>
-                  ))}
+                {deployment.expand.domain?.domain.split(";").map((domain: string) => (
+                  <>
+                    {domain}
+                    <br />
+                  </>
+                ))}
               </div>
               <div className="sm:w-24 w-full pt-1 sm:pt-0 flex items-center">
                 <DeployState deployment={deployment} />
               </div>
               <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center">
-                <DeployProgress
-                  phase={deployment.phase}
-                  phaseSuccess={deployment.phaseSuccess}
-                />
+                <DeployProgress phase={deployment.phase} phaseSuccess={deployment.phaseSuccess} />
               </div>
-              <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center sm:justify-center">
-                {convertZulu2Beijing(deployment.deployedAt)}
-              </div>
+              <div className="sm:w-56 w-full pt-1 sm:pt-0 flex items-center sm:justify-center">{convertZulu2Beijing(deployment.deployedAt)}</div>
               <div className="flex items-center grow justify-start pt-1 sm:pt-0 sm:ml-2">
                 <Sheet>
                   <SheetTrigger asChild>
@@ -129,11 +114,7 @@ const History = () => {
                                   <div>[{item.time}]</div>
                                   <div className="ml-2">{item.message}</div>
                                 </div>
-                                {item.error && (
-                                  <div className="mt-1 text-red-600">
-                                    {item.error}
-                                  </div>
-                                )}
+                                {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                               </div>
                             );
                           })}
@@ -151,17 +132,9 @@ const History = () => {
                                 </div>
                                 {item.info &&
                                   item.info.map((info: string) => {
-                                    return (
-                                      <div className="mt-1 text-green-600">
-                                        {info}
-                                      </div>
-                                    );
+                                    return <div className="mt-1 text-green-600">{info}</div>;
                                   })}
-                                {item.error && (
-                                  <div className="mt-1 text-red-600">
-                                    {item.error}
-                                  </div>
-                                )}
+                                {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                               </div>
                             );
                           })}
@@ -177,11 +150,7 @@ const History = () => {
                                   <div>[{item.time}]</div>
                                   <div className="ml-2">{item.message}</div>
                                 </div>
-                                {item.error && (
-                                  <div className="mt-1 text-red-600">
-                                    {item.error}
-                                  </div>
-                                )}
+                                {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                               </div>
                             );
                           })}

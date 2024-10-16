@@ -1,10 +1,11 @@
 package deployer
 
 import (
-	"certimate/internal/applicant"
 	"testing"
 
 	"github.com/qiniu/go-sdk/v7/auth"
+
+	"certimate/internal/applicant"
 )
 
 func Test_qiuniu_uploadCert(t *testing.T) {

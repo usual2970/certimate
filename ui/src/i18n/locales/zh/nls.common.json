@@ -16,7 +16,7 @@
   "common.update": "更新",
   "common.update.succeeded.message": "修改成功",
   "common.update.failed.message": "修改失败",
-  
+
   "common.text.domain": "域名",
   "common.text.domain.empty": "无域名",
   "common.text.ip": "IP 地址",
@@ -53,14 +53,14 @@
   "common.errmsg.url_invalid": "请输入正确的 URL",
 
   "common.provider.tencent": "腾讯云",
-  "common.provider.tencent.cdn": "腾讯云-CDN",
+  "common.provider.tencent.cdn": "腾讯云 - CDN",
   "common.provider.aliyun": "阿里云",
-  "common.provider.aliyun.cdn": "阿里云-CDN",
-  "common.provider.aliyun.oss": "阿里云-OSS",
-  "common.provider.aliyun.dcdn": "阿里云-DCDN",
+  "common.provider.aliyun.oss": "阿里云 - OSS",
+  "common.provider.aliyun.cdn": "阿里云 - CDN",
+  "common.provider.aliyun.dcdn": "阿里云 - DCDN",
   "common.provider.huaweicloud": "华为云",
   "common.provider.qiniu": "七牛云",
-  "common.provider.qiniu.cdn": "七牛云-CDN",
+  "common.provider.qiniu.cdn": "七牛云 - CDN",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",

@@ -1,23 +1,16 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
 import { getPb } from "@/repository/api";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-
-import { z } from "zod";
 
 const formSchema = z.object({
   email: z.string().email("settings.account.email.errmsg.invalid"),
@@ -65,10 +58,7 @@ const Account = () => {
     <>
       <div className="w-full md:max-w-[35em]">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 dark:text-stone-200"
-          >
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 dark:text-stone-200">
             <FormField
               control={form.control}
               name="email"

@@ -1,6 +1,7 @@
+import moment from "moment";
+
 import { Access } from "@/domain/access";
 import { getPb } from "./api";
-import moment from "moment";
 
 export const list = async () => {
   return await getPb().collection("access").getFullList<Access>({

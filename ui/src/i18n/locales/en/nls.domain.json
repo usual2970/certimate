@@ -2,7 +2,7 @@
   "domain.page.title": "Domain List",
 
   "domain.nodata": "Please add a domain to start deploying the certificate.",
-  
+
   "domain.add": "Add Domain",
   "domain.edit": "Edit Domain",
   "domain.delete": "Delete Domain",

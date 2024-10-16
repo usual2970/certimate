@@ -3,8 +3,7 @@ name: Bug report
 about: 创建一个报告来帮助我们改进
 title: "[Bug] 标题简要描述问题"
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 **描述问题**
@@ -12,6 +11,7 @@ assignees: ''
 
 **复现步骤**
 复现该问题的步骤：
+
 1. 去到 '...'
 2. 点击 '...'
 3. 滚动到 '...'
@@ -24,6 +24,7 @@ assignees: ''
 如有可能，请添加截图以帮助解释问题。
 
 **环境**
+
 - 操作系统: [e.g. Windows, macOS]
 - 浏览器: [e.g. Chrome, Safari]
 - 仓库版本: [e.g. v1.0.0]

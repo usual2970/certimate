@@ -1,8 +1,8 @@
 ﻿{
   "domain.page.title": "域名列表",
-  
+
   "domain.nodata": "请添加域名开始部署证书吧。",
-  
+
   "domain.add": "新增域名",
   "domain.edit": "编辑域名",
   "domain.delete": "删除域名",
@@ -14,7 +14,7 @@
   "domain.deploy.failed.message": "执行失败",
   "domain.deploy.failed.tips": "执行失败，请在 <1>部署历史</1> 查看详情。",
   "domain.deploy_forced": "强行部署",
-  
+
   "domain.props.expiry": "有效期限",
   "domain.props.expiry.date1": "有效期 {{date}} 天",
   "domain.props.expiry.date2": "{{date}} 到期",

@@ -1,9 +1,6 @@
 package deployer
 
 import (
-	"certimate/internal/applicant"
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
 	"context"
 	"encoding/json"
 	"errors"
@@ -11,6 +8,10 @@ import (
 	"strings"
 
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/applicant"
+	"certimate/internal/domain"
+	"certimate/internal/utils/app"
 )
 
 const (
@@ -61,7 +62,6 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 	for _, deployConfig := range deployConfigs {
 
 		deployer, err := getWithDeployConfig(record, cert, deployConfig)
-
 		if err != nil {
 			return nil, err
 		}
@@ -70,13 +70,10 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 	}
 
 	return rs, nil
-
 }
 
 func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
-
 	access, err := app.GetApp().Dao().FindRecordById("access", deployConfig.Access)
-
 	if err != nil {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
@@ -169,5 +166,4 @@ func getDeployVariables(conf domain.DeployConfig) map[string]string {
 	}
 
 	return rs
-
 }

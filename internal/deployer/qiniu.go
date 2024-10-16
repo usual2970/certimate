@@ -2,8 +2,6 @@ package deployer
 
 import (
 	"bytes"
-	"certimate/internal/domain"
-	xhttp "certimate/internal/utils/http"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -11,6 +9,9 @@ import (
 	"net/http"
 
 	"github.com/qiniu/go-sdk/v7/auth"
+
+	"certimate/internal/domain"
+	xhttp "certimate/internal/utils/http"
 )
 
 const qiniuGateway = "http://api.qiniu.com"
@@ -42,7 +43,6 @@ func (q *qiuniu) GetInfo() []string {
 }
 
 func (q *qiuniu) Deploy(ctx context.Context) error {
-
 	// 上传证书
 	certId, err := q.uploadCert()
 	if err != nil {

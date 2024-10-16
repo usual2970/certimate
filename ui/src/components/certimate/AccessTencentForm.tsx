@@ -1,40 +1,24 @@
-import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
 import z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ClientResponseError } from "pocketbase";
 
-import {
-  Access,
-  accessFormType,
-  getUsageByConfigType,
-  TencentConfig,
-} from "@/domain/access";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { PbErrorData } from "@/domain/base";
+import { Access, accessFormType, getUsageByConfigType, TencentConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
-import { ClientResponseError } from "pocketbase";
-import { PbErrorData } from "@/domain/base";
 
-const AccessTencentForm = ({
-  data,
-  op,
-  onAfterReq,
-}: {
-  data?: Access;
+type AccessTencentFormProps = {
   op: "add" | "edit" | "copy";
+  data?: Access;
   onAfterReq: () => void;
-}) => {
+};
+
+const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -100,14 +84,12 @@ const AccessTencentForm = ({
     } catch (e) {
       const err = e as ClientResponseError;
 
-      Object.entries(err.response.data as PbErrorData).forEach(
-        ([key, value]) => {
-          form.setError(key as keyof z.infer<typeof formSchema>, {
-            type: "manual",
-            message: value.message,
-          });
-        }
-      );
+      Object.entries(err.response.data as PbErrorData).forEach(([key, value]) => {
+        form.setError(key as keyof z.infer<typeof formSchema>, {
+          type: "manual",
+          message: value.message,
+        });
+      });
     }
   };
 
@@ -129,10 +111,7 @@ const AccessTencentForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.name.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -177,10 +156,7 @@ const AccessTencentForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.secret_id.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.secret_id.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.secret_id.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -195,10 +171,7 @@ const AccessTencentForm = ({
                 <FormItem>
                   <FormLabel>{t("access.authorization.form.secret_key.label")}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t("access.authorization.form.secret_key.placeholder")}
-                      {...field}
-                    />
+                    <Input placeholder={t("access.authorization.form.secret_key.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />

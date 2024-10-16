@@ -1,18 +1,16 @@
 package notify
 
 import (
-	"certimate/internal/utils/app"
 	"context"
 	"fmt"
 	"strconv"
 
 	notifyPackage "github.com/nikoksr/notify"
-
 	"github.com/nikoksr/notify/service/dingding"
-
+	"github.com/nikoksr/notify/service/http"
 	"github.com/nikoksr/notify/service/telegram"
 
-	"github.com/nikoksr/notify/service/http"
+	"certimate/internal/utils/app"
 )
 
 const (
@@ -40,7 +38,6 @@ func Send(title, content string) error {
 }
 
 func getNotifiers() ([]notifyPackage.Notifier, error) {
-
 	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='notifyChannels'")
 	if err != nil {
 		return nil, fmt.Errorf("find notifyChannels error: %w", err)
@@ -77,7 +74,6 @@ func getNotifiers() ([]notifyPackage.Notifier, error) {
 	}
 
 	return notifiers, nil
-
 }
 
 func getWebhookNotifier(conf map[string]any) notifyPackage.Notifier {
@@ -110,7 +106,6 @@ func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 		Token:  getString(conf, "accessToken"),
 		Secret: getString(conf, "secret"),
 	})
-
 }
 
 func getString(conf map[string]any, key string) string {

@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-
-import { Separator } from "../ui/separator";
 
 type DeployProgressProps = {
   phase?: "check" | "apply" | "deploy";
@@ -24,18 +23,10 @@ const DeployProgress = ({ phase, phaseSuccess }: DeployProgressProps) => {
 
   return (
     <div className="flex items-center">
-      <div
-        className={cn(
-          "text-xs text-nowrap",
-          step === 1 ? (phaseSuccess ? "text-green-600" : "text-red-600") : "",
-          step > 1 ? "text-green-600" : ""
-        )}
-      >
+      <div className={cn("text-xs text-nowrap", step === 1 ? (phaseSuccess ? "text-green-600" : "text-red-600") : "", step > 1 ? "text-green-600" : "")}>
         {t("history.props.stage.progress.check")}
       </div>
-      <Separator
-        className={cn("h-1 grow max-w-[60px]", step > 1 ? "bg-green-600" : "")}
-      />
+      <Separator className={cn("h-1 grow max-w-[60px]", step > 1 ? "bg-green-600" : "")} />
       <div
         className={cn(
           "text-xs text-nowrap",
@@ -46,9 +37,7 @@ const DeployProgress = ({ phase, phaseSuccess }: DeployProgressProps) => {
       >
         {t("history.props.stage.progress.apply")}
       </div>
-      <Separator
-        className={cn("h-1 grow max-w-[60px]", step > 2 ? "bg-green-600" : "")}
-      />
+      <Separator className={cn("h-1 grow max-w-[60px]", step > 2 ? "bg-green-600" : "")} />
       <div
         className={cn(
           "text-xs text-nowrap",

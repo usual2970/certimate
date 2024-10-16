@@ -103,7 +103,6 @@ func (s *ssh) sshExecCommand(client *sshPkg.Client, command string) (error, stri
 }
 
 func (s *ssh) upload(client *sshPkg.Client, content, path string) error {
-
 	sftpCli, err := sftp.NewClient(client)
 	if err != nil {
 		return fmt.Errorf("failed to create sftp client: %w", err)
@@ -129,7 +128,6 @@ func (s *ssh) upload(client *sshPkg.Client, content, path string) error {
 }
 
 func (s *ssh) getClient(access *sshAccess) (*sshPkg.Client, error) {
-
 	var authMethod sshPkg.AuthMethod
 
 	if access.Key != "" {

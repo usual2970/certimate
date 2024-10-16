@@ -35,11 +35,9 @@ func Req2GetReader(url string, method string, body io.Reader, head map[string]st
 	req := BuildReq(url, method, body, head)
 
 	return ToRequest(req, opts...)
-
 }
 
 func BuildReq(url string, method string, body io.Reader, head map[string]string) *http.Request {
-
 	// Create an http.Request instance
 	req, _ := http.NewRequest(method, url, body)
 	for k, v := range head {
