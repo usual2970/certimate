@@ -18,7 +18,7 @@ Related articles:
 - [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
 - [Introduction to Domain Variables and Deployment Authorization Groups](https://docs.certimate.me/blog/multi-deployer)
 
-Certimate aims to provide users with a secure and user-friendly SSL certificate management solution. For usage documentation, please visit.[https://docs.certimate.me](https://docs.certimate.me)
+Certimate aims to provide users with a secure and user-friendly SSL certificate management solution. For usage documentation, please visit [https://docs.certimate.me](https://docs.certimate.me).
 
 ## Installation
 
@@ -71,14 +71,18 @@ password：1234567890
 
 ## List of Supported Providers
 
-| Provider      | Domain Registrar | Deployment Service | Remarks                                                                                           |
-| ------------- | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------- |
-| Alibaba Cloud | Yes              | Yes                | Supports domains registered with Alibaba Cloud; supports deployment to Alibaba Cloud CDN and OSS. |
-| Tencent Cloud | Yes              | Yes                | Supports domains registered with Tencent Cloud; supports deployment to Tencent Cloud CDN.         |
-| Qiniu Cloud   | No               | Yes                | Qiniu Cloud does not offer domain registration services; supports deployment to Qiniu Cloud CDN.  |
-| Cloudflare    | Yes              | No                 | Supports domains registered with Cloudflare; Cloudflare services come with SSL certificates.      |
-| SSH           | No               | Yes                | Supports deployment to SSH servers.                                                               |
-| WEBHOOK       | No               | Yes                | Supports callbacks to WEBHOOK.                                                                    |
+|   Provider    | Registration | Deployment | Remarks                                                                                     |
+| :-----------: | :----------: | :--------: | ------------------------------------------------------------------------------------------- |
+| Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN |
+| Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud CDN      |
+| Huawei Cloud  |      √       |            | Supports domains registered on Huawei Cloud                                                 |
+|  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                      |
+|  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates   |
+|    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                      |
+|   Namesilo    |      √       |            | Supports domains registered on Namesilo                                                     |
+| Local Deploy  |              |     √      | Supports deployment to local servers                                                        |
+|      SSH      |              |     √      | Supports deployment to SSH servers                                                          |
+|    Webhook    |              |     √      | Supports callback to Webhook                                                                |
 
 ## Screenshots
 
@@ -116,22 +120,26 @@ Certimate will automatically add a TXT record for you; you only need to fill in 
 For example, if you purchased the domain from Alibaba Cloud, the authorization information would be as follows:
 
 ```bash
-accessKeyId: xxx
-accessKeySecret: TOKEN
+accessKeyId: your-access-key-id
+accessKeySecret: your-access-key-secret
 ```
 
 If you purchased the domain from Tencent Cloud, the authorization information would be as follows:
 
 ```bash
-secretId: xxx
-secretKey: TOKEN
+secretId: your-secret-id
+secretKey: your-secret-key
 ```
+
+Notes: This authorization information requires relevant administration permissions for accessing the DNS services. Please refer to the documentations of each service provider for the specific permissions list.
 
 ### 3. Authorization Information for the Deployment Service Provider
 
 After Certimate applies for the certificate, it will automatically deploy the certificate to your specified target, such as Alibaba Cloud CDN. At this point, you need to fill in the authorization information for Alibaba Cloud. Certimate will use the authorization information and domain name you provided to locate the corresponding CDN service and deploy the certificate to that service.
 
 The authorization information for the deployment service provider is the same as that for the DNS provider, with the distinction that the DNS provider's authorization information is used to prove that the domain belongs to you, while the deployment service provider's authorization information is used to provide authorization for the certificate deployment.
+
+Notes: This authorization information requires relevant administration permissions to access the target deployment services. Please refer to the documentations of each service provider for the specific permissions list.
 
 ## FAQ
 
@@ -145,7 +153,7 @@ Q: Data Security?
 
 Q: Automatic Certificate Renewal?
 
-> A: Certificates that have already been issued will be automatically renewed 10 days before expiration. The system checks once a day to see if any certificates are nearing expiration, and if so, it will automatically reapply for the certificate and deploy it to the target service.
+> A: Certificates that have already been issued will be automatically renewed **10 days before expiration**. The system checks once a day to see if any certificates are nearing expiration, and if so, it will automatically reapply for the certificate and deploy it to the target service.
 
 ## Contributing
 
@@ -164,3 +172,7 @@ Support for more service providers, UI enhancements, bug fixes, and documentatio
 - Wechat Group
 
 <img src="https://i.imgur.com/zSHEoIm.png" width="400"/>
+
+## Star History
+
+[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
