@@ -18,11 +18,12 @@ type ssh struct {
 }
 
 type sshAccess struct {
-	Host     string `json:"host"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Key      string `json:"key"`
-	Port     string `json:"port"`
+	Host          string `json:"host"`
+	Port          string `json:"port"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	Key           string `json:"key"`
+	KeyPassphrase string `json:"keyPassphrase"`
 }
 
 func NewSSH(option *DeployerOption) (Deployer, error) {
@@ -45,6 +46,7 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	if err := json.Unmarshal([]byte(s.option.Access), access); err != nil {
 		return err
 	}
+
 	// 连接
 	client, err := s.getClient(access)
 	if err != nil {
@@ -57,7 +59,7 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	// 执行前置命令
 	preCommand := getDeployString(s.option.DeployConfig, "preCommand")
 	if preCommand != "" {
-		err, stdout, stderr := s.sshExecCommand(client, preCommand)
+		stdout, stderr, err := s.sshExecCommand(client, preCommand)
 		if err != nil {
 			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 		}
@@ -78,7 +80,7 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	s.infos = append(s.infos, toStr("ssh上传私钥成功", nil))
 
 	// 执行命令
-	err, stdout, stderr := s.sshExecCommand(client, getDeployString(s.option.DeployConfig, "command"))
+	stdout, stderr, err := s.sshExecCommand(client, getDeployString(s.option.DeployConfig, "command"))
 	if err != nil {
 		return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 	}
@@ -88,18 +90,19 @@ func (s *ssh) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (s *ssh) sshExecCommand(client *sshPkg.Client, command string) (error, string, string) {
+func (s *ssh) sshExecCommand(client *sshPkg.Client, command string) (string, string, error) {
 	session, err := client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create ssh session: %w", err), "", ""
+		return "", "", fmt.Errorf("failed to create ssh session: %w", err)
 	}
+
 	defer session.Close()
 	var stdoutBuf bytes.Buffer
 	session.Stdout = &stdoutBuf
 	var stderrBuf bytes.Buffer
 	session.Stderr = &stderrBuf
 	err = session.Run(command)
-	return err, stdoutBuf.String(), stderrBuf.String()
+	return stdoutBuf.String(), stderrBuf.String(), err
 }
 
 func (s *ssh) upload(client *sshPkg.Client, content, path string) error {
@@ -131,7 +134,15 @@ func (s *ssh) getClient(access *sshAccess) (*sshPkg.Client, error) {
 	var authMethod sshPkg.AuthMethod
 
 	if access.Key != "" {
-		signer, err := sshPkg.ParsePrivateKey([]byte(access.Key))
+		var signer sshPkg.Signer
+		var err error
+
+		if access.KeyPassphrase != "" {
+			signer, err = sshPkg.ParsePrivateKeyWithPassphrase([]byte(access.Key), []byte(access.KeyPassphrase))
+		} else {
+			signer, err = sshPkg.ParsePrivateKey([]byte(access.Key))
+		}
+
 		if err != nil {
 			return nil, err
 		}
