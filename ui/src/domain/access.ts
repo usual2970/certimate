@@ -100,6 +100,7 @@ export type SSHConfig = {
   password?: string;
   key?: string;
   keyFile?: string;
+  keyPassphrase?: string;
 };
 
 export type WebhookConfig = {
