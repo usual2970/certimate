@@ -60,11 +60,12 @@ type Certificate struct {
 }
 
 type ApplyOption struct {
-	Email       string `json:"email"`
-	Domain      string `json:"domain"`
-	Access      string `json:"access"`
-	Nameservers string `json:"nameservers"`
-	Timeout     int64  `json:"timeout"`
+	Email        string `json:"email"`
+	Domain       string `json:"domain"`
+	Access       string `json:"access"`
+	KeyAlgorithm string `json:"keyAlgorithm"`
+	Nameservers  string `json:"nameservers"`
+	Timeout      int64  `json:"timeout"`
 }
 
 type ApplyUser struct {
@@ -91,11 +92,10 @@ type Applicant interface {
 
 func Get(record *models.Record) (Applicant, error) {
 	if record.GetString("applyConfig") == "" {
-		return nil, errors.New("apply config is empty")
+		return nil, errors.New("applyConfig is empty")
 	}
 
 	applyConfig := &domain.ApplyConfig{}
-
 	record.UnmarshalJSONField("applyConfig", applyConfig)
 
 	access, err := app.GetApp().Dao().FindRecordById("access", applyConfig.Access)
@@ -103,17 +103,23 @@ func Get(record *models.Record) (Applicant, error) {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
 
-	email := applyConfig.Email
-	if email == "" {
-		email = defaultEmail
+	if applyConfig.Email == "" {
+		applyConfig.Email = defaultEmail
 	}
+
+	if applyConfig.Timeout == 0 {
+		applyConfig.Timeout = defaultTimeout
+	}
+
 	option := &ApplyOption{
-		Email:       email,
-		Domain:      record.GetString("domain"),
-		Access:      access.GetString("config"),
-		Nameservers: applyConfig.Nameservers,
-		Timeout:     applyConfig.Timeout,
+		Email:        applyConfig.Email,
+		Domain:       record.GetString("domain"),
+		Access:       access.GetString("config"),
+		KeyAlgorithm: applyConfig.KeyAlgorithm,
+		Nameservers:  applyConfig.Nameservers,
+		Timeout:      applyConfig.Timeout,
 	}
+
 	switch access.GetString("configType") {
 	case configTypeAliyun:
 		return NewAliyun(option), nil
@@ -171,7 +177,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 
 	// This CA URL is configured for a local dev instance of Boulder running in Docker in a VM.
 	config.CADirURL = sslProviderUrls[sslProvider.Provider]
-	config.Certificate.KeyType = certcrypto.RSA2048
+	config.Certificate.KeyType = parseKeyAlgorithm(option.KeyAlgorithm)
 
 	// A client facilitates communication with the CA server.
 	client, err := lego.NewClient(config)
@@ -180,7 +186,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	}
 
 	challengeOptions := make([]dns01.ChallengeOption, 0)
-	nameservers := ParseNameservers(option.Nameservers)
+	nameservers := parseNameservers(option.Nameservers)
 	if len(nameservers) > 0 {
 		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(nameservers))
 	}
@@ -195,7 +201,6 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	myUser.Registration = reg
 
 	domains := strings.Split(option.Domain, ";")
-
 	request := certificate.ObtainRequest{
 		Domains: domains,
 		Bundle:  true,
@@ -231,7 +236,6 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.
 
 	default:
 		err = errors.New("unknown ssl provider")
-
 	}
 
 	if err != nil {
@@ -241,15 +245,13 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.
 	return reg, nil
 }
 
-func ParseNameservers(ns string) []string {
+func parseNameservers(ns string) []string {
 	nameservers := make([]string, 0)
 
 	lines := strings.Split(ns, ";")
 
 	for _, line := range lines {
-
 		line = strings.TrimSpace(line)
-
 		if line == "" {
 			continue
 		}
@@ -258,4 +260,23 @@ func ParseNameservers(ns string) []string {
 	}
 
 	return nameservers
+}
+
+func parseKeyAlgorithm(algo string) certcrypto.KeyType {
+	switch algo {
+	case "RSA2048":
+		return certcrypto.RSA2048
+	case "RSA3072":
+		return certcrypto.RSA3072
+	case "RSA4096":
+		return certcrypto.RSA4096
+	case "RSA8192":
+		return certcrypto.RSA8192
+	case "EC256":
+		return certcrypto.EC256
+	case "EC384":
+		return certcrypto.EC384
+	default:
+		return certcrypto.RSA2048
+	}
 }
