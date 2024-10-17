@@ -3,6 +3,7 @@ package notify
 import (
 	"context"
 	"fmt"
+	"github.com/nikoksr/notify/service/lark"
 	"strconv"
 
 	notifyPackage "github.com/nikoksr/notify"
@@ -17,6 +18,7 @@ const (
 	notifyChannelDingtalk = "dingtalk"
 	notifyChannelWebhook  = "webhook"
 	notifyChannelTelegram = "telegram"
+	notifyChannelLark     = "lark"
 )
 
 func Send(title, content string) error {
@@ -67,6 +69,8 @@ func getNotifiers() ([]notifyPackage.Notifier, error) {
 			notifiers = append(notifiers, temp)
 		case notifyChannelDingtalk:
 			notifiers = append(notifiers, getDingTalkNotifier(v))
+		case notifyChannelLark:
+			notifiers = append(notifiers, getLarkNotifier(v))
 		case notifyChannelWebhook:
 			notifiers = append(notifiers, getWebhookNotifier(v))
 		}
@@ -106,6 +110,10 @@ func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 		Token:  getString(conf, "accessToken"),
 		Secret: getString(conf, "secret"),
 	})
+}
+
+func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
+	return lark.NewWebhookService(getString(conf, "webhookUrl"))
 }
 
 func getString(conf map[string]any, key string) string {
