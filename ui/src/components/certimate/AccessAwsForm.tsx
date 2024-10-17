@@ -8,17 +8,17 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweicloudConfig, getUsageByConfigType } from "@/domain/access";
+import { Access, accessFormType, AwsConfig, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
-type AccessHuaweicloudFormProps = {
+type AccessAwsFormProps = {
   op: "add" | "edit" | "copy";
   data?: Access;
   onAfterReq: () => void;
 };
 
-const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormProps) => {
+const AccessAwsForm = ({ data, op, onAfterReq }: AccessAwsFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -40,24 +40,30 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
       .string()
       .min(1, "access.authorization.form.secret_access_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
+    hostedZoneId: z
+      .string()
+      .min(0, "access.authorization.form.aws_hosted_zone_id.placeholder")
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: HuaweicloudConfig = {
+  let config: AwsConfig = {
     region: "cn-north-1",
     accessKeyId: "",
     secretAccessKey: "",
+    hostedZoneId: "",
   };
-  if (data) config = data.config as HuaweicloudConfig;
+  if (data) config = data.config as AwsConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "huaweicloud",
+      configType: "aws",
       region: config.region,
       accessKeyId: config.accessKeyId,
       secretAccessKey: config.secretAccessKey,
+      hostedZoneId: config.hostedZoneId,
     },
   });
 
@@ -71,6 +77,7 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
         region: data.region,
         accessKeyId: data.accessKeyId,
         secretAccessKey: data.secretAccessKey,
+        hostedZoneId: data.hostedZoneId,
       },
     };
 
@@ -203,6 +210,21 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="hostedZoneId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("access.authorization.form.aws_hosted_zone_id.label")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("access.authorization.form.aws_hosted_zone_id.placeholder")} {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormMessage />
 
             <div className="flex justify-end">
@@ -215,4 +237,4 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
   );
 };
 
-export default AccessHuaweicloudForm;
+export default AccessAwsForm;

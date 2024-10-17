@@ -10,6 +10,7 @@ import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweicloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
+import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
 import AccessGodaddyForm from "./AccessGodaddyForm";
@@ -71,6 +72,17 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
     case "qiniu":
       form = (
         <AccessQiniuForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "aws":
+      form = (
+        <AccessAwsForm
           data={data}
           op={op}
           onAfterReq={() => {

@@ -78,6 +78,7 @@ go run main.go serve
 |   腾讯云   |      √       |      √       | 可签发在腾讯云注册的域名；可部署到腾讯云 CDN                 |
 |   华为云   |      √       |              | 可签发在华为云注册的域名                                     |
 |   七牛云   |              |      √       | 可部署到七牛云 CDN                                           |
+|    AWS     |      √       |              | 可签发在 AWS Route53 托管的域名                              |
 | CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书 |
 |  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                  |
 |  Namesilo  |      √       |              | 可签发在 Namesilo 注册的域名                                 |
