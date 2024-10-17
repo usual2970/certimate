@@ -1,1 +1,1 @@
-export const version = "Certimate v0.2.2";
+export const version = "Certimate v0.2.3";
