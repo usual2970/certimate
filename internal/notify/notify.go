@@ -1,6 +1,7 @@
 package notify
 
 import (
+	"certimate/internal/utils/app"
 	"context"
 	"fmt"
 	"strconv"
@@ -8,15 +9,15 @@ import (
 	notifyPackage "github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/http"
+	"github.com/nikoksr/notify/service/lark"
 	"github.com/nikoksr/notify/service/telegram"
-
-	"certimate/internal/utils/app"
 )
 
 const (
 	notifyChannelDingtalk = "dingtalk"
 	notifyChannelWebhook  = "webhook"
 	notifyChannelTelegram = "telegram"
+	notifyChannelLark     = "lark"
 )
 
 func Send(title, content string) error {
@@ -67,6 +68,8 @@ func getNotifiers() ([]notifyPackage.Notifier, error) {
 			notifiers = append(notifiers, temp)
 		case notifyChannelDingtalk:
 			notifiers = append(notifiers, getDingTalkNotifier(v))
+		case notifyChannelLark:
+			notifiers = append(notifiers, getLarkNotifier(v))
 		case notifyChannelWebhook:
 			notifiers = append(notifiers, getWebhookNotifier(v))
 		}
@@ -106,6 +109,10 @@ func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 		Token:  getString(conf, "accessToken"),
 		Secret: getString(conf, "secret"),
 	})
+}
+
+func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
+	return lark.NewWebhookService(getString(conf, "webhookUrl"))
 }
 
 func getString(conf map[string]any, key string) string {
