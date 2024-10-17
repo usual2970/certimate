@@ -68,5 +68,6 @@
   "common.provider.ssh": "SSH 部署",
   "common.provider.webhook": "Webhook",
   "common.provider.dingtalk": "钉钉",
-  "common.provider.telegram": "Telegram"
+  "common.provider.telegram": "Telegram",
+  "common.provider.lark": "飞书"
 }

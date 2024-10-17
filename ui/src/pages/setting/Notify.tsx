@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import DingTalk from "@/components/notify/DingTalk";
+import Lark from "@/components/notify/Lark";
 import NotifyTemplate from "@/components/notify/NotifyTemplate";
 import Telegram from "@/components/notify/Telegram";
 import Webhook from "@/components/notify/Webhook";
@@ -29,6 +30,13 @@ const Notify = () => {
               <AccordionTrigger>{t("common.provider.dingtalk")}</AccordionTrigger>
               <AccordionContent>
                 <DingTalk />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-3" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.lark")}</AccordionTrigger>
+              <AccordionContent>
+                <Lark />
               </AccordionContent>
             </AccordionItem>
 

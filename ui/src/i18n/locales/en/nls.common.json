@@ -68,5 +68,6 @@
   "common.provider.ssh": "SSH Deployment",
   "common.provider.webhook": "Webhook",
   "common.provider.dingtalk": "DingTalk",
-  "common.provider.telegram": "Telegram"
+  "common.provider.telegram": "Telegram",
+  "common.provider.lark": "Lark"
 }
