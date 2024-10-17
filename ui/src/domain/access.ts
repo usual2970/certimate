@@ -5,6 +5,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["tencent", ["common.provider.tencent", "/imgs/providers/tencent.svg"]],
   ["huaweicloud", ["common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg"]],
   ["qiniu", ["common.provider.qiniu", "/imgs/providers/qiniu.svg"]],
+  ["aws", ["common.provider.aws", "/imgs/providers/aws.svg"]],
   ["cloudflare", ["common.provider.cloudflare", "/imgs/providers/cloudflare.svg"]],
   ["namesilo", ["common.provider.namesilo", "/imgs/providers/namesilo.svg"]],
   ["godaddy", ["common.provider.godaddy", "/imgs/providers/godaddy.svg"]],
@@ -23,6 +24,7 @@ export const accessFormType = z.union(
     z.literal("tencent"),
     z.literal("huaweicloud"),
     z.literal("qiniu"),
+    z.literal("aws"),
     z.literal("cloudflare"),
     z.literal("namesilo"),
     z.literal("godaddy"),
@@ -46,6 +48,7 @@ export type Access = {
     | TencentConfig
     | HuaweicloudConfig
     | QiniuConfig
+    | AwsConfig
     | CloudflareConfig
     | NamesiloConfig
     | GodaddyConfig
@@ -76,6 +79,13 @@ export type HuaweicloudConfig = {
 export type QiniuConfig = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AwsConfig = {
+  region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  hostedZoneId?: string;
 };
 
 export type CloudflareConfig = {

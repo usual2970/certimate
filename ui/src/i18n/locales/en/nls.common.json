@@ -61,6 +61,7 @@
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.qiniu": "Qiniu",
   "common.provider.qiniu.cdn": "Qiniu - CDN",
+  "common.provider.aws": "AWS",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",
