@@ -77,6 +77,7 @@ password：1234567890
 | Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud CDN      |
 | Huawei Cloud  |      √       |            | Supports domains registered on Huawei Cloud                                                 |
 |  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                      |
+|      AWS      |      √       |            | Supports domains managed on AWS Route53                                                     |
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                      |
 |   Namesilo    |      √       |            | Supports domains registered on Namesilo                                                     |

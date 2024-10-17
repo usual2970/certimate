@@ -61,6 +61,7 @@
   "common.provider.huaweicloud": "华为云",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - CDN",
+  "common.provider.aws": "AWS",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",
