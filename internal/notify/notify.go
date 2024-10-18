@@ -1,17 +1,16 @@
 package notify
 
 import (
+	"certimate/internal/utils/app"
 	"context"
 	"fmt"
-	"github.com/nikoksr/notify/service/lark"
 	"strconv"
 
 	notifyPackage "github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/http"
+	"github.com/nikoksr/notify/service/lark"
 	"github.com/nikoksr/notify/service/telegram"
-
-	"certimate/internal/utils/app"
 )
 
 const (

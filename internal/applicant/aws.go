@@ -1,6 +1,7 @@
 package applicant
 
 import (
+	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
