@@ -12,6 +12,7 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
   ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
   ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
+  ["k8s", ["common.provider.kubernetes", "/imgs/providers/k8s.svg"]],
 ]);
 
 export const getProviderInfo = (t: string) => {
@@ -31,6 +32,7 @@ export const accessFormType = z.union(
     z.literal("local"),
     z.literal("ssh"),
     z.literal("webhook"),
+    z.literal("k8s"),
   ],
   { message: "access.authorization.form.type.placeholder" }
 );
@@ -54,7 +56,8 @@ export type Access = {
     | GodaddyConfig
     | LocalConfig
     | SSHConfig
-    | WebhookConfig;
+    | WebhookConfig
+    | KubernetesConfig;
   deleted?: string;
   created?: string;
   updated?: string;
@@ -117,6 +120,10 @@ export type WebhookConfig = {
   url: string;
 };
 
+export type KubernetesConfig = {
+  kubeConfig: string;
+};
+
 export const getUsageByConfigType = (configType: string): AccessUsage => {
   switch (configType) {
     case "aliyun":
@@ -128,8 +135,10 @@ export const getUsageByConfigType = (configType: string): AccessUsage => {
     case "local":
     case "ssh":
     case "webhook":
+    case "k8s":
       return "deploy";
 
+    case "aws":
     case "cloudflare":
     case "namesilo":
     case "godaddy":

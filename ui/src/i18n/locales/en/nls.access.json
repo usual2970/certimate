@@ -69,6 +69,9 @@
   "access.authorization.form.ssh_command.placeholder": "Please enter command",
   "access.authorization.form.webhook_url.label": "Webhook URL",
   "access.authorization.form.webhook_url.placeholder": "Please enter Webhook URL",
+  "access.authorization.form.k8s_kubeconfig.label": "KubeConfig",
+  "access.authorization.form.k8s_kubeconfig.placeholder": "Please enter KubeConfig",
+  "access.authorization.form.k8s_kubeconfig_file.placeholder": "Please select file",
 
   "access.group.tab": "Authorization Group",
 

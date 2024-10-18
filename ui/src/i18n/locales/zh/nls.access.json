@@ -69,6 +69,9 @@
   "access.authorization.form.ssh_command.placeholder": "请输入要执行的命令",
   "access.authorization.form.webhook_url.label": "Webhook URL",
   "access.authorization.form.webhook_url.placeholder": "请输入 Webhook URL",
+  "access.authorization.form.k8s_kubeconfig.label": "KubeConfig",
+  "access.authorization.form.k8s_kubeconfig.placeholder": "请输入 KubeConfig",
+  "access.authorization.form.k8s_kubeconfig_file.placeholder": "请选择文件",
 
   "access.group.tab": "授权组",
 
