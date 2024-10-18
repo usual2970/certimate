@@ -48,26 +48,26 @@ func (d *AliyunCDNDeployer) GetInfo() []string {
 	return d.infos
 }
 
-func (deployer *AliyunCDNDeployer) Deploy(ctx context.Context) error {
-	certName := fmt.Sprintf("%s-%s-%s", deployer.option.Domain, deployer.option.DomainId, rand.RandStr(6))
+func (d *AliyunCDNDeployer) Deploy(ctx context.Context) error {
+	certName := fmt.Sprintf("%s-%s-%s", d.option.Domain, d.option.DomainId, rand.RandStr(6))
 	setCdnDomainSSLCertificateRequest := &cdn20180510.SetCdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(getDeployString(deployer.option.DeployConfig, "domain")),
+		DomainName:  tea.String(getDeployString(d.option.DeployConfig, "domain")),
 		CertName:    tea.String(certName),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),
-		SSLPub:      tea.String(deployer.option.Certificate.Certificate),
-		SSLPri:      tea.String(deployer.option.Certificate.PrivateKey),
+		SSLPub:      tea.String(d.option.Certificate.Certificate),
+		SSLPri:      tea.String(d.option.Certificate.PrivateKey),
 		CertRegion:  tea.String("cn-hangzhou"),
 	}
 
 	runtime := &util.RuntimeOptions{}
 
-	resp, err := deployer.client.SetCdnDomainSSLCertificateWithOptions(setCdnDomainSSLCertificateRequest, runtime)
+	resp, err := d.client.SetCdnDomainSSLCertificateWithOptions(setCdnDomainSSLCertificateRequest, runtime)
 	if err != nil {
 		return err
 	}
 
-	deployer.infos = append(deployer.infos, toStr("cdn设置证书", resp))
+	d.infos = append(d.infos, toStr("cdn设置证书", resp))
 
 	return nil
 }
