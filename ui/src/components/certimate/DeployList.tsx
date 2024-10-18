@@ -140,8 +140,10 @@ const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
     config: { accesses },
   } = useConfig();
   const { t } = useTranslation();
+
   const access = accesses.find((access) => access.id === item.access);
-  const getImg = () => {
+
+  const getTypeIcon = () => {
     if (!access) {
       return "";
     }
@@ -173,7 +175,7 @@ const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
     <div className="flex justify-between text-sm p-3 items-center text-stone-700 dark:text-stone-200">
       <div className="flex space-x-2 items-center">
         <div>
-          <img src={getImg()} className="w-9"></img>
+          <img src={getTypeIcon()} className="w-9"></img>
         </div>
         <div className="text-stone-600 flex-col flex space-y-0 dark:text-stone-200">
           <div>{getTypeName()}</div>
@@ -239,7 +241,8 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
 
     let t;
     if (temp && temp.length > 1) {
-      t = temp[1];
+      // TODO: code smell, maybe a dictionary is better
+      t = temp[0] === "k8s" ? temp[0] : temp[1];
     } else {
       t = locDeployConfig.type;
     }
@@ -419,7 +422,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
   );
 };
 
-type TargetType = "ssh" | "cdn" | "webhook" | "local" | "oss" | "dcdn";
+type TargetType = "oss" | "cdn" | "dcdn" | "local" | "ssh" | "webhook" | "k8s";
 
 type DeployEditProps = {
   type: TargetType;
@@ -428,18 +431,20 @@ type DeployEditProps = {
 const DeployEdit = ({ type }: DeployEditProps) => {
   const getDeploy = () => {
     switch (type) {
-      case "ssh":
-        return <DeployToSSH />;
-      case "local":
-        return <DeployToSSH />;
       case "cdn":
         return <DeployToCDN />;
       case "dcdn":
         return <DeployToCDN />;
       case "oss":
         return <DeployToOSS />;
+      case "ssh":
+        return <DeployToSSH />;
+      case "local":
+        return <DeployToSSH />;
       case "webhook":
         return <DeployToWebhook />;
+      case "k8s":
+        return <DeployToKubernetes />;
       default:
         return <DeployToCDN />;
     }
@@ -474,9 +479,9 @@ const DeployToSSH = () => {
     <>
       <div className="flex flex-col space-y-2">
         <div>
-          <Label>{t("access.authorization.form.ssh_cert_path.label")}</Label>
+          <Label>{t("domain.deployment.form.ssh_cert_path.label")}</Label>
           <Input
-            placeholder={t("access.authorization.form.ssh_cert_path.label")}
+            placeholder={t("domain.deployment.form.ssh_cert_path.label")}
             className="w-full mt-1"
             value={data?.config?.certPath}
             onChange={(e) => {
@@ -491,9 +496,9 @@ const DeployToSSH = () => {
           />
         </div>
         <div>
-          <Label>{t("access.authorization.form.ssh_key_path.label")}</Label>
+          <Label>{t("domain.deployment.form.ssh_key_path.label")}</Label>
           <Input
-            placeholder={t("access.authorization.form.ssh_key_path.placeholder")}
+            placeholder={t("domain.deployment.form.ssh_key_path.placeholder")}
             className="w-full mt-1"
             value={data?.config?.keyPath}
             onChange={(e) => {
@@ -509,11 +514,11 @@ const DeployToSSH = () => {
         </div>
 
         <div>
-          <Label>{t("access.authorization.form.ssh_pre_command.label")}</Label>
+          <Label>{t("domain.deployment.form.ssh_pre_command.label")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.preCommand}
-            placeholder={t("access.authorization.form.ssh_pre_command.placeholder")}
+            placeholder={t("domain.deployment.form.ssh_pre_command.placeholder")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -527,11 +532,11 @@ const DeployToSSH = () => {
         </div>
 
         <div>
-          <Label>{t("access.authorization.form.ssh_command.label")}</Label>
+          <Label>{t("domain.deployment.form.ssh_command.label")}</Label>
           <Textarea
             className="mt-1"
             value={data?.config?.command}
-            placeholder={t("access.authorization.form.ssh_command.placeholder")}
+            placeholder={t("domain.deployment.form.ssh_command.placeholder")}
             onChange={(e) => {
               const newData = produce(data, (draft) => {
                 if (!draft.config) {
@@ -548,70 +553,30 @@ const DeployToSSH = () => {
   );
 };
 
-const DeployToCDN = () => {
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+const DeployToWebhook = () => {
+  const { deploy: data, setDeploy } = useDeployEditContext();
 
-  const { t } = useTranslation();
+  const { setError } = useDeployEditContext();
 
   useEffect(() => {
     setError({});
   }, []);
 
-  useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
-  });
-
   return (
-    <div className="flex flex-col space-y-2">
-      <div>
-        <Label>{t("domain.deployment.form.cdn_domain.label")}</Label>
-        <Input
-          placeholder={t("domain.deployment.form.cdn_domain.placeholder")}
-          className="w-full mt-1"
-          value={data?.config?.domain}
-          onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
+    <>
+      <KVList
+        variables={data?.config?.variables}
+        onValueChange={(variables: KVType[]) => {
+          const newData = produce(data, (draft) => {
+            if (!draft.config) {
+              draft.config = {};
             }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
-            });
-            setDeploy(newData);
-          }}
-        />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
-      </div>
-    </div>
+            draft.config.variables = variables;
+          });
+          setDeploy(newData);
+        }}
+      />
+    </>
   );
 };
 
@@ -681,6 +646,7 @@ const DeployToOSS = () => {
         <Label>{t("domain.deployment.form.oss_endpoint.label")}</Label>
 
         <Input
+          placeholder={t("domain.deployment.form.oss_endpoint.placeholder")}
           className="w-full mt-1"
           value={data?.config?.endpoint}
           onChange={(e) => {
@@ -697,7 +663,7 @@ const DeployToOSS = () => {
         />
         <div className="text-red-600 text-sm mt-1">{error?.endpoint}</div>
 
-        <Label>{t("domain.deployment.form.oss_bucket")}</Label>
+        <Label>{t("domain.deployment.form.oss_bucket.label")}</Label>
         <Input
           placeholder={t("domain.deployment.form.oss_bucket.placeholder")}
           className="w-full mt-1"
@@ -729,9 +695,9 @@ const DeployToOSS = () => {
         />
         <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
 
-        <Label>{t("domain.deployment.form.cdn_domain.label")}</Label>
+        <Label>{t("domain.deployment.form.domain.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.cdn_domain.label")}
+          placeholder={t("domain.deployment.form.domain.label")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
@@ -765,29 +731,161 @@ const DeployToOSS = () => {
   );
 };
 
-const DeployToWebhook = () => {
-  const { deploy: data, setDeploy } = useDeployEditContext();
+const DeployToCDN = () => {
+  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    setError({});
+  }, []);
+
+  useEffect(() => {
+    const resp = domainSchema.safeParse(data.config?.domain);
+    if (!resp.success) {
+      setError({
+        ...error,
+        domain: JSON.parse(resp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        domain: "",
+      });
+    }
+  }, [data]);
+
+  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+    message: t("common.errmsg.domain_invalid"),
+  });
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <div>
+        <Label>{t("domain.deployment.form.domain.label")}</Label>
+        <Input
+          placeholder={t("domain.deployment.form.domain.placeholder")}
+          className="w-full mt-1"
+          value={data?.config?.domain}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = domainSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                domain: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                domain: "",
+              });
+            }
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.domain = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+      </div>
+    </div>
+  );
+};
+
+const DeployToKubernetes = () => {
+  const { t } = useTranslation();
   const { setError } = useDeployEditContext();
 
   useEffect(() => {
     setError({});
   }, []);
 
+  const { deploy: data, setDeploy } = useDeployEditContext();
+
+  useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          namespace: "default",
+          secretName: "",
+          secretDataKeyForCrt: "tls.crt",
+          secretDataKeyForKey: "tls.key",
+        },
+      });
+    }
+  }, []);
+
   return (
     <>
-      <KVList
-        variables={data?.config?.variables}
-        onValueChange={(variables: KVType[]) => {
-          const newData = produce(data, (draft) => {
-            if (!draft.config) {
-              draft.config = {};
-            }
-            draft.config.variables = variables;
-          });
-          setDeploy(newData);
-        }}
-      />
+      <div className="flex flex-col space-y-2">
+        <div>
+          <Label>{t("domain.deployment.form.k8s_namespace.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.k8s_namespace.label")}
+            className="w-full mt-1"
+            value={data?.config?.namespace}
+            onChange={(e) => {
+              const newData = produce(data, (draft) => {
+                draft.config ??= {};
+                draft.config.namespace = e.target.value;
+              });
+              setDeploy(newData);
+            }}
+          />
+        </div>
+        <div>
+          <Label>{t("domain.deployment.form.k8s_secret_name.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.k8s_secret_name.label")}
+            className="w-full mt-1"
+            value={data?.config?.secretName}
+            onChange={(e) => {
+              const newData = produce(data, (draft) => {
+                draft.config ??= {};
+                draft.config.secretName = e.target.value;
+              });
+              setDeploy(newData);
+            }}
+          />
+        </div>
+        <div>
+          <Label>{t("domain.deployment.form.k8s_secret_data_key_for_crt.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.k8s_secret_data_key_for_crt.label")}
+            className="w-full mt-1"
+            value={data?.config?.secretDataKeyForCrt}
+            onChange={(e) => {
+              const newData = produce(data, (draft) => {
+                draft.config ??= {};
+                draft.config.secretDataKeyForCrt = e.target.value;
+              });
+              setDeploy(newData);
+            }}
+          />
+        </div>
+        <div>
+          <Label>{t("domain.deployment.form.k8s_secret_data_key_for_key.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.k8s_secret_data_key_for_key.label")}
+            className="w-full mt-1"
+            value={data?.config?.secretDataKeyForKey}
+            onChange={(e) => {
+              const newData = produce(data, (draft) => {
+                draft.config ??= {};
+                draft.config.secretDataKeyForKey = e.target.value;
+              });
+              setDeploy(newData);
+            }}
+          />
+        </div>
+      </div>
     </>
   );
 };

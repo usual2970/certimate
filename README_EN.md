@@ -84,6 +84,7 @@ password：1234567890
 | Local Deploy  |              |     √      | Supports deployment to local servers                                                        |
 |      SSH      |              |     √      | Supports deployment to SSH servers                                                          |
 |    Webhook    |              |     √      | Supports callback to Webhook                                                                |
+|  Kubernetes   |              |     √      | Supports deployment to Kubernetes Secret                                                    |
 
 ## Screenshots
 

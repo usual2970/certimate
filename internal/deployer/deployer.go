@@ -23,6 +23,7 @@ const (
 	targetLocal      = "local"
 	targetSSH        = "ssh"
 	targetWebhook    = "webhook"
+	targetK8sSecret  = "k8s-secret"
 )
 
 type DeployerOption struct {
@@ -111,6 +112,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewSSHDeployer(option)
 	case targetWebhook:
 		return NewWebhookDeployer(option)
+	case targetK8sSecret:
+		return NewK8sSecretDeployer(option)
 	}
 	return nil, errors.New("not implemented")
 }
