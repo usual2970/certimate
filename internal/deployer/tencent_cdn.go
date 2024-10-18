@@ -16,13 +16,13 @@ import (
 	"certimate/internal/utils/rand"
 )
 
-type tencentCdn struct {
+type TencentCDNDeployer struct {
 	option     *DeployerOption
 	credential *common.Credential
 	infos      []string
 }
 
-func NewTencentCdn(option *DeployerOption) (Deployer, error) {
+func NewTencentCDNDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.TencentAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal tencent access: %w", err)
@@ -33,47 +33,47 @@ func NewTencentCdn(option *DeployerOption) (Deployer, error) {
 		access.SecretKey,
 	)
 
-	return &tencentCdn{
+	return &TencentCDNDeployer{
 		option:     option,
 		credential: credential,
 		infos:      make([]string, 0),
 	}, nil
 }
 
-func (a *tencentCdn) GetID() string {
-	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+func (d *TencentCDNDeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
 }
 
-func (t *tencentCdn) GetInfo() []string {
-	return t.infos
+func (d *TencentCDNDeployer) GetInfo() []string {
+	return d.infos
 }
 
-func (t *tencentCdn) Deploy(ctx context.Context) error {
+func (d *TencentCDNDeployer) Deploy(ctx context.Context) error {
 	// 上传证书
-	certId, err := t.uploadCert()
+	certId, err := d.uploadCert()
 	if err != nil {
 		return fmt.Errorf("failed to upload certificate: %w", err)
 	}
-	t.infos = append(t.infos, toStr("上传证书", certId))
+	d.infos = append(d.infos, toStr("上传证书", certId))
 
-	if err := t.deploy(certId); err != nil {
+	if err := d.deploy(certId); err != nil {
 		return fmt.Errorf("failed to deploy: %w", err)
 	}
 
 	return nil
 }
 
-func (t *tencentCdn) uploadCert() (string, error) {
+func (d *TencentCDNDeployer) uploadCert() (string, error) {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
 
-	client, _ := ssl.NewClient(t.credential, "", cpf)
+	client, _ := ssl.NewClient(d.credential, "", cpf)
 
 	request := ssl.NewUploadCertificateRequest()
 
-	request.CertificatePublicKey = common.StringPtr(t.option.Certificate.Certificate)
-	request.CertificatePrivateKey = common.StringPtr(t.option.Certificate.PrivateKey)
-	request.Alias = common.StringPtr(t.option.Domain + "_" + rand.RandStr(6))
+	request.CertificatePublicKey = common.StringPtr(d.option.Certificate.Certificate)
+	request.CertificatePrivateKey = common.StringPtr(d.option.Certificate.PrivateKey)
+	request.Alias = common.StringPtr(d.option.Domain + "_" + rand.RandStr(6))
 	request.Repeatable = common.BoolPtr(false)
 
 	response, err := client.UploadCertificate(request)
@@ -84,11 +84,11 @@ func (t *tencentCdn) uploadCert() (string, error) {
 	return *response.Response.CertificateId, nil
 }
 
-func (t *tencentCdn) deploy(certId string) error {
+func (d *TencentCDNDeployer) deploy(certId string) error {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
 	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := ssl.NewClient(t.credential, "", cpf)
+	client, _ := ssl.NewClient(d.credential, "", cpf)
 
 	// 实例化一个请求对象,每个接口都会对应一个request对象
 	request := ssl.NewDeployCertificateInstanceRequest()
@@ -98,9 +98,9 @@ func (t *tencentCdn) deploy(certId string) error {
 	request.Status = common.Int64Ptr(1)
 
 	// 如果是泛域名就从cdn列表下获取SSL证书中的可用域名
-	domain := getDeployString(t.option.DeployConfig, "domain")
+	domain := getDeployString(d.option.DeployConfig, "domain")
 	if strings.Contains(domain, "*") {
-		list, errGetList := t.getDomainList()
+		list, errGetList := d.getDomainList()
 		if errGetList != nil {
 			return fmt.Errorf("failed to get certificate domain list: %w", errGetList)
 		}
@@ -117,18 +117,18 @@ func (t *tencentCdn) deploy(certId string) error {
 	if err != nil {
 		return fmt.Errorf("failed to deploy certificate: %w", err)
 	}
-	t.infos = append(t.infos, toStr("部署证书", resp.Response))
+	d.infos = append(d.infos, toStr("部署证书", resp.Response))
 	return nil
 }
 
-func (t *tencentCdn) getDomainList() ([]string, error) {
+func (d *TencentCDNDeployer) getDomainList() ([]string, error) {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
-	client, _ := cdn.NewClient(t.credential, "", cpf)
+	client, _ := cdn.NewClient(d.credential, "", cpf)
 
 	request := cdn.NewDescribeCertDomainsRequest()
 
-	cert := base64.StdEncoding.EncodeToString([]byte(t.option.Certificate.Certificate))
+	cert := base64.StdEncoding.EncodeToString([]byte(d.option.Certificate.Certificate))
 	request.Cert = &cert
 
 	response, err := client.DescribeCertDomains(request)

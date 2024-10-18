@@ -10,48 +10,48 @@ import (
 	xhttp "certimate/internal/utils/http"
 )
 
-type webhookAccess struct {
+type WebhookAccess struct {
 	Url string `json:"url"`
 }
 
-type hookData struct {
+type WebhookDeployer struct {
+	option *DeployerOption
+	infos  []string
+}
+
+func NewWebhookDeployer(option *DeployerOption) (Deployer, error) {
+	return &WebhookDeployer{
+		option: option,
+		infos:  make([]string, 0),
+	}, nil
+}
+
+func (d *WebhookDeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+}
+
+func (d *WebhookDeployer) GetInfo() []string {
+	return d.infos
+}
+
+type webhookData struct {
 	Domain      string            `json:"domain"`
 	Certificate string            `json:"certificate"`
 	PrivateKey  string            `json:"privateKey"`
 	Variables   map[string]string `json:"variables"`
 }
 
-type webhook struct {
-	option *DeployerOption
-	infos  []string
-}
-
-func NewWebhook(option *DeployerOption) (Deployer, error) {
-	return &webhook{
-		option: option,
-		infos:  make([]string, 0),
-	}, nil
-}
-
-func (a *webhook) GetID() string {
-	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
-}
-
-func (w *webhook) GetInfo() []string {
-	return w.infos
-}
-
-func (w *webhook) Deploy(ctx context.Context) error {
-	access := &webhookAccess{}
-	if err := json.Unmarshal([]byte(w.option.Access), access); err != nil {
+func (d *WebhookDeployer) Deploy(ctx context.Context) error {
+	access := &WebhookAccess{}
+	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return fmt.Errorf("failed to parse hook access config: %w", err)
 	}
 
-	data := &hookData{
-		Domain:      w.option.Domain,
-		Certificate: w.option.Certificate.Certificate,
-		PrivateKey:  w.option.Certificate.PrivateKey,
-		Variables:   getDeployVariables(w.option.DeployConfig),
+	data := &webhookData{
+		Domain:      d.option.Domain,
+		Certificate: d.option.Certificate.Certificate,
+		PrivateKey:  d.option.Certificate.PrivateKey,
+		Variables:   getDeployVariables(d.option.DeployConfig),
 	}
 
 	body, _ := json.Marshal(data)
@@ -63,7 +63,7 @@ func (w *webhook) Deploy(ctx context.Context) error {
 		return fmt.Errorf("failed to send hook request: %w", err)
 	}
 
-	w.infos = append(w.infos, toStr("webhook response", string(resp)))
+	d.infos = append(d.infos, toStr("webhook response", string(resp)))
 
 	return nil
 }

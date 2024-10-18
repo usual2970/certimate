@@ -17,6 +17,7 @@ import AccessGodaddyForm from "./AccessGodaddyForm";
 import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
+import AccessKubernetesForm from "./AccessKubernetesForm";
 import { Access, accessTypeMap } from "@/domain/access";
 
 type AccessEditProps = {
@@ -149,6 +150,17 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
     case "webhook":
       form = (
         <AccessWebhookForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "k8s":
+      form = (
+        <AccessKubernetesForm
           data={data}
           op={op}
           onAfterReq={() => {

@@ -85,6 +85,7 @@ go run main.go serve
 |  本地部署  |              |      √       | 可部署到本地服务器                                           |
 |    SSH     |              |      √       | 可部署到 SSH 服务器                                          |
 |  Webhook   |              |      √       | 可部署时回调到 Webhook                                       |
+| Kubernetes |              |      √       | 可部署到 Kubernetes Secret                                   |
 
 ## 四、系统截图
 
