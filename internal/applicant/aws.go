@@ -1,12 +1,13 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
 	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/go-acme/lego/v4/providers/dns/route53"
+
+	"certimate/internal/domain"
 )
 
 type aws struct {

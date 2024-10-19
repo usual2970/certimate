@@ -10,35 +10,35 @@ import (
 	"runtime"
 )
 
-type localAccess struct{}
+type LocalAccess struct{}
 
-type local struct {
+type LocalDeployer struct {
 	option *DeployerOption
 	infos  []string
 }
 
-func NewLocal(option *DeployerOption) *local {
-	return &local{
+func NewLocalDeployer(option *DeployerOption) (Deployer, error) {
+	return &LocalDeployer{
 		option: option,
 		infos:  make([]string, 0),
-	}
+	}, nil
 }
 
-func (l *local) GetID() string {
-	return fmt.Sprintf("%s-%s", l.option.AceessRecord.GetString("name"), l.option.AceessRecord.Id)
+func (d *LocalDeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
 }
 
-func (l *local) GetInfo() []string {
+func (d *LocalDeployer) GetInfo() []string {
 	return []string{}
 }
 
-func (l *local) Deploy(ctx context.Context) error {
-	access := &localAccess{}
-	if err := json.Unmarshal([]byte(l.option.Access), access); err != nil {
+func (d *LocalDeployer) Deploy(ctx context.Context) error {
+	access := &LocalAccess{}
+	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return err
 	}
 
-	preCommand := getDeployString(l.option.DeployConfig, "preCommand")
+	preCommand := getDeployString(d.option.DeployConfig, "preCommand")
 
 	if preCommand != "" {
 		if err := execCmd(preCommand); err != nil {
@@ -46,18 +46,18 @@ func (l *local) Deploy(ctx context.Context) error {
 		}
 	}
 
-	// 复制文件
-	if err := copyFile(l.option.Certificate.Certificate, getDeployString(l.option.DeployConfig, "certPath")); err != nil {
+	// 复制证书文件
+	if err := copyFile(getDeployString(d.option.DeployConfig, "certPath"), d.option.Certificate.Certificate); err != nil {
 		return fmt.Errorf("复制证书失败: %w", err)
 	}
 
-	if err := copyFile(l.option.Certificate.PrivateKey, getDeployString(l.option.DeployConfig, "keyPath")); err != nil {
+	// 复制私钥文件
+	if err := copyFile(getDeployString(d.option.DeployConfig, "keyPath"), d.option.Certificate.PrivateKey); err != nil {
 		return fmt.Errorf("复制私钥失败: %w", err)
 	}
 
 	// 执行命令
-
-	if err := execCmd(getDeployString(l.option.DeployConfig, "command")); err != nil {
+	if err := execCmd(getDeployString(d.option.DeployConfig, "command")); err != nil {
 		return fmt.Errorf("执行命令失败: %w", err)
 	}
 
@@ -85,7 +85,7 @@ func execCmd(command string) error {
 	return nil
 }
 
-func copyFile(content string, path string) error {
+func copyFile(path string, content string) error {
 	dir := filepath.Dir(path)
 
 	// 如果目录不存在，创建目录

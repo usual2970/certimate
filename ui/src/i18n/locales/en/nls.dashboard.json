@@ -7,5 +7,5 @@
   "dashboard.statistics.disabled": "Not Enabled",
   "dashboard.statistics.unit": "",
 
-  "dashboard.history": "Deployment History"
+  "dashboard.history": "Recently Deployment History"
 }

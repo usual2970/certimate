@@ -16,17 +16,17 @@ import (
 
 const qiniuGateway = "http://api.qiniu.com"
 
-type qiuniu struct {
+type QiniuCDNDeployer struct {
 	option      *DeployerOption
 	info        []string
 	credentials *auth.Credentials
 }
 
-func NewQiNiu(option *DeployerOption) (*qiuniu, error) {
+func NewQiniuCDNDeployer(option *DeployerOption) (*QiniuCDNDeployer, error) {
 	access := &domain.QiniuAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 
-	return &qiuniu{
+	return &QiniuCDNDeployer{
 		option: option,
 		info:   make([]string, 0),
 
@@ -34,41 +34,39 @@ func NewQiNiu(option *DeployerOption) (*qiuniu, error) {
 	}, nil
 }
 
-func (a *qiuniu) GetID() string {
-	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+func (d *QiniuCDNDeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
 }
 
-func (q *qiuniu) GetInfo() []string {
-	return q.info
+func (d *QiniuCDNDeployer) GetInfo() []string {
+	return d.info
 }
 
-func (q *qiuniu) Deploy(ctx context.Context) error {
+func (d *QiniuCDNDeployer) Deploy(ctx context.Context) error {
 	// 上传证书
-	certId, err := q.uploadCert()
+	certId, err := d.uploadCert()
 	if err != nil {
 		return fmt.Errorf("uploadCert failed: %w", err)
 	}
 
 	// 获取域名信息
-	domainInfo, err := q.getDomainInfo()
+	domainInfo, err := d.getDomainInfo()
 	if err != nil {
 		return fmt.Errorf("getDomainInfo failed: %w", err)
 	}
 
 	// 判断域名是否启用 https
-
 	if domainInfo.Https != nil && domainInfo.Https.CertID != "" {
 		// 启用了 https
 		// 修改域名证书
-		err = q.modifyDomainCert(certId)
+		err = d.modifyDomainCert(certId)
 		if err != nil {
 			return fmt.Errorf("modifyDomainCert failed: %w", err)
 		}
 	} else {
 		// 没启用 https
 		// 启用 https
-
-		err = q.enableHttps(certId)
+		err = d.enableHttps(certId)
 		if err != nil {
 			return fmt.Errorf("enableHttps failed: %w", err)
 		}
@@ -77,10 +75,10 @@ func (q *qiuniu) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (q *qiuniu) enableHttps(certId string) error {
-	path := fmt.Sprintf("/domain/%s/sslize", getDeployString(q.option.DeployConfig, "domain"))
+func (d *QiniuCDNDeployer) enableHttps(certId string) error {
+	path := fmt.Sprintf("/domain/%s/sslize", getDeployString(d.option.DeployConfig, "domain"))
 
-	body := &modifyDomainCertReq{
+	body := &qiniuModifyDomainCertReq{
 		CertID:      certId,
 		ForceHttps:  true,
 		Http2Enable: true,
@@ -91,7 +89,7 @@ func (q *qiuniu) enableHttps(certId string) error {
 		return fmt.Errorf("enable https failed: %w", err)
 	}
 
-	_, err = q.req(qiniuGateway+path, http.MethodPut, bytes.NewReader(bodyBytes))
+	_, err = d.req(qiniuGateway+path, http.MethodPut, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return fmt.Errorf("enable https failed: %w", err)
 	}
@@ -99,19 +97,19 @@ func (q *qiuniu) enableHttps(certId string) error {
 	return nil
 }
 
-type domainInfo struct {
-	Https *modifyDomainCertReq `json:"https"`
+type qiniuDomainInfo struct {
+	Https *qiniuModifyDomainCertReq `json:"https"`
 }
 
-func (q *qiuniu) getDomainInfo() (*domainInfo, error) {
-	path := fmt.Sprintf("/domain/%s", getDeployString(q.option.DeployConfig, "domain"))
+func (d *QiniuCDNDeployer) getDomainInfo() (*qiniuDomainInfo, error) {
+	path := fmt.Sprintf("/domain/%s", getDeployString(d.option.DeployConfig, "domain"))
 
-	res, err := q.req(qiniuGateway+path, http.MethodGet, nil)
+	res, err := d.req(qiniuGateway+path, http.MethodGet, nil)
 	if err != nil {
 		return nil, fmt.Errorf("req failed: %w", err)
 	}
 
-	resp := &domainInfo{}
+	resp := &qiniuDomainInfo{}
 	err = json.Unmarshal(res, resp)
 	if err != nil {
 		return nil, fmt.Errorf("json.Unmarshal failed: %w", err)
@@ -120,25 +118,25 @@ func (q *qiuniu) getDomainInfo() (*domainInfo, error) {
 	return resp, nil
 }
 
-type uploadCertReq struct {
+type qiniuUploadCertReq struct {
 	Name       string `json:"name"`
 	CommonName string `json:"common_name"`
 	Pri        string `json:"pri"`
 	Ca         string `json:"ca"`
 }
 
-type uploadCertResp struct {
+type qiniuUploadCertResp struct {
 	CertID string `json:"certID"`
 }
 
-func (q *qiuniu) uploadCert() (string, error) {
+func (d *QiniuCDNDeployer) uploadCert() (string, error) {
 	path := "/sslcert"
 
-	body := &uploadCertReq{
-		Name:       getDeployString(q.option.DeployConfig, "domain"),
-		CommonName: getDeployString(q.option.DeployConfig, "domain"),
-		Pri:        q.option.Certificate.PrivateKey,
-		Ca:         q.option.Certificate.Certificate,
+	body := &qiniuUploadCertReq{
+		Name:       getDeployString(d.option.DeployConfig, "domain"),
+		CommonName: getDeployString(d.option.DeployConfig, "domain"),
+		Pri:        d.option.Certificate.PrivateKey,
+		Ca:         d.option.Certificate.Certificate,
 	}
 
 	bodyBytes, err := json.Marshal(body)
@@ -146,11 +144,11 @@ func (q *qiuniu) uploadCert() (string, error) {
 		return "", fmt.Errorf("json.Marshal failed: %w", err)
 	}
 
-	res, err := q.req(qiniuGateway+path, http.MethodPost, bytes.NewReader(bodyBytes))
+	res, err := d.req(qiniuGateway+path, http.MethodPost, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return "", fmt.Errorf("req failed: %w", err)
 	}
-	resp := &uploadCertResp{}
+	resp := &qiniuUploadCertResp{}
 	err = json.Unmarshal(res, resp)
 	if err != nil {
 		return "", fmt.Errorf("json.Unmarshal failed: %w", err)
@@ -159,16 +157,16 @@ func (q *qiuniu) uploadCert() (string, error) {
 	return resp.CertID, nil
 }
 
-type modifyDomainCertReq struct {
+type qiniuModifyDomainCertReq struct {
 	CertID      string `json:"certId"`
 	ForceHttps  bool   `json:"forceHttps"`
 	Http2Enable bool   `json:"http2Enable"`
 }
 
-func (q *qiuniu) modifyDomainCert(certId string) error {
-	path := fmt.Sprintf("/domain/%s/httpsconf", getDeployString(q.option.DeployConfig, "domain"))
+func (d *QiniuCDNDeployer) modifyDomainCert(certId string) error {
+	path := fmt.Sprintf("/domain/%s/httpsconf", getDeployString(d.option.DeployConfig, "domain"))
 
-	body := &modifyDomainCertReq{
+	body := &qiniuModifyDomainCertReq{
 		CertID:      certId,
 		ForceHttps:  true,
 		Http2Enable: true,
@@ -179,7 +177,7 @@ func (q *qiuniu) modifyDomainCert(certId string) error {
 		return fmt.Errorf("json.Marshal failed: %w", err)
 	}
 
-	_, err = q.req(qiniuGateway+path, http.MethodPut, bytes.NewReader(bodyBytes))
+	_, err = d.req(qiniuGateway+path, http.MethodPut, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return fmt.Errorf("req failed: %w", err)
 	}
@@ -187,12 +185,12 @@ func (q *qiuniu) modifyDomainCert(certId string) error {
 	return nil
 }
 
-func (q *qiuniu) req(url, method string, body io.Reader) ([]byte, error) {
+func (d *QiniuCDNDeployer) req(url, method string, body io.Reader) ([]byte, error) {
 	req := xhttp.BuildReq(url, method, body, map[string]string{
 		"Content-Type": "application/json",
 	})
 
-	if err := q.credentials.AddToken(auth.TokenQBox, req); err != nil {
+	if err := d.credentials.AddToken(auth.TokenQBox, req); err != nil {
 		return nil, fmt.Errorf("credentials.AddToken failed: %w", err)
 	}
 

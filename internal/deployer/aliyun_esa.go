@@ -19,63 +19,65 @@ import (
 	"certimate/internal/utils/rand"
 )
 
-type AliyunEsa struct {
+type AliyunESADeployer struct {
 	client *dcdn20180115.Client
 	option *DeployerOption
 	infos  []string
 }
 
-func NewAliyunEsa(option *DeployerOption) (*AliyunEsa, error) {
+func NewAliyunEsaDeployer(option *DeployerOption) (*AliyunESADeployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
-	a := &AliyunEsa{
+
+	d := &AliyunESADeployer{
 		option: option,
 	}
-	client, err := a.createClient(access.AccessKeyId, access.AccessKeySecret)
+
+	client, err := d.createClient(access.AccessKeyId, access.AccessKeySecret)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AliyunEsa{
+	return &AliyunESADeployer{
 		client: client,
 		option: option,
 		infos:  make([]string, 0),
 	}, nil
 }
 
-func (a *AliyunEsa) GetID() string {
-	return fmt.Sprintf("%s-%s", a.option.AceessRecord.GetString("name"), a.option.AceessRecord.Id)
+func (d *AliyunESADeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
 }
 
-func (a *AliyunEsa) GetInfo() []string {
-	return a.infos
+func (d *AliyunESADeployer) GetInfo() []string {
+	return d.infos
 }
 
-func (a *AliyunEsa) Deploy(ctx context.Context) error {
-	certName := fmt.Sprintf("%s-%s-%s", a.option.Domain, a.option.DomainId, rand.RandStr(6))
+func (d *AliyunESADeployer) Deploy(ctx context.Context) error {
+	certName := fmt.Sprintf("%s-%s-%s", d.option.Domain, d.option.DomainId, rand.RandStr(6))
 	setDcdnDomainSSLCertificateRequest := &dcdn20180115.SetDcdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(getDeployString(a.option.DeployConfig, "domain")),
+		DomainName:  tea.String(getDeployString(d.option.DeployConfig, "domain")),
 		CertName:    tea.String(certName),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),
-		SSLPub:      tea.String(a.option.Certificate.Certificate),
-		SSLPri:      tea.String(a.option.Certificate.PrivateKey),
+		SSLPub:      tea.String(d.option.Certificate.Certificate),
+		SSLPri:      tea.String(d.option.Certificate.PrivateKey),
 		CertRegion:  tea.String("cn-hangzhou"),
 	}
 
 	runtime := &util.RuntimeOptions{}
 
-	resp, err := a.client.SetDcdnDomainSSLCertificateWithOptions(setDcdnDomainSSLCertificateRequest, runtime)
+	resp, err := d.client.SetDcdnDomainSSLCertificateWithOptions(setDcdnDomainSSLCertificateRequest, runtime)
 	if err != nil {
 		return err
 	}
 
-	a.infos = append(a.infos, toStr("dcdn设置证书", resp))
+	d.infos = append(d.infos, toStr("dcdn设置证书", resp))
 
 	return nil
 }
 
-func (a *AliyunEsa) createClient(accessKeyId, accessKeySecret string) (_result *dcdn20180115.Client, _err error) {
+func (d *AliyunESADeployer) createClient(accessKeyId, accessKeySecret string) (_result *dcdn20180115.Client, _err error) {
 	config := &openapi.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),

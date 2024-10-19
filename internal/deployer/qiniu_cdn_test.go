@@ -36,7 +36,7 @@ func Test_qiuniu_uploadCert(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			q, _ := NewQiNiu(tt.fields.option)
+			q, _ := NewQiniuCDNDeployer(tt.fields.option)
 			got, err := q.uploadCert()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("qiuniu.uploadCert() error = %v, wantErr %v", err, tt.wantErr)
@@ -78,7 +78,7 @@ func Test_qiuniu_modifyDomainCert(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			q, _ := NewQiNiu(tt.fields.option)
+			q, _ := NewQiniuCDNDeployer(tt.fields.option)
 			if err := q.modifyDomainCert(tt.args.certId); (err != nil) != tt.wantErr {
 				t.Errorf("qiuniu.modifyDomainCert() error = %v, wantErr %v", err, tt.wantErr)
 			}

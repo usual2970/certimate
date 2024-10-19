@@ -75,6 +75,7 @@ export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
   ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
   ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
+  ["k8s-secret", ["common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"]],
 ]);
 
 export const targetTypeKeys = Array.from(targetTypeMap.keys());

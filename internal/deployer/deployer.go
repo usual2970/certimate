@@ -15,14 +15,15 @@ import (
 )
 
 const (
-	targetAliyunOss  = "aliyun-oss"
-	targetAliyunCdn  = "aliyun-cdn"
-	targetAliyunEsa  = "aliyun-dcdn"
-	targetSSH        = "ssh"
-	targetWebhook    = "webhook"
-	targetTencentCdn = "tencent-cdn"
+	targetAliyunOSS  = "aliyun-oss"
+	targetAliyunCDN  = "aliyun-cdn"
+	targetAliyunESA  = "aliyun-dcdn"
+	targetTencentCDN = "tencent-cdn"
 	targetQiniuCdn   = "qiniu-cdn"
 	targetLocal      = "local"
+	targetSSH        = "ssh"
+	targetWebhook    = "webhook"
+	targetK8sSecret  = "k8s-secret"
 )
 
 type DeployerOption struct {
@@ -60,7 +61,6 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 	}
 
 	for _, deployConfig := range deployConfigs {
-
 		deployer, err := getWithDeployConfig(record, cert, deployConfig)
 		if err != nil {
 			return nil, err
@@ -96,23 +96,24 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	}
 
 	switch deployConfig.Type {
-	case targetAliyunOss:
-		return NewAliyun(option)
-	case targetAliyunCdn:
-		return NewAliyunCdn(option)
-	case targetAliyunEsa:
-		return NewAliyunEsa(option)
-	case targetSSH:
-		return NewSSH(option)
-	case targetWebhook:
-		return NewWebhook(option)
-	case targetTencentCdn:
-		return NewTencentCdn(option)
+	case targetAliyunOSS:
+		return NewAliyunOssDeployer(option)
+	case targetAliyunCDN:
+		return NewAliyunCdnDeployer(option)
+	case targetAliyunESA:
+		return NewAliyunEsaDeployer(option)
+	case targetTencentCDN:
+		return NewTencentCDNDeployer(option)
 	case targetQiniuCdn:
-
-		return NewQiNiu(option)
+		return NewQiniuCDNDeployer(option)
 	case targetLocal:
-		return NewLocal(option), nil
+		return NewLocalDeployer(option)
+	case targetSSH:
+		return NewSSHDeployer(option)
+	case targetWebhook:
+		return NewWebhookDeployer(option)
+	case targetK8sSecret:
+		return NewK8sSecretDeployer(option)
 	}
 	return nil, errors.New("not implemented")
 }

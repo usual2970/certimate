@@ -7,5 +7,5 @@
   "dashboard.statistics.disabled": "未启用",
   "dashboard.statistics.unit": "个",
 
-  "dashboard.history": "部署历史"
+  "dashboard.history": "最近部署"
 }
