@@ -32,7 +32,7 @@ type DeployerOption struct {
 	Domain       string                `json:"domain"`
 	Product      string                `json:"product"`
 	Access       string                `json:"access"`
-	AceessRecord *models.Record        `json:"-"`
+	AccessRecord *models.Record        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
 	Certificate  applicant.Certificate `json:"certificate"`
 	Variables    map[string]string     `json:"variables"`
@@ -84,7 +84,7 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		Domain:       record.GetString("domain"),
 		Product:      getProduct(deployConfig.Type),
 		Access:       access.GetString("config"),
-		AceessRecord: access,
+		AccessRecord: access,
 		DeployConfig: deployConfig,
 	}
 	if cert != nil {

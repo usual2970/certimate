@@ -27,7 +27,7 @@ func NewSSHDeployer(option *DeployerOption) (Deployer, error) {
 }
 
 func (d *SSHDeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
 func (d *SSHDeployer) GetInfo() []string {
