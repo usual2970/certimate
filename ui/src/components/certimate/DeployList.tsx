@@ -326,7 +326,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
         <DialogTrigger>{trigger}</DialogTrigger>
         <DialogContent className="dark:text-stone-200">
           <DialogHeader>
-            <DialogTitle>{t("history.page.title")}</DialogTitle>
+            <DialogTitle>{t("domain.deployment.tab")}</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
 
@@ -889,3 +889,4 @@ const DeployToKubernetes = () => {
     </>
   );
 };
+
