@@ -1,8 +1,6 @@
 package applicant
 
 import (
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -10,6 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"certimate/internal/domain"
+	"certimate/internal/utils/app"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"

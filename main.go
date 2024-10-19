@@ -32,7 +32,6 @@ func main() {
 	domains.AddEvent()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-
 		domains.InitSchedule()
 
 		e.Router.GET(

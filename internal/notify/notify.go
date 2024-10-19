@@ -1,10 +1,11 @@
 package notify
 
 import (
-	"certimate/internal/utils/app"
 	"context"
 	"fmt"
 	"strconv"
+
+	"certimate/internal/utils/app"
 
 	notifyPackage "github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
