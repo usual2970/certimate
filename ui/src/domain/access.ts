@@ -48,7 +48,7 @@ export type Access = {
   config:
     | AliyunConfig
     | TencentConfig
-    | HuaweicloudConfig
+    | HuaweiCloudConfig
     | QiniuConfig
     | AwsConfig
     | CloudflareConfig
@@ -73,7 +73,7 @@ export type TencentConfig = {
   secretKey: string;
 };
 
-export type HuaweicloudConfig = {
+export type HuaweiCloudConfig = {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
