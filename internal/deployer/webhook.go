@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	xhttp "certimate/internal/utils/http"
+	xhttp "github.com/usual2970/certimate/internal/utils/http"
 )
 
 type WebhookAccess struct {

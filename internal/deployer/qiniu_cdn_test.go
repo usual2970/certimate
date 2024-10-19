@@ -5,7 +5,7 @@ import (
 
 	"github.com/qiniu/go-sdk/v7/auth"
 
-	"certimate/internal/applicant"
+	"github.com/usual2970/certimate/internal/applicant"
 )
 
 func Test_qiuniu_uploadCert(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-acme/lego/v4/providers/dns/route53"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type aws struct {

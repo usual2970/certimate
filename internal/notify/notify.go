@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/app"
 
 	notifyPackage "github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/dingding"
