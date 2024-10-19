@@ -71,6 +71,7 @@ export const targetTypeMap: Map<string, [string, string]> = new Map([
   ["aliyun-cdn", ["common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"]],
   ["aliyun-dcdn", ["common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
   ["tencent-cdn", ["common.provider.tencent.cdn", "/imgs/providers/tencent.svg"]],
+  ["huaweicloud-cdn", ["common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"]],
   ["qiniu-cdn", ["common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"]],
   ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
   ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],

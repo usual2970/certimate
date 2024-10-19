@@ -15,15 +15,16 @@ import (
 )
 
 const (
-	targetAliyunOSS  = "aliyun-oss"
-	targetAliyunCDN  = "aliyun-cdn"
-	targetAliyunESA  = "aliyun-dcdn"
-	targetTencentCDN = "tencent-cdn"
-	targetQiniuCdn   = "qiniu-cdn"
-	targetLocal      = "local"
-	targetSSH        = "ssh"
-	targetWebhook    = "webhook"
-	targetK8sSecret  = "k8s-secret"
+	targetAliyunOSS      = "aliyun-oss"
+	targetAliyunCDN      = "aliyun-cdn"
+	targetAliyunESA      = "aliyun-dcdn"
+	targetTencentCDN     = "tencent-cdn"
+	targetHuaweiCloudCDN = "huaweicloud-cdn"
+	targetQiniuCdn       = "qiniu-cdn"
+	targetLocal          = "local"
+	targetSSH            = "ssh"
+	targetWebhook        = "webhook"
+	targetK8sSecret      = "k8s-secret"
 )
 
 type DeployerOption struct {
@@ -104,6 +105,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewAliyunESADeployer(option)
 	case targetTencentCDN:
 		return NewTencentCDNDeployer(option)
+	case targetHuaweiCloudCDN:
+		return NewHuaweiCloudCDNDeployer(option)
 	case targetQiniuCdn:
 		return NewQiniuCDNDeployer(option)
 	case targetLocal:
