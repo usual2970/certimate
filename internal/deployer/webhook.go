@@ -7,12 +7,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"certimate/internal/domain"
 	xhttp "certimate/internal/utils/http"
 )
-
-type WebhookAccess struct {
-	Url string `json:"url"`
-}
 
 type WebhookDeployer struct {
 	option *DeployerOption
@@ -42,7 +39,7 @@ type webhookData struct {
 }
 
 func (d *WebhookDeployer) Deploy(ctx context.Context) error {
-	access := &WebhookAccess{}
+	access := &domain.WebhookAccess{}
 	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return fmt.Errorf("failed to parse hook access config: %w", err)
 	}

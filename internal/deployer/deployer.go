@@ -97,11 +97,11 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 
 	switch deployConfig.Type {
 	case targetAliyunOSS:
-		return NewAliyunOssDeployer(option)
+		return NewAliyunOSSDeployer(option)
 	case targetAliyunCDN:
-		return NewAliyunCdnDeployer(option)
+		return NewAliyunCDNDeployer(option)
 	case targetAliyunESA:
-		return NewAliyunEsaDeployer(option)
+		return NewAliyunESADeployer(option)
 	case targetTencentCDN:
 		return NewTencentCDNDeployer(option)
 	case targetQiniuCdn:

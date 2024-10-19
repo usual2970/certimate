@@ -25,7 +25,7 @@ type AliyunESADeployer struct {
 	infos  []string
 }
 
-func NewAliyunEsaDeployer(option *DeployerOption) (*AliyunESADeployer, error) {
+func NewAliyunESADeployer(option *DeployerOption) (*AliyunESADeployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 

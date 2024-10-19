@@ -8,9 +8,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-)
 
-type LocalAccess struct{}
+	"certimate/internal/domain"
+)
 
 type LocalDeployer struct {
 	option *DeployerOption
@@ -33,7 +33,7 @@ func (d *LocalDeployer) GetInfo() []string {
 }
 
 func (d *LocalDeployer) Deploy(ctx context.Context) error {
-	access := &LocalAccess{}
+	access := &domain.LocalAccess{}
 	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return err
 	}

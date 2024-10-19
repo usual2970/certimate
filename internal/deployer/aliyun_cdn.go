@@ -20,7 +20,7 @@ type AliyunCDNDeployer struct {
 	infos  []string
 }
 
-func NewAliyunCdnDeployer(option *DeployerOption) (*AliyunCDNDeployer, error) {
+func NewAliyunCDNDeployer(option *DeployerOption) (*AliyunCDNDeployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 
