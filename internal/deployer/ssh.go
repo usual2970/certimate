@@ -10,16 +10,9 @@ import (
 
 	"github.com/pkg/sftp"
 	sshPkg "golang.org/x/crypto/ssh"
-)
 
-type SSHAccess struct {
-	Host          string `json:"host"`
-	Port          string `json:"port"`
-	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Key           string `json:"key"`
-	KeyPassphrase string `json:"keyPassphrase"`
-}
+	"certimate/internal/domain"
+)
 
 type SSHDeployer struct {
 	option *DeployerOption
@@ -34,7 +27,7 @@ func NewSSHDeployer(option *DeployerOption) (Deployer, error) {
 }
 
 func (d *SSHDeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
 func (d *SSHDeployer) GetInfo() []string {
@@ -42,7 +35,7 @@ func (d *SSHDeployer) GetInfo() []string {
 }
 
 func (d *SSHDeployer) Deploy(ctx context.Context) error {
-	access := &SSHAccess{}
+	access := &domain.SSHAccess{}
 	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return err
 	}
@@ -130,7 +123,7 @@ func (d *SSHDeployer) upload(client *sshPkg.Client, content, path string) error 
 	return nil
 }
 
-func (d *SSHDeployer) createClient(access *SSHAccess) (*sshPkg.Client, error) {
+func (d *SSHDeployer) createClient(access *domain.SSHAccess) (*sshPkg.Client, error) {
 	var authMethod sshPkg.AuthMethod
 
 	if access.Key != "" {

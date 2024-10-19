@@ -59,6 +59,7 @@
   "common.provider.tencent": "Tencent",
   "common.provider.tencent.cdn": "Tencent - CDN",
   "common.provider.huaweicloud": "Huawei Cloud",
+  "common.provider.huaweicloud.cdn": "Huawei Cloud - CDN",
   "common.provider.qiniu": "Qiniu",
   "common.provider.qiniu.cdn": "Qiniu - CDN",
   "common.provider.aws": "AWS",

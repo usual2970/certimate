@@ -25,7 +25,7 @@ type AliyunESADeployer struct {
 	infos  []string
 }
 
-func NewAliyunEsaDeployer(option *DeployerOption) (*AliyunESADeployer, error) {
+func NewAliyunESADeployer(option *DeployerOption) (*AliyunESADeployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 
@@ -46,7 +46,7 @@ func NewAliyunEsaDeployer(option *DeployerOption) (*AliyunESADeployer, error) {
 }
 
 func (d *AliyunESADeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
 func (d *AliyunESADeployer) GetInfo() []string {
