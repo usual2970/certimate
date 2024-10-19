@@ -10,6 +10,8 @@ import { getErrMessage } from "@/lib/error";
 import { NotifyChannels, NotifyChannelTelegram } from "@/domain/settings";
 import { update } from "@/repository/settings";
 import { useNotify } from "@/providers/notify";
+import { notifyTest } from "@/api/notify";
+import Show from "@/components/Show";
 
 type TelegramSetting = {
   id: string;
@@ -21,6 +23,8 @@ const Telegram = () => {
   const { config, setChannels } = useNotify();
   const { t } = useTranslation();
 
+  const [changed, setChanged] = useState<boolean>(false);
+
   const [telegram, setTelegram] = useState<TelegramSetting>({
     id: config.id ?? "",
     name: "notifyChannels",
@@ -31,23 +35,30 @@ const Telegram = () => {
     },
   });
 
-  useEffect(() => {
-    const getDetailTelegram = () => {
-      const df: NotifyChannelTelegram = {
-        apiToken: "",
-        chatId: "",
-        enabled: false,
-      };
-      if (!config.content) {
-        return df;
-      }
-      const chanels = config.content as NotifyChannels;
-      if (!chanels.telegram) {
-        return df;
-      }
+  const [originTelegram, setOriginTelegram] = useState<TelegramSetting>({
+    id: config.id ?? "",
+    name: "notifyChannels",
+    data: {
+      apiToken: "",
+      chatId: "",
+      enabled: false,
+    },
+  });
 
-      return chanels.telegram as NotifyChannelTelegram;
-    };
+  useEffect(() => {
+    setChanged(false);
+  }, [config]);
+
+  useEffect(() => {
+    const data = getDetailTelegram();
+    setOriginTelegram({
+      id: config.id ?? "",
+      name: "common.provider.telegram",
+      data,
+    });
+  }, [config]);
+
+  useEffect(() => {
     const data = getDetailTelegram();
     setTelegram({
       id: config.id ?? "",
@@ -57,6 +68,31 @@ const Telegram = () => {
   }, [config]);
 
   const { toast } = useToast();
+
+  const checkChanged = (data: NotifyChannelTelegram) => {
+    if (data.apiToken !== originTelegram.data.apiToken || data.chatId !== originTelegram.data.chatId) {
+      setChanged(true);
+    } else {
+      setChanged(false);
+    }
+  };
+
+  const getDetailTelegram = () => {
+    const df: NotifyChannelTelegram = {
+      apiToken: "",
+      chatId: "",
+      enabled: false,
+    };
+    if (!config.content) {
+      return df;
+    }
+    const chanels = config.content as NotifyChannels;
+    if (!chanels.telegram) {
+      return df;
+    }
+
+    return chanels.telegram as NotifyChannelTelegram;
+  };
 
   const handleSaveClick = async () => {
     try {
@@ -87,19 +123,75 @@ const Telegram = () => {
     }
   };
 
+  const handlePushTestClick = async () => {
+    try {
+      await notifyTest("telegram");
+
+      toast({
+        title: t("settings.notification.config.push.test.message.success.message"),
+        description: t("settings.notification.config.push.test.message.success.message"),
+      });
+    } catch (e) {
+      const msg = getErrMessage(e);
+
+      toast({
+        title: t("settings.notification.config.push.test.message.failed.message"),
+        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSwitchChange = async () => {
+    const newData = {
+      ...telegram,
+      data: {
+        ...telegram.data,
+        enabled: !telegram.data.enabled,
+      },
+    };
+    setTelegram(newData);
+
+    try {
+      const resp = await update({
+        ...config,
+        name: "notifyChannels",
+        content: {
+          ...config.content,
+          telegram: {
+            ...newData.data,
+          },
+        },
+      });
+
+      setChannels(resp);
+    } catch (e) {
+      const msg = getErrMessage(e);
+
+      toast({
+        title: t("common.save.failed.message"),
+        description: `${t("settings.notification.config.failed.message")}: ${msg}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div>
       <Input
         placeholder="ApiToken"
         value={telegram.data.apiToken}
         onChange={(e) => {
-          setTelegram({
+          const newData = {
             ...telegram,
             data: {
               ...telegram.data,
               apiToken: e.target.value,
             },
-          });
+          };
+
+          checkChanged(newData.data);
+          setTelegram(newData);
         }}
       />
 
@@ -107,44 +199,49 @@ const Telegram = () => {
         placeholder="ChatId"
         value={telegram.data.chatId}
         onChange={(e) => {
-          setTelegram({
+          const newData = {
             ...telegram,
             data: {
               ...telegram.data,
               chatId: e.target.value,
             },
-          });
+          };
+
+          checkChanged(newData.data);
+          setTelegram(newData);
         }}
       />
 
       <div className="flex items-center space-x-1 mt-2">
-        <Switch
-          id="airplane-mode"
-          checked={telegram.data.enabled}
-          onCheckedChange={() => {
-            setTelegram({
-              ...telegram,
-              data: {
-                ...telegram.data,
-                enabled: !telegram.data.enabled,
-              },
-            });
-          }}
-        />
+        <Switch id="airplane-mode" checked={telegram.data.enabled} onCheckedChange={handleSwitchChange} />
         <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
       </div>
 
       <div className="flex justify-end mt-2">
-        <Button
-          onClick={() => {
-            handleSaveClick();
-          }}
-        >
-          {t("common.save")}
-        </Button>
+        <Show when={changed}>
+          <Button
+            onClick={() => {
+              handleSaveClick();
+            }}
+          >
+            {t("common.save")}
+          </Button>
+        </Show>
+
+        <Show when={!changed && telegram.id != ""}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handlePushTestClick();
+            }}
+          >
+            {t("settings.notification.config.push.test.message")}
+          </Button>
+        </Show>
       </div>
     </div>
   );
 };
 
 export default Telegram;
+
