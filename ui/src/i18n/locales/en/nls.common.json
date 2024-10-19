@@ -65,6 +65,8 @@
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",
+  "common.provider.pdns": "PowerDNS",
+  "common.provider.httpreq": "Http Request",
   "common.provider.local": "Local Deployment",
   "common.provider.ssh": "SSH Deployment",
   "common.provider.webhook": "Webhook",

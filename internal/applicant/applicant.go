@@ -28,6 +28,8 @@ const (
 	configTypeCloudflare  = "cloudflare"
 	configTypeNamesilo    = "namesilo"
 	configTypeGodaddy     = "godaddy"
+	configTypePdns        = "pdns"
+	configTypeHttpreq     = "httpreq"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -135,6 +137,10 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewNamesilo(option), nil
 	case configTypeGodaddy:
 		return NewGodaddy(option), nil
+	case configTypePdns:
+		return NewPdns(option), nil
+	case configTypeHttpreq:
+		return NewHttpreq(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}

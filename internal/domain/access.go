@@ -40,3 +40,15 @@ type GodaddyAccess struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
 }
+
+type PdnsAccess struct {
+	ApiUrl    string `json:"apiUrl"`
+	ApiKey string `json:"apiKey"`
+}
+
+type HttpreqAccess struct {
+	Endpoint    string `json:"endpoint"`
+	Mode string `json:"mode"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
