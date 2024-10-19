@@ -30,6 +30,9 @@
   "settings.notification.config.enable": "Enable",
   "settings.notification.config.saved.message": "Configuration saved successfully",
   "settings.notification.config.failed.message": "Configuration save failed",
+  "settings.notification.config.push.test.message": "Send test notification",
+  "settings.notification.config.push.test.message.failed.message": "Send test notification failed",
+  "settings.notification.config.push.test.message.success.message": "Send test notification successfully",
   "settings.notification.dingtalk.secret.placeholder": "Signature for signed addition",
   "settings.notification.url.errmsg.invalid": "Invalid Url format",
 
@@ -39,3 +42,4 @@
   "settings.ca.eab_hmac_key.errmsg.empty": "Please enter EAB_HMAC_KEY.",
   "settings.ca.eab_kid_hmac_key.errmsg.empty": "Please enter EAB_KID and EAB_HMAC_KEY"
 }
+

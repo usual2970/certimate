@@ -10,6 +10,8 @@ import { getErrMessage } from "@/lib/error";
 import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
 import { useNotify } from "@/providers/notify";
 import { update } from "@/repository/settings";
+import Show from "@/components/Show";
+import { notifyTest } from "@/api/notify";
 
 type DingTalkSetting = {
   id: string;
@@ -21,6 +23,8 @@ const DingTalk = () => {
   const { config, setChannels } = useNotify();
   const { t } = useTranslation();
 
+  const [changed, setChanged] = useState<boolean>(false);
+
   const [dingtalk, setDingtalk] = useState<DingTalkSetting>({
     id: config.id ?? "",
     name: "notifyChannels",
@@ -31,23 +35,30 @@ const DingTalk = () => {
     },
   });
 
-  useEffect(() => {
-    const getDetailDingTalk = () => {
-      const df: NotifyChannelDingTalk = {
-        accessToken: "",
-        secret: "",
-        enabled: false,
-      };
-      if (!config.content) {
-        return df;
-      }
-      const chanels = config.content as NotifyChannels;
-      if (!chanels.dingtalk) {
-        return df;
-      }
+  const [originDingtalk, setOriginDingtalk] = useState<DingTalkSetting>({
+    id: config.id ?? "",
+    name: "notifyChannels",
+    data: {
+      accessToken: "",
+      secret: "",
+      enabled: false,
+    },
+  });
 
-      return chanels.dingtalk as NotifyChannelDingTalk;
-    };
+  useEffect(() => {
+    setChanged(false);
+  }, [config]);
+
+  useEffect(() => {
+    const data = getDetailDingTalk();
+    setOriginDingtalk({
+      id: config.id ?? "",
+      name: "dingtalk",
+      data,
+    });
+  }, [config]);
+
+  useEffect(() => {
     const data = getDetailDingTalk();
     setDingtalk({
       id: config.id ?? "",
@@ -57,6 +68,31 @@ const DingTalk = () => {
   }, [config]);
 
   const { toast } = useToast();
+
+  const getDetailDingTalk = () => {
+    const df: NotifyChannelDingTalk = {
+      accessToken: "",
+      secret: "",
+      enabled: false,
+    };
+    if (!config.content) {
+      return df;
+    }
+    const chanels = config.content as NotifyChannels;
+    if (!chanels.dingtalk) {
+      return df;
+    }
+
+    return chanels.dingtalk as NotifyChannelDingTalk;
+  };
+
+  const checkChanged = (data: NotifyChannelDingTalk) => {
+    if (data.accessToken !== originDingtalk.data.accessToken || data.secret !== originDingtalk.data.secret) {
+      setChanged(true);
+    } else {
+      setChanged(false);
+    }
+  };
 
   const handleSaveClick = async () => {
     try {
@@ -87,19 +123,74 @@ const DingTalk = () => {
     }
   };
 
+  const handlePushTestClick = async () => {
+    try {
+      await notifyTest("dingtalk");
+
+      toast({
+        title: t("settings.notification.config.push.test.message.success.message"),
+        description: t("settings.notification.config.push.test.message.success.message"),
+      });
+    } catch (e) {
+      const msg = getErrMessage(e);
+
+      toast({
+        title: t("settings.notification.config.push.test.message.failed.message"),
+        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSwitchChange = async () => {
+    const newData = {
+      ...dingtalk,
+      data: {
+        ...dingtalk.data,
+        enabled: !dingtalk.data.enabled,
+      },
+    };
+    setDingtalk(newData);
+
+    try {
+      const resp = await update({
+        ...config,
+        name: "notifyChannels",
+        content: {
+          ...config.content,
+          dingtalk: {
+            ...newData.data,
+          },
+        },
+      });
+
+      setChannels(resp);
+    } catch (e) {
+      const msg = getErrMessage(e);
+
+      toast({
+        title: t("common.save.failed.message"),
+        description: `${t("settings.notification.config.failed.message")}: ${msg}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div>
       <Input
         placeholder="AccessToken"
         value={dingtalk.data.accessToken}
         onChange={(e) => {
-          setDingtalk({
+          const newData = {
             ...dingtalk,
             data: {
               ...dingtalk.data,
               accessToken: e.target.value,
             },
-          });
+          };
+          checkChanged(newData.data);
+          setDingtalk(newData);
         }}
       />
       <Input
@@ -107,43 +198,47 @@ const DingTalk = () => {
         className="mt-2"
         value={dingtalk.data.secret}
         onChange={(e) => {
-          setDingtalk({
+          const newData = {
             ...dingtalk,
             data: {
               ...dingtalk.data,
               secret: e.target.value,
             },
-          });
+          };
+          checkChanged(newData.data);
+          setDingtalk(newData);
         }}
       />
       <div className="flex items-center space-x-1 mt-2">
-        <Switch
-          id="airplane-mode"
-          checked={dingtalk.data.enabled}
-          onCheckedChange={() => {
-            setDingtalk({
-              ...dingtalk,
-              data: {
-                ...dingtalk.data,
-                enabled: !dingtalk.data.enabled,
-              },
-            });
-          }}
-        />
+        <Switch id="airplane-mode" checked={dingtalk.data.enabled} onCheckedChange={handleSwitchChange} />
         <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
       </div>
 
       <div className="flex justify-end mt-2">
-        <Button
-          onClick={() => {
-            handleSaveClick();
-          }}
-        >
-          {t("common.save")}
-        </Button>
+        <Show when={changed}>
+          <Button
+            onClick={() => {
+              handleSaveClick();
+            }}
+          >
+            {t("common.save")}
+          </Button>
+        </Show>
+
+        <Show when={!changed && dingtalk.id != ""}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handlePushTestClick();
+            }}
+          >
+            {t("settings.notification.config.push.test.message")}
+          </Button>
+        </Show>
       </div>
     </div>
   );
 };
 
 export default DingTalk;
+
