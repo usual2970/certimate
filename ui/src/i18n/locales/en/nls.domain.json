@@ -41,6 +41,9 @@
   "domain.application.form.key_algorithm.placeholder": "Please select certificate key algorithm",
   "domain.application.form.timeout.label": "DNS Propagation Timeout (Seconds)",
   "domain.application.form.timeoue.placeholder": "Please enter maximum waiting time for DNS propagation",
+  "domain.application.form.disable_follow_CNAME.label": "Disable DNS CNAME following",
+  "domain.application.form.disable_follow_CNAME.tips": "This option will disable Acme DNS authentication CNAME follow. If you don't understand this option, just keep it by default. ",
+  "domain.application.form.disable_follow_CNAME.tips_link": "Learn more",
   "domain.application.unsaved.message": "Please save applyment configuration first",
 
   "domain.deployment.tab": "Deploy Settings",
