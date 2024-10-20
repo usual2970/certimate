@@ -9,13 +9,12 @@
 *.njsproj
 *.sln
 *.sw?
-
 __debug_bin*
 vendor
 pb_data
 build
 main
-
+ui/dist
 ./dist
 ./certimate
 /docker/data

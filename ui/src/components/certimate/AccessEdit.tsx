@@ -14,6 +14,8 @@ import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
 import AccessGodaddyForm from "./AccessGodaddyForm";
+import AccessPdnsForm from "./AccessPdnsForm";
+import AccessHttpreqForm from "./AccessHttpreqForm";
 import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
@@ -125,6 +127,28 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
         />
       );
       break;
+    case "pdns":
+      form = (
+        <AccessPdnsForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "httpreq":
+        form = (
+          <AccessHttpreqForm
+            data={data}
+            op={op}
+            onAfterReq={() => {
+              setOpen(false);
+            }}
+          />
+        );
+        break;
     case "local":
       form = (
         <AccessLocalForm
