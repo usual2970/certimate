@@ -13,6 +13,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	uploaderImpl "github.com/usual2970/certimate/internal/pkg/core/uploader/impl"
+	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
 type HuaweiCloudCDNDeployer struct {
@@ -86,14 +87,14 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 
 		d.infos = append(d.infos, toStr("已上传证书", uploadResult))
 
-		updateDomainMultiCertificatesReqBodyContent.CertificateType = int32Ptr(2)
-		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = stringPtr(uploadResult.CertId)
-		updateDomainMultiCertificatesReqBodyContent.CertName = stringPtr(uploadResult.CertName)
+		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
+		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(uploadResult.CertId)
+		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(uploadResult.CertName)
 	} else {
-		updateDomainMultiCertificatesReqBodyContent.CertificateType = int32Ptr(0)
-		updateDomainMultiCertificatesReqBodyContent.CertName = stringPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
-		updateDomainMultiCertificatesReqBodyContent.Certificate = stringPtr(d.option.Certificate.Certificate)
-		updateDomainMultiCertificatesReqBodyContent.PrivateKey = stringPtr(d.option.Certificate.PrivateKey)
+		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(0)
+		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
+		updateDomainMultiCertificatesReqBodyContent.Certificate = cast.StringPtr(d.option.Certificate.Certificate)
+		updateDomainMultiCertificatesReqBodyContent.PrivateKey = cast.StringPtr(d.option.Certificate.PrivateKey)
 	}
 	updateDomainMultiCertificatesReqBodyContent = mergeHuaweiCloudCDNConfig(showDomainFullConfigResp.Configs, updateDomainMultiCertificatesReqBodyContent)
 	updateDomainMultiCertificatesReq := &huaweicloudCDNUpdateDomainMultiCertificatesRequest{
@@ -177,11 +178,11 @@ func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *huaweicloudCD
 	// 而且蛋疼的是查询接口返回的数据结构和更新接口传入的参数结构不一致，需要做很多转化
 
 	if *src.OriginProtocol == "follow" {
-		dest.AccessOriginWay = int32Ptr(1)
+		dest.AccessOriginWay = cast.Int32Ptr(1)
 	} else if *src.OriginProtocol == "http" {
-		dest.AccessOriginWay = int32Ptr(2)
+		dest.AccessOriginWay = cast.Int32Ptr(2)
 	} else if *src.OriginProtocol == "https" {
-		dest.AccessOriginWay = int32Ptr(3)
+		dest.AccessOriginWay = cast.Int32Ptr(3)
 	}
 
 	if src.ForceRedirect != nil {
@@ -197,17 +198,9 @@ func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *huaweicloudCD
 
 	if src.Https != nil {
 		if *src.Https.Http2Status == "on" {
-			dest.Http2 = int32Ptr(1)
+			dest.Http2 = cast.Int32Ptr(1)
 		}
 	}
 
 	return dest
-}
-
-func int32Ptr(i int32) *int32 {
-	return &i
-}
-
-func stringPtr(s string) *string {
-	return &s
 }

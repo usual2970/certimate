@@ -11,6 +11,7 @@ import (
 	scmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -21,6 +22,7 @@ type HuaweiCloudSCMUploaderConfig struct {
 }
 
 type HuaweiCloudSCMUploader struct {
+	config *HuaweiCloudSCMUploaderConfig
 	client *scm.ScmClient
 }
 
@@ -31,6 +33,7 @@ func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (*HuaweiClo
 	}
 
 	return &HuaweiCloudSCMUploader{
+		config: config,
 		client: client,
 	}, nil
 }
@@ -49,10 +52,10 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	listCertificatesOffset := int32(0)
 	for {
 		listCertificatesReq := &scmModel.ListCertificatesRequest{
-			Limit:   int32Ptr(listCertificatesLimit),
-			Offset:  int32Ptr(listCertificatesOffset),
-			SortDir: stringPtr("DESC"),
-			SortKey: stringPtr("certExpiredTime"),
+			Limit:   cast.Int32Ptr(listCertificatesLimit),
+			Offset:  cast.Int32Ptr(listCertificatesOffset),
+			SortDir: cast.StringPtr("DESC"),
+			SortKey: cast.StringPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.client.ListCertificates(listCertificatesReq)
 		if err != nil {
@@ -129,7 +132,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func createClient(region, accessKeyId, secretAccessKey string) (*scm.ScmClient, error) {
+func (u *HuaweiCloudSCMUploader) createClient(region, accessKeyId, secretAccessKey string) (*scm.ScmClient, error) {
 	auth, err := basic.NewCredentialsBuilder().
 		WithAk(accessKeyId).
 		WithSk(secretAccessKey).
@@ -157,12 +160,4 @@ func createClient(region, accessKeyId, secretAccessKey string) (*scm.ScmClient, 
 
 	client := scm.NewScmClient(hcClient)
 	return client, nil
-}
-
-func int32Ptr(i int32) *int32 {
-	return &i
-}
-
-func stringPtr(s string) *string {
-	return &s
 }
