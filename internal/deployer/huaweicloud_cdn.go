@@ -41,7 +41,8 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 		return err
 	}
 
-	client, err := d.createClient(access)
+	// TODO: CDN 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
+	client, err := d.createClient("", access.AccessKeyId, access.SecretAccessKey)
 	if err != nil {
 		return err
 	}
@@ -62,13 +63,14 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 
 	// 更新加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/UpdateDomainMultiCertificates.html
+	// REF: https://support.huaweicloud.com/usermanual-cdn/cdn_01_0306.html
 	updateDomainMultiCertificatesReqBodyContent := &huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent{}
 	updateDomainMultiCertificatesReqBodyContent.DomainName = d.option.DeployConfig.GetConfigAsString("domain")
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
 	var updateDomainMultiCertificatesResp *cdnModel.UpdateDomainMultiCertificatesResponse
 	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
 		uploader, err := uploaderImpl.NewHuaweiCloudSCMUploader(&uploaderImpl.HuaweiCloudSCMUploaderConfig{
-			Region:          "", // TODO: SCM 服务与 CDN 服务的区域不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
+			Region:          "", // TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
 			AccessKeyId:     access.AccessKeyId,
 			SecretAccessKey: access.SecretAccessKey,
 		})
@@ -109,22 +111,26 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *HuaweiCloudCDNDeployer) createClient(access *domain.HuaweiCloudAccess) (*cdn.CdnClient, error) {
+func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessKey string) (*cdn.CdnClient, error) {
 	auth, err := global.NewCredentialsBuilder().
-		WithAk(access.AccessKeyId).
-		WithSk(access.SecretAccessKey).
+		WithAk(accessKeyId).
+		WithSk(secretAccessKey).
 		SafeBuild()
 	if err != nil {
 		return nil, err
 	}
 
-	region, err := cdnRegion.SafeValueOf(access.Region)
+	if region == "" {
+		region = "cn-north-1" // CDN 服务默认区域：华北北京一
+	}
+
+	hcRegion, err := cdnRegion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
 	hcClient, err := cdn.CdnClientBuilder().
-		WithRegion(region).
+		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
 	if err != nil {
