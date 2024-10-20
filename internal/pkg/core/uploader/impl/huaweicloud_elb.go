@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
-	elb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
-	elbModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
-	elbRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
+	hcElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
+	hcElbModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
+	hcElbRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
@@ -24,7 +24,7 @@ type HuaweiCloudELBUploaderConfig struct {
 
 type HuaweiCloudELBUploader struct {
 	config    *HuaweiCloudELBUploaderConfig
-	sdkClient *elb.ElbClient
+	sdkClient *hcElb.ElbClient
 }
 
 func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
@@ -52,7 +52,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	listCertificatesLimit := int32(2000)
 	var listCertificatesMarker *string = nil
 	for {
-		listCertificatesReq := &elbModel.ListCertificatesRequest{
+		listCertificatesReq := &hcElbModel.ListCertificatesRequest{
 			Limit:  cast.Int32Ptr(listCertificatesLimit),
 			Marker: listCertificatesMarker,
 			Type:   &[]string{"server"},
@@ -97,15 +97,15 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 		}
 	}
 
-	// 生成证书名（需符合华为云命名规则）
+	// 生成新证书名（需符合华为云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
 
 	// 创建新证书
 	// REF: https://support.huaweicloud.com/api-elb/CreateCertificate.html
-	createCertificateReq := &elbModel.CreateCertificateRequest{
-		Body: &elbModel.CreateCertificateRequestBody{
-			Certificate: &elbModel.CreateCertificateOption{
+	createCertificateReq := &hcElbModel.CreateCertificateRequest{
+		Body: &hcElbModel.CreateCertificateRequestBody{
+			Certificate: &hcElbModel.CreateCertificateOption{
 				ProjectId:   cast.StringPtr(u.config.ProjectId),
 				Name:        cast.StringPtr(certName),
 				Certificate: cast.StringPtr(certPem),
@@ -126,7 +126,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) createSdkClient() (*elb.ElbClient, error) {
+func (u *HuaweiCloudELBUploader) createSdkClient() (*hcElb.ElbClient, error) {
 	region := u.config.Region
 	accessKeyId := u.config.AccessKeyId
 	secretAccessKey := u.config.SecretAccessKey
@@ -142,12 +142,12 @@ func (u *HuaweiCloudELBUploader) createSdkClient() (*elb.ElbClient, error) {
 		return nil, err
 	}
 
-	hcRegion, err := elbRegion.SafeValueOf(region)
+	hcRegion, err := hcElbRegion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := elb.ElbClientBuilder().
+	hcClient, err := hcElb.ElbClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -155,6 +155,6 @@ func (u *HuaweiCloudELBUploader) createSdkClient() (*elb.ElbClient, error) {
 		return nil, err
 	}
 
-	client := elb.NewElbClient(hcClient)
+	client := hcElb.NewElbClient(hcClient)
 	return client, nil
 }

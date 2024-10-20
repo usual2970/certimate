@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
-	scm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
-	scmModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
-	scmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
+	hcScm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
+	hcScmModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
+	hcScmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
@@ -23,7 +23,7 @@ type HuaweiCloudSCMUploaderConfig struct {
 
 type HuaweiCloudSCMUploader struct {
 	config    *HuaweiCloudSCMUploaderConfig
-	sdkClient *scm.ScmClient
+	sdkClient *hcScm.ScmClient
 }
 
 func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
@@ -52,7 +52,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	listCertificatesLimit := int32(50)
 	listCertificatesOffset := int32(0)
 	for {
-		listCertificatesReq := &scmModel.ListCertificatesRequest{
+		listCertificatesReq := &hcScmModel.ListCertificatesRequest{
 			Limit:   cast.Int32Ptr(listCertificatesLimit),
 			Offset:  cast.Int32Ptr(listCertificatesOffset),
 			SortDir: cast.StringPtr("DESC"),
@@ -65,7 +65,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 
 		if listCertificatesResp.Certificates != nil {
 			for _, certDetail := range *listCertificatesResp.Certificates {
-				exportCertificateReq := &scmModel.ExportCertificateRequest{
+				exportCertificateReq := &hcScmModel.ExportCertificateRequest{
 					CertificateId: certDetail.Id,
 				}
 				exportCertificateResp, err := u.sdkClient.ExportCertificate(exportCertificateReq)
@@ -109,14 +109,14 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 		}
 	}
 
-	// 生成证书名（需符合华为云命名规则）
+	// 生成新证书名（需符合华为云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
 
 	// 上传新证书
 	// REF: https://support.huaweicloud.com/api-ccm/ImportCertificate.html
-	importCertificateReq := &scmModel.ImportCertificateRequest{
-		Body: &scmModel.ImportCertificateRequestBody{
+	importCertificateReq := &hcScmModel.ImportCertificateRequest{
+		Body: &hcScmModel.ImportCertificateRequestBody{
 			Name:        certName,
 			Certificate: certPem,
 			PrivateKey:  privkeyPem,
@@ -134,7 +134,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudSCMUploader) createSdkClient() (*scm.ScmClient, error) {
+func (u *HuaweiCloudSCMUploader) createSdkClient() (*hcScm.ScmClient, error) {
 	region := u.config.Region
 	accessKeyId := u.config.AccessKeyId
 	secretAccessKey := u.config.SecretAccessKey
@@ -150,12 +150,12 @@ func (u *HuaweiCloudSCMUploader) createSdkClient() (*scm.ScmClient, error) {
 		return nil, err
 	}
 
-	hcRegion, err := scmRegion.SafeValueOf(region)
+	hcRegion, err := hcScmRegion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := scm.ScmClientBuilder().
+	hcClient, err := hcScm.ScmClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -163,6 +163,6 @@ func (u *HuaweiCloudSCMUploader) createSdkClient() (*scm.ScmClient, error) {
 		return nil, err
 	}
 
-	client := scm.NewScmClient(hcClient)
+	client := hcScm.NewScmClient(hcClient)
 	return client, nil
 }
