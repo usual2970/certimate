@@ -121,6 +121,9 @@ export default function Dashboard() {
                       {t("history.page.title")}
                     </Link>
                   </nav>
+                  <div className="">
+                    <Version className="justify-center" />
+                  </div>
                 </SheetContent>
               </Sheet>
               <div className="w-full flex-1"></div>
