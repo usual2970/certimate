@@ -23,8 +23,20 @@ type DeployConfig struct {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是字符串，则返回空字符串。
 func (dc *DeployConfig) GetConfigAsString(key string) string {
+	return dc.GetConfigOrDefaultAsString(key, "")
+}
+
+// 以字符串形式获取配置项。
+//
+// 入参：
+//   - key: 配置项的键。
+//   - defaultValue: 默认值。
+//
+// 出参：
+//   - 配置项的值。如果配置项不存在或者类型不是字符串，则返回默认值。
+func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue string) string {
 	if dc.Config == nil {
-		return ""
+		return defaultValue
 	}
 
 	if value, ok := dc.Config[key]; ok {
@@ -33,7 +45,7 @@ func (dc *DeployConfig) GetConfigAsString(key string) string {
 		}
 	}
 
-	return ""
+	return defaultValue
 }
 
 // 以布尔形式获取配置项。
@@ -44,8 +56,20 @@ func (dc *DeployConfig) GetConfigAsString(key string) string {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是布尔，则返回 false。
 func (dc *DeployConfig) GetConfigAsBool(key string) bool {
+	return dc.GetConfigOrDefaultAsBool(key, false)
+}
+
+// 以布尔形式获取配置项。
+//
+// 入参：
+//   - key: 配置项的键。
+//   - defaultValue: 默认值。
+//
+// 出参：
+//   - 配置项的值。如果配置项不存在或者类型不是布尔，则返回默认值。
+func (dc *DeployConfig) GetConfigOrDefaultAsBool(key string, defaultValue bool) bool {
 	if dc.Config == nil {
-		return false
+		return defaultValue
 	}
 
 	if value, ok := dc.Config[key]; ok {
@@ -54,7 +78,7 @@ func (dc *DeployConfig) GetConfigAsBool(key string) bool {
 		}
 	}
 
-	return false
+	return defaultValue
 }
 
 type KV struct {
