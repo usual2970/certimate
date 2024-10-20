@@ -22,19 +22,19 @@ type HuaweiCloudSCMUploaderConfig struct {
 }
 
 type HuaweiCloudSCMUploader struct {
-	config *HuaweiCloudSCMUploaderConfig
-	client *scm.ScmClient
+	config    *HuaweiCloudSCMUploaderConfig
+	sdkClient *scm.ScmClient
 }
 
 func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
-	client, err := createClient(config.Region, config.AccessKeyId, config.SecretAccessKey)
+	client, err := (&HuaweiCloudSCMUploader{config: config}).createSdkClient()
 	if err != nil {
-		return nil, fmt.Errorf("failed to create client: %w", err)
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &HuaweiCloudSCMUploader{
-		config: config,
-		client: client,
+		config:    config,
+		sdkClient: client,
 	}, nil
 }
 
@@ -48,6 +48,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	// 遍历查询已有证书，避免重复上传
 	// REF: https://support.huaweicloud.com/api-ccm/ListCertificates.html
 	// REF: https://support.huaweicloud.com/api-ccm/ExportCertificate_0.html
+	listCertificatesPage := 1
 	listCertificatesLimit := int32(50)
 	listCertificatesOffset := int32(0)
 	for {
@@ -57,9 +58,9 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 			SortDir: cast.StringPtr("DESC"),
 			SortKey: cast.StringPtr("certExpiredTime"),
 		}
-		listCertificatesResp, err := u.client.ListCertificates(listCertificatesReq)
+		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute request 'scm.ListCertificates': %w", err)
+			return nil, fmt.Errorf("failed to execute sdk request 'scm.ListCertificates': %w", err)
 		}
 
 		if listCertificatesResp.Certificates != nil {
@@ -67,12 +68,12 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 				exportCertificateReq := &scmModel.ExportCertificateRequest{
 					CertificateId: certDetail.Id,
 				}
-				exportCertificateResp, err := u.client.ExportCertificate(exportCertificateReq)
+				exportCertificateResp, err := u.sdkClient.ExportCertificate(exportCertificateReq)
 				if err != nil {
 					if exportCertificateResp != nil && exportCertificateResp.HttpStatusCode == 404 {
 						continue
 					}
-					return nil, fmt.Errorf("failed to execute request 'scm.ExportCertificate': %w", err)
+					return nil, fmt.Errorf("failed to execute sdk request 'scm.ExportCertificate': %w", err)
 				}
 
 				var isSameCert bool
@@ -102,7 +103,8 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 		}
 
 		listCertificatesOffset += listCertificatesLimit
-		if listCertificatesOffset >= 999 { // 避免无限获取
+		listCertificatesPage += 1
+		if listCertificatesPage > 99 { // 避免无限获取
 			break
 		}
 	}
@@ -120,9 +122,9 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 			PrivateKey:  privkeyPem,
 		},
 	}
-	importCertificateResp, err := u.client.ImportCertificate(importCertificateReq)
+	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute request 'scm.ImportCertificate': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'scm.ImportCertificate': %w", err)
 	}
 
 	certId = *importCertificateResp.CertificateId
@@ -132,17 +134,20 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudSCMUploader) createClient(region, accessKeyId, secretAccessKey string) (*scm.ScmClient, error) {
+func (u *HuaweiCloudSCMUploader) createSdkClient() (*scm.ScmClient, error) {
+	region := u.config.Region
+	accessKeyId := u.config.AccessKeyId
+	secretAccessKey := u.config.SecretAccessKey
+	if region == "" {
+		region = "cn-north-4" // SCM 服务默认区域：华北北京四
+	}
+
 	auth, err := basic.NewCredentialsBuilder().
 		WithAk(accessKeyId).
 		WithSk(secretAccessKey).
 		SafeBuild()
 	if err != nil {
 		return nil, err
-	}
-
-	if region == "" {
-		region = "cn-north-4" // SCM 服务默认区域：华北北京四
 	}
 
 	hcRegion, err := scmRegion.SafeValueOf(region)
