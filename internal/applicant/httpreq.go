@@ -28,7 +28,7 @@ func (a *httpReq) Apply() (*Certificate, error) {
 	os.Setenv("HTTPREQ_MODE", access.Mode)
 	os.Setenv("HTTPREQ_USERNAME", access.Username)
 	os.Setenv("HTTPREQ_PASSWORD", access.Password)
-	os.Setenv("HTTPREQ_HTTP_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
+	os.Setenv("HTTPREQ_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
 	dnsProvider, err := httpreq.NewDNSProvider()
 	if err != nil {
 		return nil, err

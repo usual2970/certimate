@@ -26,7 +26,7 @@ func (a *powerdns) Apply() (*Certificate, error) {
 
 	os.Setenv("PDNS_API_URL", access.ApiUrl)
 	os.Setenv("PDNS_API_KEY", access.ApiKey)
-	os.Setenv("PDNS_HTTP_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
+	os.Setenv("PDNS_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
 	dnsProvider, err := pdns.NewDNSProvider()
 	if err != nil {
 		return nil, err
