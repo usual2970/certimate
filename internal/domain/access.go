@@ -51,6 +51,7 @@ type HttpreqAccess struct {
 	Mode     string `json:"mode"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
 
 type LocalAccess struct{}
 

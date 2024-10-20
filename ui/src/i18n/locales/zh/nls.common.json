@@ -67,7 +67,7 @@
   "common.provider.namesilo": "Namesilo",
   "common.provider.godaddy": "GoDaddy",
   "common.provider.pdns": "PowerDNS",
-  "common.provider.httpreq": "HTTP 请求",
+  "common.provider.httpreq": "Http Request",
   "common.provider.local": "本地部署",
   "common.provider.ssh": "SSH 部署",
   "common.provider.webhook": "Webhook",
@@ -77,3 +77,4 @@
   "common.provider.telegram": "Telegram",
   "common.provider.lark": "飞书"
 }
+

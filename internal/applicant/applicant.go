@@ -19,9 +19,6 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
-
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
 )
 
 const (
