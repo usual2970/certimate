@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -63,12 +64,13 @@ type Certificate struct {
 }
 
 type ApplyOption struct {
-	Email        string `json:"email"`
-	Domain       string `json:"domain"`
-	Access       string `json:"access"`
-	KeyAlgorithm string `json:"keyAlgorithm"`
-	Nameservers  string `json:"nameservers"`
-	Timeout      int64  `json:"timeout"`
+	Email              string `json:"email"`
+	Domain             string `json:"domain"`
+	Access             string `json:"access"`
+	KeyAlgorithm       string `json:"keyAlgorithm"`
+	Nameservers        string `json:"nameservers"`
+	Timeout            int64  `json:"timeout"`
+	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
 type ApplyUser struct {
@@ -115,12 +117,13 @@ func Get(record *models.Record) (Applicant, error) {
 	}
 
 	option := &ApplyOption{
-		Email:        applyConfig.Email,
-		Domain:       record.GetString("domain"),
-		Access:       access.GetString("config"),
-		KeyAlgorithm: applyConfig.KeyAlgorithm,
-		Nameservers:  applyConfig.Nameservers,
-		Timeout:      applyConfig.Timeout,
+		Email:              applyConfig.Email,
+		Domain:             record.GetString("domain"),
+		Access:             access.GetString("config"),
+		KeyAlgorithm:       applyConfig.KeyAlgorithm,
+		Nameservers:        applyConfig.Nameservers,
+		Timeout:            applyConfig.Timeout,
+		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
 	}
 
 	switch access.GetString("configType") {
@@ -176,6 +179,14 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	if err != nil {
 		return nil, err
 	}
+
+	// Some unified lego environment variables are configured here.
+	disableFCNAME := "false"
+	if option.DisableFollowCNAME {
+		disableFCNAME = "true"
+	}
+	// link: https://github.com/go-acme/lego/issues/1867
+	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", disableFCNAME)
 
 	myUser := ApplyUser{
 		Email: option.Email,
