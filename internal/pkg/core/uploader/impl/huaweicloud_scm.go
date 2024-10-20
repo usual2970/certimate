@@ -40,7 +40,7 @@ func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (*HuaweiClo
 
 func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	newCert, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 						continue
 					}
 
-					isSameCert = x509.EqualCertificate(cert, newCert)
+					isSameCert = x509.EqualCertificate(certX509, cert)
 				}
 
 				// 如果已存在相同证书，直接返回已有的证书信息
@@ -104,7 +104,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 
 		listCertificatesOffset += listCertificatesLimit
 		listCertificatesPage += 1
-		if listCertificatesPage > 99 { // 避免无限获取
+		if listCertificatesPage > 99 { // 避免死循环
 			break
 		}
 	}
@@ -139,7 +139,7 @@ func (u *HuaweiCloudSCMUploader) createSdkClient() (*hcScm.ScmClient, error) {
 	accessKeyId := u.config.AccessKeyId
 	secretAccessKey := u.config.SecretAccessKey
 	if region == "" {
-		region = "cn-north-4" // SCM 服务默认区域：华北北京四
+		region = "cn-north-4" // SCM 服务默认区域：华北四北京
 	}
 
 	auth, err := basic.NewCredentialsBuilder().

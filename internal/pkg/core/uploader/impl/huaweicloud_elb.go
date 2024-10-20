@@ -92,7 +92,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 		listCertificatesMarker = listCertificatesResp.PageInfo.NextMarker
 		listCertificatesPage++
-		if listCertificatesPage >= 9 { // 避免无限获取
+		if listCertificatesPage >= 9 { // 避免死循环
 			break
 		}
 	}
@@ -131,7 +131,7 @@ func (u *HuaweiCloudELBUploader) createSdkClient() (*hcElb.ElbClient, error) {
 	accessKeyId := u.config.AccessKeyId
 	secretAccessKey := u.config.SecretAccessKey
 	if region == "" {
-		region = "cn-north-4" // ELB 服务默认区域：华北北京四
+		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}
 
 	auth, err := basic.NewCredentialsBuilder().
