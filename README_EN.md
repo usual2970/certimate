@@ -81,6 +81,9 @@ password：1234567890
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                      |
 |   Namesilo    |      √       |            | Supports domains registered on Namesilo                                                     |
+| PowerDNS      |      √       |            | Supports domains managed by PowerDNS |
+| HTTP request  |      √       |            | Supports domains dns managed by HTTP Request |
+
 | Local Deploy  |              |     √      | Supports deployment to local servers                                                        |
 |      SSH      |              |     √      | Supports deployment to SSH servers                                                          |
 |    Webhook    |              |     √      | Supports callback to Webhook                                                                |

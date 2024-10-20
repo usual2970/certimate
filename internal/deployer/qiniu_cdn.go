@@ -10,8 +10,8 @@ import (
 
 	"github.com/qiniu/go-sdk/v7/auth"
 
-	"certimate/internal/domain"
-	xhttp "certimate/internal/utils/http"
+	"github.com/usual2970/certimate/internal/domain"
+	xhttp "github.com/usual2970/certimate/internal/utils/http"
 )
 
 const qiniuGateway = "http://api.qiniu.com"

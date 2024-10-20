@@ -9,6 +9,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/app"
+
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge"
@@ -16,9 +19,6 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
-
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
 )
 
 const (
@@ -29,6 +29,8 @@ const (
 	configTypeCloudflare  = "cloudflare"
 	configTypeNamesilo    = "namesilo"
 	configTypeGodaddy     = "godaddy"
+	configTypePdns        = "pdns"
+	configTypeHttpreq     = "httpreq"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -136,6 +138,10 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewNamesilo(option), nil
 	case configTypeGodaddy:
 		return NewGodaddy(option), nil
+	case configTypePdns:
+		return NewPdns(option), nil
+	case configTypeHttpreq:
+		return NewHttpreq(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}

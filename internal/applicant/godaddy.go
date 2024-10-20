@@ -7,7 +7,7 @@ import (
 
 	godaddyProvider "github.com/go-acme/lego/v4/providers/dns/godaddy"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type godaddy struct {

@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type LocalDeployer struct {

@@ -11,7 +11,7 @@ import (
 	"github.com/pkg/sftp"
 	sshPkg "golang.org/x/crypto/ssh"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type SSHDeployer struct {

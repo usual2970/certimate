@@ -3,7 +3,7 @@ package resp
 import (
 	"net/http"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 
 	"github.com/labstack/echo/v5"
 )

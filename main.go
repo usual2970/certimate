@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/usual2970/certimate/ui"
 	"log"
 	"os"
 	"strings"
@@ -10,11 +11,11 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
-	"certimate/internal/domains"
-	"certimate/internal/routes"
-	"certimate/internal/utils/app"
-	_ "certimate/migrations"
-	"certimate/ui"
+	_ "github.com/usual2970/certimate/migrations"
+
+	"github.com/usual2970/certimate/internal/domains"
+	"github.com/usual2970/certimate/internal/routes"
+	"github.com/usual2970/certimate/internal/utils/app"
 
 	_ "time/tzdata"
 )

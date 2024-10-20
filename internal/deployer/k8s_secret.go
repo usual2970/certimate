@@ -9,7 +9,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type K8sSecretDeployer struct {

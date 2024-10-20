@@ -11,8 +11,8 @@ import (
 	cdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
 	cdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
 
-	"certimate/internal/domain"
-	uploaderImpl "certimate/internal/pkg/core/uploader/impl"
+	"github.com/usual2970/certimate/internal/domain"
+	uploaderImpl "github.com/usual2970/certimate/internal/pkg/core/uploader/impl"
 )
 
 type HuaweiCloudCDNDeployer struct {

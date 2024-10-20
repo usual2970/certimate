@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 const (

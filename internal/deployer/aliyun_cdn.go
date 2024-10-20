@@ -10,8 +10,8 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"certimate/internal/domain"
-	"certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/rand"
 )
 
 type AliyunCDNDeployer struct {
