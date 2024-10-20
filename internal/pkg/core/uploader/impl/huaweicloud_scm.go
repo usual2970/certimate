@@ -10,8 +10,8 @@ import (
 	scmModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
 	scmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 
-	"certimate/internal/pkg/core/uploader"
-	"certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type HuaweiCloudSCMUploaderConfig struct {
@@ -49,15 +49,10 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	listCertificatesOffset := int32(0)
 	for {
 		listCertificatesReq := &scmModel.ListCertificatesRequest{
-<<<<<<< HEAD
 			Limit:   int32Ptr(listCertificatesLimit),
 			Offset:  int32Ptr(listCertificatesOffset),
 			SortDir: stringPtr("DESC"),
 			SortKey: stringPtr("certExpiredTime"),
-=======
-			Limit:  int32Ptr(listCertificatesLimit),
-			Offset: int32Ptr(listCertificatesOffset),
->>>>>>> 1ff10bf989afaa505a3fc2fda668ffcded815d09
 		}
 		listCertificatesResp, err := u.client.ListCertificates(listCertificatesReq)
 		if err != nil {
@@ -77,7 +72,6 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 					return nil, fmt.Errorf("failed to execute request 'scm.ExportCertificate': %w", err)
 				}
 
-<<<<<<< HEAD
 				var isSameCert bool
 				if *exportCertificateResp.Certificate == certPem {
 					isSameCert = true
@@ -92,15 +86,6 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 
 				// 如果已存在相同证书，直接返回已有的证书信息
 				if isSameCert {
-=======
-				cert, err := x509.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
-				if err != nil {
-					continue
-				}
-
-				if x509.EqualCertificate(cert, newCert) {
-					// 如果已存在相同证书，直接返回已有的证书信息
->>>>>>> 1ff10bf989afaa505a3fc2fda668ffcded815d09
 					return &uploader.UploadResult{
 						CertId:   certDetail.Id,
 						CertName: certDetail.Name,
@@ -114,12 +99,9 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 		}
 
 		listCertificatesOffset += listCertificatesLimit
-<<<<<<< HEAD
 		if listCertificatesOffset >= 999 { // 避免无限获取
 			break
 		}
-=======
->>>>>>> 1ff10bf989afaa505a3fc2fda668ffcded815d09
 	}
 
 	// 生成证书名（需符合华为云命名规则）
@@ -180,10 +162,7 @@ func createClient(region, accessKeyId, secretAccessKey string) (*scm.ScmClient, 
 func int32Ptr(i int32) *int32 {
 	return &i
 }
-<<<<<<< HEAD
 
 func stringPtr(s string) *string {
 	return &s
 }
-=======
->>>>>>> 1ff10bf989afaa505a3fc2fda668ffcded815d09
