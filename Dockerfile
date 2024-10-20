@@ -9,6 +9,7 @@ RUN \
   npm install && \
   npm run build
 
+
 FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
@@ -16,9 +17,12 @@ WORKDIR /app
 COPY ../. /app/
 
 RUN rm -rf /app/ui/dist
+
 COPY --from=front-builder /app/ui/dist /app/ui/dist
 
 RUN go build -o certimate
+
+
 
 FROM alpine:latest
 
