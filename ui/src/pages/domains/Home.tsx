@@ -26,7 +26,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { CustomFile, saveFiles2ZIP } from "@/lib/file";
-import { convertZulu2Beijing, getDate } from "@/lib/time";
+import { convertZulu2Beijing, getDate, getLeftDays } from "@/lib/time";
 import { Domain } from "@/domain/domain";
 import { list, remove, save, subscribeId, unsubscribeId } from "@/repository/domains";
 
@@ -213,7 +213,7 @@ const Home = () => {
                   <div>
                     {domain.expiredAt ? (
                       <>
-                        <div>{t("domain.props.expiry.date1", { date: 90 })}</div>
+                        <div>{t("domain.props.expiry.date1", { date: `${getLeftDays(domain.expiredAt)}/90` })}</div>
                         <div>
                           {t("domain.props.expiry.date2", {
                             date: getDate(domain.expiredAt),
@@ -340,3 +340,4 @@ const Home = () => {
 };
 
 export default Home;
+

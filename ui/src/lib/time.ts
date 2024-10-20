@@ -21,6 +21,16 @@ export const getDate = (zuluTime: string) => {
   return time.split(" ")[0];
 };
 
+export const getLeftDays = (zuluTime: string) => {
+  const time = convertZulu2Beijing(zuluTime);
+  const date = time.split(" ")[0];
+  const now = new Date();
+  const target = new Date(date);
+  const diff = target.getTime() - now.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return days;
+};
+
 export function getTimeBefore(days: number): string {
   // 获取当前时间
   const currentDate = new Date();
@@ -66,3 +76,4 @@ export function getTimeAfter(days: number): string {
 
   return formattedDate;
 }
+
