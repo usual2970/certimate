@@ -72,6 +72,10 @@ export default function Dashboard() {
                   </Link>
                 </nav>
               </div>
+
+              <div className="">
+                <Version className="justify-center" />
+              </div>
             </div>
           </div>
           <div className="flex flex-col">
@@ -117,6 +121,9 @@ export default function Dashboard() {
                       {t("history.page.title")}
                     </Link>
                   </nav>
+                  <div className="">
+                    <Version className="justify-center" />
+                  </div>
                 </SheetContent>
               </Sheet>
               <div className="w-full flex-1"></div>
@@ -137,8 +144,6 @@ export default function Dashboard() {
             </header>
             <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 relative">
               <Outlet />
-
-              <Version />
             </main>
           </div>
         </div>
@@ -146,3 +151,4 @@ export default function Dashboard() {
     </>
   );
 }
+
