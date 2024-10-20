@@ -24,11 +24,13 @@ import (
 const (
 	configTypeAliyun      = "aliyun"
 	configTypeTencent     = "tencent"
-	configTypeHuaweicloud = "huaweicloud"
+	configTypeHuaweiCloud = "huaweicloud"
 	configTypeAws         = "aws"
 	configTypeCloudflare  = "cloudflare"
 	configTypeNamesilo    = "namesilo"
 	configTypeGodaddy     = "godaddy"
+	configTypePdns        = "pdns"
+	configTypeHttpreq     = "httpreq"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -126,7 +128,7 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewAliyun(option), nil
 	case configTypeTencent:
 		return NewTencent(option), nil
-	case configTypeHuaweicloud:
+	case configTypeHuaweiCloud:
 		return NewHuaweiCloud(option), nil
 	case configTypeAws:
 		return NewAws(option), nil
@@ -136,6 +138,10 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewNamesilo(option), nil
 	case configTypeGodaddy:
 		return NewGodaddy(option), nil
+	case configTypePdns:
+		return NewPdns(option), nil
+	case configTypeHttpreq:
+		return NewHttpreq(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}

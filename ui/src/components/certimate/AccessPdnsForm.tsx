@@ -4,21 +4,21 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
 
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
+import { Access, PdnsConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
-type AccessHuaweiCloudFormProps = {
+type AccessPdnsFormProps = {
   op: "add" | "edit" | "copy";
   data?: Access;
   onAfterReq: () => void;
 };
 
-const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormProps) => {
+const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -28,36 +28,27 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    region: z
+    apiUrl: z.string().url("common.errmsg.url_invalid"),
+    apiKey: z
       .string()
-      .min(1, "access.authorization.form.region.placeholder")
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
-    accessKeyId: z
-      .string()
-      .min(1, "access.authorization.form.access_key_id.placeholder")
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
-    secretAccessKey: z
-      .string()
-      .min(1, "access.authorization.form.secret_access_key.placeholder")
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: HuaweiCloudConfig = {
-    region: "cn-north-1",
-    accessKeyId: "",
-    secretAccessKey: "",
+  let config: PdnsConfig = {
+    apiUrl: "",
+    apiKey: "",
   };
-  if (data) config = data.config as HuaweiCloudConfig;
+  if (data) config = data.config as PdnsConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "huaweicloud",
-      region: config.region,
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
+      configType: "pdns",
+      apiUrl: config.apiUrl,
+      apiKey: config.apiKey,
     },
   });
 
@@ -68,9 +59,8 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       configType: data.configType,
       usage: getUsageByConfigType(data.configType),
       config: {
-        region: data.region,
-        accessKeyId: data.accessKeyId,
-        secretAccessKey: data.secretAccessKey,
+        apiUrl: data.apiUrl,
+        apiKey: data.apiKey,
       },
     };
 
@@ -87,6 +77,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
         updateAccess(req);
         return;
       }
+
       addAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
@@ -160,12 +151,12 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
             <FormField
               control={form.control}
-              name="region"
+              name="apiUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.pdns_api_url.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.region.placeholder")} {...field} />
+                    <Input placeholder={t("access.authorization.form.pdns_api_url.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -175,27 +166,12 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
             <FormField
               control={form.control}
-              name="accessKeyId"
+              name="apiKey"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.pdns_api_key.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="secretAccessKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
+                    <Input placeholder={t("access.authorization.form.pdns_api_key.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -215,4 +191,5 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
   );
 };
 
-export default AccessHuaweiCloudForm;
+export default AccessPdnsForm;
+

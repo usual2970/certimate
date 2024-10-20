@@ -39,9 +39,12 @@ func init() {
 					"cloudflare",
 					"namesilo",
 					"godaddy",
+					"pdns",
+					"httpreq",
 					"local",
 					"ssh",
-					"webhook"
+					"webhook",
+					"k8s"
 				]
 			}
 		}`), edit_configType); err != nil {
@@ -75,12 +78,14 @@ func init() {
 					"tencent",
 					"huaweicloud",
 					"qiniu",
+					"aws",
 					"cloudflare",
 					"namesilo",
 					"godaddy",
 					"local",
 					"ssh",
-					"webhook"
+					"webhook",
+					"k8s"
 				]
 			}
 		}`), edit_configType); err != nil {

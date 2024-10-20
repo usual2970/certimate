@@ -4,21 +4,21 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
 
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
+import { Access, HttpreqConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
-type AccessHuaweiCloudFormProps = {
+type AccessHttpreqFormProps = {
   op: "add" | "edit" | "copy";
   data?: Access;
   onAfterReq: () => void;
 };
 
-const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormProps) => {
+const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -28,36 +28,37 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessFormType,
-    region: z
+    endpoint: z.string().url("common.errmsg.url_invalid"),
+    mode: z
+      .enum(["RAW", ""]),
+    username: z
       .string()
-      .min(1, "access.authorization.form.region.placeholder")
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
-    accessKeyId: z
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .max(128, t("common.errmsg.string_max", { max: 128 })),
+    password: z
       .string()
-      .min(1, "access.authorization.form.access_key_id.placeholder")
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
-    secretAccessKey: z
-      .string()
-      .min(1, "access.authorization.form.secret_access_key.placeholder")
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .max(128, t("common.errmsg.string_max", { max: 128 })),
   });
 
-  let config: HuaweiCloudConfig = {
-    region: "cn-north-1",
-    accessKeyId: "",
-    secretAccessKey: "",
+  let config: HttpreqConfig = {
+    endpoint: "",
+    mode: "",
+    username: "",
+    password: "",
   };
-  if (data) config = data.config as HuaweiCloudConfig;
+  if (data) config = data.config as HttpreqConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "huaweicloud",
-      region: config.region,
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
+      configType: "httpreq",
+      endpoint: config.endpoint,
+      mode: config.mode === "RAW" ? "RAW" : "",
+      username: config.username,
+      password: config.password,
     },
   });
 
@@ -68,9 +69,10 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       configType: data.configType,
       usage: getUsageByConfigType(data.configType),
       config: {
-        region: data.region,
-        accessKeyId: data.accessKeyId,
-        secretAccessKey: data.secretAccessKey,
+        endpoint: data.endpoint,
+        mode: data.mode,
+        username: data.username,
+        password: data.password,
       },
     };
 
@@ -87,6 +89,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
         updateAccess(req);
         return;
       }
+
       addAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
@@ -101,7 +104,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       return;
     }
   };
-
+  const i18n_prefix = "access.authorization.form.httpreq";
   return (
     <>
       <div className="max-w-[35em] mx-auto mt-10">
@@ -160,12 +163,12 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
             <FormField
               control={form.control}
-              name="region"
+              name="endpoint"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
+                  <FormLabel>{t(i18n_prefix + "_endpoint.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.region.placeholder")} {...field} />
+                    <Input placeholder={t(i18n_prefix + "_endpoint.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -175,12 +178,12 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
             <FormField
               control={form.control}
-              name="accessKeyId"
+              name="mode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                  <FormLabel>{t(i18n_prefix + "_mode.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
+                    <Input placeholder={t(i18n_prefix + "_mode.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -190,12 +193,27 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
             <FormField
               control={form.control}
-              name="secretAccessKey"
+              name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.username.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
+                    <Input placeholder={t("access.authorization.form.username.placeholder")} {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("access.authorization.form.password.label")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("access.authorization.form.password.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -215,4 +233,5 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
   );
 };
 
-export default AccessHuaweiCloudForm;
+export default AccessHttpreqForm;
+

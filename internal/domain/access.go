@@ -40,3 +40,34 @@ type GodaddyAccess struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
 }
+
+type PdnsAccess struct {
+	ApiUrl string `json:"apiUrl"`
+	ApiKey string `json:"apiKey"`
+}
+
+type HttpreqAccess struct {
+	Endpoint string `json:"endpoint"`
+	Mode     string `json:"mode"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LocalAccess struct{}
+
+type SSHAccess struct {
+	Host          string `json:"host"`
+	Port          string `json:"port"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	Key           string `json:"key"`
+	KeyPassphrase string `json:"keyPassphrase"`
+}
+
+type WebhookAccess struct {
+	Url string `json:"url"`
+}
+
+type KubernetesAccess struct {
+	KubeConfig string `json:"kubeConfig"`
+}

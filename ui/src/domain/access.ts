@@ -9,6 +9,8 @@ export const accessTypeMap: Map<string, [string, string]> = new Map([
   ["cloudflare", ["common.provider.cloudflare", "/imgs/providers/cloudflare.svg"]],
   ["namesilo", ["common.provider.namesilo", "/imgs/providers/namesilo.svg"]],
   ["godaddy", ["common.provider.godaddy", "/imgs/providers/godaddy.svg"]],
+  ["pdns", ["common.provider.pdns", "/imgs/providers/pdns.svg"]],
+  ["httpreq", ["common.provider.httpreq", "/imgs/providers/httpreq.svg"]],
   ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
   ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
   ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
@@ -29,6 +31,8 @@ export const accessFormType = z.union(
     z.literal("cloudflare"),
     z.literal("namesilo"),
     z.literal("godaddy"),
+    z.literal("pdns"),
+    z.literal("httpreq"),
     z.literal("local"),
     z.literal("ssh"),
     z.literal("webhook"),
@@ -48,12 +52,14 @@ export type Access = {
   config:
     | AliyunConfig
     | TencentConfig
-    | HuaweicloudConfig
+    | HuaweiCloudConfig
     | QiniuConfig
     | AwsConfig
     | CloudflareConfig
     | NamesiloConfig
     | GodaddyConfig
+    | PdnsConfig
+    | HttpreqConfig
     | LocalConfig
     | SSHConfig
     | WebhookConfig
@@ -73,7 +79,7 @@ export type TencentConfig = {
   secretKey: string;
 };
 
-export type HuaweicloudConfig = {
+export type HuaweiCloudConfig = {
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
@@ -102,6 +108,18 @@ export type NamesiloConfig = {
 export type GodaddyConfig = {
   apiKey: string;
   apiSecret: string;
+};
+
+export type PdnsConfig = {
+  apiUrl: string;
+  apiKey: string;
+};
+
+export type HttpreqConfig = {
+  endpoint: string;
+  mode: string;
+  username: string;
+  password: string;
 };
 
 export type LocalConfig = Record<string, string>;
@@ -142,6 +160,8 @@ export const getUsageByConfigType = (configType: string): AccessUsage => {
     case "cloudflare":
     case "namesilo":
     case "godaddy":
+    case "pdns":
+    case "httpreq":
       return "apply";
 
     default:

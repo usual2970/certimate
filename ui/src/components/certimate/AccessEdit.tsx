@@ -8,12 +8,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
-import AccessHuaweicloudForm from "./AccessHuaweicloudForm";
+import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
 import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
 import AccessGodaddyForm from "./AccessGodaddyForm";
+import AccessPdnsForm from "./AccessPdnsForm";
+import AccessHttpreqForm from "./AccessHttpreqForm";
 import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
@@ -61,7 +63,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       break;
     case "huaweicloud":
       form = (
-        <AccessHuaweicloudForm
+        <AccessHuaweiCloudForm
           data={data}
           op={op}
           onAfterReq={() => {
@@ -125,6 +127,28 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
         />
       );
       break;
+    case "pdns":
+      form = (
+        <AccessPdnsForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "httpreq":
+        form = (
+          <AccessHttpreqForm
+            data={data}
+            op={op}
+            onAfterReq={() => {
+              setOpen(false);
+            }}
+          />
+        );
+        break;
     case "local":
       form = (
         <AccessLocalForm

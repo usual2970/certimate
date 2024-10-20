@@ -20,7 +20,7 @@ type AliyunCDNDeployer struct {
 	infos  []string
 }
 
-func NewAliyunCdnDeployer(option *DeployerOption) (*AliyunCDNDeployer, error) {
+func NewAliyunCDNDeployer(option *DeployerOption) (*AliyunCDNDeployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 
@@ -41,7 +41,7 @@ func NewAliyunCdnDeployer(option *DeployerOption) (*AliyunCDNDeployer, error) {
 }
 
 func (d *AliyunCDNDeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
 func (d *AliyunCDNDeployer) GetInfo() []string {
