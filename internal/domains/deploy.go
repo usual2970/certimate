@@ -7,9 +7,9 @@ import (
 
 	"github.com/pocketbase/pocketbase/models"
 
-	"certimate/internal/applicant"
-	"certimate/internal/deployer"
-	"certimate/internal/utils/app"
+	"github.com/usual2970/certimate/internal/applicant"
+	"github.com/usual2970/certimate/internal/deployer"
+	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 type Phase string

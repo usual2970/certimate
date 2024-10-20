@@ -10,8 +10,8 @@ import (
 	cdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
 	cdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
 
-	"certimate/internal/domain"
-	"certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/rand"
 )
 
 type HuaweiCloudCDNDeployer struct {

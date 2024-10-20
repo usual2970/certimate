@@ -1,7 +1,7 @@
 /*
  * @Author: Bin
  * @Date: 2024-09-17
- * @FilePath: /certimate/internal/deployer/aliyun_esa.go
+ * @FilePath: /github.com/usual2970/certimate/internal/deployer/aliyun_esa.go
  */
 package deployer
 
@@ -15,8 +15,8 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"certimate/internal/domain"
-	"certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/rand"
 )
 
 type AliyunESADeployer struct {

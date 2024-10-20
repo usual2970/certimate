@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"strings"
 
-	"certimate/internal/domain"
-	"certimate/internal/utils/app"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/app"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"

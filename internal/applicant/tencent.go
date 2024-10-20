@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-acme/lego/v4/providers/dns/tencentcloud"
 
-	"certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type tencent struct {
