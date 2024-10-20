@@ -11,6 +11,7 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
 	"certimate/internal/domains"
+	"certimate/internal/routes"
 	"certimate/internal/utils/app"
 	_ "certimate/migrations"
 	"certimate/ui"
@@ -33,6 +34,8 @@ func main() {
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		domains.InitSchedule()
+
+		routes.Register(e.Router)
 
 		e.Router.GET(
 			"/*",

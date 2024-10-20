@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"certimate/internal/domain"
 	"certimate/internal/utils/app"
 
 	notifyPackage "github.com/nikoksr/notify"
@@ -12,13 +13,6 @@ import (
 	"github.com/nikoksr/notify/service/http"
 	"github.com/nikoksr/notify/service/lark"
 	"github.com/nikoksr/notify/service/telegram"
-)
-
-const (
-	notifyChannelDingtalk = "dingtalk"
-	notifyChannelWebhook  = "webhook"
-	notifyChannelTelegram = "telegram"
-	notifyChannelLark     = "lark"
 )
 
 func Send(title, content string) error {
@@ -37,6 +31,28 @@ func Send(title, content string) error {
 
 	// 发送消息
 	return n.Send(context.Background(), title, content)
+}
+
+type sendTestParam struct {
+	Title   string         `json:"title"`
+	Content string         `json:"content"`
+	Channel string         `json:"channel"`
+	Conf    map[string]any `json:"conf"`
+}
+
+func SendTest(param *sendTestParam) error {
+	notifier, err := getNotifier(param.Channel, param.Conf)
+	if err != nil {
+		return err
+	}
+
+	n := notifyPackage.New()
+
+	// 添加推送渠道
+	n.UseServices(notifier)
+
+	// 发送消息
+	return n.Send(context.Background(), param.Title, param.Content)
 }
 
 func getNotifiers() ([]notifyPackage.Notifier, error) {
@@ -59,25 +75,36 @@ func getNotifiers() ([]notifyPackage.Notifier, error) {
 			continue
 		}
 
-		switch k {
-		case notifyChannelTelegram:
-			temp := getTelegramNotifier(v)
-			if temp == nil {
-				continue
-			}
-
-			notifiers = append(notifiers, temp)
-		case notifyChannelDingtalk:
-			notifiers = append(notifiers, getDingTalkNotifier(v))
-		case notifyChannelLark:
-			notifiers = append(notifiers, getLarkNotifier(v))
-		case notifyChannelWebhook:
-			notifiers = append(notifiers, getWebhookNotifier(v))
+		notifier, err := getNotifier(k, v)
+		if err != nil {
+			continue
 		}
+
+		notifiers = append(notifiers, notifier)
 
 	}
 
 	return notifiers, nil
+}
+
+func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, error) {
+	switch channel {
+	case domain.NotifyChannelTelegram:
+		temp := getTelegramNotifier(conf)
+		if temp == nil {
+			return nil, fmt.Errorf("telegram notifier config error")
+		}
+
+		return temp, nil
+	case domain.NotifyChannelDingtalk:
+		return getDingTalkNotifier(conf), nil
+	case domain.NotifyChannelLark:
+		return getLarkNotifier(conf), nil
+	case domain.NotifyChannelWebhook:
+		return getWebhookNotifier(conf), nil
+	}
+
+	return nil, fmt.Errorf("notifier not found")
 }
 
 func getWebhookNotifier(conf map[string]any) notifyPackage.Notifier {

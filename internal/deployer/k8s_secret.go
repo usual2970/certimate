@@ -8,11 +8,9 @@ import (
 	k8sMetaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-)
 
-type KubernetesAccess struct {
-	KubeConfig string `json:"kubeConfig"`
-}
+	"certimate/internal/domain"
+)
 
 type K8sSecretDeployer struct {
 	option *DeployerOption
@@ -27,7 +25,7 @@ func NewK8sSecretDeployer(option *DeployerOption) (Deployer, error) {
 }
 
 func (d *K8sSecretDeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AceessRecord.GetString("name"), d.option.AceessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
 func (d *K8sSecretDeployer) GetInfo() []string {
@@ -35,7 +33,7 @@ func (d *K8sSecretDeployer) GetInfo() []string {
 }
 
 func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
-	access := &KubernetesAccess{}
+	access := &domain.KubernetesAccess{}
 	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
 		return err
 	}
@@ -86,7 +84,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *K8sSecretDeployer) createClient(access *KubernetesAccess) (*kubernetes.Clientset, error) {
+func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kubernetes.Clientset, error) {
 	kubeConfig, err := clientcmd.Load([]byte(access.KubeConfig))
 	if err != nil {
 		return nil, err

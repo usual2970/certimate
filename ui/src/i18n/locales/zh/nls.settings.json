@@ -30,6 +30,9 @@
   "settings.notification.config.enable": "是否启用",
   "settings.notification.config.saved.message": "配置保存成功",
   "settings.notification.config.failed.message": "配置保存失败",
+  "settings.notification.config.push.test.message": "推送测试消息",
+  "settings.notification.config.push.test.message.failed.message": "推送测试消息失败",
+  "settings.notification.config.push.test.message.success.message": "推送测试消息成功",
   "settings.notification.dingtalk.secret.placeholder": "加签的签名",
   "settings.notification.url.errmsg.invalid": "URL 格式不正确",
 
@@ -39,3 +42,4 @@
   "settings.ca.eab_hmac_key.errmsg.empty": "请输入EAB_HMAC_KEY",
   "settings.ca.eab_kid_hmac_key.errmsg.empty": "请输入EAB_KID和EAB_HMAC_KEY"
 }
+

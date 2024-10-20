@@ -8,17 +8,17 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweicloudConfig, getUsageByConfigType } from "@/domain/access";
+import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfig } from "@/providers/config";
 
-type AccessHuaweicloudFormProps = {
+type AccessHuaweiCloudFormProps = {
   op: "add" | "edit" | "copy";
   data?: Access;
   onAfterReq: () => void;
 };
 
-const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormProps) => {
+const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormProps) => {
   const { addAccess, updateAccess } = useConfig();
   const { t } = useTranslation();
   const formSchema = z.object({
@@ -42,12 +42,12 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: HuaweicloudConfig = {
+  let config: HuaweiCloudConfig = {
     region: "cn-north-1",
     accessKeyId: "",
     secretAccessKey: "",
   };
-  if (data) config = data.config as HuaweicloudConfig;
+  if (data) config = data.config as HuaweiCloudConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -215,4 +215,4 @@ const AccessHuaweicloudForm = ({ data, op, onAfterReq }: AccessHuaweicloudFormPr
   );
 };
 
-export default AccessHuaweicloudForm;
+export default AccessHuaweiCloudForm;

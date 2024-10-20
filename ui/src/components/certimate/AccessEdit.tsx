@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
-import AccessHuaweicloudForm from "./AccessHuaweicloudForm";
+import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
 import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
@@ -63,7 +63,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       break;
     case "huaweicloud":
       form = (
-        <AccessHuaweicloudForm
+        <AccessHuaweiCloudForm
           data={data}
           op={op}
           onAfterReq={() => {

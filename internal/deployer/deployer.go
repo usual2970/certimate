@@ -15,15 +15,16 @@ import (
 )
 
 const (
-	targetAliyunOSS  = "aliyun-oss"
-	targetAliyunCDN  = "aliyun-cdn"
-	targetAliyunESA  = "aliyun-dcdn"
-	targetTencentCDN = "tencent-cdn"
-	targetQiniuCdn   = "qiniu-cdn"
-	targetLocal      = "local"
-	targetSSH        = "ssh"
-	targetWebhook    = "webhook"
-	targetK8sSecret  = "k8s-secret"
+	targetAliyunOSS      = "aliyun-oss"
+	targetAliyunCDN      = "aliyun-cdn"
+	targetAliyunESA      = "aliyun-dcdn"
+	targetTencentCDN     = "tencent-cdn"
+	targetHuaweiCloudCDN = "huaweicloud-cdn"
+	targetQiniuCdn       = "qiniu-cdn"
+	targetLocal          = "local"
+	targetSSH            = "ssh"
+	targetWebhook        = "webhook"
+	targetK8sSecret      = "k8s-secret"
 )
 
 type DeployerOption struct {
@@ -31,7 +32,7 @@ type DeployerOption struct {
 	Domain       string                `json:"domain"`
 	Product      string                `json:"product"`
 	Access       string                `json:"access"`
-	AceessRecord *models.Record        `json:"-"`
+	AccessRecord *models.Record        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
 	Certificate  applicant.Certificate `json:"certificate"`
 	Variables    map[string]string     `json:"variables"`
@@ -83,7 +84,7 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		Domain:       record.GetString("domain"),
 		Product:      getProduct(deployConfig.Type),
 		Access:       access.GetString("config"),
-		AceessRecord: access,
+		AccessRecord: access,
 		DeployConfig: deployConfig,
 	}
 	if cert != nil {
@@ -97,13 +98,15 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 
 	switch deployConfig.Type {
 	case targetAliyunOSS:
-		return NewAliyunOssDeployer(option)
+		return NewAliyunOSSDeployer(option)
 	case targetAliyunCDN:
-		return NewAliyunCdnDeployer(option)
+		return NewAliyunCDNDeployer(option)
 	case targetAliyunESA:
-		return NewAliyunEsaDeployer(option)
+		return NewAliyunESADeployer(option)
 	case targetTencentCDN:
 		return NewTencentCDNDeployer(option)
+	case targetHuaweiCloudCDN:
+		return NewHuaweiCloudCDNDeployer(option)
 	case targetQiniuCdn:
 		return NewQiniuCDNDeployer(option)
 	case targetLocal:

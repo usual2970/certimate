@@ -13,7 +13,7 @@
   "domain.deploy.started.tips": "Deployment initiated, please check the deployment log later.",
   "domain.deploy.failed.message": "Execution Failed",
   "domain.deploy.failed.tips": "Execution failed, please check the details in <1>Deployment History</1>.",
-  "domain.deploy_forced": "Force Deployment",
+  "domain.deploy_forced": "Force Deploy",
 
   "domain.props.expiry": "Validity Period",
   "domain.props.expiry.date1": "Valid for {{date}} days",

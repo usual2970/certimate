@@ -19,12 +19,15 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
+
+	"certimate/internal/domain"
+	"certimate/internal/utils/app"
 )
 
 const (
 	configTypeAliyun      = "aliyun"
 	configTypeTencent     = "tencent"
-	configTypeHuaweicloud = "huaweicloud"
+	configTypeHuaweiCloud = "huaweicloud"
 	configTypeAws         = "aws"
 	configTypeCloudflare  = "cloudflare"
 	configTypeNamesilo    = "namesilo"
@@ -128,7 +131,7 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewAliyun(option), nil
 	case configTypeTencent:
 		return NewTencent(option), nil
-	case configTypeHuaweicloud:
+	case configTypeHuaweiCloud:
 		return NewHuaweiCloud(option), nil
 	case configTypeAws:
 		return NewAws(option), nil

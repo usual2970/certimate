@@ -59,6 +59,7 @@
   "common.provider.aliyun.cdn": "阿里云 - CDN",
   "common.provider.aliyun.dcdn": "阿里云 - DCDN",
   "common.provider.huaweicloud": "华为云",
+  "common.provider.huaweicloud.cdn": "华为云 - CDN",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - CDN",
   "common.provider.aws": "AWS",
