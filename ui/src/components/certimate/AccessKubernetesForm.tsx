@@ -113,81 +113,79 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
 
   return (
     <>
-      <div className="max-w-[35em] mx-auto mt-10">
-        <Form {...form}>
-          <form
-            onSubmit={(e) => {
-              e.stopPropagation();
-              form.handleSubmit(onSubmit)(e);
-            }}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                  </FormControl>
+      <Form {...form}>
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-3"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="kubeConfig"
-              render={({ field }) => (
-                <FormItem hidden>
-                  <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="kubeConfig"
+            render={({ field }) => (
+              <FormItem hidden>
+                <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="kubeConfigFile"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
-                        {fileName ? fileName : t("access.authorization.form.k8s_kubeconfig_file.placeholder")}
-                      </Button>
-                      <Input
-                        placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")}
-                        {...field}
-                        ref={fileInputRef}
-                        className="hidden"
-                        hidden
-                        type="file"
-                        onChange={handleFileChange}
-                      />
-                    </div>
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="kubeConfigFile"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
+                <FormControl>
+                  <div>
+                    <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
+                      {fileName ? fileName : t("access.authorization.form.k8s_kubeconfig_file.placeholder")}
+                    </Button>
+                    <Input
+                      placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")}
+                      {...field}
+                      ref={fileInputRef}
+                      className="hidden"
+                      hidden
+                      type="file"
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormMessage />
+          <FormMessage />
 
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.save")}</Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          <div className="flex justify-end">
+            <Button type="submit">{t("common.save")}</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 };

@@ -37,7 +37,7 @@
   "domain.application.form.access.placeholder": "Please select DNS provider authorization configuration",
   "domain.application.form.access.list": "Provider Authorization Configurations",
   "domain.application.form.advanced_settings.label": "Advanced Settings",
-  "domain.application.form.key_algorithm.label": "Certificate Key Algorithm",
+  "domain.application.form.key_algorithm.label": "Certificate Key Algorithm (Default: RSA2048)",
   "domain.application.form.key_algorithm.placeholder": "Please select certificate key algorithm",
   "domain.application.form.timeout.label": "DNS Propagation Timeout (Seconds)",
   "domain.application.form.timeoue.placeholder": "Please enter maximum waiting time for DNS propagation",

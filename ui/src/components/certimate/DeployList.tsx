@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import AccessEdit from "./AccessEdit";
+import AccessEditDialog from "./AccessEditDialog";
 import KVList from "./KVList";
 import { DeployConfig, KVType, targetTypeKeys, targetTypeMap } from "@/domain/domain";
 import { accessTypeMap } from "@/domain/access";
@@ -365,7 +365,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
           <div>
             <Label className="flex justify-between">
               <div>{t("domain.deployment.form.access.label")}</div>
-              <AccessEdit
+              <AccessEditDialog
                 trigger={
                   <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                     <Plus size={14} />
@@ -477,7 +477,7 @@ const DeployToSSH = () => {
   }, []);
   return (
     <>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-8">
         <div>
           <Label>{t("domain.deployment.form.ssh_cert_path.label")}</Label>
           <Input
@@ -641,7 +641,7 @@ const DeployToOSS = () => {
   });
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-8">
       <div>
         <Label>{t("domain.deployment.form.oss_endpoint.label")}</Label>
 
@@ -760,7 +760,7 @@ const DeployToCDN = () => {
   });
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-8">
       <div>
         <Label>{t("domain.deployment.form.domain.label")}</Label>
         <Input
@@ -824,7 +824,7 @@ const DeployToKubernetes = () => {
 
   return (
     <>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-8">
         <div>
           <Label>{t("domain.deployment.form.k8s_namespace.label")}</Label>
           <Input
@@ -840,6 +840,7 @@ const DeployToKubernetes = () => {
             }}
           />
         </div>
+
         <div>
           <Label>{t("domain.deployment.form.k8s_secret_name.label")}</Label>
           <Input
@@ -855,6 +856,7 @@ const DeployToKubernetes = () => {
             }}
           />
         </div>
+
         <div>
           <Label>{t("domain.deployment.form.k8s_secret_data_key_for_crt.label")}</Label>
           <Input
@@ -870,6 +872,7 @@ const DeployToKubernetes = () => {
             }}
           />
         </div>
+
         <div>
           <Label>{t("domain.deployment.form.k8s_secret_data_key_for_key.label")}</Label>
           <Input
@@ -889,4 +892,3 @@ const DeployToKubernetes = () => {
     </>
   );
 };
-

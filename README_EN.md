@@ -75,15 +75,14 @@ password：1234567890
 | :-----------: | :----------: | :--------: | ------------------------------------------------------------------------------------------- |
 | Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN |
 | Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud CDN      |
-| Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei; supports deployment to Huawei Cloud CDN              |
+| Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei Cloud; supports deployment to Huawei Cloud CDN        |
 |  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                      |
 |      AWS      |      √       |            | Supports domains managed on AWS Route53                                                     |
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                      |
 |   Namesilo    |      √       |            | Supports domains registered on Namesilo                                                     |
-| PowerDNS      |      √       |            | Supports domains managed by PowerDNS |
-| HTTP request  |      √       |            | Supports domains dns managed by HTTP Request |
-
+|   PowerDNS    |      √       |            | Supports domains managed on PowerDNS                                                        |
+| HTTP Request  |      √       |            | Supports domains which allow managing DNS by HTTP request                                   |
 | Local Deploy  |              |     √      | Supports deployment to local servers                                                        |
 |      SSH      |              |     √      | Supports deployment to SSH servers                                                          |
 |    Webhook    |              |     √      | Supports callback to Webhook                                                                |

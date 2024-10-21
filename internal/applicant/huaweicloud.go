@@ -24,7 +24,12 @@ func (t *huaweicloud) Apply() (*Certificate, error) {
 	access := &domain.HuaweiCloudAccess{}
 	json.Unmarshal([]byte(t.option.Access), access)
 
-	os.Setenv("HUAWEICLOUD_REGION", access.Region) // 华为云的 SDK 要求必须传一个区域，实际上 DNS-01 流程里用不到，但不传会报错
+	region := access.Region
+	if region == "" {
+		region = "cn-north-1"
+	}
+
+	os.Setenv("HUAWEICLOUD_REGION", region) // 华为云的 SDK 要求必须传一个区域，实际上 DNS-01 流程里用不到，但不传会报错
 	os.Setenv("HUAWEICLOUD_ACCESS_KEY_ID", access.AccessKeyId)
 	os.Setenv("HUAWEICLOUD_SECRET_ACCESS_KEY", access.SecretAccessKey)
 	os.Setenv("HUAWEICLOUD_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", t.option.Timeout))

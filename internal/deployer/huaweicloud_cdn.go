@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
 	cdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
@@ -11,7 +12,8 @@ import (
 	cdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/rand"
+	uploader "github.com/usual2970/certimate/internal/pkg/core/uploader"
+	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
 type HuaweiCloudCDNDeployer struct {
@@ -40,16 +42,18 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 		return err
 	}
 
-	client, err := d.createClient(access)
+	// TODO: CDN 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
+	client, err := d.createClient("", access.AccessKeyId, access.SecretAccessKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("HuaweiCloudCdnClient 创建成功", nil))
+	d.infos = append(d.infos, toStr("SDK 客户端创建成功", nil))
 
 	// 查询加速域名配置
+	// REF: https://support.huaweicloud.com/api-cdn/ShowDomainFullConfig.html
 	showDomainFullConfigReq := &cdnModel.ShowDomainFullConfigRequest{
-		DomainName: getDeployString(d.option.DeployConfig, "domain"),
+		DomainName: d.option.DeployConfig.GetConfigAsString("domain"),
 	}
 	showDomainFullConfigResp, err := client.ShowDomainFullConfig(showDomainFullConfigReq)
 	if err != nil {
@@ -59,19 +63,46 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已查询到加速域名配置", showDomainFullConfigResp))
 
 	// 更新加速域名配置
-	certName := fmt.Sprintf("%s-%s", d.option.DomainId, rand.RandStr(12))
-	updateDomainMultiCertificatesReq := &cdnModel.UpdateDomainMultiCertificatesRequest{
-		Body: &cdnModel.UpdateDomainMultiCertificatesRequestBody{
-			Https: mergeHuaweiCloudCDNConfig(showDomainFullConfigResp.Configs, &cdnModel.UpdateDomainMultiCertificatesRequestBodyContent{
-				DomainName:  getDeployString(d.option.DeployConfig, "domain"),
-				HttpsSwitch: 1,
-				CertName:    &certName,
-				Certificate: &d.option.Certificate.Certificate,
-				PrivateKey:  &d.option.Certificate.PrivateKey,
-			}),
+	// REF: https://support.huaweicloud.com/api-cdn/UpdateDomainMultiCertificates.html
+	// REF: https://support.huaweicloud.com/usermanual-cdn/cdn_01_0306.html
+	updateDomainMultiCertificatesReqBodyContent := &huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent{}
+	updateDomainMultiCertificatesReqBodyContent.DomainName = d.option.DeployConfig.GetConfigAsString("domain")
+	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
+	var updateDomainMultiCertificatesResp *cdnModel.UpdateDomainMultiCertificatesResponse
+	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
+		uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
+			Region:          "", // TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
+			AccessKeyId:     access.AccessKeyId,
+			SecretAccessKey: access.SecretAccessKey,
+		})
+		if err != nil {
+			return err
+		}
+
+		// 上传证书到 SCM
+		uploadResult, err := uploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+		if err != nil {
+			return err
+		}
+
+		d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+
+		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
+		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(uploadResult.CertId)
+		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(uploadResult.CertName)
+	} else {
+		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(0)
+		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
+		updateDomainMultiCertificatesReqBodyContent.Certificate = cast.StringPtr(d.option.Certificate.Certificate)
+		updateDomainMultiCertificatesReqBodyContent.PrivateKey = cast.StringPtr(d.option.Certificate.PrivateKey)
+	}
+	updateDomainMultiCertificatesReqBodyContent = mergeHuaweiCloudCDNConfig(showDomainFullConfigResp.Configs, updateDomainMultiCertificatesReqBodyContent)
+	updateDomainMultiCertificatesReq := &huaweicloudCDNUpdateDomainMultiCertificatesRequest{
+		Body: &huaweicloudCDNUpdateDomainMultiCertificatesRequestBody{
+			Https: updateDomainMultiCertificatesReqBodyContent,
 		},
 	}
-	updateDomainMultiCertificatesResp, err := client.UpdateDomainMultiCertificates(updateDomainMultiCertificatesReq)
+	updateDomainMultiCertificatesResp, err = executeHuaweiCloudCDNUploadDomainMultiCertificates(client, updateDomainMultiCertificatesReq)
 	if err != nil {
 		return err
 	}
@@ -81,22 +112,26 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *HuaweiCloudCDNDeployer) createClient(access *domain.HuaweiCloudAccess) (*cdn.CdnClient, error) {
+func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessKey string) (*cdn.CdnClient, error) {
 	auth, err := global.NewCredentialsBuilder().
-		WithAk(access.AccessKeyId).
-		WithSk(access.SecretAccessKey).
+		WithAk(accessKeyId).
+		WithSk(secretAccessKey).
 		SafeBuild()
 	if err != nil {
 		return nil, err
 	}
 
-	region, err := cdnRegion.SafeValueOf(access.Region)
+	if region == "" {
+		region = "cn-north-1" // CDN 服务默认区域：华北一北京
+	}
+
+	hcRegion, err := cdnRegion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
 	hcClient, err := cdn.CdnClientBuilder().
-		WithRegion(region).
+		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
 	if err != nil {
@@ -107,25 +142,47 @@ func (d *HuaweiCloudCDNDeployer) createClient(access *domain.HuaweiCloudAccess) 
 	return client, nil
 }
 
-func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *cdnModel.UpdateDomainMultiCertificatesRequestBodyContent) *cdnModel.UpdateDomainMultiCertificatesRequestBodyContent {
+type huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent struct {
+	cdnModel.UpdateDomainMultiCertificatesRequestBodyContent `json:",inline"`
+
+	SCMCertificateId *string `json:"scm_certificate_id,omitempty"`
+}
+
+type huaweicloudCDNUpdateDomainMultiCertificatesRequestBody struct {
+	Https *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent `json:"https,omitempty"`
+}
+
+type huaweicloudCDNUpdateDomainMultiCertificatesRequest struct {
+	Body *huaweicloudCDNUpdateDomainMultiCertificatesRequestBody `json:"body,omitempty"`
+}
+
+func executeHuaweiCloudCDNUploadDomainMultiCertificates(client *cdn.CdnClient, request *huaweicloudCDNUpdateDomainMultiCertificatesRequest) (*cdnModel.UpdateDomainMultiCertificatesResponse, error) {
+	// 华为云官方 SDK 中目前提供的字段缺失，这里暂时先需自定义请求
+	// 可能需要等之后 SDK 更新
+
+	requestDef := cdn.GenReqDefForUpdateDomainMultiCertificates()
+
+	if resp, err := client.HcClient.Sync(request, requestDef); err != nil {
+		return nil, err
+	} else {
+		return resp.(*cdnModel.UpdateDomainMultiCertificatesResponse), nil
+	}
+}
+
+func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent) *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent {
 	if src == nil {
 		return dest
 	}
 
 	// 华为云 API 中不传的字段表示使用默认值、而非保留原值，因此这里需要把原配置中的参数重新赋值回去
 	// 而且蛋疼的是查询接口返回的数据结构和更新接口传入的参数结构不一致，需要做很多转化
-	// REF: https://support.huaweicloud.com/api-cdn/ShowDomainFullConfig.html
-	// REF: https://support.huaweicloud.com/api-cdn/UpdateDomainMultiCertificates.html
 
 	if *src.OriginProtocol == "follow" {
-		accessOriginWay := int32(1)
-		dest.AccessOriginWay = &accessOriginWay
+		dest.AccessOriginWay = cast.Int32Ptr(1)
 	} else if *src.OriginProtocol == "http" {
-		accessOriginWay := int32(2)
-		dest.AccessOriginWay = &accessOriginWay
+		dest.AccessOriginWay = cast.Int32Ptr(2)
 	} else if *src.OriginProtocol == "https" {
-		accessOriginWay := int32(3)
-		dest.AccessOriginWay = &accessOriginWay
+		dest.AccessOriginWay = cast.Int32Ptr(3)
 	}
 
 	if src.ForceRedirect != nil {
@@ -141,8 +198,7 @@ func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *cdnModel.Upda
 
 	if src.Https != nil {
 		if *src.Https.Http2Status == "on" {
-			http2 := int32(1)
-			dest.Http2 = &http2
+			dest.Http2 = cast.Int32Ptr(1)
 		}
 	}
 

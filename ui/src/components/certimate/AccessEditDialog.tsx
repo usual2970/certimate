@@ -29,7 +29,7 @@ type AccessEditProps = {
   data?: Access;
 };
 
-const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
+const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -139,16 +139,16 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "httpreq":
-        form = (
-          <AccessHttpreqForm
-            data={data}
-            op={op}
-            onAfterReq={() => {
-              setOpen(false);
-            }}
-          />
-        );
-        break;
+      form = (
+        <AccessHttpreqForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
     case "local":
       form = (
         <AccessLocalForm
@@ -212,33 +212,34 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">
-            <Label>{t("access.authorization.form.type.label")}</Label>
+            <div>
+              <Label>{t("access.authorization.form.type.label")}</Label>
+              <Select
+                onValueChange={(val) => {
+                  setConfigType(val);
+                }}
+                defaultValue={configType}
+              >
+                <SelectTrigger className="mt-3">
+                  <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
+                    {typeKeys.map((key) => (
+                      <SelectItem value={key} key={key}>
+                        <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
+                          <img src={accessTypeMap.get(key)?.[1]} className="h-6 w-6" />
+                          <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select
-              onValueChange={(val) => {
-                setConfigType(val);
-              }}
-              defaultValue={configType}
-            >
-              <SelectTrigger className="mt-3">
-                <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
-                  {typeKeys.map((key) => (
-                    <SelectItem value={key} key={key}>
-                      <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
-                        <img src={accessTypeMap.get(key)?.[1]} className="h-6 w-6" />
-                        <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            {form}
+            <div className="mt-8">{form}</div>
           </div>
         </ScrollArea>
       </DialogContent>
@@ -246,4 +247,4 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
   );
 };
 
-export default AccessEdit;
+export default AccessEditDialog;
