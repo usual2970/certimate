@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
-import AccessEdit from "@/components/certimate/AccessEdit";
+import AccessEditDialog from "@/components/certimate/AccessEditDialog";
 import DeployList from "@/components/certimate/DeployList";
 import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
@@ -295,7 +295,7 @@ const Edit = () => {
                       <FormItem>
                         <FormLabel className="flex w-full justify-between">
                           <div>{t("domain.application.form.access.label")}</div>
-                          <AccessEdit
+                          <AccessEditDialog
                             trigger={
                               <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                                 <Plus size={14} />

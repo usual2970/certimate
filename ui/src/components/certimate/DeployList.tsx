@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import AccessEdit from "./AccessEdit";
+import AccessEditDialog from "./AccessEditDialog";
 import KVList from "./KVList";
 import { DeployConfig, KVType, targetTypeKeys, targetTypeMap } from "@/domain/domain";
 import { accessTypeMap } from "@/domain/access";
@@ -365,7 +365,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
           <div>
             <Label className="flex justify-between">
               <div>{t("domain.deployment.form.access.label")}</div>
-              <AccessEdit
+              <AccessEditDialog
                 trigger={
                   <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                     <Plus size={14} />
@@ -889,4 +889,3 @@ const DeployToKubernetes = () => {
     </>
   );
 };
-

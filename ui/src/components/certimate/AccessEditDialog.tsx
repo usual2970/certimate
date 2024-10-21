@@ -29,7 +29,7 @@ type AccessEditProps = {
   data?: Access;
 };
 
-const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
+const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -139,16 +139,16 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "httpreq":
-        form = (
-          <AccessHttpreqForm
-            data={data}
-            op={op}
-            onAfterReq={() => {
-              setOpen(false);
-            }}
-          />
-        );
-        break;
+      form = (
+        <AccessHttpreqForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
     case "local":
       form = (
         <AccessLocalForm
@@ -238,7 +238,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
               </SelectContent>
             </Select>
 
-            {form}
+            <div className="mt-8">{form}</div>
           </div>
         </ScrollArea>
       </DialogContent>
@@ -246,4 +246,4 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
   );
 };
 
-export default AccessEdit;
+export default AccessEditDialog;

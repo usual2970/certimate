@@ -193,84 +193,113 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
 
   return (
     <>
-      <div className="max-w-[35em] mx-auto mt-10">
-        <Form {...form}>
-          <form
-            onSubmit={(e) => {
-              e.stopPropagation();
-              form.handleSubmit(onSubmit)(e);
-            }}
-            className="space-y-3"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                  </FormControl>
+      <Form {...form}>
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-3"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="group"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="w-full flex justify-between">
-                    <div>{t("access.authorization.form.ssh_group.label")}</div>
-                    <AccessGroupEdit
-                      trigger={
-                        <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
-                          <Plus size={14} />
-                          {t("common.add")}
-                        </div>
-                      }
-                    />
-                  </FormLabel>
-                  <FormControl>
-                    <Select
-                      {...field}
-                      value={field.value}
-                      defaultValue="emptyId"
-                      onValueChange={(value) => {
-                        form.setValue("group", value);
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder={t("access.authorization.form.access_group.placeholder")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="emptyId">
-                          <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>--</div>
+          <FormField
+            control={form.control}
+            name="group"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="w-full flex justify-between">
+                  <div>{t("access.authorization.form.ssh_group.label")}</div>
+                  <AccessGroupEdit
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                  />
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    {...field}
+                    value={field.value}
+                    defaultValue="emptyId"
+                    onValueChange={(value) => {
+                      form.setValue("group", value);
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("access.authorization.form.access_group.placeholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="emptyId">
+                        <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>--</div>
+                      </SelectItem>
+                      {accessGroups.map((item) => (
+                        <SelectItem value={item.id ? item.id : ""} key={item.id}>
+                          <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>{item.name}</div>
                         </SelectItem>
-                        {accessGroups.map((item) => (
-                          <SelectItem value={item.id ? item.id : ""} key={item.id}>
-                            <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>{item.name}</div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="configType"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex space-x-2">
             <FormField
               control={form.control}
-              name="id"
+              name="host"
               render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormItem className="grow">
+                  <FormLabel>{t("access.authorization.form.ssh_host.label")}</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder={t("access.authorization.form.ssh_host.placeholder")} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -280,146 +309,115 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
 
             <FormField
               control={form.control}
-              name="configType"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex space-x-2">
-              <FormField
-                control={form.control}
-                name="host"
-                render={({ field }) => (
-                  <FormItem className="grow">
-                    <FormLabel>{t("access.authorization.form.ssh_host.label")}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t("access.authorization.form.ssh_host.placeholder")} {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="port"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("access.authorization.form.ssh_port.label")}</FormLabel>
-                    <FormControl>
-                      <Input placeholder={t("access.authorization.form.ssh_port.placeholder")} {...field} type="number" />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="username"
+              name="port"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t("access.authorization.form.ssh_username.label")}</FormLabel>
+                  <FormLabel>{t("access.authorization.form.ssh_port.label")}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t("access.authorization.form.ssh_username.placeholder")} {...field} />
+                    <Input placeholder={t("access.authorization.form.ssh_port.placeholder")} {...field} type="number" />
                   </FormControl>
 
                   <FormMessage />
                 </FormItem>
               )}
             />
+          </div>
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.ssh_password.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.ssh_password.placeholder")} {...field} type="password" />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.ssh_username.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.ssh_username.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="key"
-              render={({ field }) => (
-                <FormItem hidden>
-                  <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.ssh_key.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.ssh_password.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.ssh_password.placeholder")} {...field} type="password" />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="keyFile"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
-                  <FormControl>
-                    <div>
-                      <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
-                        {fileName ? fileName : t("access.authorization.form.ssh_key_file.placeholder")}
-                      </Button>
-                      <Input
-                        placeholder={t("access.authorization.form.ssh_key.placeholder")}
-                        {...field}
-                        ref={fileInputRef}
-                        className="hidden"
-                        hidden
-                        type="file"
-                        onChange={handleFileChange}
-                      />
-                    </div>
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="key"
+            render={({ field }) => (
+              <FormItem hidden>
+                <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.ssh_key.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="keyPassphrase"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.ssh_key_passphrase.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.ssh_key_passphrase.placeholder")} {...field} type="password" />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="keyFile"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.ssh_key.label")}</FormLabel>
+                <FormControl>
+                  <div>
+                    <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
+                      {fileName ? fileName : t("access.authorization.form.ssh_key_file.placeholder")}
+                    </Button>
+                    <Input
+                      placeholder={t("access.authorization.form.ssh_key.placeholder")}
+                      {...field}
+                      ref={fileInputRef}
+                      className="hidden"
+                      hidden
+                      type="file"
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormMessage />
+          <FormField
+            control={form.control}
+            name="keyPassphrase"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.ssh_key_passphrase.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.ssh_key_passphrase.placeholder")} {...field} type="password" />
+                </FormControl>
 
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.save")}</Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormMessage />
+
+          <div className="flex justify-end">
+            <Button type="submit">{t("common.save")}</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 };
