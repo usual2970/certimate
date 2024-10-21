@@ -439,18 +439,18 @@ const Edit = () => {
                               <FormItem>
                                 <FormLabel>
                                   <div className="flex">
-                                    <span className="mr-1">{t("domain.application.form.disable_follow_CNAME.label")} </span>
+                                    <span className="mr-1">{t("domain.application.form.disable_follow_cname.label")} </span>
                                     <TooltipFast
                                       className="max-w-[20rem]"
                                       contentView={
                                         <p>
-                                          {t("domain.application.form.disable_follow_CNAME.tips")}
+                                          {t("domain.application.form.disable_follow_cname.tips")}
                                           <a
                                             className="text-primary"
                                             target="_blank"
                                             href="https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname"
                                           >
-                                            {t("domain.application.form.disable_follow_CNAME.tips_link")}
+                                            {t("domain.application.form.disable_follow_cname.tips_link")}
                                           </a>
                                         </p>
                                       }
