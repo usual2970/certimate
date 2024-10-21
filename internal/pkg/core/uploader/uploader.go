@@ -21,7 +21,7 @@ type Uploader interface {
 
 // 表示证书上传结果的数据结构，包含上传后的证书 ID、名称和其他数据。
 type UploadResult struct {
-	CertId   string                 `json:"certId"`
-	CertName string                 `json:"certName"`
-	CertData map[string]interface{} `json:"certData,omitempty"`
+	CertId   string         `json:"certId"`
+	CertName string         `json:"certName"`
+	CertData map[string]any `json:"certData,omitempty"`
 }

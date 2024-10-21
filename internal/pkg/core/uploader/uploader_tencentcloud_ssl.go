@@ -1,4 +1,4 @@
-﻿package impl
+﻿package uploader
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
-	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
@@ -36,7 +35,7 @@ func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (*Tencent
 	}, nil
 }
 
-func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
 	// 生成新证书名（需符合腾讯云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
@@ -63,7 +62,7 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 
 		certId = *uploadCertificateResp.Response.RepeatCertId
 		certName = *describeCertificateDetailResp.Response.Alias
-		return &uploader.UploadResult{
+		return &UploadResult{
 			CertId:   certId,
 			CertName: certName,
 		}, nil
@@ -73,7 +72,7 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 	}
 
 	certId = *uploadCertificateResp.Response.CertificateId
-	return &uploader.UploadResult{
+	return &UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil

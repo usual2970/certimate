@@ -1,4 +1,4 @@
-﻿package impl
+﻿package uploader
 
 import (
 	"context"
@@ -11,7 +11,6 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -40,7 +39,7 @@ func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (*AliyunCASUploader, 
 	}, nil
 }
 
-func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
@@ -88,7 +87,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 					// 如果已存在相同证书，直接返回已有的证书信息
 					if isSameCert {
-						return &uploader.UploadResult{
+						return &UploadResult{
 							CertId:   fmt.Sprintf("%d", tea.Int64Value(certDetail.CertificateId)),
 							CertName: *certDetail.Name,
 						}, nil
@@ -124,7 +123,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}
 
 	certId = fmt.Sprintf("%d", tea.Int64Value(uploadUserCertificateResp.Body.CertId))
-	return &uploader.UploadResult{
+	return &UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil

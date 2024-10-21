@@ -12,7 +12,7 @@ import (
 	cdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
 
 	"github.com/usual2970/certimate/internal/domain"
-	uploaderImpl "github.com/usual2970/certimate/internal/pkg/core/uploader/impl"
+	uploader "github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
@@ -70,7 +70,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
 	var updateDomainMultiCertificatesResp *cdnModel.UpdateDomainMultiCertificatesResponse
 	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
-		uploader, err := uploaderImpl.NewHuaweiCloudSCMUploader(&uploaderImpl.HuaweiCloudSCMUploaderConfig{
+		uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
 			Region:          "", // TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
 			AccessKeyId:     access.AccessKeyId,
 			SecretAccessKey: access.SecretAccessKey,
