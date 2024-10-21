@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -181,12 +182,8 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	}
 
 	// Some unified lego environment variables are configured here.
-	disableFCNAME := "false"
-	if option.DisableFollowCNAME {
-		disableFCNAME = "true"
-	}
 	// link: https://github.com/go-acme/lego/issues/1867
-	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", disableFCNAME)
+	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(option.DisableFollowCNAME))
 
 	myUser := ApplyUser{
 		Email: option.Email,
