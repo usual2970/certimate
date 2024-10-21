@@ -37,7 +37,7 @@
   "domain.application.form.access.placeholder": "请选择 DNS 服务商授权配置",
   "domain.application.form.access.list": "DNS 服务商授权配置列表",
   "domain.application.form.advanced_settings.label": "高级设置",
-  "domain.application.form.key_algorithm.label": "数字证书算法",
+  "domain.application.form.key_algorithm.label": "数字证书算法（默认：RSA2048）",
   "domain.application.form.key_algorithm.placeholder": "请选择数字证书算法",
   "domain.application.form.timeout.label": "DNS 传播检查超时时间（单位：秒）",
   "domain.application.form.timeoue.placeholder": "请输入 DNS 传播检查超时时间",

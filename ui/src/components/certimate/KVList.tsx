@@ -88,7 +88,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
       <Show
         when={!!locVariables?.length}
         fallback={
-          <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
+          <div className="border rounded-md p-3 text-sm flex flex-col items-center">
             <div className="text-muted-foreground">{t("domain.deployment.form.variables.empty")}</div>
 
             <KVEdit
