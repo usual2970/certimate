@@ -122,7 +122,7 @@ func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessK
 	}
 
 	if region == "" {
-		region = "cn-north-1" // CDN 服务默认区域：华北北京一
+		region = "cn-north-1" // CDN 服务默认区域：华北一北京
 	}
 
 	hcRegion, err := cdnRegion.SafeValueOf(region)
