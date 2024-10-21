@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import { ChevronsUpDown, Plus, CircleHelp } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,8 @@ import { EmailsSetting } from "@/domain/settings";
 import { DeployConfig, Domain } from "@/domain/domain";
 import { save, get } from "@/repository/domains";
 import { useConfig } from "@/providers/config";
+import { Switch } from "@/components/ui/switch";
+import { TooltipFast } from "@/components/ui/tooltip";
 
 const Edit = () => {
   const {
@@ -64,6 +66,7 @@ const Edit = () => {
     keyAlgorithm: z.string().optional(),
     nameservers: z.string().optional(),
     timeout: z.number().optional(),
+    disableFollowCNAME: z.boolean().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -76,6 +79,7 @@ const Edit = () => {
       keyAlgorithm: "RSA2048",
       nameservers: "",
       timeout: 60,
+      disableFollowCNAME: true,
     },
   });
 
@@ -89,6 +93,7 @@ const Edit = () => {
         keyAlgorithm: domain.applyConfig?.keyAlgorithm,
         nameservers: domain.applyConfig?.nameservers,
         timeout: domain.applyConfig?.timeout,
+        disableFollowCNAME: domain.applyConfig?.disableFollowCNAME,
       });
     }
   }, [domain, form]);
@@ -108,6 +113,7 @@ const Edit = () => {
         keyAlgorithm: data.keyAlgorithm,
         nameservers: data.nameservers,
         timeout: data.timeout,
+        disableFollowCNAME: data.disableFollowCNAME,
       },
     };
 
@@ -176,7 +182,7 @@ const Edit = () => {
     <>
       <div className="">
         <Toaster />
-        <div className=" h-5 text-muted-foreground">
+        <div className="h-5 text-muted-foreground">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -190,7 +196,7 @@ const Edit = () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="mt-5 flex w-full justify-center md:space-x-10 flex-col md:flex-row">
+        <div className="flex flex-col justify-center w-full mt-5 md:space-x-10 md:flex-row">
           <div className="w-full md:w-[200px] text-muted-foreground space-x-3 md:space-y-3 flex-row md:flex-col flex md:mt-5">
             <div
               className={cn("cursor-pointer text-right", tab === "apply" ? "text-primary" : "")}
@@ -247,11 +253,11 @@ const Edit = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex w-full justify-between">
+                        <FormLabel className="flex justify-between w-full">
                           <div>{t("domain.application.form.email.label") + " " + t("domain.application.form.email.tips")}</div>
                           <EmailsEdit
                             trigger={
-                              <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                              <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                                 <Plus size={14} />
                                 {t("common.add")}
                               </div>
@@ -293,11 +299,11 @@ const Edit = () => {
                     name="access"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex w-full justify-between">
+                        <FormLabel className="flex justify-between w-full">
                           <div>{t("domain.application.form.access.label")}</div>
                           <AccessEdit
                             trigger={
-                              <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                              <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                                 <Plus size={14} />
                                 {t("common.add")}
                               </div>
@@ -344,8 +350,8 @@ const Edit = () => {
                     <Collapsible>
                       <CollapsibleTrigger className="w-full my-4">
                         <div className="flex items-center justify-between space-x-4">
-                          <span className="flex-1 text-sm text-gray-600 text-left">{t("domain.application.form.advanced_settings.label")}</span>
-                          <ChevronsUpDown className="h-4 w-4" />
+                          <span className="flex-1 text-sm text-left text-gray-600">{t("domain.application.form.advanced_settings.label")}</span>
+                          <ChevronsUpDown className="w-4 h-4" />
                         </div>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
@@ -420,6 +426,49 @@ const Edit = () => {
                                   />
                                 </FormControl>
 
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* 禁用 CNAME 跟随 */}
+                          <FormField
+                            control={form.control}
+                            name="disableFollowCNAME"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  <div className="flex">
+                                    <span className="mr-1">{t("domain.application.form.disable_follow_cname.label")} </span>
+                                    <TooltipFast
+                                      className="max-w-[20rem]"
+                                      contentView={
+                                        <p>
+                                          {t("domain.application.form.disable_follow_cname.tips")}
+                                          <a
+                                            className="text-primary"
+                                            target="_blank"
+                                            href="https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname"
+                                          >
+                                            {t("domain.application.form.disable_follow_cname.tips_link")}
+                                          </a>
+                                        </p>
+                                      }
+                                    >
+                                      <CircleHelp size={14} />
+                                    </TooltipFast>
+                                  </div>
+                                </FormLabel>
+                                <FormControl>
+                                  <div>
+                                    <Switch
+                                      defaultChecked={field.value}
+                                      onCheckedChange={(value) => {
+                                        form.setValue(field.name, value);
+                                      }}
+                                    />
+                                  </div>
+                                </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
