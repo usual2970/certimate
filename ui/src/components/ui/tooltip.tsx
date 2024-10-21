@@ -24,4 +24,31 @@ const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPrimitive
 );
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+type TooltipFastProps = TooltipPrimitive.TooltipContentProps &
+  TooltipPrimitive.TooltipProps &
+  React.RefAttributes<HTMLDivElement> & {
+    contentView?: JSX.Element;
+  };
+
+const TooltipLink = React.forwardRef((props: React.PropsWithChildren, forwardedRef: React.ForwardedRef<HTMLAnchorElement>) => (
+  <a {...props} ref={forwardedRef}>
+    {props.children}
+  </a>
+));
+
+function TooltipFast({ children, contentView, open, defaultOpen, onOpenChange, ...props }: TooltipFastProps) {
+  return (
+    <TooltipProvider>
+      <Tooltip open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+        <TooltipPrimitive.Trigger asChild>
+          <TooltipLink>{children}</TooltipLink>
+        </TooltipPrimitive.Trigger>
+        <TooltipContent side="top" align="center" {...props}>
+          {contentView}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, TooltipFast };

@@ -53,6 +53,7 @@ export type ApplyConfig = {
   keyAlgorithm?: string;
   nameservers?: string;
   timeout?: number;
+  disableFollowCNAME?: boolean;
 };
 
 export type Statistic = {
