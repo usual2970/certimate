@@ -12,9 +12,10 @@ const LoginLayout = () => {
     <div className="container">
       <Outlet />
 
-      <Version />
+      <Version className="fixed right-0 bottom-0 justify-end pr-5" />
     </div>
   );
 };
 
 export default LoginLayout;
+

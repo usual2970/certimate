@@ -3,13 +3,17 @@ import { BookOpen } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
 import { version } from "@/domain/version";
+import { cn } from "@/lib/utils";
 
-const Version = () => {
+type VersionProps = {
+  className?: string;
+};
+
+const Version = ({ className }: VersionProps) => {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed right-0 bottom-0 w-full flex justify-between p-5">
-      <div className=""></div>
+    <div className={cn("w-full flex pb-5 ", className)}>
       <div className="text-muted-foreground text-sm hover:text-stone-900 dark:hover:text-stone-200 flex">
         <a href="https://docs.certimate.me" target="_blank" className="flex items-center">
           <BookOpen size={16} />
@@ -25,3 +29,4 @@ const Version = () => {
 };
 
 export default Version;
+

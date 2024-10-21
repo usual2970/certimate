@@ -1,7 +1,7 @@
 /*
  * @Author: Bin
  * @Date: 2024-09-17
- * @FilePath: /github.com/usual2970/certimate/internal/deployer/aliyun_esa.go
+ * @FilePath: /certimate/internal/deployer/aliyun_esa.go
  */
 package deployer
 
@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	dcdn20180115 "github.com/alibabacloud-go/dcdn-20180115/v3/client"
@@ -55,8 +56,15 @@ func (d *AliyunESADeployer) GetInfo() []string {
 
 func (d *AliyunESADeployer) Deploy(ctx context.Context) error {
 	certName := fmt.Sprintf("%s-%s-%s", d.option.Domain, d.option.DomainId, rand.RandStr(6))
+
+	// 支持泛解析域名，在 Aliyun DCND 中泛解析域名表示为 .example.com
+	domain := getDeployString(d.option.DeployConfig, "domain")
+	if strings.HasPrefix(domain, "*") {
+		domain = strings.TrimPrefix(domain, "*")
+	}
+
 	setDcdnDomainSSLCertificateRequest := &dcdn20180115.SetDcdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(getDeployString(d.option.DeployConfig, "domain")),
+		DomainName:  tea.String(domain),
 		CertName:    tea.String(certName),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),

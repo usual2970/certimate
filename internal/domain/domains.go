@@ -1,11 +1,12 @@
 package domain
 
 type ApplyConfig struct {
-	Email        string `json:"email"`
-	Access       string `json:"access"`
-	KeyAlgorithm string `json:"keyAlgorithm"`
-	Nameservers  string `json:"nameservers"`
-	Timeout      int64  `json:"timeout"`
+	Email              string `json:"email"`
+	Access             string `json:"access"`
+	KeyAlgorithm       string `json:"keyAlgorithm"`
+	Nameservers        string `json:"nameservers"`
+	Timeout            int64  `json:"timeout"`
+	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
 type DeployConfig struct {
