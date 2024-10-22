@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
 import { Access, AliyunConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessAliyunFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessAliyunFormProps = {
 };
 
 const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),

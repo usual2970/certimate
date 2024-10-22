@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
 import { EmailsSetting } from "@/domain/settings";
 import { update } from "@/repository/settings";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type EmailsEditProps = {
   className?: string;
@@ -24,7 +24,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
   const {
     config: { emails },
     setEmails,
-  } = useConfig();
+  } = useConfigContext();
 
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();

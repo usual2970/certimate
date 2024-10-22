@@ -12,12 +12,13 @@ export type NotifyContext = {
 
 const Context = createContext({} as NotifyContext);
 
-export const useNotify = () => useContext(Context);
-interface ContainerProps {
+export const useNotifyContext = () => useContext(Context);
+
+interface NotifyProviderProps {
   children: ReactNode;
 }
 
-export const NotifyProvider = ({ children }: ContainerProps) => {
+export const NotifyProvider = ({ children }: NotifyProviderProps) => {
   const [notify, dispatchNotify] = useReducer(notifyReducer, {});
 
   useEffect(() => {

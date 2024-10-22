@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
 import { save } from "@/repository/access";
 import { updateById } from "@/repository/access_group";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessSSHFormProps = {
   op: "add" | "edit" | "copy";
@@ -31,7 +31,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
     updateAccess,
     reloadAccessGroups,
     config: { accessGroups },
-  } = useConfig();
+  } = useConfigContext();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -199,7 +199,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
             e.stopPropagation();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="space-y-3"
+          className="space-y-8"
         >
           <FormField
             control={form.control}

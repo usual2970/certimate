@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { PbErrorData } from "@/domain/base";
 import { Access, accessFormType, getUsageByConfigType, GodaddyConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessGodaddyFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessGodaddyFormProps = {
 };
 
 const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),

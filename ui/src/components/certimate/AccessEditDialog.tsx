@@ -207,7 +207,13 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
           <DialogTitle>
-            {op == "add" ? t("access.authorization.add") : op == "edit" ? t("access.authorization.edit") : t("access.authorization.copy")}
+            {
+              {
+                ["add"]: t("access.authorization.add"),
+                ["edit"]: t("access.authorization.edit"),
+                ["copy"]: t("access.authorization.copy"),
+              }[op]
+            }
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">

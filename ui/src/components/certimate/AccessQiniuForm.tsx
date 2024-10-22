@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
 import { Access, accessFormType, getUsageByConfigType, QiniuConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessQiniuFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessQiniuFormProps = {
 };
 
 const AccessQiniuForm = ({ data, op, onAfterReq }: AccessQiniuFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),

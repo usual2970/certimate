@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
 import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessHuaweiCloudFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessHuaweiCloudFormProps = {
 };
 
 const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),

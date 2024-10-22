@@ -23,11 +23,11 @@ import XPagination from "@/components/certimate/XPagination";
 import { convertZulu2Beijing } from "@/lib/time";
 import { Access as AccessType, accessTypeMap } from "@/domain/access";
 import { remove } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 const Access = () => {
   const { t } = useTranslation();
-  const { config, deleteAccess } = useConfig();
+  const { config, deleteAccess } = useConfigContext();
   const { accesses } = config;
 
   const perPage = 10;

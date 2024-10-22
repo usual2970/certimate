@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
 import { NotifyChannels, NotifyChannelTelegram } from "@/domain/settings";
 import { update } from "@/repository/settings";
-import { useNotify } from "@/providers/notify";
+import { useNotifyContext } from "@/providers/notify";
 import { notifyTest } from "@/api/notify";
 import Show from "@/components/Show";
 
@@ -20,7 +20,7 @@ type TelegramSetting = {
 };
 
 const Telegram = () => {
-  const { config, setChannels } = useNotify();
+  const { config, setChannels } = useNotifyContext();
   const { t } = useTranslation();
 
   const [changed, setChanged] = useState<boolean>(false);
@@ -244,4 +244,3 @@ const Telegram = () => {
 };
 
 export default Telegram;
-

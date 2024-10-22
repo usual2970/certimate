@@ -25,14 +25,14 @@ import { accessTypeMap } from "@/domain/access";
 import { EmailsSetting } from "@/domain/settings";
 import { DeployConfig, Domain } from "@/domain/domain";
 import { save, get } from "@/repository/domains";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 import { Switch } from "@/components/ui/switch";
 import { TooltipFast } from "@/components/ui/tooltip";
 
 const Edit = () => {
   const {
     config: { accesses, emails },
-  } = useConfig();
+  } = useConfigContext();
 
   const [domain, setDomain] = useState<Domain>({} as Domain);
 

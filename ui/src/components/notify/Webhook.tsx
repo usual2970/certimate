@@ -10,7 +10,7 @@ import { getErrMessage } from "@/lib/error";
 import { isValidURL } from "@/lib/url";
 import { NotifyChannels, NotifyChannelWebhook } from "@/domain/settings";
 import { update } from "@/repository/settings";
-import { useNotify } from "@/providers/notify";
+import { useNotifyContext } from "@/providers/notify";
 import { notifyTest } from "@/api/notify";
 import Show from "@/components/Show";
 
@@ -21,7 +21,7 @@ type WebhookSetting = {
 };
 
 const Webhook = () => {
-  const { config, setChannels } = useNotify();
+  const { config, setChannels } = useNotifyContext();
   const { t } = useTranslation();
   const [changed, setChanged] = useState<boolean>(false);
 
@@ -234,4 +234,3 @@ const Webhook = () => {
 };
 
 export default Webhook;
-

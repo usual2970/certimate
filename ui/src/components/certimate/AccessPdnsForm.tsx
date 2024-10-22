@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
 import { Access, PdnsConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessPdnsFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessPdnsFormProps = {
 };
 
 const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),

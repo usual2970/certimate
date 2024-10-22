@@ -26,13 +26,13 @@ export type ConfigContext = {
 
 const Context = createContext({} as ConfigContext);
 
-export const useConfig = () => useContext(Context);
+export const useConfigContext = () => useContext(Context);
 
-interface ContainerProps {
+interface ConfigProviderProps {
   children: ReactNode;
 }
 
-export const ConfigProvider = ({ children }: ContainerProps) => {
+export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   const [config, dispatchConfig] = useReducer(configReducer, {
     accesses: [],
     emails: { content: { emails: [] } },

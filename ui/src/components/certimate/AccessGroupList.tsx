@@ -21,14 +21,14 @@ import { useToast } from "@/components/ui/use-toast";
 import AccessGroupEdit from "./AccessGroupEdit";
 import { getProviderInfo } from "@/domain/access";
 import { getErrMessage } from "@/lib/error";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 import { remove } from "@/repository/access_group";
 
 const AccessGroupList = () => {
   const {
     config: { accessGroups },
     reloadAccessGroups,
-  } = useConfig();
+  } = useConfigContext();
 
   const { toast } = useToast();
 

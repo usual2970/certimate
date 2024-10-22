@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { readFileContent } from "@/lib/file";
 import { PbErrorData } from "@/domain/base";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessKubernetesFormProps = {
   op: "add" | "edit" | "copy";
@@ -21,7 +21,7 @@ type AccessKubernetesFormProps = {
 };
 
 const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState("");
@@ -119,7 +119,7 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
             e.stopPropagation();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="space-y-3"
+          className="space-y-8"
         >
           <FormField
             control={form.control}

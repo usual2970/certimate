@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
 import { Access, accessFormType, getUsageByConfigType } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessLocalFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessLocalFormProps = {
 };
 
 const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
-  const { addAccess, updateAccess, reloadAccessGroups } = useConfig();
+  const { addAccess, updateAccess, reloadAccessGroups } = useConfigContext();
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -88,7 +88,7 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
             e.stopPropagation();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="space-y-3"
+          className="space-y-8"
         >
           <FormField
             control={form.control}
