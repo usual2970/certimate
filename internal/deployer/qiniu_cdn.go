@@ -76,7 +76,8 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context) error {
 }
 
 func (d *QiniuCDNDeployer) enableHttps(certId string) error {
-	path := fmt.Sprintf("/domain/%s/sslize", getDeployString(d.option.DeployConfig, "domain"))
+	domain := d.option.DeployConfig.GetDomain()
+	path := fmt.Sprintf("/domain/%s/sslize", domain)
 
 	body := &qiniuModifyDomainCertReq{
 		CertID:      certId,
@@ -102,7 +103,9 @@ type qiniuDomainInfo struct {
 }
 
 func (d *QiniuCDNDeployer) getDomainInfo() (*qiniuDomainInfo, error) {
-	path := fmt.Sprintf("/domain/%s", getDeployString(d.option.DeployConfig, "domain"))
+	domain := d.option.DeployConfig.GetDomain()
+
+	path := fmt.Sprintf("/domain/%s", domain)
 
 	res, err := d.req(qiniuGateway+path, http.MethodGet, nil)
 	if err != nil {
@@ -164,7 +167,8 @@ type qiniuModifyDomainCertReq struct {
 }
 
 func (d *QiniuCDNDeployer) modifyDomainCert(certId string) error {
-	path := fmt.Sprintf("/domain/%s/httpsconf", getDeployString(d.option.DeployConfig, "domain"))
+	domain := d.option.DeployConfig.GetDomain()
+	path := fmt.Sprintf("/domain/%s/httpsconf", domain)
 
 	body := &qiniuModifyDomainCertReq{
 		CertID:      certId,
