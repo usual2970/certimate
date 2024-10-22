@@ -1,5 +1,7 @@
 package domain
 
+import "strings"
+
 type ApplyConfig struct {
 	Email              string `json:"email"`
 	Access             string `json:"access"`
@@ -15,6 +17,7 @@ type DeployConfig struct {
 	Type   string         `json:"type"`
 	Config map[string]any `json:"config"`
 }
+
 
 // 以字符串形式获取配置项。
 //
@@ -80,6 +83,25 @@ func (dc *DeployConfig) GetConfigOrDefaultAsBool(key string, defaultValue bool) 
 	}
 
 	return defaultValue
+}
+
+// GetDomain returns the domain from the deploy config
+// if the domain is a wildcard domain, and wildcard is true, return the wildcard domain
+func (dc *DeployConfig) GetDomain(wildcard ...bool) string {
+	val := dc.GetConfigAsString("domain")
+	if val == "" {
+		return ""
+	}
+
+	if !strings.HasPrefix(val, "*") {
+		return val
+	}
+
+	if len(wildcard) > 0 && wildcard[0] {
+		return val
+	}
+
+	return strings.TrimPrefix(val, "*")
 }
 
 type KV struct {
