@@ -21,7 +21,7 @@ import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
 import AccessGroupList from "@/components/certimate/AccessGroupList";
 import XPagination from "@/components/certimate/XPagination";
 import { convertZulu2Beijing } from "@/lib/time";
-import { Access as AccessType, accessTypeMap } from "@/domain/access";
+import { Access as AccessType, accessProvidersMap } from "@/domain/access";
 import { remove } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -119,8 +119,8 @@ const Access = () => {
                   >
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">{access.name}</div>
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
-                      <img src={accessTypeMap.get(access.configType)?.[1]} className="w-6" />
-                      <div>{t(accessTypeMap.get(access.configType)?.[0] || "")}</div>
+                      <img src={accessProvidersMap.get(access.configType)?.icon} className="w-6" />
+                      <div>{t(accessProvidersMap.get(access.configType)?.name || "")}</div>
                     </div>
 
                     <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">{access.created && convertZulu2Beijing(access.created)}</div>

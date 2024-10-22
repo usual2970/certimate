@@ -20,7 +20,7 @@ import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
-import { Access, accessTypeMap } from "@/domain/access";
+import { Access, accessProvidersMap } from "@/domain/access";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
@@ -30,10 +30,9 @@ type AccessEditProps = {
 };
 
 const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => {
-  const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
-  const typeKeys = Array.from(accessTypeMap.keys());
+  const [open, setOpen] = useState(false);
 
   const [configType, setConfigType] = useState(data?.configType || "");
 
@@ -232,11 +231,11 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
-                    {typeKeys.map((key) => (
+                    {Array.from(accessProvidersMap.entries()).map(([key, provider]) => (
                       <SelectItem value={key} key={key}>
                         <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
-                          <img src={accessTypeMap.get(key)?.[1]} className="h-6 w-6" />
-                          <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
+                          <img src={provider.icon} className="h-6 w-6" />
+                          <div>{t(provider.name)}</div>
                         </div>
                       </SelectItem>
                     ))}

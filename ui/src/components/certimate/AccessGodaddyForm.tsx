@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, getUsageByConfigType, GodaddyConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type GodaddyConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     apiKey: z
       .string()
       .min(1, "access.authorization.form.godaddy_api_key.placeholder")
@@ -60,7 +60,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         apiKey: data.apiKey,
         apiSecret: data.apiSecret,

@@ -16,10 +16,10 @@ export type ConfigData = {
 
 export type ConfigContext = {
   config: ConfigData;
-  deleteAccess: (id: string) => void;
+  setEmails: (email: Setting) => void;
   addAccess: (access: Access) => void;
   updateAccess: (access: Access) => void;
-  setEmails: (email: Setting) => void;
+  deleteAccess: (id: string) => void;
   setAccessGroups: (accessGroups: AccessGroup[]) => void;
   reloadAccessGroups: () => void;
 };
@@ -96,10 +96,10 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
           emails: config.emails,
           accessGroups: config.accessGroups,
         },
-        deleteAccess,
-        addAccess,
         setEmails,
+        addAccess,
         updateAccess,
+        deleteAccess,
         setAccessGroups,
         reloadAccessGroups,
       }}

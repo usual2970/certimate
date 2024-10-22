@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, getUsageByConfigType, WebhookConfig } from "@/domain/access";
+import { Access, accessProvidersMap, accessTypeFormSchema, WebhookConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     url: z.string().url("common.errmsg.url_invalid"),
   });
 
@@ -51,7 +51,7 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         url: data.url,
       },

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, getUsageByConfigType, TencentConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type TencentConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     secretId: z
       .string()
       .min(1, "access.authorization.form.secret_id.placeholder")
@@ -60,7 +60,7 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         secretId: data.secretId,
         secretKey: data.secretKey,

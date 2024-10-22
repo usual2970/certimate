@@ -21,7 +21,7 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
 import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
-import { accessTypeMap } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/access";
 import { EmailsSetting } from "@/domain/settings";
 import { DeployConfig, Domain } from "@/domain/domain";
 import { save, get } from "@/repository/domains";
@@ -330,7 +330,7 @@ const Edit = () => {
                                   .map((item) => (
                                     <SelectItem key={item.id} value={item.id}>
                                       <div className="flex items-center space-x-2">
-                                        <img className="w-6" src={accessTypeMap.get(item.configType)?.[1]} />
+                                        <img className="w-6" src={accessProvidersMap.get(item.configType)?.icon} />
                                         <div>{item.name}</div>
                                       </div>
                                     </SelectItem>

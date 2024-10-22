@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -28,7 +28,7 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +45,7 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
 
       config: {},
     };

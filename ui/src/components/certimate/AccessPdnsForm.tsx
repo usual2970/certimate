@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, PdnsConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type PdnsConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     apiUrl: z.string().url("common.errmsg.url_invalid"),
     apiKey: z
       .string()
@@ -57,7 +57,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         apiUrl: data.apiUrl,
         apiKey: data.apiKey,

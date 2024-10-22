@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
-import { Access, accessFormType, getUsageByConfigType, SSHConfig } from "@/domain/access";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,7 @@ import AccessGroupEdit from "./AccessGroupEdit";
 import { readFileContent } from "@/lib/file";
 import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type SSHConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { updateById } from "@/repository/access_group";
 import { useConfigContext } from "@/providers/config";
@@ -50,7 +50,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     host: z.string().refine(
       (str) => {
         return ipReg.test(str) || domainReg.test(str);
@@ -119,7 +119,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       group: group,
       config: {
         host: data.host,

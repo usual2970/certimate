@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, HttpreqConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type HttpreqConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     endpoint: z.string().url("common.errmsg.url_invalid"),
     mode: z.enum(["RAW", ""]),
     username: z
@@ -66,7 +66,7 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         endpoint: data.endpoint,
         mode: data.mode,

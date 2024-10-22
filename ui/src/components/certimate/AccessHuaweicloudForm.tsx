@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type HuaweiCloudConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -27,7 +27,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     region: z
       .string()
       .min(1, "access.authorization.form.region.placeholder")
@@ -66,7 +66,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         region: data.region,
         accessKeyId: data.accessKeyId,

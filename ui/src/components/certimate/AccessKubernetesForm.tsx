@@ -5,12 +5,12 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
 
-import { Access, accessFormType, getUsageByConfigType, KubernetesConfig } from "@/domain/access";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { readFileContent } from "@/lib/file";
 import { PbErrorData } from "@/domain/base";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type KubernetesConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -34,7 +34,7 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     kubeConfig: z
       .string()
       .min(1, "access.authorization.form.k8s_kubeconfig.placeholder")
@@ -64,7 +64,7 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         kubeConfig: data.kubeConfig,
       },

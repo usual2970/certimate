@@ -16,8 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import AccessEditDialog from "./AccessEditDialog";
 import KVList from "./KVList";
 import { DeployConfig, KVType, targetTypeKeys, targetTypeMap } from "@/domain/domain";
-import { accessTypeMap } from "@/domain/access";
-import { useConfig } from "@/providers/config";
+import { accessProvidersMap } from "@/domain/access";
+import { useConfigContext } from "@/providers/config";
 
 type DeployEditContextProps = {
   deploy: DeployConfig;
@@ -30,6 +30,68 @@ const DeployEditContext = createContext<DeployEditContextProps>({} as DeployEdit
 
 export const useDeployEditContext = () => {
   return useContext(DeployEditContext);
+};
+
+type DeployItemProps = {
+  item: DeployConfig;
+  onDelete: () => void;
+  onSave: (deploy: DeployConfig) => void;
+};
+
+const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
+  const {
+    config: { accesses },
+  } = useConfigContext();
+  const { t } = useTranslation();
+
+  const access = accesses.find((access) => access.id === item.access);
+
+  const getTypeIcon = () => {
+    if (!access) {
+      return "";
+    }
+
+    return accessProvidersMap.get(access.configType)?.icon || "";
+  };
+
+  const getTypeName = () => {
+    if (!access) {
+      return "";
+    }
+
+    return t(accessProvidersMap.get(access.configType)?.name || "");
+  };
+
+  return (
+    <div className="flex justify-between text-sm p-3 items-center text-stone-700 dark:text-stone-200">
+      <div className="flex space-x-2 items-center">
+        <div>
+          <img src={getTypeIcon()} className="w-9"></img>
+        </div>
+        <div className="text-stone-600 flex-col flex space-y-0 dark:text-stone-200">
+          <div>{getTypeName()}</div>
+          <div>{access?.name}</div>
+        </div>
+      </div>
+      <div className="flex space-x-2">
+        <DeployEditDialog
+          trigger={<EditIcon size={16} className="cursor-pointer" />}
+          deployConfig={item}
+          onSave={(deploy: DeployConfig) => {
+            onSave(deploy);
+          }}
+        />
+
+        <Trash2
+          size={16}
+          className="cursor-pointer"
+          onClick={() => {
+            onDelete();
+          }}
+        />
+      </div>
+    </div>
+  );
 };
 
 type DeployListProps = {
@@ -129,80 +191,6 @@ const DeployList = ({ deploys, onChange }: DeployListProps) => {
 
 export default DeployList;
 
-type DeployItemProps = {
-  item: DeployConfig;
-  onDelete: () => void;
-  onSave: (deploy: DeployConfig) => void;
-};
-
-const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
-  const {
-    config: { accesses },
-  } = useConfig();
-  const { t } = useTranslation();
-
-  const access = accesses.find((access) => access.id === item.access);
-
-  const getTypeIcon = () => {
-    if (!access) {
-      return "";
-    }
-
-    const accessType = accessTypeMap.get(access.configType);
-
-    if (accessType) {
-      return accessType[1];
-    }
-
-    return "";
-  };
-
-  const getTypeName = () => {
-    if (!access) {
-      return "";
-    }
-
-    const accessType = targetTypeMap.get(item.type);
-
-    if (accessType) {
-      return t(accessType[0]);
-    }
-
-    return "";
-  };
-
-  return (
-    <div className="flex justify-between text-sm p-3 items-center text-stone-700 dark:text-stone-200">
-      <div className="flex space-x-2 items-center">
-        <div>
-          <img src={getTypeIcon()} className="w-9"></img>
-        </div>
-        <div className="text-stone-600 flex-col flex space-y-0 dark:text-stone-200">
-          <div>{getTypeName()}</div>
-          <div>{access?.name}</div>
-        </div>
-      </div>
-      <div className="flex space-x-2">
-        <DeployEditDialog
-          trigger={<EditIcon size={16} className="cursor-pointer" />}
-          deployConfig={item}
-          onSave={(deploy: DeployConfig) => {
-            onSave(deploy);
-          }}
-        />
-
-        <Trash2
-          size={16}
-          className="cursor-pointer"
-          onClick={() => {
-            onDelete();
-          }}
-        />
-      </div>
-    </div>
-  );
-};
-
 type DeployEditDialogProps = {
   trigger: React.ReactNode;
   deployConfig?: DeployConfig;
@@ -212,7 +200,7 @@ type DeployEditDialogProps = {
 const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogProps) => {
   const {
     config: { accesses },
-  } = useConfig();
+  } = useConfigContext();
 
   const [deployType, setDeployType] = useState<TargetType>();
 
@@ -317,8 +305,8 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     <DeployEditContext.Provider
       value={{
         deploy: locDeployConfig,
-        setDeploy: setDeploy,
         error: error,
+        setDeploy: setDeploy,
         setError: setError,
       }}
     >
@@ -391,7 +379,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
                   {targetAccesses.map((item) => (
                     <SelectItem key={item.id} value={item.id}>
                       <div className="flex items-center space-x-2">
-                        <img className="w-6" src={accessTypeMap.get(item.configType)?.[1]} />
+                        <img className="w-6" src={accessProvidersMap.get(item.configType)?.icon} />
                         <div>{item.name}</div>
                       </div>
                     </SelectItem>
