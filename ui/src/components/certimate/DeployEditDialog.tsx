@@ -12,6 +12,7 @@ import { Context as DeployEditContext } from "./DeployEdit";
 import DeployToAliyunOSS from "./DeployToAliyunOSS";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToTencentCDN from "./DeployToTencentCDN";
+import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
 import DeployToSSH from "./DeployToSSH";
@@ -118,6 +119,8 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     case "tencent-cdn":
       childComponent = <DeployToTencentCDN />;
       break;
+    case "tencent-cos":
+      childComponent = <DeployToTencentCOS />;
     case "huaweicloud-cdn":
       childComponent = <DeployToHuaweiCloudCDN />;
       break;
