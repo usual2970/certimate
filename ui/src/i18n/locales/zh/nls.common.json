@@ -54,6 +54,7 @@
 
   "common.provider.tencent": "腾讯云",
   "common.provider.tencent.cdn": "腾讯云 - CDN",
+  "common.provider.tencent.cos": "腾讯云 - COS",
   "common.provider.aliyun": "阿里云",
   "common.provider.aliyun.oss": "阿里云 - OSS",
   "common.provider.aliyun.cdn": "阿里云 - CDN",
