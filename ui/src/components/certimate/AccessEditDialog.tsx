@@ -36,10 +36,10 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
 
   const [configType, setConfigType] = useState(data?.configType || "");
 
-  let form = <> </>;
+  let childComponent = <> </>;
   switch (configType) {
     case "aliyun":
-      form = (
+      childComponent = (
         <AccessAliyunForm
           data={data}
           op={op}
@@ -50,7 +50,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "tencent":
-      form = (
+      childComponent = (
         <AccessTencentForm
           data={data}
           op={op}
@@ -61,7 +61,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "huaweicloud":
-      form = (
+      childComponent = (
         <AccessHuaweiCloudForm
           data={data}
           op={op}
@@ -72,7 +72,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "qiniu":
-      form = (
+      childComponent = (
         <AccessQiniuForm
           data={data}
           op={op}
@@ -83,7 +83,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "aws":
-      form = (
+      childComponent = (
         <AccessAwsForm
           data={data}
           op={op}
@@ -94,7 +94,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "cloudflare":
-      form = (
+      childComponent = (
         <AccessCloudflareForm
           data={data}
           op={op}
@@ -105,7 +105,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "namesilo":
-      form = (
+      childComponent = (
         <AccessNamesiloForm
           data={data}
           op={op}
@@ -116,7 +116,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "godaddy":
-      form = (
+      childComponent = (
         <AccessGodaddyForm
           data={data}
           op={op}
@@ -127,7 +127,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "pdns":
-      form = (
+      childComponent = (
         <AccessPdnsForm
           data={data}
           op={op}
@@ -138,7 +138,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "httpreq":
-      form = (
+      childComponent = (
         <AccessHttpreqForm
           data={data}
           op={op}
@@ -149,7 +149,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "local":
-      form = (
+      childComponent = (
         <AccessLocalForm
           data={data}
           op={op}
@@ -160,7 +160,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "ssh":
-      form = (
+      childComponent = (
         <AccessSSHForm
           data={data}
           op={op}
@@ -171,7 +171,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "webhook":
-      form = (
+      childComponent = (
         <AccessWebhookForm
           data={data}
           op={op}
@@ -182,7 +182,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       );
       break;
     case "k8s":
-      form = (
+      childComponent = (
         <AccessKubernetesForm
           data={data}
           op={op}
@@ -244,7 +244,7 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
               </Select>
             </div>
 
-            <div className="mt-8">{form}</div>
+            <div className="mt-8">{childComponent}</div>
           </div>
         </ScrollArea>
       </DialogContent>
