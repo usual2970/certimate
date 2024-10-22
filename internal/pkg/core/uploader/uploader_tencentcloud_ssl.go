@@ -49,29 +49,24 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 		Repeatable:            cast.BoolPtr(false),
 	}
 	uploadCertificateResp, err := u.sdkClient.UploadCertificate(uploadCertificateReq)
-	if uploadCertificateResp != nil && uploadCertificateResp.Response != nil && uploadCertificateResp.Response.RepeatCertId != nil {
-		// 获取重复证书
-		// REF: https://cloud.tencent.com/document/api/400/41673
-		describeCertificateDetailReq := &tcSsl.DescribeCertificateDetailRequest{
-			CertificateId: uploadCertificateResp.Response.RepeatCertId,
-		}
-		describeCertificateDetailResp, err := u.sdkClient.DescribeCertificateDetail(describeCertificateDetailReq)
-		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'ssl.DescribeCertificateDetail': %w", err)
-		}
-
-		certId = *uploadCertificateResp.Response.RepeatCertId
-		certName = *describeCertificateDetailResp.Response.Alias
-		return &UploadResult{
-			CertId:   certId,
-			CertName: certName,
-		}, nil
-	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'ssl.UploadCertificate': %w", err)
 	}
 
-	certId = *uploadCertificateResp.Response.CertificateId
+	// 获取证书详情
+	// REF: https://cloud.tencent.com/document/api/400/41673
+	//
+	// P.S. 上传重复证书会返回上一次的证书 ID，这里需要重新获取一遍证书名（https://github.com/usual2970/certimate/pull/227）
+	describeCertificateDetailReq := &tcSsl.DescribeCertificateDetailRequest{
+		CertificateId: uploadCertificateResp.Response.CertificateId,
+	}
+	describeCertificateDetailResp, err := u.sdkClient.DescribeCertificateDetail(describeCertificateDetailReq)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute sdk request 'ssl.DescribeCertificateDetail': %w", err)
+	}
+
+	certId = *describeCertificateDetailResp.Response.CertificateId
+	certName = *describeCertificateDetailResp.Response.Alias
 	return &UploadResult{
 		CertId:   certId,
 		CertName: certName,
