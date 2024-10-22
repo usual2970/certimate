@@ -46,10 +46,9 @@ func main() {
 
 		return nil
 	})
+
 	defer log.Println("Exit!")
-	go func() {
-		log.Println("Visit the website:", "http://127.0.0.1:8090")
-	}()
+	log.Println("Visit the website:", "http://127.0.0.1:8090")
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
