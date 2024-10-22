@@ -121,6 +121,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "tencent-cos":
       childComponent = <DeployToTencentCOS />;
+      break;
     case "huaweicloud-cdn":
       childComponent = <DeployToHuaweiCloudCDN />;
       break;
