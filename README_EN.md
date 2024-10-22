@@ -73,7 +73,7 @@ password：1234567890
 |   Provider    | Registration | Deployment | Remarks                                                                                     |
 | :-----------: | :----------: | :--------: | ------------------------------------------------------------------------------------------- |
 | Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN |
-| Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud CDN      |
+| Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud CDN, COS |
 | Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei Cloud; supports deployment to Huawei Cloud CDN        |
 |  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                      |
 |      AWS      |      √       |            | Supports domains managed on AWS Route53                                                     |
