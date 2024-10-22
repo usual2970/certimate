@@ -16,18 +16,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AccessEdit from "@/components/certimate/AccessEdit";
+import AccessEditDialog from "@/components/certimate/AccessEditDialog";
 import AccessGroupEdit from "@/components/certimate/AccessGroupEdit";
 import AccessGroupList from "@/components/certimate/AccessGroupList";
 import XPagination from "@/components/certimate/XPagination";
 import { convertZulu2Beijing } from "@/lib/time";
-import { Access as AccessType, accessTypeMap } from "@/domain/access";
+import { Access as AccessType, accessProvidersMap } from "@/domain/access";
 import { remove } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 const Access = () => {
   const { t } = useTranslation();
-  const { config, deleteAccess } = useConfig();
+  const { config, deleteAccess } = useConfigContext();
   const { accesses } = config;
 
   const perPage = 10;
@@ -62,7 +62,7 @@ const Access = () => {
       <div className="flex justify-between items-center">
         <div className="text-muted-foreground">{t("access.page.title")}</div>
         {tab != "access_group" ? (
-          <AccessEdit trigger={<Button>{t("access.authorization.add")}</Button>} op="add" />
+          <AccessEditDialog trigger={<Button>{t("access.authorization.add")}</Button>} op="add" />
         ) : (
           <AccessGroupEdit trigger={<Button>{t("access.group.add")}</Button>} />
         )}
@@ -95,7 +95,7 @@ const Access = () => {
               </span>
 
               <div className="text-center text-sm text-muted-foreground mt-3">{t("access.authorization.nodata")}</div>
-              <AccessEdit trigger={<Button>{t("access.authorization.add")}</Button>} op="add" className="mt-3" />
+              <AccessEditDialog trigger={<Button>{t("access.authorization.add")}</Button>} op="add" className="mt-3" />
             </div>
           ) : (
             <>
@@ -119,14 +119,14 @@ const Access = () => {
                   >
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">{access.name}</div>
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
-                      <img src={accessTypeMap.get(access.configType)?.[1]} className="w-6" />
-                      <div>{t(accessTypeMap.get(access.configType)?.[0] || "")}</div>
+                      <img src={accessProvidersMap.get(access.configType)?.icon} className="w-6" />
+                      <div>{t(accessProvidersMap.get(access.configType)?.name || "")}</div>
                     </div>
 
                     <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">{access.created && convertZulu2Beijing(access.created)}</div>
                     <div className="sm:w-60 w-full pt-1 sm:pt-0 flex items-center">{access.updated && convertZulu2Beijing(access.updated)}</div>
                     <div className="flex items-center grow justify-start pt-1 sm:pt-0">
-                      <AccessEdit
+                      <AccessEditDialog
                         trigger={
                           <Button variant={"link"} className="p-0">
                             {t("common.edit")}
@@ -136,7 +136,7 @@ const Access = () => {
                         data={access}
                       />
                       <Separator orientation="vertical" className="h-4 mx-2" />
-                      <AccessEdit
+                      <AccessEditDialog
                         trigger={
                           <Button variant={"link"} className="p-0">
                             {t("common.copy")}

@@ -20,7 +20,7 @@ import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
-import { Access, accessTypeMap } from "@/domain/access";
+import { Access, accessProvidersMap } from "@/domain/access";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
@@ -29,18 +29,17 @@ type AccessEditProps = {
   data?: Access;
 };
 
-const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
-  const [open, setOpen] = useState(false);
+const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => {
   const { t } = useTranslation();
 
-  const typeKeys = Array.from(accessTypeMap.keys());
+  const [open, setOpen] = useState(false);
 
   const [configType, setConfigType] = useState(data?.configType || "");
 
-  let form = <> </>;
+  let childComponent = <> </>;
   switch (configType) {
     case "aliyun":
-      form = (
+      childComponent = (
         <AccessAliyunForm
           data={data}
           op={op}
@@ -51,7 +50,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "tencent":
-      form = (
+      childComponent = (
         <AccessTencentForm
           data={data}
           op={op}
@@ -62,7 +61,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "huaweicloud":
-      form = (
+      childComponent = (
         <AccessHuaweiCloudForm
           data={data}
           op={op}
@@ -73,7 +72,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "qiniu":
-      form = (
+      childComponent = (
         <AccessQiniuForm
           data={data}
           op={op}
@@ -84,7 +83,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "aws":
-      form = (
+      childComponent = (
         <AccessAwsForm
           data={data}
           op={op}
@@ -95,7 +94,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "cloudflare":
-      form = (
+      childComponent = (
         <AccessCloudflareForm
           data={data}
           op={op}
@@ -106,7 +105,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "namesilo":
-      form = (
+      childComponent = (
         <AccessNamesiloForm
           data={data}
           op={op}
@@ -117,7 +116,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "godaddy":
-      form = (
+      childComponent = (
         <AccessGodaddyForm
           data={data}
           op={op}
@@ -128,7 +127,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "pdns":
-      form = (
+      childComponent = (
         <AccessPdnsForm
           data={data}
           op={op}
@@ -139,18 +138,18 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "httpreq":
-        form = (
-          <AccessHttpreqForm
-            data={data}
-            op={op}
-            onAfterReq={() => {
-              setOpen(false);
-            }}
-          />
-        );
-        break;
+      childComponent = (
+        <AccessHttpreqForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
     case "local":
-      form = (
+      childComponent = (
         <AccessLocalForm
           data={data}
           op={op}
@@ -161,7 +160,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "ssh":
-      form = (
+      childComponent = (
         <AccessSSHForm
           data={data}
           op={op}
@@ -172,7 +171,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "webhook":
-      form = (
+      childComponent = (
         <AccessWebhookForm
           data={data}
           op={op}
@@ -183,7 +182,7 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       );
       break;
     case "k8s":
-      form = (
+      childComponent = (
         <AccessKubernetesForm
           data={data}
           op={op}
@@ -207,38 +206,45 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
       <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
         <DialogHeader>
           <DialogTitle>
-            {op == "add" ? t("access.authorization.add") : op == "edit" ? t("access.authorization.edit") : t("access.authorization.copy")}
+            {
+              {
+                ["add"]: t("access.authorization.add"),
+                ["edit"]: t("access.authorization.edit"),
+                ["copy"]: t("access.authorization.copy"),
+              }[op]
+            }
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
           <div className="container py-3">
-            <Label>{t("access.authorization.form.type.label")}</Label>
+            <div>
+              <Label>{t("access.authorization.form.type.label")}</Label>
+              <Select
+                onValueChange={(val) => {
+                  setConfigType(val);
+                }}
+                defaultValue={configType}
+              >
+                <SelectTrigger className="mt-3">
+                  <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
+                    {Array.from(accessProvidersMap.entries()).map(([key, provider]) => (
+                      <SelectItem value={key} key={key}>
+                        <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
+                          <img src={provider.icon} className="h-6 w-6" />
+                          <div>{t(provider.name)}</div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select
-              onValueChange={(val) => {
-                setConfigType(val);
-              }}
-              defaultValue={configType}
-            >
-              <SelectTrigger className="mt-3">
-                <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
-                  {typeKeys.map((key) => (
-                    <SelectItem value={key} key={key}>
-                      <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
-                        <img src={accessTypeMap.get(key)?.[1]} className="h-6 w-6" />
-                        <div>{t(accessTypeMap.get(key)?.[0] || "")}</div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            {form}
+            <div className="mt-8">{childComponent}</div>
           </div>
         </ScrollArea>
       </DialogContent>
@@ -246,4 +252,4 @@ const AccessEdit = ({ trigger, op, data, className }: AccessEditProps) => {
   );
 };
 
-export default AccessEdit;
+export default AccessEditDialog;

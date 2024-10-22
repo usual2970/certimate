@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { useNotify } from "@/providers/notify";
+import { useNotifyContext } from "@/providers/notify";
 import { NotifyChannelLark, NotifyChannels } from "@/domain/settings";
 import { useEffect, useState } from "react";
 import { update } from "@/repository/settings";
@@ -19,7 +19,7 @@ type LarkSetting = {
 };
 
 const Lark = () => {
-  const { config, setChannels } = useNotify();
+  const { config, setChannels } = useNotifyContext();
   const { t } = useTranslation();
 
   const [changed, setChanged] = useState<boolean>(false);
@@ -222,4 +222,3 @@ const Lark = () => {
 };
 
 export default Lark;
-

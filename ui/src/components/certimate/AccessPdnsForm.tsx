@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { Access, PdnsConfig, accessFormType, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type PdnsConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessPdnsFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessPdnsFormProps = {
 };
 
 const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -27,7 +27,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     apiUrl: z.string().url("common.errmsg.url_invalid"),
     apiKey: z
       .string()
@@ -57,7 +57,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         apiUrl: data.apiUrl,
         apiKey: data.apiKey,
@@ -95,101 +95,98 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
 
   return (
     <>
-      <div className="max-w-[35em] mx-auto mt-10">
-        <Form {...form}>
-          <form
-            onSubmit={(e) => {
-              e.stopPropagation();
-              form.handleSubmit(onSubmit)(e);
-            }}
-            className="space-y-8"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                  </FormControl>
+      <Form {...form}>
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-8"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="configType"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="configType"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="apiUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.pdns_api_url.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.pdns_api_url.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="apiUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.pdns_api_url.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.pdns_api_url.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.pdns_api_key.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.pdns_api_key.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="apiKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.pdns_api_key.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.pdns_api_key.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormMessage />
+          <FormMessage />
 
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.save")}</Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          <div className="flex justify-end">
+            <Button type="submit">{t("common.save")}</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 };
 
 export default AccessPdnsForm;
-

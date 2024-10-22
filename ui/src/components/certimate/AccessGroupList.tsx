@@ -19,16 +19,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 import AccessGroupEdit from "./AccessGroupEdit";
-import { getProviderInfo } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/access";
 import { getErrMessage } from "@/lib/error";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 import { remove } from "@/repository/access_group";
 
 const AccessGroupList = () => {
   const {
     config: { accessGroups },
     reloadAccessGroups,
-  } = useConfig();
+  } = useConfigContext();
 
   const { toast } = useToast();
 
@@ -86,11 +86,11 @@ const AccessGroupList = () => {
                       <div key={access.id} className="flex flex-col mb-3">
                         <div className="flex items-center">
                           <div className="">
-                            <img src={getProviderInfo(access.configType)![1]} alt="provider" className="w-8 h-8"></img>
+                            <img src={accessProvidersMap.get(access.configType)!.icon} alt="provider" className="w-8 h-8"></img>
                           </div>
                           <div className="ml-3">
                             <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">{access.name}</div>
-                            <div className="text-xs text-muted-foreground">{getProviderInfo(access.configType)![0]}</div>
+                            <div className="text-xs text-muted-foreground">{accessProvidersMap.get(access.configType)!.name}</div>
                           </div>
                         </div>
                       </div>

@@ -55,8 +55,7 @@ mkdir -p ~/.certimate && cd ~/.certimate && curl -O https://raw.githubuserconten
 ```bash
 git clone EMAIL:usual2970/certimate.git
 cd certimate
-go mod vendor
-go run main.go serve
+make local.run
 ```
 
 ## 二、使用
@@ -82,8 +81,8 @@ go run main.go serve
 | CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书 |
 |  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                  |
 |  Namesilo  |      √       |              | 可签发在 Namesilo 注册的域名                                 |
-| PowerDNS |      √       |              | 可签发通过PowerDNS管理的域名 |
-| HTTP request |      √       |              | 可签发通过HTTP Request修改dns的域名 |
+|  PowerDNS  |      √       |              | 可签发在 PowerDNS 托管的域名                                 |
+| HTTP 请求  |      √       |              | 可签发允许通过 HTTP 请求修改 DNS 的域名                      |
 |  本地部署  |              |      √       | 可部署到本地服务器                                           |
 |    SSH     |              |      √       | 可部署到 SSH 服务器                                          |
 |  Webhook   |              |      √       | 可部署时回调到 Webhook                                       |

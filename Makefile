@@ -35,3 +35,6 @@ help:
 	@echo "  make help   - 显示此帮助信息"
 
 .PHONY: all build clean help
+
+local.run:
+	go mod vendor&& npm --prefix ./ui install && npm --prefix ./ui run build && go run main.go serve --http 127.0.0.1:8090

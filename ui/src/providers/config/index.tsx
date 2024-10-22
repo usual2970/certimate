@@ -16,23 +16,23 @@ export type ConfigData = {
 
 export type ConfigContext = {
   config: ConfigData;
-  deleteAccess: (id: string) => void;
+  setEmails: (email: Setting) => void;
   addAccess: (access: Access) => void;
   updateAccess: (access: Access) => void;
-  setEmails: (email: Setting) => void;
+  deleteAccess: (id: string) => void;
   setAccessGroups: (accessGroups: AccessGroup[]) => void;
   reloadAccessGroups: () => void;
 };
 
 const Context = createContext({} as ConfigContext);
 
-export const useConfig = () => useContext(Context);
+export const useConfigContext = () => useContext(Context);
 
-interface ContainerProps {
+interface ConfigProviderProps {
   children: ReactNode;
 }
 
-export const ConfigProvider = ({ children }: ContainerProps) => {
+export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   const [config, dispatchConfig] = useReducer(configReducer, {
     accesses: [],
     emails: { content: { emails: [] } },
@@ -96,10 +96,10 @@ export const ConfigProvider = ({ children }: ContainerProps) => {
           emails: config.emails,
           accessGroups: config.accessGroups,
         },
-        deleteAccess,
-        addAccess,
         setEmails,
+        addAccess,
         updateAccess,
+        deleteAccess,
         setAccessGroups,
         reloadAccessGroups,
       }}
