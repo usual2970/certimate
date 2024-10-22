@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"strings"
@@ -25,6 +26,12 @@ func main() {
 
 	isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
 
+	// 获取启动命令中的http参数
+	var httpFlag string
+	flag.StringVar(&httpFlag, "http", "127.0.0.1:8090", "HTTP server address")
+	// "serve"影响解析
+	_ = flag.CommandLine.Parse(os.Args[2:])
+
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
 		// enable auto creation of migration files when making collection changes in the Admin UI
 		// (the isGoRun check is to enable it only during development)
@@ -48,7 +55,7 @@ func main() {
 	})
 
 	defer log.Println("Exit!")
-	log.Println("Visit the website:", "http://127.0.0.1:8090")
+	log.Printf("Visit the website: http://%s", httpFlag)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
