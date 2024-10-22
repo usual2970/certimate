@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
 import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
-import { useNotify } from "@/providers/notify";
+import { useNotifyContext } from "@/providers/notify";
 import { update } from "@/repository/settings";
 import Show from "@/components/Show";
 import { notifyTest } from "@/api/notify";
@@ -20,7 +20,7 @@ type DingTalkSetting = {
 };
 
 const DingTalk = () => {
-  const { config, setChannels } = useNotify();
+  const { config, setChannels } = useNotifyContext();
   const { t } = useTranslation();
 
   const [changed, setChanged] = useState<boolean>(false);
@@ -241,4 +241,3 @@ const DingTalk = () => {
 };
 
 export default DingTalk;
-

@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, HuaweiCloudConfig, getUsageByConfigType } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type HuaweiCloudConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessHuaweiCloudFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessHuaweiCloudFormProps = {
 };
 
 const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -27,7 +27,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     region: z
       .string()
       .min(1, "access.authorization.form.region.placeholder")
@@ -66,7 +66,7 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         region: data.region,
         accessKeyId: data.accessKeyId,
@@ -104,113 +104,111 @@ const AccessHuaweiCloudForm = ({ data, op, onAfterReq }: AccessHuaweiCloudFormPr
 
   return (
     <>
-      <div className="max-w-[35em] mx-auto mt-10">
-        <Form {...form}>
-          <form
-            onSubmit={(e) => {
-              e.stopPropagation();
-              form.handleSubmit(onSubmit)(e);
-            }}
-            className="space-y-8"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                  </FormControl>
+      <Form {...form}>
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-8"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="configType"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="configType"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="region"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.region.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="region"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.region.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.region.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="accessKeyId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="accessKeyId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="secretAccessKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="secretAccessKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormMessage />
+          <FormMessage />
 
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.save")}</Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          <div className="flex justify-end">
+            <Button type="submit">{t("common.save")}</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 };

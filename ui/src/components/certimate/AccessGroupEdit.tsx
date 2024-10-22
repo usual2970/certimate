@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
 import { update } from "@/repository/access_group";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessGroupEditProps = {
   className?: string;
@@ -20,7 +20,7 @@ type AccessGroupEditProps = {
 };
 
 const AccessGroupEdit = ({ className, trigger }: AccessGroupEditProps) => {
-  const { reloadAccessGroups } = useConfig();
+  const { reloadAccessGroups } = useConfigContext();
 
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();

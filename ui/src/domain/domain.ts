@@ -63,21 +63,23 @@ export type Statistic = {
   disabled: number;
 };
 
-export const getLastDeployment = (domain: Domain): Deployment | undefined => {
-  return domain.expand?.lastDeployment;
+type DeployTarget = {
+  type: string;
+  name: string;
+  icon: string;
 };
 
-export const targetTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun-oss", ["common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-cdn", ["common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"]],
-  ["aliyun-dcdn", ["common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"]],
-  ["tencent-cdn", ["common.provider.tencent.cdn", "/imgs/providers/tencent.svg"]],
-  ["huaweicloud-cdn", ["common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"]],
-  ["qiniu-cdn", ["common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"]],
-  ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
-  ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
-  ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
-  ["k8s-secret", ["common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"]],
-]);
-
-export const targetTypeKeys = Array.from(targetTypeMap.keys());
+export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map(
+  [
+    ["aliyun-oss", "common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"],
+    ["aliyun-cdn", "common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"],
+    ["aliyun-dcdn", "common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"],
+    ["tencent-cdn", "common.provider.tencent.cdn", "/imgs/providers/tencent.svg"],
+    ["huaweicloud-cdn", "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
+    ["qiniu-cdn", "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
+    ["local", "common.provider.local", "/imgs/providers/local.svg"],
+    ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg"],
+    ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg"],
+    ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"],
+  ].map(([type, name, icon]) => [type, { type, name, icon }])
+);

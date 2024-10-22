@@ -6,7 +6,7 @@ import { Edit, Plus, Trash2 } from "lucide-react";
 import Show from "@/components/Show";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { FormControl, FormLabel } from "@/components/ui/form";
+import { FormControl, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -63,65 +63,67 @@ const StringList = ({ value, className, onValueChange, valueType = "domain" }: S
   return (
     <>
       <div className={cn(className)}>
-        <FormLabel className="flex justify-between items-center">
-          <div>{t(titles[valueType])}</div>
+        <FormItem>
+          <FormLabel className="flex justify-between items-center">
+            <div>{t(titles[valueType])}</div>
 
-          <Show when={list.length > 0}>
-            <StringEdit
-              op="add"
-              onValueChange={(val: string) => {
-                addVal(val);
-              }}
-              valueType={valueType}
-              value={""}
-              trigger={
-                <div className="flex items-center text-primary">
-                  <Plus size={16} className="cursor-pointer " />
+            <Show when={list.length > 0}>
+              <StringEdit
+                op="add"
+                onValueChange={(val: string) => {
+                  addVal(val);
+                }}
+                valueType={valueType}
+                value={""}
+                trigger={
+                  <div className="flex items-center text-primary">
+                    <Plus size={16} className="cursor-pointer " />
 
-                  <div className="text-sm ">{t("common.add")}</div>
+                    <div className="text-sm ">{t("common.add")}</div>
+                  </div>
+                }
+              />
+            </Show>
+          </FormLabel>
+          <FormControl>
+            <Show
+              when={list.length > 0}
+              fallback={
+                <div className="border rounded-md p-3 text-sm flex flex-col items-center">
+                  <div className="text-muted-foreground">{t("common.text." + valueType + ".empty")}</div>
+
+                  <StringEdit value={""} trigger={t("common.add")} onValueChange={addVal} valueType={valueType} />
                 </div>
               }
-            />
-          </Show>
-        </FormLabel>
-        <FormControl>
-          <Show
-            when={list.length > 0}
-            fallback={
-              <div className="border rounded-md p-3 text-sm mt-2 flex flex-col items-center">
-                <div className="text-muted-foreground">{t("common.text." + valueType + ".empty")}</div>
-
-                <StringEdit value={""} trigger={t("common.add")} onValueChange={addVal} valueType={valueType} />
-              </div>
-            }
-          >
-            <div className="border rounded-md p-3 text-sm mt-2 text-gray-700 space-y-2 dark:text-white dark:border-stone-700 dark:bg-stone-950">
-              {list.map((item, index) => (
-                <div key={index} className="flex justify-between items-center">
-                  <div>{item}</div>
-                  <div className="flex space-x-2">
-                    <StringEdit
-                      op="edit"
-                      valueType={valueType}
-                      trigger={<Edit size={16} className="cursor-pointer text-gray-600 dark:text-white" />}
-                      value={item}
-                      onValueChange={(val: string) => {
-                        editVal(index, val);
-                      }}
-                    />
-                    <Trash2
-                      size={16}
-                      className="cursor-pointer"
-                      onClick={() => {
-                        onRemoveClick(index);
-                      }}
-                    />
+            >
+              <div className="border rounded-md p-3 text-sm text-gray-700 space-y-2 dark:text-white dark:border-stone-700 dark:bg-stone-950">
+                {list.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center">
+                    <div>{item}</div>
+                    <div className="flex space-x-2">
+                      <StringEdit
+                        op="edit"
+                        valueType={valueType}
+                        trigger={<Edit size={16} className="cursor-pointer text-gray-600 dark:text-white" />}
+                        value={item}
+                        onValueChange={(val: string) => {
+                          editVal(index, val);
+                        }}
+                      />
+                      <Trash2
+                        size={16}
+                        className="cursor-pointer"
+                        onClick={() => {
+                          onRemoveClick(index);
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </Show>
-        </FormControl>
+                ))}
+              </div>
+            </Show>
+          </FormControl>
+        </FormItem>
       </div>
     </>
   );

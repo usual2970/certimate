@@ -1,27 +1,34 @@
 import { z } from "zod";
 
-export const accessTypeMap: Map<string, [string, string]> = new Map([
-  ["aliyun", ["common.provider.aliyun", "/imgs/providers/aliyun.svg"]],
-  ["tencent", ["common.provider.tencent", "/imgs/providers/tencent.svg"]],
-  ["huaweicloud", ["common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg"]],
-  ["qiniu", ["common.provider.qiniu", "/imgs/providers/qiniu.svg"]],
-  ["aws", ["common.provider.aws", "/imgs/providers/aws.svg"]],
-  ["cloudflare", ["common.provider.cloudflare", "/imgs/providers/cloudflare.svg"]],
-  ["namesilo", ["common.provider.namesilo", "/imgs/providers/namesilo.svg"]],
-  ["godaddy", ["common.provider.godaddy", "/imgs/providers/godaddy.svg"]],
-  ["pdns", ["common.provider.pdns", "/imgs/providers/pdns.svg"]],
-  ["httpreq", ["common.provider.httpreq", "/imgs/providers/httpreq.svg"]],
-  ["local", ["common.provider.local", "/imgs/providers/local.svg"]],
-  ["ssh", ["common.provider.ssh", "/imgs/providers/ssh.svg"]],
-  ["webhook", ["common.provider.webhook", "/imgs/providers/webhook.svg"]],
-  ["k8s", ["common.provider.kubernetes", "/imgs/providers/k8s.svg"]],
-]);
+type AccessUsages = "apply" | "deploy" | "all";
 
-export const getProviderInfo = (t: string) => {
-  return accessTypeMap.get(t);
+type AccessProvider = {
+  type: string;
+  name: string;
+  icon: string;
+  usage: AccessUsages;
 };
 
-export const accessFormType = z.union(
+export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
+  [
+    ["aliyun", "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all"],
+    ["tencent", "common.provider.tencent", "/imgs/providers/tencent.svg", "all"],
+    ["huaweicloud", "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all"],
+    ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy"],
+    ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply"],
+    ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply"],
+    ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply"],
+    ["godaddy", "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply"],
+    ["pdns", "common.provider.pdns", "/imgs/providers/pdns.svg", "apply"],
+    ["httpreq", "common.provider.httpreq", "/imgs/providers/httpreq.svg", "apply"],
+    ["local", "common.provider.local", "/imgs/providers/local.svg", "deploy"],
+    ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
+    ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
+    ["k8s", "common.provider.kubernetes", "/imgs/providers/k8s.svg", "deploy"],
+  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
+);
+
+export const accessTypeFormSchema = z.union(
   [
     z.literal("aliyun"),
     z.literal("tencent"),
@@ -41,13 +48,11 @@ export const accessFormType = z.union(
   { message: "access.authorization.form.type.placeholder" }
 );
 
-type AccessUsage = "apply" | "deploy" | "all";
-
 export type Access = {
   id: string;
   name: string;
   configType: string;
-  usage: AccessUsage;
+  usage: AccessUsages;
   group?: string;
   config:
     | AliyunConfig
@@ -140,31 +145,4 @@ export type WebhookConfig = {
 
 export type KubernetesConfig = {
   kubeConfig: string;
-};
-
-export const getUsageByConfigType = (configType: string): AccessUsage => {
-  switch (configType) {
-    case "aliyun":
-    case "tencent":
-    case "huaweicloud":
-      return "all";
-
-    case "qiniu":
-    case "local":
-    case "ssh":
-    case "webhook":
-    case "k8s":
-      return "deploy";
-
-    case "aws":
-    case "cloudflare":
-    case "namesilo":
-    case "godaddy":
-    case "pdns":
-    case "httpreq":
-      return "apply";
-
-    default:
-      return "all";
-  }
 };

@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessFormType, getUsageByConfigType, GodaddyConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type Access, type GodaddyConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfig } from "@/providers/config";
+import { useConfigContext } from "@/providers/config";
 
 type AccessGodaddyFormProps = {
   op: "add" | "edit" | "copy";
@@ -19,7 +19,7 @@ type AccessGodaddyFormProps = {
 };
 
 const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => {
-  const { addAccess, updateAccess } = useConfig();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -27,7 +27,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
       .string()
       .min(1, "access.authorization.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: accessFormType,
+    configType: accessTypeFormSchema,
     apiKey: z
       .string()
       .min(1, "access.authorization.form.godaddy_api_key.placeholder")
@@ -60,7 +60,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
       id: data.id as string,
       name: data.name,
       configType: data.configType,
-      usage: getUsageByConfigType(data.configType),
+      usage: accessProvidersMap.get(data.configType)!.usage,
       config: {
         apiKey: data.apiKey,
         apiSecret: data.apiSecret,
@@ -95,96 +95,94 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
 
   return (
     <>
-      <div className="max-w-[35em] mx-auto mt-10">
-        <Form {...form}>
-          <form
-            onSubmit={(e) => {
-              e.stopPropagation();
-              form.handleSubmit(onSubmit)(e);
-            }}
-            className="space-y-8"
-          >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                  </FormControl>
+      <Form {...form}>
+        <form
+          onSubmit={(e) => {
+            e.stopPropagation();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-8"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="id"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="configType"
-              render={({ field }) => (
-                <FormItem className="hidden">
-                  <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="configType"
+            render={({ field }) => (
+              <FormItem className="hidden">
+                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.godaddy_api_key.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.godaddy_api_key.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="apiKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.godaddy_api_key.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.godaddy_api_key.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="apiSecret"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("access.authorization.form.godaddy_api_secret.label")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t("access.authorization.form.godaddy_api_secret.placeholder")} {...field} />
-                  </FormControl>
+          <FormField
+            control={form.control}
+            name="apiSecret"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("access.authorization.form.godaddy_api_secret.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("access.authorization.form.godaddy_api_secret.placeholder")} {...field} />
+                </FormControl>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.save")}</Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+          <div className="flex justify-end">
+            <Button type="submit">{t("common.save")}</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 };
