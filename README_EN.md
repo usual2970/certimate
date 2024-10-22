@@ -54,8 +54,7 @@ mkdir -p ~/.certimate && cd ~/.certimate && curl -O https://raw.githubuserconten
 ```bash
 git clone EMAIL:usual2970/certimate.git
 cd certimate
-go mod vendor
-go run main.go serve
+make local.run
 ```
 
 ## Usage

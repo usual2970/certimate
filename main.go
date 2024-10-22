@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/usual2970/certimate/ui"
 	"log"
 	"os"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/domains"
 	"github.com/usual2970/certimate/internal/routes"
 	"github.com/usual2970/certimate/internal/utils/app"
+	"github.com/usual2970/certimate/ui"
 
 	_ "time/tzdata"
 )
@@ -46,6 +46,10 @@ func main() {
 
 		return nil
 	})
+	defer log.Println("Exit!")
+	go func() {
+		log.Println("Visit the website:", "http://127.0.0.1:8090")
+	}()
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)
