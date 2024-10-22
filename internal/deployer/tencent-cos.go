@@ -97,7 +97,7 @@ func (d *TencentCOSDeployer) deploy(certId string) error {
 
 	request.Region = common.StringPtr(getDeployString(d.option.DeployConfig, "region"))
 	request.CertificateId = common.StringPtr(certId)
-	request.ResourceType = common.StringPtr("c")
+	request.ResourceType = common.StringPtr("cos")
 	request.Status = common.Int64Ptr(1)
 
 	domain := getDeployString(d.option.DeployConfig, "domain")
