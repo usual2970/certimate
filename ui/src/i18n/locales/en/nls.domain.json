@@ -59,6 +59,7 @@
   "domain.deployment.form.cos_bucket.label": "Bucket",
   "domain.deployment.form.cos_bucket.placeholder": "Please enter bucket, e.g. example-1250000000",
   "domain.deployment.form.domain.label": "Deploy to domain (Single domain only, not wildcard domain)",
+  "domain.deployment.form.domain.label.wildsupported": "Deploy to domain (Wildcard domain is also supported)",
   "domain.deployment.form.domain.placeholder": "Please enter domain to be deployed",
   "domain.deployment.form.ssh_key_path.label": "Private Key Save Path",
   "domain.deployment.form.ssh_key_path.placeholder": "Please enter private key save path",

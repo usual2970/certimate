@@ -59,6 +59,7 @@
   "domain.deployment.form.cos_bucket.label": "存储桶",
   "domain.deployment.form.cos_bucket.placeholder": "请输入存储桶名, 如 example-1250000000",
   "domain.deployment.form.domain.label": "部署到域名（仅支持单个域名；不支持泛域名）",
+  "domain.deployment.form.domain.label.wildsupported": "部署到域名（支持泛域名）",
   "domain.deployment.form.domain.placeholder": "请输入部署到的域名",
   "domain.deployment.form.ssh_key_path.label": "私钥保存路径",
   "domain.deployment.form.ssh_key_path.placeholder": "请输入私钥保存路径",

@@ -38,7 +38,7 @@ const DeployToQiniuCDN = () => {
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.domain.label")}</Label>
+        <Label>{t("domain.deployment.form.domain.label.wildsupported")}</Label>
         <Input
           placeholder={t("domain.deployment.form.domain.placeholder")}
           className="w-full mt-1"
