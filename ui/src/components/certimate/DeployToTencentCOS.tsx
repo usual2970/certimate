@@ -32,7 +32,7 @@ const DeployToTencentCOS = () => {
   }, [data]);
 
   useEffect(() => {
-    const bucketResp = bucketSchema.safeParse(data.config?.domain);
+    const bucketResp = bucketSchema.safeParse(data.config?.bucket);
     if (!bucketResp.success) {
       setError({
         ...error,
