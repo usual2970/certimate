@@ -15,7 +15,7 @@ func init() {
 			{
 				"id": "z3p974ainxjqlvs",
 				"created": "2024-07-29 10:02:48.334Z",
-				"updated": "2024-09-18 14:23:22.359Z",
+				"updated": "2024-10-13 02:40:36.312Z",
 				"name": "domains",
 				"type": "base",
 				"system": false,
@@ -191,7 +191,8 @@ func init() {
 								"ssh",
 								"webhook",
 								"tencent-cdn",
-								"qiniu-cdn"
+								"qiniu-cdn",
+								"local"
 							]
 						}
 					},
@@ -313,6 +314,30 @@ func init() {
 							"max": null,
 							"pattern": ""
 						}
+					},
+					{
+						"system": false,
+						"id": "wwrzc3jo",
+						"name": "applyConfig",
+						"type": "json",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"maxSize": 2000000
+						}
+					},
+					{
+						"system": false,
+						"id": "474iwy8r",
+						"name": "deployConfig",
+						"type": "json",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"maxSize": 2000000
+						}
 					}
 				],
 				"indexes": [
@@ -328,7 +353,7 @@ func init() {
 			{
 				"id": "4yzbv8urny5ja1e",
 				"created": "2024-07-29 10:04:39.685Z",
-				"updated": "2024-09-17 00:53:25.859Z",
+				"updated": "2024-10-20 04:36:58.692Z",
 				"name": "access",
 				"type": "base",
 				"system": false,
@@ -372,12 +397,18 @@ func init() {
 							"values": [
 								"aliyun",
 								"tencent",
+								"huaweicloud",
+								"qiniu",
+								"aws",
+								"cloudflare",
+								"namesilo",
+								"godaddy",
+								"pdns",
+								"httpreq",
+								"local",
 								"ssh",
 								"webhook",
-								"cloudflare",
-								"qiniu",
-								"namesilo",
-								"godaddy"
+								"k8s"
 							]
 						}
 					},
@@ -441,7 +472,7 @@ func init() {
 			{
 				"id": "0a1o4e6sstp694f",
 				"created": "2024-07-30 06:30:27.801Z",
-				"updated": "2024-09-17 00:53:25.859Z",
+				"updated": "2024-10-17 15:21:58.176Z",
 				"name": "deployments",
 				"type": "base",
 				"system": false,
@@ -513,6 +544,16 @@ func init() {
 							"min": "",
 							"max": ""
 						}
+					},
+					{
+						"system": false,
+						"id": "wledpzgb",
+						"name": "wholeSuccess",
+						"type": "bool",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {}
 					}
 				],
 				"indexes": [],
@@ -526,7 +567,7 @@ func init() {
 			{
 				"id": "_pb_users_auth_",
 				"created": "2024-09-12 13:09:54.234Z",
-				"updated": "2024-09-17 00:53:25.859Z",
+				"updated": "2024-10-13 02:40:36.312Z",
 				"name": "users",
 				"type": "auth",
 				"system": false,
@@ -589,7 +630,7 @@ func init() {
 			{
 				"id": "dy6ccjb60spfy6p",
 				"created": "2024-09-12 23:12:21.677Z",
-				"updated": "2024-09-17 00:53:25.860Z",
+				"updated": "2024-10-13 02:40:36.312Z",
 				"name": "settings",
 				"type": "base",
 				"system": false,
@@ -634,7 +675,7 @@ func init() {
 			{
 				"id": "teolp9pl72dxlxq",
 				"created": "2024-09-13 12:51:05.611Z",
-				"updated": "2024-09-17 00:53:25.860Z",
+				"updated": "2024-10-13 02:40:36.312Z",
 				"name": "access_groups",
 				"type": "base",
 				"system": false,
@@ -673,6 +714,76 @@ func init() {
 				"indexes": [
 					"CREATE UNIQUE INDEX ` + "`" + `idx_RgRXp0R` + "`" + ` ON ` + "`" + `access_groups` + "`" + ` (` + "`" + `name` + "`" + `)"
 				],
+				"listRule": null,
+				"viewRule": null,
+				"createRule": null,
+				"updateRule": null,
+				"deleteRule": null,
+				"options": {}
+			},
+			{
+				"id": "012d7abbod1hwvr",
+				"created": "2024-10-23 06:37:13.155Z",
+				"updated": "2024-10-23 07:34:58.636Z",
+				"name": "acme_accounts",
+				"type": "base",
+				"system": false,
+				"schema": [
+					{
+						"system": false,
+						"id": "fmjfn0yw",
+						"name": "ca",
+						"type": "text",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"min": null,
+							"max": null,
+							"pattern": ""
+						}
+					},
+					{
+						"system": false,
+						"id": "qqwijqzt",
+						"name": "email",
+						"type": "email",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"exceptDomains": null,
+							"onlyDomains": null
+						}
+					},
+					{
+						"system": false,
+						"id": "genxqtii",
+						"name": "key",
+						"type": "text",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"min": null,
+							"max": null,
+							"pattern": ""
+						}
+					},
+					{
+						"system": false,
+						"id": "1aoia909",
+						"name": "resource",
+						"type": "json",
+						"required": false,
+						"presentable": false,
+						"unique": false,
+						"options": {
+							"maxSize": 2000000
+						}
+					}
+				],
+				"indexes": [],
 				"listRule": null,
 				"viewRule": null,
 				"createRule": null,
