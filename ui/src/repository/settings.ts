@@ -1,9 +1,9 @@
-import { Setting } from "@/domain/settings";
+import { EmailsSetting, Setting } from "@/domain/settings";
 import { getPb } from "./api";
 
 export const getEmails = async () => {
   try {
-    const resp = await getPb().collection("settings").getFirstListItem<Setting>("name='emails'");
+    const resp = await getPb().collection("settings").getFirstListItem<Setting<EmailsSetting>>("name='emails'");
     return resp;
   } catch (e) {
     return {
@@ -12,21 +12,21 @@ export const getEmails = async () => {
   }
 };
 
-export const getSetting = async (name: string) => {
+export const getSetting = async <T>(name: string) => {
   try {
-    const resp = await getPb().collection("settings").getFirstListItem<Setting>(`name='${name}'`);
+    const resp = await getPb().collection("settings").getFirstListItem<Setting<T>>(`name='${name}'`);
     return resp;
   } catch (e) {
-    const rs: Setting = {
+    const rs: Setting<T> = {
       name: name,
     };
     return rs;
   }
 };
 
-export const update = async (setting: Setting) => {
+export const update = async <T>(setting: Setting<T>) => {
   const pb = getPb();
-  let resp: Setting;
+  let resp: Setting<T>;
   if (setting.id) {
     resp = await pb.collection("settings").update(setting.id, setting);
   } else {

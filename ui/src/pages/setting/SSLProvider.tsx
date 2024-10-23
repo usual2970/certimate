@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState, createContext } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -14,93 +14,71 @@ import { getErrMessage } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { SSLProvider as SSLProviderType, SSLProviderSetting, Setting } from "@/domain/settings";
 import { getSetting, update } from "@/repository/settings";
+import { produce } from "immer";
+
+type SSLProviderContext = {
+  setting: Setting<SSLProviderSetting>;
+  onSubmit: (data: Setting<SSLProviderSetting>) => void;
+  setConfig: (config: Setting<SSLProviderSetting>) => void;
+};
+
+const Context = createContext({} as SSLProviderContext);
+
+export const useSSLProviderContext = () => {
+  return useContext(Context);
+};
 
 const SSLProvider = () => {
   const { t } = useTranslation();
 
-  const formSchema = z.object({
-    provider: z.enum(["letsencrypt", "zerossl"], {
-      message: t("settings.ca.provider.errmsg.empty"),
-    }),
-    eabKid: z.string().optional(),
-    eabHmacKey: z.string().optional(),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
+  const [config, setConfig] = useState<Setting<SSLProviderSetting>>({
+    id: "",
+    content: {
       provider: "letsencrypt",
+      config: {},
     },
   });
-
-  const [provider, setProvider] = useState("letsencrypt");
-
-  const [config, setConfig] = useState<Setting>();
 
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
-      const setting = await getSetting("ssl-provider");
+      const setting = await getSetting<SSLProviderSetting>("ssl-provider");
 
       if (setting) {
         setConfig(setting);
-        const content = setting.content as SSLProviderSetting;
-
-        form.setValue("provider", content.provider);
-        form.setValue("eabKid", content.config[content.provider].eabKid);
-        form.setValue("eabHmacKey", content.config[content.provider].eabHmacKey);
-        setProvider(content.provider);
-      } else {
-        form.setValue("provider", "letsencrypt");
-        setProvider("letsencrypt");
       }
     };
     fetchData();
   }, []);
 
+  const setProvider = (val: SSLProviderType) => {
+    const newData = produce(config, (draft) => {
+      if (draft.content) {
+        draft.content.provider = val;
+      } else {
+        draft.content = {
+          provider: val,
+          config: {},
+        };
+      }
+    });
+    setConfig(newData);
+  };
+
   const getOptionCls = (val: string) => {
-    if (provider === val) {
+    if (config.content?.provider === val) {
       return "border-primary";
     }
 
     return "";
   };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (values.provider === "zerossl") {
-      if (!values.eabKid) {
-        form.setError("eabKid", {
-          message: t("settings.ca.eab_kid_hmac_key.errmsg.empty"),
-        });
-      }
-      if (!values.eabHmacKey) {
-        form.setError("eabHmacKey", {
-          message: t("settings.ca.eab_kid_hmac_key.errmsg.empty"),
-        });
-      }
-      if (!values.eabKid || !values.eabHmacKey) {
-        return;
-      }
-    }
-
-    const setting: Setting = {
-      id: config?.id,
-      name: "ssl-provider",
-      content: {
-        provider: values.provider,
-        config: {
-          letsencrypt: {},
-          zerossl: {
-            eabKid: values.eabKid ?? "",
-            eabHmacKey: values.eabHmacKey ?? "",
-          },
-        },
-      },
-    };
-
+  const onSubmit = async (data: Setting<SSLProviderSetting>) => {
     try {
-      await update(setting);
+      console.log(data);
+      const resp = await update({ ...data });
+      setConfig(resp);
       toast({
         title: t("common.update.succeeded.message"),
         description: t("common.update.succeeded.message"),
@@ -117,88 +95,350 @@ const SSLProvider = () => {
 
   return (
     <>
-      <div className="w-full md:max-w-[35em]">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 dark:text-stone-200">
-            <FormField
-              control={form.control}
-              name="provider"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common.text.ca")}</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      {...field}
-                      className="flex"
-                      onValueChange={(val) => {
-                        setProvider(val);
-                        form.setValue("provider", val as SSLProviderType);
-                      }}
-                      value={provider}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="letsencrypt" id="letsencrypt" />
-                        <Label htmlFor="letsencrypt">
-                          <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("letsencrypt"))}>
-                            <img src={"/imgs/providers/letsencrypt.svg"} className="h-6" />
-                            <div>{"Let's Encrypt"}</div>
-                          </div>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="zerossl" id="zerossl" />
-                        <Label htmlFor="zerossl">
-                          <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("zerossl"))}>
-                            <img src={"/imgs/providers/zerossl.svg"} className="h-6" />
-                            <div>{"ZeroSSL"}</div>
-                          </div>
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-
-                  <FormField
-                    control={form.control}
-                    name="eabKid"
-                    render={({ field }) => (
-                      <FormItem hidden={provider !== "zerossl"}>
-                        <FormLabel>EAB_KID</FormLabel>
-                        <FormControl>
-                          <Input placeholder={t("settings.ca.eab_kid.errmsg.empty")} {...field} type="text" />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="eabHmacKey"
-                    render={({ field }) => (
-                      <FormItem hidden={provider !== "zerossl"}>
-                        <FormLabel>EAB_HMAC_KEY</FormLabel>
-                        <FormControl>
-                          <Input placeholder={t("settings.ca.eab_hmac_key.errmsg.empty")} {...field} type="text" />
-                        </FormControl>
-
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end">
-              <Button type="submit">{t("common.update")}</Button>
+      <Context.Provider value={{ onSubmit, setConfig, setting: config }}>
+        <div className="w-full md:max-w-[35em]">
+          <Label>{t("common.text.ca")}</Label>
+          <RadioGroup
+            className="flex mt-3"
+            onValueChange={(val) => {
+              setProvider(val as SSLProviderType);
+            }}
+            value={config.content?.provider}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="letsencrypt" id="letsencrypt" />
+              <Label htmlFor="letsencrypt">
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("letsencrypt"))}>
+                  <img src={"/imgs/providers/letsencrypt.svg"} className="h-6" />
+                  <div>{"Let's Encrypt"}</div>
+                </div>
+              </Label>
             </div>
-          </form>
-        </Form>
-      </div>
+            <div className="flex items-center space-x-2 ">
+              <RadioGroupItem value="zerossl" id="zerossl" />
+              <Label htmlFor="zerossl">
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("zerossl"))}>
+                  <img src={"/imgs/providers/zerossl.svg"} className="h-6" />
+                  <div>{"ZeroSSL"}</div>
+                </div>
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="gts" id="gts" />
+              <Label htmlFor="gts">
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("gts"))}>
+                  <img src={"/imgs/providers/google.svg"} className="h-6" />
+                  <div>{"Google Trust Services"}</div>
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+
+          <SSLProviderForm kind={config.content?.provider ?? ""} />
+        </div>
+      </Context.Provider>
     </>
+  );
+};
+
+const SSLProviderForm = ({ kind }: { kind: string }) => {
+  const getForm = () => {
+    switch (kind) {
+      case "zerossl":
+        return <SSLProviderZeroSSLForm />;
+      case "gts":
+        return <SSLProviderGtsForm />;
+      default:
+        return <SSLProviderLetsEncryptForm />;
+    }
+  };
+
+  return (
+    <>
+      <div className="mt-5">{getForm()}</div>
+    </>
+  );
+};
+
+const getConfigStr = (content: SSLProviderSetting, kind: string, key: string) => {
+  if (!content.config) {
+    return "";
+  }
+  if (!content.config[kind]) {
+    return "";
+  }
+  return content.config[kind][key] ?? "";
+};
+
+const SSLProviderLetsEncryptForm = () => {
+  const { t } = useTranslation();
+
+  const { setting, onSubmit } = useSSLProviderContext();
+
+  const formSchema = z.object({
+    kind: z.literal("letsencrypt"),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      kind: "letsencrypt",
+    },
+  });
+
+  const onLocalSubmit = async (data: z.infer<typeof formSchema>) => {
+    const newData = produce(setting, (draft) => {
+      if (!draft.content) {
+        draft.content = {
+          provider: data.kind,
+          config: {
+            letsencrypt: {},
+          },
+        };
+      }
+    });
+    onSubmit(newData);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onLocalSubmit)} className="space-y-8 dark:text-stone-200">
+        <FormField
+          control={form.control}
+          name="kind"
+          render={({ field }) => (
+            <FormItem hidden>
+              <FormLabel>kind</FormLabel>
+              <FormControl>
+                <Input {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormMessage />
+
+        <div className="flex justify-end">
+          <Button type="submit">{t("common.update")}</Button>
+        </div>
+      </form>
+    </Form>
+  );
+};
+const SSLProviderZeroSSLForm = () => {
+  const { t } = useTranslation();
+
+  const { setting, onSubmit } = useSSLProviderContext();
+
+  const formSchema = z.object({
+    kind: z.literal("zerossl"),
+    eabKid: z.string().min(1, { message: t("settings.ca.eab_kid_hmac_key.errmsg.empty") }),
+    eabHmacKey: z.string().min(1, { message: t("settings.ca.eab_kid_hmac_key.errmsg.empty") }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      kind: "zerossl",
+      eabKid: "",
+      eabHmacKey: "",
+    },
+  });
+
+  useEffect(() => {
+    if (setting.content) {
+      const content = setting.content;
+
+      form.reset({
+        eabKid: getConfigStr(content, "zerossl", "eabKid"),
+        eabHmacKey: getConfigStr(content, "zerossl", "eabHmacKey"),
+      });
+    }
+  }, [setting]);
+
+  const onLocalSubmit = async (data: z.infer<typeof formSchema>) => {
+    const newData = produce(setting, (draft) => {
+      if (!draft.content) {
+        draft.content = {
+          provider: "zerossl",
+          config: {
+            zerossl: {},
+          },
+        };
+      }
+
+      draft.content.config.zerossl = {
+        eabKid: data.eabKid,
+        eabHmacKey: data.eabHmacKey,
+      };
+    });
+    onSubmit(newData);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onLocalSubmit)} className="space-y-8 dark:text-stone-200">
+        <FormField
+          control={form.control}
+          name="kind"
+          render={({ field }) => (
+            <FormItem hidden>
+              <FormLabel>kind</FormLabel>
+              <FormControl>
+                <Input {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="eabKid"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>EAB_KID</FormLabel>
+              <FormControl>
+                <Input placeholder={t("settings.ca.eab_kid.errmsg.empty")} {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="eabHmacKey"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>EAB_HMAC_KEY</FormLabel>
+              <FormControl>
+                <Input placeholder={t("settings.ca.eab_hmac_key.errmsg.empty")} {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormMessage />
+
+        <div className="flex justify-end">
+          <Button type="submit">{t("common.update")}</Button>
+        </div>
+      </form>
+    </Form>
+  );
+};
+
+const SSLProviderGtsForm = () => {
+  const { t } = useTranslation();
+
+  const { setting, onSubmit } = useSSLProviderContext();
+
+  const formSchema = z.object({
+    kind: z.literal("gts"),
+    eabKid: z.string().min(1, { message: t("settings.ca.eab_kid_hmac_key.errmsg.empty") }),
+    eabHmacKey: z.string().min(1, { message: t("settings.ca.eab_kid_hmac_key.errmsg.empty") }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      kind: "gts",
+      eabKid: "",
+      eabHmacKey: "",
+    },
+  });
+
+  useEffect(() => {
+    if (setting.content) {
+      const content = setting.content;
+
+      form.reset({
+        eabKid: getConfigStr(content, "gts", "eabKid"),
+        eabHmacKey: getConfigStr(content, "gts", "eabHmacKey"),
+      });
+    }
+  }, [setting]);
+
+  const onLocalSubmit = async (data: z.infer<typeof formSchema>) => {
+    const newData = produce(setting, (draft) => {
+      if (!draft.content) {
+        draft.content = {
+          provider: "gts",
+          config: {
+            zerossl: {},
+          },
+        };
+      }
+
+      draft.content.config.gts = {
+        eabKid: data.eabKid,
+        eabHmacKey: data.eabHmacKey,
+      };
+    });
+    onSubmit(newData);
+  };
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onLocalSubmit)} className="space-y-8 dark:text-stone-200">
+        <FormField
+          control={form.control}
+          name="kind"
+          render={({ field }) => (
+            <FormItem hidden>
+              <FormLabel>kind</FormLabel>
+              <FormControl>
+                <Input {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="eabKid"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>EAB_KID</FormLabel>
+              <FormControl>
+                <Input placeholder={t("settings.ca.eab_kid.errmsg.empty")} {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="eabHmacKey"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>EAB_HMAC_KEY</FormLabel>
+              <FormControl>
+                <Input placeholder={t("settings.ca.eab_hmac_key.errmsg.empty")} {...field} type="text" />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormMessage />
+
+        <div className="flex justify-end">
+          <Button type="submit">{t("common.update")}</Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 

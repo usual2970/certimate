@@ -8,7 +8,7 @@ type Action =
   | { type: "DELETE_ACCESS"; payload: string }
   | { type: "UPDATE_ACCESS"; payload: Access }
   | { type: "SET_ACCESSES"; payload: Access[] }
-  | { type: "SET_EMAILS"; payload: Setting }
+  | { type: "SET_EMAILS"; payload: Setting<EmailsSetting> }
   | { type: "ADD_EMAIL"; payload: string }
   | { type: "SET_ACCESS_GROUPS"; payload: AccessGroup[] };
 

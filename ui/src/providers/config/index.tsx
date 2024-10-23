@@ -2,7 +2,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useReduce
 
 import { Access } from "@/domain/access";
 import { AccessGroup } from "@/domain/access_groups";
-import { Setting } from "@/domain/settings";
+import { EmailsSetting, Setting } from "@/domain/settings";
 import { list } from "@/repository/access";
 import { list as getAccessGroups } from "@/repository/access_group";
 import { getEmails } from "@/repository/settings";
@@ -10,13 +10,13 @@ import { configReducer } from "./reducer";
 
 export type ConfigData = {
   accesses: Access[];
-  emails: Setting;
+  emails: Setting<EmailsSetting>;
   accessGroups: AccessGroup[];
 };
 
 export type ConfigContext = {
   config: ConfigData;
-  setEmails: (email: Setting) => void;
+  setEmails: (email: Setting<EmailsSetting>) => void;
   addAccess: (access: Access) => void;
   updateAccess: (access: Access) => void;
   deleteAccess: (id: string) => void;
@@ -68,7 +68,7 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     dispatchConfig({ type: "SET_ACCESS_GROUPS", payload: accessGroups });
   }, []);
 
-  const setEmails = useCallback((emails: Setting) => {
+  const setEmails = useCallback((emails: Setting<EmailsSetting>) => {
     dispatchConfig({ type: "SET_EMAILS", payload: emails });
   }, []);
 

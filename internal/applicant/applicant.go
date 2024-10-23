@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/repository"
 	"github.com/usual2970/certimate/internal/utils/app"
 
 	"github.com/go-acme/lego/v4/certcrypto"
@@ -39,16 +41,19 @@ const defaultSSLProvider = "letsencrypt"
 const (
 	sslProviderLetsencrypt = "letsencrypt"
 	sslProviderZeroSSL     = "zerossl"
+	sslProviderGts         = "gts"
 )
 
 const (
 	zerosslUrl     = "https://acme.zerossl.com/v2/DV90"
 	letsencryptUrl = "https://acme-v02.api.letsencrypt.org/directory"
+	gtsUrl         = "https://dv.acme-v02.api.pki.goog/directory"
 )
 
 var sslProviderUrls = map[string]string{
 	sslProviderLetsencrypt: letsencryptUrl,
 	sslProviderZeroSSL:     zerosslUrl,
+	sslProviderGts:         gtsUrl,
 }
 
 const defaultEmail = "536464346@qq.com"
@@ -75,9 +80,37 @@ type ApplyOption struct {
 }
 
 type ApplyUser struct {
+	Ca           string
 	Email        string
 	Registration *registration.Resource
-	key          crypto.PrivateKey
+	key          string
+}
+
+func newApplyUser(ca, email string) (*ApplyUser, error) {
+	repo := getAcmeAccountRepository()
+	rs := &ApplyUser{
+		Ca:    ca,
+		Email: email,
+	}
+	resp, err := repo.GetByCAAndEmail(ca, email)
+	if err != nil {
+		privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+		if err != nil {
+			return nil, err
+		}
+		keyStr, err := x509.PrivateKeyToPEM(privateKey)
+		if err != nil {
+			return nil, err
+		}
+		rs.key = keyStr
+
+		return rs, nil
+	}
+
+	rs.Registration = resp.Resource
+	rs.key = resp.Key
+
+	return rs, nil
 }
 
 func (u *ApplyUser) GetEmail() string {
@@ -89,6 +122,15 @@ func (u ApplyUser) GetRegistration() *registration.Resource {
 }
 
 func (u *ApplyUser) GetPrivateKey() crypto.PrivateKey {
+	rs, _ := x509.ParsePrivateKeyFromPEM(u.key)
+	return rs
+}
+
+func (u *ApplyUser) hasRegistration() bool {
+	return u.Registration != nil
+}
+
+func (u *ApplyUser) getPrivateKeyString() string {
 	return u.key
 }
 
@@ -157,10 +199,13 @@ type SSLProviderConfig struct {
 }
 
 type SSLProviderConfigContent struct {
-	Zerossl struct {
-		EabHmacKey string `json:"eabHmacKey"`
-		EabKid     string `json:"eabKid"`
-	}
+	Zerossl SSLProviderEab `json:"zerossl"`
+	Gts     SSLProviderEab `json:"gts"`
+}
+
+type SSLProviderEab struct {
+	EabHmacKey string `json:"eabHmacKey"`
+	EabKid     string `json:"eabKid"`
 }
 
 func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
@@ -176,21 +221,16 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		}
 	}
 
-	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	if err != nil {
-		return nil, err
-	}
-
 	// Some unified lego environment variables are configured here.
 	// link: https://github.com/go-acme/lego/issues/1867
 	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(option.DisableFollowCNAME))
 
-	myUser := ApplyUser{
-		Email: option.Email,
-		key:   privateKey,
+	myUser, err := newApplyUser(sslProvider.Provider, option.Email)
+	if err != nil {
+		return nil, err
 	}
 
-	config := lego.NewConfig(&myUser)
+	config := lego.NewConfig(myUser)
 
 	// This CA URL is configured for a local dev instance of Boulder running in Docker in a VM.
 	config.CADirURL = sslProviderUrls[sslProvider.Provider]
@@ -211,11 +251,13 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	client.Challenge.SetDNS01Provider(provider, challengeOptions...)
 
 	// New users will need to register
-	reg, err := getReg(client, sslProvider)
-	if err != nil {
-		return nil, fmt.Errorf("failed to register: %w", err)
+	if !myUser.hasRegistration() {
+		reg, err := getReg(client, sslProvider, myUser)
+		if err != nil {
+			return nil, fmt.Errorf("failed to register: %w", err)
+		}
+		myUser.Registration = reg
 	}
-	myUser.Registration = reg
 
 	domains := strings.Split(option.Domain, ";")
 	request := certificate.ObtainRequest{
@@ -237,7 +279,16 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	}, nil
 }
 
-func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.Resource, error) {
+type AcmeAccountRepository interface {
+	GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error)
+	Save(ca, email, key string, resource *registration.Resource) error
+}
+
+func getAcmeAccountRepository() AcmeAccountRepository {
+	return repository.NewAcmeAccountRepository()
+}
+
+func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *ApplyUser) (*registration.Resource, error) {
 	var reg *registration.Resource
 	var err error
 	switch sslProvider.Provider {
@@ -246,6 +297,12 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.
 			TermsOfServiceAgreed: true,
 			Kid:                  sslProvider.Config.Zerossl.EabKid,
 			HmacEncoded:          sslProvider.Config.Zerossl.EabHmacKey,
+		})
+	case sslProviderGts:
+		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+			TermsOfServiceAgreed: true,
+			Kid:                  sslProvider.Config.Gts.EabKid,
+			HmacEncoded:          sslProvider.Config.Gts.EabHmacKey,
 		})
 
 	case sslProviderLetsencrypt:
@@ -257,6 +314,18 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.
 
 	if err != nil {
 		return nil, err
+	}
+
+	repo := getAcmeAccountRepository()
+
+	resp, err := repo.GetByCAAndEmail(sslProvider.Provider, user.GetEmail())
+	if err == nil {
+		user.key = resp.Key
+		return resp.Resource, nil
+	}
+
+	if err := repo.Save(sslProvider.Provider, user.GetEmail(), user.getPrivateKeyString(), reg); err != nil {
+		return nil, fmt.Errorf("failed to save registration: %w", err)
 	}
 
 	return reg, nil
