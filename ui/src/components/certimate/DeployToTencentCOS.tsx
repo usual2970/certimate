@@ -47,6 +47,21 @@ const DeployToTencentCOS = () => {
   }, []);
 
   useEffect(() => {
+    const regionResp = regionSchema.safeParse(data.config?.bucket);
+    if (!regionResp.success) {
+      setError({
+        ...error,
+        region: JSON.parse(regionResp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        region: "",
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     if (!data.id) {
       setDeploy({
         ...data,
@@ -63,8 +78,12 @@ const DeployToTencentCOS = () => {
     message: t("common.errmsg.domain_invalid"),
   });
 
-  const bucketSchema = z.string().min(1, {
+  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
     message: t("domain.deployment.form.cos_region.placeholder"),
+  });
+
+  const bucketSchema = z.string().regex(/^.+-\d+$/, {
+    message: t("domain.deployment.form.cos_bucket.placeholder"),
   });
 
   return (
@@ -78,6 +97,19 @@ const DeployToTencentCOS = () => {
           onChange={(e) => {
             const temp = e.target.value;
 
+            const resp = bucketSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                region: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                region: "",
+              });
+            }
+
             const newData = produce(data, (draft) => {
               if (!draft.config) {
                 draft.config = {};
@@ -87,7 +119,7 @@ const DeployToTencentCOS = () => {
             setDeploy(newData);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.endpoint}</div>
+        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
       </div>
 
       <div>
