@@ -47,7 +47,7 @@ const DeployToTencentCOS = () => {
   }, []);
 
   useEffect(() => {
-    const regionResp = regionSchema.safeParse(data.config?.bucket);
+    const regionResp = regionSchema.safeParse(data.config?.region);
     if (!regionResp.success) {
       setError({
         ...error,
