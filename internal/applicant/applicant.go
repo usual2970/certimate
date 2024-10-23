@@ -318,6 +318,12 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *ApplyUser
 
 	repo := getAcmeAccountRepository()
 
+	resp, err := repo.GetByCAAndEmail(sslProvider.Provider, user.GetEmail())
+	if err == nil {
+		user.key = resp.Key
+		return resp.Resource, nil
+	}
+
 	if err := repo.Save(sslProvider.Provider, user.GetEmail(), user.getPrivateKeyString(), reg); err != nil {
 		return nil, fmt.Errorf("failed to save registration: %w", err)
 	}

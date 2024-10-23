@@ -1,11 +1,14 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/app"
+	"golang.org/x/sync/singleflight"
 )
 
 type AcmeAccountRepository struct{}
@@ -14,25 +17,42 @@ func NewAcmeAccountRepository() *AcmeAccountRepository {
 	return &AcmeAccountRepository{}
 }
 
+var g singleflight.Group
+
 func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error) {
-	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("acme_accounts", "ca={:ca} && email={:email}", dbx.Params{"ca": ca, "email": email})
+	resp, err, _ := g.Do(fmt.Sprintf("acme_account_%s_%s", ca, email), func() (interface{}, error) {
+		resp, err := app.GetApp().Dao().FindFirstRecordByFilter("acme_accounts", "ca={:ca} && email={:email}", dbx.Params{"ca": ca, "email": email})
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	})
 	if err != nil {
 		return nil, err
 	}
 
+	if resp == nil {
+		return nil, fmt.Errorf("acme account not found")
+	}
+
+	record, ok := resp.(*models.Record)
+	if !ok {
+		return nil, fmt.Errorf("acme account not found")
+	}
+
 	resource := &registration.Resource{}
-	if err := resp.UnmarshalJSONField("resource", resource); err != nil {
+	if err := record.UnmarshalJSONField("resource", resource); err != nil {
 		return nil, err
 	}
 
 	return &domain.AcmeAccount{
-		Id:       resp.GetString("id"),
-		Ca:       resp.GetString("ca"),
-		Email:    resp.GetString("email"),
-		Key:      resp.GetString("key"),
+		Id:       record.GetString("id"),
+		Ca:       record.GetString("ca"),
+		Email:    record.GetString("email"),
+		Key:      record.GetString("key"),
 		Resource: resource,
-		Created:  resp.GetTime("created"),
-		Updated:  resp.GetTime("updated"),
+		Created:  record.GetTime("created"),
+		Updated:  record.GetTime("updated"),
 	}, nil
 }
 
