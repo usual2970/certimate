@@ -85,13 +85,13 @@ func (d *TencentCLBDeployer) deploy(certId string) error {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
 	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := ssl.NewClient(d.credential, "", cpf)
+	client, _ := ssl.NewClient(d.credential, getDeployString(d.option.DeployConfig, "region"), cpf)
 
 	// 实例化一个请求对象,每个接口都会对应一个request对象
 	request := ssl.NewDeployCertificateInstanceRequest()
 
 	request.CertificateId = common.StringPtr(certId)
-	request.ResourceType = common.StringPtr("cdn")
+	request.ResourceType = common.StringPtr("clb")
 	request.Status = common.Int64Ptr(1)
 
 	clbId := getDeployString(d.option.DeployConfig, "clbId")

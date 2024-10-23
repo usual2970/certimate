@@ -61,6 +61,21 @@ const DeployToTencentCLB = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const regionResp = regionSchema.safeParse(data.config?.region);
+    if (!regionResp.success) {
+      setError({
+        ...error,
+        region: JSON.parse(regionResp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        region: "",
+      });
+    }
+  }, []);
+
 
   useEffect(() => {
     if (!data.id) {
@@ -70,10 +85,15 @@ const DeployToTencentCLB = () => {
           lsnId: "",
           clbId: "",
           domain: "",
+          region: "",
         },
       });
     }
   }, []);
+
+  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
+    message: t("domain.deployment.form.clb_region.placeholder"),
+  });
 
   const domainSchema = z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
     message: t("common.errmsg.domain_invalid"),
@@ -89,6 +109,40 @@ const DeployToTencentCLB = () => {
 
   return (
     <div className="flex flex-col space-y-8">
+      <div>
+        <Label>{t("domain.deployment.form.clb_region.label")}</Label>
+        <Input
+          placeholder={t("domain.deployment.form.clb_region.placeholder")}
+          className="w-full mt-1"
+          value={data?.config?.region}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = regionSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                region: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                region: "",
+              });
+            }
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.region = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+      </div>
+
       <div>
         <Label>{t("domain.deployment.form.clb_id.label")}</Label>
         <Input
