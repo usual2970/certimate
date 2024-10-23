@@ -39,16 +39,19 @@ const defaultSSLProvider = "letsencrypt"
 const (
 	sslProviderLetsencrypt = "letsencrypt"
 	sslProviderZeroSSL     = "zerossl"
+	sslProviderGts         = "gts"
 )
 
 const (
 	zerosslUrl     = "https://acme.zerossl.com/v2/DV90"
 	letsencryptUrl = "https://acme-v02.api.letsencrypt.org/directory"
+	gtsUrl         = "https://dv.acme-v02.api.pki.goog/directory"
 )
 
 var sslProviderUrls = map[string]string{
 	sslProviderLetsencrypt: letsencryptUrl,
 	sslProviderZeroSSL:     zerosslUrl,
+	sslProviderGts:         gtsUrl,
 }
 
 const defaultEmail = "536464346@qq.com"
@@ -157,10 +160,13 @@ type SSLProviderConfig struct {
 }
 
 type SSLProviderConfigContent struct {
-	Zerossl struct {
-		EabHmacKey string `json:"eabHmacKey"`
-		EabKid     string `json:"eabKid"`
-	}
+	Zerossl SSLProviderEab `json:"zerossl"`
+	Gts     SSLProviderEab `json:"gts"`
+}
+
+type SSLProviderEab struct {
+	EabHmacKey string `json:"eabHmacKey"`
+	EabKid     string `json:"eabKid"`
 }
 
 func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
@@ -246,6 +252,12 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig) (*registration.
 			TermsOfServiceAgreed: true,
 			Kid:                  sslProvider.Config.Zerossl.EabKid,
 			HmacEncoded:          sslProvider.Config.Zerossl.EabHmacKey,
+		})
+	case sslProviderGts:
+		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+			TermsOfServiceAgreed: true,
+			Kid:                  sslProvider.Config.Gts.EabKid,
+			HmacEncoded:          sslProvider.Config.Gts.EabHmacKey,
 		})
 
 	case sslProviderLetsencrypt:
