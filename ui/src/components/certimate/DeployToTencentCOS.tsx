@@ -159,7 +159,7 @@ const DeployToTencentCOS = () => {
       <div>
         <Label>{t("domain.deployment.form.domain.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.domain.label")}
+          placeholder={t("domain.deployment.form.domain.placeholder")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
