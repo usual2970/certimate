@@ -32,11 +32,11 @@ const DeployToAliyunOSS = () => {
   }, [data]);
 
   useEffect(() => {
-    const bucketResp = bucketSchema.safeParse(data.config?.domain);
-    if (!bucketResp.success) {
+    const resp = bucketSchema.safeParse(data.config?.bucket);
+    if (!resp.success) {
       setError({
         ...error,
-        bucket: JSON.parse(bucketResp.error.message)[0].message,
+        bucket: JSON.parse(resp.error.message)[0].message,
       });
     } else {
       setError({
