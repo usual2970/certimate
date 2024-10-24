@@ -80,6 +80,7 @@ export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map
     ["huaweicloud-cdn", "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
     ["qiniu-cdn", "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
     ["local", "common.provider.local", "/imgs/providers/local.svg"],
+    ["iis", "common.provider.iis", "/imgs/providers/iis.svg"],
     ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg"],
     ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg"],
     ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"],

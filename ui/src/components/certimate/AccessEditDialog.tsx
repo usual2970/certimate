@@ -17,6 +17,7 @@ import AccessGodaddyForm from "./AccessGodaddyForm";
 import AccessPdnsForm from "./AccessPdnsForm";
 import AccessHttpreqForm from "./AccessHttpreqForm";
 import AccessLocalForm from "./AccessLocalForm";
+import AccessIISForm from "./AccessIISForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
@@ -159,6 +160,17 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
         />
       );
       break;
+      case "iis":
+        childComponent = (
+          <AccessIISForm
+            data={data}
+            op={op}
+            onAfterReq={() => {
+              setOpen(false);
+            }}
+          />
+        );
+        break;
     case "ssh":
       childComponent = (
         <AccessSSHForm

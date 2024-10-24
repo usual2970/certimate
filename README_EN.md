@@ -83,6 +83,7 @@ password：1234567890
 |   PowerDNS    |      √       |            | Supports domains managed on PowerDNS                                                        |
 | HTTP Request  |      √       |            | Supports domains which allow managing DNS by HTTP request                                   |
 | Local Deploy  |              |     √      | Supports deployment to local servers                                                        |
+|      IIS      |              |     √      | Supports deployment to IIS service on local Windows servers                                 |
 |      SSH      |              |     √      | Supports deployment to SSH servers                                                          |
 |    Webhook    |              |     √      | Supports callback to Webhook                                                                |
 |  Kubernetes   |              |     √      | Supports deployment to Kubernetes Secret                                                    |
