@@ -150,6 +150,10 @@ const History = () => {
                                   <div>[{item.time}]</div>
                                   <div className="ml-2">{item.message}</div>
                                 </div>
+                                {item.info &&
+                                  item.info.map((info: string) => {
+                                    return <div className="mt-1 text-green-600 break-words">{info}</div>;
+                                  })}
                                 {item.error && <div className="mt-1 text-red-600">{item.error}</div>}
                               </div>
                             );
