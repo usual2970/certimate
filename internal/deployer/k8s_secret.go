@@ -2,8 +2,12 @@ package deployer
 
 import (
 	"context"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
+
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	k8sMetaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -65,6 +69,14 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	if secretDataKeyForKey == "" {
 		namespace = "tls.key"
 	}
+	block, _ := pem.Decode([]byte(d.option.Certificate.Certificate))
+	if block == nil {
+		return fmt.Errorf("failed to parse certificate PEM")
+	}
+	cert, err := x509.ParseCertificate(block.Bytes)
+	if err != nil {
+		return fmt.Errorf("failed to parse certificate: " + err.Error())
+	}
 
 	secretPayload := corev1.Secret{
 		TypeMeta: k8sMetaV1.TypeMeta{
@@ -74,9 +86,10 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 		ObjectMeta: k8sMetaV1.ObjectMeta{
 			Name: secretName,
 			Annotations: map[string]string{
-				"certimage/alt-names":   d.option.Domain,
-				"certimage/common-name": d.option.Domain,
-				"certimage/issuer-name": d.option.DeployConfig.Id,
+				"certimate/domains":             d.option.Domain,
+				"certimate/alt-names":           strings.Join(cert.DNSNames, ","),
+				"certimate/common-name":         cert.Subject.CommonName,
+				"certimate/issuer-organization": strings.Join(cert.Issuer.Organization, ","),
 			},
 		},
 		Type: corev1.SecretType("kubernetes.io/tls"),
