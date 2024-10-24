@@ -26,8 +26,12 @@ type HuaweiCloudELBUploader struct {
 	sdkClient *hcElb.ElbClient
 }
 
-func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
-	client, err := (&HuaweiCloudELBUploader{config: config}).createSdkClient()
+func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (Uploader, error) {
+	client, err := (&HuaweiCloudELBUploader{}).createSdkClient(
+		config.Region,
+		config.AccessKeyId,
+		config.SecretAccessKey,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -87,12 +91,12 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 		if listCertificatesResp.Certificates == nil || len(*listCertificatesResp.Certificates) < int(listCertificatesLimit) {
 			break
-		}
-
-		listCertificatesMarker = listCertificatesResp.PageInfo.NextMarker
-		listCertificatesPage++
-		if listCertificatesPage >= 9 { // 避免死循环
-			break
+		} else {
+			listCertificatesMarker = listCertificatesResp.PageInfo.NextMarker
+			listCertificatesPage++
+			if listCertificatesPage >= 9 { // 避免死循环
+				break
+			}
 		}
 	}
 
@@ -125,10 +129,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) createSdkClient() (*hcElb.ElbClient, error) {
-	region := u.config.Region
-	accessKeyId := u.config.AccessKeyId
-	secretAccessKey := u.config.SecretAccessKey
+func (u *HuaweiCloudELBUploader) createSdkClient(region, accessKeyId, secretAccessKey string) (*hcElb.ElbClient, error) {
 	if region == "" {
 		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}

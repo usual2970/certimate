@@ -26,8 +26,12 @@ type AliyunCASUploader struct {
 	sdkRuntime *util.RuntimeOptions
 }
 
-func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
-	client, err := (&AliyunCASUploader{config: config}).createSdkClient()
+func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (Uploader, error) {
+	client, err := (&AliyunCASUploader{}).createSdkClient(
+		config.Region,
+		config.AccessKeyId,
+		config.AccessKeySecret,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -98,11 +102,11 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 		if listUserCertificateOrderResp.Body.CertificateOrderList == nil || len(listUserCertificateOrderResp.Body.CertificateOrderList) < int(listUserCertificateOrderLimit) {
 			break
-		}
-
-		listUserCertificateOrderPage += 1
-		if listUserCertificateOrderPage > 99 { // 避免死循环
-			break
+		} else {
+			listUserCertificateOrderPage += 1
+			if listUserCertificateOrderPage > 99 { // 避免死循环
+				break
+			}
 		}
 	}
 
@@ -129,10 +133,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunCASUploader) createSdkClient() (*cas20200407.Client, error) {
-	region := u.config.Region
-	accessKeyId := u.config.AccessKeyId
-	accessKeySecret := u.config.AccessKeySecret
+func (u *AliyunCASUploader) createSdkClient(region, accessKeyId, accessKeySecret string) (*cas20200407.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}

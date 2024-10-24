@@ -38,6 +38,23 @@ const DeployToHuaweiCloudCDN = () => {
   return (
     <div className="flex flex-col space-y-8">
       <div>
+        <Label>{t("domain.deployment.form.huaweicloud_elb_region.label")}</Label>
+        <Input
+          placeholder={t("domain.deployment.form.huaweicloud_elb_region.placeholder")}
+          className="w-full mt-1"
+          value={data?.config?.region}
+          onChange={(e) => {
+            const newData = produce(data, (draft) => {
+              draft.config ??= {};
+              draft.config.region = e.target.value;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+      </div>
+
+      <div>
         <Label>{t("domain.deployment.form.domain.label")}</Label>
         <Input
           placeholder={t("domain.deployment.form.domain.placeholder")}

@@ -64,15 +64,15 @@ const DeployToAliyunOSS = () => {
   });
 
   const bucketSchema = z.string().min(1, {
-    message: t("domain.deployment.form.oss_bucket.placeholder"),
+    message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.oss_endpoint.label")}</Label>
+        <Label>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.oss_endpoint.placeholder")}
+          placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")}
           className="w-full mt-1"
           value={data?.config?.endpoint}
           onChange={(e) => {
@@ -91,9 +91,9 @@ const DeployToAliyunOSS = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.oss_bucket.label")}</Label>
+        <Label>{t("domain.deployment.form.aliyun_oss_bucket.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.oss_bucket.placeholder")}
+          placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")}
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {

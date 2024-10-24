@@ -64,15 +64,15 @@ const DeployToTencentCOS = () => {
   });
 
   const bucketSchema = z.string().min(1, {
-    message: t("domain.deployment.form.cos_region.placeholder"),
+    message: t("domain.deployment.form.tencent_cos_region.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.cos_region.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_cos_region.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.cos_region.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_cos_region.placeholder")}
           className="w-full mt-1"
           value={data?.config?.region}
           onChange={(e) => {
@@ -91,9 +91,9 @@ const DeployToTencentCOS = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.cos_bucket.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_cos_bucket.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.cos_bucket.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_cos_bucket.placeholder")}
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {
