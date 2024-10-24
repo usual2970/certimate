@@ -74,9 +74,9 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 		ObjectMeta: k8sMetaV1.ObjectMeta{
 			Name: secretName,
 			Annotations: map[string]string{
-				"cert-manager.io/alt-names":   d.option.Domain,
-				"cert-manager.io/common-name": d.option.Domain,
-				"cert-manager.io/issuer-name": d.option.DeployConfig.Id,
+				"certimage/alt-names":   d.option.Domain,
+				"certimage/common-name": d.option.Domain,
+				"certimage/issuer-name": d.option.DeployConfig.Id,
 			},
 		},
 		Type: corev1.SecretType("kubernetes.io/tls"),
