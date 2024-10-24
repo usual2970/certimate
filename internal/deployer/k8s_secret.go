@@ -116,7 +116,7 @@ func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kube
 	}
 	config, err := kubeConfig.ClientConfig()
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 
 	client, err := kubernetes.NewForConfig(config)
