@@ -8,9 +8,22 @@ import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
 const DeployToAliyunOSS = () => {
+  const { t } = useTranslation();
+
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
-  const { t } = useTranslation();
+  useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          endpoint: "oss-cn-hangzhou.aliyuncs.com",
+          bucket: "",
+          domain: "",
+        },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     setError({});
@@ -44,20 +57,7 @@ const DeployToAliyunOSS = () => {
         bucket: "",
       });
     }
-  }, []);
-
-  useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
-        config: {
-          endpoint: "oss-cn-hangzhou.aliyuncs.com",
-          bucket: "",
-          domain: "",
-        },
-      });
-    }
-  }, []);
+  }, [data]);
 
   const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
     message: t("common.errmsg.domain_invalid"),
