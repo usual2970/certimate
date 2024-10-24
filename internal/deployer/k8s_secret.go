@@ -2,11 +2,8 @@ package deployer
 
 import (
 	"context"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
-
 	"strings"
 
 	corev1 "k8s.io/api/core/v1"
@@ -15,6 +12,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type K8sSecretDeployer struct {
@@ -69,13 +67,10 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	if secretDataKeyForKey == "" {
 		namespace = "tls.key"
 	}
-	block, _ := pem.Decode([]byte(d.option.Certificate.Certificate))
-	if block == nil {
-		return fmt.Errorf("failed to parse certificate PEM")
-	}
-	cert, err := x509.ParseCertificate(block.Bytes)
+
+	certificate, err := x509.ParseCertificateFromPEM(d.option.Certificate.Certificate)
 	if err != nil {
-		return fmt.Errorf("failed to parse certificate: " + err.Error())
+		return fmt.Errorf("failed to parse certificate: %w", err)
 	}
 
 	secretPayload := corev1.Secret{
@@ -87,9 +82,9 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 			Name: secretName,
 			Annotations: map[string]string{
 				"certimate/domains":             d.option.Domain,
-				"certimate/alt-names":           strings.Join(cert.DNSNames, ","),
-				"certimate/common-name":         cert.Subject.CommonName,
-				"certimate/issuer-organization": strings.Join(cert.Issuer.Organization, ","),
+				"certimate/alt-names":           strings.Join(certificate.DNSNames, ","),
+				"certimate/common-name":         certificate.Subject.CommonName,
+				"certimate/issuer-organization": strings.Join(certificate.Issuer.Organization, ","),
 			},
 		},
 		Type: corev1.SecretType("kubernetes.io/tls"),
