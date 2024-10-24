@@ -68,7 +68,7 @@ const SSLProvider = () => {
 
   const getOptionCls = (val: string) => {
     if (config.content?.provider === val) {
-      return "border-primary";
+      return "border-primary dark:border-primary";
     }
 
     return "";
@@ -97,18 +97,18 @@ const SSLProvider = () => {
     <>
       <Context.Provider value={{ onSubmit, setConfig, setting: config }}>
         <div className="w-full md:max-w-[35em]">
-          <Label>{t("common.text.ca")}</Label>
+          <Label className="dark:text-stone-200">{t("common.text.ca")}</Label>
           <RadioGroup
-            className="flex mt-3"
+            className="flex mt-3 dark:text-stone-200"
             onValueChange={(val) => {
               setProvider(val as SSLProviderType);
             }}
             value={config.content?.provider}
           >
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 ">
               <RadioGroupItem value="letsencrypt" id="letsencrypt" />
               <Label htmlFor="letsencrypt">
-                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("letsencrypt"))}>
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("letsencrypt"))}>
                   <img src={"/imgs/providers/letsencrypt.svg"} className="h-6" />
                   <div>{"Let's Encrypt"}</div>
                 </div>
@@ -117,7 +117,7 @@ const SSLProvider = () => {
             <div className="flex items-center space-x-2 ">
               <RadioGroupItem value="zerossl" id="zerossl" />
               <Label htmlFor="zerossl">
-                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("zerossl"))}>
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("zerossl"))}>
                   <img src={"/imgs/providers/zerossl.svg"} className="h-6" />
                   <div>{"ZeroSSL"}</div>
                 </div>
@@ -127,7 +127,7 @@ const SSLProvider = () => {
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="gts" id="gts" />
               <Label htmlFor="gts">
-                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer", getOptionCls("gts"))}>
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("gts"))}>
                   <img src={"/imgs/providers/google.svg"} className="h-6" />
                   <div>{"Google Trust Services"}</div>
                 </div>
@@ -443,3 +443,4 @@ const SSLProviderGtsForm = () => {
 };
 
 export default SSLProvider;
+
