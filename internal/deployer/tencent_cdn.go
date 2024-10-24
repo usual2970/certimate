@@ -130,13 +130,29 @@ func (d *TencentCDNDeployer) getDomainList() ([]string, error) {
 
 	cert := base64.StdEncoding.EncodeToString([]byte(d.option.Certificate.Certificate))
 	request.Cert = &cert
+	domains := make([]string, 0)
+
+	var product string
+	product = "cdn"
+	request.Product = &product
 
 	response, err := client.DescribeCertDomains(request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get domain list: %w", err)
+		return nil, fmt.Errorf("failed to get cdn domain list: %w", err)
 	}
 
-	domains := make([]string, 0)
+	for _, domain := range response.Response.Domains {
+		domains = append(domains, *domain)
+	}
+
+	product = "ecdn"
+	request.Product = &product
+
+	response, err = client.DescribeCertDomains(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ecdn domain list: %w", err)
+	}
+
 	for _, domain := range response.Response.Domains {
 		domains = append(domains, *domain)
 	}
