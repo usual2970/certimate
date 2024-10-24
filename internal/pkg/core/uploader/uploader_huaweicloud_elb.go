@@ -6,19 +6,22 @@ import (
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
 	hcElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
 	hcElbModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
 	hcElbRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
+	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type HuaweiCloudELBUploaderConfig struct {
-	Region          string `json:"region"`
-	ProjectId       string `json:"projectId"`
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
+	Region          string `json:"region"`
 }
 
 type HuaweiCloudELBUploader struct {
@@ -28,9 +31,9 @@ type HuaweiCloudELBUploader struct {
 
 func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (Uploader, error) {
 	client, err := (&HuaweiCloudELBUploader{}).createSdkClient(
-		config.Region,
 		config.AccessKeyId,
 		config.SecretAccessKey,
+		config.Region,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
@@ -100,6 +103,13 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 		}
 	}
 
+	// 获取项目 ID
+	// REF: https://support.huaweicloud.com/api-iam/iam_06_0001.html
+	projectId, err := u.getSdkProjectId(u.config.Region, u.config.AccessKeyId, u.config.SecretAccessKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get SDK project id: %w", err)
+	}
+
 	// 生成新证书名（需符合华为云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
@@ -109,7 +119,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	createCertificateReq := &hcElbModel.CreateCertificateRequest{
 		Body: &hcElbModel.CreateCertificateRequestBody{
 			Certificate: &hcElbModel.CreateCertificateOption{
-				ProjectId:   cast.StringPtr(u.config.ProjectId),
+				ProjectId:   cast.StringPtr(projectId),
 				Name:        cast.StringPtr(certName),
 				Certificate: cast.StringPtr(certPem),
 				PrivateKey:  cast.StringPtr(privkeyPem),
@@ -129,7 +139,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) createSdkClient(region, accessKeyId, secretAccessKey string) (*hcElb.ElbClient, error) {
+func (u *HuaweiCloudELBUploader) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
 	if region == "" {
 		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}
@@ -157,4 +167,48 @@ func (u *HuaweiCloudELBUploader) createSdkClient(region, accessKeyId, secretAcce
 
 	client := hcElb.NewElbClient(hcClient)
 	return client, nil
+}
+
+func (u *HuaweiCloudELBUploader) getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error) {
+	if region == "" {
+		region = "cn-north-4" // IAM 服务默认区域：华北四北京
+	}
+
+	auth, err := global.NewCredentialsBuilder().
+		WithAk(accessKeyId).
+		WithSk(secretAccessKey).
+		SafeBuild()
+	if err != nil {
+		return "", err
+	}
+
+	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	if err != nil {
+		return "", err
+	}
+
+	hcClient, err := hcIam.IamClientBuilder().
+		WithRegion(hcRegion).
+		WithCredential(auth).
+		SafeBuild()
+	if err != nil {
+		return "", err
+	}
+
+	client := hcIam.NewIamClient(hcClient)
+	if err != nil {
+		return "", err
+	}
+
+	request := &hcIamModel.KeystoneListProjectsRequest{
+		Name: &region,
+	}
+	response, err := client.KeystoneListProjects(request)
+	if err != nil {
+		return "", err
+	} else if response.Projects == nil || len(*response.Projects) == 0 {
+		return "", fmt.Errorf("no project found")
+	}
+
+	return (*response.Projects)[0].Id, nil
 }

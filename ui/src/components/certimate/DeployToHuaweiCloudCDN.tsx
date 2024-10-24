@@ -13,6 +13,18 @@ const DeployToHuaweiCloudCDN = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          region: "cn-north-1",
+          domain: "",
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     setError({});
   }, []);
 
@@ -46,12 +58,12 @@ const DeployToHuaweiCloudCDN = () => {
           onChange={(e) => {
             const newData = produce(data, (draft) => {
               draft.config ??= {};
-              draft.config.region = e.target.value;
+              draft.config.region = e.target.value?.trim();
             });
             setDeploy(newData);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
       </div>
 
       <div>
@@ -61,26 +73,9 @@ const DeployToHuaweiCloudCDN = () => {
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
             setDeploy(newData);
           }}

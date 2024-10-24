@@ -14,6 +14,7 @@ import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
+import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
 import DeployToSSH from "./DeployToSSH";
 import DeployToWebhook from "./DeployToWebhook";
@@ -82,7 +83,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       return true;
     }
 
-    return item.configType === locDeployConfig.type.split("-")[0];
+    return item.configType === deployTargetsMap.get(locDeployConfig.type)?.provider;
   });
 
   const handleSaveClick = () => {
@@ -124,6 +125,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "huaweicloud-cdn":
       childComponent = <DeployToHuaweiCloudCDN />;
+      break;
+    case "huaweicloud-elb":
+      childComponent = <DeployToHuaweiCloudELB />;
       break;
     case "qiniu-cdn":
       childComponent = <DeployToQiniuCDN />;

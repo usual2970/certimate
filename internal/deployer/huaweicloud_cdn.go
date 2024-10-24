@@ -31,9 +31,9 @@ func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 	}
 
 	client, err := (&HuaweiCloudCDNDeployer{}).createSdkClient(
-		option.DeployConfig.GetConfigAsString("region"),
 		access.AccessKeyId,
 		access.SecretAccessKey,
+		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *HuaweiCloudCDNDeployer) createSdkClient(region, accessKeyId, secretAccessKey string) (*hcCdn.CdnClient, error) {
+func (d *HuaweiCloudCDNDeployer) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcCdn.CdnClient, error) {
 	if region == "" {
 		region = "cn-north-1" // CDN 服务默认区域：华北一北京
 	}
