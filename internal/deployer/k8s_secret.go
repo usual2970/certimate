@@ -4,12 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
+	corev1 "k8s.io/api/core/v1"
 	k8sMetaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type K8sSecretDeployer struct {
@@ -43,7 +46,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("kubeClient 创建成功", nil))
+	d.infos = append(d.infos, toStr("kubeClient create success.", nil))
 
 	namespace := getDeployString(d.option.DeployConfig, "namespace")
 	if namespace == "" {
@@ -65,36 +68,61 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 		namespace = "tls.key"
 	}
 
-	// 获取 Secret 实例
-	secret, err := client.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMetaV1.GetOptions{})
+	certificate, err := x509.ParseCertificateFromPEM(d.option.Certificate.Certificate)
 	if err != nil {
-		return fmt.Errorf("failed to get k8s secret: %w", err)
+		return fmt.Errorf("failed to parse certificate: %w", err)
 	}
 
-	// 更新 Secret Data
-	secret.Data[secretDataKeyForCrt] = []byte(d.option.Certificate.Certificate)
-	secret.Data[secretDataKeyForKey] = []byte(d.option.Certificate.PrivateKey)
-	_, err = client.CoreV1().Secrets(namespace).Update(context.TODO(), secret, k8sMetaV1.UpdateOptions{})
+	secretPayload := corev1.Secret{
+		TypeMeta: k8sMetaV1.TypeMeta{
+			Kind:       "Secret",
+			APIVersion: "v1",
+		},
+		ObjectMeta: k8sMetaV1.ObjectMeta{
+			Name: secretName,
+			Annotations: map[string]string{
+				"certimate/domains":             d.option.Domain,
+				"certimate/alt-names":           strings.Join(certificate.DNSNames, ","),
+				"certimate/common-name":         certificate.Subject.CommonName,
+				"certimate/issuer-organization": strings.Join(certificate.Issuer.Organization, ","),
+			},
+		},
+		Type: corev1.SecretType("kubernetes.io/tls"),
+	}
+
+	secretPayload.Data = make(map[string][]byte)
+	secretPayload.Data[secretDataKeyForCrt] = []byte(d.option.Certificate.Certificate)
+	secretPayload.Data[secretDataKeyForKey] = []byte(d.option.Certificate.PrivateKey)
+
+	// 获取 Secret 实例
+	_, err = client.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMetaV1.GetOptions{})
+	if err != nil {
+		_, err = client.CoreV1().Secrets(namespace).Create(context.TODO(), &secretPayload, k8sMetaV1.CreateOptions{})
+		if err != nil {
+			return fmt.Errorf("failed to create k8s secret: %w", err)
+		} else {
+			d.infos = append(d.infos, toStr("Certificate has been created in K8s Secret", nil))
+			return nil
+		}
+	}
+
+	// 更新 Secret 实例
+	_, err = client.CoreV1().Secrets(namespace).Update(ctx, &secretPayload, k8sMetaV1.UpdateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to update k8s secret: %w", err)
 	}
 
-	d.infos = append(d.infos, toStr("证书已更新到 K8s Secret", nil))
+	d.infos = append(d.infos, toStr("Certificate has been updated to K8s Secret", nil))
 
 	return nil
 }
 
 func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kubernetes.Clientset, error) {
-	kubeConfig, err := clientcmd.Load([]byte(access.KubeConfig))
+	kubeConfig, err := clientcmd.NewClientConfigFromBytes([]byte(access.KubeConfig))
 	if err != nil {
 		return nil, err
 	}
-
-	clientConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
-		&clientcmd.ClientConfigLoadingRules{ExplicitPath: ""},
-		&clientcmd.ConfigOverrides{CurrentContext: kubeConfig.CurrentContext},
-	)
-	config, err := clientConfig.ClientConfig()
+	config, err := kubeConfig.ClientConfig()
 	if err != nil {
 		return nil, err
 	}

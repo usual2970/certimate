@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
-const DeployToTencentCOS = () => {
+const DeployToTencentCLB = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   const { t } = useTranslation();
@@ -32,19 +32,34 @@ const DeployToTencentCOS = () => {
   }, [data]);
 
   useEffect(() => {
-    const bucketResp = bucketSchema.safeParse(data.config?.bucket);
-    if (!bucketResp.success) {
+    const clbIdresp = clbIdSchema.safeParse(data.config?.clbId);
+    if (!clbIdresp.success) {
       setError({
         ...error,
-        bucket: JSON.parse(bucketResp.error.message)[0].message,
+        clbId: JSON.parse(clbIdresp.error.message)[0].message,
       });
     } else {
       setError({
         ...error,
-        bucket: "",
+        clbId: "",
       });
     }
-  }, []);
+  }, [data]);
+
+  useEffect(() => {
+    const lsnIdresp = lsnIdSchema.safeParse(data.config?.lsnId);
+    if (!lsnIdresp.success) {
+      setError({
+        ...error,
+        lsnId: JSON.parse(lsnIdresp.error.message)[0].message,
+      });
+    } else {
+      setError({
+        ...error,
+        lsnId: "",
+      });
+    }
+  }, [data]);
 
   useEffect(() => {
     const regionResp = regionSchema.safeParse(data.config?.region);
@@ -66,38 +81,43 @@ const DeployToTencentCOS = () => {
       setDeploy({
         ...data,
         config: {
-          region: "",
-          bucket: "",
+          lsnId: "",
+          clbId: "",
           domain: "",
+          region: "",
         },
       });
     }
   }, []);
 
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
+    message: t("domain.deployment.form.tencent_clb_region.placeholder"),
+  });
+
+  const domainSchema = z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
     message: t("common.errmsg.domain_invalid"),
   });
 
-  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
-    message: t("domain.deployment.form.cos_region.placeholder"),
+  const clbIdSchema = z.string().regex(/^lb-[a-zA-Z0-9]{8}$/, {
+    message: t("domain.deployment.form.tencent_clb_id.placeholder"),
   });
 
-  const bucketSchema = z.string().regex(/^.+-\d+$/, {
-    message: t("domain.deployment.form.cos_bucket.placeholder"),
+  const lsnIdSchema = z.string().regex(/^lbl-.{8}$/, {
+    message: t("domain.deployment.form.tencent_clb_listener.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.tencent_cos_region.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_region.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.tencent_cos_region.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_region.placeholder")}
           className="w-full mt-1"
           value={data?.config?.region}
           onChange={(e) => {
             const temp = e.target.value;
 
-            const resp = bucketSchema.safeParse(temp);
+            const resp = regionSchema.safeParse(temp);
             if (!resp.success) {
               setError({
                 ...error,
@@ -123,24 +143,24 @@ const DeployToTencentCOS = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.tencent_cos_bucket.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_id.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.tencent_cos_bucket.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_id.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.bucket}
+          value={data?.config?.clbId}
           onChange={(e) => {
             const temp = e.target.value;
 
-            const resp = bucketSchema.safeParse(temp);
+            const resp = clbIdSchema.safeParse(temp);
             if (!resp.success) {
               setError({
                 ...error,
-                bucket: JSON.parse(resp.error.message)[0].message,
+                clbId: JSON.parse(resp.error.message)[0].message,
               });
             } else {
               setError({
                 ...error,
-                bucket: "",
+                clbId: "",
               });
             }
 
@@ -148,18 +168,52 @@ const DeployToTencentCOS = () => {
               if (!draft.config) {
                 draft.config = {};
               }
-              draft.config.bucket = temp;
+              draft.config.clbId = temp;
             });
             setDeploy(newData);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
+        <div className="text-red-600 text-sm mt-1">{error?.clbId}</div>
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.domain.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_listener.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.domain.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_listener.placeholder")}
+          className="w-full mt-1"
+          value={data?.config?.lsnId}
+          onChange={(e) => {
+            const temp = e.target.value;
+
+            const resp = lsnIdSchema.safeParse(temp);
+            if (!resp.success) {
+              setError({
+                ...error,
+                lsnId: JSON.parse(resp.error.message)[0].message,
+              });
+            } else {
+              setError({
+                ...error,
+                lsnId: "",
+              });
+            }
+
+            const newData = produce(data, (draft) => {
+              if (!draft.config) {
+                draft.config = {};
+              }
+              draft.config.lsnId = temp;
+            });
+            setDeploy(newData);
+          }}
+        />
+        <div className="text-red-600 text-sm mt-1">{error?.lsnId}</div>
+      </div>
+
+      <div>
+        <Label>{t("domain.deployment.form.tencent_clb_domain.label")}</Label>
+        <Input
+          placeholder={t("domain.deployment.form.tencent_clb_domain.placeholder")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
@@ -193,4 +247,4 @@ const DeployToTencentCOS = () => {
   );
 };
 
-export default DeployToTencentCOS;
+export default DeployToTencentCLB;

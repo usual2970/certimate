@@ -1,7 +1,7 @@
-export type Setting = {
+export type Setting<T> = {
   id?: string;
   name?: string;
-  content?: EmailsSetting | NotifyTemplates | NotifyChannels | SSLProviderSetting;
+  content?: T;
 };
 
 export type EmailsSetting = {
@@ -53,7 +53,7 @@ export const defaultNotifyTemplate: NotifyTemplate = {
   content: "有 {COUNT} 张证书即将过期，域名分别为 {DOMAINS}，请保持关注！",
 };
 
-export type SSLProvider = "letsencrypt" | "zerossl";
+export type SSLProvider = "letsencrypt" | "zerossl" | "gts";
 
 export type SSLProviderSetting = {
   provider: SSLProvider;

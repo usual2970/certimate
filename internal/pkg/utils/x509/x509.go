@@ -1,6 +1,7 @@
 ﻿package x509
 
 import (
+	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -45,4 +46,36 @@ func EqualCertificate(a, b *x509.Certificate) bool {
 		a.SerialNumber.String() == b.SerialNumber.String() &&
 		a.Issuer.SerialNumber == b.Issuer.SerialNumber &&
 		a.Subject.SerialNumber == b.Subject.SerialNumber
+}
+
+// 将 ECDSA 私钥转换为 PEM 格式的字符串。
+func PrivateKeyToPEM(privateKey *ecdsa.PrivateKey) (string, error) {
+	data, err := x509.MarshalECPrivateKey(privateKey)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal EC private key: %w", err)
+	}
+
+	block := &pem.Block{
+		Type:  "EC PRIVATE KEY",
+		Bytes: data,
+	}
+
+	return string(pem.EncodeToMemory(block)), nil
+}
+
+// 从 PEM 编码的私钥字符串解析并返回一个 ECDSA 私钥对象。
+func ParsePrivateKeyFromPEM(privateKeyPem string) (*ecdsa.PrivateKey, error) {
+	pemData := []byte(privateKeyPem)
+
+	block, _ := pem.Decode(pemData)
+	if block == nil {
+		return nil, fmt.Errorf("failed to decode PEM block")
+	}
+
+	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse private key: %w", err)
+	}
+
+	return privateKey, nil
 }
