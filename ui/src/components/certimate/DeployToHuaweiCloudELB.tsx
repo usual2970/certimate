@@ -44,7 +44,7 @@ const DeployToHuaweiCloudCDN = () => {
       message: t("domain.deployment.form.huaweicloud_elb_certificate_id.placeholder"),
       path: ["certificateId"],
     })
-    .refine((data) => (data.resourceType === "loadbalancer" ? !!data.certificateId?.trim() : true), {
+    .refine((data) => (data.resourceType === "loadbalancer" ? !!data.loadbalancerId?.trim() : true), {
       message: t("domain.deployment.form.huaweicloud_elb_loadbalancer_id.placeholder"),
       path: ["loadbalancerId"],
     })

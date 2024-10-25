@@ -11,6 +11,7 @@ import AccessEditDialog from "./AccessEditDialog";
 import { Context as DeployEditContext } from "./DeployEdit";
 import DeployToAliyunOSS from "./DeployToAliyunOSS";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
+import DeployToAliyunCLB from "./DeployToAliyunCLB";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCLB from "./DeployToTencentCLB";
 import DeployToTencentCOS from "./DeployToTencentCOS";
@@ -117,6 +118,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     case "aliyun-cdn":
     case "aliyun-dcdn":
       childComponent = <DeployToAliyunCDN />;
+      break;
+    case "aliyun-clb":
+      childComponent = <DeployToAliyunCLB />;
       break;
     case "tencent-cdn":
       childComponent = <DeployToTencentCDN />;

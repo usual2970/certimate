@@ -18,6 +18,7 @@ const (
 	targetAliyunOSS      = "aliyun-oss"
 	targetAliyunCDN      = "aliyun-cdn"
 	targetAliyunESA      = "aliyun-dcdn"
+	targetAliyunCLB      = "aliyun-clb"
 	targetTencentCDN     = "tencent-cdn"
 	targetTencentCLB     = "tencent-clb"
 	targetTencentCOS     = "tencent-cos"
@@ -106,6 +107,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewAliyunCDNDeployer(option)
 	case targetAliyunESA:
 		return NewAliyunESADeployer(option)
+	case targetAliyunCLB:
+		return NewAliyunCLBDeployer(option)
 	case targetTencentCDN:
 		return NewTencentCDNDeployer(option)
 	case targetTencentCLB:

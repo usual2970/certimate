@@ -18,7 +18,6 @@ type DeployConfig struct {
 	Config map[string]any `json:"config"`
 }
 
-
 // 以字符串形式获取配置项。
 //
 // 入参：
@@ -45,6 +44,39 @@ func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue stri
 
 	if value, ok := dc.Config[key]; ok {
 		if result, ok := value.(string); ok {
+			return result
+		}
+	}
+
+	return defaultValue
+}
+
+// 以 32 位整数形式获取配置项。
+//
+// 入参：
+//   - key: 配置项的键。
+//
+// 出参：
+//   - 配置项的值。如果配置项不存在或者类型不是 32 位整数，则返回 0。
+func (dc *DeployConfig) GetConfigAsInt32(key string) int32 {
+	return dc.GetConfigOrDefaultAsInt32(key, 0)
+}
+
+// 以 32 位整数形式获取配置项。
+//
+// 入参：
+//   - key: 配置项的键。
+//   - defaultValue: 默认值。
+//
+// 出参：
+//   - 配置项的值。如果配置项不存在或者类型不是 32 位整数，则返回默认值。
+func (dc *DeployConfig) GetConfigOrDefaultAsInt32(key string, defaultValue int32) int32 {
+	if dc.Config == nil {
+		return defaultValue
+	}
+
+	if value, ok := dc.Config[key]; ok {
+		if result, ok := value.(int32); ok {
 			return result
 		}
 	}
