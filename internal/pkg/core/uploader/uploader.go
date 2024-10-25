@@ -9,13 +9,13 @@ type Uploader interface {
 	// 上传证书。
 	//
 	// 入参：
-	//   - ctx：
-	//   - certPem：证书 PEM 内容
-	//   - privkeyPem：私钥 PEM 内容
+	//   - ctx：上下文。
+	//   - certPem：证书 PEM 内容。
+	//   - privkeyPem：私钥 PEM 内容。
 	//
 	// 出参：
-	//   - res：
-	//   - err：
+	//   - res：上传结果。
+	//   - err: 错误。
 	Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error)
 }
 

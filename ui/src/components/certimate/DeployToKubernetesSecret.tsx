@@ -8,13 +8,8 @@ import { useDeployEditContext } from "./DeployEdit";
 
 const DeployToKubernetesSecret = () => {
   const { t } = useTranslation();
-  const { setError } = useDeployEditContext();
 
-  useEffect(() => {
-    setError({});
-  }, []);
-
-  const { deploy: data, setDeploy } = useDeployEditContext();
+  const { deploy: data, setDeploy, setError } = useDeployEditContext();
 
   useEffect(() => {
     if (!data.id) {
@@ -28,6 +23,10 @@ const DeployToKubernetesSecret = () => {
         },
       });
     }
+  }, []);
+
+  useEffect(() => {
+    setError({});
   }, []);
 
   return (

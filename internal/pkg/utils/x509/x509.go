@@ -13,8 +13,8 @@ import (
 //   - certPem: 证书 PEM 内容。
 //
 // 出参:
-//   - cert:
-//   - err:
+//   - cert: x509.Certificate 对象。
+//   - err: 错误。
 func ParseCertificateFromPEM(certPem string) (cert *x509.Certificate, err error) {
 	pemData := []byte(certPem)
 

@@ -23,8 +23,12 @@ type TencentCloudSSLUploader struct {
 	sdkClient *tcSsl.Client
 }
 
-func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (*TencentCloudSSLUploader, error) {
-	client, err := (&TencentCloudSSLUploader{config: config}).createSdkClient()
+func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (Uploader, error) {
+	client, err := (&TencentCloudSSLUploader{}).createSdkClient(
+		config.Region,
+		config.SecretId,
+		config.SecretKey,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -73,10 +77,7 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 	}, nil
 }
 
-func (u *TencentCloudSSLUploader) createSdkClient() (*tcSsl.Client, error) {
-	region := u.config.Region
-	secretId := u.config.SecretId
-	secretKey := u.config.SecretKey
+func (u *TencentCloudSSLUploader) createSdkClient(region, secretId, secretKey string) (*tcSsl.Client, error) {
 	if region == "" {
 		region = "ap-guangzhou" // SSL 服务默认区域：广州
 	}

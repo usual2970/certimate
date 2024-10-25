@@ -76,7 +76,6 @@ const DeployToTencentCLB = () => {
     }
   }, []);
 
-
   useEffect(() => {
     if (!data.id) {
       setDeploy({
@@ -92,7 +91,7 @@ const DeployToTencentCLB = () => {
   }, []);
 
   const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
-    message: t("domain.deployment.form.clb_region.placeholder"),
+    message: t("domain.deployment.form.tencent_clb_region.placeholder"),
   });
 
   const domainSchema = z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
@@ -100,19 +99,19 @@ const DeployToTencentCLB = () => {
   });
 
   const clbIdSchema = z.string().regex(/^lb-[a-zA-Z0-9]{8}$/, {
-    message: t("domain.deployment.form.clb_id.placeholder"),
+    message: t("domain.deployment.form.tencent_clb_id.placeholder"),
   });
 
   const lsnIdSchema = z.string().regex(/^lbl-.{8}$/, {
-    message: t("domain.deployment.form.clb_listener.placeholder"),
+    message: t("domain.deployment.form.tencent_clb_listener.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.clb_region.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_region.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.clb_region.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_region.placeholder")}
           className="w-full mt-1"
           value={data?.config?.region}
           onChange={(e) => {
@@ -144,9 +143,9 @@ const DeployToTencentCLB = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.clb_id.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_id.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.clb_id.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_id.placeholder")}
           className="w-full mt-1"
           value={data?.config?.clbId}
           onChange={(e) => {
@@ -178,9 +177,9 @@ const DeployToTencentCLB = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.clb_listener.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_listener.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.clb_listener.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_listener.placeholder")}
           className="w-full mt-1"
           value={data?.config?.lsnId}
           onChange={(e) => {
@@ -212,9 +211,9 @@ const DeployToTencentCLB = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.clb_domain.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_domain.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.clb_domain.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_domain.placeholder")}
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {

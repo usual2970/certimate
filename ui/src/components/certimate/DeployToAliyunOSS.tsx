@@ -8,9 +8,22 @@ import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
 const DeployToAliyunOSS = () => {
+  const { t } = useTranslation();
+
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
-  const { t } = useTranslation();
+  useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          endpoint: "oss-cn-hangzhou.aliyuncs.com",
+          bucket: "",
+          domain: "",
+        },
+      });
+    }
+  }, []);
 
   useEffect(() => {
     setError({});
@@ -32,11 +45,11 @@ const DeployToAliyunOSS = () => {
   }, [data]);
 
   useEffect(() => {
-    const bucketResp = bucketSchema.safeParse(data.config?.domain);
-    if (!bucketResp.success) {
+    const resp = bucketSchema.safeParse(data.config?.bucket);
+    if (!resp.success) {
       setError({
         ...error,
-        bucket: JSON.parse(bucketResp.error.message)[0].message,
+        bucket: JSON.parse(resp.error.message)[0].message,
       });
     } else {
       setError({
@@ -44,35 +57,22 @@ const DeployToAliyunOSS = () => {
         bucket: "",
       });
     }
-  }, []);
-
-  useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
-        config: {
-          endpoint: "oss-cn-hangzhou.aliyuncs.com",
-          bucket: "",
-          domain: "",
-        },
-      });
-    }
-  }, []);
+  }, [data]);
 
   const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
     message: t("common.errmsg.domain_invalid"),
   });
 
   const bucketSchema = z.string().min(1, {
-    message: t("domain.deployment.form.oss_bucket.placeholder"),
+    message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
   });
 
   return (
     <div className="flex flex-col space-y-8">
       <div>
-        <Label>{t("domain.deployment.form.oss_endpoint.label")}</Label>
+        <Label>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.oss_endpoint.placeholder")}
+          placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")}
           className="w-full mt-1"
           value={data?.config?.endpoint}
           onChange={(e) => {
@@ -91,9 +91,9 @@ const DeployToAliyunOSS = () => {
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.oss_bucket.label")}</Label>
+        <Label>{t("domain.deployment.form.aliyun_oss_bucket.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.oss_bucket.placeholder")}
+          placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")}
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {

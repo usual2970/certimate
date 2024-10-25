@@ -65,6 +65,7 @@ export type Statistic = {
 
 type DeployTarget = {
   type: string;
+  provider: string;
   name: string;
   icon: string;
 };
@@ -78,10 +79,11 @@ export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map
     ["tencent-clb", "common.provider.tencent.clb", "/imgs/providers/tencent.svg"],
     ["tencent-cos", "common.provider.tencent.cos", "/imgs/providers/tencent.svg"],
     ["huaweicloud-cdn", "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
+    ["huaweicloud-elb", "common.provider.huaweicloud.elb", "/imgs/providers/huaweicloud.svg"],
     ["qiniu-cdn", "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
     ["local", "common.provider.local", "/imgs/providers/local.svg"],
     ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg"],
     ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg"],
     ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"],
-  ].map(([type, name, icon]) => [type, { type, name, icon }])
+  ].map(([type, name, icon]) => [type, { type, provider: type.split("-")[0], name, icon }])
 );
