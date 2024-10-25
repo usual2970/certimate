@@ -14,6 +14,7 @@ import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCLB from "./DeployToTencentCLB";
 import DeployToTencentCOS from "./DeployToTencentCOS";
+import DeployToTencentTEO from "./DeployToTencentTEO";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
@@ -127,6 +128,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "tencent-cos":
       childComponent = <DeployToTencentCOS />;
+      break;
+    case "tencent-teo":
+      childComponent = <DeployToTencentTEO />;
       break;
     case "huaweicloud-cdn":
       childComponent = <DeployToHuaweiCloudCDN />;

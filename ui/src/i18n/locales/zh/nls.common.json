@@ -60,6 +60,7 @@
   "common.provider.tencent.cdn": "腾讯云 - CDN",
   "common.provider.tencent.ecdn": "腾讯云 - ECDN",
   "common.provider.tencent.clb": "腾讯云 - CLB",
+  "common.provider.tencent.teo": "腾讯云 - TEO",
   "common.provider.huaweicloud": "华为云",
   "common.provider.huaweicloud.cdn": "华为云 - CDN",
   "common.provider.huaweicloud.elb": "华为云 - ELB",
