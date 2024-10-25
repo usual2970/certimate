@@ -1,0 +1,44 @@
+﻿{
+  "settings.page.title": "Einstellungen",
+
+  "settings.account.relogin.message": "Bitte erneut einloggen",
+
+  "settings.account.tab": "Konto",
+  "settings.account.email.label": "E-Mail",
+  "settings.account.email.placeholder": "Bitte E-Mail eingeben",
+  "settings.account.email.errmsg.invalid": "Bitte eine gültige E-Mail-Adresse eingeben",
+  "settings.account.email.changed.message": "Konto E-Mail erfolgreich geändert",
+  "settings.account.email.failed.message": "Änderung der Kontoe-Mail fehlgeschlagen",
+
+  "settings.password.tab": "Passwort",
+  "settings.password.current_password.label": "Aktuelles Passwort",
+  "settings.password.current_password.placeholder": "Bitte aktuelles Passwort eingeben",
+  "settings.password.new_password.label": "Neues Passwort",
+  "settings.password.new_password.placeholder": "Bitte neues Passwort eingeben",
+  "settings.password.confirm_password.label": "Passwort bestätigen",
+  "settings.password.confirm_password.placeholder": "Bitte neues Passwort erneut eingeben",
+  "settings.password.password.errmsg.length": "Das Passwort muss mindestens 10 Zeichen lang sein",
+  "settings.password.password.errmsg.not_matched": "Passwörter stimmen nicht überein",
+  "settings.password.changed.message": "Passwort erfolgreich geändert",
+  "settings.password.failed.message": "Passwortänderung fehlgeschlagen",
+
+  "settings.notification.tab": "Benachrichtigung",
+  "settings.notification.template.label": "Vorlage",
+  "settings.notification.template.saved.message": "Benachrichtigungsvorlage erfolgreich gespeichert",
+  "settings.notification.template.variables.tips.title": "Optionale Variablen ({COUNT}: Anzahl bald ablaufender Einträge)",
+  "settings.notification.template.variables.tips.content": "Optionale Variablen ({COUNT}: Anzahl bald ablaufender Einträge, {DOMAINS}: Domainliste)",
+  "settings.notification.config.enable": "Aktivieren",
+  "settings.notification.config.saved.message": "Konfiguration erfolgreich gespeichert",
+  "settings.notification.config.failed.message": "Speichern der Konfiguration fehlgeschlagen",
+  "settings.notification.config.push.test.message": "Testbenachrichtigung senden",
+  "settings.notification.config.push.test.message.failed.message": "Senden der Testbenachrichtigung fehlgeschlagen",
+  "settings.notification.config.push.test.message.success.message": "Testbenachrichtigung erfolgreich gesendet",
+  "settings.notification.dingtalk.secret.placeholder": "Signatur für signierte Ergänzung",
+  "settings.notification.url.errmsg.invalid": "Ungültiges URL-Format",
+
+  "settings.ca.tab": "Zertifizierungsstelle",
+  "settings.ca.provider.errmsg.empty": "Bitte eine Zertifizierungsstelle auswählen",
+  "settings.ca.eab_kid.errmsg.empty": "Bitte EAB_KID eingeben",
+  "settings.ca.eab_hmac_key.errmsg.empty": "Bitte EAB_HMAC_KEY eingeben",
+  "settings.ca.eab_kid_hmac_key.errmsg.empty": "Bitte EAB_KID und EAB_HMAC_KEY eingeben"
+}

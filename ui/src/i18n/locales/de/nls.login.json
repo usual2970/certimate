@@ -1,0 +1,9 @@
+﻿{
+  "login.username.label": "Benutzername",
+  "login.username.placeholder": "Benutzername/E-Mail",
+  "login.username.errmsg.invalid": "Bitte eine gültige E-Mail-Adresse eingeben!",
+  "login.password.label": "Passwort",
+  "login.password.placeholder": "Passwort",
+  "login.password.errmsg.invalid": "Das Passwort muss mindestens 10 Zeichen lang sein!",
+  "login.submit": "Anmelden"
+}

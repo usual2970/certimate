@@ -2,6 +2,7 @@ import { Resource } from "i18next";
 
 import zh from "./zh";
 import en from "./en";
+import de from "./de";
 
 const resources: Resource = {
   zh: {
@@ -11,6 +12,10 @@ const resources: Resource = {
   en: {
     name: "English",
     translation: en,
+  },
+  de: {
+    name: "Deutsch",
+    translation: de,
   },
 };
 

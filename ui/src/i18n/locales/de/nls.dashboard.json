@@ -1,0 +1,11 @@
+﻿{
+  "dashboard.page.title": "Dashboard",
+
+  "dashboard.statistics.all": "Alle",
+  "dashboard.statistics.near_expired": "Läuft bald ab",
+  "dashboard.statistics.enabled": "Aktiviert",
+  "dashboard.statistics.disabled": "Nicht aktiviert",
+  "dashboard.statistics.unit": "",
+
+  "dashboard.history": "Kürzliches Deployment-Protokoll"
+}
