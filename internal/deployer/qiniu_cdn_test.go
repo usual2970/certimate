@@ -79,7 +79,7 @@ func Test_qiuniu_modifyDomainCert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			q, _ := NewQiniuCDNDeployer(tt.fields.option)
-			if err := q.modifyDomainCert(tt.args.certId); (err != nil) != tt.wantErr {
+			if err := q.modifyDomainCert(tt.args.certId, true, true); (err != nil) != tt.wantErr {
 				t.Errorf("qiuniu.modifyDomainCert() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

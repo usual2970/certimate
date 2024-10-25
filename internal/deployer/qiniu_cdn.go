@@ -59,7 +59,7 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context) error {
 	if domainInfo.Https != nil && domainInfo.Https.CertID != "" {
 		// 启用了 https
 		// 修改域名证书
-		err = d.modifyDomainCert(certId)
+		err = d.modifyDomainCert(certId, domainInfo.Https.ForceHttps, domainInfo.Https.Http2Enable)
 		if err != nil {
 			return fmt.Errorf("modifyDomainCert failed: %w", err)
 		}
@@ -166,14 +166,14 @@ type qiniuModifyDomainCertReq struct {
 	Http2Enable bool   `json:"http2Enable"`
 }
 
-func (d *QiniuCDNDeployer) modifyDomainCert(certId string) error {
+func (d *QiniuCDNDeployer) modifyDomainCert(certId string, forceHttps, http2Enable bool) error {
 	domain := d.option.DeployConfig.GetDomain()
 	path := fmt.Sprintf("/domain/%s/httpsconf", domain)
 
 	body := &qiniuModifyDomainCertReq{
 		CertID:      certId,
-		ForceHttps:  true,
-		Http2Enable: true,
+		ForceHttps:  forceHttps,
+		Http2Enable: http2Enable,
 	}
 
 	bodyBytes, err := json.Marshal(body)
