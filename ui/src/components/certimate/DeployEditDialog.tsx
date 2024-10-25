@@ -119,6 +119,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       childComponent = <DeployToAliyunCDN />;
       break;
     case "tencent-cdn":
+    case "tencent-ecdn":
       childComponent = <DeployToTencentCDN />;
       break;
     case "tencent-clb":
