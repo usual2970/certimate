@@ -15,9 +15,9 @@ import (
 )
 
 type AliyunCASUploaderConfig struct {
-	Region          string `json:"region"`
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
+	Region          string `json:"region"`
 }
 
 type AliyunCASUploader struct {
@@ -28,9 +28,9 @@ type AliyunCASUploader struct {
 
 func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (Uploader, error) {
 	client, err := (&AliyunCASUploader{}).createSdkClient(
-		config.Region,
 		config.AccessKeyId,
 		config.AccessKeySecret,
+		config.Region,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
@@ -81,12 +81,12 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 					if *getUserCertificateDetailResp.Body.Cert == certPem {
 						isSameCert = true
 					} else {
-						cert, err := x509.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
+						oldCertX509, err := x509.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
 						if err != nil {
 							continue
 						}
 
-						isSameCert = x509.EqualCertificate(certX509, cert)
+						isSameCert = x509.EqualCertificate(certX509, oldCertX509)
 					}
 
 					// 如果已存在相同证书，直接返回已有的证书信息
@@ -133,7 +133,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunCASUploader) createSdkClient(region, accessKeyId, accessKeySecret string) (*cas20200407.Client, error) {
+func (u *AliyunCASUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*cas20200407.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}
@@ -147,10 +147,6 @@ func (u *AliyunCASUploader) createSdkClient(region, accessKeyId, accessKeySecret
 	switch region {
 	case "cn-hangzhou":
 		endpoint = "cas.aliyuncs.com"
-	case "ap-southeast-1":
-		endpoint = "cas.ap-southeast-1.aliyuncs.com"
-	case "eu-central-1":
-		endpoint = "cas.eu-central-1.aliyuncs.com"
 	default:
 		endpoint = fmt.Sprintf("cas.%s.aliyuncs.com", region)
 	}
