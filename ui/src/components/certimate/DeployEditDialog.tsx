@@ -44,7 +44,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     type: "",
   });
 
-  const [error, setError] = useState<Record<string, string>>({});
+  const [error, setError] = useState<Record<string, string | undefined>>({});
 
   const [open, setOpen] = useState(false);
 

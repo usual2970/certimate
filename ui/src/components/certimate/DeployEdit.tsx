@@ -4,7 +4,7 @@ import { DeployConfig } from "@/domain/domain";
 
 type DeployEditContext = {
   deploy: DeployConfig;
-  error: Record<string, string>;
+  error: Record<string, string | undefined>;
   setDeploy: (deploy: DeployConfig) => void;
   setError: (error: Record<string, string | undefined>) => void;
 };
