@@ -71,6 +71,7 @@
   "common.provider.pdns": "PowerDNS",
   "common.provider.httpreq": "Http Request",
   "common.provider.local": "Local Deployment",
+  "common.provider.iis": "Local IIS Deployment",
   "common.provider.ssh": "SSH Deployment",
   "common.provider.webhook": "Webhook",
   "common.provider.kubernetes": "Kubernetes",

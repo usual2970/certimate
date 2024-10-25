@@ -22,6 +22,7 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     ["pdns", "common.provider.pdns", "/imgs/providers/pdns.svg", "apply"],
     ["httpreq", "common.provider.httpreq", "/imgs/providers/httpreq.svg", "apply"],
     ["local", "common.provider.local", "/imgs/providers/local.svg", "deploy"],
+    ["iis", "common.provider.iis", "/imgs/providers/iis.svg", "deploy"],
     ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
     ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
     ["k8s", "common.provider.kubernetes", "/imgs/providers/k8s.svg", "deploy"],
@@ -41,6 +42,7 @@ export const accessTypeFormSchema = z.union(
     z.literal("pdns"),
     z.literal("httpreq"),
     z.literal("local"),
+    z.literal("iis"),
     z.literal("ssh"),
     z.literal("webhook"),
     z.literal("k8s"),
@@ -66,6 +68,7 @@ export type Access = {
     | PdnsConfig
     | HttpreqConfig
     | LocalConfig
+    | IISConfig
     | SSHConfig
     | WebhookConfig
     | KubernetesConfig;
@@ -128,6 +131,8 @@ export type HttpreqConfig = {
 };
 
 export type LocalConfig = Record<string, string>;
+
+export type IISConfig = Record<string, string>;
 
 export type SSHConfig = {
   host: string;

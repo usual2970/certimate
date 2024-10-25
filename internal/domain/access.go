@@ -55,6 +55,8 @@ type HttpreqAccess struct {
 
 type LocalAccess struct{}
 
+type IISAccess struct{}
+
 type SSHAccess struct {
 	Host          string `json:"host"`
 	Port          string `json:"port"`

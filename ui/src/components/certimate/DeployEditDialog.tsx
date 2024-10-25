@@ -17,6 +17,7 @@ import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
 import DeployToSSH from "./DeployToSSH";
+import DeployToIIS from "./DeployToIIS";
 import DeployToWebhook from "./DeployToWebhook";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
 import { deployTargetsMap, type DeployConfig } from "@/domain/domain";
@@ -135,6 +136,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     case "ssh":
     case "local":
       childComponent = <DeployToSSH />;
+      break;
+    case "iis":
+      childComponent = <DeployToIIS />;
       break;
     case "webhook":
       childComponent = <DeployToWebhook />;

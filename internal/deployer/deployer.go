@@ -24,6 +24,7 @@ const (
 	targetHuaweiCloudCDN = "huaweicloud-cdn"
 	targetQiniuCdn       = "qiniu-cdn"
 	targetLocal          = "local"
+	targetIIS          	 = "iis"
 	targetSSH            = "ssh"
 	targetWebhook        = "webhook"
 	targetK8sSecret      = "k8s-secret"
@@ -117,6 +118,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewQiniuCDNDeployer(option)
 	case targetLocal:
 		return NewLocalDeployer(option)
+	case targetIIS:
+		return NewLocalIISDeployer(option)
 	case targetSSH:
 		return NewSSHDeployer(option)
 	case targetWebhook:

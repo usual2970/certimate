@@ -84,6 +84,7 @@ make local.run
 |  PowerDNS  |      √       |              | 可签发在 PowerDNS 托管的域名                                 |
 | HTTP 请求  |      √       |              | 可签发允许通过 HTTP 请求修改 DNS 的域名                      |
 |  本地部署  |              |      √       | 可部署到本地服务器                                           |
+|    IIS     |              |     √        | 可部署到本地Windows服务器的IIS服务上                          |
 |    SSH     |              |      √       | 可部署到 SSH 服务器                                          |
 |  Webhook   |              |      √       | 可部署时回调到 Webhook                                       |
 | Kubernetes |              |      √       | 可部署到 Kubernetes Secret                                   |
