@@ -15,9 +15,9 @@ import (
 )
 
 type HuaweiCloudSCMUploaderConfig struct {
-	Region          string `json:"region"`
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
+	Region          string `json:"region"`
 }
 
 type HuaweiCloudSCMUploader struct {
@@ -25,8 +25,12 @@ type HuaweiCloudSCMUploader struct {
 	sdkClient *hcScm.ScmClient
 }
 
-func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
-	client, err := (&HuaweiCloudSCMUploader{config: config}).createSdkClient()
+func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (Uploader, error) {
+	client, err := (&HuaweiCloudSCMUploader{}).createSdkClient(
+		config.AccessKeyId,
+		config.SecretAccessKey,
+		config.Region,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -99,12 +103,12 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 
 		if listCertificatesResp.Certificates == nil || len(*listCertificatesResp.Certificates) < int(listCertificatesLimit) {
 			break
-		}
-
-		listCertificatesOffset += listCertificatesLimit
-		listCertificatesPage += 1
-		if listCertificatesPage > 99 { // 避免死循环
-			break
+		} else {
+			listCertificatesOffset += listCertificatesLimit
+			listCertificatesPage += 1
+			if listCertificatesPage > 99 { // 避免死循环
+				break
+			}
 		}
 	}
 
@@ -133,10 +137,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudSCMUploader) createSdkClient() (*hcScm.ScmClient, error) {
-	region := u.config.Region
-	accessKeyId := u.config.AccessKeyId
-	secretAccessKey := u.config.SecretAccessKey
+func (u *HuaweiCloudSCMUploader) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmClient, error) {
 	if region == "" {
 		region = "cn-north-4" // SCM 服务默认区域：华北四北京
 	}

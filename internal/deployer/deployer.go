@@ -22,6 +22,7 @@ const (
 	targetTencentCLB     = "tencent-clb"
 	targetTencentCOS     = "tencent-cos"
 	targetHuaweiCloudCDN = "huaweicloud-cdn"
+	targetHuaweiCloudELB = "huaweicloud-elb"
 	targetQiniuCdn       = "qiniu-cdn"
 	targetLocal          = "local"
 	targetSSH            = "ssh"
@@ -113,6 +114,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewTencentCOSDeployer(option)
 	case targetHuaweiCloudCDN:
 		return NewHuaweiCloudCDNDeployer(option)
+	case targetHuaweiCloudELB:
+		return NewHuaweiCloudELBDeployer(option)
 	case targetQiniuCdn:
 		return NewQiniuCDNDeployer(option)
 	case targetLocal:

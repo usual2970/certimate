@@ -13,6 +13,17 @@ const DeployToAliyunCDN = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   useEffect(() => {
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          domain: "",
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     setError({});
   }, []);
 

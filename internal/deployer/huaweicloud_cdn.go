@@ -7,24 +7,53 @@ import (
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
-	cdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
-	cdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
-	cdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
+	hcCdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
+	hcCdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
+	hcCdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
 
 	"github.com/usual2970/certimate/internal/domain"
-	uploader "github.com/usual2970/certimate/internal/pkg/core/uploader"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
 type HuaweiCloudCDNDeployer struct {
 	option *DeployerOption
 	infos  []string
+
+	sdkClient   *hcCdn.CdnClient
+	sslUploader uploader.Uploader
 }
 
 func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
+	access := &domain.HuaweiCloudAccess{}
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, err
+	}
+
+	client, err := (&HuaweiCloudCDNDeployer{}).createSdkClient(
+		access.AccessKeyId,
+		access.SecretAccessKey,
+		option.DeployConfig.GetConfigAsString("region"),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
+	uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
+		Region:          "",
+		AccessKeyId:     access.AccessKeyId,
+		SecretAccessKey: access.SecretAccessKey,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	return &HuaweiCloudCDNDeployer{
-		option: option,
-		infos:  make([]string, 0),
+		option:      option,
+		infos:       make([]string, 0),
+		sdkClient:   client,
+		sslUploader: uploader,
 	}, nil
 }
 
@@ -37,25 +66,12 @@ func (d *HuaweiCloudCDNDeployer) GetInfo() []string {
 }
 
 func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
-	access := &domain.HuaweiCloudAccess{}
-	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
-		return err
-	}
-
-	// TODO: CDN 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
-	client, err := d.createClient("", access.AccessKeyId, access.SecretAccessKey)
-	if err != nil {
-		return err
-	}
-
-	d.infos = append(d.infos, toStr("SDK 客户端创建成功", nil))
-
 	// 查询加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/ShowDomainFullConfig.html
-	showDomainFullConfigReq := &cdnModel.ShowDomainFullConfigRequest{
+	showDomainFullConfigReq := &hcCdnModel.ShowDomainFullConfigRequest{
 		DomainName: d.option.DeployConfig.GetConfigAsString("domain"),
 	}
-	showDomainFullConfigResp, err := client.ShowDomainFullConfig(showDomainFullConfigReq)
+	showDomainFullConfigResp, err := d.sdkClient.ShowDomainFullConfig(showDomainFullConfigReq)
 	if err != nil {
 		return err
 	}
@@ -68,19 +84,10 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	updateDomainMultiCertificatesReqBodyContent := &huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent{}
 	updateDomainMultiCertificatesReqBodyContent.DomainName = d.option.DeployConfig.GetConfigAsString("domain")
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
-	var updateDomainMultiCertificatesResp *cdnModel.UpdateDomainMultiCertificatesResponse
+	var updateDomainMultiCertificatesResp *hcCdnModel.UpdateDomainMultiCertificatesResponse
 	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
-		uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
-			Region:          "", // TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
-			AccessKeyId:     access.AccessKeyId,
-			SecretAccessKey: access.SecretAccessKey,
-		})
-		if err != nil {
-			return err
-		}
-
 		// 上传证书到 SCM
-		uploadResult, err := uploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+		uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 		if err != nil {
 			return err
 		}
@@ -102,7 +109,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 			Https: updateDomainMultiCertificatesReqBodyContent,
 		},
 	}
-	updateDomainMultiCertificatesResp, err = executeHuaweiCloudCDNUploadDomainMultiCertificates(client, updateDomainMultiCertificatesReq)
+	updateDomainMultiCertificatesResp, err = executeHuaweiCloudCDNUploadDomainMultiCertificates(d.sdkClient, updateDomainMultiCertificatesReq)
 	if err != nil {
 		return err
 	}
@@ -112,7 +119,11 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessKey string) (*cdn.CdnClient, error) {
+func (d *HuaweiCloudCDNDeployer) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcCdn.CdnClient, error) {
+	if region == "" {
+		region = "cn-north-1" // CDN 服务默认区域：华北一北京
+	}
+
 	auth, err := global.NewCredentialsBuilder().
 		WithAk(accessKeyId).
 		WithSk(secretAccessKey).
@@ -121,16 +132,12 @@ func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessK
 		return nil, err
 	}
 
-	if region == "" {
-		region = "cn-north-1" // CDN 服务默认区域：华北一北京
-	}
-
-	hcRegion, err := cdnRegion.SafeValueOf(region)
+	hcRegion, err := hcCdnRegion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := cdn.CdnClientBuilder().
+	hcClient, err := hcCdn.CdnClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -138,12 +145,12 @@ func (d *HuaweiCloudCDNDeployer) createClient(region, accessKeyId, secretAccessK
 		return nil, err
 	}
 
-	client := cdn.NewCdnClient(hcClient)
+	client := hcCdn.NewCdnClient(hcClient)
 	return client, nil
 }
 
 type huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent struct {
-	cdnModel.UpdateDomainMultiCertificatesRequestBodyContent `json:",inline"`
+	hcCdnModel.UpdateDomainMultiCertificatesRequestBodyContent `json:",inline"`
 
 	SCMCertificateId *string `json:"scm_certificate_id,omitempty"`
 }
@@ -156,20 +163,20 @@ type huaweicloudCDNUpdateDomainMultiCertificatesRequest struct {
 	Body *huaweicloudCDNUpdateDomainMultiCertificatesRequestBody `json:"body,omitempty"`
 }
 
-func executeHuaweiCloudCDNUploadDomainMultiCertificates(client *cdn.CdnClient, request *huaweicloudCDNUpdateDomainMultiCertificatesRequest) (*cdnModel.UpdateDomainMultiCertificatesResponse, error) {
+func executeHuaweiCloudCDNUploadDomainMultiCertificates(client *hcCdn.CdnClient, request *huaweicloudCDNUpdateDomainMultiCertificatesRequest) (*hcCdnModel.UpdateDomainMultiCertificatesResponse, error) {
 	// 华为云官方 SDK 中目前提供的字段缺失，这里暂时先需自定义请求
 	// 可能需要等之后 SDK 更新
 
-	requestDef := cdn.GenReqDefForUpdateDomainMultiCertificates()
+	requestDef := hcCdn.GenReqDefForUpdateDomainMultiCertificates()
 
 	if resp, err := client.HcClient.Sync(request, requestDef); err != nil {
 		return nil, err
 	} else {
-		return resp.(*cdnModel.UpdateDomainMultiCertificatesResponse), nil
+		return resp.(*hcCdnModel.UpdateDomainMultiCertificatesResponse), nil
 	}
 }
 
-func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent) *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent {
+func mergeHuaweiCloudCDNConfig(src *hcCdnModel.ConfigsGetBody, dest *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent) *huaweicloudCDNUpdateDomainMultiCertificatesRequestBodyContent {
 	if src == nil {
 		return dest
 	}
@@ -186,7 +193,7 @@ func mergeHuaweiCloudCDNConfig(src *cdnModel.ConfigsGetBody, dest *huaweicloudCD
 	}
 
 	if src.ForceRedirect != nil {
-		dest.ForceRedirectConfig = &cdnModel.ForceRedirect{}
+		dest.ForceRedirectConfig = &hcCdnModel.ForceRedirect{}
 
 		if src.ForceRedirect.Status == "on" {
 			dest.ForceRedirectConfig.Switch = 1
