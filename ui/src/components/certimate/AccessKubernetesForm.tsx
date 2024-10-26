@@ -37,7 +37,7 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
     configType: accessTypeFormSchema,
     kubeConfig: z
       .string()
-      .min(1, "access.authorization.form.k8s_kubeconfig.placeholder")
+      .min(0, "access.authorization.form.k8s_kubeconfig.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 })),
     kubeConfigFile: z.any().optional(),
   });
@@ -191,3 +191,4 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
 };
 
 export default AccessKubernetesForm;
+
