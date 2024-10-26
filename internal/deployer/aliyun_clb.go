@@ -113,7 +113,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		return errors.New("`loadbalancerId` is required")
 	}
 
-	// 查询负载均衡器实例的详细信息
+	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
 	describeLoadBalancerAttributeReq := &slb20140515.DescribeLoadBalancerAttributeRequest{
 		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
@@ -124,7 +124,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerAttribute': %w", err)
 	}
 
-	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡器实例", describeLoadBalancerAttributeResp))
+	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp))
 
 	// 查询监听列表
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerlisteners
@@ -159,7 +159,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 	}
 
-	d.infos = append(d.infos, toStr("已查询到 ELB 负载均衡器下的监听器", aliListenerPorts))
+	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", aliListenerPorts))
 
 	// 上传证书到 SLB
 	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)

@@ -5,6 +5,7 @@ go 1.22.0
 toolchain go1.23.2
 
 require (
+	github.com/alibabacloud-go/alb-20200616/v2 v2.2.1
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.1
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.0.0
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10
