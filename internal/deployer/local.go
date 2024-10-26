@@ -51,10 +51,6 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 
 	// 写入证书和私钥文件
 	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", "pem") {
-	case "pfx":
-		// TODO: pfx
-		return fmt.Errorf("not implemented")
-
 	case "pem":
 		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
 			return fmt.Errorf("failed to save certificate file: %w", err)
@@ -67,6 +63,18 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 		}
 
 		d.infos = append(d.infos, toStr("保存私钥成功", nil))
+
+	case "pfx":
+		pfxData, err := convertPemToPfx(d.option.Certificate.Certificate, d.option.Certificate.PrivateKey, d.option.DeployConfig.GetConfigAsString("pfxPassword"))
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
 	}
 
 	// 执行命令
@@ -87,14 +95,14 @@ func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 	var cmd *exec.Cmd
 
 	switch d.option.DeployConfig.GetConfigAsString("shell") {
+	case "sh":
+		cmd = exec.Command("sh", "-c", command)
+
 	case "cmd":
 		cmd = exec.Command("cmd", "/C", command)
 
 	case "powershell":
 		cmd = exec.Command("powershell", "-Command", command)
-
-	case "sh":
-		cmd = exec.Command("sh", "-c", command)
 
 	case "":
 		if runtime.GOOS == "windows" {

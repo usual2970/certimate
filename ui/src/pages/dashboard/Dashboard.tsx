@@ -209,7 +209,7 @@ const Dashboard = () => {
                           {t("history.log")}
                         </SheetTitle>
                       </SheetHeader>
-                      <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh]">
+                      <div className="bg-gray-950 text-stone-100 p-5 text-sm h-[80dvh] overflow-y-auto">
                         {deployment.log.check && (
                           <>
                             {deployment.log.check.map((item: Log) => {

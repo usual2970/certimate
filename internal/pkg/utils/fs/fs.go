@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-// 与 `WriteFile` 类似，但写入的是字符串内容。
+// 与 [WriteFile] 类似，但写入的是字符串内容。
 //
 // 入参:
 //   - path: 文件路径。

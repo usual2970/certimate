@@ -2,12 +2,15 @@ package deployer
 
 import (
 	"context"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/models"
+	"software.sslmate.com/src/go-pkcs12"
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
@@ -179,4 +182,33 @@ func getDeployVariables(conf domain.DeployConfig) map[string]string {
 	}
 
 	return rs
+}
+
+func convertPemToPfx(certificate string, privateKey string, password string) ([]byte, error) {
+	// TODO: refactor
+
+	certBlock, _ := pem.Decode([]byte(certificate))
+	if certBlock == nil {
+		return nil, fmt.Errorf("failed to decode pem")
+	}
+	cert, err := x509.ParseCertificate(certBlock.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse pem: %w", err)
+	}
+
+	privkeyBlock, _ := pem.Decode([]byte(privateKey))
+	if privkeyBlock == nil {
+		return nil, fmt.Errorf("failed to decode pem")
+	}
+	privkey, err := x509.ParsePKCS1PrivateKey(privkeyBlock.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse pem: %w", err)
+	}
+
+	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, password)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode as pfx %w", err)
+	}
+
+	return pfxData, nil
 }

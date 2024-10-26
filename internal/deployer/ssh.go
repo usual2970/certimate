@@ -60,19 +60,33 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 		d.infos = append(d.infos, toStr("SSH 执行前置命令成功", stdout))
 	}
 
-	// 上传证书
-	if err := d.uploadFile(client, d.option.Certificate.Certificate, d.option.DeployConfig.GetConfigAsString("certPath")); err != nil {
-		return fmt.Errorf("failed to upload certificate file: %w", err)
+	// 上传证书和私钥文件
+	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", "pem") {
+	case "pem":
+		if err := d.writeSftpFileString(client, d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
+			return fmt.Errorf("failed to upload certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
+
+		if err := d.writeSftpFileString(client, d.option.DeployConfig.GetConfigAsString("keyPath"), d.option.Certificate.PrivateKey); err != nil {
+			return fmt.Errorf("failed to upload private key file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("SSH 上传私钥成功", nil))
+
+	case "pfx":
+		pfxData, err := convertPemToPfx(d.option.Certificate.Certificate, d.option.Certificate.PrivateKey, d.option.DeployConfig.GetConfigAsString("pfxPassword"))
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := d.writeSftpFile(client, d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
+			return fmt.Errorf("failed to upload certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
 	}
-
-	d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
-
-	// 上传私钥
-	if err := d.uploadFile(client, d.option.Certificate.PrivateKey, d.option.DeployConfig.GetConfigAsString("keyPath")); err != nil {
-		return fmt.Errorf("failed to upload private key file: %w", err)
-	}
-
-	d.infos = append(d.infos, toStr("SSH 上传私钥成功", nil))
 
 	// 执行命令
 	command := d.option.DeployConfig.GetConfigAsString("command")
@@ -133,7 +147,11 @@ func (d *SSHDeployer) sshExecCommand(client *ssh.Client, command string) (string
 	return stdoutBuf.String(), stderrBuf.String(), err
 }
 
-func (d *SSHDeployer) uploadFile(client *ssh.Client, path string, content string) error {
+func (d *SSHDeployer) writeSftpFileString(client *ssh.Client, path string, content string) error {
+	return d.writeSftpFile(client, path, []byte(content))
+}
+
+func (d *SSHDeployer) writeSftpFile(client *ssh.Client, path string, data []byte) error {
 	sftpCli, err := sftp.NewClient(client)
 	if err != nil {
 		return fmt.Errorf("failed to create sftp client: %w", err)
@@ -150,7 +168,7 @@ func (d *SSHDeployer) uploadFile(client *ssh.Client, path string, content string
 	}
 	defer file.Close()
 
-	_, err = file.Write([]byte(content))
+	_, err = file.Write(data)
 	if err != nil {
 		return fmt.Errorf("failed to write to remote file: %w", err)
 	}

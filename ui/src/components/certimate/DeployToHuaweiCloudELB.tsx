@@ -102,7 +102,7 @@ const DeployToHuaweiCloudCDN = () => {
           onValueChange={(value) => {
             const newData = produce(data, (draft) => {
               draft.config ??= {};
-              draft.config.resourceType = value?.trim();
+              draft.config.resourceType = value;
             });
             setDeploy(newData);
           }}
