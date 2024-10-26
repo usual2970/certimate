@@ -208,6 +208,8 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 		return errors.New("`loadbalancerId` is required")
 	}
 
+	hcListenerIds := make([]string, 0)
+
 	// 查询负载均衡器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowLoadBalancer.html
 	showLoadBalancerReq := &hcElbModel.ShowLoadBalancerRequest{
@@ -222,7 +224,6 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 
 	// 查询监听器列表
 	// REF: https://support.huaweicloud.com/api-elb/ListListeners.html
-	hcListenerIds := make([]string, 0)
 	listListenersLimit := int32(2000)
 	var listListenersMarker *string = nil
 	for {

@@ -110,6 +110,8 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		return errors.New("`loadbalancerId` is required")
 	}
 
+	aliListenerIds := make([]string, 0)
+
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getloadbalancerattribute
 	getLoadBalancerAttributeReq := &alb20200616.GetLoadBalancerAttributeRequest{
@@ -122,9 +124,8 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 
 	d.infos = append(d.infos, toStr("已查询到 ALB 负载均衡实例", getLoadBalancerAttributeResp))
 
-	// 查询监听列表
+	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
-	aliListenerIds := make([]string, 0)
 	listListenersPage := 1
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
@@ -155,6 +156,38 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 ALB 负载均衡实例下的全部 HTTPS 监听", aliListenerIds))
+
+	// 查询 QUIC 监听列表
+	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
+	listListenersPage = 1
+	listListenersToken = nil
+	for {
+		listListenersReq := &alb20200616.ListListenersRequest{
+			MaxResults:       tea.Int32(listListenersLimit),
+			NextToken:        listListenersToken,
+			LoadBalancerIds:  []*string{tea.String(aliLoadbalancerId)},
+			ListenerProtocol: tea.String("QUIC"),
+		}
+		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		if err != nil {
+			return fmt.Errorf("failed to execute sdk request 'alb.ListListeners': %w", err)
+		}
+
+		if listListenersResp.Body.Listeners != nil {
+			for _, listener := range listListenersResp.Body.Listeners {
+				aliListenerIds = append(aliListenerIds, *listener.ListenerId)
+			}
+		}
+
+		if listListenersResp.Body.NextToken == nil {
+			break
+		} else {
+			listListenersToken = listListenersResp.Body.NextToken
+			listListenersPage += 1
+		}
+	}
+
+	d.infos = append(d.infos, toStr("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", aliListenerIds))
 
 	// 上传证书到 SSL
 	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)

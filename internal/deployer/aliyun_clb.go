@@ -113,6 +113,8 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		return errors.New("`loadbalancerId` is required")
 	}
 
+	aliListenerPorts := make([]int32, 0)
+
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
 	describeLoadBalancerAttributeReq := &slb20140515.DescribeLoadBalancerAttributeRequest{
@@ -126,9 +128,8 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 
 	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp))
 
-	// 查询监听列表
+	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerlisteners
-	aliListenerPorts := make([]int32, 0)
 	listListenersPage := 1
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
