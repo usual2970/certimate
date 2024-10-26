@@ -89,8 +89,6 @@ func (d *AliyunNLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 
 	var endpoint string
 	switch region {
-	case "cn-hangzhou-finance":
-		endpoint = "nlb.cn-hangzhou.aliyuncs.com"
 	default:
 		endpoint = fmt.Sprintf("nlb.%s.aliyuncs.com", region)
 	}
