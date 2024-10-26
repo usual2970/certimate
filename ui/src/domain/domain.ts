@@ -77,6 +77,7 @@ export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map
     ["aliyun-dcdn", "common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"],
     ["aliyun-clb", "common.provider.aliyun.clb", "/imgs/providers/aliyun.svg"],
     ["aliyun-alb", "common.provider.aliyun.alb", "/imgs/providers/aliyun.svg"],
+    ["aliyun-nlb", "common.provider.aliyun.nlb", "/imgs/providers/aliyun.svg"],
     ["tencent-cdn", "common.provider.tencent.cdn", "/imgs/providers/tencent.svg"],
     ["tencent-clb", "common.provider.tencent.clb", "/imgs/providers/tencent.svg"],
     ["tencent-cos", "common.provider.tencent.cos", "/imgs/providers/tencent.svg"],

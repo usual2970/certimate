@@ -57,6 +57,7 @@
   "common.provider.aliyun.dcdn": "阿里云 - 全站加速 DCDN",
   "common.provider.aliyun.clb": "阿里云 - 传统型负载均衡 CLB",
   "common.provider.aliyun.alb": "阿里云 - 应用型负载均衡 ALB",
+  "common.provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",
   "common.provider.tencent": "腾讯云",
   "common.provider.tencent.cos": "腾讯云 - 对象存储 COS",
   "common.provider.tencent.cdn": "腾讯云 - 内容分发网络 CDN",

@@ -58,6 +58,7 @@
   "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN",
   "common.provider.aliyun.clb": "Alibaba Cloud - CLB",
   "common.provider.aliyun.alb": "Alibaba Cloud - ALB",
+  "common.provider.aliyun.nlb": "Alibaba Cloud - NLB",
   "common.provider.tencent": "Tencent Cloud",
   "common.provider.tencent.cdn": "Tencent Cloud - CDN",
   "common.provider.tencent.clb": "Tencent Cloud - CLB",

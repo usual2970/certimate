@@ -13,6 +13,7 @@ import DeployToAliyunOSS from "./DeployToAliyunOSS";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToAliyunCLB from "./DeployToAliyunCLB";
 import DeployToAliyunALB from "./DeployToAliyunALB";
+import DeployToAliyunNLB from "./DeployToAliyunNLB";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCLB from "./DeployToTencentCLB";
 import DeployToTencentCOS from "./DeployToTencentCOS";
@@ -125,6 +126,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "aliyun-alb":
       childComponent = <DeployToAliyunALB />;
+      break;
+    case "aliyun-nlb":
+      childComponent = <DeployToAliyunNLB />;
       break;
     case "tencent-cdn":
       childComponent = <DeployToTencentCDN />;
