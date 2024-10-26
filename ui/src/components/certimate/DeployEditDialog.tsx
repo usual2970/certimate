@@ -17,6 +17,7 @@ import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
+import DeployToLocal from "./DeployToLocal";
 import DeployToSSH from "./DeployToSSH";
 import DeployToWebhook from "./DeployToWebhook";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
@@ -136,8 +137,10 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     case "qiniu-cdn":
       childComponent = <DeployToQiniuCDN />;
       break;
-    case "ssh":
     case "local":
+      childComponent = <DeployToLocal />;
+      break;
+    case "ssh":
       childComponent = <DeployToSSH />;
       break;
     case "webhook":

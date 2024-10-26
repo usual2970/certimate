@@ -5,10 +5,12 @@ import { produce } from "immer";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useDeployEditContext } from "./DeployEdit";
+import { cn } from "@/lib/utils";
 
-const DeployToSSH = () => {
+const DeployToLocal = () => {
   const { t } = useTranslation();
 
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
@@ -20,6 +22,7 @@ const DeployToSSH = () => {
         config: {
           certPath: "/etc/nginx/ssl/nginx.crt",
           keyPath: "/etc/nginx/ssl/nginx.key",
+          shell: "sh",
           preCommand: "",
           command: "sudo service nginx reload",
         },
@@ -34,6 +37,9 @@ const DeployToSSH = () => {
   const formSchema = z.object({
     certPath: z.string().min(1, t("domain.deployment.form.file_cert_path.placeholder")),
     keyPath: z.string().min(1, t("domain.deployment.form.file_key_path.placeholder")),
+    shell: z.union([z.literal("sh"), z.literal("cmd"), z.literal("powershell")], {
+      message: t("domain.deployment.form.shell.placeholder"),
+    }),
     preCommand: z.string().optional(),
     command: z.string().optional(),
   });
@@ -45,6 +51,7 @@ const DeployToSSH = () => {
         ...error,
         certPath: res.error.errors.find((e) => e.path[0] === "certPath")?.message,
         keyPath: res.error.errors.find((e) => e.path[0] === "keyPath")?.message,
+        shell: res.error.errors.find((e) => e.path[0] === "shell")?.message,
         preCommand: res.error.errors.find((e) => e.path[0] === "preCommand")?.message,
         command: res.error.errors.find((e) => e.path[0] === "command")?.message,
       });
@@ -53,11 +60,20 @@ const DeployToSSH = () => {
         ...error,
         certPath: undefined,
         keyPath: undefined,
+        shell: undefined,
         preCommand: undefined,
         command: undefined,
       });
     }
   }, [data]);
+
+  const getOptionCls = (val: string) => {
+    if (data.config?.shell === val) {
+      return "border-primary dark:border-primary";
+    }
+
+    return "";
+  };
 
   return (
     <>
@@ -94,6 +110,47 @@ const DeployToSSH = () => {
             }}
           />
           <div className="text-red-600 text-sm mt-1">{error?.keyPath}</div>
+        </div>
+
+        <div>
+          <Label>{t("domain.deployment.form.shell.label")}</Label>
+          <RadioGroup
+            className="flex mt-1"
+            value={data?.config?.shell}
+            onValueChange={(val) => {
+              const newData = produce(data, (draft) => {
+                draft.config ??= {};
+                draft.config.shell = val;
+              });
+              setDeploy(newData);
+            }}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sh" id="shellOptionSh" />
+              <Label htmlFor="shellOptionSh">
+                <div className={cn("flex items-center space-x-2 border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("sh"))}>
+                  <div>POSIX Bash (Linux)</div>
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="cmd" id="shellOptionCmd" />
+              <Label htmlFor="shellOptionCmd">
+                <div className={cn("border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("cmd"))}>
+                  <div>CMD (Windows)</div>
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="powershell" id="shellOptionPowerShell" />
+              <Label htmlFor="shellOptionPowerShell">
+                <div className={cn("border p-2 rounded cursor-pointer dark:border-stone-700", getOptionCls("powershell"))}>
+                  <div>PowerShell (Windows)</div>
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+          <div className="text-red-600 text-sm mt-1">{error?.shell}</div>
         </div>
 
         <div>
@@ -134,4 +191,4 @@ const DeployToSSH = () => {
   );
 };
 
-export default DeployToSSH;
+export default DeployToLocal;
