@@ -2,18 +2,16 @@ package deployer
 
 import (
 	"context"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/pocketbase/pocketbase/models"
 	"software.sslmate.com/src/go-pkcs12"
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 	"github.com/usual2970/certimate/internal/utils/app"
 )
 
@@ -41,7 +39,6 @@ const (
 type DeployerOption struct {
 	DomainId     string                `json:"domainId"`
 	Domain       string                `json:"domain"`
-	Product      string                `json:"product"`
 	Access       string                `json:"access"`
 	AccessRecord *models.Record        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
@@ -93,7 +90,6 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	option := &DeployerOption{
 		DomainId:     record.Id,
 		Domain:       record.GetString("domain"),
-		Product:      getProduct(deployConfig.Type),
 		Access:       access.GetString("config"),
 		AccessRecord: access,
 		DeployConfig: deployConfig,
@@ -121,7 +117,7 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	case targetAliyunNLB:
 		return NewAliyunNLBDeployer(option)
 	case targetTencentCDN:
-		return NewTencentCDNDeployer(option)	
+		return NewTencentCDNDeployer(option)
 	case targetTencentECDN:
 		return NewTencentECDNDeployer(option)
 	case targetTencentCLB:
@@ -146,14 +142,6 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewK8sSecretDeployer(option)
 	}
 	return nil, errors.New("unsupported deploy target")
-}
-
-func getProduct(t string) string {
-	rs := strings.Split(t, "-")
-	if len(rs) < 2 {
-		return ""
-	}
-	return rs[1]
 }
 
 func toStr(tag string, data any) string {
@@ -200,24 +188,14 @@ func getDeployVariables(conf domain.DeployConfig) map[string]string {
 }
 
 func convertPemToPfx(certificate string, privateKey string, password string) ([]byte, error) {
-	// TODO: refactor
-
-	certBlock, _ := pem.Decode([]byte(certificate))
-	if certBlock == nil {
-		return nil, fmt.Errorf("failed to decode pem")
-	}
-	cert, err := x509.ParseCertificate(certBlock.Bytes)
+	cert, err := x509.ParseCertificateFromPEM(certificate)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse pem: %w", err)
+		return nil, err
 	}
 
-	privkeyBlock, _ := pem.Decode([]byte(privateKey))
-	if privkeyBlock == nil {
-		return nil, fmt.Errorf("failed to decode pem")
-	}
-	privkey, err := x509.ParsePKCS1PrivateKey(privkeyBlock.Bytes)
+	privkey, err := x509.ParsePKCS1PrivateKeyFromPEM(privateKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse pem: %w", err)
+		return nil, err
 	}
 
 	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, password)

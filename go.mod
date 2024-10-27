@@ -26,6 +26,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1030
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1030
 	golang.org/x/crypto v0.28.0
 	k8s.io/api v0.31.1
 	k8s.io/apimachinery v0.31.1
@@ -59,7 +60,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1030 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
