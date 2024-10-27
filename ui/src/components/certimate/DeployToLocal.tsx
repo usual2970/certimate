@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { produce } from "immer";
 
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -115,6 +116,60 @@ const DeployToLocal = () => {
     }
 
     return "";
+  };
+
+  const handleUsePresetScript = (key: string) => {
+    switch (key) {
+      case "reload_nginx":
+        {
+          const newData = produce(data, (draft) => {
+            draft.config ??= {};
+            draft.config.shell = "sh";
+            draft.config.command = "sudo service nginx reload";
+          });
+          setDeploy(newData);
+        }
+        break;
+
+      case "binding_iis":
+        {
+          const newData = produce(data, (draft) => {
+            draft.config ??= {};
+            draft.config.shell = "powershell";
+            draft.config.command = `
+# 请将以下变量替换为实际值
+$pfxPath = "<your-pfx-path>" # PFX 文件路径
+$pfxPassword = "<your-pfx-password>" # PFX 密码
+$siteName = "<your-site-name>" # IIS 网站名称
+$domain = "<your-domain-name>" # 域名
+$ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
+$port = "<your-binding-port>"  # 绑定端口
+
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 导入 WebAdministration 模块
+Import-Module WebAdministration
+# 检查是否已存在 HTTPS 绑定
+$existingBinding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -HostHeader "$domain" -ErrorAction SilentlyContinue
+if (!$existingBinding) {
+    # 添加新的 HTTPS 绑定
+  New-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
+}
+# 获取绑定对象
+$binding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
+# 绑定 SSL 证书
+$binding.AddSslCertificate($thumbprint, "My")
+# 删除目录下的证书文件
+Remove-Item -Path "$pfxPath" -Force
+            `.trim();
+          });
+          setDeploy(newData);
+        }
+        break;
+    }
   };
 
   return (
@@ -263,7 +318,22 @@ const DeployToLocal = () => {
         </div>
 
         <div>
-          <Label>{t("domain.deployment.form.shell_command.label")}</Label>
+          <div className="flex items-center justify-between">
+            <Label>{t("domain.deployment.form.shell_command.label")}</Label>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <a className="text-xs text-blue-500 cursor-pointer">{t("domain.deployment.form.shell_preset_scripts.trigger")}</a>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleUsePresetScript("reload_nginx")}>
+                  {t("domain.deployment.form.shell_preset_scripts.option.reload_nginx.label")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleUsePresetScript("binding_iis")}>
+                  {t("domain.deployment.form.shell_preset_scripts.option.binding_iis.label")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <Textarea
             className="mt-1"
             value={data?.config?.command}
