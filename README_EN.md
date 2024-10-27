@@ -59,7 +59,7 @@ make local.run
 
 ## Usage
 
-After completing the installation steps above, you can access the Certimate management page by visiting http://127.0.0.1:8090 in your browser.
+After completing the installation steps above, you can access the Certimate management page by visiting <http://127.0.0.1:8090> in your browser.
 
 ```bash
 username：admin@certimate.fun
@@ -72,7 +72,7 @@ password：1234567890
 
 |   Provider    | Registration | Deployment | Remarks                                                                                                               |
 | :-----------: | :----------: | :--------: | --------------------------------------------------------------------------------------------------------------------- |
-| Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN                           |
+| Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN,SLB                       |
 | Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud COS, CDN, ECDN, CLB, TEO           |
 | Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei Cloud; supports deployment to Huawei Cloud CDN, ELB                             |
 |  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                                                |
