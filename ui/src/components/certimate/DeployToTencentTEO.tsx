@@ -33,7 +33,7 @@ const DeployToTencentTEO = () => {
   }, [data]);
 
   useEffect(() => {
-    const resp = ZoneIdSchema.safeParse(data.config?.zoneId);
+    const resp = zoneIdSchema.safeParse(data.config?.zoneId);
     if (!resp.success) {
       setError({
         ...error,
@@ -51,8 +51,8 @@ const DeployToTencentTEO = () => {
     message: t("common.errmsg.domain_invalid"),
   });
 
-  const ZoneIdSchema = z.string().regex(/^zone-[0-9a-zA-Z]{9}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  const zoneIdSchema = z.string().regex(/^zone-[0-9a-zA-Z]{9}$/, {
+    message: t("common.errmsg.zoneid_invalid"),
   });
 
   return (
@@ -66,7 +66,7 @@ const DeployToTencentTEO = () => {
           onChange={(e) => {
             const temp = e.target.value;
 
-            const resp = ZoneIdSchema.safeParse(temp);
+            const resp = zoneIdSchema.safeParse(temp);
             if (!resp.success) {
               setError({
                 ...error,

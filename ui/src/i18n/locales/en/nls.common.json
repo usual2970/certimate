@@ -51,6 +51,7 @@
   "common.errmsg.host_invalid": "Please enter the correct domain name or IP",
   "common.errmsg.ip_invalid": "Please enter IP",
   "common.errmsg.url_invalid": "Please enter a valid URL",
+  "common.errmsg.zoneid_invalid": "Please enter Zone ID",
 
   "common.provider.aliyun": "Alibaba Cloud",
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS",

@@ -51,6 +51,8 @@
   "common.errmsg.host_invalid": "请输入正确的域名或 IP 地址",
   "common.errmsg.ip_invalid": "请输入正确的 IP 地址",
   "common.errmsg.url_invalid": "请输入正确的 URL",
+  "common.errmsg.zoneid_invalid": "请输入正确的 Zone ID",
+
   "common.provider.aliyun": "阿里云",
   "common.provider.aliyun.oss": "阿里云 - OSS",
   "common.provider.aliyun.cdn": "阿里云 - CDN",
@@ -81,3 +83,4 @@
   "common.provider.telegram": "Telegram",
   "common.provider.lark": "飞书"
 }
+
