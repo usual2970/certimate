@@ -69,7 +69,7 @@
   "access.authorization.form.ssh_key_passphrase.placeholder": "请输入 Key 口令",
   "access.authorization.form.webhook_url.label": "Webhook URL",
   "access.authorization.form.webhook_url.placeholder": "请输入 Webhook URL",
-  "access.authorization.form.k8s_kubeconfig.label": "KubeConfig",
+  "access.authorization.form.k8s_kubeconfig.label": "KubeConfig（不选将使用Pod的ServiceAccount）",
   "access.authorization.form.k8s_kubeconfig.placeholder": "请输入 KubeConfig",
   "access.authorization.form.k8s_kubeconfig_file.placeholder": "请选择文件",
 

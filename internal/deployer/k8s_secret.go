@@ -9,6 +9,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	k8sMetaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -118,19 +119,26 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 }
 
 func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kubernetes.Clientset, error) {
-	kubeConfig, err := clientcmd.NewClientConfigFromBytes([]byte(access.KubeConfig))
-	if err != nil {
-		return nil, err
+	var config *rest.Config
+	var err error
+	if access.KubeConfig == "" {
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		kubeConfig, err := clientcmd.NewClientConfigFromBytes([]byte(access.KubeConfig))
+		if err != nil {
+			return nil, err
+		}
+		config, err = kubeConfig.ClientConfig()
+		if err != nil {
+			return nil, err
+		}
 	}
-	config, err := kubeConfig.ClientConfig()
-	if err != nil {
-		return nil, err
-	}
-
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, err
 	}
-
 	return client, nil
 }
