@@ -51,6 +51,7 @@
   "common.errmsg.host_invalid": "Please enter the correct domain name or IP",
   "common.errmsg.ip_invalid": "Please enter IP",
   "common.errmsg.url_invalid": "Please enter a valid URL",
+  "common.errmsg.zoneid_invalid": "Please enter Zone ID",
 
   "common.provider.aliyun": "Alibaba Cloud",
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS",
@@ -58,8 +59,10 @@
   "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN",
   "common.provider.tencent": "Tencent Cloud",
   "common.provider.tencent.cdn": "Tencent Cloud - CDN",
+  "common.provider.tencent.ecdn": "Tencent Cloud - ECDN",
   "common.provider.tencent.clb": "Tencent Cloud - CLB",
   "common.provider.tencent.cos": "Tencent Cloud - COS",
+  "common.provider.tencent.teo": "Tencent Cloud - TEO",
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.huaweicloud.cdn": "Huawei Cloud - CDN",
   "common.provider.huaweicloud.elb": "Huawei Cloud - ELB",
