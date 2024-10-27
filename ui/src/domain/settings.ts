@@ -22,9 +22,10 @@ export type NotifyChannels = {
   lark?: NotifyChannel;
   telegram?: NotifyChannel;
   webhook?: NotifyChannel;
+  serverchan?: NotifyChannel;
 };
 
-export type NotifyChannel = NotifyChannelDingTalk | NotifyChannelLark | NotifyChannelTelegram | NotifyChannelWebhook;
+export type NotifyChannel = NotifyChannelDingTalk | NotifyChannelLark | NotifyChannelTelegram | NotifyChannelWebhook | NotifyChannelServerChan;
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -44,6 +45,11 @@ export type NotifyChannelTelegram = {
 };
 
 export type NotifyChannelWebhook = {
+  url: string;
+  enabled: boolean;
+};
+
+export type NotifyChannelServerChan = {
   url: string;
   enabled: boolean;
 };
