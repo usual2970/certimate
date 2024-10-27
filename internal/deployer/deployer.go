@@ -195,3 +195,13 @@ func getDeployVariables(conf domain.DeployConfig) map[string]string {
 
 	return rs
 }
+
+// contains 检查字符串切片中是否包含指定的字符串
+func contains(slice []string, item string) bool {
+    for _, s := range slice {
+        if s == item {
+            return true
+        }
+    }
+    return false
+}
