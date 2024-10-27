@@ -170,14 +170,21 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 支持更多服务商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家提交 PR。
 
-## 八、加入社区
+## 八、免责声明
+
+本软件依据 MIT 许可证（MIT License）发布，免费提供，旨在“按现状”供用户使用。作者及贡献者不对使用本软件所产生的任何直接或间接后果承担责任，包括但不限于性能下降、数据丢失、服务中断、或任何其他类型的损害。
+
+无任何保证：本软件不提供任何明示或暗示的保证，包括但不限于对特定用途的适用性、无侵权性、商用性及可靠性的保证。
+
+用户责任：使用本软件即表示您理解并同意承担由此产生的一切风险及责任。
+
+## 九、加入社区
 
 - [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
 - 微信群聊（超 200 人需邀请入群，可先加作者好友）
 
 <img src="https://i.imgur.com/8xwsLTA.png" width="400"/>
 
-## 九、Star 趋势图
+## 十、Star 趋势图
 
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
-
