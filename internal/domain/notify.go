@@ -5,6 +5,7 @@ const (
 	NotifyChannelWebhook  = "webhook"
 	NotifyChannelTelegram = "telegram"
 	NotifyChannelLark     = "lark"
+	NotifyChannelServerChan = "serverchan"
 )
 
 type NotifyTestPushReq struct {
