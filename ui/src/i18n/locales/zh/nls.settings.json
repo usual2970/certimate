@@ -35,6 +35,7 @@
   "settings.notification.config.push.test.message.success.message": "推送测试消息成功",
   "settings.notification.dingtalk.secret.placeholder": "加签的签名",
   "settings.notification.url.errmsg.invalid": "URL 格式不正确",
+  "settings.notification.serverchan.url.placeholder": "Url, 形如: https://sctapi.ftqq.com/****************.send",
 
   "settings.ca.tab": "证书颁发机构（CA）",
   "settings.ca.provider.errmsg.empty": "请选择证书分发机构",

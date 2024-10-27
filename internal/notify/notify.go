@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 
+	stdhttp "net/http"
+
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/app"
 
@@ -102,6 +104,8 @@ func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, e
 		return getLarkNotifier(conf), nil
 	case domain.NotifyChannelWebhook:
 		return getWebhookNotifier(conf), nil
+	case domain.NotifyChannelServerChan:
+		return getServerChanNotifier(conf), nil
 	}
 
 	return nil, fmt.Errorf("notifier not found")
@@ -129,6 +133,25 @@ func getTelegramNotifier(conf map[string]any) notifyPackage.Notifier {
 	}
 
 	rs.AddReceivers(id)
+	return rs
+}
+
+func getServerChanNotifier(conf map[string]any) notifyPackage.Notifier {
+	rs := http.New()
+
+	rs.AddReceivers(&http.Webhook{
+		URL:         getString(conf, "url"),
+		Header:      stdhttp.Header{},
+		ContentType: "application/json",
+		Method:      stdhttp.MethodPost,
+		BuildPayload: func(subject, message string) (payload any) {
+			return map[string]string{
+				"text": subject,
+				"desp": message,
+			}
+		},
+	})
+
 	return rs
 }
 

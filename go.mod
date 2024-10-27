@@ -5,9 +5,12 @@ go 1.22.0
 toolchain go1.23.2
 
 require (
+	github.com/alibabacloud-go/alb-20200616/v2 v2.2.1
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.1
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.0.0
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10
+	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
+	github.com/alibabacloud-go/slb-20140515/v4 v4.0.9
 	github.com/alibabacloud-go/tea v1.2.2
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.6
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
@@ -21,7 +24,7 @@ require (
 	github.com/pocketbase/pocketbase v0.22.18
 	github.com/qiniu/go-sdk/v7 v7.22.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1017
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1030
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	golang.org/x/crypto v0.28.0
 	k8s.io/api v0.31.1
@@ -56,6 +59,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1030 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

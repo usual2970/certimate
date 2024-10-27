@@ -35,6 +35,7 @@
   "settings.notification.config.push.test.message.success.message": "Send test notification successfully",
   "settings.notification.dingtalk.secret.placeholder": "Signature for signed addition",
   "settings.notification.url.errmsg.invalid": "Invalid Url format",
+  "settings.notification.serverchan.url.placeholder": "Url, e.g. https://sctapi.ftqq.com/****************.send",
 
   "settings.ca.tab": "Certificate Authority",
   "settings.ca.provider.errmsg.empty": "Please select a Certificate Authority",

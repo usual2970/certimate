@@ -6,6 +6,7 @@ import Lark from "@/components/notify/Lark";
 import NotifyTemplate from "@/components/notify/NotifyTemplate";
 import Telegram from "@/components/notify/Telegram";
 import Webhook from "@/components/notify/Webhook";
+import ServerChan from "@/components/notify/ServerChan";
 import { NotifyProvider } from "@/providers/notify";
 
 const Notify = () => {
@@ -51,6 +52,13 @@ const Notify = () => {
               <AccordionTrigger>{t("common.provider.webhook")}</AccordionTrigger>
               <AccordionContent>
                 <Webhook />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-6" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.serverchan")}</AccordionTrigger>
+              <AccordionContent>
+                <ServerChan />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

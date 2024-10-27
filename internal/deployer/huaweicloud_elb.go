@@ -46,9 +46,9 @@ func NewHuaweiCloudELBDeployer(option *DeployerOption) (Deployer, error) {
 	}
 
 	uploader, err := uploader.NewHuaweiCloudELBUploader(&uploader.HuaweiCloudELBUploaderConfig{
-		Region:          option.DeployConfig.GetConfigAsString("region"),
 		AccessKeyId:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
+		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
 		return nil, err
@@ -176,10 +176,15 @@ func (u *HuaweiCloudELBDeployer) getSdkProjectId(accessKeyId, secretAccessKey, r
 }
 
 func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context) error {
+	hcCertId := d.option.DeployConfig.GetConfigAsString("certificateId")
+	if hcCertId == "" {
+		return errors.New("`certificateId` is required")
+	}
+
 	// 更新证书
 	// REF: https://support.huaweicloud.com/api-elb/UpdateCertificate.html
 	updateCertificateReq := &hcElbModel.UpdateCertificateRequest{
-		CertificateId: d.option.DeployConfig.GetConfigAsString("certificateId"),
+		CertificateId: hcCertId,
 		Body: &hcElbModel.UpdateCertificateRequestBody{
 			Certificate: &hcElbModel.UpdateCertificateOption{
 				Certificate: cast.StringPtr(d.option.Certificate.Certificate),
@@ -198,21 +203,27 @@ func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context) error 
 }
 
 func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error {
+	hcLoadbalancerId := d.option.DeployConfig.GetConfigAsString("loadbalancerId")
+	if hcLoadbalancerId == "" {
+		return errors.New("`loadbalancerId` is required")
+	}
+
+	hcListenerIds := make([]string, 0)
+
 	// 查询负载均衡器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowLoadBalancer.html
 	showLoadBalancerReq := &hcElbModel.ShowLoadBalancerRequest{
-		LoadbalancerId: d.option.DeployConfig.GetConfigAsString("loadbalancerId"),
+		LoadbalancerId: hcLoadbalancerId,
 	}
 	showLoadBalancerResp, err := d.sdkClient.ShowLoadBalancer(showLoadBalancerReq)
 	if err != nil {
 		return fmt.Errorf("failed to execute sdk request 'elb.ShowLoadBalancer': %w", err)
 	}
 
-	d.infos = append(d.infos, toStr("已查询到到 ELB 负载均衡器", showLoadBalancerResp))
+	d.infos = append(d.infos, toStr("已查询到 ELB 负载均衡器", showLoadBalancerResp))
 
 	// 查询监听器列表
 	// REF: https://support.huaweicloud.com/api-elb/ListListeners.html
-	listenerIds := make([]string, 0)
 	listListenersLimit := int32(2000)
 	var listListenersMarker *string = nil
 	for {
@@ -229,7 +240,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 
 		if listListenersResp.Listeners != nil {
 			for _, listener := range *listListenersResp.Listeners {
-				listenerIds = append(listenerIds, listener.Id)
+				hcListenerIds = append(hcListenerIds, listener.Id)
 			}
 		}
 
@@ -240,7 +251,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 		}
 	}
 
-	d.infos = append(d.infos, toStr("已查询到到 ELB 负载均衡器下的监听器", listenerIds))
+	d.infos = append(d.infos, toStr("已查询到 ELB 负载均衡器下的监听器", hcListenerIds))
 
 	// 上传证书到 SCM
 	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
@@ -252,8 +263,8 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 
 	// 批量更新监听器证书
 	var errs []error
-	for _, listenerId := range listenerIds {
-		if err := d.updateListenerCertificate(ctx, listenerId, uploadResult.CertId); err != nil {
+	for _, hcListenerId := range hcListenerIds {
+		if err := d.updateListenerCertificate(ctx, hcListenerId, uploadResult.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -265,6 +276,11 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 }
 
 func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context) error {
+	hcListenerId := d.option.DeployConfig.GetConfigAsString("listenerId")
+	if hcListenerId == "" {
+		return errors.New("`listenerId` is required")
+	}
+
 	// 上传证书到 SCM
 	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
@@ -274,7 +290,7 @@ func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
 
 	// 更新监听器证书
-	if err := d.updateListenerCertificate(ctx, d.option.DeployConfig.GetConfigAsString("listenerId"), uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, hcListenerId, uploadResult.CertId); err != nil {
 		return err
 	}
 
@@ -292,7 +308,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 		return fmt.Errorf("failed to execute sdk request 'elb.ShowListener': %w", err)
 	}
 
-	d.infos = append(d.infos, toStr("已查询到到 ELB 监听器", showListenerResp))
+	d.infos = append(d.infos, toStr("已查询到 ELB 监听器", showListenerResp))
 
 	// 更新监听器
 	// REF: https://support.huaweicloud.com/api-elb/UpdateListener.html
@@ -359,7 +375,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 		return fmt.Errorf("failed to execute sdk request 'elb.UpdateListener': %w", err)
 	}
 
-	d.infos = append(d.infos, toStr("已更新监听器", updateListenerResp))
+	d.infos = append(d.infos, toStr("已更新 ELB 监听器", updateListenerResp))
 
 	return nil
 }

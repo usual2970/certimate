@@ -11,9 +11,13 @@ import AccessEditDialog from "./AccessEditDialog";
 import { Context as DeployEditContext } from "./DeployEdit";
 import DeployToAliyunOSS from "./DeployToAliyunOSS";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
+import DeployToAliyunCLB from "./DeployToAliyunCLB";
+import DeployToAliyunALB from "./DeployToAliyunALB";
+import DeployToAliyunNLB from "./DeployToAliyunNLB";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCLB from "./DeployToTencentCLB";
 import DeployToTencentCOS from "./DeployToTencentCOS";
+import DeployToTencentTEO from "./DeployToTencentTEO";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
@@ -119,7 +123,17 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     case "aliyun-dcdn":
       childComponent = <DeployToAliyunCDN />;
       break;
+    case "aliyun-clb":
+      childComponent = <DeployToAliyunCLB />;
+      break;
+    case "aliyun-alb":
+      childComponent = <DeployToAliyunALB />;
+      break;
+    case "aliyun-nlb":
+      childComponent = <DeployToAliyunNLB />;
+      break;
     case "tencent-cdn":
+    case "tencent-ecdn":
       childComponent = <DeployToTencentCDN />;
       break;
     case "tencent-clb":
@@ -127,6 +141,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "tencent-cos":
       childComponent = <DeployToTencentCOS />;
+      break;
+    case "tencent-teo":
+      childComponent = <DeployToTencentTEO />;
       break;
     case "huaweicloud-cdn":
       childComponent = <DeployToHuaweiCloudCDN />;

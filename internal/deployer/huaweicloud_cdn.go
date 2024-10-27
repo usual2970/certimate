@@ -41,9 +41,9 @@ func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 
 	// TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
 	uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
-		Region:          "",
 		AccessKeyId:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
+		Region:          "",
 	})
 	if err != nil {
 		return nil, err
