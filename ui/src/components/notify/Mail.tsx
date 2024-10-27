@@ -214,7 +214,7 @@ const Mail = () => {
             ...mail,
             data: {
               ...mail.data,
-              secret: e.target.value,
+              receiverAddresses: e.target.value,
             },
           };
           checkChanged(newData.data);
@@ -230,7 +230,7 @@ const Mail = () => {
             ...mail,
             data: {
               ...mail.data,
-              secret: e.target.value,
+              smtpHostAddr: e.target.value,
             },
           };
           checkChanged(newData.data);
@@ -246,7 +246,7 @@ const Mail = () => {
             ...mail,
             data: {
             ...mail.data,
-            secret: e.target.value,
+            smtpHostPort: e.target.value,
             },
         };
         checkChanged(newData.data);
@@ -262,7 +262,7 @@ const Mail = () => {
             ...mail,
             data: {
             ...mail.data,
-            secret: e.target.value,
+            username: e.target.value,
             },
         };
         checkChanged(newData.data);
@@ -278,7 +278,7 @@ const Mail = () => {
             ...mail,
             data: {
             ...mail.data,
-            secret: e.target.value,
+            password: e.target.value,
             },
         };
         checkChanged(newData.data);
