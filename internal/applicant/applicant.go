@@ -98,7 +98,7 @@ func newApplyUser(ca, email string) (*ApplyUser, error) {
 		if err != nil {
 			return nil, err
 		}
-		keyStr, err := x509.PrivateKeyToPEM(privateKey)
+		keyStr, err := x509.ConvertECPrivateKeyToPEM(privateKey)
 		if err != nil {
 			return nil, err
 		}
@@ -122,7 +122,7 @@ func (u ApplyUser) GetRegistration() *registration.Resource {
 }
 
 func (u *ApplyUser) GetPrivateKey() crypto.PrivateKey {
-	rs, _ := x509.ParsePrivateKeyFromPEM(u.key)
+	rs, _ := x509.ParseECPrivateKeyFromPEM(u.key)
 	return rs
 }
 

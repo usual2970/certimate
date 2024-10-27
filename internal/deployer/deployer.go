@@ -18,6 +18,9 @@ const (
 	targetAliyunOSS      = "aliyun-oss"
 	targetAliyunCDN      = "aliyun-cdn"
 	targetAliyunESA      = "aliyun-dcdn"
+	targetAliyunCLB      = "aliyun-clb"
+	targetAliyunALB      = "aliyun-alb"
+	targetAliyunNLB      = "aliyun-nlb"
 	targetTencentCDN     = "tencent-cdn"
 	targetTencentECDN    = "tencent-ecdn"
 	targetTencentCLB     = "tencent-clb"
@@ -108,6 +111,12 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewAliyunCDNDeployer(option)
 	case targetAliyunESA:
 		return NewAliyunESADeployer(option)
+	case targetAliyunCLB:
+		return NewAliyunCLBDeployer(option)
+	case targetAliyunALB:
+		return NewAliyunALBDeployer(option)
+	case targetAliyunNLB:
+		return NewAliyunNLBDeployer(option)
 	case targetTencentCDN:
 		return NewTencentCDNDeployer(option)	
 	case targetTencentECDN:
@@ -133,7 +142,7 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	case targetK8sSecret:
 		return NewK8sSecretDeployer(option)
 	}
-	return nil, errors.New("not implemented")
+	return nil, errors.New("unsupported deploy target")
 }
 
 func getProduct(t string) string {

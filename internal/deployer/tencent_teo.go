@@ -94,7 +94,7 @@ func (d *TencentTEODeployer) deploy(certId string) error {
 
 	request.ZoneId = common.StringPtr(getDeployString(d.option.DeployConfig, "zoneId"))
 	request.Mode = common.StringPtr("sslcert")
-	request.ServerCertInfo = []*teo.ServerCertInfo{&teo.ServerCertInfo{
+	request.ServerCertInfo = []*teo.ServerCertInfo{{
 		CertId: common.StringPtr(certId),
 	}}
 
