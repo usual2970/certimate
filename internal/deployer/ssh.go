@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/fs"
 )
 
 type SSHDeployer struct {
@@ -61,8 +62,8 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 	}
 
 	// 上传证书和私钥文件
-	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", "pem") {
-	case "pem":
+	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", certFormatPEM) {
+	case certFormatPEM:
 		if err := d.writeSftpFileString(client, d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
 			return fmt.Errorf("failed to upload certificate file: %w", err)
 		}
@@ -75,8 +76,12 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 
 		d.infos = append(d.infos, toStr("SSH 上传私钥成功", nil))
 
-	case "pfx":
-		pfxData, err := convertPemToPfx(d.option.Certificate.Certificate, d.option.Certificate.PrivateKey, d.option.DeployConfig.GetConfigAsString("pfxPassword"))
+	case certFormatPFX:
+		pfxData, err := convertPEMToPFX(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
+		)
 		if err != nil {
 			return fmt.Errorf("failed to convert pem to pfx %w", err)
 		}
@@ -86,6 +91,24 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 		}
 
 		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
+
+	case certFormatJKS:
+		jksData, err := convertPEMToJKS(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("jksAlias"),
+			d.option.DeployConfig.GetConfigAsString("jksKeypass"),
+			d.option.DeployConfig.GetConfigAsString("jksStorepass"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
 	}
 
 	// 执行命令

@@ -23,6 +23,9 @@ const DeployToSSH = () => {
           certPath: "/etc/nginx/ssl/nginx.crt",
           keyPath: "/etc/nginx/ssl/nginx.key",
           pfxPassword: "",
+          jksAlias: "",
+          jksKeypass: "",
+          jksStorepass: "",
           preCommand: "",
           command: "sudo service nginx reload",
         },
@@ -36,7 +39,7 @@ const DeployToSSH = () => {
 
   const formSchema = z
     .object({
-      format: z.union([z.literal("pem"), z.literal("pfx")], {
+      format: z.union([z.literal("pem"), z.literal("pfx"), z.literal("jks")], {
         message: t("domain.deployment.form.file_format.placeholder"),
       }),
       certPath: z
@@ -48,6 +51,9 @@ const DeployToSSH = () => {
         .min(0, t("domain.deployment.form.file_key_path.placeholder"))
         .max(255, t("common.errmsg.string_max", { max: 255 })),
       pfxPassword: z.string().optional(),
+      jksAlias: z.string().optional(),
+      jksKeypass: z.string().optional(),
+      jksStorepass: z.string().optional(),
       preCommand: z.string().optional(),
       command: z.string().optional(),
     })
@@ -58,6 +64,18 @@ const DeployToSSH = () => {
     .refine((data) => (data.format === "pfx" ? !!data.pfxPassword?.trim() : true), {
       message: t("domain.deployment.form.file_pfx_password.placeholder"),
       path: ["pfxPassword"],
+    })
+    .refine((data) => (data.format === "jks" ? !!data.jksAlias?.trim() : true), {
+      message: t("domain.deployment.form.file_jks_alias.placeholder"),
+      path: ["jksAlias"],
+    })
+    .refine((data) => (data.format === "jks" ? !!data.jksKeypass?.trim() : true), {
+      message: t("domain.deployment.form.file_jks_keypass.placeholder"),
+      path: ["jksKeypass"],
+    })
+    .refine((data) => (data.format === "jks" ? !!data.jksStorepass?.trim() : true), {
+      message: t("domain.deployment.form.file_jks_storepass.placeholder"),
+      path: ["jksStorepass"],
     });
 
   useEffect(() => {
@@ -65,16 +83,26 @@ const DeployToSSH = () => {
     if (!res.success) {
       setError({
         ...error,
+        format: res.error.errors.find((e) => e.path[0] === "format")?.message,
         certPath: res.error.errors.find((e) => e.path[0] === "certPath")?.message,
         keyPath: res.error.errors.find((e) => e.path[0] === "keyPath")?.message,
+        pfxPassword: res.error.errors.find((e) => e.path[0] === "pfxPassword")?.message,
+        jksAlias: res.error.errors.find((e) => e.path[0] === "jksAlias")?.message,
+        jksKeypass: res.error.errors.find((e) => e.path[0] === "jksKeypass")?.message,
+        jksStorepass: res.error.errors.find((e) => e.path[0] === "jksStorepass")?.message,
         preCommand: res.error.errors.find((e) => e.path[0] === "preCommand")?.message,
         command: res.error.errors.find((e) => e.path[0] === "command")?.message,
       });
     } else {
       setError({
         ...error,
+        format: undefined,
         certPath: undefined,
         keyPath: undefined,
+        pfxPassword: undefined,
+        jksAlias: undefined,
+        jksKeypass: undefined,
+        jksStorepass: undefined,
         preCommand: undefined,
         command: undefined,
       });
@@ -83,18 +111,26 @@ const DeployToSSH = () => {
 
   useEffect(() => {
     if (data.config?.format === "pem") {
-      if (data.config.certPath && data.config.certPath.endsWith(".pfx")) {
+      if (/(.pfx|.jks)$/.test(data.config.certPath)) {
         const newData = produce(data, (draft) => {
           draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/.pfx$/, ".crt");
+          draft.config.certPath = data.config!.certPath.replace(/(.pfx|.jks)$/, ".crt");
         });
         setDeploy(newData);
       }
     } else if (data.config?.format === "pfx") {
-      if (data.config.certPath && data.config.certPath.endsWith(".crt")) {
+      if (/(.crt|.jks)$/.test(data.config.certPath)) {
         const newData = produce(data, (draft) => {
           draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/.crt$/, ".pfx");
+          draft.config.certPath = data.config!.certPath.replace(/(.crt|.jks)$/, ".pfx");
+        });
+        setDeploy(newData);
+      }
+    } else if (data.config?.format === "jks") {
+      if (/(.crt|.pfx)$/.test(data.config.certPath)) {
+        const newData = produce(data, (draft) => {
+          draft.config ??= {};
+          draft.config.certPath = data.config!.certPath.replace(/(.crt|.pfx)$/, ".jks");
         });
         setDeploy(newData);
       }
@@ -123,6 +159,7 @@ const DeployToSSH = () => {
               <SelectGroup>
                 <SelectItem value="pem">PEM</SelectItem>
                 <SelectItem value="pfx">PFX</SelectItem>
+                <SelectItem value="jks">JKS</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
@@ -184,6 +221,63 @@ const DeployToSSH = () => {
             />
             <div className="text-red-600 text-sm mt-1">{error?.pfxPassword}</div>
           </div>
+        ) : (
+          <></>
+        )}
+
+        {data.config?.format === "jks" ? (
+          <>
+            <div>
+              <Label>{t("domain.deployment.form.file_jks_alias.label")}</Label>
+              <Input
+                placeholder={t("domain.deployment.form.file_jks_alias.placeholder")}
+                className="w-full mt-1"
+                value={data?.config?.jksAlias}
+                onChange={(e) => {
+                  const newData = produce(data, (draft) => {
+                    draft.config ??= {};
+                    draft.config.jksAlias = e.target.value?.trim();
+                  });
+                  setDeploy(newData);
+                }}
+              />
+              <div className="text-red-600 text-sm mt-1">{error?.jksAlias}</div>
+            </div>
+
+            <div>
+              <Label>{t("domain.deployment.form.file_jks_keypass.label")}</Label>
+              <Input
+                placeholder={t("domain.deployment.form.file_jks_keypass.placeholder")}
+                className="w-full mt-1"
+                value={data?.config?.jksKeypass}
+                onChange={(e) => {
+                  const newData = produce(data, (draft) => {
+                    draft.config ??= {};
+                    draft.config.jksKeypass = e.target.value?.trim();
+                  });
+                  setDeploy(newData);
+                }}
+              />
+              <div className="text-red-600 text-sm mt-1">{error?.jksKeypass}</div>
+            </div>
+
+            <div>
+              <Label>{t("domain.deployment.form.file_jks_storepass.label")}</Label>
+              <Input
+                placeholder={t("domain.deployment.form.file_jks_storepass.placeholder")}
+                className="w-full mt-1"
+                value={data?.config?.jksStorepass}
+                onChange={(e) => {
+                  const newData = produce(data, (draft) => {
+                    draft.config ??= {};
+                    draft.config.jksStorepass = e.target.value?.trim();
+                  });
+                  setDeploy(newData);
+                }}
+              />
+              <div className="text-red-600 text-sm mt-1">{error?.jksStorepass}</div>
+            </div>
+          </>
         ) : (
           <></>
         )}

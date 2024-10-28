@@ -17,6 +17,18 @@ type LocalDeployer struct {
 	infos  []string
 }
 
+const (
+	certFormatPEM = "pem"
+	certFormatPFX = "pfx"
+	certFormatJKS = "jks"
+)
+
+const (
+	shellEnvSh         = "sh"
+	shellEnvCmd        = "cmd"
+	shellEnvPowershell = "powershell"
+)
+
 func NewLocalDeployer(option *DeployerOption) (Deployer, error) {
 	return &LocalDeployer{
 		option: option,
@@ -50,8 +62,8 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 	}
 
 	// 写入证书和私钥文件
-	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", "pem") {
-	case "pem":
+	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", certFormatPEM) {
+	case certFormatPEM:
 		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
 			return fmt.Errorf("failed to save certificate file: %w", err)
 		}
@@ -64,13 +76,35 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 
 		d.infos = append(d.infos, toStr("保存私钥成功", nil))
 
-	case "pfx":
-		pfxData, err := convertPemToPfx(d.option.Certificate.Certificate, d.option.Certificate.PrivateKey, d.option.DeployConfig.GetConfigAsString("pfxPassword"))
+	case certFormatPFX:
+		pfxData, err := convertPEMToPFX(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
+		)
 		if err != nil {
 			return fmt.Errorf("failed to convert pem to pfx %w", err)
 		}
 
 		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
+
+	case certFormatJKS:
+		jksData, err := convertPEMToJKS(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("jksAlias"),
+			d.option.DeployConfig.GetConfigAsString("jksKeypass"),
+			d.option.DeployConfig.GetConfigAsString("jksStorepass"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
 			return fmt.Errorf("failed to save certificate file: %w", err)
 		}
 
@@ -95,13 +129,13 @@ func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 	var cmd *exec.Cmd
 
 	switch d.option.DeployConfig.GetConfigAsString("shell") {
-	case "sh":
+	case shellEnvSh:
 		cmd = exec.Command("sh", "-c", command)
 
-	case "cmd":
+	case shellEnvCmd:
 		cmd = exec.Command("cmd", "/C", command)
 
-	case "powershell":
+	case shellEnvPowershell:
 		cmd = exec.Command("powershell", "-Command", command)
 
 	case "":

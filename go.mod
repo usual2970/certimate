@@ -19,6 +19,7 @@ require (
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.114
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
 	github.com/nikoksr/notify v1.0.0
+	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/pkg/sftp v1.13.6
 	github.com/pocketbase/dbx v1.10.1
 	github.com/pocketbase/pocketbase v0.22.18
