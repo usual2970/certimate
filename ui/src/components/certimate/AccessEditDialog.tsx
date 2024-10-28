@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
@@ -20,7 +19,8 @@ import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
-import { Access, accessProvidersMap } from "@/domain/access";
+import { Access } from "@/domain/access";
+import { AccessTypeSelect } from "./AccessTypeSelect";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
@@ -194,16 +194,17 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
       break;
   }
 
-  const getOptionCls = (val: string) => {
-    return val == configType ? "border-primary" : "";
-  };
-
   return (
-    <Dialog onOpenChange={setOpen} open={open}>
+    <Dialog onOpenChange={setOpen} open={open} modal={false}>
       <DialogTrigger asChild className={cn(className)}>
         {trigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px] w-full dark:text-stone-200">
+      <DialogContent
+        className="sm:max-w-[600px] w-full dark:text-stone-200"
+        onInteractOutside={(event) => {
+          event.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>
             {
@@ -219,29 +220,15 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
           <div className="container py-3">
             <div>
               <Label>{t("access.authorization.form.type.label")}</Label>
-              <Select
-                onValueChange={(val) => {
+              <AccessTypeSelect
+                value={configType}
+                onChange={(val) => {
                   setConfigType(val);
                 }}
-                defaultValue={configType}
-              >
-                <SelectTrigger className="mt-3">
-                  <SelectValue placeholder={t("access.authorization.form.type.placeholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>{t("access.authorization.form.type.list")}</SelectLabel>
-                    {Array.from(accessProvidersMap.entries()).map(([key, provider]) => (
-                      <SelectItem value={key} key={key}>
-                        <div className={cn("flex items-center space-x-2 rounded cursor-pointer", getOptionCls(key))}>
-                          <img src={provider.icon} className="h-6 w-6" />
-                          <div>{t(provider.name)}</div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+                className="w-full mt-3"
+                placeholder={t("access.authorization.form.type.placeholder")}
+                searchPlaceholder={t("access.authorization.form.type.search.placeholder")}
+              />
             </div>
 
             <div className="mt-8">{childComponent}</div>
