@@ -6,9 +6,8 @@ import (
 	"strings"
 	"time"
 
-	cas20200407 "github.com/alibabacloud-go/cas-20200407/v3/client"
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	util "github.com/alibabacloud-go/tea-utils/v2/service"
+	aliyunCas "github.com/alibabacloud-go/cas-20200407/v3/client"
+	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
@@ -21,9 +20,8 @@ type AliyunCASUploaderConfig struct {
 }
 
 type AliyunCASUploader struct {
-	config     *AliyunCASUploaderConfig
-	sdkClient  *cas20200407.Client
-	sdkRuntime *util.RuntimeOptions
+	config    *AliyunCASUploaderConfig
+	sdkClient *aliyunCas.Client
 }
 
 func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (Uploader, error) {
@@ -37,9 +35,8 @@ func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (Uploader, error) {
 	}
 
 	return &AliyunCASUploader{
-		config:     config,
-		sdkClient:  client,
-		sdkRuntime: &util.RuntimeOptions{},
+		config:    config,
+		sdkClient: client,
 	}, nil
 }
 
@@ -56,12 +53,12 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	listUserCertificateOrderPage := int64(1)
 	listUserCertificateOrderLimit := int64(50)
 	for {
-		listUserCertificateOrderReq := &cas20200407.ListUserCertificateOrderRequest{
+		listUserCertificateOrderReq := &aliyunCas.ListUserCertificateOrderRequest{
 			CurrentPage: tea.Int64(listUserCertificateOrderPage),
 			ShowSize:    tea.Int64(listUserCertificateOrderLimit),
 			OrderType:   tea.String("CERT"),
 		}
-		listUserCertificateOrderResp, err := u.sdkClient.ListUserCertificateOrderWithOptions(listUserCertificateOrderReq, u.sdkRuntime)
+		listUserCertificateOrderResp, err := u.sdkClient.ListUserCertificateOrder(listUserCertificateOrderReq)
 		if err != nil {
 			return nil, fmt.Errorf("failed to execute sdk request 'cas.ListUserCertificateOrder': %w", err)
 		}
@@ -69,10 +66,10 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 		if listUserCertificateOrderResp.Body.CertificateOrderList != nil {
 			for _, certDetail := range listUserCertificateOrderResp.Body.CertificateOrderList {
 				if strings.EqualFold(certX509.SerialNumber.Text(16), *certDetail.SerialNo) {
-					getUserCertificateDetailReq := &cas20200407.GetUserCertificateDetailRequest{
+					getUserCertificateDetailReq := &aliyunCas.GetUserCertificateDetailRequest{
 						CertId: certDetail.CertificateId,
 					}
-					getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetailWithOptions(getUserCertificateDetailReq, u.sdkRuntime)
+					getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
 					if err != nil {
 						return nil, fmt.Errorf("failed to execute sdk request 'cas.GetUserCertificateDetail': %w", err)
 					}
@@ -116,12 +113,12 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-uploadusercertificate
-	uploadUserCertificateReq := &cas20200407.UploadUserCertificateRequest{
+	uploadUserCertificateReq := &aliyunCas.UploadUserCertificateRequest{
 		Name: tea.String(certName),
 		Cert: tea.String(certPem),
 		Key:  tea.String(privkeyPem),
 	}
-	uploadUserCertificateResp, err := u.sdkClient.UploadUserCertificateWithOptions(uploadUserCertificateReq, u.sdkRuntime)
+	uploadUserCertificateResp, err := u.sdkClient.UploadUserCertificate(uploadUserCertificateReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'cas.UploadUserCertificate': %w", err)
 	}
@@ -133,12 +130,12 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunCASUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*cas20200407.Client, error) {
+func (u *AliyunCASUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}
 
-	aConfig := &openapi.Config{
+	aConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
@@ -152,7 +149,7 @@ func (u *AliyunCASUploader) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := cas20200407.NewClient(aConfig)
+	client, err := aliyunCas.NewClient(aConfig)
 	if err != nil {
 		return nil, err
 	}

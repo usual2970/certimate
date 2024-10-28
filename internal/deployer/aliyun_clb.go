@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	slb20140515 "github.com/alibabacloud-go/slb-20140515/v4/client"
+	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -18,7 +18,7 @@ type AliyunCLBDeployer struct {
 	option *DeployerOption
 	infos  []string
 
-	sdkClient   *slb20140515.Client
+	sdkClient   *aliyunSlb.Client
 	sslUploader uploader.Uploader
 }
 
@@ -77,12 +77,12 @@ func (d *AliyunCLBDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*slb20140515.Client, error) {
+func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CLB(SLB) 服务默认区域：华东一杭州
 	}
 
-	aConfig := &openapi.Config{
+	aConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
@@ -99,7 +99,7 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := slb20140515.NewClient(aConfig)
+	client, err := aliyunSlb.NewClient(aConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
-	describeLoadBalancerAttributeReq := &slb20140515.DescribeLoadBalancerAttributeRequest{
+	describeLoadBalancerAttributeReq := &aliyunSlb.DescribeLoadBalancerAttributeRequest{
 		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 	}
@@ -134,7 +134,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
-		describeLoadBalancerListenersReq := &slb20140515.DescribeLoadBalancerListenersRequest{
+		describeLoadBalancerListenersReq := &aliyunSlb.DescribeLoadBalancerListenersRequest{
 			RegionId:         tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
@@ -214,7 +214,7 @@ func (d *AliyunCLBDeployer) deployToListener(ctx context.Context) error {
 func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLoadbalancerId string, aliListenerPort int32, aliCertId string) error {
 	// 查询监听配置
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerhttpslistenerattribute
-	describeLoadBalancerHTTPSListenerAttributeReq := &slb20140515.DescribeLoadBalancerHTTPSListenerAttributeRequest{
+	describeLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.DescribeLoadBalancerHTTPSListenerAttributeRequest{
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 		ListenerPort:   tea.Int32(aliListenerPort),
 	}
@@ -227,7 +227,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 
 	// 查询扩展域名
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
-	describeDomainExtensionsReq := &slb20140515.DescribeDomainExtensionsRequest{
+	describeDomainExtensionsReq := &aliyunSlb.DescribeDomainExtensionsRequest{
 		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 		ListenerPort:   tea.Int32(aliListenerPort),
@@ -249,7 +249,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 				break
 			}
 
-			setDomainExtensionAttributeReq := &slb20140515.SetDomainExtensionAttributeRequest{
+			setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
 				RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 				DomainExtensionId:   tea.String(*domainExtension.DomainExtensionId),
 				ServerCertificateId: tea.String(aliCertId),
@@ -265,7 +265,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
 	//
 	// 注意修改监听配置要放在修改扩展域名之后
-	setLoadBalancerHTTPSListenerAttributeReq := &slb20140515.SetLoadBalancerHTTPSListenerAttributeRequest{
+	setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
 		RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId:      tea.String(aliLoadbalancerId),
 		ListenerPort:        tea.Int32(aliListenerPort),

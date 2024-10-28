@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	corev1 "k8s.io/api/core/v1"
-	k8sMetaV1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	k8sCore "k8s.io/api/core/v1"
+	k8sMeta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -49,46 +49,46 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 
 	d.infos = append(d.infos, toStr("kubeClient create success.", nil))
 
-	namespace := getDeployString(d.option.DeployConfig, "namespace")
+	namespace := d.option.DeployConfig.GetConfigAsString("namespace")
 	if namespace == "" {
 		namespace = "default"
 	}
 
-	secretName := getDeployString(d.option.DeployConfig, "secretName")
+	secretName := d.option.DeployConfig.GetConfigAsString("secretName")
 	if secretName == "" {
 		return fmt.Errorf("k8s secret name is empty")
 	}
 
-	secretDataKeyForCrt := getDeployString(d.option.DeployConfig, "secretDataKeyForCrt")
+	secretDataKeyForCrt := d.option.DeployConfig.GetConfigAsString("secretDataKeyForCrt")
 	if secretDataKeyForCrt == "" {
 		namespace = "tls.crt"
 	}
 
-	secretDataKeyForKey := getDeployString(d.option.DeployConfig, "secretDataKeyForKey")
+	secretDataKeyForKey := d.option.DeployConfig.GetConfigAsString("secretDataKeyForKey")
 	if secretDataKeyForKey == "" {
 		namespace = "tls.key"
 	}
 
-	certificate, err := x509.ParseCertificateFromPEM(d.option.Certificate.Certificate)
+	certX509, err := x509.ParseCertificateFromPEM(d.option.Certificate.Certificate)
 	if err != nil {
 		return fmt.Errorf("failed to parse certificate: %w", err)
 	}
 
-	secretPayload := corev1.Secret{
-		TypeMeta: k8sMetaV1.TypeMeta{
+	secretPayload := k8sCore.Secret{
+		TypeMeta: k8sMeta.TypeMeta{
 			Kind:       "Secret",
 			APIVersion: "v1",
 		},
-		ObjectMeta: k8sMetaV1.ObjectMeta{
+		ObjectMeta: k8sMeta.ObjectMeta{
 			Name: secretName,
 			Annotations: map[string]string{
 				"certimate/domains":             d.option.Domain,
-				"certimate/alt-names":           strings.Join(certificate.DNSNames, ","),
-				"certimate/common-name":         certificate.Subject.CommonName,
-				"certimate/issuer-organization": strings.Join(certificate.Issuer.Organization, ","),
+				"certimate/alt-names":           strings.Join(certX509.DNSNames, ","),
+				"certimate/common-name":         certX509.Subject.CommonName,
+				"certimate/issuer-organization": strings.Join(certX509.Issuer.Organization, ","),
 			},
 		},
-		Type: corev1.SecretType("kubernetes.io/tls"),
+		Type: k8sCore.SecretType("kubernetes.io/tls"),
 	}
 
 	secretPayload.Data = make(map[string][]byte)
@@ -96,9 +96,9 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	secretPayload.Data[secretDataKeyForKey] = []byte(d.option.Certificate.PrivateKey)
 
 	// 获取 Secret 实例
-	_, err = client.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMetaV1.GetOptions{})
+	_, err = client.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMeta.GetOptions{})
 	if err != nil {
-		_, err = client.CoreV1().Secrets(namespace).Create(context.TODO(), &secretPayload, k8sMetaV1.CreateOptions{})
+		_, err = client.CoreV1().Secrets(namespace).Create(context.TODO(), &secretPayload, k8sMeta.CreateOptions{})
 		if err != nil {
 			return fmt.Errorf("failed to create k8s secret: %w", err)
 		} else {
@@ -108,7 +108,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	}
 
 	// 更新 Secret 实例
-	_, err = client.CoreV1().Secrets(namespace).Update(ctx, &secretPayload, k8sMetaV1.UpdateOptions{})
+	_, err = client.CoreV1().Secrets(namespace).Update(ctx, &secretPayload, k8sMeta.UpdateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to update k8s secret: %w", err)
 	}

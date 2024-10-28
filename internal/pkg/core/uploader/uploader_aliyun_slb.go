@@ -8,9 +8,8 @@ import (
 	"strings"
 	"time"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	slb20140515 "github.com/alibabacloud-go/slb-20140515/v4/client"
-	util "github.com/alibabacloud-go/tea-utils/v2/service"
+	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
@@ -23,9 +22,8 @@ type AliyunSLBUploaderConfig struct {
 }
 
 type AliyunSLBUploader struct {
-	config     *AliyunSLBUploaderConfig
-	sdkClient  *slb20140515.Client
-	sdkRuntime *util.RuntimeOptions
+	config    *AliyunSLBUploaderConfig
+	sdkClient *aliyunSlb.Client
 }
 
 func NewAliyunSLBUploader(config *AliyunSLBUploaderConfig) (Uploader, error) {
@@ -39,9 +37,8 @@ func NewAliyunSLBUploader(config *AliyunSLBUploaderConfig) (Uploader, error) {
 	}
 
 	return &AliyunSLBUploader{
-		config:     config,
-		sdkClient:  client,
-		sdkRuntime: &util.RuntimeOptions{},
+		config:    config,
+		sdkClient: client,
 	}, nil
 }
 
@@ -54,10 +51,10 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 	// 查询证书列表，避免重复上传
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeservercertificates
-	describeServerCertificatesReq := &slb20140515.DescribeServerCertificatesRequest{
+	describeServerCertificatesReq := &aliyunSlb.DescribeServerCertificatesRequest{
 		RegionId: tea.String(u.config.Region),
 	}
-	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificatesWithOptions(describeServerCertificatesReq, u.sdkRuntime)
+	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificates(describeServerCertificatesReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'slb.DescribeServerCertificates': %w", err)
 	}
@@ -85,13 +82,13 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-uploadservercertificate
-	uploadServerCertificateReq := &slb20140515.UploadServerCertificateRequest{
+	uploadServerCertificateReq := &aliyunSlb.UploadServerCertificateRequest{
 		RegionId:              tea.String(u.config.Region),
 		ServerCertificateName: tea.String(certName),
 		ServerCertificate:     tea.String(certPem),
 		PrivateKey:            tea.String(privkeyPem),
 	}
-	uploadServerCertificateResp, err := u.sdkClient.UploadServerCertificateWithOptions(uploadServerCertificateReq, u.sdkRuntime)
+	uploadServerCertificateResp, err := u.sdkClient.UploadServerCertificate(uploadServerCertificateReq)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'slb.UploadServerCertificate': %w", err)
 	}
@@ -103,12 +100,12 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunSLBUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*slb20140515.Client, error) {
+func (u *AliyunSLBUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // SLB 服务默认区域：华东一杭州
 	}
 
-	aConfig := &openapi.Config{
+	aConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
@@ -125,7 +122,7 @@ func (u *AliyunSLBUploader) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := slb20140515.NewClient(aConfig)
+	client, err := aliyunSlb.NewClient(aConfig)
 	if err != nil {
 		return nil, err
 	}

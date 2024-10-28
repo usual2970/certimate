@@ -3,6 +3,7 @@ package deployer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
@@ -11,27 +12,30 @@ import (
 )
 
 type AliyunOSSDeployer struct {
-	client *oss.Client
 	option *DeployerOption
 	infos  []string
+
+	sdkClient *oss.Client
 }
 
 func NewAliyunOSSDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(option.Access), access)
 
-	d := &AliyunOSSDeployer{
-		option: option,
-		infos:  make([]string, 0),
-	}
-
-	client, err := d.createClient(access.AccessKeyId, access.AccessKeySecret)
+	client, err := (&AliyunOSSDeployer{}).createSdkClient(
+		access.AccessKeyId,
+		access.AccessKeySecret,
+		option.DeployConfig.GetConfigAsString("endpoint"),
+	)
 	if err != nil {
 		return nil, err
 	}
-	d.client = client
 
-	return d, nil
+	return &AliyunOSSDeployer{
+		option:    option,
+		infos:     make([]string, 0),
+		sdkClient: client,
+	}, nil
 }
 
 func (d *AliyunOSSDeployer) GetID() string {
@@ -43,8 +47,15 @@ func (d *AliyunOSSDeployer) GetInfo() []string {
 }
 
 func (d *AliyunOSSDeployer) Deploy(ctx context.Context) error {
-	err := d.client.PutBucketCnameWithCertificate(getDeployString(d.option.DeployConfig, "bucket"), oss.PutBucketCname{
-		Cname: getDeployString(d.option.DeployConfig, "domain"),
+	aliBucket := d.option.DeployConfig.GetConfigAsString("bucket")
+	if aliBucket == "" {
+		return errors.New("`bucket` is required")
+	}
+
+	// 为存储空间绑定自定义域名
+	// REF: https://help.aliyun.com/zh/oss/developer-reference/putcname
+	err := d.sdkClient.PutBucketCnameWithCertificate(aliBucket, oss.PutBucketCname{
+		Cname: d.option.DeployConfig.GetConfigAsString("domain"),
 		CertificateConfiguration: &oss.CertificateConfiguration{
 			Certificate: d.option.Certificate.Certificate,
 			PrivateKey:  d.option.Certificate.PrivateKey,
@@ -52,19 +63,21 @@ func (d *AliyunOSSDeployer) Deploy(ctx context.Context) error {
 		},
 	})
 	if err != nil {
-		return fmt.Errorf("deploy aliyun oss error: %w", err)
+		return fmt.Errorf("failed to execute sdk request 'oss.PutBucketCnameWithCertificate': %w", err)
 	}
+
 	return nil
 }
 
-func (d *AliyunOSSDeployer) createClient(accessKeyId, accessKeySecret string) (*oss.Client, error) {
-	client, err := oss.New(
-		getDeployString(d.option.DeployConfig, "endpoint"),
-		accessKeyId,
-		accessKeySecret,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("create aliyun client error: %w", err)
+func (d *AliyunOSSDeployer) createSdkClient(accessKeyId, accessKeySecret, endpoint string) (*oss.Client, error) {
+	if endpoint == "" {
+		endpoint = "oss.aliyuncs.com"
 	}
+
+	client, err := oss.New(endpoint, accessKeyId, accessKeySecret)
+	if err != nil {
+		return nil, err
+	}
+
 	return client, nil
 }

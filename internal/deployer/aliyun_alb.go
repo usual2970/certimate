@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	alb20200616 "github.com/alibabacloud-go/alb-20200616/v2/client"
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliyunAlb "github.com/alibabacloud-go/alb-20200616/v2/client"
+	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -18,7 +18,7 @@ type AliyunALBDeployer struct {
 	option *DeployerOption
 	infos  []string
 
-	sdkClient   *alb20200616.Client
+	sdkClient   *aliyunAlb.Client
 	sslUploader uploader.Uploader
 }
 
@@ -77,12 +77,12 @@ func (d *AliyunALBDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *AliyunALBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*alb20200616.Client, error) {
+func (d *AliyunALBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunAlb.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // ALB 服务默认区域：华东一杭州
 	}
 
-	aConfig := &openapi.Config{
+	aConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
@@ -96,7 +96,7 @@ func (d *AliyunALBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := alb20200616.NewClient(aConfig)
+	client, err := aliyunAlb.NewClient(aConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getloadbalancerattribute
-	getLoadBalancerAttributeReq := &alb20200616.GetLoadBalancerAttributeRequest{
+	getLoadBalancerAttributeReq := &aliyunAlb.GetLoadBalancerAttributeRequest{
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
@@ -130,7 +130,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
-		listListenersReq := &alb20200616.ListListenersRequest{
+		listListenersReq := &aliyunAlb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
 			LoadBalancerIds:  []*string{tea.String(aliLoadbalancerId)},
@@ -162,7 +162,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	listListenersPage = 1
 	listListenersToken = nil
 	for {
-		listListenersReq := &alb20200616.ListListenersRequest{
+		listListenersReq := &aliyunAlb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
 			LoadBalancerIds:  []*string{tea.String(aliLoadbalancerId)},
@@ -236,7 +236,7 @@ func (d *AliyunALBDeployer) deployToListener(ctx context.Context) error {
 func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, aliListenerId string, aliCertId string) error {
 	// 查询监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getlistenerattribute
-	getListenerAttributeReq := &alb20200616.GetListenerAttributeRequest{
+	getListenerAttributeReq := &aliyunAlb.GetListenerAttributeRequest{
 		ListenerId: tea.String(aliListenerId),
 	}
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
@@ -248,9 +248,9 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, aliLi
 
 	// 修改监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-updatelistenerattribute
-	updateListenerAttributeReq := &alb20200616.UpdateListenerAttributeRequest{
+	updateListenerAttributeReq := &aliyunAlb.UpdateListenerAttributeRequest{
 		ListenerId: tea.String(aliListenerId),
-		Certificates: []*alb20200616.UpdateListenerAttributeRequestCertificates{{
+		Certificates: []*aliyunAlb.UpdateListenerAttributeRequestCertificates{{
 			CertificateId: tea.String(aliCertId),
 		}},
 	}

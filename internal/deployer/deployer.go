@@ -17,7 +17,7 @@ import (
 const (
 	targetAliyunOSS      = "aliyun-oss"
 	targetAliyunCDN      = "aliyun-cdn"
-	targetAliyunESA      = "aliyun-dcdn"
+	targetAliyunDCDN     = "aliyun-dcdn"
 	targetAliyunCLB      = "aliyun-clb"
 	targetAliyunALB      = "aliyun-alb"
 	targetAliyunNLB      = "aliyun-nlb"
@@ -109,8 +109,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewAliyunOSSDeployer(option)
 	case targetAliyunCDN:
 		return NewAliyunCDNDeployer(option)
-	case targetAliyunESA:
-		return NewAliyunESADeployer(option)
+	case targetAliyunDCDN:
+		return NewAliyunDCDNDeployer(option)
 	case targetAliyunCLB:
 		return NewAliyunCLBDeployer(option)
 	case targetAliyunALB:
@@ -118,7 +118,7 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	case targetAliyunNLB:
 		return NewAliyunNLBDeployer(option)
 	case targetTencentCDN:
-		return NewTencentCDNDeployer(option)	
+		return NewTencentCDNDeployer(option)
 	case targetTencentECDN:
 		return NewTencentECDNDeployer(option)
 	case targetTencentCLB:
