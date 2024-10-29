@@ -85,5 +85,6 @@
   "common.provider.kubernetes.secret": "Kubernetes - Secret",
   "common.provider.dingtalk": "DingTalk",
   "common.provider.telegram": "Telegram",
-  "common.provider.lark": "Lark"
+  "common.provider.lark": "Lark",
+  "common.provider.mail": "Mail"
 }

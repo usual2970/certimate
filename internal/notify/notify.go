@@ -106,6 +106,8 @@ func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, e
 		return getWebhookNotifier(conf), nil
 	case domain.NotifyChannelServerChan:
 		return getServerChanNotifier(conf), nil
+	case domain.NotifyChannelMail:
+		return getMailNotifier(conf), nil
 	}
 
 	return nil, fmt.Errorf("notifier not found")
@@ -164,6 +166,14 @@ func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 
 func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
 	return lark.NewWebhookService(getString(conf, "webhookUrl"))
+}
+
+func getMailNotifier(conf map[string]any) notifyPackage.Notifier {
+	rs := NewMail(getString(conf, "senderAddress"),getString(conf,"receiverAddress"), getString(conf, "smtpHostAddr"), getString(conf, "smtpHostPort"))
+
+	rs.SetAuth(getString(conf, "username"), getString(conf, "password"))
+
+	return rs
 }
 
 func getString(conf map[string]any, key string) string {

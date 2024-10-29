@@ -36,6 +36,12 @@
   "settings.notification.dingtalk.secret.placeholder": "加签的签名",
   "settings.notification.url.errmsg.invalid": "URL 格式不正确",
   "settings.notification.serverchan.url.placeholder": "Url, 形如: https://sctapi.ftqq.com/****************.send",
+  "settings.notification.mail.sender_address.placeholder": "发送邮箱地址",
+  "settings.notification.mail.receiver_address.placeholder": "接收邮箱地址",
+  "settings.notification.mail.smtp_host.placeholder": "SMTP服务器地址",
+  "settings.notification.mail.smtp_port.placeholder": "SMTP服务器端口, 如果未设置, 默认为25",
+  "settings.notification.mail.username.placeholder": "用于登录到邮件服务器的用户名",
+  "settings.notification.mail.password.placeholder": "用于登录到邮件服务器的密码",
 
   "settings.ca.tab": "证书颁发机构（CA）",
   "settings.ca.provider.errmsg.empty": "请选择证书分发机构",

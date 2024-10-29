@@ -36,6 +36,12 @@
   "settings.notification.dingtalk.secret.placeholder": "Signature for signed addition",
   "settings.notification.url.errmsg.invalid": "Invalid Url format",
   "settings.notification.serverchan.url.placeholder": "Url, e.g. https://sctapi.ftqq.com/****************.send",
+  "settings.notification.mail.sender_address.placeholder": "Sender email address",
+  "settings.notification.mail.receiver_address.placeholder": "Receiver email address",
+  "settings.notification.mail.smtp_host.placeholder": "SMTP server address",
+  "settings.notification.mail.smtp_port.placeholder": "SMTP server port, if not set, default is 25",
+  "settings.notification.mail.username.placeholder": "username",
+  "settings.notification.mail.password.placeholder": "password",
 
   "settings.ca.tab": "Certificate Authority",
   "settings.ca.provider.errmsg.empty": "Please select a Certificate Authority",
