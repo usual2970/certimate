@@ -23,9 +23,10 @@ export type NotifyChannels = {
   telegram?: NotifyChannel;
   webhook?: NotifyChannel;
   serverchan?: NotifyChannel;
+  mail?: NotifyChannelMail;
 };
 
-export type NotifyChannel = NotifyChannelDingTalk | NotifyChannelLark | NotifyChannelTelegram | NotifyChannelWebhook | NotifyChannelServerChan;
+export type NotifyChannel = NotifyChannelDingTalk | NotifyChannelLark | NotifyChannelTelegram | NotifyChannelWebhook | NotifyChannelServerChan | NotifyChannelMail;
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -51,6 +52,16 @@ export type NotifyChannelWebhook = {
 
 export type NotifyChannelServerChan = {
   url: string;
+  enabled: boolean;
+};
+
+export type NotifyChannelMail = {
+  senderAddress: string;
+  receiverAddresses: string;
+  smtpHostAddr: string;
+  smtpHostPort: string;
+  username:string;
+  password:string;
   enabled: boolean;
 };
 

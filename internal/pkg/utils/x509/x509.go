@@ -2,6 +2,7 @@
 
 import (
 	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -48,7 +49,7 @@ func ParseCertificateFromPEM(certPem string) (cert *x509.Certificate, err error)
 	return cert, nil
 }
 
-// 从 PEM 编码的私钥字符串解析并返回一个 ECDSA 私钥对象。
+// 从 PEM 编码的私钥字符串解析并返回一个 ecdsa.PrivateKey 对象。
 //
 // 入参:
 //   - privkeyPem: 私钥 PEM 内容。
@@ -72,7 +73,31 @@ func ParseECPrivateKeyFromPEM(privkeyPem string) (privkey *ecdsa.PrivateKey, err
 	return privkey, nil
 }
 
-// 将 ECDSA 私钥转换为 PEM 编码的字符串。
+// 从 PEM 编码的私钥字符串解析并返回一个 rsa.PrivateKey 对象。
+//
+// 入参:
+//   - privkeyPem: 私钥 PEM 内容。
+//
+// 出参:
+//   - privkey: rsa.PrivateKey 对象。
+//   - err: 错误。
+func ParsePKCS1PrivateKeyFromPEM(privkeyPem string) (privkey *rsa.PrivateKey, err error) {
+	pemData := []byte(privkeyPem)
+
+	block, _ := pem.Decode(pemData)
+	if block == nil {
+		return nil, fmt.Errorf("failed to decode PEM block")
+	}
+
+	privkey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse private key: %w", err)
+	}
+
+	return privkey, nil
+}
+
+// 将 ecdsa.PrivateKey 对象转换为 PEM 编码的字符串。
 //
 // 入参:
 //   - privkey: ecdsa.PrivateKey 对象。

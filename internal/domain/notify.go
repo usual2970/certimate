@@ -6,6 +6,7 @@ const (
 	NotifyChannelTelegram = "telegram"
 	NotifyChannelLark     = "lark"
 	NotifyChannelServerChan = "serverchan"
+	NotifyChannelMail = "mail"
 )
 
 type NotifyTestPushReq struct {

@@ -2,10 +2,10 @@ package deployer
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"strings"
+	"golang.org/x/exp/slices"
 
 	cdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -100,16 +100,23 @@ func (d *TencentCDNDeployer) deploy(certId string) error {
 	// 如果是泛域名就从cdn列表下获取SSL证书中的可用域名
 	domain := getDeployString(d.option.DeployConfig, "domain")
 	if strings.Contains(domain, "*") {
-		list, errGetList := d.getDomainList()
+		list, errGetList := d.getDomainList(certId)
 		if errGetList != nil {
 			return fmt.Errorf("failed to get certificate domain list: %w", errGetList)
 		}
-		if list == nil || len(list) == 0 {
-			return fmt.Errorf("failed to get certificate domain list: empty list.")
+		if len(list) == 0 {
+			d.infos = append(d.infos, "没有需要部署的实例")
+			return nil
 		}
 		request.InstanceIdList = common.StringPtrs(list)
 	} else { // 否则直接使用传入的域名
-		request.InstanceIdList = common.StringPtrs([]string{domain})
+		deployed, _ := d.isDomainDeployed(certId, domain)
+		if(deployed){
+			d.infos = append(d.infos, "域名已部署")
+			return nil
+		}else{
+			request.InstanceIdList = common.StringPtrs([]string{domain})
+		}
 	}
 
 	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
@@ -121,23 +128,61 @@ func (d *TencentCDNDeployer) deploy(certId string) error {
 	return nil
 }
 
-func (d *TencentCDNDeployer) getDomainList() ([]string, error) {
+func (d *TencentCDNDeployer) getDomainList(certId string) ([]string, error) {
 	cpf := profile.NewClientProfile()
 	cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
 	client, _ := cdn.NewClient(d.credential, "", cpf)
 
 	request := cdn.NewDescribeCertDomainsRequest()
 
-	cert := base64.StdEncoding.EncodeToString([]byte(d.option.Certificate.Certificate))
-	request.Cert = &cert
+	request.CertId = common.StringPtr(certId)
 
 	response, err := client.DescribeCertDomains(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get domain list: %w", err)
 	}
 
+	deployedDomains, err := d.getDeployedDomainList(certId)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployed domain list: %w", err)
+	}
+
 	domains := make([]string, 0)
 	for _, domain := range response.Response.Domains {
+		domainStr := *domain
+		if(slices.Contains(deployedDomains, domainStr)){
+			domains = append(domains, domainStr)
+		}
+	}
+
+	return domains, nil
+}
+
+func (d *TencentCDNDeployer) isDomainDeployed(certId, domain string) (bool, error) {
+	deployedDomains, err := d.getDeployedDomainList(certId)
+	if(err != nil){
+		return false, err
+	}
+
+	return slices.Contains(deployedDomains, domain), nil
+}
+
+func (d *TencentCDNDeployer) getDeployedDomainList(certId string) ([]string, error) {
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
+	client, _ := ssl.NewClient(d.credential, "", cpf)
+
+	request := ssl.NewDescribeDeployedResourcesRequest()
+	request.CertificateIds = common.StringPtrs([]string{certId})
+	request.ResourceType = common.StringPtr("cdn")
+
+	response, err := client.DescribeDeployedResources(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get deployed domain list: %w", err)
+	}
+
+	domains := make([]string, 0)
+	for _, domain := range response.Response.DeployedResources[0].Resources {
 		domains = append(domains, *domain)
 	}
 
