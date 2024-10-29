@@ -108,7 +108,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	}
 
 	// 更新 Secret 实例
-	_, err = client.CoreV1().Secrets(namespace).Update(ctx, &secretPayload, k8sMetaV1.UpdateOptions{})
+	_, err = client.CoreV1().Secrets(namespace).Update(context.TODO(), &secretPayload, k8sMetaV1.UpdateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to update k8s secret: %w", err)
 	}
