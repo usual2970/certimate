@@ -9,6 +9,7 @@ import (
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunDcdn "github.com/alibabacloud-go/dcdn-20180115/v3/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/rand"
@@ -23,14 +24,16 @@ type AliyunDCDNDeployer struct {
 
 func NewAliyunDCDNDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunDCDNDeployer{}).createSdkClient(
 		access.AccessKeyId,
 		access.AccessKeySecret,
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &AliyunDCDNDeployer{
@@ -70,7 +73,7 @@ func (d *AliyunDCDNDeployer) Deploy(ctx context.Context) error {
 	}
 	setDcdnDomainSSLCertificateResp, err := d.sdkClient.SetDcdnDomainSSLCertificate(setDcdnDomainSSLCertificateReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'dcdn.SetDcdnDomainSSLCertificate': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'dcdn.SetDcdnDomainSSLCertificate'")
 	}
 
 	d.infos = append(d.infos, toStr("已配置 DCDN 域名证书", setDcdnDomainSSLCertificateResp))

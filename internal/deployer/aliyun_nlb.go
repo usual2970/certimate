@@ -9,6 +9,7 @@ import (
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunNlb "github.com/alibabacloud-go/nlb-20220430/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -24,7 +25,9 @@ type AliyunNLBDeployer struct {
 
 func NewAliyunNLBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunNLBDeployer{}).createSdkClient(
 		access.AccessKeyId,
@@ -32,7 +35,7 @@ func NewAliyunNLBDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	uploader, err := uploader.NewAliyunCASUploader(&uploader.AliyunCASUploaderConfig{
@@ -41,7 +44,7 @@ func NewAliyunNLBDeployer(option *DeployerOption) (Deployer, error) {
 		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &AliyunNLBDeployer{
@@ -117,7 +120,7 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'nlb.GetLoadBalancerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetLoadBalancerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 NLB 负载均衡实例", getLoadBalancerAttributeResp))
@@ -136,7 +139,7 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'nlb.ListListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'nlb.ListListeners'")
 		}
 
 		if listListenersResp.Body.Listeners != nil {
@@ -156,17 +159,17 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已查询到 NLB 负载均衡实例下的全部 TCPSSL 监听", aliListenerIds))
 
 	// 上传证书到 SSL
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 批量更新监听证书
 	var errs []error
 	for _, aliListenerId := range aliListenerIds {
-		if err := d.updateListenerCertificate(ctx, aliListenerId, uploadResult.CertId); err != nil {
+		if err := d.updateListenerCertificate(ctx, aliListenerId, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -184,15 +187,15 @@ func (d *AliyunNLBDeployer) deployToListener(ctx context.Context) error {
 	}
 
 	// 上传证书到 SSL
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听
-	if err := d.updateListenerCertificate(ctx, aliListenerId, uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, aliListenerId, upres.CertId); err != nil {
 		return err
 	}
 
@@ -207,7 +210,7 @@ func (d *AliyunNLBDeployer) updateListenerCertificate(ctx context.Context, aliLi
 	}
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'nlb.GetListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 NLB 监听配置", getListenerAttributeResp))
@@ -220,7 +223,7 @@ func (d *AliyunNLBDeployer) updateListenerCertificate(ctx context.Context, aliLi
 	}
 	updateListenerAttributeResp, err := d.sdkClient.UpdateListenerAttribute(updateListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'nlb.UpdateListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.UpdateListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 NLB 监听配置", updateListenerAttributeResp))

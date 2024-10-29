@@ -24,7 +24,9 @@ type QiniuCDNDeployer struct {
 
 func NewQiniuCDNDeployer(option *DeployerOption) (*QiniuCDNDeployer, error) {
 	access := &domain.QiniuAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, fmt.Errorf("failed to get access: %w", err)
+	}
 
 	return &QiniuCDNDeployer{
 		option: option,

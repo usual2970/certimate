@@ -9,6 +9,7 @@ import (
 	aliyunAlb "github.com/alibabacloud-go/alb-20200616/v2/client"
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -24,7 +25,9 @@ type AliyunALBDeployer struct {
 
 func NewAliyunALBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunALBDeployer{}).createSdkClient(
 		access.AccessKeyId,
@@ -32,7 +35,7 @@ func NewAliyunALBDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	uploader, err := uploader.NewAliyunCASUploader(&uploader.AliyunCASUploaderConfig{
@@ -41,7 +44,7 @@ func NewAliyunALBDeployer(option *DeployerOption) (Deployer, error) {
 		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &AliyunALBDeployer{
@@ -119,7 +122,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'alb.GetLoadBalancerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetLoadBalancerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 ALB 负载均衡实例", getLoadBalancerAttributeResp))
@@ -138,7 +141,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'alb.ListListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
 
 		if listListenersResp.Body.Listeners != nil {
@@ -170,7 +173,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'alb.ListListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
 
 		if listListenersResp.Body.Listeners != nil {
@@ -190,17 +193,17 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", aliListenerIds))
 
 	// 上传证书到 SSL
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 批量更新监听证书
 	var errs []error
 	for _, aliListenerId := range aliListenerIds {
-		if err := d.updateListenerCertificate(ctx, aliListenerId, uploadResult.CertId); err != nil {
+		if err := d.updateListenerCertificate(ctx, aliListenerId, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -218,15 +221,15 @@ func (d *AliyunALBDeployer) deployToListener(ctx context.Context) error {
 	}
 
 	// 上传证书到 SSL
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听
-	if err := d.updateListenerCertificate(ctx, aliListenerId, uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, aliListenerId, upres.CertId); err != nil {
 		return err
 	}
 
@@ -241,7 +244,7 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, aliLi
 	}
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'alb.GetListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 ALB 监听配置", getListenerAttributeResp))
@@ -256,7 +259,7 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, aliLi
 	}
 	updateListenerAttributeResp, err := d.sdkClient.UpdateListenerAttribute(updateListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'alb.UpdateListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 ALB 监听配置", updateListenerAttributeResp))

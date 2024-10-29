@@ -9,6 +9,7 @@ import (
 	aliyunCas "github.com/alibabacloud-go/cas-20200407/v3/client"
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
@@ -31,7 +32,7 @@ func NewAliyunCASUploader(config *AliyunCASUploaderConfig) (Uploader, error) {
 		config.Region,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &AliyunCASUploader{
@@ -60,7 +61,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 		}
 		listUserCertificateOrderResp, err := u.sdkClient.ListUserCertificateOrder(listUserCertificateOrderReq)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'cas.ListUserCertificateOrder': %w", err)
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.ListUserCertificateOrder'")
 		}
 
 		if listUserCertificateOrderResp.Body.CertificateOrderList != nil {
@@ -71,7 +72,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 					}
 					getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
 					if err != nil {
-						return nil, fmt.Errorf("failed to execute sdk request 'cas.GetUserCertificateDetail': %w", err)
+						return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
 					}
 
 					var isSameCert bool
@@ -120,7 +121,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}
 	uploadUserCertificateResp, err := u.sdkClient.UploadUserCertificate(uploadUserCertificateReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'cas.UploadUserCertificate': %w", err)
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.UploadUserCertificate'")
 	}
 
 	certId = fmt.Sprintf("%d", tea.Int64Value(uploadUserCertificateResp.Body.CertId))

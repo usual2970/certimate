@@ -10,6 +10,7 @@ import (
 	hcCdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
 	hcCdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
 	hcCdnRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/region"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -27,7 +28,7 @@ type HuaweiCloudCDNDeployer struct {
 func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.HuaweiCloudAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 
 	client, err := (&HuaweiCloudCDNDeployer{}).createSdkClient(
@@ -36,7 +37,7 @@ func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	// TODO: SCM 服务与 DNS 服务所支持的区域可能不一致，这里暂时不传而是使用默认值，仅支持华为云国内版
@@ -46,7 +47,7 @@ func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 		Region:          "",
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &HuaweiCloudCDNDeployer{
@@ -87,16 +88,16 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	var updateDomainMultiCertificatesResp *hcCdnModel.UpdateDomainMultiCertificatesResponse
 	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
 		// 上传证书到 SCM
-		uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+		upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 		if err != nil {
 			return err
 		}
 
-		d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+		d.infos = append(d.infos, toStr("已上传证书", upres))
 
 		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
-		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(uploadResult.CertId)
-		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(uploadResult.CertName)
+		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(upres.CertId)
+		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(upres.CertName)
 	} else {
 		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(0)
 		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))

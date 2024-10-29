@@ -204,7 +204,7 @@ func convertPEMToPFX(certificate string, privateKey string, password string) ([]
 
 	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, password)
 	if err != nil {
-		return nil, fmt.Errorf("failed to encode as pfx %w", err)
+		return nil, err
 	}
 
 	return pfxData, nil

@@ -9,6 +9,7 @@ import (
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -24,7 +25,9 @@ type AliyunCLBDeployer struct {
 
 func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunCLBDeployer{}).createSdkClient(
 		access.AccessKeyId,
@@ -32,7 +35,7 @@ func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	uploader, err := uploader.NewAliyunSLBUploader(&uploader.AliyunSLBUploaderConfig{
@@ -41,7 +44,7 @@ func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &AliyunCLBDeployer{
@@ -123,7 +126,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	}
 	describeLoadBalancerAttributeResp, err := d.sdkClient.DescribeLoadBalancerAttribute(describeLoadBalancerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp))
@@ -143,7 +146,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 		describeLoadBalancerListenersResp, err := d.sdkClient.DescribeLoadBalancerListeners(describeLoadBalancerListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerListeners'")
 		}
 
 		if describeLoadBalancerListenersResp.Body.Listeners != nil {
@@ -163,17 +166,17 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", aliListenerPorts))
 
 	// 上传证书到 SLB
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 批量更新监听证书
 	var errs []error
 	for _, aliListenerPort := range aliListenerPorts {
-		if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, uploadResult.CertId); err != nil {
+		if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -196,15 +199,15 @@ func (d *AliyunCLBDeployer) deployToListener(ctx context.Context) error {
 	}
 
 	// 上传证书到 SLB
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听
-	if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, upres.CertId); err != nil {
 		return err
 	}
 
@@ -220,7 +223,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	}
 	describeLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.DescribeLoadBalancerHTTPSListenerAttribute(describeLoadBalancerHTTPSListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp))
@@ -234,7 +237,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	}
 	describeDomainExtensionsResp, err := d.sdkClient.DescribeDomainExtensions(describeDomainExtensionsReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeDomainExtensions': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB 扩展域名", describeDomainExtensionsResp))
@@ -256,7 +259,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 			}
 			_, err := d.sdkClient.SetDomainExtensionAttribute(setDomainExtensionAttributeReq)
 			if err != nil {
-				return fmt.Errorf("failed to execute sdk request 'slb.SetDomainExtensionAttribute': %w", err)
+				return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'")
 			}
 		}
 	}
@@ -273,7 +276,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	}
 	setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp))

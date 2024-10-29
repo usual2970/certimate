@@ -1,9 +1,10 @@
 ﻿package fs
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
+
+	xerrors "github.com/pkg/errors"
 )
 
 // 与 [WriteFile] 类似，但写入的是字符串内容。
@@ -33,18 +34,18 @@ func WriteFile(path string, data []byte) error {
 
 	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("failed to create directory: %w", err)
+		return xerrors.Wrap(err, "failed to create directory")
 	}
 
 	file, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
+		return xerrors.Wrap(err, "failed to create file")
 	}
 	defer file.Close()
 
 	_, err = file.Write(data)
 	if err != nil {
-		return fmt.Errorf("failed to write file: %w", err)
+		return xerrors.Wrap(err, "failed to write file")
 	}
 
 	return nil

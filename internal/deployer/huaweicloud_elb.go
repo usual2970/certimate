@@ -16,6 +16,7 @@ import (
 	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
 	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -33,7 +34,7 @@ type HuaweiCloudELBDeployer struct {
 func NewHuaweiCloudELBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.HuaweiCloudAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 
 	client, err := (&HuaweiCloudELBDeployer{}).createSdkClient(
@@ -42,7 +43,7 @@ func NewHuaweiCloudELBDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	uploader, err := uploader.NewHuaweiCloudELBUploader(&uploader.HuaweiCloudELBUploaderConfig{
@@ -51,7 +52,7 @@ func NewHuaweiCloudELBDeployer(option *DeployerOption) (Deployer, error) {
 		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &HuaweiCloudELBDeployer{
@@ -73,14 +74,17 @@ func (d *HuaweiCloudELBDeployer) GetInfo() []string {
 func (d *HuaweiCloudELBDeployer) Deploy(ctx context.Context) error {
 	switch d.option.DeployConfig.GetConfigAsString("resourceType") {
 	case "certificate":
+		// 部署到指定证书
 		if err := d.deployToCertificate(ctx); err != nil {
 			return err
 		}
 	case "loadbalancer":
+		// 部署到指定负载均衡器
 		if err := d.deployToLoadbalancer(ctx); err != nil {
 			return err
 		}
 	case "listener":
+		// 部署到指定监听器
 		if err := d.deployToListener(ctx); err != nil {
 			return err
 		}
@@ -254,17 +258,17 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 	d.infos = append(d.infos, toStr("已查询到 ELB 负载均衡器下的监听器", hcListenerIds))
 
 	// 上传证书到 SCM
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 批量更新监听器证书
 	var errs []error
 	for _, hcListenerId := range hcListenerIds {
-		if err := d.updateListenerCertificate(ctx, hcListenerId, uploadResult.CertId); err != nil {
+		if err := d.updateListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -282,15 +286,15 @@ func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context) error {
 	}
 
 	// 上传证书到 SCM
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听器证书
-	if err := d.updateListenerCertificate(ctx, hcListenerId, uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
 		return err
 	}
 

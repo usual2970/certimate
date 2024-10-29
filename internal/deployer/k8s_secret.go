@@ -3,9 +3,11 @@ package deployer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 
+	xerrors "github.com/pkg/errors"
 	k8sCore "k8s.io/api/core/v1"
 	k8sMeta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -19,12 +21,25 @@ import (
 type K8sSecretDeployer struct {
 	option *DeployerOption
 	infos  []string
+
+	k8sClient *kubernetes.Clientset
 }
 
 func NewK8sSecretDeployer(option *DeployerOption) (Deployer, error) {
+	access := &domain.KubernetesAccess{}
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
+
+	client, err := (&K8sSecretDeployer{}).createK8sClient(access)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create k8s client")
+	}
+
 	return &K8sSecretDeployer{
-		option: option,
-		infos:  make([]string, 0),
+		option:    option,
+		infos:     make([]string, 0),
+		k8sClient: client,
 	}, nil
 }
 
@@ -37,41 +52,20 @@ func (d *K8sSecretDeployer) GetInfo() []string {
 }
 
 func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
-	access := &domain.KubernetesAccess{}
-	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
-		return err
-	}
-
-	client, err := d.createClient(access)
-	if err != nil {
-		return err
-	}
-
-	d.infos = append(d.infos, toStr("kubeClient create success.", nil))
-
 	namespace := d.option.DeployConfig.GetConfigAsString("namespace")
+	secretName := d.option.DeployConfig.GetConfigAsString("secretName")
+	secretDataKeyForCrt := d.option.DeployConfig.GetConfigOrDefaultAsString("secretDataKeyForCrt", "tls.crt")
+	secretDataKeyForKey := d.option.DeployConfig.GetConfigOrDefaultAsString("secretDataKeyForKey", "tls.key")
 	if namespace == "" {
 		namespace = "default"
 	}
-
-	secretName := d.option.DeployConfig.GetConfigAsString("secretName")
 	if secretName == "" {
-		return fmt.Errorf("k8s secret name is empty")
-	}
-
-	secretDataKeyForCrt := d.option.DeployConfig.GetConfigAsString("secretDataKeyForCrt")
-	if secretDataKeyForCrt == "" {
-		namespace = "tls.crt"
-	}
-
-	secretDataKeyForKey := d.option.DeployConfig.GetConfigAsString("secretDataKeyForKey")
-	if secretDataKeyForKey == "" {
-		namespace = "tls.key"
+		return errors.New("`secretName` is required")
 	}
 
 	certX509, err := x509.ParseCertificateFromPEM(d.option.Certificate.Certificate)
 	if err != nil {
-		return fmt.Errorf("failed to parse certificate: %w", err)
+		return err
 	}
 
 	secretPayload := k8sCore.Secret{
@@ -90,17 +84,16 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 		},
 		Type: k8sCore.SecretType("kubernetes.io/tls"),
 	}
-
 	secretPayload.Data = make(map[string][]byte)
 	secretPayload.Data[secretDataKeyForCrt] = []byte(d.option.Certificate.Certificate)
 	secretPayload.Data[secretDataKeyForKey] = []byte(d.option.Certificate.PrivateKey)
 
 	// 获取 Secret 实例
-	_, err = client.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMeta.GetOptions{})
+	_, err = d.k8sClient.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, k8sMeta.GetOptions{})
 	if err != nil {
-		_, err = client.CoreV1().Secrets(namespace).Create(context.TODO(), &secretPayload, k8sMeta.CreateOptions{})
+		_, err = d.k8sClient.CoreV1().Secrets(namespace).Create(context.TODO(), &secretPayload, k8sMeta.CreateOptions{})
 		if err != nil {
-			return fmt.Errorf("failed to create k8s secret: %w", err)
+			return xerrors.Wrap(err, "failed to create k8s secret")
 		} else {
 			d.infos = append(d.infos, toStr("Certificate has been created in K8s Secret", nil))
 			return nil
@@ -108,9 +101,9 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	}
 
 	// 更新 Secret 实例
-	_, err = client.CoreV1().Secrets(namespace).Update(context.TODO(), &secretPayload, k8sMetaV1.UpdateOptions{})
+	_, err = d.k8sClient.CoreV1().Secrets(namespace).Update(context.TODO(), &secretPayload, k8sMeta.UpdateOptions{})
 	if err != nil {
-		return fmt.Errorf("failed to update k8s secret: %w", err)
+		return xerrors.Wrap(err, "failed to update k8s secret")
 	}
 
 	d.infos = append(d.infos, toStr("Certificate has been updated to K8s Secret", nil))
@@ -118,7 +111,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kubernetes.Clientset, error) {
+func (d *K8sSecretDeployer) createK8sClient(access *domain.KubernetesAccess) (*kubernetes.Clientset, error) {
 	var config *rest.Config
 	var err error
 	if access.KubeConfig == "" {
@@ -129,7 +122,6 @@ func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kube
 			return nil, err
 		}
 		config, err = kubeConfig.ClientConfig()
-
 	}
 	if err != nil {
 		return nil, err
@@ -139,5 +131,6 @@ func (d *K8sSecretDeployer) createClient(access *domain.KubernetesAccess) (*kube
 	if err != nil {
 		return nil, err
 	}
+
 	return client, nil
 }

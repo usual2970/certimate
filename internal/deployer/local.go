@@ -3,12 +3,13 @@ package deployer
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"os/exec"
 	"runtime"
 
-	"github.com/usual2970/certimate/internal/domain"
+	xerrors "github.com/pkg/errors"
+
 	"github.com/usual2970/certimate/internal/pkg/utils/fs"
 )
 
@@ -45,17 +46,12 @@ func (d *LocalDeployer) GetInfo() []string {
 }
 
 func (d *LocalDeployer) Deploy(ctx context.Context) error {
-	access := &domain.LocalAccess{}
-	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
-		return err
-	}
-
 	// 执行前置命令
 	preCommand := d.option.DeployConfig.GetConfigAsString("preCommand")
 	if preCommand != "" {
 		stdout, stderr, err := d.execCommand(preCommand)
 		if err != nil {
-			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+			return xerrors.Wrapf(err, "failed to run pre-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.infos = append(d.infos, toStr("执行前置命令成功", stdout))
@@ -65,13 +61,13 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", certFormatPEM) {
 	case certFormatPEM:
 		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
-			return fmt.Errorf("failed to save certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
 
 		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("keyPath"), d.option.Certificate.PrivateKey); err != nil {
-			return fmt.Errorf("failed to save private key file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("保存私钥成功", nil))
@@ -83,11 +79,11 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
 		)
 		if err != nil {
-			return fmt.Errorf("failed to convert pem to pfx %w", err)
+			return err
 		}
 
 		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
-			return fmt.Errorf("failed to save certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
@@ -101,11 +97,11 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 			d.option.DeployConfig.GetConfigAsString("jksStorepass"),
 		)
 		if err != nil {
-			return fmt.Errorf("failed to convert pem to pfx %w", err)
+			return err
 		}
 
 		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
-			return fmt.Errorf("failed to save certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
@@ -116,7 +112,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 	if command != "" {
 		stdout, stderr, err := d.execCommand(command)
 		if err != nil {
-			return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+			return xerrors.Wrapf(err, "failed to run command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.infos = append(d.infos, toStr("执行命令成功", stdout))
@@ -146,7 +142,7 @@ func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 		}
 
 	default:
-		return "", "", fmt.Errorf("unsupported shell")
+		return "", "", errors.New("unsupported shell")
 	}
 
 	var stdoutBuf bytes.Buffer
@@ -156,7 +152,7 @@ func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 
 	err := cmd.Run()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to execute script: %w", err)
+		return "", "", xerrors.Wrap(err, "failed to execute shell script")
 	}
 
 	return stdoutBuf.String(), stderrBuf.String(), err

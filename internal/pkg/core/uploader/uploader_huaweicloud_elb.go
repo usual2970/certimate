@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
 	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
@@ -36,7 +38,7 @@ func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (Uploader, 
 		config.Region,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+		return nil, xerrors.Wrap(err, "failed to create sdk client: %w")
 	}
 
 	return &HuaweiCloudELBUploader{
@@ -65,7 +67,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'elb.ListCertificates': %w", err)
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
 		}
 
 		if listCertificatesResp.Certificates != nil {
@@ -107,7 +109,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	// REF: https://support.huaweicloud.com/api-iam/iam_06_0001.html
 	projectId, err := u.getSdkProjectId(u.config.Region, u.config.AccessKeyId, u.config.SecretAccessKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get SDK project id: %w", err)
+		return nil, xerrors.Wrap(err, "failed to get SDK project id")
 	}
 
 	// 生成新证书名（需符合华为云命名规则）
@@ -128,7 +130,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	}
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'elb.CreateCertificate': %w", err)
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.CreateCertificate'")
 	}
 
 	certId = createCertificateResp.Certificate.Id
@@ -207,7 +209,7 @@ func (u *HuaweiCloudELBUploader) getSdkProjectId(accessKeyId, secretAccessKey, r
 	if err != nil {
 		return "", err
 	} else if response.Projects == nil || len(*response.Projects) == 0 {
-		return "", fmt.Errorf("no project found")
+		return "", errors.New("no project found")
 	}
 
 	return (*response.Projects)[0].Id, nil

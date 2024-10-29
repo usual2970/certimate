@@ -5,7 +5,9 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
+	"errors"
+
+	xerrors "github.com/pkg/errors"
 )
 
 // 比较两个 x509.Certificate 对象，判断它们是否是同一张证书。
@@ -38,12 +40,12 @@ func ParseCertificateFromPEM(certPem string) (cert *x509.Certificate, err error)
 
 	block, _ := pem.Decode(pemData)
 	if block == nil {
-		return nil, fmt.Errorf("failed to decode PEM block")
+		return nil, errors.New("failed to decode PEM block")
 	}
 
 	cert, err = x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse certificate: %w", err)
+		return nil, xerrors.Wrap(err, "failed to parse certificate")
 	}
 
 	return cert, nil
@@ -62,12 +64,12 @@ func ParseECPrivateKeyFromPEM(privkeyPem string) (privkey *ecdsa.PrivateKey, err
 
 	block, _ := pem.Decode(pemData)
 	if block == nil {
-		return nil, fmt.Errorf("failed to decode PEM block")
+		return nil, errors.New("failed to decode PEM block")
 	}
 
 	privkey, err = x509.ParseECPrivateKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse private key: %w", err)
+		return nil, xerrors.Wrap(err, "failed to parse private key")
 	}
 
 	return privkey, nil
@@ -86,12 +88,12 @@ func ParsePKCS1PrivateKeyFromPEM(privkeyPem string) (privkey *rsa.PrivateKey, er
 
 	block, _ := pem.Decode(pemData)
 	if block == nil {
-		return nil, fmt.Errorf("failed to decode PEM block")
+		return nil, errors.New("failed to decode PEM block")
 	}
 
 	privkey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse private key: %w", err)
+		return nil, xerrors.Wrap(err, "failed to parse private key")
 	}
 
 	return privkey, nil
@@ -108,7 +110,7 @@ func ParsePKCS1PrivateKeyFromPEM(privkeyPem string) (privkey *rsa.PrivateKey, er
 func ConvertECPrivateKeyToPEM(privkey *ecdsa.PrivateKey) (privkeyPem string, err error) {
 	data, err := x509.MarshalECPrivateKey(privkey)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal EC private key: %w", err)
+		return "", xerrors.Wrap(err, "failed to marshal EC private key")
 	}
 
 	block := &pem.Block{

@@ -11,6 +11,7 @@ import (
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
@@ -33,7 +34,7 @@ func NewAliyunSLBUploader(config *AliyunSLBUploaderConfig) (Uploader, error) {
 		config.Region,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &AliyunSLBUploader{
@@ -56,7 +57,7 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}
 	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificates(describeServerCertificatesReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'slb.DescribeServerCertificates': %w", err)
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeServerCertificates'")
 	}
 
 	if describeServerCertificatesResp.Body.ServerCertificates != nil && describeServerCertificatesResp.Body.ServerCertificates.ServerCertificate != nil {
@@ -90,7 +91,7 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}
 	uploadServerCertificateResp, err := u.sdkClient.UploadServerCertificate(uploadServerCertificateReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'slb.UploadServerCertificate': %w", err)
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'slb.UploadServerCertificate'")
 	}
 
 	certId = *uploadServerCertificateResp.Body.ServerCertificateId

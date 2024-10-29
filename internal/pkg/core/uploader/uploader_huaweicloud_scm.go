@@ -9,6 +9,7 @@ import (
 	hcScm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
 	hcScmModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
 	hcScmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
@@ -32,7 +33,7 @@ func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (Uploader, 
 		config.Region,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &HuaweiCloudSCMUploader{
@@ -63,7 +64,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'scm.ListCertificates': %w", err)
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ListCertificates'")
 		}
 
 		if listCertificatesResp.Certificates != nil {
@@ -76,7 +77,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 					if exportCertificateResp != nil && exportCertificateResp.HttpStatusCode == 404 {
 						continue
 					}
-					return nil, fmt.Errorf("failed to execute sdk request 'scm.ExportCertificate': %w", err)
+					return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ExportCertificate'")
 				}
 
 				var isSameCert bool
@@ -127,7 +128,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'scm.ImportCertificate': %w", err)
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ImportCertificate'")
 	}
 
 	certId = *importCertificateResp.CertificateId

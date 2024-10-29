@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -20,7 +21,9 @@ type AliyunOSSDeployer struct {
 
 func NewAliyunOSSDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunOSSDeployer{}).createSdkClient(
 		access.AccessKeyId,
@@ -28,7 +31,7 @@ func NewAliyunOSSDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("endpoint"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &AliyunOSSDeployer{
@@ -63,7 +66,7 @@ func (d *AliyunOSSDeployer) Deploy(ctx context.Context) error {
 		},
 	})
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'oss.PutBucketCnameWithCertificate': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'oss.PutBucketCnameWithCertificate'")
 	}
 
 	return nil
