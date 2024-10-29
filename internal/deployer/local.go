@@ -1,21 +1,33 @@
 package deployer
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"os/exec"
-	"path/filepath"
 	"runtime"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/fs"
 )
 
 type LocalDeployer struct {
 	option *DeployerOption
 	infos  []string
 }
+
+const (
+	certFormatPEM = "pem"
+	certFormatPFX = "pfx"
+	certFormatJKS = "jks"
+)
+
+const (
+	shellEnvSh         = "sh"
+	shellEnvCmd        = "cmd"
+	shellEnvPowershell = "powershell"
+)
 
 func NewLocalDeployer(option *DeployerOption) (Deployer, error) {
 	return &LocalDeployer{
@@ -38,74 +50,114 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 		return err
 	}
 
-	preCommand := getDeployString(d.option.DeployConfig, "preCommand")
-
+	// 执行前置命令
+	preCommand := d.option.DeployConfig.GetConfigAsString("preCommand")
 	if preCommand != "" {
-		if err := execCmd(preCommand); err != nil {
-			return fmt.Errorf("执行前置命令失败: %w", err)
+		stdout, stderr, err := d.execCommand(preCommand)
+		if err != nil {
+			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
 		}
+
+		d.infos = append(d.infos, toStr("执行前置命令成功", stdout))
 	}
 
-	// 复制证书文件
-	if err := copyFile(getDeployString(d.option.DeployConfig, "certPath"), d.option.Certificate.Certificate); err != nil {
-		return fmt.Errorf("复制证书失败: %w", err)
-	}
+	// 写入证书和私钥文件
+	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", certFormatPEM) {
+	case certFormatPEM:
+		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
 
-	// 复制私钥文件
-	if err := copyFile(getDeployString(d.option.DeployConfig, "keyPath"), d.option.Certificate.PrivateKey); err != nil {
-		return fmt.Errorf("复制私钥失败: %w", err)
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
+
+		if err := fs.WriteFileString(d.option.DeployConfig.GetConfigAsString("keyPath"), d.option.Certificate.PrivateKey); err != nil {
+			return fmt.Errorf("failed to save private key file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存私钥成功", nil))
+
+	case certFormatPFX:
+		pfxData, err := convertPEMToPFX(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
+
+	case certFormatJKS:
+		jksData, err := convertPEMToJKS(
+			d.option.Certificate.Certificate,
+			d.option.Certificate.PrivateKey,
+			d.option.DeployConfig.GetConfigAsString("jksAlias"),
+			d.option.DeployConfig.GetConfigAsString("jksKeypass"),
+			d.option.DeployConfig.GetConfigAsString("jksStorepass"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to convert pem to pfx %w", err)
+		}
+
+		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
+			return fmt.Errorf("failed to save certificate file: %w", err)
+		}
+
+		d.infos = append(d.infos, toStr("保存证书成功", nil))
 	}
 
 	// 执行命令
-	if err := execCmd(getDeployString(d.option.DeployConfig, "command")); err != nil {
-		return fmt.Errorf("执行命令失败: %w", err)
+	command := d.option.DeployConfig.GetConfigAsString("command")
+	if command != "" {
+		stdout, stderr, err := d.execCommand(command)
+		if err != nil {
+			return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+		}
+
+		d.infos = append(d.infos, toStr("执行命令成功", stdout))
 	}
 
 	return nil
 }
 
-func execCmd(command string) error {
-	// 执行命令
+func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 	var cmd *exec.Cmd
 
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/C", command)
-	} else {
+	switch d.option.DeployConfig.GetConfigAsString("shell") {
+	case shellEnvSh:
 		cmd = exec.Command("sh", "-c", command)
+
+	case shellEnvCmd:
+		cmd = exec.Command("cmd", "/C", command)
+
+	case shellEnvPowershell:
+		cmd = exec.Command("powershell", "-Command", command)
+
+	case "":
+		if runtime.GOOS == "windows" {
+			cmd = exec.Command("cmd", "/C", command)
+		} else {
+			cmd = exec.Command("sh", "-c", command)
+		}
+
+	default:
+		return "", "", fmt.Errorf("unsupported shell")
 	}
 
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	var stdoutBuf bytes.Buffer
+	cmd.Stdout = &stdoutBuf
+	var stderrBuf bytes.Buffer
+	cmd.Stderr = &stderrBuf
 
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("执行命令失败: %w", err)
+		return "", "", fmt.Errorf("failed to execute script: %w", err)
 	}
 
-	return nil
-}
-
-func copyFile(path string, content string) error {
-	dir := filepath.Dir(path)
-
-	// 如果目录不存在，创建目录
-	err := os.MkdirAll(dir, os.ModePerm)
-	if err != nil {
-		return fmt.Errorf("创建目录失败: %w", err)
-	}
-
-	// 创建或打开文件
-	file, err := os.Create(path)
-	if err != nil {
-		return fmt.Errorf("创建文件失败: %w", err)
-	}
-	defer file.Close()
-
-	// 写入内容到文件
-	_, err = file.Write([]byte(content))
-	if err != nil {
-		return fmt.Errorf("写入文件失败: %w", err)
-	}
-
-	return nil
+	return stdoutBuf.String(), stderrBuf.String(), err
 }
