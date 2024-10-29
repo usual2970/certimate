@@ -24,7 +24,6 @@ func Test_qiuniu_uploadCert(t *testing.T) {
 				option: &DeployerOption{
 					DomainId: "1",
 					Domain:   "example.com",
-					Product:  "test",
 					Access:   `{"bucket":"test","accessKey":"","secretKey":""}`,
 					Certificate: applicant.Certificate{
 						Certificate: "",
@@ -70,7 +69,6 @@ func Test_qiuniu_modifyDomainCert(t *testing.T) {
 				option: &DeployerOption{
 					DomainId: "1",
 					Domain:   "jt1.ikit.fun",
-					Product:  "test",
 					Access:   `{"bucket":"test","accessKey":"","secretKey":""}`,
 				},
 			},
