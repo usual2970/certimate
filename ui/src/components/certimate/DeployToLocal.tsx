@@ -206,7 +206,7 @@ Remove-Item -Path "$pfxPath" -Force
         }
         break;
 
-        case "binding_netsh":
+      case "binding_netsh":
         {
           const newData = produce(data, (draft) => {
             draft.config ??= {};
@@ -221,7 +221,7 @@ $port = "<your-binding-port>"  # 绑定端口
 $addr = $ipaddr + ":" + $port
 
 # 导入证书到本地计算机的个人存储区
-$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\LocalMachine\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
 # 获取 Thumbprint
 $thumbprint = $cert.Thumbprint
 # 检测端口是否绑定证书，如绑定则删除绑定
