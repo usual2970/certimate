@@ -97,7 +97,7 @@ const DeployToTencentCOS = () => {
           onChange={(e) => {
             const temp = e.target.value;
 
-            const resp = bucketSchema.safeParse(temp);
+            const resp = regionSchema.safeParse(temp);
             if (!resp.success) {
               setError({
                 ...error,
