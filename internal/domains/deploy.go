@@ -45,16 +45,6 @@ func deploy(ctx context.Context, record *models.Record) error {
 	cert := currRecord.GetString("certificate")
 	expiredAt := currRecord.GetDateTime("expiredAt").Time()
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") {
-		app.GetApp().Logger().Info("证书在有效期内")
-		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
-			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
-		}, true)
-
-		// 跳过的情况也算成功
-		history.setWholeSuccess(true)
-		return nil
-	}
 	history.record(checkPhase, "检查通过", nil, true)
 
 	// ############2.申请证书
@@ -101,23 +91,27 @@ func deploy(ctx context.Context, record *models.Record) error {
 		return nil
 	}
 
+	deploySuccess := true
 	for _, deployer := range deployers {
 		if err = deployer.Deploy(ctx); err != nil {
-
 			app.GetApp().Logger().Error("部署失败", "err", err)
 			history.record(deployPhase, "部署失败", &RecordInfo{Err: err, Info: deployer.GetInfo()})
-			return err
+			deploySuccess = false
+		} else {
+			history.record(deployPhase, fmt.Sprintf("[%s]-部署成功", deployer.GetID()), &RecordInfo{
+				Info: deployer.GetInfo(),
+			}, false)
 		}
-		history.record(deployPhase, fmt.Sprintf("[%s]-部署成功", deployer.GetID()), &RecordInfo{
-			Info: deployer.GetInfo(),
-		}, false)
-
 	}
 
-	app.GetApp().Logger().Info("部署成功")
-	history.record(deployPhase, "部署成功", nil, true)
-
-	history.setWholeSuccess(true)
+	if deploySuccess {
+		app.GetApp().Logger().Info("部署成功")
+		history.record(deployPhase, "部署成功", nil, true)
+		history.setWholeSuccess(true)
+	} else {
+		app.GetApp().Logger().Info("部分部署失败")
+		history.record(deployPhase, "部分部署失败", nil, false)
+	}
 
 	return nil
 }
