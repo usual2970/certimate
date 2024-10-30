@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
 	"golang.org/x/exp/slices"
 
 	cdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
@@ -111,10 +112,10 @@ func (d *TencentCDNDeployer) deploy(certId string) error {
 		request.InstanceIdList = common.StringPtrs(list)
 	} else { // 否则直接使用传入的域名
 		deployed, _ := d.isDomainDeployed(certId, domain)
-		if(deployed){
+		if deployed {
 			d.infos = append(d.infos, "域名已部署")
 			return nil
-		}else{
+		} else {
 			request.InstanceIdList = common.StringPtrs([]string{domain})
 		}
 	}
@@ -150,7 +151,7 @@ func (d *TencentCDNDeployer) getDomainList(certId string) ([]string, error) {
 	domains := make([]string, 0)
 	for _, domain := range response.Response.Domains {
 		domainStr := *domain
-		if(slices.Contains(deployedDomains, domainStr)){
+		if !slices.Contains(deployedDomains, domainStr) {
 			domains = append(domains, domainStr)
 		}
 	}
@@ -160,7 +161,7 @@ func (d *TencentCDNDeployer) getDomainList(certId string) ([]string, error) {
 
 func (d *TencentCDNDeployer) isDomainDeployed(certId, domain string) (bool, error) {
 	deployedDomains, err := d.getDeployedDomainList(certId)
-	if(err != nil){
+	if err != nil {
 		return false, err
 	}
 
