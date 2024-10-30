@@ -143,6 +143,7 @@
   "domain.deployment.form.shell_preset_scripts.trigger": "使用预设脚本",
   "domain.deployment.form.shell_preset_scripts.option.reload_nginx.label": "Bash - 重启 nginx",
   "domain.deployment.form.shell_preset_scripts.option.binding_iis.label": "PowerShell - 导入并绑定到 IIS（需管理员权限）",
+  "domain.deployment.form.shell_preset_scripts.option.binding_netsh.label": "PowerShell - 导入并绑定到netsh（需管理员权限）",
   "domain.deployment.form.k8s_namespace.label": "命名空间",
   "domain.deployment.form.k8s_namespace.placeholder": "请输入 K8S 命名空间",
   "domain.deployment.form.k8s_secret_name.label": "Secret 名称",
