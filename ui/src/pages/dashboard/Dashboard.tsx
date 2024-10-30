@@ -180,13 +180,8 @@ const Dashboard = () => {
                 key={deployment.id}
                 className="flex flex-col sm:flex-row text-secondary-foreground border-b  dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
               >
-                <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
-                  {deployment.expand.domain?.domain.split(";").map((domain: string) => (
-                    <>
-                      {domain}
-                      <br />
-                    </>
-                  ))}
+                <div className="sm:w-48 w-full pt-1 sm:pt-0 flex flex-col items-start">
+                  {deployment.expand.domain?.domain.split(";").map((domain: string) => <div className="pr-3 truncate w-full">{domain}</div>)}
                 </div>
                 <div className="sm:w-24 w-full pt-1 sm:pt-0 flex items-center">
                   <DeployState deployment={deployment} />
