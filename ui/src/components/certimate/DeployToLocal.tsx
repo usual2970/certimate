@@ -205,6 +205,37 @@ Remove-Item -Path "$pfxPath" -Force
           setDeploy(newData);
         }
         break;
+
+      case "binding_netsh":
+        {
+          const newData = produce(data, (draft) => {
+            draft.config ??= {};
+            draft.config.shell = "powershell";
+            draft.config.command = `
+# 请将以下变量替换为实际值
+$pfxPath = "<your-pfx-path>" # PFX 文件路径
+$pfxPassword = "<your-pfx-password>" # PFX 密码
+$ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
+$port = "<your-binding-port>"  # 绑定端口
+
+$addr = $ipaddr + ":" + $port
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 检测端口是否绑定证书，如绑定则删除绑定
+$isExist = netsh http show sslcert ipport=$addr
+if ($isExist -like "*$addr*"){ netsh http delete sslcert ipport=$addr }
+# 绑定到端口
+netsh http add sslcert ipport=$addr certhash=$thumbprint
+# 删除目录下的证书文件
+Remove-Item -Path "$pfxPath" -Force
+            `.trim();
+          });
+          setDeploy(newData);
+        }
+        break;
     }
   };
 
@@ -424,6 +455,9 @@ Remove-Item -Path "$pfxPath" -Force
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleUsePresetScript("binding_iis")}>
                   {t("domain.deployment.form.shell_preset_scripts.option.binding_iis.label")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleUsePresetScript("binding_netsh")}>
+                  {t("domain.deployment.form.shell_preset_scripts.option.binding_netsh.label")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

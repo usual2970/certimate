@@ -146,6 +146,7 @@
   "domain.deployment.form.shell_preset_scripts.trigger": "Use Preset Scripts",
   "domain.deployment.form.shell_preset_scripts.option.reload_nginx.label": "Bash - Reload Nginx",
   "domain.deployment.form.shell_preset_scripts.option.binding_iis.label": "PowerShell - Binding IIS",
+  "domain.deployment.form.shell_preset_scripts.option.binding_netsh.label": "PowerShell - Binding netsh(Windows)",
   "domain.deployment.form.k8s_namespace.label": "Namespace",
   "domain.deployment.form.k8s_namespace.placeholder": "Please enter namespace",
   "domain.deployment.form.k8s_secret_name.label": "Secret Name",
