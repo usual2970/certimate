@@ -195,7 +195,16 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
   }
 
   return (
-    <Dialog onOpenChange={setOpen} open={open} modal={false}>
+    <Dialog
+      onOpenChange={(openState) => {
+        if (openState) {
+          document.body.style.pointerEvents = "auto";
+        }
+        setOpen(openState);
+      }}
+      open={open}
+      modal={false}
+    >
       <DialogTrigger asChild className={cn(className)}>
         {trigger}
       </DialogTrigger>
