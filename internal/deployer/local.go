@@ -155,5 +155,5 @@ func (d *LocalDeployer) execCommand(command string) (string, string, error) {
 		return "", "", xerrors.Wrap(err, "failed to execute shell script")
 	}
 
-	return stdoutBuf.String(), stderrBuf.String(), err
+	return stdoutBuf.String(), stderrBuf.String(), nil
 }

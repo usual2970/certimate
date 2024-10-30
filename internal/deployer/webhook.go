@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net/http"
 
+	xerrors "github.com/pkg/errors"
+
 	"github.com/usual2970/certimate/internal/domain"
 	xhttp "github.com/usual2970/certimate/internal/utils/http"
 )
@@ -41,7 +43,7 @@ type webhookData struct {
 func (d *WebhookDeployer) Deploy(ctx context.Context) error {
 	access := &domain.WebhookAccess{}
 	if err := json.Unmarshal([]byte(d.option.Access), access); err != nil {
-		return fmt.Errorf("failed to parse hook access config: %w", err)
+		return xerrors.Wrap(err, "failed to get access")
 	}
 
 	data := &webhookData{
@@ -50,17 +52,15 @@ func (d *WebhookDeployer) Deploy(ctx context.Context) error {
 		PrivateKey:  d.option.Certificate.PrivateKey,
 		Variables:   getDeployVariables(d.option.DeployConfig),
 	}
-
 	body, _ := json.Marshal(data)
-
 	resp, err := xhttp.Req(access.Url, http.MethodPost, bytes.NewReader(body), map[string]string{
 		"Content-Type": "application/json",
 	})
 	if err != nil {
-		return fmt.Errorf("failed to send hook request: %w", err)
+		return xerrors.Wrap(err, "failed to send webhook request")
 	}
 
-	d.infos = append(d.infos, toStr("webhook response", string(resp)))
+	d.infos = append(d.infos, toStr("Webhook Response", string(resp)))
 
 	return nil
 }

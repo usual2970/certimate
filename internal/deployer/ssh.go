@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	xerrors "github.com/pkg/errors"
 	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 
@@ -55,7 +56,7 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 	if preCommand != "" {
 		stdout, stderr, err := d.sshExecCommand(client, preCommand)
 		if err != nil {
-			return fmt.Errorf("failed to run pre-command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+			return xerrors.Wrapf(err, "failed to run pre-command: stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.infos = append(d.infos, toStr("SSH 执行前置命令成功", stdout))
@@ -65,13 +66,13 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 	switch d.option.DeployConfig.GetConfigOrDefaultAsString("format", certFormatPEM) {
 	case certFormatPEM:
 		if err := d.writeSftpFileString(client, d.option.DeployConfig.GetConfigAsString("certPath"), d.option.Certificate.Certificate); err != nil {
-			return fmt.Errorf("failed to upload certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
 
 		if err := d.writeSftpFileString(client, d.option.DeployConfig.GetConfigAsString("keyPath"), d.option.Certificate.PrivateKey); err != nil {
-			return fmt.Errorf("failed to upload private key file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("SSH 上传私钥成功", nil))
@@ -83,11 +84,11 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
 		)
 		if err != nil {
-			return fmt.Errorf("failed to convert pem to pfx %w", err)
+			return err
 		}
 
 		if err := d.writeSftpFile(client, d.option.DeployConfig.GetConfigAsString("certPath"), pfxData); err != nil {
-			return fmt.Errorf("failed to upload certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
@@ -101,11 +102,11 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 			d.option.DeployConfig.GetConfigAsString("jksStorepass"),
 		)
 		if err != nil {
-			return fmt.Errorf("failed to convert pem to pfx %w", err)
+			return err
 		}
 
 		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
-			return fmt.Errorf("failed to save certificate file: %w", err)
+			return err
 		}
 
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
@@ -116,7 +117,7 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 	if command != "" {
 		stdout, stderr, err := d.sshExecCommand(client, command)
 		if err != nil {
-			return fmt.Errorf("failed to run command: %w, stdout: %s, stderr: %s", err, stdout, stderr)
+			return xerrors.Wrapf(err, "failed to run command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.infos = append(d.infos, toStr("SSH 执行命令成功", stdout))
@@ -158,7 +159,7 @@ func (d *SSHDeployer) createSshClient(access *domain.SSHAccess) (*ssh.Client, er
 func (d *SSHDeployer) sshExecCommand(client *ssh.Client, command string) (string, string, error) {
 	session, err := client.NewSession()
 	if err != nil {
-		return "", "", fmt.Errorf("failed to create ssh session: %w", err)
+		return "", "", xerrors.Wrap(err, "failed to create ssh session")
 	}
 
 	defer session.Close()
@@ -167,7 +168,11 @@ func (d *SSHDeployer) sshExecCommand(client *ssh.Client, command string) (string
 	var stderrBuf bytes.Buffer
 	session.Stderr = &stderrBuf
 	err = session.Run(command)
-	return stdoutBuf.String(), stderrBuf.String(), err
+	if err != nil {
+		return "", "", xerrors.Wrap(err, "failed to execute ssh script")
+	}
+
+	return stdoutBuf.String(), stderrBuf.String(), nil
 }
 
 func (d *SSHDeployer) writeSftpFileString(client *ssh.Client, path string, content string) error {
@@ -177,23 +182,23 @@ func (d *SSHDeployer) writeSftpFileString(client *ssh.Client, path string, conte
 func (d *SSHDeployer) writeSftpFile(client *ssh.Client, path string, data []byte) error {
 	sftpCli, err := sftp.NewClient(client)
 	if err != nil {
-		return fmt.Errorf("failed to create sftp client: %w", err)
+		return xerrors.Wrap(err, "failed to create sftp client")
 	}
 	defer sftpCli.Close()
 
 	if err := sftpCli.MkdirAll(filepath.Dir(path)); err != nil {
-		return fmt.Errorf("failed to create remote directory: %w", err)
+		return xerrors.Wrap(err, "failed to create remote directory")
 	}
 
 	file, err := sftpCli.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC)
 	if err != nil {
-		return fmt.Errorf("failed to open remote file: %w", err)
+		return xerrors.Wrap(err, "failed to open remote file")
 	}
 	defer file.Close()
 
 	_, err = file.Write(data)
 	if err != nil {
-		return fmt.Errorf("failed to write to remote file: %w", err)
+		return xerrors.Wrap(err, "failed to write to remote file")
 	}
 
 	return nil

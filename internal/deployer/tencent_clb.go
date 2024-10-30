@@ -3,37 +3,58 @@ package deployer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
+	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 )
 
 type TencentCLBDeployer struct {
-	option     *DeployerOption
-	credential *common.Credential
-	infos      []string
+	option *DeployerOption
+	infos  []string
+
+	sdkClients  *tencentCLBDeployerSdkClients
+	sslUploader uploader.Uploader
+}
+
+type tencentCLBDeployerSdkClients struct {
+	ssl *tcSsl.Client
 }
 
 func NewTencentCLBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.TencentAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal tencent access: %w", err)
+		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 
-	credential := common.NewCredential(
+	clients, err := (&TencentCLBDeployer{}).createSdkClients(
 		access.SecretId,
 		access.SecretKey,
+		option.DeployConfig.GetConfigAsString("region"),
 	)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+	}
+
+	uploader, err := uploader.NewTencentCloudSSLUploader(&uploader.TencentCloudSSLUploaderConfig{
+		SecretId:  access.SecretId,
+		SecretKey: access.SecretKey,
+	})
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+	}
 
 	return &TencentCLBDeployer{
-		option:     option,
-		credential: credential,
-		infos:      make([]string, 0),
+		option:      option,
+		infos:       make([]string, 0),
+		sdkClients:  clients,
+		sslUploader: uploader,
 	}, nil
 }
 
@@ -46,72 +67,68 @@ func (d *TencentCLBDeployer) GetInfo() []string {
 }
 
 func (d *TencentCLBDeployer) Deploy(ctx context.Context) error {
-	// 上传证书
-	certId, err := d.uploadCert()
-	if err != nil {
-		return fmt.Errorf("failed to upload certificate: %w", err)
-	}
-	d.infos = append(d.infos, toStr("上传证书", certId))
+	// TODO: 直接部署方式
 
-	if err := d.deploy(certId); err != nil {
-		return fmt.Errorf("failed to deploy: %w", err)
+	// 通过 SSL 服务部署到云资源实例
+	err := d.deployToInstanceUseSsl(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-func (d *TencentCLBDeployer) uploadCert() (string, error) {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
+func (d *TencentCLBDeployer) createSdkClients(secretId, secretKey, region string) (*tencentCLBDeployerSdkClients, error) {
+	credential := common.NewCredential(secretId, secretKey)
 
-	client, _ := ssl.NewClient(d.credential, "", cpf)
-
-	request := ssl.NewUploadCertificateRequest()
-
-	request.CertificatePublicKey = common.StringPtr(d.option.Certificate.Certificate)
-	request.CertificatePrivateKey = common.StringPtr(d.option.Certificate.PrivateKey)
-	request.Alias = common.StringPtr(d.option.Domain + "_" + rand.RandStr(6))
-	request.Repeatable = common.BoolPtr(false)
-
-	response, err := client.UploadCertificate(request)
+	sslClient, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
-		return "", fmt.Errorf("failed to upload certificate: %w", err)
+		return nil, err
 	}
 
-	return *response.Response.CertificateId, nil
+	return &tencentCLBDeployerSdkClients{
+		ssl: sslClient,
+	}, nil
 }
 
-func (d *TencentCLBDeployer) deploy(certId string) error {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
-	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := ssl.NewClient(d.credential, getDeployString(d.option.DeployConfig, "region"), cpf)
-
-	// 实例化一个请求对象,每个接口都会对应一个request对象
-	request := ssl.NewDeployCertificateInstanceRequest()
-
-	request.CertificateId = common.StringPtr(certId)
-	request.ResourceType = common.StringPtr("clb")
-	request.Status = common.Int64Ptr(1)
-
-	clbId := getDeployString(d.option.DeployConfig, "clbId")
-	lsnId := getDeployString(d.option.DeployConfig, "lsnId")
-	domain := getDeployString(d.option.DeployConfig, "domain")
-
-	if(domain == ""){
-		// 未开启SNI，只需要精确到监听器
-		request.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s", clbId, lsnId)})
-	}else{
-		// 开启SNI，需要精确到域名，支持泛域名
-		request.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", clbId, lsnId, domain)})
+func (d *TencentCLBDeployer) deployToInstanceUseSsl(ctx context.Context) error {
+	tcLoadbalancerId := d.option.DeployConfig.GetConfigAsString("clbId")
+	tcListenerId := d.option.DeployConfig.GetConfigAsString("lsnId")
+	tcDomain := d.option.DeployConfig.GetConfigAsString("domain")
+	if tcLoadbalancerId == "" {
+		return errors.New("`loadbalancerId` is required")
 	}
-	
+	if tcListenerId == "" {
+		return errors.New("`listenerId` is required")
+	}
 
-	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
-	resp, err := client.DeployCertificateInstance(request)
+	// 上传证书到 SSL
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
-		return fmt.Errorf("failed to deploy certificate: %w", err)
+		return err
 	}
-	d.infos = append(d.infos, toStr("部署证书", resp.Response))
+
+	d.infos = append(d.infos, toStr("已上传证书", upres))
+
+	// 证书部署到 CLB 实例
+	// REF: https://cloud.tencent.com/document/product/400/91667
+	deployCertificateInstanceReq := tcSsl.NewDeployCertificateInstanceRequest()
+	deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)
+	deployCertificateInstanceReq.ResourceType = common.StringPtr("clb")
+	deployCertificateInstanceReq.Status = common.Int64Ptr(1)
+	if tcDomain == "" {
+		// 未开启 SNI，只需指定到监听器
+		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s", tcLoadbalancerId, tcListenerId)})
+	} else {
+		// 开启 SNI，需指定到域名（支持泛域名）
+		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", tcLoadbalancerId, tcListenerId, tcDomain)})
+	}
+	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
+	if err != nil {
+		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
+	}
+
+	d.infos = append(d.infos, toStr("已部署证书到云资源实例", deployCertificateInstanceResp.Response))
+
 	return nil
 }
