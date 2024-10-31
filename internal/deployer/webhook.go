@@ -50,7 +50,7 @@ func (d *WebhookDeployer) Deploy(ctx context.Context) error {
 		Domain:      d.option.Domain,
 		Certificate: d.option.Certificate.Certificate,
 		PrivateKey:  d.option.Certificate.PrivateKey,
-		Variables:   getDeployVariables(d.option.DeployConfig),
+		Variables:   d.option.DeployConfig.GetConfigAsVariables(),
 	}
 	body, _ := json.Marshal(data)
 	resp, err := xhttp.Req(access.Url, http.MethodPost, bytes.NewReader(body), map[string]string{

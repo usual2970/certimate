@@ -156,28 +156,6 @@ func toStr(tag string, data any) string {
 	return tag + "：" + string(byts)
 }
 
-func getDeployVariables(conf domain.DeployConfig) map[string]string {
-	rs := make(map[string]string)
-	data, ok := conf.Config["variables"]
-	if !ok {
-		return rs
-	}
-
-	bts, _ := json.Marshal(data)
-
-	kvData := make([]domain.KV, 0)
-
-	if err := json.Unmarshal(bts, &kvData); err != nil {
-		return rs
-	}
-
-	for _, kv := range kvData {
-		rs[kv.Key] = kv.Value
-	}
-
-	return rs
-}
-
 func convertPEMToPFX(certificate string, privateKey string, password string) ([]byte, error) {
 	cert, err := x509.ParseCertificateFromPEM(certificate)
 	if err != nil {

@@ -1,6 +1,11 @@
 package domain
 
-import "strings"
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/usual2970/certimate/internal/domain"
+)
 
 type ApplyConfig struct {
 	Email              string `json:"email"`
@@ -115,6 +120,33 @@ func (dc *DeployConfig) GetConfigOrDefaultAsBool(key string, defaultValue bool) 
 	}
 
 	return defaultValue
+}
+
+// 以变量字典形式获取配置项。
+//
+// 出参：
+//   - 变量字典。
+func (dc *DeployConfig) GetConfigAsVariables() map[string]string {
+	rs := make(map[string]string)
+
+	if dc.Config != nil {
+		value, ok := dc.Config["variables"]
+		if !ok {
+			return rs
+		}
+
+		kvs := make([]domain.KV, 0)
+		bts, _ := json.Marshal(value)
+		if err := json.Unmarshal(bts, &kvs); err != nil {
+			return rs
+		}
+
+		for _, kv := range kvs {
+			rs[kv.Key] = kv.Value
+		}
+	}
+
+	return rs
 }
 
 // GetDomain returns the domain from the deploy config
