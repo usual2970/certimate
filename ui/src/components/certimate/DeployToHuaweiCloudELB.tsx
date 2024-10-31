@@ -8,28 +8,32 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeployEditContext } from "./DeployEdit";
 
-const DeployToHuaweiCloudCDN = () => {
+type DeployToHuaweiCloudELBConfigParams = {
+  region?: string;
+  resourceType?: string;
+  certificateId?: string;
+  loadbalancerId?: string;
+  listenerId?: string;
+};
+
+const DeployToHuaweiCloudELB = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToHuaweiCloudELBConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
           region: "cn-north-1",
-          resourceType: "",
-          certificateId: "",
-          loadbalancerId: "",
-          listenerId: "",
         },
       });
     }
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
   const formSchema = z
@@ -56,16 +60,16 @@ const DeployToHuaweiCloudCDN = () => {
     });
 
   useEffect(() => {
-    const res = formSchema.safeParse(data.config);
-    setError({
-      ...error,
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
       region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
       resourceType: res.error?.errors?.find((e) => e.path[0] === "resourceType")?.message,
       certificateId: res.error?.errors?.find((e) => e.path[0] === "certificateId")?.message,
       loadbalancerId: res.error?.errors?.find((e) => e.path[0] === "loadbalancerId")?.message,
       listenerId: res.error?.errors?.find((e) => e.path[0] === "listenerId")?.message,
     });
-  }, [data]);
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -74,28 +78,28 @@ const DeployToHuaweiCloudCDN = () => {
         <Input
           placeholder={t("domain.deployment.form.huaweicloud_elb_region.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.region}
+          value={config?.config?.region}
           onChange={(e) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.region = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.region}</div>
       </div>
 
       <div>
         <Label>{t("domain.deployment.form.huaweicloud_elb_resource_type.label")}</Label>
         <Select
-          value={data?.config?.resourceType}
+          value={config?.config?.resourceType}
           onValueChange={(value) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.resourceType = value;
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         >
           <SelectTrigger>
@@ -109,67 +113,67 @@ const DeployToHuaweiCloudCDN = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <div className="text-red-600 text-sm mt-1">{error?.resourceType}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.resourceType}</div>
       </div>
 
-      {data?.config?.resourceType === "certificate" ? (
+      {config?.config?.resourceType === "certificate" ? (
         <div>
           <Label>{t("domain.deployment.form.huaweicloud_elb_certificate_id.label")}</Label>
           <Input
             placeholder={t("domain.deployment.form.huaweicloud_elb_certificate_id.placeholder")}
             className="w-full mt-1"
-            value={data?.config?.certificateId}
+            value={config?.config?.certificateId}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.certificateId = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.certificateId}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.certificateId}</div>
         </div>
       ) : (
         <></>
       )}
 
-      {data?.config?.resourceType === "loadbalancer" ? (
+      {config?.config?.resourceType === "loadbalancer" ? (
         <div>
           <Label>{t("domain.deployment.form.huaweicloud_elb_loadbalancer_id.label")}</Label>
           <Input
             placeholder={t("domain.deployment.form.huaweicloud_elb_loadbalancer_id.placeholder")}
             className="w-full mt-1"
-            value={data?.config?.loadbalancerId}
+            value={config?.config?.loadbalancerId}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.loadbalancerId = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.loadbalancerId}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.loadbalancerId}</div>
         </div>
       ) : (
         <></>
       )}
 
-      {data?.config?.resourceType === "listener" ? (
+      {config?.config?.resourceType === "listener" ? (
         <div>
           <Label>{t("domain.deployment.form.huaweicloud_elb_listener_id.label")}</Label>
           <Input
             placeholder={t("domain.deployment.form.huaweicloud_elb_listener_id.placeholder")}
             className="w-full mt-1"
-            value={data?.config?.listenerId}
+            value={config?.config?.listenerId}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.listenerId = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.listenerId}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.listenerId}</div>
         </div>
       ) : (
         <></>
@@ -178,4 +182,4 @@ const DeployToHuaweiCloudCDN = () => {
   );
 };
 
-export default DeployToHuaweiCloudCDN;
+export default DeployToHuaweiCloudELB;

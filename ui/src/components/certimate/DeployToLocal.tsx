@@ -12,33 +12,40 @@ import { Textarea } from "@/components/ui/textarea";
 import { useDeployEditContext } from "./DeployEdit";
 import { cn } from "@/lib/utils";
 
+type DeployToLocalConfigParams = {
+  format?: string;
+  certPath?: string;
+  keyPath?: string;
+  pfxPassword?: string;
+  jksAlias?: string;
+  jksKeypass?: string;
+  jksStorepass?: string;
+  shell?: string;
+  preCommand?: string;
+  command?: string;
+};
+
 const DeployToLocal = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToLocalConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
           format: "pem",
           certPath: "/etc/nginx/ssl/nginx.crt",
           keyPath: "/etc/nginx/ssl/nginx.key",
-          pfxPassword: "",
-          jksAlias: "",
-          jksKeypass: "",
-          jksStorepass: "",
           shell: "sh",
-          preCommand: "",
-          command: "sudo service nginx reload",
         },
       });
     }
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
   const formSchema = z
@@ -86,9 +93,9 @@ const DeployToLocal = () => {
     });
 
   useEffect(() => {
-    const res = formSchema.safeParse(data.config);
-    setError({
-      ...error,
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
       format: res.error?.errors?.find((e) => e.path[0] === "format")?.message,
       certPath: res.error?.errors?.find((e) => e.path[0] === "certPath")?.message,
       keyPath: res.error?.errors?.find((e) => e.path[0] === "keyPath")?.message,
@@ -100,38 +107,41 @@ const DeployToLocal = () => {
       preCommand: res.error?.errors?.find((e) => e.path[0] === "preCommand")?.message,
       command: res.error?.errors?.find((e) => e.path[0] === "command")?.message,
     });
-  }, [data]);
+  }, [config]);
 
   useEffect(() => {
-    if (data.config?.format === "pem") {
-      if (/(.pfx|.jks)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.pfx|.jks)$/, ".crt");
-        });
-        setDeploy(newData);
+    if (config.config?.format === "pem") {
+      if (/(.pfx|.jks)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.pfx|.jks)$/, ".crt");
+          })
+        );
       }
-    } else if (data.config?.format === "pfx") {
-      if (/(.crt|.jks)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.crt|.jks)$/, ".pfx");
-        });
-        setDeploy(newData);
+    } else if (config.config?.format === "pfx") {
+      if (/(.crt|.jks)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.crt|.jks)$/, ".pfx");
+          })
+        );
       }
-    } else if (data.config?.format === "jks") {
-      if (/(.crt|.pfx)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.crt|.pfx)$/, ".jks");
-        });
-        setDeploy(newData);
+    } else if (config.config?.format === "jks") {
+      if (/(.crt|.pfx)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.crt|.pfx)$/, ".jks");
+          })
+        );
       }
     }
-  }, [data.config?.format]);
+  }, [config.config?.format]);
 
   const getOptionCls = (val: string) => {
-    if (data.config?.shell === val) {
+    if (config.config?.shell === val) {
       return "border-primary dark:border-primary";
     }
 
@@ -142,21 +152,23 @@ const DeployToLocal = () => {
     switch (key) {
       case "reload_nginx":
         {
-          const newData = produce(data, (draft) => {
-            draft.config ??= {};
-            draft.config.shell = "sh";
-            draft.config.command = "sudo service nginx reload";
-          });
-          setDeploy(newData);
+          setConfig(
+            produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.shell = "sh";
+              draft.config.command = "sudo service nginx reload";
+            })
+          );
         }
         break;
 
       case "binding_iis":
         {
-          const newData = produce(data, (draft) => {
-            draft.config ??= {};
-            draft.config.shell = "powershell";
-            draft.config.command = `
+          setConfig(
+            produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.shell = "powershell";
+              draft.config.command = `
 # 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -185,17 +197,18 @@ $binding.AddSslCertificate($thumbprint, "My")
 # 删除目录下的证书文件
 Remove-Item -Path "$pfxPath" -Force
             `.trim();
-          });
-          setDeploy(newData);
+            })
+          );
         }
         break;
 
       case "binding_netsh":
         {
-          const newData = produce(data, (draft) => {
-            draft.config ??= {};
-            draft.config.shell = "powershell";
-            draft.config.command = `
+          setConfig(
+            produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.shell = "powershell";
+              draft.config.command = `
 # 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -216,8 +229,8 @@ netsh http add sslcert ipport=$addr certhash=$thumbprint
 # 删除目录下的证书文件
 Remove-Item -Path "$pfxPath" -Force
             `.trim();
-          });
-          setDeploy(newData);
+            })
+          );
         }
         break;
     }
@@ -229,13 +242,13 @@ Remove-Item -Path "$pfxPath" -Force
         <div>
           <Label>{t("domain.deployment.form.file_format.label")}</Label>
           <Select
-            value={data?.config?.format}
+            value={config?.config?.format}
             onValueChange={(value) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.format = value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           >
             <SelectTrigger>
@@ -249,7 +262,7 @@ Remove-Item -Path "$pfxPath" -Force
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="text-red-600 text-sm mt-1">{error?.format}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.format}</div>
         </div>
 
         <div>
@@ -257,77 +270,77 @@ Remove-Item -Path "$pfxPath" -Force
           <Input
             placeholder={t("domain.deployment.form.file_cert_path.label")}
             className="w-full mt-1"
-            value={data?.config?.certPath}
+            value={config?.config?.certPath}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.certPath = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.certPath}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.certPath}</div>
         </div>
 
-        {data.config?.format === "pem" ? (
+        {config.config?.format === "pem" ? (
           <div>
             <Label>{t("domain.deployment.form.file_key_path.label")}</Label>
             <Input
               placeholder={t("domain.deployment.form.file_key_path.placeholder")}
               className="w-full mt-1"
-              value={data?.config?.keyPath}
+              value={config?.config?.keyPath}
               onChange={(e) => {
-                const newData = produce(data, (draft) => {
+                const nv = produce(config, (draft) => {
                   draft.config ??= {};
                   draft.config.keyPath = e.target.value?.trim();
                 });
-                setDeploy(newData);
+                setConfig(nv);
               }}
             />
-            <div className="text-red-600 text-sm mt-1">{error?.keyPath}</div>
+            <div className="text-red-600 text-sm mt-1">{errors?.keyPath}</div>
           </div>
         ) : (
           <></>
         )}
 
-        {data.config?.format === "pfx" ? (
+        {config.config?.format === "pfx" ? (
           <div>
             <Label>{t("domain.deployment.form.file_pfx_password.label")}</Label>
             <Input
               placeholder={t("domain.deployment.form.file_pfx_password.placeholder")}
               className="w-full mt-1"
-              value={data?.config?.pfxPassword}
+              value={config?.config?.pfxPassword}
               onChange={(e) => {
-                const newData = produce(data, (draft) => {
+                const nv = produce(config, (draft) => {
                   draft.config ??= {};
                   draft.config.pfxPassword = e.target.value?.trim();
                 });
-                setDeploy(newData);
+                setConfig(nv);
               }}
             />
-            <div className="text-red-600 text-sm mt-1">{error?.pfxPassword}</div>
+            <div className="text-red-600 text-sm mt-1">{errors?.pfxPassword}</div>
           </div>
         ) : (
           <></>
         )}
 
-        {data.config?.format === "jks" ? (
+        {config.config?.format === "jks" ? (
           <>
             <div>
               <Label>{t("domain.deployment.form.file_jks_alias.label")}</Label>
               <Input
                 placeholder={t("domain.deployment.form.file_jks_alias.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksAlias}
+                value={config?.config?.jksAlias}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksAlias = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksAlias}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksAlias}</div>
             </div>
 
             <div>
@@ -335,16 +348,16 @@ Remove-Item -Path "$pfxPath" -Force
               <Input
                 placeholder={t("domain.deployment.form.file_jks_keypass.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksKeypass}
+                value={config?.config?.jksKeypass}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksKeypass = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksKeypass}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksKeypass}</div>
             </div>
 
             <div>
@@ -352,16 +365,16 @@ Remove-Item -Path "$pfxPath" -Force
               <Input
                 placeholder={t("domain.deployment.form.file_jks_storepass.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksStorepass}
+                value={config?.config?.jksStorepass}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksStorepass = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksStorepass}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksStorepass}</div>
             </div>
           </>
         ) : (
@@ -372,13 +385,13 @@ Remove-Item -Path "$pfxPath" -Force
           <Label>{t("domain.deployment.form.shell.label")}</Label>
           <RadioGroup
             className="flex mt-1"
-            value={data?.config?.shell}
+            value={config?.config?.shell}
             onValueChange={(val) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.shell = val;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           >
             <div className="flex items-center space-x-2">
@@ -406,24 +419,24 @@ Remove-Item -Path "$pfxPath" -Force
               </Label>
             </div>
           </RadioGroup>
-          <div className="text-red-600 text-sm mt-1">{error?.shell}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.shell}</div>
         </div>
 
         <div>
           <Label>{t("domain.deployment.form.shell_pre_command.label")}</Label>
           <Textarea
             className="mt-1"
-            value={data?.config?.preCommand}
+            value={config?.config?.preCommand}
             placeholder={t("domain.deployment.form.shell_pre_command.placeholder")}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.preCommand = e.target.value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           ></Textarea>
-          <div className="text-red-600 text-sm mt-1">{error?.preCommand}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.preCommand}</div>
         </div>
 
         <div>
@@ -448,17 +461,17 @@ Remove-Item -Path "$pfxPath" -Force
           </div>
           <Textarea
             className="mt-1"
-            value={data?.config?.command}
+            value={config?.config?.command}
             placeholder={t("domain.deployment.form.shell_command.placeholder")}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.command = e.target.value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           ></Textarea>
-          <div className="text-red-600 text-sm mt-1">{error?.command}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.command}</div>
         </div>
       </div>
     </>

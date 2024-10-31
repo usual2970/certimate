@@ -9,24 +9,32 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Textarea } from "@/components/ui/textarea";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToSSHConfigParams = {
+  format?: string;
+  certPath?: string;
+  keyPath?: string;
+  pfxPassword?: string;
+  jksAlias?: string;
+  jksKeypass?: string;
+  jksStorepass?: string;
+  shell?: string;
+  preCommand?: string;
+  command?: string;
+};
+
 const DeployToSSH = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToSSHConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
           format: "pem",
           certPath: "/etc/nginx/ssl/nginx.crt",
           keyPath: "/etc/nginx/ssl/nginx.key",
-          pfxPassword: "",
-          jksAlias: "",
-          jksKeypass: "",
-          jksStorepass: "",
-          preCommand: "",
           command: "sudo service nginx reload",
         },
       });
@@ -34,7 +42,7 @@ const DeployToSSH = () => {
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
   const formSchema = z
@@ -79,9 +87,9 @@ const DeployToSSH = () => {
     });
 
   useEffect(() => {
-    const res = formSchema.safeParse(data.config);
-    setError({
-      ...error,
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
       format: res.error?.errors?.find((e) => e.path[0] === "format")?.message,
       certPath: res.error?.errors?.find((e) => e.path[0] === "certPath")?.message,
       keyPath: res.error?.errors?.find((e) => e.path[0] === "keyPath")?.message,
@@ -92,35 +100,38 @@ const DeployToSSH = () => {
       preCommand: res.error?.errors?.find((e) => e.path[0] === "preCommand")?.message,
       command: res.error?.errors?.find((e) => e.path[0] === "command")?.message,
     });
-  }, [data]);
+  }, [config]);
 
   useEffect(() => {
-    if (data.config?.format === "pem") {
-      if (/(.pfx|.jks)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.pfx|.jks)$/, ".crt");
-        });
-        setDeploy(newData);
+    if (config.config?.format === "pem") {
+      if (/(.pfx|.jks)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.pfx|.jks)$/, ".crt");
+          })
+        );
       }
-    } else if (data.config?.format === "pfx") {
-      if (/(.crt|.jks)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.crt|.jks)$/, ".pfx");
-        });
-        setDeploy(newData);
+    } else if (config.config?.format === "pfx") {
+      if (/(.crt|.jks)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.crt|.jks)$/, ".pfx");
+          })
+        );
       }
-    } else if (data.config?.format === "jks") {
-      if (/(.crt|.pfx)$/.test(data.config.certPath)) {
-        const newData = produce(data, (draft) => {
-          draft.config ??= {};
-          draft.config.certPath = data.config!.certPath.replace(/(.crt|.pfx)$/, ".jks");
-        });
-        setDeploy(newData);
+    } else if (config.config?.format === "jks") {
+      if (/(.crt|.pfx)$/.test(config.config.certPath!)) {
+        setConfig(
+          produce(config, (draft) => {
+            draft.config ??= {};
+            draft.config.certPath = config.config!.certPath!.replace(/(.crt|.pfx)$/, ".jks");
+          })
+        );
       }
     }
-  }, [data.config?.format]);
+  }, [config.config?.format]);
 
   return (
     <>
@@ -128,13 +139,13 @@ const DeployToSSH = () => {
         <div>
           <Label>{t("domain.deployment.form.file_format.label")}</Label>
           <Select
-            value={data?.config?.format}
+            value={config?.config?.format}
             onValueChange={(value) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.format = value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           >
             <SelectTrigger>
@@ -148,7 +159,7 @@ const DeployToSSH = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <div className="text-red-600 text-sm mt-1">{error?.format}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.format}</div>
         </div>
 
         <div>
@@ -156,77 +167,77 @@ const DeployToSSH = () => {
           <Input
             placeholder={t("domain.deployment.form.file_cert_path.label")}
             className="w-full mt-1"
-            value={data?.config?.certPath}
+            value={config?.config?.certPath}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.certPath = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.certPath}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.certPath}</div>
         </div>
 
-        {data.config?.format === "pem" ? (
+        {config.config?.format === "pem" ? (
           <div>
             <Label>{t("domain.deployment.form.file_key_path.label")}</Label>
             <Input
               placeholder={t("domain.deployment.form.file_key_path.placeholder")}
               className="w-full mt-1"
-              value={data?.config?.keyPath}
+              value={config?.config?.keyPath}
               onChange={(e) => {
-                const newData = produce(data, (draft) => {
+                const nv = produce(config, (draft) => {
                   draft.config ??= {};
                   draft.config.keyPath = e.target.value?.trim();
                 });
-                setDeploy(newData);
+                setConfig(nv);
               }}
             />
-            <div className="text-red-600 text-sm mt-1">{error?.keyPath}</div>
+            <div className="text-red-600 text-sm mt-1">{errors?.keyPath}</div>
           </div>
         ) : (
           <></>
         )}
 
-        {data.config?.format === "pfx" ? (
+        {config.config?.format === "pfx" ? (
           <div>
             <Label>{t("domain.deployment.form.file_pfx_password.label")}</Label>
             <Input
               placeholder={t("domain.deployment.form.file_pfx_password.placeholder")}
               className="w-full mt-1"
-              value={data?.config?.pfxPassword}
+              value={config?.config?.pfxPassword}
               onChange={(e) => {
-                const newData = produce(data, (draft) => {
+                const nv = produce(config, (draft) => {
                   draft.config ??= {};
                   draft.config.pfxPassword = e.target.value?.trim();
                 });
-                setDeploy(newData);
+                setConfig(nv);
               }}
             />
-            <div className="text-red-600 text-sm mt-1">{error?.pfxPassword}</div>
+            <div className="text-red-600 text-sm mt-1">{errors?.pfxPassword}</div>
           </div>
         ) : (
           <></>
         )}
 
-        {data.config?.format === "jks" ? (
+        {config.config?.format === "jks" ? (
           <>
             <div>
               <Label>{t("domain.deployment.form.file_jks_alias.label")}</Label>
               <Input
                 placeholder={t("domain.deployment.form.file_jks_alias.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksAlias}
+                value={config?.config?.jksAlias}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksAlias = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksAlias}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksAlias}</div>
             </div>
 
             <div>
@@ -234,16 +245,16 @@ const DeployToSSH = () => {
               <Input
                 placeholder={t("domain.deployment.form.file_jks_keypass.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksKeypass}
+                value={config?.config?.jksKeypass}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksKeypass = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksKeypass}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksKeypass}</div>
             </div>
 
             <div>
@@ -251,16 +262,16 @@ const DeployToSSH = () => {
               <Input
                 placeholder={t("domain.deployment.form.file_jks_storepass.placeholder")}
                 className="w-full mt-1"
-                value={data?.config?.jksStorepass}
+                value={config?.config?.jksStorepass}
                 onChange={(e) => {
-                  const newData = produce(data, (draft) => {
+                  const nv = produce(config, (draft) => {
                     draft.config ??= {};
                     draft.config.jksStorepass = e.target.value?.trim();
                   });
-                  setDeploy(newData);
+                  setConfig(nv);
                 }}
               />
-              <div className="text-red-600 text-sm mt-1">{error?.jksStorepass}</div>
+              <div className="text-red-600 text-sm mt-1">{errors?.jksStorepass}</div>
             </div>
           </>
         ) : (
@@ -271,34 +282,34 @@ const DeployToSSH = () => {
           <Label>{t("domain.deployment.form.shell_pre_command.label")}</Label>
           <Textarea
             className="mt-1"
-            value={data?.config?.preCommand}
+            value={config?.config?.preCommand}
             placeholder={t("domain.deployment.form.shell_pre_command.placeholder")}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.preCommand = e.target.value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           ></Textarea>
-          <div className="text-red-600 text-sm mt-1">{error?.preCommand}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.preCommand}</div>
         </div>
 
         <div>
           <Label>{t("domain.deployment.form.shell_command.label")}</Label>
           <Textarea
             className="mt-1"
-            value={data?.config?.command}
+            value={config?.config?.command}
             placeholder={t("domain.deployment.form.shell_command.placeholder")}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.command = e.target.value;
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           ></Textarea>
-          <div className="text-red-600 text-sm mt-1">{error?.command}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.command}</div>
         </div>
       </div>
     </>

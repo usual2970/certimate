@@ -7,25 +7,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToHuaweiCloudCDNConfigParams = {
+  region?: string;
+  domain?: string;
+};
+
 const DeployToHuaweiCloudCDN = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToHuaweiCloudCDNConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
           region: "cn-north-1",
-          domain: "",
         },
       });
     }
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
   const formSchema = z.object({
@@ -38,13 +42,13 @@ const DeployToHuaweiCloudCDN = () => {
   });
 
   useEffect(() => {
-    const res = formSchema.safeParse(data.config);
-    setError({
-      ...error,
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
       region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
       domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
     });
-  }, [data]);
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -53,16 +57,16 @@ const DeployToHuaweiCloudCDN = () => {
         <Input
           placeholder={t("domain.deployment.form.huaweicloud_cdn_region.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.region}
+          value={config?.config?.region}
           onChange={(e) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.region = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.region}</div>
       </div>
 
       <div>
@@ -70,16 +74,16 @@ const DeployToHuaweiCloudCDN = () => {
         <Input
           placeholder={t("domain.deployment.form.domain.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.domain}
+          value={config?.config?.domain}
           onChange={(e) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.domain = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
       </div>
     </div>
   );
