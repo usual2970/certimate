@@ -79,11 +79,11 @@ const DeployToTencentCOS = () => {
   });
 
   const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
-    message: t("domain.deployment.form.cos_region.placeholder"),
+    message: t("domain.deployment.form.tencent_cos_region.placeholder"),
   });
 
   const bucketSchema = z.string().regex(/^.+-\d+$/, {
-    message: t("domain.deployment.form.cos_bucket.placeholder"),
+    message: t("domain.deployment.form.tencent_cos_bucket.placeholder"),
   });
 
   return (
@@ -97,7 +97,7 @@ const DeployToTencentCOS = () => {
           onChange={(e) => {
             const temp = e.target.value;
 
-            const resp = bucketSchema.safeParse(temp);
+            const resp = regionSchema.safeParse(temp);
             if (!resp.success) {
               setError({
                 ...error,

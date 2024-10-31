@@ -179,7 +179,12 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     >
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger>{trigger}</DialogTrigger>
-        <DialogContent className="dark:text-stone-200">
+        <DialogContent
+          className="dark:text-stone-200"
+          onInteractOutside={(event) => {
+            event.preventDefault();
+          }}
+        >
           <DialogHeader>
             <DialogTitle>{t("domain.deployment.tab")}</DialogTitle>
             <DialogDescription></DialogDescription>
