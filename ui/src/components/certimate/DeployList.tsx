@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import DeployEditDialog from "./DeployEditDialog";
 import { DeployConfig } from "@/domain/domain";
 import { accessProvidersMap } from "@/domain/access";
+import { deployTargetsMap } from "@/domain/domain";
 import { useConfigContext } from "@/providers/config";
 
 type DeployItemProps = {
@@ -18,10 +19,11 @@ type DeployItemProps = {
 };
 
 const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
+  const { t } = useTranslation();
+
   const {
     config: { accesses },
   } = useConfigContext();
-  const { t } = useTranslation();
 
   const access = accesses.find((access) => access.id === item.access);
 
@@ -34,11 +36,7 @@ const DeployItem = ({ item, onDelete, onSave }: DeployItemProps) => {
   };
 
   const getTypeName = () => {
-    if (!access) {
-      return "";
-    }
-
-    return t(accessProvidersMap.get(access.configType)?.name || "");
+    return t(deployTargetsMap.get(item.type)?.name || "");
   };
 
   return (
