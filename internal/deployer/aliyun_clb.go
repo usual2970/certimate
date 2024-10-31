@@ -112,11 +112,10 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 
 func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	aliLoadbalancerId := d.option.DeployConfig.GetConfigAsString("loadbalancerId")
+	aliListenerPorts := make([]int32, 0)
 	if aliLoadbalancerId == "" {
 		return errors.New("`loadbalancerId` is required")
 	}
-
-	aliListenerPorts := make([]int32, 0)
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute

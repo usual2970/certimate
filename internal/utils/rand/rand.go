@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// RandStr 随机生成指定长度字符串
+// Deprecated: this will be removed in the future.
+// 随机生成指定长度字符串
 func RandStr(n int) string {
 	seed := time.Now().UnixNano()
 	source := rand.NewSource(seed)

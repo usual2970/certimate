@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	aliyunCdn "github.com/alibabacloud-go/cdn-20180510/v5/client"
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -11,7 +12,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/rand"
 )
 
 type AliyunCDNDeployer struct {
@@ -51,14 +51,12 @@ func (d *AliyunCDNDeployer) GetInfos() []string {
 }
 
 func (d *AliyunCDNDeployer) Deploy(ctx context.Context) error {
-	certName := fmt.Sprintf("%s-%s-%s", d.option.Domain, d.option.DomainId, rand.RandStr(6))
-
 	// 设置 CDN 域名域名证书
 	// REF: https://help.aliyun.com/zh/cdn/developer-reference/api-cdn-2018-05-10-setcdndomainsslcertificate
 	setCdnDomainSSLCertificateReq := &aliyunCdn.SetCdnDomainSSLCertificateRequest{
 		DomainName:  tea.String(d.option.DeployConfig.GetConfigAsString("domain")),
 		CertRegion:  tea.String(d.option.DeployConfig.GetConfigOrDefaultAsString("region", "cn-hangzhou")),
-		CertName:    tea.String(certName),
+		CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),
 		SSLPub:      tea.String(d.option.Certificate.Certificate),
