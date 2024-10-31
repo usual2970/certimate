@@ -59,7 +59,7 @@ func (d *AliyunALBDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *AliyunALBDeployer) GetInfo() []string {
+func (d *AliyunALBDeployer) GetInfos() []string {
 	return d.infos
 }
 

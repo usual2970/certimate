@@ -57,7 +57,7 @@ func (d *TencentCOSDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *TencentCOSDeployer) GetInfo() []string {
+func (d *TencentCOSDeployer) GetInfos() []string {
 	return d.infos
 }
 

@@ -63,7 +63,7 @@ func (d *TencentTEODeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *TencentTEODeployer) GetInfo() []string {
+func (d *TencentTEODeployer) GetInfos() []string {
 	return d.infos
 }
 

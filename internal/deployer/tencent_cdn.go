@@ -64,7 +64,7 @@ func (d *TencentCDNDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *TencentCDNDeployer) GetInfo() []string {
+func (d *TencentCDNDeployer) GetInfos() []string {
 	return d.infos
 }
 

@@ -52,7 +52,7 @@ type DeployerOption struct {
 
 type Deployer interface {
 	Deploy(ctx context.Context) error
-	GetInfo() []string
+	GetInfos() []string
 	GetID() string
 }
 
@@ -154,19 +154,6 @@ func toStr(tag string, data any) string {
 	}
 	byts, _ := json.Marshal(data)
 	return tag + "：" + string(byts)
-}
-
-func getDeployString(conf domain.DeployConfig, key string) string {
-	if _, ok := conf.Config[key]; !ok {
-		return ""
-	}
-
-	val, ok := conf.Config[key].(string)
-	if !ok {
-		return ""
-	}
-
-	return val
 }
 
 func getDeployVariables(conf domain.DeployConfig) map[string]string {

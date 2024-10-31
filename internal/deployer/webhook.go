@@ -29,7 +29,7 @@ func (d *WebhookDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *WebhookDeployer) GetInfo() []string {
+func (d *WebhookDeployer) GetInfos() []string {
 	return d.infos
 }
 

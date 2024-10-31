@@ -41,7 +41,7 @@ func (d *LocalDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *LocalDeployer) GetInfo() []string {
+func (d *LocalDeployer) GetInfos() []string {
 	return []string{}
 }
 

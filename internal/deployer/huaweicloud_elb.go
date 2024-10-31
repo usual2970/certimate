@@ -67,7 +67,7 @@ func (d *HuaweiCloudELBDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *HuaweiCloudELBDeployer) GetInfo() []string {
+func (d *HuaweiCloudELBDeployer) GetInfos() []string {
 	return d.infos
 }
 
@@ -173,7 +173,7 @@ func (u *HuaweiCloudELBDeployer) getSdkProjectId(accessKeyId, secretAccessKey, r
 	if err != nil {
 		return "", err
 	} else if response.Projects == nil || len(*response.Projects) == 0 {
-		return "", fmt.Errorf("no project found")
+		return "", errors.New("no project found")
 	}
 
 	return (*response.Projects)[0].Id, nil
@@ -198,7 +198,7 @@ func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context) error 
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'elb.UpdateCertificate': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateCertificate'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 ELB 证书", updateCertificateResp))
@@ -221,7 +221,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 	}
 	showLoadBalancerResp, err := d.sdkClient.ShowLoadBalancer(showLoadBalancerReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'elb.ShowLoadBalancer': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowLoadBalancer'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 ELB 负载均衡器", showLoadBalancerResp))
@@ -239,7 +239,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'elb.ListListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListListeners'")
 		}
 
 		if listListenersResp.Listeners != nil {
@@ -309,7 +309,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 	}
 	showListenerResp, err := d.sdkClient.ShowListener(showListenerReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'elb.ShowListener': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowListener'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 ELB 监听器", showListenerResp))
@@ -335,7 +335,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 			}
 			listOldCertificateResp, err := d.sdkClient.ListCertificates(listOldCertificateReq)
 			if err != nil {
-				return fmt.Errorf("failed to execute sdk request 'elb.ListCertificates': %w", err)
+				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
 			}
 
 			showNewCertificateReq := &hcElbModel.ShowCertificateRequest{
@@ -343,7 +343,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 			}
 			showNewCertificateResp, err := d.sdkClient.ShowCertificate(showNewCertificateReq)
 			if err != nil {
-				return fmt.Errorf("failed to execute sdk request 'elb.ShowCertificate': %w", err)
+				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowCertificate'")
 			}
 
 			for _, certificate := range *listOldCertificateResp.Certificates {
@@ -376,7 +376,7 @@ func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, 
 	}
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'elb.UpdateListener': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateListener'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 ELB 监听器", updateListenerResp))

@@ -47,7 +47,7 @@ func (d *K8sSecretDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *K8sSecretDeployer) GetInfo() []string {
+func (d *K8sSecretDeployer) GetInfos() []string {
 	return d.infos
 }
 

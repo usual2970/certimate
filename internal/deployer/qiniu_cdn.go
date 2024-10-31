@@ -55,7 +55,7 @@ func (d *QiniuCDNDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *QiniuCDNDeployer) GetInfo() []string {
+func (d *QiniuCDNDeployer) GetInfos() []string {
 	return d.infos
 }
 

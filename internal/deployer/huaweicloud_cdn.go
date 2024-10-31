@@ -62,7 +62,7 @@ func (d *HuaweiCloudCDNDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *HuaweiCloudCDNDeployer) GetInfo() []string {
+func (d *HuaweiCloudCDNDeployer) GetInfos() []string {
 	return d.infos
 }
 
@@ -74,7 +74,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	}
 	showDomainFullConfigResp, err := d.sdkClient.ShowDomainFullConfig(showDomainFullConfigReq)
 	if err != nil {
-		return err
+		return xerrors.Wrap(err, "failed to execute sdk request 'cdn.ShowDomainFullConfig'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到加速域名配置", showDomainFullConfigResp))
@@ -111,7 +111,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	}
 	updateDomainMultiCertificatesResp, err := d.sdkClient.UploadDomainMultiCertificatesEx(updateDomainMultiCertificatesReq)
 	if err != nil {
-		return err
+		return xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadDomainMultiCertificatesEx'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新加速域名配置", updateDomainMultiCertificatesResp))

@@ -47,7 +47,7 @@ func (d *AliyunDCDNDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *AliyunDCDNDeployer) GetInfo() []string {
+func (d *AliyunDCDNDeployer) GetInfos() []string {
 	return d.infos
 }
 

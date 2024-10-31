@@ -37,13 +37,6 @@ func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (Uploader
 }
 
 func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Printf("Recovered from panic: %+v", r)
-			fmt.Println()
-		}
-	}()
-
 	// 生成新证书名（需符合腾讯云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
