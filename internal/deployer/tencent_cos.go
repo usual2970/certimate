@@ -77,7 +77,7 @@ func (d *TencentCOSDeployer) Deploy(ctx context.Context) error {
 
 	d.infos = append(d.infos, toStr("已上传证书", upres))
 
-	// 证书部署到 CLB 实例
+	// 证书部署到 COS 实例
 	// REF: https://cloud.tencent.com/document/product/400/91667
 	deployCertificateInstanceReq := tcSsl.NewDeployCertificateInstanceRequest()
 	deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)

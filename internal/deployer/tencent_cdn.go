@@ -79,7 +79,7 @@ func (d *TencentCDNDeployer) Deploy(ctx context.Context) error {
 
 	// 获取待部署的 CDN 实例
 	// 如果是泛域名，根据证书匹配 CDN 实例
-	aliInstanceIds := make([]string, 0)
+	tcInstanceIds := make([]string, 0)
 	domain := d.option.DeployConfig.GetConfigAsString("domain")
 	if strings.HasPrefix(domain, "*") {
 		domains, err := d.getDomainsByCertificateId(upres.CertId)
@@ -87,27 +87,27 @@ func (d *TencentCDNDeployer) Deploy(ctx context.Context) error {
 			return err
 		}
 
-		aliInstanceIds = domains
+		tcInstanceIds = domains
 	} else {
-		aliInstanceIds = append(aliInstanceIds, domain)
+		tcInstanceIds = append(tcInstanceIds, domain)
 	}
 
 	// 跳过已部署的 CDN 实例
-	if len(aliInstanceIds) > 0 {
+	if len(tcInstanceIds) > 0 {
 		deployedDomains, err := d.getDeployedDomainsByCertificateId(upres.CertId)
 		if err != nil {
 			return err
 		}
 
 		temp := make([]string, 0)
-		for _, aliInstanceId := range aliInstanceIds {
+		for _, aliInstanceId := range tcInstanceIds {
 			if !slices.Contains(deployedDomains, aliInstanceId) {
 				temp = append(temp, aliInstanceId)
 			}
 		}
-		aliInstanceIds = temp
+		tcInstanceIds = temp
 	}
-	if len(aliInstanceIds) == 0 {
+	if len(tcInstanceIds) == 0 {
 		d.infos = append(d.infos, "已部署过或没有要部署的 CDN 实例")
 		return nil
 	}
@@ -118,7 +118,7 @@ func (d *TencentCDNDeployer) Deploy(ctx context.Context) error {
 	deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)
 	deployCertificateInstanceReq.ResourceType = common.StringPtr("cdn")
 	deployCertificateInstanceReq.Status = common.Int64Ptr(1)
-	deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(aliInstanceIds)
+	deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(tcInstanceIds)
 	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
