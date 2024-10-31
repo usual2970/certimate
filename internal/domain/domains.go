@@ -3,8 +3,6 @@ package domain
 import (
 	"encoding/json"
 	"strings"
-
-	"github.com/usual2970/certimate/internal/domain"
 )
 
 type ApplyConfig struct {
@@ -135,7 +133,7 @@ func (dc *DeployConfig) GetConfigAsVariables() map[string]string {
 			return rs
 		}
 
-		kvs := make([]domain.KV, 0)
+		kvs := make([]KV, 0)
 		bts, _ := json.Marshal(value)
 		if err := json.Unmarshal(bts, &kvs); err != nil {
 			return rs
