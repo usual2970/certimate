@@ -65,7 +65,7 @@
   "common.provider.tencent.cdn": "腾讯云 - 内容分发网络 CDN",
   "common.provider.tencent.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "common.provider.tencent.clb": "腾讯云 - 负载均衡 CLB",
-  "common.provider.tencent.teo": "腾讯云 - 边缘安全加速平台 EO",
+  "common.provider.tencent.teo": "腾讯云 - 边缘安全加速平台 EdgeOne",
   "common.provider.huaweicloud": "华为云",
   "common.provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "common.provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
@@ -88,4 +88,3 @@
   "common.provider.lark": "飞书",
   "common.provider.mail": "电子邮件"
 }
-

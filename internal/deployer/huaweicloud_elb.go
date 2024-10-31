@@ -268,7 +268,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context) error
 	// 批量更新监听器证书
 	var errs []error
 	for _, hcListenerId := range hcListenerIds {
-		if err := d.updateListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
+		if err := d.modifyListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -294,14 +294,14 @@ func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听器证书
-	if err := d.updateListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
+	if err := d.modifyListenerCertificate(ctx, hcListenerId, upres.CertId); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (d *HuaweiCloudELBDeployer) updateListenerCertificate(ctx context.Context, hcListenerId string, hcCertId string) error {
+func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, hcListenerId string, hcCertId string) error {
 	// 查询监听器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowListener.html
 	showListenerReq := &hcElbModel.ShowListenerRequest{

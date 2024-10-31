@@ -204,8 +204,6 @@ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHk
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fxamacker/cbor/v2 v2.7.0 h1:iM5WgngdRBanHcxugY4JySA0nk1wZorNOpTgCMedv5E=
 github.com/fxamacker/cbor/v2 v2.7.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXEeXQVeNoDQ=
-github.com/gabriel-vasile/mimetype v1.4.4 h1:QjV6pZ7/XZ7ryI2KuyeEDE8wnh7fHP9YnQy+R0LnH8I=
-github.com/gabriel-vasile/mimetype v1.4.4/go.mod h1:JwLei5XPtWdGiMFB5Pjle1oEeoSeEuJfJE+TtfvdB/s=
 github.com/gabriel-vasile/mimetype v1.4.6 h1:3+PzJTKLkvgjeTbts6msPJt4DixhT4YtFNf1gtGe3zc=
 github.com/gabriel-vasile/mimetype v1.4.6/go.mod h1:JX1qVKqZd40hUPpAfiNTe0Sne7hdfKSbOqqmkq8GCXc=
 github.com/gammazero/toposort v0.1.1/go.mod h1:H2cozTnNpMw0hg2VHAYsAxmkHXBYroNangj2NTBQDvw=
@@ -460,11 +458,14 @@ github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQ
 github.com/technoweenie/multipartstreamer v1.0.1/go.mod h1:jNVxdtShOxzAsukZwTSw6MDx5eUJoiEBsSvzDU9uzog=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017 h1:OymmfmyFkvHirY3WHsoRT3cdTEsqygLbMn8jM41erK4=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017/go.mod h1:gnLxGXlLmF+jDqWR1/RVoF/UUwxQxomQhkc0oN7KeuI=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1031 h1:/eVMCl+jadCex6HxNN6/hFbC0iWl+e8s4PSIcI8aqS4=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1031/go.mod h1:8Km0fRIaDS7PssuyxDFvRRFBUFmECqG+ICpViCs/Vak=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.992/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1002/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1017/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1030 h1:kwiUoCkooUgy7iPyhEEbio7WT21kGJUeZ5JeJfb/dYk=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1030/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1031 h1:3ouglYKE5cwhx2vwICGeW7pAlwyCLnpQd7O0l3hCSTg=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1031/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1002 h1:QwE0dRkAAbdf+eACnkNULgDn9ZKUJpPWRyXdqJolP5E=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1002/go.mod h1:WdC0FYbqYhJwQ3kbqri6hVP5HAEp+rzX9FToItTAzUg=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992 h1:A6O89OlCJQUpNxGqC/E5By04UNKBryIt5olQIGOx8mg=

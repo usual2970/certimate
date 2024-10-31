@@ -65,7 +65,7 @@
   "common.provider.tencent.ecdn": "Tencent Cloud - ECDN",
   "common.provider.tencent.clb": "Tencent Cloud - CLB",
   "common.provider.tencent.cos": "Tencent Cloud - COS",
-  "common.provider.tencent.teo": "Tencent Cloud - TEO",
+  "common.provider.tencent.teo": "Tencent Cloud - EdgeOne",
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.huaweicloud.cdn": "Huawei Cloud - CDN",
   "common.provider.huaweicloud.elb": "Huawei Cloud - ELB",

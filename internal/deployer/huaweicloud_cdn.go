@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
 	hcCdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
@@ -67,6 +66,14 @@ func (d *HuaweiCloudCDNDeployer) GetInfos() []string {
 }
 
 func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
+	// 上传证书到 SCM
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	if err != nil {
+		return err
+	}
+
+	d.infos = append(d.infos, toStr("已上传证书", upres))
+
 	// 查询加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/ShowDomainFullConfig.html
 	showDomainFullConfigReq := &hcCdnModel.ShowDomainFullConfigRequest{
@@ -85,24 +92,9 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context) error {
 	updateDomainMultiCertificatesReqBodyContent := &hcCdnEx.UpdateDomainMultiCertificatesExRequestBodyContent{}
 	updateDomainMultiCertificatesReqBodyContent.DomainName = d.option.DeployConfig.GetConfigAsString("domain")
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
-	if d.option.DeployConfig.GetConfigAsBool("useSCM") {
-		// 上传证书到 SCM
-		upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
-		if err != nil {
-			return err
-		}
-
-		d.infos = append(d.infos, toStr("已上传证书", upres))
-
-		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
-		updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(upres.CertId)
-		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(upres.CertName)
-	} else {
-		updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(0)
-		updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
-		updateDomainMultiCertificatesReqBodyContent.Certificate = cast.StringPtr(d.option.Certificate.Certificate)
-		updateDomainMultiCertificatesReqBodyContent.PrivateKey = cast.StringPtr(d.option.Certificate.PrivateKey)
-	}
+	updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
+	updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(upres.CertId)
+	updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(upres.CertName)
 	updateDomainMultiCertificatesReqBodyContent = updateDomainMultiCertificatesReqBodyContent.MergeConfig(showDomainFullConfigResp.Configs)
 	updateDomainMultiCertificatesReq := &hcCdnEx.UpdateDomainMultiCertificatesExRequest{
 		Body: &hcCdnEx.UpdateDomainMultiCertificatesExRequestBody{
