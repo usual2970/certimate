@@ -35,7 +35,9 @@ const DeployToHuaweiCloudCDN = () => {
   const formSchema = z
     .object({
       region: z.string().min(1, t("domain.deployment.form.huaweicloud_elb_region.placeholder")),
-      resourceType: z.string().min(1, t("domain.deployment.form.huaweicloud_elb_resource_type.placeholder")),
+      resourceType: z.union([z.literal("certificate"), z.literal("loadbalancer"), z.literal("listener")], {
+        message: t("domain.deployment.form.huaweicloud_elb_resource_type.placeholder"),
+      }),
       certificateId: z.string().optional(),
       loadbalancerId: z.string().optional(),
       listenerId: z.string().optional(),
@@ -55,25 +57,14 @@ const DeployToHuaweiCloudCDN = () => {
 
   useEffect(() => {
     const res = formSchema.safeParse(data.config);
-    if (!res.success) {
-      setError({
-        ...error,
-        region: res.error.errors.find((e) => e.path[0] === "region")?.message,
-        resourceType: res.error.errors.find((e) => e.path[0] === "resourceType")?.message,
-        certificateId: res.error.errors.find((e) => e.path[0] === "certificateId")?.message,
-        loadbalancerId: res.error.errors.find((e) => e.path[0] === "loadbalancerId")?.message,
-        listenerId: res.error.errors.find((e) => e.path[0] === "listenerId")?.message,
-      });
-    } else {
-      setError({
-        ...error,
-        region: undefined,
-        resourceType: undefined,
-        certificateId: undefined,
-        loadbalancerId: undefined,
-        listenerId: undefined,
-      });
-    }
+    setError({
+      ...error,
+      region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
+      resourceType: res.error?.errors?.find((e) => e.path[0] === "resourceType")?.message,
+      certificateId: res.error?.errors?.find((e) => e.path[0] === "certificateId")?.message,
+      loadbalancerId: res.error?.errors?.find((e) => e.path[0] === "loadbalancerId")?.message,
+      listenerId: res.error?.errors?.find((e) => e.path[0] === "listenerId")?.message,
+    });
   }, [data]);
 
   return (

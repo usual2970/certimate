@@ -95,6 +95,8 @@
   "domain.deployment.form.tencent_cos_region.placeholder": "Please enter region (e.g. ap-guangzhou)",
   "domain.deployment.form.tencent_cos_bucket.label": "Bucket",
   "domain.deployment.form.tencent_cos_bucket.placeholder": "Please enter bucket",
+  "domain.deployment.form.tencent_cdn_region.label": "Region",
+  "domain.deployment.form.tencent_cdn_region.placeholder": "Please enter region (e.g. ap-guangzhou)",
   "domain.deployment.form.tencent_clb_region.label": "Region",
   "domain.deployment.form.tencent_clb_region.placeholder": "Please enter region (e.g. ap-guangzhou)",
   "domain.deployment.form.tencent_clb_resource_type.label": "Resource Type",

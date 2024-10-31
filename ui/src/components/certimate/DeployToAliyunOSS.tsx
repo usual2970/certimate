@@ -17,7 +17,7 @@ const DeployToAliyunOSS = () => {
       setDeploy({
         ...data,
         config: {
-          endpoint: "oss-cn-hangzhou.aliyuncs.com",
+          endpoint: "oss.aliyuncs.com",
           bucket: "",
           domain: "",
         },
@@ -29,43 +29,27 @@ const DeployToAliyunOSS = () => {
     setError({});
   }, []);
 
-  useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const resp = bucketSchema.safeParse(data.config?.bucket);
-    if (!resp.success) {
-      setError({
-        ...error,
-        bucket: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        bucket: "",
-      });
-    }
-  }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  const formSchema = z.object({
+    endpoint: z.string().min(1, {
+      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
+    }),
+    bucket: z.string().min(1, {
+      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
+    }),
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
   });
 
-  const bucketSchema = z.string().min(1, {
-    message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
-  });
+  useEffect(() => {
+    const res = formSchema.safeParse(data.config);
+    setError({
+      ...error,
+      endpoint: res.error?.errors?.find((e) => e.path[0] === "endpoint")?.message,
+      bucket: res.error?.errors?.find((e) => e.path[0] === "bucket")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [data]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -76,13 +60,9 @@ const DeployToAliyunOSS = () => {
           className="w-full mt-1"
           value={data?.config?.endpoint}
           onChange={(e) => {
-            const temp = e.target.value;
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.endpoint = temp;
+              draft.config ??= {};
+              draft.config.endpoint = e.target.value?.trim();
             });
             setDeploy(newData);
           }}
@@ -97,26 +77,9 @@ const DeployToAliyunOSS = () => {
           className="w-full mt-1"
           value={data?.config?.bucket}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = bucketSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                bucket: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                bucket: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.bucket = temp;
+              draft.config ??= {};
+              draft.config.bucket = e.target.value?.trim();
             });
             setDeploy(newData);
           }}
@@ -131,26 +94,9 @@ const DeployToAliyunOSS = () => {
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
             setDeploy(newData);
           }}

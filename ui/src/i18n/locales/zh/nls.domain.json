@@ -115,6 +115,8 @@
   "domain.deployment.form.tencent_teo_zone_id.placeholder": "请输入 Zone ID",
   "domain.deployment.form.tencent_teo_domain.label": "部署到域名（支持泛域名, 应与服务器上配置的域名完全一致, 每行一个域名）",
   "domain.deployment.form.tencent_teo_domain.placeholder": "请输入部署到的域名",
+  "domain.deployment.form.huaweicloud_cdn_region.label": "地域",
+  "domain.deployment.form.huaweicloud_cdn_region.placeholder": "请输入地域（如 cn-north-1）",
   "domain.deployment.form.huaweicloud_elb_region.label": "地域",
   "domain.deployment.form.huaweicloud_elb_region.placeholder": "请输入地域（如 cn-north-1）",
   "domain.deployment.form.huaweicloud_elb_resource_type.label": "替换方式",

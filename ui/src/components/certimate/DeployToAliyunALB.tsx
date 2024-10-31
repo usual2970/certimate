@@ -51,23 +51,13 @@ const DeployToAliyunALB = () => {
 
   useEffect(() => {
     const res = formSchema.safeParse(data.config);
-    if (!res.success) {
-      setError({
-        ...error,
-        region: res.error.errors.find((e) => e.path[0] === "region")?.message,
-        resourceType: res.error.errors.find((e) => e.path[0] === "resourceType")?.message,
-        loadbalancerId: res.error.errors.find((e) => e.path[0] === "loadbalancerId")?.message,
-        listenerId: res.error.errors.find((e) => e.path[0] === "listenerId")?.message,
-      });
-    } else {
-      setError({
-        ...error,
-        region: undefined,
-        resourceType: undefined,
-        loadbalancerId: undefined,
-        listenerId: undefined,
-      });
-    }
+    setError({
+      ...error,
+      region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
+      resourceType: res.error?.errors?.find((e) => e.path[0] === "resourceType")?.message,
+      loadbalancerId: res.error?.errors?.find((e) => e.path[0] === "loadbalancerId")?.message,
+      listenerId: res.error?.errors?.find((e) => e.path[0] === "listenerId")?.message,
+    });
   }, [data]);
 
   return (

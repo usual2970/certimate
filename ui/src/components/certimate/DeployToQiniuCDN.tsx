@@ -27,24 +27,19 @@ const DeployToQiniuCDN = () => {
     setError({});
   }, []);
 
-  useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  const formSchema = z.object({
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
   });
+
+  useEffect(() => {
+    const res = formSchema.safeParse(data.config);
+    setError({
+      ...error,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [data]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -55,26 +50,9 @@ const DeployToQiniuCDN = () => {
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
             setDeploy(newData);
           }}

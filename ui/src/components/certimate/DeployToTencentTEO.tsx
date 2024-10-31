@@ -14,46 +14,35 @@ const DeployToTencentTEO = () => {
   const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
 
   useEffect(() => {
-    setError({});
+    if (!data.id) {
+      setDeploy({
+        ...data,
+        config: {
+          zoneId: "",
+        },
+      });
+    }
   }, []);
 
   useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
+    setError({});
+  }, []);
+
+  const formSchema = z.object({
+    zoneId: z.string().min(1, t("domain.deployment.form.tencent_teo_zone_id.placeholder")),
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
+  });
 
   useEffect(() => {
-    const resp = zoneIdSchema.safeParse(data.config?.zoneId);
-    if (!resp.success) {
-      setError({
-        ...error,
-        zoneId: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        zoneId: "",
-      });
-    }
+    const res = formSchema.safeParse(data.config);
+    setError({
+      ...error,
+      zoneId: res.error?.errors?.find((e) => e.path[0] === "zoneId")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
   }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
-  });
-
-  const zoneIdSchema = z.string().regex(/^zone-[0-9a-zA-Z]{9}$/, {
-    message: t("common.errmsg.zoneid_invalid"),
-  });
 
   return (
     <div className="flex flex-col space-y-8">
@@ -64,26 +53,9 @@ const DeployToTencentTEO = () => {
           className="w-full mt-1"
           value={data?.config?.zoneId}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = zoneIdSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                zoneId: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                zoneId: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.zoneId = temp;
+              draft.config ??= {};
+              draft.config.zoneId = e.target.value?.trim();
             });
             setDeploy(newData);
           }}
@@ -98,26 +70,9 @@ const DeployToTencentTEO = () => {
           className="w-full mt-1"
           value={data?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
             const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
             setDeploy(newData);
           }}

@@ -80,33 +80,18 @@ const DeployToSSH = () => {
 
   useEffect(() => {
     const res = formSchema.safeParse(data.config);
-    if (!res.success) {
-      setError({
-        ...error,
-        format: res.error.errors.find((e) => e.path[0] === "format")?.message,
-        certPath: res.error.errors.find((e) => e.path[0] === "certPath")?.message,
-        keyPath: res.error.errors.find((e) => e.path[0] === "keyPath")?.message,
-        pfxPassword: res.error.errors.find((e) => e.path[0] === "pfxPassword")?.message,
-        jksAlias: res.error.errors.find((e) => e.path[0] === "jksAlias")?.message,
-        jksKeypass: res.error.errors.find((e) => e.path[0] === "jksKeypass")?.message,
-        jksStorepass: res.error.errors.find((e) => e.path[0] === "jksStorepass")?.message,
-        preCommand: res.error.errors.find((e) => e.path[0] === "preCommand")?.message,
-        command: res.error.errors.find((e) => e.path[0] === "command")?.message,
-      });
-    } else {
-      setError({
-        ...error,
-        format: undefined,
-        certPath: undefined,
-        keyPath: undefined,
-        pfxPassword: undefined,
-        jksAlias: undefined,
-        jksKeypass: undefined,
-        jksStorepass: undefined,
-        preCommand: undefined,
-        command: undefined,
-      });
-    }
+    setError({
+      ...error,
+      format: res.error?.errors?.find((e) => e.path[0] === "format")?.message,
+      certPath: res.error?.errors?.find((e) => e.path[0] === "certPath")?.message,
+      keyPath: res.error?.errors?.find((e) => e.path[0] === "keyPath")?.message,
+      pfxPassword: res.error?.errors?.find((e) => e.path[0] === "pfxPassword")?.message,
+      jksAlias: res.error?.errors?.find((e) => e.path[0] === "jksAlias")?.message,
+      jksKeypass: res.error?.errors?.find((e) => e.path[0] === "jksKeypass")?.message,
+      jksStorepass: res.error?.errors?.find((e) => e.path[0] === "jksStorepass")?.message,
+      preCommand: res.error?.errors?.find((e) => e.path[0] === "preCommand")?.message,
+      command: res.error?.errors?.find((e) => e.path[0] === "command")?.message,
+    });
   }, [data]);
 
   useEffect(() => {
