@@ -22,7 +22,7 @@ type TencentCloudSSLUploader struct {
 }
 
 func New(config *TencentCloudSSLUploaderConfig) (*TencentCloudSSLUploader, error) {
-	client, err := (&TencentCloudSSLUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.SecretId,
 		config.SecretKey,
 	)
@@ -55,7 +55,7 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 	}, nil
 }
 
-func (u *TencentCloudSSLUploader) createSdkClient(secretId, secretKey string) (*tcSsl.Client, error) {
+func createSdkClient(secretId, secretKey string) (*tcSsl.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
 	client, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {

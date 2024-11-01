@@ -28,7 +28,7 @@ type HuaweiCloudSCMUploader struct {
 }
 
 func New(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
-	client, err := (&HuaweiCloudSCMUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.SecretAccessKey,
 		config.Region,
@@ -139,7 +139,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudSCMUploader) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmClient, error) {
 	if region == "" {
 		region = "cn-north-4" // SCM 服务默认区域：华北四北京
 	}

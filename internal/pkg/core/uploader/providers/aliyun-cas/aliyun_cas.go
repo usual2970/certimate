@@ -27,7 +27,7 @@ type AliyunCASUploader struct {
 }
 
 func New(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
-	client, err := (&AliyunCASUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,
 		config.Region,
@@ -132,7 +132,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunCASUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}

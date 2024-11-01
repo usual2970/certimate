@@ -33,7 +33,7 @@ type HuaweiCloudELBUploader struct {
 }
 
 func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
-	client, err := (&HuaweiCloudELBUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.SecretAccessKey,
 		config.Region,
@@ -108,7 +108,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 	// 获取项目 ID
 	// REF: https://support.huaweicloud.com/api-iam/iam_06_0001.html
-	projectId, err := u.getSdkProjectId(u.config.Region, u.config.AccessKeyId, u.config.SecretAccessKey)
+	projectId, err := getSdkProjectId(u.config.AccessKeyId, u.config.SecretAccessKey, u.config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to get SDK project id")
 	}
@@ -142,7 +142,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
 	if region == "" {
 		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}
@@ -172,7 +172,7 @@ func (u *HuaweiCloudELBUploader) createSdkClient(accessKeyId, secretAccessKey, r
 	return client, nil
 }
 
-func (u *HuaweiCloudELBUploader) getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error) {
+func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error) {
 	if region == "" {
 		region = "cn-north-4" // IAM 服务默认区域：华北四北京
 	}

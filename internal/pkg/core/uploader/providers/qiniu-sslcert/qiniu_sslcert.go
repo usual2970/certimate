@@ -24,7 +24,7 @@ type QiniuSSLCertUploader struct {
 }
 
 func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
-	client, err := (&QiniuSSLCertUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.AccessKey,
 		config.SecretKey,
 	)
@@ -63,7 +63,7 @@ func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privk
 	}, nil
 }
 
-func (u *QiniuSSLCertUploader) createSdkClient(accessKey, secretKey string) (*qiniuEx.Client, error) {
+func createSdkClient(accessKey, secretKey string) (*qiniuEx.Client, error) {
 	credential := auth.New(accessKey, secretKey)
 	client := qiniuEx.NewClient(credential)
 	return client, nil

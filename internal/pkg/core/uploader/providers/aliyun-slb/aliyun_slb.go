@@ -29,7 +29,7 @@ type AliyunSLBUploader struct {
 }
 
 func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
-	client, err := (&AliyunSLBUploader{}).createSdkClient(
+	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,
 		config.Region,
@@ -102,7 +102,7 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}, nil
 }
 
-func (u *AliyunSLBUploader) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // SLB 服务默认区域：华东一杭州
 	}
