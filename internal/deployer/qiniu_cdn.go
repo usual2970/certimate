@@ -10,6 +10,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderQiniu "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 	qiniuEx "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
 )
 
@@ -35,7 +36,7 @@ func NewQiniuCDNDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploader.NewQiniuSSLCertUploader(&uploader.QiniuSSLCertUploaderConfig{
+	uploader, err := uploaderQiniu.New(&uploaderQiniu.QiniuSSLCertUploaderConfig{
 		AccessKey: access.AccessKey,
 		SecretKey: access.SecretKey,
 	})

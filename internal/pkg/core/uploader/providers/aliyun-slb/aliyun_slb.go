@@ -1,4 +1,4 @@
-﻿package uploader
+﻿package aliyunslb
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -27,7 +28,7 @@ type AliyunSLBUploader struct {
 	sdkClient *aliyunSlb.Client
 }
 
-func NewAliyunSLBUploader(config *AliyunSLBUploaderConfig) (Uploader, error) {
+func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 	client, err := (&AliyunSLBUploader{}).createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,
@@ -43,7 +44,7 @@ func NewAliyunSLBUploader(config *AliyunSLBUploaderConfig) (Uploader, error) {
 	}, nil
 }
 
-func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
+func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
@@ -69,7 +70,7 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 				strings.EqualFold(certX509.Subject.CommonName, *certDetail.CommonName)
 			// 如果已存在相同证书，直接返回已有的证书信息
 			if isSameCert {
-				return &UploadResult{
+				return &uploader.UploadResult{
 					CertId:   *certDetail.ServerCertificateId,
 					CertName: *certDetail.ServerCertificateName,
 				}, nil
@@ -95,7 +96,7 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	}
 
 	certId = *uploadServerCertificateResp.Body.ServerCertificateId
-	return &UploadResult{
+	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil

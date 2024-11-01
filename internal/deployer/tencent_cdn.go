@@ -15,6 +15,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderTcSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentCDNDeployer struct {
@@ -44,7 +45,7 @@ func NewTencentCDNDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	uploader, err := uploader.NewTencentCloudSSLUploader(&uploader.TencentCloudSSLUploaderConfig{
+	uploader, err := uploaderTcSsl.New(&uploaderTcSsl.TencentCloudSSLUploaderConfig{
 		SecretId:  access.SecretId,
 		SecretKey: access.SecretKey,
 	})

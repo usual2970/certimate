@@ -20,6 +20,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderHcElb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
@@ -46,7 +47,7 @@ func NewHuaweiCloudELBDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploader.NewHuaweiCloudELBUploader(&uploader.HuaweiCloudELBUploaderConfig{
+	uploader, err := uploaderHcElb.New(&uploaderHcElb.HuaweiCloudELBUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
 		Region:          option.DeployConfig.GetConfigAsString("region"),

@@ -13,6 +13,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderAliyunCas "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
 type AliyunALBDeployer struct {
@@ -38,7 +39,7 @@ func NewAliyunALBDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploader.NewAliyunCASUploader(&uploader.AliyunCASUploaderConfig{
+	uploader, err := uploaderAliyunCas.New(&uploaderAliyunCas.AliyunCASUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.AccessKeySecret,
 		Region:          option.DeployConfig.GetConfigAsString("region"),

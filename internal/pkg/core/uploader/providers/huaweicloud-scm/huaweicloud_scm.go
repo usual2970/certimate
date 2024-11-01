@@ -1,4 +1,4 @@
-﻿package uploader
+﻿package huaweicloudscm
 
 import (
 	"context"
@@ -11,6 +11,7 @@ import (
 	hcScmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 	xerrors "github.com/pkg/errors"
 
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
@@ -26,7 +27,7 @@ type HuaweiCloudSCMUploader struct {
 	sdkClient *hcScm.ScmClient
 }
 
-func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (Uploader, error) {
+func New(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
 	client, err := (&HuaweiCloudSCMUploader{}).createSdkClient(
 		config.AccessKeyId,
 		config.SecretAccessKey,
@@ -42,7 +43,7 @@ func NewHuaweiCloudSCMUploader(config *HuaweiCloudSCMUploaderConfig) (Uploader, 
 	}, nil
 }
 
-func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
+func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
@@ -94,7 +95,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 
 				// 如果已存在相同证书，直接返回已有的证书信息
 				if isSameCert {
-					return &UploadResult{
+					return &uploader.UploadResult{
 						CertId:   certDetail.Id,
 						CertName: certDetail.Name,
 					}, nil
@@ -132,7 +133,7 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	}
 
 	certId = *importCertificateResp.CertificateId
-	return &UploadResult{
+	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil

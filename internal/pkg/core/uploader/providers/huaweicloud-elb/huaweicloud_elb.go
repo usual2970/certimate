@@ -1,4 +1,4 @@
-﻿package uploader
+﻿package huaweicloudelb
 
 import (
 	"context"
@@ -16,6 +16,7 @@ import (
 	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 	xerrors "github.com/pkg/errors"
 
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
@@ -31,7 +32,7 @@ type HuaweiCloudELBUploader struct {
 	sdkClient *hcElb.ElbClient
 }
 
-func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (Uploader, error) {
+func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
 	client, err := (&HuaweiCloudELBUploader{}).createSdkClient(
 		config.AccessKeyId,
 		config.SecretAccessKey,
@@ -47,7 +48,7 @@ func NewHuaweiCloudELBUploader(config *HuaweiCloudELBUploaderConfig) (Uploader, 
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
+func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	newCert, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
@@ -86,7 +87,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 				// 如果已存在相同证书，直接返回已有的证书信息
 				if isSameCert {
-					return &UploadResult{
+					return &uploader.UploadResult{
 						CertId:   certDetail.Id,
 						CertName: certDetail.Name,
 					}, nil
@@ -135,7 +136,7 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 	certId = createCertificateResp.Certificate.Id
 	certName = createCertificateResp.Certificate.Name
-	return &UploadResult{
+	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil

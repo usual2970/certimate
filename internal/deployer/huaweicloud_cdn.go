@@ -13,6 +13,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderHcScm "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	hcCdnEx "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-cdn-sdk"
 )
@@ -40,7 +41,7 @@ func NewHuaweiCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploader.NewHuaweiCloudSCMUploader(&uploader.HuaweiCloudSCMUploaderConfig{
+	uploader, err := uploaderHcScm.New(&uploaderHcScm.HuaweiCloudSCMUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
 		Region:          "",

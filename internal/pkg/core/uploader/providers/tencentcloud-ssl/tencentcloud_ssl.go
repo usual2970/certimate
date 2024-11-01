@@ -1,4 +1,4 @@
-﻿package uploader
+﻿package tencentcloudssl
 
 import (
 	"context"
@@ -7,6 +7,8 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 )
 
 type TencentCloudSSLUploaderConfig struct {
@@ -19,7 +21,7 @@ type TencentCloudSSLUploader struct {
 	sdkClient *tcSsl.Client
 }
 
-func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (Uploader, error) {
+func New(config *TencentCloudSSLUploaderConfig) (*TencentCloudSSLUploader, error) {
 	client, err := (&TencentCloudSSLUploader{}).createSdkClient(
 		config.SecretId,
 		config.SecretKey,
@@ -34,7 +36,7 @@ func NewTencentCloudSSLUploader(config *TencentCloudSSLUploaderConfig) (Uploader
 	}, nil
 }
 
-func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
+func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 上传新证书
 	// REF: https://cloud.tencent.com/document/product/400/41665
 	uploadCertificateReq := tcSsl.NewUploadCertificateRequest()
@@ -46,8 +48,8 @@ func (u *TencentCloudSSLUploader) Upload(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.UploadCertificate'")
 	}
 
-	certId := *describeCertificateDetailResp.Response.CertificateId
-	return &UploadResult{
+	certId := *uploadCertificateResp.Response.CertificateId
+	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: "",
 	}, nil

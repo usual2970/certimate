@@ -1,4 +1,4 @@
-﻿package uploader
+﻿package qiniusslcert
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/auth"
 
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 	qiniuEx "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
 )
@@ -22,7 +23,7 @@ type QiniuSSLCertUploader struct {
 	sdkClient *qiniuEx.Client
 }
 
-func NewQiniuSSLCertUploader(config *QiniuSSLCertUploaderConfig) (Uploader, error) {
+func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
 	client, err := (&QiniuSSLCertUploader{}).createSdkClient(
 		config.AccessKey,
 		config.SecretKey,
@@ -37,7 +38,7 @@ func NewQiniuSSLCertUploader(config *QiniuSSLCertUploaderConfig) (Uploader, erro
 	}, nil
 }
 
-func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error) {
+func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
@@ -56,7 +57,7 @@ func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privk
 	}
 
 	certId = uploadSslCertResp.CertID
-	return &UploadResult{
+	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,
 	}, nil
