@@ -24,6 +24,7 @@ export type NotifyChannels = {
   webhook?: NotifyChannel;
   serverchan?: NotifyChannel;
   mail?: NotifyChannelMail;
+  bark?: NotifyChannelBark;
 };
 
 export type NotifyChannel =
@@ -32,7 +33,8 @@ export type NotifyChannel =
   | NotifyChannelTelegram
   | NotifyChannelWebhook
   | NotifyChannelServerChan
-  | NotifyChannelMail;
+  | NotifyChannelMail
+  | NotifyChannelBark;
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -68,6 +70,12 @@ export type NotifyChannelMail = {
   smtpHostPort: string;
   username: string;
   password: string;
+  enabled: boolean;
+};
+
+export type NotifyChannelBark = {
+  deviceKey: string;
+  serverUrl: string;
   enabled: boolean;
 };
 

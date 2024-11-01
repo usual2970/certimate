@@ -11,6 +11,7 @@ import (
 	"github.com/usual2970/certimate/internal/utils/app"
 
 	notifyPackage "github.com/nikoksr/notify"
+	"github.com/nikoksr/notify/service/bark"
 	"github.com/nikoksr/notify/service/dingding"
 	"github.com/nikoksr/notify/service/http"
 	"github.com/nikoksr/notify/service/lark"
@@ -108,6 +109,8 @@ func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, e
 		return getServerChanNotifier(conf), nil
 	case domain.NotifyChannelMail:
 		return getMailNotifier(conf), nil
+	case domain.NotifyChannelBark:
+		return getBarkNotifier(conf), nil
 	}
 
 	return nil, fmt.Errorf("notifier not found")
@@ -157,6 +160,15 @@ func getServerChanNotifier(conf map[string]any) notifyPackage.Notifier {
 	return rs
 }
 
+func getBarkNotifier(conf map[string]any) notifyPackage.Notifier {
+	deviceKey := getString(conf, "deviceKey")
+	serverURL := getString(conf, "serverUrl")
+	if serverURL == "" {
+		return bark.New(deviceKey)
+	}
+	return bark.NewWithServers(deviceKey, serverURL)
+}
+
 func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 	return dingding.New(&dingding.Config{
 		Token:  getString(conf, "accessToken"),
@@ -169,7 +181,7 @@ func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
 }
 
 func getMailNotifier(conf map[string]any) notifyPackage.Notifier {
-	rs := NewMail(getString(conf, "senderAddress"),getString(conf,"receiverAddress"), getString(conf, "smtpHostAddr"), getString(conf, "smtpHostPort"))
+	rs := NewMail(getString(conf, "senderAddress"), getString(conf, "receiverAddress"), getString(conf, "smtpHostAddr"), getString(conf, "smtpHostPort"))
 
 	rs.SetAuth(getString(conf, "username"), getString(conf, "password"))
 

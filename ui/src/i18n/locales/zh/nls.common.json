@@ -86,6 +86,6 @@
   "common.provider.dingtalk": "钉钉",
   "common.provider.telegram": "Telegram",
   "common.provider.lark": "飞书",
-  "common.provider.mail": "电子邮件"
+  "common.provider.mail": "电子邮件",
+  "common.provider.bark": "Bark"
 }
-

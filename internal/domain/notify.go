@@ -1,12 +1,13 @@
 package domain
 
 const (
-	NotifyChannelDingtalk = "dingtalk"
-	NotifyChannelWebhook  = "webhook"
-	NotifyChannelTelegram = "telegram"
-	NotifyChannelLark     = "lark"
+	NotifyChannelDingtalk   = "dingtalk"
+	NotifyChannelWebhook    = "webhook"
+	NotifyChannelTelegram   = "telegram"
+	NotifyChannelLark       = "lark"
 	NotifyChannelServerChan = "serverchan"
-	NotifyChannelMail = "mail"
+	NotifyChannelMail       = "mail"
+	NotifyChannelBark       = "bark"
 )
 
 type NotifyTestPushReq struct {

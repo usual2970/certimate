@@ -42,6 +42,8 @@
   "settings.notification.mail.smtp_port.placeholder": "SMTP服务器端口, 如果未设置, 默认为25",
   "settings.notification.mail.username.placeholder": "用于登录到邮件服务器的用户名",
   "settings.notification.mail.password.placeholder": "用于登录到邮件服务器的密码",
+  "settings.notification.bark.serverUrl.placeholder": "服务器URL，形如: https://your-bark-server.com， 留空则使用 Bark 默认服务器",
+  "settings.notification.bark.deviceKey.placeholder": "设备密钥，形如: XXXXXXXXXXXXXXXXXXXX",
 
   "settings.ca.tab": "证书颁发机构（CA）",
   "settings.ca.provider.errmsg.empty": "请选择证书分发机构",
@@ -49,4 +51,3 @@
   "settings.ca.eab_hmac_key.errmsg.empty": "请输入EAB_HMAC_KEY",
   "settings.ca.eab_kid_hmac_key.errmsg.empty": "请输入EAB_KID和EAB_HMAC_KEY"
 }
-
