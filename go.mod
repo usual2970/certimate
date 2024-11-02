@@ -12,7 +12,6 @@ require (
 	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.9
 	github.com/alibabacloud-go/tea v1.2.2
-	github.com/alibabacloud-go/tea-utils/v2 v2.0.6
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/go-acme/lego/v4 v4.19.2
 	github.com/gojek/heimdall/v7 v7.0.3
@@ -25,7 +24,8 @@ require (
 	github.com/pocketbase/pocketbase v0.22.18
 	github.com/qiniu/go-sdk/v7 v7.22.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1030
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1031
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1031
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1030
 	golang.org/x/crypto v0.28.0
@@ -41,6 +41,7 @@ require (
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
+	github.com/alibabacloud-go/tea-utils/v2 v2.0.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.43.2 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
@@ -141,7 +142,7 @@ require (
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/nrdcg/namesilo v0.2.1 // indirect
 	github.com/opentracing/opentracing-go v1.2.1-0.20220228012449-10b1cf09e00b // indirect
-	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect

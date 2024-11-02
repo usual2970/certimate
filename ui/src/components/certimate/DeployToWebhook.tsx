@@ -6,26 +6,31 @@ import KVList from "./KVList";
 import { type KVType } from "@/domain/domain";
 
 const DeployToWebhook = () => {
-  const { deploy: data, setDeploy } = useDeployEditContext();
-
-  const { setError } = useDeployEditContext();
+  const { config, setConfig, setErrors } = useDeployEditContext();
 
   useEffect(() => {
-    setError({});
+    if (!config.id) {
+      setConfig({
+        ...config,
+        config: {},
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    setErrors({});
   }, []);
 
   return (
     <>
       <KVList
-        variables={data?.config?.variables}
+        variables={config?.config?.variables}
         onValueChange={(variables: KVType[]) => {
-          const newData = produce(data, (draft) => {
-            if (!draft.config) {
-              draft.config = {};
-            }
+          const nv = produce(config, (draft) => {
+            draft.config ??= {};
             draft.config.variables = variables;
           });
-          setDeploy(newData);
+          setConfig(nv);
         }}
       />
     </>

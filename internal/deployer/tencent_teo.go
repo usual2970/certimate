@@ -6,36 +6,57 @@ import (
 	"fmt"
 	"strings"
 
-	teo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
+	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcTeo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderTcSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentTEODeployer struct {
-	option     *DeployerOption
-	credential *common.Credential
-	infos      []string
+	option *DeployerOption
+	infos  []string
+
+	sdkClients  *tencentTEODeployerSdkClients
+	sslUploader uploader.Uploader
+}
+
+type tencentTEODeployerSdkClients struct {
+	ssl *tcSsl.Client
+	teo *tcTeo.Client
 }
 
 func NewTencentTEODeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.TencentAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal tencent access: %w", err)
+		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 
-	credential := common.NewCredential(
+	clients, err := (&TencentTEODeployer{}).createSdkClients(
 		access.SecretId,
 		access.SecretKey,
 	)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+	}
+
+	uploader, err := uploaderTcSsl.New(&uploaderTcSsl.TencentCloudSSLUploaderConfig{
+		SecretId:  access.SecretId,
+		SecretKey: access.SecretKey,
+	})
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+	}
 
 	return &TencentTEODeployer{
-		option:     option,
-		credential: credential,
-		infos:      make([]string, 0),
+		option:      option,
+		infos:       make([]string, 0),
+		sdkClients:  clients,
+		sslUploader: uploader,
 	}, nil
 }
 
@@ -43,69 +64,56 @@ func (d *TencentTEODeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *TencentTEODeployer) GetInfo() []string {
+func (d *TencentTEODeployer) GetInfos() []string {
 	return d.infos
 }
 
 func (d *TencentTEODeployer) Deploy(ctx context.Context) error {
-	// 上传证书
-	certId, err := d.uploadCert()
-	if err != nil {
-		return fmt.Errorf("failed to upload certificate: %w", err)
+	tcZoneId := d.option.DeployConfig.GetConfigAsString("zoneId")
+	if tcZoneId == "" {
+		return xerrors.New("`zoneId` is required")
 	}
-	d.infos = append(d.infos, toStr("上传证书", certId))
 
-	if err := d.deploy(certId); err != nil {
-		return fmt.Errorf("failed to deploy: %w", err)
+	// 上传证书到 SSL
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	if err != nil {
+		return err
 	}
+
+	d.infos = append(d.infos, toStr("已上传证书", upres))
+
+	// 配置域名证书
+	// REF: https://cloud.tencent.com/document/product/1552/80764
+	modifyHostsCertificateReq := tcTeo.NewModifyHostsCertificateRequest()
+	modifyHostsCertificateReq.ZoneId = common.StringPtr(tcZoneId)
+	modifyHostsCertificateReq.Mode = common.StringPtr("sslcert")
+	modifyHostsCertificateReq.Hosts = common.StringPtrs(strings.Split(strings.ReplaceAll(d.option.Domain, "\r\n", "\n"), "\n"))
+	modifyHostsCertificateReq.ServerCertInfo = []*tcTeo.ServerCertInfo{{CertId: common.StringPtr(upres.CertId)}}
+	modifyHostsCertificateResp, err := d.sdkClients.teo.ModifyHostsCertificate(modifyHostsCertificateReq)
+	if err != nil {
+		return xerrors.Wrap(err, "failed to execute sdk request 'teo.ModifyHostsCertificate'")
+	}
+
+	d.infos = append(d.infos, toStr("已配置域名证书", modifyHostsCertificateResp.Response))
 
 	return nil
 }
 
-func (d *TencentTEODeployer) uploadCert() (string, error) {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
+func (d *TencentTEODeployer) createSdkClients(secretId, secretKey string) (*tencentTEODeployerSdkClients, error) {
+	credential := common.NewCredential(secretId, secretKey)
 
-	client, _ := ssl.NewClient(d.credential, "", cpf)
-
-	request := ssl.NewUploadCertificateRequest()
-
-	request.CertificatePublicKey = common.StringPtr(d.option.Certificate.Certificate)
-	request.CertificatePrivateKey = common.StringPtr(d.option.Certificate.PrivateKey)
-	request.Alias = common.StringPtr(d.option.Domain + "_" + rand.RandStr(6))
-	request.Repeatable = common.BoolPtr(false)
-
-	response, err := client.UploadCertificate(request)
+	sslClient, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
-		return "", fmt.Errorf("failed to upload certificate: %w", err)
+		return nil, err
 	}
 
-	return *response.Response.CertificateId, nil
-}
-
-func (d *TencentTEODeployer) deploy(certId string) error {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "teo.tencentcloudapi.com"
-	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := teo.NewClient(d.credential, "", cpf)
-
-	// 实例化一个请求对象,每个接口都会对应一个request对象
-	request := teo.NewModifyHostsCertificateRequest()
-
-	request.ZoneId = common.StringPtr(getDeployString(d.option.DeployConfig, "zoneId"))
-	request.Mode = common.StringPtr("sslcert")
-	request.ServerCertInfo = []*teo.ServerCertInfo{{
-		CertId: common.StringPtr(certId),
-	}}
-
-	domains := strings.Split(strings.ReplaceAll(d.option.Domain, "\r\n", "\n"),"\n")
-	request.Hosts = common.StringPtrs(domains)
-
-	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
-	resp, err := client.ModifyHostsCertificate(request)
+	teoClient, err := tcTeo.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
-		return fmt.Errorf("failed to deploy certificate: %w", err)
+		return nil, err
 	}
-	d.infos = append(d.infos, toStr("部署证书", resp.Response))
-	return nil
+
+	return &tencentTEODeployerSdkClients{
+		ssl: sslClient,
+		teo: teoClient,
+	}, nil
 }

@@ -51,7 +51,6 @@
   "common.errmsg.host_invalid": "请输入正确的域名或 IP 地址",
   "common.errmsg.ip_invalid": "请输入正确的 IP 地址",
   "common.errmsg.url_invalid": "请输入正确的 URL",
-  "common.errmsg.zoneid_invalid": "请输入正确的 Zone ID",
 
   "common.provider.aliyun": "阿里云",
   "common.provider.aliyun.oss": "阿里云 - 对象存储 OSS",
@@ -65,7 +64,7 @@
   "common.provider.tencent.cdn": "腾讯云 - 内容分发网络 CDN",
   "common.provider.tencent.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "common.provider.tencent.clb": "腾讯云 - 负载均衡 CLB",
-  "common.provider.tencent.teo": "腾讯云 - 边缘安全加速平台 EO",
+  "common.provider.tencent.teo": "腾讯云 - 边缘安全加速平台 EdgeOne",
   "common.provider.huaweicloud": "华为云",
   "common.provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "common.provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
@@ -88,4 +87,3 @@
   "common.provider.lark": "飞书",
   "common.provider.mail": "电子邮件"
 }
-

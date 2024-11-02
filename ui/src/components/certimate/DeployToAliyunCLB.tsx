@@ -8,19 +8,24 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToAliyunCLBConfigParams = {
+  region?: string;
+  resourceType?: string;
+  loadbalancerId?: string;
+  listenerPort?: string;
+};
+
 const DeployToAliyunCLB = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToAliyunCLBConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
           region: "cn-hangzhou",
-          resourceType: "",
-          loadbalancerId: "",
           listenerPort: "443",
         },
       });
@@ -28,7 +33,7 @@ const DeployToAliyunCLB = () => {
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
   const formSchema = z
@@ -50,25 +55,15 @@ const DeployToAliyunCLB = () => {
     });
 
   useEffect(() => {
-    const res = formSchema.safeParse(data.config);
-    if (!res.success) {
-      setError({
-        ...error,
-        region: res.error.errors.find((e) => e.path[0] === "region")?.message,
-        resourceType: res.error.errors.find((e) => e.path[0] === "resourceType")?.message,
-        loadbalancerId: res.error.errors.find((e) => e.path[0] === "loadbalancerId")?.message,
-        listenerPort: res.error.errors.find((e) => e.path[0] === "listenerPort")?.message,
-      });
-    } else {
-      setError({
-        ...error,
-        region: undefined,
-        resourceType: undefined,
-        loadbalancerId: undefined,
-        listenerPort: undefined,
-      });
-    }
-  }, [data]);
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
+      resourceType: res.error?.errors?.find((e) => e.path[0] === "resourceType")?.message,
+      loadbalancerId: res.error?.errors?.find((e) => e.path[0] === "loadbalancerId")?.message,
+      listenerPort: res.error?.errors?.find((e) => e.path[0] === "listenerPort")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -77,28 +72,28 @@ const DeployToAliyunCLB = () => {
         <Input
           placeholder={t("domain.deployment.form.aliyun_clb_region.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.region}
+          value={config?.config?.region}
           onChange={(e) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.region = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.region}</div>
       </div>
 
       <div>
         <Label>{t("domain.deployment.form.aliyun_clb_resource_type.label")}</Label>
         <Select
-          value={data?.config?.resourceType}
+          value={config?.config?.resourceType}
           onValueChange={(value) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
-              draft.config.resourceType = value?.trim();
+              draft.config.resourceType = value;
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         >
           <SelectTrigger>
@@ -111,7 +106,7 @@ const DeployToAliyunCLB = () => {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <div className="text-red-600 text-sm mt-1">{error?.resourceType}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.resourceType}</div>
       </div>
 
       <div>
@@ -119,34 +114,34 @@ const DeployToAliyunCLB = () => {
         <Input
           placeholder={t("domain.deployment.form.aliyun_clb_loadbalancer_id.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.loadbalancerId}
+          value={config?.config?.loadbalancerId}
           onChange={(e) => {
-            const newData = produce(data, (draft) => {
+            const nv = produce(config, (draft) => {
               draft.config ??= {};
               draft.config.loadbalancerId = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.loadbalancerId}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.loadbalancerId}</div>
       </div>
 
-      {data?.config?.resourceType === "listener" ? (
+      {config?.config?.resourceType === "listener" ? (
         <div>
           <Label>{t("domain.deployment.form.aliyun_clb_listener_port.label")}</Label>
           <Input
             placeholder={t("domain.deployment.form.aliyun_clb_listener_port.placeholder")}
             className="w-full mt-1"
-            value={data?.config?.listenerPort}
+            value={config?.config?.listenerPort}
             onChange={(e) => {
-              const newData = produce(data, (draft) => {
+              const nv = produce(config, (draft) => {
                 draft.config ??= {};
                 draft.config.listenerPort = e.target.value?.trim();
               });
-              setDeploy(newData);
+              setConfig(nv);
             }}
           />
-          <div className="text-red-600 text-sm mt-1">{error?.listenerPort}</div>
+          <div className="text-red-600 text-sm mt-1">{errors?.listenerPort}</div>
         </div>
       ) : (
         <></>

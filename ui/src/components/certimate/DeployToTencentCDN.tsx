@@ -7,33 +7,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToTencentCDNParams = {
+  domain?: string;
+};
+
 const DeployToTencentCDN = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToTencentCDNParams>();
 
   useEffect(() => {
-    setError({});
+    if (!config.id) {
+      setConfig({
+        ...config,
+        config: {},
+      });
+    }
   }, []);
 
   useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
+    setErrors({});
+  }, []);
 
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  const formSchema = z.object({
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
   });
+
+  useEffect(() => {
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -42,33 +50,16 @@ const DeployToTencentCDN = () => {
         <Input
           placeholder={t("domain.deployment.form.domain.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.domain}
+          value={config?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
       </div>
     </div>
   );

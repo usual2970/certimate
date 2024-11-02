@@ -105,11 +105,11 @@ func deploy(ctx context.Context, record *models.Record) error {
 		if err = deployer.Deploy(ctx); err != nil {
 
 			app.GetApp().Logger().Error("部署失败", "err", err)
-			history.record(deployPhase, "部署失败", &RecordInfo{Err: err, Info: deployer.GetInfo()})
+			history.record(deployPhase, "部署失败", &RecordInfo{Err: err, Info: deployer.GetInfos()})
 			return err
 		}
 		history.record(deployPhase, fmt.Sprintf("[%s]-部署成功", deployer.GetID()), &RecordInfo{
-			Info: deployer.GetInfo(),
+			Info: deployer.GetInfos(),
 		}, false)
 
 	}

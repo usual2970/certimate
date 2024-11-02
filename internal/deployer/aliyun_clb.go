@@ -6,25 +6,29 @@ import (
 	"errors"
 	"fmt"
 
-	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	slb20140515 "github.com/alibabacloud-go/slb-20140515/v4/client"
+	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
+	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderAliyunSlb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-slb"
 )
 
 type AliyunCLBDeployer struct {
 	option *DeployerOption
 	infos  []string
 
-	sdkClient   *slb20140515.Client
+	sdkClient   *aliyunSlb.Client
 	sslUploader uploader.Uploader
 }
 
 func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(option.Access), access)
+	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
+		return nil, xerrors.Wrap(err, "failed to get access")
+	}
 
 	client, err := (&AliyunCLBDeployer{}).createSdkClient(
 		access.AccessKeyId,
@@ -32,16 +36,16 @@ func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploader.NewAliyunSLBUploader(&uploader.AliyunSLBUploaderConfig{
+	uploader, err := uploaderAliyunSlb.New(&uploaderAliyunSlb.AliyunSLBUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.AccessKeySecret,
 		Region:          option.DeployConfig.GetConfigAsString("region"),
 	})
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
 	return &AliyunCLBDeployer{
@@ -56,7 +60,7 @@ func (d *AliyunCLBDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *AliyunCLBDeployer) GetInfo() []string {
+func (d *AliyunCLBDeployer) GetInfos() []string {
 	return d.infos
 }
 
@@ -77,12 +81,12 @@ func (d *AliyunCLBDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*slb20140515.Client, error) {
+func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CLB(SLB) 服务默认区域：华东一杭州
 	}
 
-	aConfig := &openapi.Config{
+	aConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
@@ -99,7 +103,7 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := slb20140515.NewClient(aConfig)
+	client, err := aliyunSlb.NewClient(aConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -109,21 +113,20 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 
 func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	aliLoadbalancerId := d.option.DeployConfig.GetConfigAsString("loadbalancerId")
+	aliListenerPorts := make([]int32, 0)
 	if aliLoadbalancerId == "" {
 		return errors.New("`loadbalancerId` is required")
 	}
 
-	aliListenerPorts := make([]int32, 0)
-
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
-	describeLoadBalancerAttributeReq := &slb20140515.DescribeLoadBalancerAttributeRequest{
+	describeLoadBalancerAttributeReq := &aliyunSlb.DescribeLoadBalancerAttributeRequest{
 		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 	}
 	describeLoadBalancerAttributeResp, err := d.sdkClient.DescribeLoadBalancerAttribute(describeLoadBalancerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp))
@@ -134,7 +137,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
-		describeLoadBalancerListenersReq := &slb20140515.DescribeLoadBalancerListenersRequest{
+		describeLoadBalancerListenersReq := &aliyunSlb.DescribeLoadBalancerListenersRequest{
 			RegionId:         tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
@@ -143,7 +146,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 		}
 		describeLoadBalancerListenersResp, err := d.sdkClient.DescribeLoadBalancerListeners(describeLoadBalancerListenersReq)
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerListeners': %w", err)
+			return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerListeners'")
 		}
 
 		if describeLoadBalancerListenersResp.Body.Listeners != nil {
@@ -163,17 +166,17 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context) error {
 	d.infos = append(d.infos, toStr("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", aliListenerPorts))
 
 	// 上传证书到 SLB
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 批量更新监听证书
 	var errs []error
 	for _, aliListenerPort := range aliListenerPorts {
-		if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, uploadResult.CertId); err != nil {
+		if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, upres.CertId); err != nil {
 			errs = append(errs, err)
 		}
 	}
@@ -196,15 +199,15 @@ func (d *AliyunCLBDeployer) deployToListener(ctx context.Context) error {
 	}
 
 	// 上传证书到 SLB
-	uploadResult, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
 		return err
 	}
 
-	d.infos = append(d.infos, toStr("已上传证书", uploadResult))
+	d.infos = append(d.infos, toStr("已上传证书", upres))
 
 	// 更新监听
-	if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, uploadResult.CertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, aliLoadbalancerId, aliListenerPort, upres.CertId); err != nil {
 		return err
 	}
 
@@ -214,27 +217,27 @@ func (d *AliyunCLBDeployer) deployToListener(ctx context.Context) error {
 func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLoadbalancerId string, aliListenerPort int32, aliCertId string) error {
 	// 查询监听配置
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerhttpslistenerattribute
-	describeLoadBalancerHTTPSListenerAttributeReq := &slb20140515.DescribeLoadBalancerHTTPSListenerAttributeRequest{
+	describeLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.DescribeLoadBalancerHTTPSListenerAttributeRequest{
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 		ListenerPort:   tea.Int32(aliListenerPort),
 	}
 	describeLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.DescribeLoadBalancerHTTPSListenerAttribute(describeLoadBalancerHTTPSListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp))
 
 	// 查询扩展域名
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
-	describeDomainExtensionsReq := &slb20140515.DescribeDomainExtensionsRequest{
+	describeDomainExtensionsReq := &aliyunSlb.DescribeDomainExtensionsRequest{
 		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId: tea.String(aliLoadbalancerId),
 		ListenerPort:   tea.Int32(aliListenerPort),
 	}
 	describeDomainExtensionsResp, err := d.sdkClient.DescribeDomainExtensions(describeDomainExtensionsReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.DescribeDomainExtensions': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
 	}
 
 	d.infos = append(d.infos, toStr("已查询到 CLB 扩展域名", describeDomainExtensionsResp))
@@ -249,14 +252,14 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 				break
 			}
 
-			setDomainExtensionAttributeReq := &slb20140515.SetDomainExtensionAttributeRequest{
+			setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
 				RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 				DomainExtensionId:   tea.String(*domainExtension.DomainExtensionId),
 				ServerCertificateId: tea.String(aliCertId),
 			}
 			_, err := d.sdkClient.SetDomainExtensionAttribute(setDomainExtensionAttributeReq)
 			if err != nil {
-				return fmt.Errorf("failed to execute sdk request 'slb.SetDomainExtensionAttribute': %w", err)
+				return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'")
 			}
 		}
 	}
@@ -265,7 +268,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
 	//
 	// 注意修改监听配置要放在修改扩展域名之后
-	setLoadBalancerHTTPSListenerAttributeReq := &slb20140515.SetLoadBalancerHTTPSListenerAttributeRequest{
+	setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
 		RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
 		LoadBalancerId:      tea.String(aliLoadbalancerId),
 		ListenerPort:        tea.Int32(aliListenerPort),
@@ -273,7 +276,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	}
 	setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute': %w", err)
+		return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
 	}
 
 	d.infos = append(d.infos, toStr("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp))

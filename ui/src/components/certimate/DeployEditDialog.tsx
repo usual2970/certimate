@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AccessEditDialog from "./AccessEditDialog";
-import { Context as DeployEditContext } from "./DeployEdit";
+import { Context as DeployEditContext, type DeployEditContext as DeployEditContextType } from "./DeployEdit";
 import DeployToAliyunOSS from "./DeployToAliyunOSS";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToAliyunCLB from "./DeployToAliyunCLB";
@@ -49,7 +49,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
     type: "",
   });
 
-  const [error, setError] = useState<Record<string, string | undefined>>({});
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
   const [open, setOpen] = useState(false);
 
@@ -66,10 +66,10 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
 
   useEffect(() => {
     setDeployType(locDeployConfig.type);
-    setError({});
+    setErrors({});
   }, [locDeployConfig.type]);
 
-  const setDeploy = useCallback(
+  const setConfig = useCallback(
     (deploy: DeployConfig) => {
       if (deploy.type !== locDeployConfig.type) {
         setLocDeployConfig({ ...deploy, access: "", config: {} });
@@ -94,10 +94,10 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
 
   const handleSaveClick = () => {
     // 验证数据
-    const newError = { ...error };
+    const newError = { ...errors };
     newError.type = locDeployConfig.type === "" ? t("domain.deployment.form.access.placeholder") : "";
     newError.access = locDeployConfig.access === "" ? t("domain.deployment.form.access.placeholder") : "";
-    setError(newError);
+    setErrors(newError);
     if (Object.values(newError).some((e) => !!e)) return;
 
     // 保存数据
@@ -108,7 +108,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       access: "",
       type: "",
     });
-    setError({});
+    setErrors({});
 
     // 关闭弹框
     setOpen(false);
@@ -171,10 +171,10 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
   return (
     <DeployEditContext.Provider
       value={{
-        deploy: locDeployConfig,
-        error: error,
-        setDeploy: setDeploy,
-        setError: setError,
+        config: locDeployConfig as DeployEditContextType["config"],
+        setConfig: setConfig as DeployEditContextType["setConfig"],
+        errors: errors as DeployEditContextType["errors"],
+        setErrors: setErrors as DeployEditContextType["setErrors"],
       }}
     >
       <Dialog open={open} onOpenChange={setOpen}>
@@ -199,7 +199,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
                 <Select
                   value={locDeployConfig.type}
                   onValueChange={(val: string) => {
-                    setDeploy({ ...locDeployConfig, type: val });
+                    setConfig({ ...locDeployConfig, type: val });
                   }}
                 >
                   <SelectTrigger className="mt-2">
@@ -220,7 +220,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
                   </SelectContent>
                 </Select>
 
-                <div className="text-red-500 text-sm mt-1">{error.type}</div>
+                <div className="text-red-500 text-sm mt-1">{errors.type}</div>
               </div>
 
               {/* 授权配置 */}
@@ -241,7 +241,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
                 <Select
                   value={locDeployConfig.access}
                   onValueChange={(val: string) => {
-                    setDeploy({ ...locDeployConfig, access: val });
+                    setConfig({ ...locDeployConfig, access: val });
                   }}
                 >
                   <SelectTrigger className="mt-2">
@@ -262,7 +262,7 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
                   </SelectContent>
                 </Select>
 
-                <div className="text-red-500 text-sm mt-1">{error.access}</div>
+                <div className="text-red-500 text-sm mt-1">{errors.access}</div>
               </div>
 
               {/* 其他参数 */}

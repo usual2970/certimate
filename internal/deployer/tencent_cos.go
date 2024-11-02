@@ -3,37 +3,54 @@ package deployer
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
+	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/rand"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploaderTcSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentCOSDeployer struct {
-	option     *DeployerOption	
-	credential *common.Credential
-	infos      []string
+	option *DeployerOption
+	infos  []string
+
+	sdkClient   *tcSsl.Client
+	sslUploader uploader.Uploader
 }
 
 func NewTencentCOSDeployer(option *DeployerOption) (Deployer, error) {
 	access := &domain.TencentAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal tencent access: %w", err)
+		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 
-	credential := common.NewCredential(
+	client, err := (&TencentCOSDeployer{}).createSdkClient(
 		access.SecretId,
 		access.SecretKey,
 	)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+	}
+
+	uploader, err := uploaderTcSsl.New(&uploaderTcSsl.TencentCloudSSLUploaderConfig{
+		SecretId:  access.SecretId,
+		SecretKey: access.SecretKey,
+	})
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+	}
 
 	return &TencentCOSDeployer{
-		option:     option,
-		credential: credential,
-		infos:      make([]string, 0),
+		option:      option,
+		infos:       make([]string, 0),
+		sdkClient:   client,
+		sslUploader: uploader,
 	}, nil
 }
 
@@ -41,68 +58,49 @@ func (d *TencentCOSDeployer) GetID() string {
 	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
 }
 
-func (d *TencentCOSDeployer) GetInfo() []string {
+func (d *TencentCOSDeployer) GetInfos() []string {
 	return d.infos
 }
 
 func (d *TencentCOSDeployer) Deploy(ctx context.Context) error {
-	// 上传证书
-	certId, err := d.uploadCert()
-	if err != nil {
-		return fmt.Errorf("failed to upload certificate: %w", err)
+	tcRegion := d.option.DeployConfig.GetConfigAsString("region")
+	tcBucket := d.option.DeployConfig.GetConfigAsString("bucket")
+	tcDomain := d.option.DeployConfig.GetConfigAsString("domain")
+	if tcBucket == "" {
+		return errors.New("`bucket` is required")
 	}
-	d.infos = append(d.infos, toStr("上传证书", certId))
 
-	if err := d.deploy(certId); err != nil {
-		return fmt.Errorf("failed to deploy: %w", err)
+	// 上传证书到 SSL
+	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	if err != nil {
+		return err
 	}
+
+	d.infos = append(d.infos, toStr("已上传证书", upres))
+
+	// 证书部署到 COS 实例
+	// REF: https://cloud.tencent.com/document/product/400/91667
+	deployCertificateInstanceReq := tcSsl.NewDeployCertificateInstanceRequest()
+	deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)
+	deployCertificateInstanceReq.ResourceType = common.StringPtr("cos")
+	deployCertificateInstanceReq.Status = common.Int64Ptr(1)
+	deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s#%s#%s", tcRegion, tcBucket, tcDomain)})
+	deployCertificateInstanceResp, err := d.sdkClient.DeployCertificateInstance(deployCertificateInstanceReq)
+	if err != nil {
+		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
+	}
+
+	d.infos = append(d.infos, toStr("已部署证书到云资源实例", deployCertificateInstanceResp.Response))
 
 	return nil
 }
 
-// 上传证书，与CDN部署的上传方法一致。
-func (d *TencentCOSDeployer) uploadCert() (string, error) {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
-
-	client, _ := ssl.NewClient(d.credential, "", cpf)
-
-	request := ssl.NewUploadCertificateRequest()
-
-	request.CertificatePublicKey = common.StringPtr(d.option.Certificate.Certificate)
-	request.CertificatePrivateKey = common.StringPtr(d.option.Certificate.PrivateKey)
-	request.Alias = common.StringPtr(d.option.Domain + "_" + rand.RandStr(6))
-	request.Repeatable = common.BoolPtr(false)
-
-	response, err := client.UploadCertificate(request)
+func (d *TencentCOSDeployer) createSdkClient(secretId, secretKey string) (*tcSsl.Client, error) {
+	credential := common.NewCredential(secretId, secretKey)
+	client, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
-		return "", fmt.Errorf("failed to upload certificate: %w", err)
+		return nil, err
 	}
 
-	return *response.Response.CertificateId, nil
-}
-
-func (d *TencentCOSDeployer) deploy(certId string) error {
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
-	// 实例化要请求产品的client对象,clientProfile是可选的
-	client, _ := ssl.NewClient(d.credential, getDeployString(d.option.DeployConfig, "region"), cpf)
-
-	// 实例化一个请求对象,每个接口都会对应一个request对象
-	request := ssl.NewDeployCertificateInstanceRequest()
-
-	request.CertificateId = common.StringPtr(certId)
-	request.ResourceType = common.StringPtr("cos")
-	request.Status = common.Int64Ptr(1)
-
-	domain := getDeployString(d.option.DeployConfig, "domain")
-	request.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s#%s#%s", getDeployString(d.option.DeployConfig, "region"), getDeployString(d.option.DeployConfig, "bucket"), domain)})
-
-	// 返回的resp是一个DeployCertificateInstanceResponse的实例，与请求对象对应
-	resp, err := client.DeployCertificateInstance(request)
-	if err != nil {
-		return fmt.Errorf("failed to deploy certificate: %w", err)
-	}
-	d.infos = append(d.infos, toStr("部署证书", resp.Response))
-	return nil
+	return client, nil
 }

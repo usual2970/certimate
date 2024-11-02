@@ -7,65 +7,53 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToAliyunOSSConfigParams = {
+  endpoint?: string;
+  bucket?: string;
+  domain?: string;
+};
+
 const DeployToAliyunOSS = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToAliyunOSSConfigParams>();
 
   useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
-          endpoint: "oss-cn-hangzhou.aliyuncs.com",
-          bucket: "",
-          domain: "",
+          endpoint: "oss.aliyuncs.com",
         },
       });
     }
   }, []);
 
   useEffect(() => {
-    setError({});
+    setErrors({});
   }, []);
 
-  useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const resp = bucketSchema.safeParse(data.config?.bucket);
-    if (!resp.success) {
-      setError({
-        ...error,
-        bucket: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        bucket: "",
-      });
-    }
-  }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  const formSchema = z.object({
+    endpoint: z.string().min(1, {
+      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
+    }),
+    bucket: z.string().min(1, {
+      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
+    }),
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
   });
 
-  const bucketSchema = z.string().min(1, {
-    message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
-  });
+  useEffect(() => {
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      endpoint: res.error?.errors?.find((e) => e.path[0] === "endpoint")?.message,
+      bucket: res.error?.errors?.find((e) => e.path[0] === "bucket")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -74,20 +62,16 @@ const DeployToAliyunOSS = () => {
         <Input
           placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.endpoint}
+          value={config?.config?.endpoint}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.endpoint = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.endpoint = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.endpoint}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.endpoint}</div>
       </div>
 
       <div>
@@ -95,33 +79,16 @@ const DeployToAliyunOSS = () => {
         <Input
           placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.bucket}
+          value={config?.config?.bucket}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = bucketSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                bucket: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                bucket: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.bucket = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.bucket = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.bucket}</div>
       </div>
 
       <div>
@@ -129,33 +96,16 @@ const DeployToAliyunOSS = () => {
         <Input
           placeholder={t("domain.deployment.form.domain.label")}
           className="w-full mt-1"
-          value={data?.config?.domain}
+          value={config?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
       </div>
     </div>
   );

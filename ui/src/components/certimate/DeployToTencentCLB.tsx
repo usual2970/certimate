@@ -5,106 +5,80 @@ import { produce } from "immer";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeployEditContext } from "./DeployEdit";
 
-const DeployToTencentCLB = () => {
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+type DeployToTencentCLBParams = {
+  region?: string;
+  resourceType?: string;
+  loadbalancerId?: string;
+  listenerId?: string;
+  domain?: string;
+};
 
+const DeployToTencentCLB = () => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    setError({});
-  }, []);
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToTencentCLBParams>();
 
   useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const clbIdresp = clbIdSchema.safeParse(data.config?.clbId);
-    if (!clbIdresp.success) {
-      setError({
-        ...error,
-        clbId: JSON.parse(clbIdresp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        clbId: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const lsnIdresp = lsnIdSchema.safeParse(data.config?.lsnId);
-    if (!lsnIdresp.success) {
-      setError({
-        ...error,
-        lsnId: JSON.parse(lsnIdresp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        lsnId: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const regionResp = regionSchema.safeParse(data.config?.region);
-    if (!regionResp.success) {
-      setError({
-        ...error,
-        region: JSON.parse(regionResp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        region: "",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
-          lsnId: "",
-          clbId: "",
-          domain: "",
-          region: "",
+          region: "ap-guangzhou",
         },
       });
     }
   }, []);
 
-  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
-    message: t("domain.deployment.form.tencent_clb_region.placeholder"),
-  });
+  useEffect(() => {
+    setErrors({});
+  }, []);
 
-  const domainSchema = z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
-  });
+  const formSchema = z
+    .object({
+      region: z.string().min(1, t("domain.deployment.form.tencent_clb_region.placeholder")),
+      resourceType: z.union([z.literal("ssl-deploy"), z.literal("loadbalancer"), z.literal("listener"), z.literal("ruledomain")], {
+        message: t("domain.deployment.form.tencent_clb_resource_type.placeholder"),
+      }),
+      loadbalancerId: z.string().min(1, t("domain.deployment.form.tencent_clb_loadbalancer_id.placeholder")),
+      listenerId: z.string().optional(),
+      domain: z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+        message: t("common.errmsg.domain_invalid"),
+      }),
+    })
+    .refine(
+      (data) => {
+        switch (data.resourceType) {
+          case "ssl-deploy":
+          case "listener":
+          case "ruledomain":
+            return !!data.listenerId?.trim();
+        }
+        return true;
+      },
+      {
+        message: t("domain.deployment.form.tencent_clb_listener_id.placeholder"),
+        path: ["listenerId"],
+      }
+    )
+    .refine((data) => (data.resourceType === "ruledomain" ? !!data.domain?.trim() : true), {
+      message: t("domain.deployment.form.tencent_clb_ruledomain.placeholder"),
+      path: ["domain"],
+    });
 
-  const clbIdSchema = z.string().regex(/^lb-[a-zA-Z0-9]{8}$/, {
-    message: t("domain.deployment.form.tencent_clb_id.placeholder"),
-  });
-
-  const lsnIdSchema = z.string().regex(/^lbl-.{8}$/, {
-    message: t("domain.deployment.form.tencent_clb_listener.placeholder"),
-  });
+  useEffect(() => {
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
+      resourceType: res.error?.errors?.find((e) => e.path[0] === "resourceType")?.message,
+      loadbalancerId: res.error?.errors?.find((e) => e.path[0] === "loadbalancerId")?.message,
+      listenerId: res.error?.errors?.find((e) => e.path[0] === "listenerId")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -113,136 +87,124 @@ const DeployToTencentCLB = () => {
         <Input
           placeholder={t("domain.deployment.form.tencent_clb_region.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.region}
+          value={config?.config?.region}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = regionSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                region: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                region: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.region = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.region = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.region}</div>
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.tencent_clb_id.label")}</Label>
-        <Input
-          placeholder={t("domain.deployment.form.tencent_clb_id.placeholder")}
-          className="w-full mt-1"
-          value={data?.config?.clbId}
-          onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = clbIdSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                clbId: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                clbId: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.clbId = temp;
+        <Label>{t("domain.deployment.form.tencent_clb_resource_type.label")}</Label>
+        <Select
+          value={config?.config?.resourceType}
+          onValueChange={(value) => {
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.resourceType = value;
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
-        />
-        <div className="text-red-600 text-sm mt-1">{error?.clbId}</div>
+        >
+          <SelectTrigger>
+            <SelectValue placeholder={t("domain.deployment.form.tencent_clb_resource_type.placeholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="ssl-deploy">{t("domain.deployment.form.tencent_clb_resource_type.option.ssl_deploy.label")}</SelectItem>
+              <SelectItem value="loadbalancer">{t("domain.deployment.form.tencent_clb_resource_type.option.loadbalancer.label")}</SelectItem>
+              <SelectItem value="listener">{t("domain.deployment.form.tencent_clb_resource_type.option.listener.label")}</SelectItem>
+              <SelectItem value="ruledomain">{t("domain.deployment.form.tencent_clb_resource_type.option.ruledomain.label")}</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <div className="text-red-600 text-sm mt-1">{errors?.resourceType}</div>
       </div>
 
       <div>
-        <Label>{t("domain.deployment.form.tencent_clb_listener.label")}</Label>
+        <Label>{t("domain.deployment.form.tencent_clb_loadbalancer_id.label")}</Label>
         <Input
-          placeholder={t("domain.deployment.form.tencent_clb_listener.placeholder")}
+          placeholder={t("domain.deployment.form.tencent_clb_loadbalancer_id.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.lsnId}
+          value={config?.config?.loadbalancerId}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = lsnIdSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                lsnId: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                lsnId: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.lsnId = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.loadbalancerId = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.lsnId}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.loadbalancerId}</div>
       </div>
 
-      <div>
-        <Label>{t("domain.deployment.form.tencent_clb_domain.label")}</Label>
-        <Input
-          placeholder={t("domain.deployment.form.tencent_clb_domain.placeholder")}
-          className="w-full mt-1"
-          value={data?.config?.domain}
-          onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
+      {config?.config?.resourceType === "ssl-deploy" || config?.config?.resourceType === "listener" || config?.config?.resourceType === "ruledomain" ? (
+        <div>
+          <Label>{t("domain.deployment.form.tencent_clb_listener_id.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.tencent_clb_listener_id.placeholder")}
+            className="w-full mt-1"
+            value={config?.config?.listenerId}
+            onChange={(e) => {
+              const nv = produce(config, (draft) => {
+                draft.config ??= {};
+                draft.config.listenerId = e.target.value?.trim();
               });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
+              setConfig(nv);
+            }}
+          />
+          <div className="text-red-600 text-sm mt-1">{errors?.listenerId}</div>
+        </div>
+      ) : (
+        <></>
+      )}
 
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
-            });
-            setDeploy(newData);
-          }}
-        />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
-      </div>
+      {config?.config?.resourceType === "ssl-deploy" ? (
+        <div>
+          <Label>{t("domain.deployment.form.tencent_clb_domain.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.tencent_clb_domain.placeholder")}
+            className="w-full mt-1"
+            value={config?.config?.domain}
+            onChange={(e) => {
+              const nv = produce(config, (draft) => {
+                draft.config ??= {};
+                draft.config.domain = e.target.value?.trim();
+              });
+              setConfig(nv);
+            }}
+          />
+          <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {config?.config?.resourceType === "ruledomain" ? (
+        <div>
+          <Label>{t("domain.deployment.form.tencent_clb_ruledomain.label")}</Label>
+          <Input
+            placeholder={t("domain.deployment.form.tencent_clb_ruledomain.placeholder")}
+            className="w-full mt-1"
+            value={config?.config?.domain}
+            onChange={(e) => {
+              const nv = produce(config, (draft) => {
+                draft.config ??= {};
+                draft.config.domain = e.target.value?.trim();
+              });
+              setConfig(nv);
+            }}
+          />
+          <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

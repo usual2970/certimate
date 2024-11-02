@@ -8,52 +8,44 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useDeployEditContext } from "./DeployEdit";
 
+type DeployToTencentTEOParams = {
+  zoneId?: string;
+  domain?: string;
+};
+
 const DeployToTencentTEO = () => {
   const { t } = useTranslation();
 
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToTencentTEOParams>();
 
   useEffect(() => {
-    setError({});
+    if (!config.id) {
+      setConfig({
+        ...config,
+        config: {},
+      });
+    }
   }, []);
 
   useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
+    setErrors({});
+  }, []);
+
+  const formSchema = z.object({
+    zoneId: z.string().min(1, t("domain.deployment.form.tencent_teo_zone_id.placeholder")),
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
+  });
 
   useEffect(() => {
-    const resp = zoneIdSchema.safeParse(data.config?.zoneId);
-    if (!resp.success) {
-      setError({
-        ...error,
-        zoneId: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        zoneId: "",
-      });
-    }
-  }, [data]);
-
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
-  });
-
-  const zoneIdSchema = z.string().regex(/^zone-[0-9a-zA-Z]{9}$/, {
-    message: t("common.errmsg.zoneid_invalid"),
-  });
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      zoneId: res.error?.errors?.find((e) => e.path[0] === "zoneId")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -62,33 +54,16 @@ const DeployToTencentTEO = () => {
         <Input
           placeholder={t("domain.deployment.form.tencent_teo_zone_id.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.zoneId}
+          value={config?.config?.zoneId}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = zoneIdSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                zoneId: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                zoneId: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.zoneId = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.zoneId = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.zoneId}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.zoneId}</div>
       </div>
 
       <div>
@@ -96,33 +71,16 @@ const DeployToTencentTEO = () => {
         <Textarea
           placeholder={t("domain.deployment.form.tencent_teo_domain.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.domain}
+          value={config?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
       </div>
     </div>
   );

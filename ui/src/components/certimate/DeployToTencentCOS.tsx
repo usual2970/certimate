@@ -7,84 +7,49 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeployEditContext } from "./DeployEdit";
 
-const DeployToTencentCOS = () => {
-  const { deploy: data, setDeploy, error, setError } = useDeployEditContext();
+type DeployToTencentCOSParams = {
+  region?: string;
+  bucket?: string;
+  domain?: string;
+};
 
+const DeployToTencentCOS = () => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    setError({});
-  }, []);
+  const { config, setConfig, errors, setErrors } = useDeployEditContext<DeployToTencentCOSParams>();
 
   useEffect(() => {
-    const resp = domainSchema.safeParse(data.config?.domain);
-    if (!resp.success) {
-      setError({
-        ...error,
-        domain: JSON.parse(resp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        domain: "",
-      });
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const bucketResp = bucketSchema.safeParse(data.config?.bucket);
-    if (!bucketResp.success) {
-      setError({
-        ...error,
-        bucket: JSON.parse(bucketResp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        bucket: "",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    const regionResp = regionSchema.safeParse(data.config?.region);
-    if (!regionResp.success) {
-      setError({
-        ...error,
-        region: JSON.parse(regionResp.error.message)[0].message,
-      });
-    } else {
-      setError({
-        ...error,
-        region: "",
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!data.id) {
-      setDeploy({
-        ...data,
+    if (!config.id) {
+      setConfig({
+        ...config,
         config: {
-          region: "",
-          bucket: "",
-          domain: "",
+          region: "ap-guangzhou",
         },
       });
     }
   }, []);
 
-  const domainSchema = z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-    message: t("common.errmsg.domain_invalid"),
+  useEffect(() => {
+    setErrors({});
+  }, []);
+
+  const formSchema = z.object({
+    region: z.string().min(1, t("domain.deployment.form.tencent_cos_region.placeholder")),
+    bucket: z.string().min(1, t("domain.deployment.form.tencent_cos_bucket.placeholder")),
+    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
+      message: t("common.errmsg.domain_invalid"),
+    }),
   });
 
-  const regionSchema = z.string().regex(/^ap-[a-z]+$/, {
-    message: t("domain.deployment.form.tencent_cos_region.placeholder"),
-  });
-
-  const bucketSchema = z.string().regex(/^.+-\d+$/, {
-    message: t("domain.deployment.form.tencent_cos_bucket.placeholder"),
-  });
+  useEffect(() => {
+    const res = formSchema.safeParse(config.config);
+    setErrors({
+      ...errors,
+      region: res.error?.errors?.find((e) => e.path[0] === "region")?.message,
+      bucket: res.error?.errors?.find((e) => e.path[0] === "bucket")?.message,
+      domain: res.error?.errors?.find((e) => e.path[0] === "domain")?.message,
+    });
+  }, [config]);
 
   return (
     <div className="flex flex-col space-y-8">
@@ -93,33 +58,16 @@ const DeployToTencentCOS = () => {
         <Input
           placeholder={t("domain.deployment.form.tencent_cos_region.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.region}
+          value={config?.config?.region}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = regionSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                region: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                region: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.region = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.region = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.region}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.region}</div>
       </div>
 
       <div>
@@ -127,33 +75,16 @@ const DeployToTencentCOS = () => {
         <Input
           placeholder={t("domain.deployment.form.tencent_cos_bucket.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.bucket}
+          value={config?.config?.bucket}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = bucketSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                bucket: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                bucket: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.bucket = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.bucket = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.bucket}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.bucket}</div>
       </div>
 
       <div>
@@ -161,33 +92,16 @@ const DeployToTencentCOS = () => {
         <Input
           placeholder={t("domain.deployment.form.domain.placeholder")}
           className="w-full mt-1"
-          value={data?.config?.domain}
+          value={config?.config?.domain}
           onChange={(e) => {
-            const temp = e.target.value;
-
-            const resp = domainSchema.safeParse(temp);
-            if (!resp.success) {
-              setError({
-                ...error,
-                domain: JSON.parse(resp.error.message)[0].message,
-              });
-            } else {
-              setError({
-                ...error,
-                domain: "",
-              });
-            }
-
-            const newData = produce(data, (draft) => {
-              if (!draft.config) {
-                draft.config = {};
-              }
-              draft.config.domain = temp;
+            const nv = produce(config, (draft) => {
+              draft.config ??= {};
+              draft.config.domain = e.target.value?.trim();
             });
-            setDeploy(newData);
+            setConfig(nv);
           }}
         />
-        <div className="text-red-600 text-sm mt-1">{error?.domain}</div>
+        <div className="text-red-600 text-sm mt-1">{errors?.domain}</div>
       </div>
     </div>
   );

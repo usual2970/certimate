@@ -22,7 +22,7 @@ import (
 const (
 	targetAliyunOSS      = "aliyun-oss"
 	targetAliyunCDN      = "aliyun-cdn"
-	targetAliyunESA      = "aliyun-dcdn"
+	targetAliyunDCDN     = "aliyun-dcdn"
 	targetAliyunCLB      = "aliyun-clb"
 	targetAliyunALB      = "aliyun-alb"
 	targetAliyunNLB      = "aliyun-nlb"
@@ -52,7 +52,7 @@ type DeployerOption struct {
 
 type Deployer interface {
 	Deploy(ctx context.Context) error
-	GetInfo() []string
+	GetInfos() []string
 	GetID() string
 }
 
@@ -112,8 +112,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewAliyunOSSDeployer(option)
 	case targetAliyunCDN:
 		return NewAliyunCDNDeployer(option)
-	case targetAliyunESA:
-		return NewAliyunESADeployer(option)
+	case targetAliyunDCDN:
+		return NewAliyunDCDNDeployer(option)
 	case targetAliyunCLB:
 		return NewAliyunCLBDeployer(option)
 	case targetAliyunALB:
@@ -156,41 +156,6 @@ func toStr(tag string, data any) string {
 	return tag + "：" + string(byts)
 }
 
-func getDeployString(conf domain.DeployConfig, key string) string {
-	if _, ok := conf.Config[key]; !ok {
-		return ""
-	}
-
-	val, ok := conf.Config[key].(string)
-	if !ok {
-		return ""
-	}
-
-	return val
-}
-
-func getDeployVariables(conf domain.DeployConfig) map[string]string {
-	rs := make(map[string]string)
-	data, ok := conf.Config["variables"]
-	if !ok {
-		return rs
-	}
-
-	bts, _ := json.Marshal(data)
-
-	kvData := make([]domain.KV, 0)
-
-	if err := json.Unmarshal(bts, &kvData); err != nil {
-		return rs
-	}
-
-	for _, kv := range kvData {
-		rs[kv.Key] = kv.Value
-	}
-
-	return rs
-}
-
 func convertPEMToPFX(certificate string, privateKey string, password string) ([]byte, error) {
 	cert, err := x509.ParseCertificateFromPEM(certificate)
 	if err != nil {
@@ -204,7 +169,7 @@ func convertPEMToPFX(certificate string, privateKey string, password string) ([]
 
 	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, password)
 	if err != nil {
-		return nil, fmt.Errorf("failed to encode as pfx %w", err)
+		return nil, err
 	}
 
 	return pfxData, nil
