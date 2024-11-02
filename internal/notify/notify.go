@@ -108,7 +108,7 @@ func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, e
 	case domain.NotifyChannelServerChan:
 		return getServerChanNotifier(conf), nil
 	case domain.NotifyChannelMail:
-		return getMailNotifier(conf), nil
+		return getMailNotifier(conf)
 	case domain.NotifyChannelBark:
 		return getBarkNotifier(conf), nil
 	}
@@ -180,12 +180,18 @@ func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
 	return lark.NewWebhookService(getString(conf, "webhookUrl"))
 }
 
-func getMailNotifier(conf map[string]any) notifyPackage.Notifier {
-	rs := NewMail(getString(conf, "senderAddress"), getString(conf, "receiverAddress"), getString(conf, "smtpHostAddr"), getString(conf, "smtpHostPort"))
+func getMailNotifier(conf map[string]any) (notifyPackage.Notifier, error) {
+	rs, err := NewMail(getString(conf, "senderAddress"),
+		getString(conf, "receiverAddresses"),
+		getString(conf, "smtpHostAddr"),
+		getString(conf, "smtpHostPort"),
+		getString(conf, "password"),
+	)
+	if err != nil {
+		return nil, err
+	}
 
-	rs.SetAuth(getString(conf, "username"), getString(conf, "password"))
-
-	return rs
+	return rs, nil
 }
 
 func getString(conf map[string]any, key string) string {

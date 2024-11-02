@@ -2,57 +2,55 @@ package notify
 
 import (
 	"context"
-	"net/smtp"
+	"fmt"
+	"net/mail"
+	"strconv"
+
+	"github.com/pocketbase/pocketbase/tools/mailer"
 )
 
+const defaultSmtpHostPort = "25"
+
 type Mail struct {
-	senderAddress     string
-	smtpHostAddr      string
-	smtpHostPort	  string
-	smtpAuth          smtp.Auth
-	receiverAddresses string
+	username string
+	to       string
+	client   *mailer.SmtpClient
 }
 
-func NewMail(senderAddress, receiverAddresses, smtpHostAddr, smtpHostPort string) *Mail {
-	if(smtpHostPort == "") {
-		smtpHostPort = "25"
+func NewMail(senderAddress, receiverAddresses, smtpHostAddr, smtpHostPort, password string) (*Mail, error) {
+	if smtpHostPort == "" {
+		smtpHostPort = defaultSmtpHostPort
+	}
+
+	port, err := strconv.Atoi(smtpHostPort)
+	if err != nil {
+		return nil, fmt.Errorf("invalid smtp port: %w", err)
+	}
+
+	client := mailer.SmtpClient{
+		Host:     smtpHostAddr,
+		Port:     port,
+		Username: senderAddress,
+		Password: password,
+		Tls:      true,
 	}
 
 	return &Mail{
-		senderAddress:     senderAddress,
-		smtpHostAddr:      smtpHostAddr,
-		smtpHostPort:      smtpHostPort,
-		receiverAddresses: receiverAddresses,
-	}
+		username: senderAddress,
+		client:   &client,
+		to:       receiverAddresses,
+	}, nil
 }
 
-func (m *Mail) SetAuth(username, password string) {
-	m.smtpAuth = smtp.PlainAuth("", username, password, m.smtpHostAddr)
-}
-
-func (m *Mail) Send(ctx context.Context, subject, message string) error {
-	// 构建邮件
-    from := m.senderAddress
-    to := []string{m.receiverAddresses}
-    msg := []byte(
-		"From: " + from + "\r\n" +
-		"To: " + m.receiverAddresses + "\r\n" +
-        "Subject: " + subject + "\r\n" +
-        "\r\n" +
-        message + "\r\n")
-	
-	var smtpAddress string
-	// 组装邮箱服务器地址
-	if(m.smtpHostPort == "25"){
-		smtpAddress = m.smtpHostAddr
-	}else{
-		smtpAddress = m.smtpHostAddr + ":" + m.smtpHostPort
+func (m *Mail) Send(ctx context.Context, subject, content string) error {
+	message := &mailer.Message{
+		From: mail.Address{
+			Address: m.username,
+		},
+		To:      []mail.Address{{Address: m.to}},
+		Subject: subject,
+		Text:    content,
 	}
 
-    err := smtp.SendMail(smtpAddress, m.smtpAuth, from, to, msg)
-    if err != nil {
-        return err
-    }
-
-	return nil
+	return m.client.Send(message)
 }
