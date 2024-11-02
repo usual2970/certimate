@@ -42,6 +42,8 @@
   "settings.notification.mail.smtp_port.placeholder": "SMTP server port, if not set, default is 25",
   "settings.notification.mail.username.placeholder": "username",
   "settings.notification.mail.password.placeholder": "password",
+  "settings.notification.bark.serverUrl.placeholder": "Server URL, e.g. https://your-bark-server.com, leave it blank to use the bark default server",
+  "settings.notification.bark.deviceKey.placeholder": "Device Key，e.g. XXXXXXXXXXXXXXXXXXXX",
 
   "settings.ca.tab": "Certificate Authority",
   "settings.ca.provider.errmsg.empty": "Please select a Certificate Authority",
@@ -49,4 +51,3 @@
   "settings.ca.eab_hmac_key.errmsg.empty": "Please enter EAB_HMAC_KEY.",
   "settings.ca.eab_kid_hmac_key.errmsg.empty": "Please enter EAB_KID and EAB_HMAC_KEY"
 }
-
