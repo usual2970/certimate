@@ -68,6 +68,7 @@
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.huaweicloud.cdn": "Huawei Cloud - CDN",
   "common.provider.huaweicloud.elb": "Huawei Cloud - ELB",
+  "common.provider.baiducloud": "Baidu Cloud",
   "common.provider.qiniu": "Qiniu Cloud",
   "common.provider.qiniu.cdn": "Qiniu Cloud - CDN",
   "common.provider.dogecloud": "Doge Cloud",
