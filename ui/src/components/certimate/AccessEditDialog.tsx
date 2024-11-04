@@ -9,6 +9,7 @@ import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
+import AccessDogeCloudForm from "./AccessDogeCloudForm";
 import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
@@ -74,6 +75,17 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
     case "qiniu":
       childComponent = (
         <AccessQiniuForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "dogecloud":
+      childComponent = (
+        <AccessDogeCloudForm
           data={data}
           op={op}
           onAfterReq={() => {

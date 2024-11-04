@@ -70,6 +70,7 @@
   "common.provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",
+  "common.provider.dogecloud": "多吉云",
   "common.provider.aws": "AWS",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",

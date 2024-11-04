@@ -32,6 +32,11 @@ type QiniuAccess struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type DogeCloudAccess struct {
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}
+
 type NameSiloAccess struct {
 	ApiKey string `json:"apiKey"`
 }
