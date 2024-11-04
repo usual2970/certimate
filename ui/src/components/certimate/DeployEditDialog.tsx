@@ -20,6 +20,7 @@ import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToTencentTEO from "./DeployToTencentTEO";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
+import DeployToBaiduCloudCDN from "./DeployToBaiduCloudCDN";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
 import DeployToDogeCloudCDN from "./DeployToDogeCloudCDN";
 import DeployToLocal from "./DeployToLocal";
@@ -151,6 +152,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "huaweicloud-elb":
       childComponent = <DeployToHuaweiCloudELB />;
+      break;
+    case "baiducloud-cdn":
+      childComponent = <DeployToBaiduCloudCDN />;
       break;
     case "qiniu-cdn":
       childComponent = <DeployToQiniuCDN />;

@@ -33,6 +33,7 @@ const (
 	targetTencentTEO     = "tencent-teo"
 	targetHuaweiCloudCDN = "huaweicloud-cdn"
 	targetHuaweiCloudELB = "huaweicloud-elb"
+	targetBaiduCloudCDN  = "baiducloud-cdn"
 	targetQiniuCdn       = "qiniu-cdn"
 	targetDogeCloudCdn   = "dogecloud-cdn"
 	targetLocal          = "local"
@@ -135,6 +136,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewHuaweiCloudCDNDeployer(option)
 	case targetHuaweiCloudELB:
 		return NewHuaweiCloudELBDeployer(option)
+	case targetBaiduCloudCDN:
+		return NewBaiduCloudCDNDeployer(option)
 	case targetQiniuCdn:
 		return NewQiniuCDNDeployer(option)
 	case targetDogeCloudCdn:

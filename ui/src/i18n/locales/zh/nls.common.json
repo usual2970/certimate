@@ -69,6 +69,7 @@
   "common.provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "common.provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
   "common.provider.baiducloud": "百度智能云",
+  "common.provider.baiducloud.cdn": "百度智能云 - 内容分发网络 CDN",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",
   "common.provider.dogecloud": "多吉云",

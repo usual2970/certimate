@@ -85,6 +85,7 @@ export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map
     ["tencent-teo", "common.provider.tencent.teo", "/imgs/providers/tencent.svg"],
     ["huaweicloud-cdn", "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
     ["huaweicloud-elb", "common.provider.huaweicloud.elb", "/imgs/providers/huaweicloud.svg"],
+    ["baiducloud-cdn", "common.provider.baiducloud.cdn", "/imgs/providers/baiducloud.svg"],
     ["qiniu-cdn", "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
     ["dogecloud-cdn", "common.provider.dogecloud.cdn", "/imgs/providers/dogecloud.svg"],
     ["local", "common.provider.local", "/imgs/providers/local.svg"],
