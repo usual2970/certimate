@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	baiduCdn "github.com/baidubce/bce-sdk-go/services/cdn"
-	baiduCdnApi "github.com/baidubce/bce-sdk-go/services/cdn/api"
+	bceCdn "github.com/baidubce/bce-sdk-go/services/cdn"
+	bceCdnApi "github.com/baidubce/bce-sdk-go/services/cdn/api"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -17,7 +17,7 @@ type BaiduCloudCDNDeployer struct {
 	option *DeployerOption
 	infos  []string
 
-	sdkClient *baiduCdn.Client
+	sdkClient *bceCdn.Client
 }
 
 func NewBaiduCloudCDNDeployer(option *DeployerOption) (Deployer, error) {
@@ -54,7 +54,7 @@ func (d *BaiduCloudCDNDeployer) Deploy(ctx context.Context) error {
 	// REF: https://cloud.baidu.com/doc/CDN/s/qjzuz2hp8
 	putCertResp, err := d.sdkClient.PutCert(
 		d.option.DeployConfig.GetConfigAsString("domain"),
-		&baiduCdnApi.UserCertificate{
+		&bceCdnApi.UserCertificate{
 			CertName:    fmt.Sprintf("certimate-%d", time.Now().UnixMilli()),
 			ServerData:  d.option.Certificate.Certificate,
 			PrivateData: d.option.Certificate.PrivateKey,
@@ -70,8 +70,8 @@ func (d *BaiduCloudCDNDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *BaiduCloudCDNDeployer) createSdkClient(accessKeyId, secretAccessKey string) (*baiduCdn.Client, error) {
-	client, err := baiduCdn.NewClient(accessKeyId, secretAccessKey, "")
+func (d *BaiduCloudCDNDeployer) createSdkClient(accessKeyId, secretAccessKey string) (*bceCdn.Client, error) {
+	client, err := bceCdn.NewClient(accessKeyId, secretAccessKey, "")
 	if err != nil {
 		return nil, err
 	}

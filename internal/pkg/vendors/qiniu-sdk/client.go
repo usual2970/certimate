@@ -105,12 +105,12 @@ func (c *Client) EnableDomainHttps(domain, certId string, forceHttps, http2Enabl
 	return resp, nil
 }
 
-func (c *Client) UploadSslCert(name, commonName, pri, ca string) (*UploadSslCertResponse, error) {
+func (c *Client) UploadSslCert(name, commonName, certificate, privateKey string) (*UploadSslCertResponse, error) {
 	req := &UploadSslCertRequest{
-		Name:       name,
-		CommonName: commonName,
-		Pri:        pri,
-		Ca:         ca,
+		Name:        name,
+		CommonName:  commonName,
+		Certificate: certificate,
+		PrivateKey:  privateKey,
 	}
 
 	reqBytes, err := json.Marshal(req)

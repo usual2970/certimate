@@ -6,10 +6,10 @@ type BaseResponse struct {
 }
 
 type UploadSslCertRequest struct {
-	Name       string `json:"name"`
-	CommonName string `json:"common_name"`
-	Pri        string `json:"pri"`
-	Ca         string `json:"ca"`
+	Name        string `json:"name"`
+	CommonName  string `json:"common_name"`
+	Certificate string `json:"ca"`
+	PrivateKey  string `json:"pri"`
 }
 
 type UploadSslCertResponse struct {
