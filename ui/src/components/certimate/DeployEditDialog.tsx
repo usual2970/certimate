@@ -21,6 +21,7 @@ import DeployToTencentTEO from "./DeployToTencentTEO";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
+import DeployToDogeCloudCDN from "./DeployToDogeCloudCDN";
 import DeployToLocal from "./DeployToLocal";
 import DeployToSSH from "./DeployToSSH";
 import DeployToWebhook from "./DeployToWebhook";
@@ -153,6 +154,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "qiniu-cdn":
       childComponent = <DeployToQiniuCDN />;
+      break;
+    case "dogecloud-cdn":
+      childComponent = <DeployToDogeCloudCDN />;
       break;
     case "local":
       childComponent = <DeployToLocal />;

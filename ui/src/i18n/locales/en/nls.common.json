@@ -71,6 +71,7 @@
   "common.provider.qiniu": "Qiniu Cloud",
   "common.provider.qiniu.cdn": "Qiniu Cloud - CDN",
   "common.provider.dogecloud": "Doge Cloud",
+  "common.provider.dogecloud.cdn": "Doge Cloud - CDN",
   "common.provider.aws": "AWS",
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.namesilo": "Namesilo",

@@ -12,7 +12,7 @@ import (
 	xhttp "github.com/usual2970/certimate/internal/utils/http"
 )
 
-const qiniuHost = "http://api.qiniu.com"
+const qiniuHost = "https://api.qiniu.com"
 
 type Client struct {
 	mac *auth.Credentials
@@ -129,7 +129,7 @@ func (c *Client) UploadSslCert(name, commonName, pri, ca string) (*UploadSslCert
 		return nil, err
 	}
 	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("code: %d, error: %s", *resp.Code, *resp.Error)
+		return nil, fmt.Errorf("qiniu api error, code: %d, error: %s", *resp.Code, *resp.Error)
 	}
 
 	return resp, nil

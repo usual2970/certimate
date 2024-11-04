@@ -34,6 +34,7 @@ const (
 	targetHuaweiCloudCDN = "huaweicloud-cdn"
 	targetHuaweiCloudELB = "huaweicloud-elb"
 	targetQiniuCdn       = "qiniu-cdn"
+	targetDogeCloudCdn   = "dogecloud-cdn"
 	targetLocal          = "local"
 	targetSSH            = "ssh"
 	targetWebhook        = "webhook"
@@ -136,6 +137,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewHuaweiCloudELBDeployer(option)
 	case targetQiniuCdn:
 		return NewQiniuCDNDeployer(option)
+	case targetDogeCloudCdn:
+		return NewDogeCloudCDNDeployer(option)
 	case targetLocal:
 		return NewLocalDeployer(option)
 	case targetSSH:
