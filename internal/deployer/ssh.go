@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,7 +14,6 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/fs"
 )
 
 type SSHDeployer struct {
@@ -105,11 +105,14 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 			return err
 		}
 
-		if err := fs.WriteFile(d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
+		if err := d.writeSftpFile(client, d.option.DeployConfig.GetConfigAsString("certPath"), jksData); err != nil {
 			return err
 		}
 
-		d.infos = append(d.infos, toStr("保存证书成功", nil))
+		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
+
+	default:
+		return errors.New("unsupported format")
 	}
 
 	// 执行命令
@@ -156,8 +159,8 @@ func (d *SSHDeployer) createSshClient(access *domain.SSHAccess) (*ssh.Client, er
 	})
 }
 
-func (d *SSHDeployer) sshExecCommand(client *ssh.Client, command string) (string, string, error) {
-	session, err := client.NewSession()
+func (d *SSHDeployer) sshExecCommand(sshCli *ssh.Client, command string) (string, string, error) {
+	session, err := sshCli.NewSession()
 	if err != nil {
 		return "", "", xerrors.Wrap(err, "failed to create ssh session")
 	}
@@ -175,12 +178,12 @@ func (d *SSHDeployer) sshExecCommand(client *ssh.Client, command string) (string
 	return stdoutBuf.String(), stderrBuf.String(), nil
 }
 
-func (d *SSHDeployer) writeSftpFileString(client *ssh.Client, path string, content string) error {
-	return d.writeSftpFile(client, path, []byte(content))
+func (d *SSHDeployer) writeSftpFileString(sshCli *ssh.Client, path string, content string) error {
+	return d.writeSftpFile(sshCli, path, []byte(content))
 }
 
-func (d *SSHDeployer) writeSftpFile(client *ssh.Client, path string, data []byte) error {
-	sftpCli, err := sftp.NewClient(client)
+func (d *SSHDeployer) writeSftpFile(sshCli *ssh.Client, path string, data []byte) error {
+	sftpCli, err := sftp.NewClient()
 	if err != nil {
 		return xerrors.Wrap(err, "failed to create sftp client")
 	}
