@@ -183,7 +183,7 @@ func (d *SSHDeployer) writeSftpFileString(sshCli *ssh.Client, path string, conte
 }
 
 func (d *SSHDeployer) writeSftpFile(sshCli *ssh.Client, path string, data []byte) error {
-	sftpCli, err := sftp.NewClient()
+	sftpCli, err := sftp.NewClient(sshCli)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to create sftp client")
 	}
