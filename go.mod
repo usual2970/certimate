@@ -13,6 +13,7 @@ require (
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.9
 	github.com/alibabacloud-go/tea v1.2.2
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
+	github.com/baidubce/bce-sdk-go v0.9.197
 	github.com/go-acme/lego/v4 v4.19.2
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.114

@@ -1,16 +1,20 @@
 ﻿package qiniusdk
 
+type BaseResponse struct {
+	Code  *int    `json:"code,omitempty"`
+	Error *string `json:"error,omitempty"`
+}
+
 type UploadSslCertRequest struct {
-	Name       string `json:"name"`
-	CommonName string `json:"common_name"`
-	Pri        string `json:"pri"`
-	Ca         string `json:"ca"`
+	Name        string `json:"name"`
+	CommonName  string `json:"common_name"`
+	Certificate string `json:"ca"`
+	PrivateKey  string `json:"pri"`
 }
 
 type UploadSslCertResponse struct {
-	Code   *int    `json:"code,omitempty"`
-	Error  *string `json:"error,omitempty"`
-	CertID string  `json:"certID"`
+	*BaseResponse
+	CertID string `json:"certID"`
 }
 
 type DomainInfoHttpsData struct {
@@ -20,8 +24,7 @@ type DomainInfoHttpsData struct {
 }
 
 type GetDomainInfoResponse struct {
-	Code               *int                 `json:"code,omitempty"`
-	Error              *string              `json:"error,omitempty"`
+	*BaseResponse
 	Name               string               `json:"name"`
 	Type               string               `json:"type"`
 	CName              string               `json:"cname"`
@@ -39,8 +42,7 @@ type ModifyDomainHttpsConfRequest struct {
 }
 
 type ModifyDomainHttpsConfResponse struct {
-	Code  *int    `json:"code,omitempty"`
-	Error *string `json:"error,omitempty"`
+	*BaseResponse
 }
 
 type EnableDomainHttpsRequest struct {
@@ -48,6 +50,5 @@ type EnableDomainHttpsRequest struct {
 }
 
 type EnableDomainHttpsResponse struct {
-	Code  *int    `json:"code,omitempty"`
-	Error *string `json:"error,omitempty"`
+	*BaseResponse
 }

@@ -8,7 +8,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
+import AccessBaiduCloudForm from "./AccessBaiduCloudForm";
 import AccessQiniuForm from "./AccessQiniuForm";
+import AccessDogeCloudForm from "./AccessDogeCloudForm";
 import AccessAwsForm from "./AccessAwsForm";
 import AccessCloudflareForm from "./AccessCloudflareForm";
 import AccessNamesiloForm from "./AccessNamesiloForm";
@@ -71,9 +73,31 @@ const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => 
         />
       );
       break;
+    case "baiducloud":
+      childComponent = (
+        <AccessBaiduCloudForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
     case "qiniu":
       childComponent = (
         <AccessQiniuForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "dogecloud":
+      childComponent = (
+        <AccessDogeCloudForm
           data={data}
           op={op}
           onAfterReq={() => {

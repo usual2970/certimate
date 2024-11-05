@@ -15,7 +15,9 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     ["aliyun", "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all", "阿里云:alibaba cloud"],
     ["tencent", "common.provider.tencent", "/imgs/providers/tencent.svg", "all", "腾讯云:tencent cloud"],
     ["huaweicloud", "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all", "华为云:huawei cloud"],
-    ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛:qiniu"],
+    ["baiducloud", "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all", "百度智能云:百度云:baidu cloud"],
+    ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛云:qiniu"],
+    ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy", "多吉云:doge cloud"],
     ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply", "亚马逊:amazon:aws"],
     ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply", "cloudflare:cf:cloud flare"],
     ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply", "namesilo"],
@@ -34,7 +36,9 @@ export const accessTypeFormSchema = z.union(
     z.literal("aliyun"),
     z.literal("tencent"),
     z.literal("huaweicloud"),
+    z.literal("baiducloud"),
     z.literal("qiniu"),
+    z.literal("dogecloud"),
     z.literal("aws"),
     z.literal("cloudflare"),
     z.literal("namesilo"),
@@ -60,6 +64,7 @@ export type Access = {
     | TencentConfig
     | HuaweiCloudConfig
     | QiniuConfig
+    | DogeCloudConfig
     | AwsConfig
     | CloudflareConfig
     | NamesiloConfig
@@ -91,7 +96,17 @@ export type HuaweiCloudConfig = {
   secretAccessKey: string;
 };
 
+export type BaiduCloudConfig = {
+  accessKeyId: string;
+  secretAccessKey: string;
+};
+
 export type QiniuConfig = {
+  accessKey: string;
+  secretKey: string;
+};
+
+export type DogeCloudConfig = {
   accessKey: string;
   secretKey: string;
 };
