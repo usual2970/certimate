@@ -13,6 +13,7 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Account from "./pages/setting/Account";
 import Notify from "./pages/setting/Notify";
 import SSLProvider from "./pages/setting/SSLProvider";
+import Workflow from "./pages/workflow";
 
 export const router = createHashRouter([
   {
@@ -75,6 +76,6 @@ export const router = createHashRouter([
   },
   {
     path: "/about",
-    element: <div>About</div>,
+    element: <Workflow />,
   },
 ]);
