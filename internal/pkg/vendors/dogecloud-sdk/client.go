@@ -153,7 +153,8 @@ func (c *Client) sendReq(method string, path string, data map[string]interface{}
 		mime = "application/x-www-form-urlencoded"
 	}
 
-	signStr := path + "\n" + body
+	path = strings.TrimPrefix(path, "/")
+	signStr := "/" + path + "\n" + body
 	hmacObj := hmac.New(sha1.New, []byte(c.secretKey))
 	hmacObj.Write([]byte(signStr))
 	sign := hex.EncodeToString(hmacObj.Sum(nil))
