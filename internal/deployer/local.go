@@ -105,6 +105,9 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 		}
 
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
+
+	default:
+		return errors.New("unsupported format")
 	}
 
 	// 执行命令
