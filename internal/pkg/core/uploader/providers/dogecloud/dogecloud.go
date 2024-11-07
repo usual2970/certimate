@@ -48,7 +48,7 @@ func (u *DogeCloudUploader) Upload(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadCdnCert'")
 	}
 
-	certId = uploadSslCertResp.Data.Id
+	certId = fmt.Sprintf("%d", uploadSslCertResp.Data.Id)
 	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,

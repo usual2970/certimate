@@ -58,7 +58,7 @@ func (c *Client) UploadCdnCert(note, cert, private string) (*UploadCdnCertRespon
 	return resp, nil
 }
 
-func (c *Client) BindCdnCertWithDomain(certId string, domain string) (*BindCdnCertResponse, error) {
+func (c *Client) BindCdnCertWithDomain(certId int64, domain string) (*BindCdnCertResponse, error) {
 	req := &BindCdnCertRequest{
 		CertId: certId,
 		Domain: &domain,
@@ -92,7 +92,7 @@ func (c *Client) BindCdnCertWithDomain(certId string, domain string) (*BindCdnCe
 	return resp, nil
 }
 
-func (c *Client) BindCdnCertWithDomainId(certId string, domainId int32) (*BindCdnCertResponse, error) {
+func (c *Client) BindCdnCertWithDomainId(certId int64, domainId int64) (*BindCdnCertResponse, error) {
 	req := &BindCdnCertRequest{
 		CertId:   certId,
 		DomainId: &domainId,

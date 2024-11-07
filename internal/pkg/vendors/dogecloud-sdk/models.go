@@ -12,7 +12,7 @@ type UploadCdnCertRequest struct {
 }
 
 type UploadCdnCertResponseData struct {
-	Id string `json:"id"`
+	Id int64 `json:"id"`
 }
 
 type UploadCdnCertResponse struct {
@@ -21,8 +21,8 @@ type UploadCdnCertResponse struct {
 }
 
 type BindCdnCertRequest struct {
-	CertId   string  `json:"id"`
-	DomainId *int32  `json:"did,omitempty"`
+	CertId   int64   `json:"id"`
+	DomainId *int64  `json:"did,omitempty"`
 	Domain   *string `json:"domain,omitempty"`
 }
 
