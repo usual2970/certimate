@@ -43,7 +43,7 @@ func (u *DogeCloudUploader) Upload(ctx context.Context, certPem string, privkeyP
 
 	// 上传新证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-upload
-	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certName, privkeyPem)
+	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadCdnCert'")
 	}
