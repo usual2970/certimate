@@ -24,7 +24,7 @@ type DomainInfoHttpsData struct {
 }
 
 type GetDomainInfoResponse struct {
-	*BaseResponse
+	BaseResponse
 	Name               string               `json:"name"`
 	Type               string               `json:"type"`
 	CName              string               `json:"cname"`
@@ -42,7 +42,7 @@ type ModifyDomainHttpsConfRequest struct {
 }
 
 type ModifyDomainHttpsConfResponse struct {
-	*BaseResponse
+	BaseResponse
 }
 
 type EnableDomainHttpsRequest struct {
@@ -50,5 +50,5 @@ type EnableDomainHttpsRequest struct {
 }
 
 type EnableDomainHttpsResponse struct {
-	*BaseResponse
+	BaseResponse
 }
