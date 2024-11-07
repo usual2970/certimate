@@ -1,4 +1,14 @@
-import { addBranch, addNode, removeBranch, removeNode, updateNode, WorkflowBranchNode, WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import {
+  addBranch,
+  addNode,
+  getWorkflowOutputBeforeId,
+  removeBranch,
+  removeNode,
+  updateNode,
+  WorkflowBranchNode,
+  WorkflowNode,
+  WorkflowNodeType,
+} from "@/domain/workflow";
 import { create } from "zustand";
 
 export type WorkflowState = {
@@ -8,16 +18,17 @@ export type WorkflowState = {
   addBranch: (branchId: string) => void;
   removeNode: (nodeId: string) => void;
   removeBranch: (branchId: string, index: number) => void;
+  getWorkflowOuptutBeforeId: (id: string, type: string) => WorkflowNode[];
 };
 
-export const useWorkflowStore = create<WorkflowState>((set) => ({
+export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   root: {
     id: "1",
     name: "开始",
     type: WorkflowNodeType.Start,
     next: {
       id: "2",
-      name: "结束",
+      name: "分支",
       type: WorkflowNodeType.Branch,
       branches: [
         {
@@ -81,4 +92,9 @@ export const useWorkflowStore = create<WorkflowState>((set) => ({
         root: newRoot,
       };
     }),
+
+  getWorkflowOuptutBeforeId: (id: string, type: string) => {
+    return getWorkflowOutputBeforeId(get().root, id, type);
+  },
 }));
+

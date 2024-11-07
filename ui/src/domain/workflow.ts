@@ -2,6 +2,7 @@ import { produce } from "immer";
 import { nanoid } from "nanoid";
 import { accessProviders } from "./access";
 import i18n from "@/i18n";
+import { deployTargets } from "./domain";
 
 export enum WorkflowNodeType {
   Start = "start",
@@ -25,6 +26,52 @@ export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Ma
   [WorkflowNodeType.Custom, "自定义"],
 ]);
 
+export type WorkflowNodeIo = {
+  name: string;
+  type: string;
+  required: boolean;
+  label: string;
+  value?: string;
+  valueSelector?: WorkflowNodeIoValueSelector;
+};
+
+export type WorkflowNodeIoValueSelector = {
+  id: string;
+  name: string;
+};
+
+export const workflowNodeTypeDefaultInput: Map<WorkflowNodeType, WorkflowNodeIo[]> = new Map([
+  [WorkflowNodeType.Apply, []],
+  [
+    WorkflowNodeType.Deploy,
+    [
+      {
+        name: "certificate",
+        type: " certificate",
+        required: true,
+        label: "证书",
+      },
+    ],
+  ],
+  [WorkflowNodeType.Notify, []],
+]);
+
+export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo[]> = new Map([
+  [
+    WorkflowNodeType.Apply,
+    [
+      {
+        name: "certificate",
+        type: "certificate",
+        required: true,
+        label: "证书",
+      },
+    ],
+  ],
+  [WorkflowNodeType.Deploy, []],
+  [WorkflowNodeType.Notify, []],
+]);
+
 export type WorkflowNodeConfig = Record<string, string | boolean | number | string[] | undefined>;
 
 export type WorkflowNode = {
@@ -32,7 +79,7 @@ export type WorkflowNode = {
   name: string;
   type: WorkflowNodeType;
 
-  parameters?: WorkflowNodeIo[];
+  input?: WorkflowNodeIo[];
   config?: WorkflowNodeConfig;
   configured?: boolean;
   output?: WorkflowNodeIo[];
@@ -62,6 +109,8 @@ export const newWorkflowNode = (type: WorkflowNodeType, options: NewWorkflowNode
       config: {
         providerType: options.providerType,
       },
+      input: workflowNodeTypeDefaultInput.get(type),
+      output: workflowNodeTypeDefaultOutput.get(type),
     };
   }
 
@@ -202,26 +251,52 @@ export const removeBranch = (node: WorkflowNode | WorkflowBranchNode, branchNode
   });
 };
 
+// 1 个分支的节点，不应该能获取到相邻分支上节点的输出
+export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNode, id: string, type: string): WorkflowNode[] => {
+  const output: WorkflowNode[] = [];
+
+  const traverse = (current: WorkflowNode | WorkflowBranchNode, output: WorkflowNode[]) => {
+    if (!current) {
+      return false;
+    }
+    if (current.id === id) {
+      return true;
+    }
+
+    if (!isWorkflowBranchNode(current) && current.output && current.output.some((io) => io.type === type)) {
+      output.push({
+        ...current,
+        output: current.output.filter((io) => io.type === type),
+      });
+    }
+
+    if (isWorkflowBranchNode(current)) {
+      const currentLength = output.length;
+      console.log(currentLength);
+      for (const branch of current.branches) {
+        if (traverse(branch, output)) {
+          return true;
+        }
+        // 如果当前分支没有输出，清空之前的输出
+        if (output.length > currentLength) {
+          output.splice(currentLength);
+        }
+      }
+    }
+
+    return traverse(current.next as WorkflowNode, output);
+  };
+
+  traverse(node, output);
+  return output;
+};
+
 export type WorkflowBranchNode = {
   id: string;
   name: string;
   type: WorkflowNodeType;
   branches: WorkflowNode[];
   next?: WorkflowNode | WorkflowBranchNode;
-};
-
-export type WorkflowNodeIo = {
-  name: string;
-  type: string;
-  required: boolean;
-  description?: string;
-  value?: string;
-  valueSelector?: WorkflowNodeIoValueSelector;
-};
-
-export type WorkflowNodeIoValueSelector = {
-  id: string;
-  name: string;
 };
 
 type WorkflowwNodeDropdwonItem = {
@@ -243,39 +318,18 @@ export type WorkflowwNodeDropdwonItemIcon = {
   name: string;
 };
 
-const workflowNodeDropdownApplyList: WorkflowwNodeDropdwonItem[] = accessProviders
-  .filter((item) => {
-    return item[3] === "apply" || item[3] === "all";
-  })
-  .map((item) => {
-    return {
-      type: WorkflowNodeType.Apply,
-      providerType: item[0],
-      name: i18n.t(item[1]),
-      leaf: true,
-      icon: {
-        type: WorkflowwNodeDropdwonItemIconType.Provider,
-        name: item[2],
-      },
-    };
-  });
-
-const workflowNodeDropdownDeployList: WorkflowwNodeDropdwonItem[] = accessProviders
-  .filter((item) => {
-    return item[3] === "deploy" || item[3] === "all";
-  })
-  .map((item) => {
-    return {
-      type: WorkflowNodeType.Apply,
-      providerType: item[0],
-      name: i18n.t(item[1]),
-      leaf: true,
-      icon: {
-        type: WorkflowwNodeDropdwonItemIconType.Provider,
-        name: item[2],
-      },
-    };
-  });
+const workflowNodeDropdownDeployList: WorkflowwNodeDropdwonItem[] = deployTargets.map((item) => {
+  return {
+    type: WorkflowNodeType.Apply,
+    providerType: item.type,
+    name: i18n.t(item.name),
+    leaf: true,
+    icon: {
+      type: WorkflowwNodeDropdwonItemIconType.Provider,
+      name: item.icon,
+    },
+  };
+});
 
 export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
   {
@@ -285,7 +339,7 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
       type: WorkflowwNodeDropdwonItemIconType.Icon,
       name: "NotebookPen",
     },
-    children: workflowNodeDropdownApplyList,
+    leaf: true,
   },
   {
     type: WorkflowNodeType.Deploy,
@@ -315,3 +369,4 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     },
   },
 ];
+

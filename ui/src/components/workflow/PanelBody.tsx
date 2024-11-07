@@ -13,6 +13,8 @@ const PanelBody = ({ data }: PanelBodyProps) => {
         return <StartForm data={data} />;
       case WorkflowNodeType.Apply:
         return <ApplyForm data={data} />;
+      case WorkflowNodeType.Deploy:
+        return <DeployPanelBody data={data} />;
       case WorkflowNodeType.Notify:
         return <DeployPanelBody data={data} />;
       case WorkflowNodeType.Branch:
@@ -28,3 +30,4 @@ const PanelBody = ({ data }: PanelBodyProps) => {
 };
 
 export default PanelBody;
+
