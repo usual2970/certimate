@@ -16,7 +16,7 @@ type UploadCdnCertResponseData struct {
 }
 
 type UploadCdnCertResponse struct {
-	*BaseResponse
+	BaseResponse
 	Data *UploadCdnCertResponseData `json:"data,omitempty"`
 }
 
@@ -27,5 +27,5 @@ type BindCdnCertRequest struct {
 }
 
 type BindCdnCertResponse struct {
-	*BaseResponse
+	BaseResponse
 }
