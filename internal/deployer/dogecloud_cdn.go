@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	xerrors "github.com/pkg/errors"
 
@@ -70,7 +71,8 @@ func (d *DogeCloudCDNDeployer) Deploy(ctx context.Context) error {
 
 	// 绑定证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-bind
-	bindCdnCertResp, err := d.sdkClient.BindCdnCertWithDomain(upres.CertId, d.option.DeployConfig.GetConfigAsString("domain"))
+	bindCdnCertId, _ := strconv.ParseInt(upres.CertId, 10, 64)
+	bindCdnCertResp, err := d.sdkClient.BindCdnCertWithDomain(bindCdnCertId, d.option.DeployConfig.GetConfigAsString("domain"))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdn.BindCdnCert'")
 	}
