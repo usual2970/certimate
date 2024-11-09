@@ -91,15 +91,13 @@ password：1234567890
 
 ## Screenshots
 
-![login](https://i.imgur.com/SYjjbql.jpeg)
-
-![dashboard](https://i.imgur.com/WMVbBId.jpeg)
-
-![domains](https://i.imgur.com/8wit3ZA.jpeg)
-
-![accesses](https://i.imgur.com/EWtOoJ0.jpeg)
-
-![history](https://i.imgur.com/aaPtSW7.jpeg)
+<div align="center">
+<img src="https://i.imgur.com/SYjjbql.jpeg" title="Login page" width="95%"/>
+<img src="https://i.imgur.com/WMVbBId.jpeg" title="Dashboard page" width="47%"/>
+<img src="https://i.imgur.com/8wit3ZA.jpeg" title="Domains page" width="47%"/>
+<img src="https://i.imgur.com/EWtOoJ0.jpeg" title="Accesses page" width="47%"/>
+<img src="https://i.imgur.com/aaPtSW7.jpeg" title="History page" width="47%"/>
+</div>
 
 ## Concepts
 
