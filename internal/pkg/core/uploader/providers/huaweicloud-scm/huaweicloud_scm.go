@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -30,6 +31,10 @@ type HuaweiCloudSCMUploader struct {
 var _ uploader.Uploader = (*HuaweiCloudSCMUploader)(nil)
 
 func New(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
+	if config == nil {
+		return nil, errors.New("config is nil")
+	}
+
 	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.SecretAccessKey,

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -31,6 +32,10 @@ type AliyunSLBUploader struct {
 var _ uploader.Uploader = (*AliyunSLBUploader)(nil)
 
 func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
+	if config == nil {
+		return nil, errors.New("config is nil")
+	}
+
 	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,
