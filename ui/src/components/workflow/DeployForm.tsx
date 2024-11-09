@@ -4,15 +4,17 @@ import DeployToAliyunOSS from "./DeployToAliyunOss";
 
 export type DeployFormProps = {
   data: WorkflowNode;
+  defaultProivder?: string;
 };
-const DeployForm = ({ data }: DeployFormProps) => {
-  return getForm(data);
+const DeployForm = ({ data, defaultProivder }: DeployFormProps) => {
+  return getForm(data, defaultProivder);
 };
 
 export default memo(DeployForm);
 
-const getForm = (data: WorkflowNode) => {
-  switch (data.config?.providerType) {
+const getForm = (data: WorkflowNode, defaultProivder?: string) => {
+  const provider = defaultProivder || data.config?.providerType;
+  switch (provider) {
     case "aliyun-oss":
       return <DeployToAliyunOSS data={data} />;
     case "tencent":

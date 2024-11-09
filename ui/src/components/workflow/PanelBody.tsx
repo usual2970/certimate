@@ -2,6 +2,7 @@ import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import StartForm from "./StartForm";
 import DeployPanelBody from "./DeployPanelBody";
 import ApplyForm from "./ApplyForm";
+import NotifyForm from "./NotifyForm";
 
 type PanelBodyProps = {
   data: WorkflowNode;
@@ -16,7 +17,7 @@ const PanelBody = ({ data }: PanelBodyProps) => {
       case WorkflowNodeType.Deploy:
         return <DeployPanelBody data={data} />;
       case WorkflowNodeType.Notify:
-        return <DeployPanelBody data={data} />;
+        return <NotifyForm data={data} />;
       case WorkflowNodeType.Branch:
         return <div>分支节点</div>;
       case WorkflowNodeType.Condition:

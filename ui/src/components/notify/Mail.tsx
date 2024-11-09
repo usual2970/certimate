@@ -43,13 +43,13 @@ const Mail = () => {
     id: config.id ?? "",
     name: "notifyChannels",
     data: {
-        senderAddress: "",
-        receiverAddresses: "",
-        smtpHostAddr: "",
-        smtpHostPort: "25",
-        username: "",
-        password: "",
-        enabled: false,
+      senderAddress: "",
+      receiverAddresses: "",
+      smtpHostAddr: "",
+      smtpHostPort: "25",
+      username: "",
+      password: "",
+      enabled: false,
     },
   });
 
@@ -79,13 +79,13 @@ const Mail = () => {
 
   const getDetailMail = () => {
     const df: NotifyChannelMail = {
-        senderAddress: "",
-        receiverAddresses: "",
-        smtpHostAddr: "",
-        smtpHostPort: "25",
-        username: "",
-        password: "",
-        enabled: false,
+      senderAddress: "",
+      receiverAddresses: "",
+      smtpHostAddr: "",
+      smtpHostPort: "25",
+      username: "",
+      password: "",
+      enabled: false,
     };
     if (!config.content) {
       return df;
@@ -99,7 +99,14 @@ const Mail = () => {
   };
 
   const checkChanged = (data: NotifyChannelMail) => {
-    if (data.senderAddress !== originMail.data.senderAddress || data.receiverAddresses !== originMail.data.receiverAddresses || data.smtpHostAddr !== originMail.data.smtpHostAddr || data.smtpHostPort !== originMail.data.smtpHostPort || data.username !== originMail.data.username || data.password !== originMail.data.password) {
+    if (
+      data.senderAddress !== originMail.data.senderAddress ||
+      data.receiverAddresses !== originMail.data.receiverAddresses ||
+      data.smtpHostAddr !== originMail.data.smtpHostAddr ||
+      data.smtpHostPort !== originMail.data.smtpHostPort ||
+      data.username !== originMail.data.username ||
+      data.password !== originMail.data.password
+    ) {
       setChanged(true);
     } else {
       setChanged(false);
@@ -236,55 +243,55 @@ const Mail = () => {
           checkChanged(newData.data);
           setmail(newData);
         }}
-        />
-    <Input
+      />
+      <Input
         placeholder={t("settings.notification.mail.smtp_port.placeholder")}
         className="mt-2"
         value={mail.data.smtpHostPort}
         onChange={(e) => {
-        const newData = {
+          const newData = {
             ...mail,
             data: {
-            ...mail.data,
-            smtpHostPort: e.target.value,
+              ...mail.data,
+              smtpHostPort: e.target.value,
             },
-        };
-        checkChanged(newData.data);
-        setmail(newData);
+          };
+          checkChanged(newData.data);
+          setmail(newData);
         }}
-    />
-    <Input
+      />
+      <Input
         placeholder={t("settings.notification.mail.username.placeholder")}
         className="mt-2"
         value={mail.data.username}
         onChange={(e) => {
-        const newData = {
+          const newData = {
             ...mail,
             data: {
-            ...mail.data,
-            username: e.target.value,
+              ...mail.data,
+              username: e.target.value,
             },
-        };
-        checkChanged(newData.data);
-        setmail(newData);
+          };
+          checkChanged(newData.data);
+          setmail(newData);
         }}
-        />
-    <Input
+      />
+      <Input
         placeholder={t("settings.notification.mail.password.placeholder")}
         className="mt-2"
         value={mail.data.password}
         onChange={(e) => {
-        const newData = {
+          const newData = {
             ...mail,
             data: {
-            ...mail.data,
-            password: e.target.value,
+              ...mail.data,
+              password: e.target.value,
             },
-        };
-        checkChanged(newData.data);
-        setmail(newData);
+          };
+          checkChanged(newData.data);
+          setmail(newData);
         }}
-        />
+      />
       <div className="flex items-center space-x-1 mt-2">
         <Switch id="airplane-mode" checked={mail.data.enabled} onCheckedChange={handleSwitchChange} />
         <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>

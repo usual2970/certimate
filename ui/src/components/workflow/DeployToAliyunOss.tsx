@@ -105,7 +105,7 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
                           <SelectGroup key={item.id}>
                             <SelectLabel>{item.name}</SelectLabel>
                             {item.output?.map((output) => (
-                              <SelectItem key={output.name} value={`${item.id}-${output.name}`}>
+                              <SelectItem key={output.name} value={`${item.id}#${output.name}`}>
                                 <div>
                                   {item.name}-{output.label}
                                 </div>

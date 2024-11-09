@@ -22,7 +22,7 @@ const DeployPanelBody = ({ data }: DeployPanelBodyProps) => {
   return (
     <>
       {/* 默认展示服务商列表 */}
-      <Show when={!providerType} fallback={<DeployForm data={data} />}>
+      <Show when={!providerType} fallback={<DeployForm data={data} defaultProivder={providerType} />}>
         <div className="text-lg font-semibold text-gray-700">选择服务商</div>
         {deployTargets
           .reduce((acc: DeployTarget[][], provider, index) => {

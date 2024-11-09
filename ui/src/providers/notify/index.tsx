@@ -8,6 +8,7 @@ export type NotifyContext = {
   config: Setting<NotifyChannels>;
   setChannel: (data: { channel: string; data: NotifyChannel }) => void;
   setChannels: (data: Setting<NotifyChannels>) => void;
+  initChannels: () => void;
 };
 
 const Context = createContext({} as NotifyContext);
@@ -22,13 +23,18 @@ export const NotifyProvider = ({ children }: NotifyProviderProps) => {
   const [notify, dispatchNotify] = useReducer(notifyReducer, {});
 
   useEffect(() => {
-    const featchData = async () => {
-      const chanels = await getSetting<NotifyChannels>("notifyChannels");
-      dispatchNotify({
-        type: "SET_CHANNELS",
-        payload: chanels,
-      });
-    };
+    featchData();
+  }, []);
+
+  const featchData = async () => {
+    const chanels = await getSetting<NotifyChannels>("notifyChannels");
+    dispatchNotify({
+      type: "SET_CHANNELS",
+      payload: chanels,
+    });
+  };
+
+  const initChannels = useCallback(() => {
     featchData();
   }, []);
 
@@ -52,6 +58,7 @@ export const NotifyProvider = ({ children }: NotifyProviderProps) => {
         config: notify,
         setChannel,
         setChannels,
+        initChannels,
       }}
     >
       {children}

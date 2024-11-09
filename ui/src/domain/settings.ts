@@ -18,13 +18,7 @@ export type NotifyTemplate = {
 };
 
 export type NotifyChannels = {
-  dingtalk?: NotifyChannel;
-  lark?: NotifyChannel;
-  telegram?: NotifyChannel;
-  webhook?: NotifyChannel;
-  serverchan?: NotifyChannel;
-  mail?: NotifyChannelMail;
-  bark?: NotifyChannelBark;
+  [key: string]: NotifyChannel;
 };
 
 export type NotifyChannel =
@@ -35,6 +29,37 @@ export type NotifyChannel =
   | NotifyChannelServerChan
   | NotifyChannelMail
   | NotifyChannelBark;
+
+export const channels = [
+  {
+    name: "dingtalk",
+    label: "common.provider.dingtalk",
+  },
+  {
+    name: "lark",
+    label: "common.provider.lark",
+  },
+  {
+    name: "telegram",
+    label: "common.provider.telegram",
+  },
+  {
+    name: "webhook",
+    label: "common.provider.webhook",
+  },
+  {
+    name: "serverchan",
+    label: "common.provider.serverchan",
+  },
+  {
+    name: "mail",
+    label: "common.provider.mail",
+  },
+  {
+    name: "bark",
+    label: "common.provider.bark",
+  },
+];
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -94,3 +119,4 @@ export type SSLProviderSetting = {
     };
   };
 };
+
