@@ -1,17 +1,21 @@
 ﻿package notify
 
-func getString(conf map[string]any, key string) string {
-	if _, ok := conf[key]; !ok {
-		return ""
-	}
+import (
+	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+)
 
-	return conf[key].(string)
+func getConfigAsString(conf map[string]any, key string) string {
+	return maps.GetValueAsString(conf, key)
 }
 
-func getBool(conf map[string]any, key string) bool {
-	if _, ok := conf[key]; !ok {
-		return false
-	}
+func getConfigAsInt32(conf map[string]any, key string) int32 {
+	return maps.GetValueAsInt32(conf, key)
+}
 
-	return conf[key].(bool)
+func getConfigAsInt64(conf map[string]any, key string) int64 {
+	return maps.GetValueAsInt64(conf, key)
+}
+
+func getConfigAsBool(conf map[string]any, key string) bool {
+	return maps.GetValueAsBool(conf, key)
 }

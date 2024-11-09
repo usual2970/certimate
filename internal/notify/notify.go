@@ -3,7 +3,6 @@ package notify
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	stdhttp "net/http"
 
@@ -74,7 +73,7 @@ func getNotifiers() ([]notifyPackage.Notifier, error) {
 
 	for k, v := range rs {
 
-		if !getBool(v, "enabled") {
+		if !getConfigAsBool(v, "enabled") {
 			continue
 		}
 
@@ -119,25 +118,18 @@ func getNotifier(channel string, conf map[string]any) (notifyPackage.Notifier, e
 func getWebhookNotifier(conf map[string]any) notifyPackage.Notifier {
 	rs := http.New()
 
-	rs.AddReceiversURLs(getString(conf, "url"))
+	rs.AddReceiversURLs(getConfigAsString(conf, "url"))
 
 	return rs
 }
 
 func getTelegramNotifier(conf map[string]any) notifyPackage.Notifier {
-	rs, err := telegram.New(getString(conf, "apiToken"))
+	rs, err := telegram.New(getConfigAsString(conf, "apiToken"))
 	if err != nil {
 		return nil
 	}
 
-	chatId := getString(conf, "chatId")
-
-	id, err := strconv.ParseInt(chatId, 10, 64)
-	if err != nil {
-		return nil
-	}
-
-	rs.AddReceivers(id)
+	rs.AddReceivers(getConfigAsInt64(conf, "chatId"))
 	return rs
 }
 
@@ -145,7 +137,7 @@ func getServerChanNotifier(conf map[string]any) notifyPackage.Notifier {
 	rs := http.New()
 
 	rs.AddReceivers(&http.Webhook{
-		URL:         getString(conf, "url"),
+		URL:         getConfigAsString(conf, "url"),
 		Header:      stdhttp.Header{},
 		ContentType: "application/json",
 		Method:      stdhttp.MethodPost,
@@ -161,8 +153,8 @@ func getServerChanNotifier(conf map[string]any) notifyPackage.Notifier {
 }
 
 func getBarkNotifier(conf map[string]any) notifyPackage.Notifier {
-	deviceKey := getString(conf, "deviceKey")
-	serverURL := getString(conf, "serverUrl")
+	deviceKey := getConfigAsString(conf, "deviceKey")
+	serverURL := getConfigAsString(conf, "serverUrl")
 	if serverURL == "" {
 		return bark.New(deviceKey)
 	}
@@ -171,21 +163,21 @@ func getBarkNotifier(conf map[string]any) notifyPackage.Notifier {
 
 func getDingTalkNotifier(conf map[string]any) notifyPackage.Notifier {
 	return dingding.New(&dingding.Config{
-		Token:  getString(conf, "accessToken"),
-		Secret: getString(conf, "secret"),
+		Token:  getConfigAsString(conf, "accessToken"),
+		Secret: getConfigAsString(conf, "secret"),
 	})
 }
 
 func getLarkNotifier(conf map[string]any) notifyPackage.Notifier {
-	return lark.NewWebhookService(getString(conf, "webhookUrl"))
+	return lark.NewWebhookService(getConfigAsString(conf, "webhookUrl"))
 }
 
 func getMailNotifier(conf map[string]any) (notifyPackage.Notifier, error) {
-	rs, err := NewMail(getString(conf, "senderAddress"),
-		getString(conf, "receiverAddresses"),
-		getString(conf, "smtpHostAddr"),
-		getString(conf, "smtpHostPort"),
-		getString(conf, "password"),
+	rs, err := NewMail(getConfigAsString(conf, "senderAddress"),
+		getConfigAsString(conf, "receiverAddresses"),
+		getConfigAsString(conf, "smtpHostAddr"),
+		getConfigAsString(conf, "smtpHostPort"),
+		getConfigAsString(conf, "password"),
 	)
 	if err != nil {
 		return nil, err
