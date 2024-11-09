@@ -21,6 +21,8 @@ type DogeCloudUploader struct {
 	sdkClient *doge.Client
 }
 
+var _ uploader.Uploader = (*DogeCloudUploader)(nil)
+
 func New(config *DogeCloudUploaderConfig) (*DogeCloudUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKey,

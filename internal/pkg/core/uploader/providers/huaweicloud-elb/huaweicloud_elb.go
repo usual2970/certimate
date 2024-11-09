@@ -32,6 +32,8 @@ type HuaweiCloudELBUploader struct {
 	sdkClient *hcElb.ElbClient
 }
 
+var _ uploader.Uploader = (*HuaweiCloudELBUploader)(nil)
+
 func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKeyId,

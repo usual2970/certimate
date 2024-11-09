@@ -28,6 +28,8 @@ type AliyunSLBUploader struct {
 	sdkClient *aliyunSlb.Client
 }
 
+var _ uploader.Uploader = (*AliyunSLBUploader)(nil)
+
 func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKeyId,

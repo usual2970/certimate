@@ -26,6 +26,8 @@ type AliyunCASUploader struct {
 	sdkClient *aliyunCas.Client
 }
 
+var _ uploader.Uploader = (*AliyunCASUploader)(nil)
+
 func New(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKeyId,

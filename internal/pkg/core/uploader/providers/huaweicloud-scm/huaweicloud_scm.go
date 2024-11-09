@@ -27,6 +27,8 @@ type HuaweiCloudSCMUploader struct {
 	sdkClient *hcScm.ScmClient
 }
 
+var _ uploader.Uploader = (*HuaweiCloudSCMUploader)(nil)
+
 func New(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKeyId,

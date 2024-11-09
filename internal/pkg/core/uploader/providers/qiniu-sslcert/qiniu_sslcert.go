@@ -23,6 +23,8 @@ type QiniuSSLCertUploader struct {
 	sdkClient *qiniuEx.Client
 }
 
+var _ uploader.Uploader = (*QiniuSSLCertUploader)(nil)
+
 func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
 	client, err := createSdkClient(
 		config.AccessKey,

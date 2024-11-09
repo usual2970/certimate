@@ -21,6 +21,8 @@ type TencentCloudSSLUploader struct {
 	sdkClient *tcSsl.Client
 }
 
+var _ uploader.Uploader = (*TencentCloudSSLUploader)(nil)
+
 func New(config *TencentCloudSSLUploaderConfig) (*TencentCloudSSLUploader, error) {
 	client, err := createSdkClient(
 		config.SecretId,
