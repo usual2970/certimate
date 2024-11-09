@@ -42,7 +42,7 @@ func NewAliyunNLBDeployer(option *DeployerOption) (Deployer, error) {
 	uploader, err := uploaderAliyunCas.New(&uploaderAliyunCas.AliyunCASUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.AccessKeySecret,
-		Region:          option.DeployConfig.GetConfigAsString("region"),
+		Region:          "", // TODO: 暂时传空，但仅支持阿里云国内版、不支持国际版，后续需要重新设计表单以区分国内国际
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
