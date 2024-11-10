@@ -37,7 +37,7 @@
   "settings.notification.email.smtp_host.placeholder": "Please enter SMTP host",
   "settings.notification.email.smtp_port.label": "SMTP Port",
   "settings.notification.email.smtp_port.placeholder": "Please enter SMTP port",
-  "settings.notification.email.smtp_tls.label": "TLS/SSL connection",
+  "settings.notification.email.smtp_tls.label": "Use TLS/SSL",
   "settings.notification.email.username.label": "Username",
   "settings.notification.email.username.placeholder": "please enter username",
   "settings.notification.email.password.label": "Password",

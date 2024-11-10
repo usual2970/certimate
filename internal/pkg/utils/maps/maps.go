@@ -154,10 +154,8 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 
 		// 兼容字符串类型的值
 		if str, ok := value.(string); ok {
-			if str == "true" || str == "True" || str == "1" {
-				return true
-			} else if str == "false" || str == "False" || str == "0" {
-				return false
+			if result, err := strconv.ParseBool(str); err == nil {
+				return result
 			}
 		}
 	}
