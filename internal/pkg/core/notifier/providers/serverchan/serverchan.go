@@ -1,4 +1,4 @@
-﻿package email
+﻿package serverchan
 
 import (
 	"context"

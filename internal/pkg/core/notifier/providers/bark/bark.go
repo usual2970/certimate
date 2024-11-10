@@ -1,4 +1,4 @@
-﻿package email
+﻿package bark
 
 import (
 	"context"
