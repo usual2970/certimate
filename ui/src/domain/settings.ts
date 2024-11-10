@@ -18,23 +18,39 @@ export type NotifyTemplate = {
 };
 
 export type NotifyChannels = {
+  email?: NotifyChannelEmail;
+  webhook?: NotifyChannel;
   dingtalk?: NotifyChannel;
   lark?: NotifyChannel;
   telegram?: NotifyChannel;
-  webhook?: NotifyChannel;
   serverchan?: NotifyChannel;
-  mail?: NotifyChannelMail;
   bark?: NotifyChannelBark;
 };
 
 export type NotifyChannel =
+  | NotifyChannelEmail
+  | NotifyChannelWebhook
   | NotifyChannelDingTalk
   | NotifyChannelLark
   | NotifyChannelTelegram
-  | NotifyChannelWebhook
   | NotifyChannelServerChan
-  | NotifyChannelMail
   | NotifyChannelBark;
+
+export type NotifyChannelEmail = {
+  smtpHost: string;
+  smtpPort: number;
+  smtpTLS: boolean;
+  username: string;
+  password: string;
+  senderAddress: string;
+  receiverAddress: string;
+  enabled: boolean;
+};
+
+export type NotifyChannelWebhook = {
+  url: string;
+  enabled: boolean;
+};
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -53,23 +69,8 @@ export type NotifyChannelTelegram = {
   enabled: boolean;
 };
 
-export type NotifyChannelWebhook = {
-  url: string;
-  enabled: boolean;
-};
-
 export type NotifyChannelServerChan = {
   url: string;
-  enabled: boolean;
-};
-
-export type NotifyChannelMail = {
-  senderAddress: string;
-  receiverAddresses: string;
-  smtpHostAddr: string;
-  smtpHostPort: string;
-  username: string;
-  password: string;
   enabled: boolean;
 };
 

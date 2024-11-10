@@ -128,15 +128,15 @@ const DingTalk = () => {
       await notifyTest("dingtalk");
 
       toast({
-        title: t("settings.notification.config.push.test.message.success.message"),
-        description: t("settings.notification.config.push.test.message.success.message"),
+        title: t("settings.notification.push_test_message.succeeded.message"),
+        description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t("settings.notification.config.push.test.message.failed.message"),
-        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        title: t("settings.notification.push_test_message.failed.message"),
+        description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -232,7 +232,7 @@ const DingTalk = () => {
               handlePushTestClick();
             }}
           >
-            {t("settings.notification.config.push.test.message")}
+            {t("settings.notification.push_test_message")}
           </Button>
         </Show>
       </div>

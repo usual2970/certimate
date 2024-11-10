@@ -97,7 +97,7 @@ const Webhook = () => {
       if (!isValidURL(webhook.data.url)) {
         toast({
           title: t("common.save.failed.message"),
-          description: t("settings.notification.url.errmsg.invalid"),
+          description: t("common.errmsg.url_invalid"),
           variant: "destructive",
         });
         return;
@@ -135,15 +135,15 @@ const Webhook = () => {
       await notifyTest("webhook");
 
       toast({
-        title: t("settings.notification.config.push.test.message.success.message"),
-        description: t("settings.notification.config.push.test.message.success.message"),
+        title: t("settings.notification.push_test_message.succeeded.message"),
+        description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t("settings.notification.config.push.test.message.failed.message"),
-        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        title: t("settings.notification.push_test_message.failed.message"),
+        description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -225,7 +225,7 @@ const Webhook = () => {
               handlePushTestClick();
             }}
           >
-            {t("settings.notification.config.push.test.message")}
+            {t("settings.notification.push_test_message")}
           </Button>
         </Show>
       </div>
