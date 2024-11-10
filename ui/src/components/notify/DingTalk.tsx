@@ -177,64 +177,73 @@ const DingTalk = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder="AccessToken"
-        value={dingtalk.data.accessToken}
-        onChange={(e) => {
-          const newData = {
-            ...dingtalk,
-            data: {
-              ...dingtalk.data,
-              accessToken: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setDingtalk(newData);
-        }}
-      />
-      <Input
-        placeholder={t("settings.notification.dingtalk.secret.placeholder")}
-        className="mt-2"
-        value={dingtalk.data.secret}
-        onChange={(e) => {
-          const newData = {
-            ...dingtalk,
-            data: {
-              ...dingtalk.data,
-              secret: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setDingtalk(newData);
-        }}
-      />
-      <div className="flex items-center space-x-1 mt-2">
-        <Switch id="airplane-mode" checked={dingtalk.data.enabled} onCheckedChange={handleSwitchChange} />
-        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+    <div className="flex flex-col space-y-4">
+      <div>
+        <Label>{t("settings.notification.dingtalk.access_token.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.dingtalk.access_token.placeholder")}
+          value={dingtalk.data.accessToken}
+          onChange={(e) => {
+            const newData = {
+              ...dingtalk,
+              data: {
+                ...dingtalk.data,
+                accessToken: e.target.value,
+              },
+            };
+            checkChanged(newData.data);
+            setDingtalk(newData);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end mt-2">
-        <Show when={changed}>
-          <Button
-            onClick={() => {
-              handleSaveClick();
-            }}
-          >
-            {t("common.save")}
-          </Button>
-        </Show>
+      <div>
+        <Label>{t("settings.notification.dingtalk.secret.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.dingtalk.secret.placeholder")}
+          value={dingtalk.data.secret}
+          onChange={(e) => {
+            const newData = {
+              ...dingtalk,
+              data: {
+                ...dingtalk.data,
+                secret: e.target.value,
+              },
+            };
+            checkChanged(newData.data);
+            setDingtalk(newData);
+          }}
+        />
+      </div>
 
-        <Show when={!changed && dingtalk.id != ""}>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              handlePushTestClick();
-            }}
-          >
-            {t("settings.notification.push_test_message")}
-          </Button>
-        </Show>
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={dingtalk.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
+
+          <Show when={!changed && dingtalk.id != ""}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
+        </div>
       </div>
     </div>
   );

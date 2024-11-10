@@ -200,154 +200,173 @@ const Mail = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder={t("settings.notification.email.smtp_host.placeholder")}
-        value={mail.data.smtpHost}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              smtpHost: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+    <div className="flex flex-col space-y-4">
+      <div className="flex space-x-4">
+        <div className="w-2/5">
+          <Label>{t("settings.notification.email.smtp_host.label")}</Label>
+          <Input
+            placeholder={t("settings.notification.email.smtp_host.placeholder")}
+            value={mail.data.smtpHost}
+            onChange={(e) => {
+              const newData = {
+                ...mail,
+                data: {
+                  ...mail.data,
+                  smtpHost: e.target.value,
+                },
+              };
+              checkChanged(newData.data);
+              setMail(newData);
+            }}
+          />
+        </div>
 
-      <Input
-        className="mt-2"
-        type="number"
-        placeholder={t("settings.notification.email.smtp_port.placeholder")}
-        value={mail.data.smtpPort}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              smtpPort: +e.target.value || 0,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+        <div className="w-2/5">
+          <Label>{t("settings.notification.email.smtp_port.label")}</Label>
+          <Input
+            type="number"
+            placeholder={t("settings.notification.email.smtp_port.placeholder")}
+            value={mail.data.smtpPort}
+            onChange={(e) => {
+              const newData = {
+                ...mail,
+                data: {
+                  ...mail.data,
+                  smtpPort: +e.target.value || 0,
+                },
+              };
+              checkChanged(newData.data);
+              setMail(newData);
+            }}
+          />
+        </div>
 
-      <Switch
-        className="mt-2"
-        checked={mail.data.smtpTLS}
-        onCheckedChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              smtpTLS: e,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+        <div className="w-1/5">
+          <Label>{t("settings.notification.email.smtp_tls.label")}</Label>
+          <Switch
+            className="block mt-2"
+            checked={mail.data.smtpTLS}
+            onCheckedChange={(e) => {
+              const newData = {
+                ...mail,
+                data: {
+                  ...mail.data,
+                  smtpPort: e && mail.data.smtpPort === 25 ? 465 : !e && mail.data.smtpPort === 465 ? 25 : mail.data.smtpPort,
+                  smtpTLS: e,
+                },
+              };
+              checkChanged(newData.data);
+              setMail(newData);
+            }}
+          />
+        </div>
+      </div>
 
-      <Input
-        className="mt-2"
-        placeholder={t("settings.notification.email.username.placeholder")}
-        value={mail.data.username}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              username: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+      <div className="flex space-x-4">
+        <div className="w-1/2">
+          <Label>{t("settings.notification.email.username.label")}</Label>
+          <Input
+            placeholder={t("settings.notification.email.username.placeholder")}
+            value={mail.data.username}
+            onChange={(e) => {
+              const newData = {
+                ...mail,
+                data: {
+                  ...mail.data,
+                  username: e.target.value,
+                },
+              };
+              checkChanged(newData.data);
+              setMail(newData);
+            }}
+          />
+        </div>
 
-      <Input
-        className="mt-2"
-        placeholder={t("settings.notification.email.password.placeholder")}
-        value={mail.data.password}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              password: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+        <div className="w-1/2">
+          <Label>{t("settings.notification.email.password.label")}</Label>
+          <Input
+            placeholder={t("settings.notification.email.password.placeholder")}
+            value={mail.data.password}
+            onChange={(e) => {
+              const newData = {
+                ...mail,
+                data: {
+                  ...mail.data,
+                  password: e.target.value,
+                },
+              };
+              checkChanged(newData.data);
+              setMail(newData);
+            }}
+          />
+        </div>
+      </div>
 
-      <Input
-        className="mt-2"
-        placeholder={t("settings.notification.email.sender_address.placeholder")}
-        value={mail.data.senderAddress}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              senderAddress: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+      <div>
+        <Label>{t("settings.notification.email.sender_address.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.email.sender_address.placeholder")}
+          value={mail.data.senderAddress}
+          onChange={(e) => {
+            const newData = {
+              ...mail,
+              data: {
+                ...mail.data,
+                senderAddress: e.target.value,
+              },
+            };
+            checkChanged(newData.data);
+            setMail(newData);
+          }}
+        />
+      </div>
 
-      <Input
-        className="mt-2"
-        placeholder={t("settings.notification.email.receiver_address.placeholder")}
-        value={mail.data.receiverAddress}
-        onChange={(e) => {
-          const newData = {
-            ...mail,
-            data: {
-              ...mail.data,
-              receiverAddress: e.target.value,
-            },
-          };
-          checkChanged(newData.data);
-          setMail(newData);
-        }}
-      />
+      <div>
+        <Label>{t("settings.notification.email.receiver_address.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.email.receiver_address.placeholder")}
+          value={mail.data.receiverAddress}
+          onChange={(e) => {
+            const newData = {
+              ...mail,
+              data: {
+                ...mail.data,
+                receiverAddress: e.target.value,
+              },
+            };
+            checkChanged(newData.data);
+            setMail(newData);
+          }}
+        />
+      </div>
 
-      <div className="mt-2">
-        <div className="flex justify-between gap-4">
-          <div className="flex items-center space-x-1">
-            <Switch id="airplane-mode" checked={mail.data.enabled} onCheckedChange={handleSwitchChange} />
-            <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
-          </div>
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={mail.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
 
-          <div className="flex items-center space-x-1">
-            <Show when={changed}>
-              <Button
-                onClick={() => {
-                  handleSaveClick();
-                }}
-              >
-                {t("common.save")}
-              </Button>
-            </Show>
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
 
-            <Show when={!changed && mail.id != ""}>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  handlePushTestClick();
-                }}
-              >
-                {t("settings.notification.push_test_message")}
-              </Button>
-            </Show>
-          </div>
+          <Show when={!changed && mail.id != ""}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
         </div>
       </div>
     </div>

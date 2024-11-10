@@ -177,67 +177,75 @@ const Bark = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder={t("settings.notification.bark.serverUrl.placeholder")}
-        value={bark.data.serverUrl}
-        onChange={(e) => {
-          const newData = {
-            ...bark,
-            data: {
-              ...bark.data,
-              serverUrl: e.target.value,
-            },
-          };
+    <div className="flex flex-col space-y-4">
+      <div>
+        <Label>{t("settings.notification.bark.server_url.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.bark.server_url.placeholder")}
+          value={bark.data.serverUrl}
+          onChange={(e) => {
+            const newData = {
+              ...bark,
+              data: {
+                ...bark.data,
+                serverUrl: e.target.value,
+              },
+            };
 
-          checkChanged(newData.data);
-          setBark(newData);
-        }}
-      />
-
-      <Input
-        placeholder={t("settings.notification.bark.deviceKey.placeholder")}
-        value={bark.data.deviceKey}
-        onChange={(e) => {
-          const newData = {
-            ...bark,
-            data: {
-              ...bark.data,
-              deviceKey: e.target.value,
-            },
-          };
-
-          checkChanged(newData.data);
-          setBark(newData);
-        }}
-      />
-
-      <div className="flex items-center space-x-1 mt-2">
-        <Switch id="airplane-mode" checked={bark.data.enabled} onCheckedChange={handleSwitchChange} />
-        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+            checkChanged(newData.data);
+            setBark(newData);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end mt-2">
-        <Show when={changed}>
-          <Button
-            onClick={() => {
-              handleSaveClick();
-            }}
-          >
-            {t("common.save")}
-          </Button>
-        </Show>
+      <div>
+        <Label>{t("settings.notification.bark.device_key.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.bark.device_key.placeholder")}
+          value={bark.data.deviceKey}
+          onChange={(e) => {
+            const newData = {
+              ...bark,
+              data: {
+                ...bark.data,
+                deviceKey: e.target.value,
+              },
+            };
 
-        <Show when={!changed && bark.id != ""}>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              handlePushTestClick();
-            }}
-          >
-            {t("settings.notification.push_test_message")}
-          </Button>
-        </Show>
+            checkChanged(newData.data);
+            setBark(newData);
+          }}
+        />
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={bark.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
+
+          <Show when={!changed && bark.id != ""}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
+        </div>
       </div>
     </div>
   );

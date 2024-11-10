@@ -184,50 +184,55 @@ const Webhook = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder="Url"
-        value={webhook.data.url}
-        onChange={(e) => {
-          const newData = {
-            ...webhook,
-            data: {
-              ...webhook.data,
-              url: e.target.value,
-            },
-          };
+    <div className="flex flex-col space-y-4">
+      <div>
+        <Label>{t("settings.notification.webhook.url.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.webhook.url.placeholder")}
+          value={webhook.data.url}
+          onChange={(e) => {
+            const newData = {
+              ...webhook,
+              data: {
+                ...webhook.data,
+                url: e.target.value,
+              },
+            };
 
-          checkChanged(newData.data);
-          setWebhook(newData);
-        }}
-      />
-
-      <div className="flex items-center space-x-1 mt-2">
-        <Switch id="airplane-mode" checked={webhook.data.enabled} onCheckedChange={handleSwitchChange} />
-        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+            checkChanged(newData.data);
+            setWebhook(newData);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end mt-2">
-        <Show when={changed}>
-          <Button
-            onClick={() => {
-              handleSaveClick();
-            }}
-          >
-            {t("common.save")}
-          </Button>
-        </Show>
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={webhook.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
 
-        <Show when={!changed && webhook.id != ""}>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              handlePushTestClick();
-            }}
-          >
-            {t("settings.notification.push_test_message")}
-          </Button>
-        </Show>
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
+
+          <Show when={!changed && webhook.id != ""}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
+        </div>
       </div>
     </div>
   );
