@@ -116,11 +116,18 @@ const Lark = () => {
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("lark");
 
       toast({
@@ -214,6 +221,7 @@ const Lark = () => {
           <Show when={!changed && lark.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

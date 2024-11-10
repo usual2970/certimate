@@ -130,8 +130,13 @@ const Webhook = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("webhook");
 
       toast({
@@ -146,6 +151,8 @@ const Webhook = () => {
         description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -225,6 +232,7 @@ const Webhook = () => {
           <Show when={!changed && webhook.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

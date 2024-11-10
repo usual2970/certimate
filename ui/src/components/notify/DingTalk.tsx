@@ -120,11 +120,18 @@ const DingTalk = () => {
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("dingtalk");
 
       toast({
@@ -236,6 +243,7 @@ const DingTalk = () => {
           <Show when={!changed && dingtalk.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

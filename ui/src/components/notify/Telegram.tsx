@@ -123,8 +123,13 @@ const Telegram = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("telegram");
 
       toast({
@@ -139,6 +144,8 @@ const Telegram = () => {
         description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -238,6 +245,7 @@ const Telegram = () => {
           <Show when={!changed && telegram.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

@@ -123,8 +123,13 @@ const Bark = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("bark");
 
       toast({
@@ -139,6 +144,8 @@ const Bark = () => {
         description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -238,6 +245,7 @@ const Bark = () => {
           <Show when={!changed && bark.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

@@ -146,8 +146,13 @@ const Mail = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("email");
 
       toast({
@@ -162,6 +167,8 @@ const Mail = () => {
         description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -360,6 +367,7 @@ const Mail = () => {
           <Show when={!changed && mail.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}

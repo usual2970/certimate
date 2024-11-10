@@ -130,8 +130,13 @@ const ServerChan = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("serverchan");
 
       toast({
@@ -146,6 +151,8 @@ const ServerChan = () => {
         description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -225,6 +232,7 @@ const ServerChan = () => {
           <Show when={!changed && serverchan.id != ""}>
             <Button
               variant="secondary"
+              loading={testing}
               onClick={() => {
                 handlePushTestClick();
               }}
