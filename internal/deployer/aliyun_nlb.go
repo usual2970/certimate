@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunNlb "github.com/alibabacloud-go/nlb-20220430/v2/client"
@@ -39,10 +40,21 @@ func NewAliyunNLBDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
+	aliCasRegion := option.DeployConfig.GetConfigAsString("region")
+	if aliCasRegion != "" {
+		// 阿里云 CAS 服务接入点是独立于 NLB 服务的
+		// 国内版接入点：华东一杭州
+		// 国际版接入点：亚太东南一新加坡
+		if !strings.HasPrefix(aliCasRegion, "cn-") {
+			aliCasRegion = "ap-southeast-1"
+		} else {
+			aliCasRegion = "cn-hangzhou"
+		}
+	}
 	uploader, err := uploaderAliyunCas.New(&uploaderAliyunCas.AliyunCASUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.AccessKeySecret,
-		Region:          option.DeployConfig.GetConfigAsString("region"),
+		Region:          aliCasRegion,
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")

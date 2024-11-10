@@ -70,8 +70,6 @@ func (d *TencentCLBDeployer) GetInfos() []string {
 }
 
 func (d *TencentCLBDeployer) Deploy(ctx context.Context) error {
-	// TODO: 直接部署方式
-
 	switch d.option.DeployConfig.GetConfigAsString("resourceType") {
 	case "ssl-deploy":
 		// 通过 SSL 服务部署到云资源实例
