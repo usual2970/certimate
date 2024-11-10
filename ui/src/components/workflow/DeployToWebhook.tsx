@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
-import { Input } from "@/components/ui/input";
 import { DeployFormProps } from "./DeployForm";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -15,12 +14,18 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
+import KVList from "../certimate/KVList";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
 });
-const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
+
+const KVTypeSchema = z.object({
+  key: z.string(),
+  value: z.string(),
+});
+const DeployToWebhook = ({ data }: DeployFormProps) => {
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
@@ -29,30 +34,20 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
   useEffect(() => {
     const rs = getWorkflowOuptutBeforeId(data.id, "certificate");
-    console.log(rs);
     setBeforeOutput(rs);
   }, [data]);
 
   const formSchema = z.object({
     providerType: z.string(),
     certificate: z.string().min(1),
-    endpoint: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
-    }),
-    bucket: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
-    }),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    }),
+    variables: z.array(KVTypeSchema).optional(),
   });
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-oss",
-    endpoint: "",
-    bucket: "",
-    domain: "",
+    providerType: "webhook",
+
+    variables: [],
   };
   if (data) config = data.config ?? config;
 
@@ -61,13 +56,12 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
     defaultValues: {
       providerType: config.providerType as string,
       certificate: config.certificate as string,
-      endpoint: config.endpoint as string,
-      bucket: config.bucket as string,
-      domain: config.domain as string,
+      variables: config.variables as { key: string; value: string }[],
     },
   });
 
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
+    console.log(config);
     updateNode({ ...data, config: { ...config } });
     hidePanel();
   };
@@ -122,47 +116,19 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="endpoint"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")} {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}
-            name="bucket"
+            name="variables"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_bucket.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")} {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="domain"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("domain.deployment.form.domain.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.domain.label")} {...field} />
-                </FormControl>
-
-                <FormMessage />
+                <KVList
+                  {...field}
+                  variables={field.value}
+                  onValueChange={(value) => {
+                    form.setValue("variables", value);
+                  }}
+                />
               </FormItem>
             )}
           />
@@ -176,4 +142,4 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   );
 };
 
-export default DeployToAliyunOSS;
+export default DeployToWebhook;

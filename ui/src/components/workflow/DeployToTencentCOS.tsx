@@ -20,7 +20,7 @@ const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
 });
-const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
+const DeployToTencentCOS = ({ data }: DeployFormProps) => {
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
@@ -36,12 +36,8 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   const formSchema = z.object({
     providerType: z.string(),
     certificate: z.string().min(1),
-    endpoint: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
-    }),
-    bucket: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
-    }),
+    region: z.string().min(1, t("domain.deployment.form.tencent_cos_region.placeholder")),
+    bucket: z.string().min(1, t("domain.deployment.form.tencent_cos_bucket.placeholder")),
     domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
       message: t("common.errmsg.domain_invalid"),
     }),
@@ -49,8 +45,8 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-oss",
-    endpoint: "",
+    providerType: "tencent-cos",
+    region: "",
     bucket: "",
     domain: "",
   };
@@ -61,7 +57,7 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
     defaultValues: {
       providerType: config.providerType as string,
       certificate: config.certificate as string,
-      endpoint: config.endpoint as string,
+      region: config.region as string,
       bucket: config.bucket as string,
       domain: config.domain as string,
     },
@@ -122,14 +118,15 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="endpoint"
+            name="region"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.tencent_cos_region.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")} {...field} />
+                  <Input placeholder={t("domain.deployment.form.tencent_cos_region.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -142,9 +139,9 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
             name="bucket"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_bucket.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.tencent_cos_bucket.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")} {...field} />
+                  <Input placeholder={t("domain.deployment.form.tencent_cos_bucket.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -176,4 +173,4 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   );
 };
 
-export default DeployToAliyunOSS;
+export default DeployToTencentCOS;

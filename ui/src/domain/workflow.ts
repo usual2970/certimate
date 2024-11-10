@@ -1,8 +1,7 @@
 import { produce } from "immer";
 import { nanoid } from "nanoid";
-import { accessProviders } from "./access";
 import i18n from "@/i18n";
-import { deployTargets } from "./domain";
+import { deployTargets, KVType } from "./domain";
 
 export enum WorkflowNodeType {
   Start = "start",
@@ -72,7 +71,7 @@ export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo
   [WorkflowNodeType.Notify, []],
 ]);
 
-export type WorkflowNodeConfig = Record<string, string | boolean | number | string[] | undefined>;
+export type WorkflowNodeConfig = Record<string, string | boolean | number | KVType[] | string[] | undefined>;
 
 export type WorkflowNode = {
   id: string;
@@ -369,4 +368,3 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     },
   },
 ];
-

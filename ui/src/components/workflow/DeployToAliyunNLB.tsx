@@ -1,26 +1,25 @@
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeployFormProps } from "./DeployForm";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Button } from "../ui/button";
-
-import { useEffect, useState } from "react";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { SelectLabel } from "@radix-ui/react-select";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
 });
-const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
+
+const DeployToAliyunNLB = ({ data }: DeployFormProps) => {
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
@@ -33,26 +32,33 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
     setBeforeOutput(rs);
   }, [data]);
 
-  const formSchema = z.object({
-    providerType: z.string(),
-    certificate: z.string().min(1),
-    endpoint: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
-    }),
-    bucket: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
-    }),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    }),
-  });
+  const formSchema = z
+    .object({
+      providerType: z.string(),
+      certificate: z.string().min(1),
+      region: z.string().min(1, t("domain.deployment.form.aliyun_nlb_region.placeholder")),
+      resourceType: z.union([z.literal("loadbalancer"), z.literal("listener")], {
+        message: t("domain.deployment.form.aliyun_nlb_resource_type.placeholder"),
+      }),
+      loadbalancerId: z.string().optional(),
+      listenerId: z.string().optional(),
+    })
+    .refine((data) => (data.resourceType === "loadbalancer" ? !!data.loadbalancerId?.trim() : true), {
+      message: t("domain.deployment.form.aliyun_nlb_loadbalancer_id.placeholder"),
+      path: ["loadbalancerId"],
+    })
+    .refine((data) => (data.resourceType === "listener" ? !!data.listenerId?.trim() : true), {
+      message: t("domain.deployment.form.aliyun_nlb_listener_id.placeholder"),
+      path: ["listenerId"],
+    });
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-oss",
-    endpoint: "",
-    bucket: "",
-    domain: "",
+    providerType: "aliyun-nlb",
+    region: "",
+    resourceType: "",
+    loadbalancerId: "",
+    listenerId: "",
   };
   if (data) config = data.config ?? config;
 
@@ -61,9 +67,10 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
     defaultValues: {
       providerType: config.providerType as string,
       certificate: config.certificate as string,
-      endpoint: config.endpoint as string,
-      bucket: config.bucket as string,
-      domain: config.domain as string,
+      region: config.region as string,
+      resourceType: config.resourceType as "loadbalancer" | "listener",
+      loadbalancerId: config.loadbalancerId as string,
+      listenerId: config.listenerId as string,
     },
   });
 
@@ -124,12 +131,12 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
           />
           <FormField
             control={form.control}
-            name="endpoint"
+            name="region"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.aliyun_nlb_region.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")} {...field} />
+                  <Input placeholder={t("domain.deployment.form.aliyun_nlb_region.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -139,12 +146,28 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
           <FormField
             control={form.control}
-            name="bucket"
+            name="resourceType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_bucket.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.aliyun_nlb_resource_type.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")} {...field} />
+                  <Select
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("resourceType", value as "loadbalancer" | "listener");
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("domain.deployment.form.aliyun_nlb_resource_type.placeholder")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="loadbalancer">{t("domain.deployment.form.aliyun_nlb_resource_type.option.loadbalancer.label")}</SelectItem>
+                        <SelectItem value="listener">{t("domain.deployment.form.aliyun_nlb_resource_type.option.listener.label")}</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
 
                 <FormMessage />
@@ -154,12 +177,27 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
           <FormField
             control={form.control}
-            name="domain"
+            name="loadbalancerId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.domain.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.aliyun_nlb_loadbalancer_id.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.domain.label")} {...field} />
+                  <Input placeholder={t("domain.deployment.form.aliyun_nlb_loadbalancer_id.placeholder")} {...field} />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="listenerId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("domain.deployment.form.aliyun_nlb_listener_id.label")}</FormLabel>
+                <FormControl>
+                  <Input placeholder={t("domain.deployment.form.aliyun_nlb_listener_id.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -176,4 +214,4 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   );
 };
 
-export default DeployToAliyunOSS;
+export default DeployToAliyunNLB;

@@ -178,4 +178,3 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
 };
 
 export default NotifyForm;
-

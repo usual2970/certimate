@@ -36,8 +36,8 @@ const Workflow = () => {
   return (
     <>
       <WorkflowProvider>
-        <ScrollArea className="h-[100vh] w-full bg-slate-50 relative">
-          <div className="h-16 sticky  top-0 left-0 z-20 shadow-md bg-white"></div>
+        <ScrollArea className="h-[100vh] w-full relative bg-background">
+          <div className="h-16 sticky  top-0 left-0 z-20 shadow-md bg-muted/40"></div>
 
           <div className=" flex flex-col items-center mt-8">{elements}</div>
 

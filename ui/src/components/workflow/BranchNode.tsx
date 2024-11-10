@@ -25,7 +25,7 @@ const BranchNode = memo(({ data }: BrandNodeProps) => {
 
   return (
     <>
-      <div className="border-t-[2px] border-b-[2px] relative flex gap-x-16 border-stone-300 bg-slate-50">
+      <div className="border-t-[2px] border-b-[2px] relative flex gap-x-16 border-stone-200 bg-background">
         <Button
           onClick={() => {
             addBranch(data.id);
@@ -40,18 +40,18 @@ const BranchNode = memo(({ data }: BrandNodeProps) => {
         {data.branches.map((branch, index) => (
           <div
             key={branch.id}
-            className="relative flex flex-col items-center before:content-['']  before:w-[2px] before:bg-stone-300 before:absolute before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0"
+            className="relative flex flex-col items-center before:content-['']  before:w-[2px] before:bg-stone-200 before:absolute before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0"
           >
             {index == 0 && (
               <>
-                <div className="w-[50%]  h-2 absolute -top-1 bg-stone-50 -left-[1px]"></div>
-                <div className="w-[50%]  h-2 absolute -bottom-1 bg-stone-50 -left-[1px]"></div>
+                <div className="w-[50%]  h-2 absolute -top-1 bg-background -left-[1px]"></div>
+                <div className="w-[50%]  h-2 absolute -bottom-1 bg-background -left-[1px]"></div>
               </>
             )}
             {index == data.branches.length - 1 && (
               <>
-                <div className="w-[50%]  h-2 absolute -top-1 bg-stone-50 -right-[1px]"></div>
-                <div className="w-[50%]  h-2 absolute -bottom-1 bg-stone-50 -right-[1px]"></div>
+                <div className="w-[50%]  h-2 absolute -top-1 bg-background -right-[1px]"></div>
+                <div className="w-[50%]  h-2 absolute -bottom-1 bg-background -right-[1px]"></div>
               </>
             )}
             {/* 条件 1 */}

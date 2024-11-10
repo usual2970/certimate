@@ -119,4 +119,3 @@ export type SSLProviderSetting = {
     };
   };
 };
-

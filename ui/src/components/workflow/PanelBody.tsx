@@ -31,4 +31,3 @@ const PanelBody = ({ data }: PanelBodyProps) => {
 };
 
 export default PanelBody;
-

@@ -20,7 +20,7 @@ const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
 });
-const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
+const DeployToKubernetesSecret = ({ data }: DeployFormProps) => {
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
@@ -36,23 +36,27 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   const formSchema = z.object({
     providerType: z.string(),
     certificate: z.string().min(1),
-    endpoint: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
+    namespace: z.string().min(1, {
+      message: t("domain.deployment.form.k8s_namespace.placeholder"),
     }),
-    bucket: z.string().min(1, {
-      message: t("domain.deployment.form.aliyun_oss_bucket.placeholder"),
+    secretName: z.string().min(1, {
+      message: t("domain.deployment.form.k8s_secret_name.placeholder"),
     }),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
+    secretDataKeyForCrt: z.string().min(1, {
+      message: t("domain.deployment.form.k8s_secret_data_key_for_crt.placeholder"),
+    }),
+    secretDataKeyForKey: z.string().min(1, {
+      message: t("domain.deployment.form.k8s_secret_data_key_for_key.placeholder"),
     }),
   });
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-oss",
-    endpoint: "",
-    bucket: "",
-    domain: "",
+    providerType: "k8s-secret",
+    namespace: "",
+    secretName: "",
+    secretDataKeyForCrt: "",
+    secretDataKeyForKey: "",
   };
   if (data) config = data.config ?? config;
 
@@ -61,9 +65,10 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
     defaultValues: {
       providerType: config.providerType as string,
       certificate: config.certificate as string,
-      endpoint: config.endpoint as string,
-      bucket: config.bucket as string,
-      domain: config.domain as string,
+      namespace: config.namespace as string,
+      secretName: config.secretName as string,
+      secretDataKeyForCrt: config.secretDataKeyForCrt as string,
+      secretDataKeyForKey: config.secretDataKeyForKey as string,
     },
   });
 
@@ -122,16 +127,16 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="endpoint"
+            name="namespace"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_endpoint.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.k8s_namespace.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_endpoint.placeholder")} {...field} />
+                  <Input {...field} placeholder={t("domain.deployment.form.k8s_namespace.label")} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -139,14 +144,13 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
           <FormField
             control={form.control}
-            name="bucket"
+            name="secretName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_oss_bucket.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.k8s_secret_name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_oss_bucket.placeholder")} {...field} />
+                  <Input {...field} placeholder={t("domain.deployment.form.k8s_secret_name.label")} />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -154,14 +158,27 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
           <FormField
             control={form.control}
-            name="domain"
+            name="secretDataKeyForCrt"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("domain.deployment.form.domain.label")}</FormLabel>
+                <FormLabel>{t("domain.deployment.form.k8s_secret_data_key_for_crt.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("domain.deployment.form.domain.label")} {...field} />
+                  <Input {...field} placeholder={t("domain.deployment.form.k8s_secret_data_key_for_crt.label")} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
+          <FormField
+            control={form.control}
+            name="secretDataKeyForKey"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("domain.deployment.form.k8s_secret_data_key_for_key.label")}</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder={t("domain.deployment.form.k8s_secret_data_key_for_key.label")} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -176,4 +193,4 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   );
 };
 
-export default DeployToAliyunOSS;
+export default DeployToKubernetesSecret;
