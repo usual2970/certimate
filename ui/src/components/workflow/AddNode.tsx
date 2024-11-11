@@ -19,6 +19,7 @@ import {
 } from "../ui/dropdown-menu";
 import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
 import Show from "../Show";
+import { useTranslation } from "react-i18next";
 
 const selectState = (state: WorkflowState) => ({
   addNode: state.addNode,
@@ -26,6 +27,7 @@ const selectState = (state: WorkflowState) => ({
 
 const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
   const { addNode } = useWorkflowStore(useShallow(selectState));
+  const { t } = useTranslation();
 
   const handleTypeSelected = (type: WorkflowNodeType, provider?: string) => {
     const node = newWorkflowNode(type, {
@@ -44,7 +46,7 @@ const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>选择节点类型</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("workflow.node.selectNodeType.label")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           {workflowNodeDropdownList.map((item) => (
             <Show

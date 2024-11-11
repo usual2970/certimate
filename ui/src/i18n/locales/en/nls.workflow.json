@@ -1,0 +1,33 @@
+{
+  "workflow.common.certificate.label": "Certificate",
+  "workflow.common.certificate.placeholder": "Please select certificate source",
+
+  "workflow.node.start.title": "Start",
+  "workflow.node.apply.title": "Apply",
+  "workflow.node.deploy.title": "Deploy",
+  "workflow.node.branch.title": "Branch",
+  "workflow.node.condition.title": "Branch",
+  "workflow.node.end.title": "End",
+  "workflow.node.notify.title": "Notify",
+
+  "workflow.node.setting.label": "Setting Node",
+  "workflow.node.delete.label": "Delete Node",
+  "workflow.node.addBranch.label": "Add Branch",
+  "workflow.node.selectNodeType.label": "Select Node Type",
+
+  "workflow.node.start.form.executionMethod.label": "Execution Method",
+  "workflow.node.start.form.executionMethod.placeholder": "Please select execution method",
+  "workflow.node.start.form.executionMethod.options.manual": "Manual",
+  "workflow.node.start.form.executionMethod.options.auto": "Auto",
+  "workflow.node.start.form.crontab.label": "Crontab",
+  "workflow.node.start.form.crontab.placeholder": "Please enter crontab",
+
+  "workflow.node.notify.form.title.label": "Title",
+  "workflow.node.notify.form.title.placeholder": "Please enter title",
+  "workflow.node.notify.form.content.label": "Content",
+  "workflow.node.notify.form.content.placeholder": "Please enter content",
+  "workflow.node.notify.form.channel.label": "Channel",
+  "workflow.node.notify.form.channel.placeholder": "Please select channel",
+  "workflow.node.notify.form.settingChannel.label": "Setting Channel"
+}
+

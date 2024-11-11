@@ -6,12 +6,15 @@ import { memo } from "react";
 import { BrandNodeProps } from "./types";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { useShallow } from "zustand/shallow";
+import { useTranslation } from "react-i18next";
 
 const selectState = (state: WorkflowState) => ({
   addBranch: state.addBranch,
 });
 const BranchNode = memo(({ data }: BrandNodeProps) => {
   const { addBranch } = useWorkflowStore(useShallow(selectState));
+
+  const { t } = useTranslation();
 
   const renderNodes = (node: WorkflowBranchNode | WorkflowNode | undefined, branchNodeId?: string, branchIndex?: number) => {
     const elements: JSX.Element[] = [];
@@ -34,7 +37,7 @@ const BranchNode = memo(({ data }: BrandNodeProps) => {
           variant={"outline"}
           className="text-xs px-2 h-6 rounded-full absolute  -top-3 left-[50%] -translate-x-1/2 z-10"
         >
-          添加分支
+          {t("workflow.node.addBranch.label")}
         </Button>
 
         {data.branches.map((branch, index) => (

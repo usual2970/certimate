@@ -14,15 +14,17 @@ export enum WorkflowNodeType {
   Custom = "custom",
 }
 
+const i18nPrefix = "workflow.node";
+
 export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Map([
-  [WorkflowNodeType.Start, "开始"],
-  [WorkflowNodeType.End, "结束"],
-  [WorkflowNodeType.Branch, "分支"],
-  [WorkflowNodeType.Condition, "分支"],
-  [WorkflowNodeType.Apply, "申请"],
-  [WorkflowNodeType.Deploy, "部署"],
-  [WorkflowNodeType.Notify, "通知"],
-  [WorkflowNodeType.Custom, "自定义"],
+  [WorkflowNodeType.Start, i18n.t(`${i18nPrefix}.start.title`)],
+  [WorkflowNodeType.End, i18n.t(`${i18nPrefix}.end.title`)],
+  [WorkflowNodeType.Branch, i18n.t(`${i18nPrefix}.branch.title`)],
+  [WorkflowNodeType.Condition, i18n.t(`${i18nPrefix}.condition.title`)],
+  [WorkflowNodeType.Apply, i18n.t(`${i18nPrefix}.apply.title`)],
+  [WorkflowNodeType.Deploy, i18n.t(`${i18nPrefix}.deploy.title`)],
+  [WorkflowNodeType.Notify, i18n.t(`${i18nPrefix}.notify.title`)],
+  [WorkflowNodeType.Custom, i18n.t(`${i18nPrefix}.custom.title`)],
 ]);
 
 export type WorkflowNodeIo = {
@@ -48,7 +50,7 @@ export const workflowNodeTypeDefaultInput: Map<WorkflowNodeType, WorkflowNodeIo[
         name: "certificate",
         type: " certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.common.certificate.label"),
       },
     ],
   ],
@@ -63,7 +65,7 @@ export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.common.certificate.label"),
       },
     ],
   ],
@@ -77,6 +79,7 @@ export type WorkflowNode = {
   id: string;
   name: string;
   type: WorkflowNodeType;
+  validated?: boolean;
 
   input?: WorkflowNodeIo[];
   config?: WorkflowNodeConfig;

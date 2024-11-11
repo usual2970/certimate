@@ -38,6 +38,8 @@ type StartFormProps = {
   data: WorkflowNode;
 };
 
+const i18nPrefix = "workflow.node.start.form";
+
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
 });
@@ -72,7 +74,7 @@ const StartForm = ({ data }: StartFormProps) => {
   });
 
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config: { ...config } });
+    updateNode({ ...data, config: { ...config }, validated: true });
     hidePanel();
   };
 
@@ -91,7 +93,7 @@ const StartForm = ({ data }: StartFormProps) => {
             name="executionMethod"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>执行方式</FormLabel>
+                <FormLabel>{t(`${i18nPrefix}.executionMethod.label`)}</FormLabel>
                 <FormControl>
                   <RadioGroup
                     {...field}
@@ -103,11 +105,11 @@ const StartForm = ({ data }: StartFormProps) => {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="auto" id="option-one" />
-                      <Label htmlFor="option-one">自动</Label>
+                      <Label htmlFor="option-one">{t(`${i18nPrefix}.executionMethod.options.auto`)}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="manual" id="option-two" />
-                      <Label htmlFor="option-two">手动</Label>
+                      <Label htmlFor="option-two">{t(`${i18nPrefix}.executionMethod.options.manual`)}</Label>
                     </div>
                   </RadioGroup>
                 </FormControl>
@@ -122,9 +124,9 @@ const StartForm = ({ data }: StartFormProps) => {
             name="crontab"
             render={({ field }) => (
               <FormItem hidden={method == "manual"}>
-                <FormLabel>定时表达式</FormLabel>
+                <FormLabel>{t(`${i18nPrefix}.crontab.label`)}</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} placeholder={t(`${i18nPrefix}.crontab.placeholder`)} />
                 </FormControl>
 
                 <FormMessage />

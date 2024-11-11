@@ -30,7 +30,11 @@ export type NotifyChannel =
   | NotifyChannelMail
   | NotifyChannelBark;
 
-export const channels = [
+type ChannelLabel = {
+  name: string;
+  label: string;
+};
+export const channels: ChannelLabel[] = [
   {
     name: "dingtalk",
     label: "common.provider.dingtalk",
@@ -60,6 +64,8 @@ export const channels = [
     label: "common.provider.bark",
   },
 ];
+
+export const channelLabelMap: Map<string, ChannelLabel> = new Map(channels.map((item) => [item.name, item]));
 
 export type NotifyChannelDingTalk = {
   accessToken: string;

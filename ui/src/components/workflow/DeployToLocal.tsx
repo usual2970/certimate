@@ -114,7 +114,7 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
   }, [format]);
 
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config });
+    updateNode({ ...data, config, validated: true });
     hidePanel();
   };
 
@@ -203,7 +203,7 @@ Remove-Item -Path "$pfxPath" -Force
           name="certificate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>证书</FormLabel>
+              <FormLabel>{t("workflow.common.certificate.label")}</FormLabel>
               <FormControl>
                 <Select
                   {...field}
@@ -213,7 +213,7 @@ Remove-Item -Path "$pfxPath" -Force
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="选择证书来源" />
+                    <SelectValue placeholder={t("workflow.common.certificate.placeholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {beforeOutput.map((item) => (

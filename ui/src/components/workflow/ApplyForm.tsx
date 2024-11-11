@@ -82,7 +82,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
   });
 
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config });
+    updateNode({ ...data, config, validated: true });
     hidePanel();
   };
 

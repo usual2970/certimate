@@ -1,0 +1,33 @@
+{
+  "workflow.common.certificate.label": "证书",
+  "workflow.common.certificate.placeholder": "请选择证书来源",
+
+  "workflow.node.start.title": "开始",
+  "workflow.node.apply.title": "申请",
+  "workflow.node.deploy.title": "部署",
+  "workflow.node.branch.title": "分支",
+  "workflow.node.condition.title": "分支",
+  "workflow.node.end.title": "流程结束",
+  "workflow.node.notify.title": "通知",
+
+  "workflow.node.setting.label": "设置节点",
+  "workflow.node.delete.label": "删除节点",
+  "workflow.node.addBranch.label": "添加分支",
+  "workflow.node.selectNodeType.label": "选择节点类型",
+
+  "workflow.node.start.form.executionMethod.label": "执行方式",
+  "workflow.node.start.form.executionMethod.placeholder": "请选择执行方式",
+  "workflow.node.start.form.executionMethod.options.manual": "手动",
+  "workflow.node.start.form.executionMethod.options.auto": "自动",
+  "workflow.node.start.form.crontab.label": "定时表达式",
+  "workflow.node.start.form.crontab.placeholder": "请输入定时表达式",
+
+  "workflow.node.notify.form.title.label": "标题",
+  "workflow.node.notify.form.title.placeholder": "请输入标题",
+  "workflow.node.notify.form.content.label": "内容",
+  "workflow.node.notify.form.content.placeholder": "请输入内容",
+  "workflow.node.notify.form.channel.label": "推送渠道",
+  "workflow.node.notify.form.channel.placeholder": "请选择推送渠道",
+  "workflow.node.notify.form.settingChannel.label": "设置推送渠道"
+}
+

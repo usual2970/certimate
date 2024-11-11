@@ -74,8 +74,10 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
     },
   });
 
+  const resourceType = form.watch("resourceType");
+
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config: { ...config } });
+    updateNode({ ...data, config: { ...config }, validated: true });
     hidePanel();
   };
 
@@ -94,7 +96,7 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
             name="certificate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>证书</FormLabel>
+                <FormLabel>{t("workflow.common.certificate.label")}</FormLabel>
                 <FormControl>
                   <Select
                     {...field}
@@ -104,7 +106,7 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="选择证书来源" />
+                      <SelectValue placeholder={t("workflow.common.certificate.placeholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {beforeOutput.map((item) => (
@@ -174,36 +176,39 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
               </FormItem>
             )}
           />
+          {resourceType === "loadbalancer" && (
+            <FormField
+              control={form.control}
+              name="loadbalancerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("domain.deployment.form.aliyun_alb_loadbalancer_id.label")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("domain.deployment.form.aliyun_alb_loadbalancer_id.placeholder")} {...field} />
+                  </FormControl>
 
-          <FormField
-            control={form.control}
-            name="loadbalancerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_alb_loadbalancer_id.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_alb_loadbalancer_id.placeholder")} {...field} />
-                </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {resourceType === "listener" && (
+            <FormField
+              control={form.control}
+              name="listenerId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("domain.deployment.form.aliyun_alb_listener_id.label")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("domain.deployment.form.aliyun_alb_listener_id.placeholder")} {...field} />
+                  </FormControl>
 
-          <FormField
-            control={form.control}
-            name="listenerId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_alb_listener_id.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_alb_listener_id.placeholder")} {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className="flex justify-end">
             <Button type="submit">{t("common.save")}</Button>

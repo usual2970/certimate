@@ -63,7 +63,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
   });
 
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config: { ...config } });
+    updateNode({ ...data, config: { ...config }, validated: true });
     hidePanel();
   };
 
@@ -82,7 +82,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
             name="certificate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>证书</FormLabel>
+                <FormLabel>{t("workflow.common.certificate.label")}</FormLabel>
                 <FormControl>
                   <Select
                     {...field}
@@ -92,7 +92,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="选择证书来源" />
+                      <SelectValue placeholder={t("workflow.common.certificate.placeholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {beforeOutput.map((item) => (

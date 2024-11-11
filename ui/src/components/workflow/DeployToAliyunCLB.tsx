@@ -74,8 +74,10 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
     },
   });
 
+  const resouceType = form.watch("resourceType");
+
   const onSubmit = async (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config: { ...config } });
+    updateNode({ ...data, config: { ...config }, validated: true });
     hidePanel();
   };
 
@@ -94,7 +96,7 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
             name="certificate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>证书</FormLabel>
+                <FormLabel>{t("workflow.common.certificate.label")}</FormLabel>
                 <FormControl>
                   <Select
                     {...field}
@@ -104,7 +106,7 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="选择证书来源" />
+                      <SelectValue placeholder={t("workflow.common.certificate.placeholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {beforeOutput.map((item) => (
@@ -190,20 +192,22 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="listenerPort"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("domain.deployment.form.aliyun_clb_listener_port.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("domain.deployment.form.aliyun_clb_listener_port.placeholder")} {...field} />
-                </FormControl>
+          {resouceType === "listener" && (
+            <FormField
+              control={form.control}
+              name="listenerPort"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("domain.deployment.form.aliyun_clb_listener_port.label")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder={t("domain.deployment.form.aliyun_clb_listener_port.placeholder")} {...field} />
+                  </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className="flex justify-end">
             <Button type="submit">{t("common.save")}</Button>

@@ -28,6 +28,8 @@ type ChannelName = {
   name: string;
   label: string;
 };
+
+const i18nPrefix = "workflow.node.notify.form";
 const NotifyForm = ({ data }: NotifyFormProps) => {
   const { updateNode } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
@@ -79,7 +81,7 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
   });
 
   const onSubmit = (config: z.infer<typeof formSchema>) => {
-    updateNode({ ...data, config });
+    updateNode({ ...data, config, validated: true });
     hidePanel();
   };
 
@@ -100,7 +102,7 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
               <FormItem>
                 <FormLabel className="flex justify-between items-center">
                   <div className="flex space-x-2 items-center">
-                    <div>推送渠道</div>
+                    <div>{t(`${i18nPrefix}.channel.label`)}</div>
                     <RefreshCw size={16} className="cursor-pointer" onClick={() => initChannels()} />
                   </div>
                   <a
@@ -108,7 +110,7 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
                     target="_blank"
                     className="flex justify-between items-center space-x-1 font-normal text-primary hover:underline cursor-pointer"
                   >
-                    <Settings size={16} /> <div>设置推送渠道</div>
+                    <Settings size={16} /> <div>{t(`${i18nPrefix}.settingChannel.label`)}</div>
                   </a>
                 </FormLabel>
                 <FormControl>
@@ -120,7 +122,7 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="选择推送渠道" />
+                      <SelectValue placeholder={t(`${i18nPrefix}.channel.placeholder`)} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -143,9 +145,9 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>标题</FormLabel>
+                <FormLabel>{t(`${i18nPrefix}.title.label`)}</FormLabel>
                 <FormControl>
-                  <Input placeholder="请输入消息标题" {...field} />
+                  <Input placeholder={t(`${i18nPrefix}.title.placeholder`)} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -158,9 +160,9 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>内容</FormLabel>
+                <FormLabel>{t(`${i18nPrefix}.content.label`)}</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="请输入消息内容" {...field} />
+                  <Textarea placeholder={t(`${i18nPrefix}.content.placeholder`)} {...field} />
                 </FormControl>
 
                 <FormMessage />

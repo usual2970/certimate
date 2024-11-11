@@ -98,4 +98,3 @@ export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map
 );
 
 export const deployTargets = deployTargetList.map(([type, name, icon]) => ({ type, provider: type.split("-")[0], name, icon }));
-
