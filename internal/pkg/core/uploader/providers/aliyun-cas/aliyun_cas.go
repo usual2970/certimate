@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -26,7 +27,13 @@ type AliyunCASUploader struct {
 	sdkClient *aliyunCas.Client
 }
 
+var _ uploader.Uploader = (*AliyunCASUploader)(nil)
+
 func New(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
+	if config == nil {
+		return nil, errors.New("config is nil")
+	}
+
 	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,

@@ -116,23 +116,30 @@ const Lark = () => {
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("lark");
 
       toast({
-        title: t("settings.notification.config.push.test.message.success.message"),
-        description: t("settings.notification.config.push.test.message.success.message"),
+        title: t("settings.notification.push_test_message.succeeded.message"),
+        description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t("settings.notification.config.push.test.message.failed.message"),
-        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        title: t("settings.notification.push_test_message.failed.message"),
+        description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
     }
@@ -173,49 +180,56 @@ const Lark = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder="Webhook Url"
-        value={lark.data.webhookUrl}
-        onChange={(e) => {
-          const newData = {
-            ...lark,
-            data: {
-              ...lark.data,
-              webhookUrl: e.target.value,
-            },
-          };
+    <div className="flex flex-col space-y-4">
+      <div>
+        <Label>{t("settings.notification.lark.webhook_url.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.lark.webhook_url.placeholder")}
+          value={lark.data.webhookUrl}
+          onChange={(e) => {
+            const newData = {
+              ...lark,
+              data: {
+                ...lark.data,
+                webhookUrl: e.target.value,
+              },
+            };
 
-          checkChanged(newData.data);
-          setLark(newData);
-        }}
-      />
-      <div className="flex items-center space-x-1 mt-2">
-        <Switch id="airplane-mode" checked={lark.data.enabled} onCheckedChange={handleSwitchChange} />
-        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+            checkChanged(newData.data);
+            setLark(newData);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end mt-2">
-        <Show when={changed}>
-          <Button
-            onClick={() => {
-              handleSaveClick();
-            }}
-          >
-            {t("common.save")}
-          </Button>
-        </Show>
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={lark.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
 
-        <Show when={!changed && lark.id != ""}>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              handlePushTestClick();
-            }}
-          >
-            {t("settings.notification.config.push.test.message")}
-          </Button>
-        </Show>
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
+
+          <Show when={!changed && lark.id != ""}>
+            <Button
+              variant="secondary"
+              loading={testing}
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
+        </div>
       </div>
     </div>
   );

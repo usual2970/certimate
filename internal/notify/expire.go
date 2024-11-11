@@ -12,19 +12,13 @@ import (
 	"github.com/usual2970/certimate/internal/utils/xtime"
 )
 
-type msg struct {
-	subject string
-	message string
-}
-
 const (
-	defaultExpireSubject = "您有{COUNT}张证书即将过期"
-	defaultExpireMsg     = "有{COUNT}张证书即将过期,域名分别为{DOMAINS},请保持关注！"
+	defaultExpireSubject = "您有 {COUNT} 张证书即将过期"
+	defaultExpireMessage = "有 {COUNT} 张证书即将过期，域名分别为 {DOMAINS}，请保持关注！"
 )
 
 func PushExpireMsg() {
 	// 查询即将过期的证书
-
 	records, err := app.GetApp().Dao().FindRecordsByFilter("domains", "expiredAt<{:time}&&certUrl!=''", "-created", 500, 0,
 		dbx.Params{"time": xtime.GetTimeAfter(24 * time.Hour * 15)})
 	if err != nil {
@@ -34,12 +28,12 @@ func PushExpireMsg() {
 
 	// 组装消息
 	msg := buildMsg(records)
-
 	if msg == nil {
 		return
 	}
 
-	if err := Send(msg.subject, msg.message); err != nil {
+	// 发送通知
+	if err := SendToAllChannels(msg.Subject, msg.Message); err != nil {
 		app.GetApp().Logger().Error("send expire msg", "error", err)
 	}
 }
@@ -53,22 +47,27 @@ type notifyTemplate struct {
 	Content string `json:"content"`
 }
 
-func buildMsg(records []*models.Record) *msg {
+type notifyMessage struct {
+	Subject string
+	Message string
+}
+
+func buildMsg(records []*models.Record) *notifyMessage {
 	if len(records) == 0 {
 		return nil
 	}
 
 	// 查询模板信息
 	templateRecord, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='templates'")
-	title := defaultExpireSubject
-	content := defaultExpireMsg
+	subject := defaultExpireSubject
+	message := defaultExpireMessage
 
 	if err == nil {
 		var templates *notifyTemplates
 		templateRecord.UnmarshalJSONField("content", templates)
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
-			title = templates.NotifyTemplates[0].Title
-			content = templates.NotifyTemplates[0].Content
+			subject = templates.NotifyTemplates[0].Title
+			message = templates.NotifyTemplates[0].Content
 		}
 	}
 
@@ -81,17 +80,17 @@ func buildMsg(records []*models.Record) *msg {
 	}
 
 	countStr := strconv.Itoa(count)
-	domainStr := strings.Join(domains, ",")
+	domainStr := strings.Join(domains, ";")
 
-	title = strings.ReplaceAll(title, "{COUNT}", countStr)
-	title = strings.ReplaceAll(title, "{DOMAINS}", domainStr)
+	subject = strings.ReplaceAll(subject, "{COUNT}", countStr)
+	subject = strings.ReplaceAll(subject, "{DOMAINS}", domainStr)
 
-	content = strings.ReplaceAll(content, "{COUNT}", countStr)
-	content = strings.ReplaceAll(content, "{DOMAINS}", domainStr)
+	message = strings.ReplaceAll(message, "{COUNT}", countStr)
+	message = strings.ReplaceAll(message, "{DOMAINS}", domainStr)
 
 	// 返回消息
-	return &msg{
-		subject: title,
-		message: content,
+	return &notifyMessage{
+		Subject: subject,
+		Message: message,
 	}
 }

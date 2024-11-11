@@ -29,18 +29,13 @@ func NewNotifyService(settingRepo SettingRepository) *NotifyService {
 func (n *NotifyService) Test(ctx context.Context, req *domain.NotifyTestPushReq) error {
 	setting, err := n.settingRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
-		return fmt.Errorf("get notify channels setting failed: %w", err)
+		return fmt.Errorf("failed to get notify channels settings: %w", err)
 	}
 
-	conf, err := setting.GetChannelContent(req.Channel)
+	channelConfig, err := setting.GetChannelContent(req.Channel)
 	if err != nil {
-		return fmt.Errorf("get notify channel %s config failed: %w", req.Channel, err)
+		return fmt.Errorf("failed to get notify channel \"%s\" config: %w", req.Channel, err)
 	}
 
-	return SendTest(&sendTestParam{
-		Title:   notifyTestTitle,
-		Content: notifyTestBody,
-		Channel: req.Channel,
-		Conf:    conf,
-	})
+	return SendToChannel(notifyTestTitle, notifyTestBody, req.Channel, channelConfig)
 }
