@@ -29,11 +29,11 @@ func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, xerrors.Wrap(err, "failed to get access")
 	}
-
+	regionConfig := option.DeployConfig.GetConfigAsString("region")
 	client, err := (&AliyunCLBDeployer{}).createSdkClient(
 		access.AccessKeyId,
 		access.AccessKeySecret,
-		option.DeployConfig.GetConfigAsString("region"),
+		regionConfig,
 	)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
@@ -42,7 +42,7 @@ func NewAliyunCLBDeployer(option *DeployerOption) (Deployer, error) {
 	uploader, err := uploaderAliyunSlb.New(&uploaderAliyunSlb.AliyunSLBUploaderConfig{
 		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.AccessKeySecret,
-		Region:          option.DeployConfig.GetConfigAsString("region"),
+		Region:          regionConfig,
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
@@ -92,15 +92,8 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 	}
 
 	var endpoint string
-	switch region {
-	case "cn-hangzhou":
-	case "cn-hangzhou-finance":
-	case "cn-shanghai-finance-1":
-	case "cn-shenzhen-finance-1":
-		endpoint = "slb.aliyuncs.com"
-	default:
-		endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
-	}
+	endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
+
 	aConfig.Endpoint = tea.String(endpoint)
 
 	client, err := aliyunSlb.NewClient(aConfig)
@@ -246,11 +239,14 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
 	//
 	// 这里仅修改跟被替换证书一致的扩展域名
-	if describeDomainExtensionsResp.Body.DomainExtensions == nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension == nil {
+	if describeDomainExtensionsResp.Body.DomainExtensions != nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension != nil {
+		d.infos = append(d.infos, toStr("正在查找匹配域名", ""))
+
 		for _, domainExtension := range describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension {
-			if *domainExtension.ServerCertificateId == *describeLoadBalancerHTTPSListenerAttributeResp.Body.ServerCertificateId {
-				break
+			if *domainExtension.Domain != d.option.Domain {
+				continue
 			}
+			d.infos = append(d.infos, toStr("已查询到 匹配扩展域名", d.option.Domain))
 
 			setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
 				RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
@@ -261,18 +257,22 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'")
 			}
+			break
 		}
+	} else {
+		d.infos = append(d.infos, toStr("扩展域名为空!", describeDomainExtensionsResp.Body.DomainExtensions))
 	}
-
 	// 修改监听配置
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
 	//
 	// 注意修改监听配置要放在修改扩展域名之后
 	setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
-		RegionId:            tea.String(d.option.DeployConfig.GetConfigAsString("region")),
-		LoadBalancerId:      tea.String(aliLoadbalancerId),
-		ListenerPort:        tea.Int32(aliListenerPort),
-		ServerCertificateId: tea.String(aliCertId),
+		RegionId:       tea.String(d.option.DeployConfig.GetConfigAsString("region")),
+		LoadBalancerId: tea.String(aliLoadbalancerId),
+		ListenerPort:   tea.Int32(aliListenerPort),
+	}
+	if len(describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension) == 1 {
+		setLoadBalancerHTTPSListenerAttributeReq.ServerCertificateId = tea.String(aliCertId)
 	}
 	setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
 	if err != nil {

@@ -1,6 +1,8 @@
 ﻿package aliyunslb
 
 import (
+	"bufio"
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -35,7 +37,6 @@ func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
-
 	client, err := createSdkClient(
 		config.AccessKeyId,
 		config.AccessKeySecret,
@@ -49,6 +50,38 @@ func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 		config:    config,
 		sdkClient: client,
 	}, nil
+}
+
+// PermRemoveEmptyLine 接收一个字符串内容，移除其中的空行后返回新的字符串。
+func PermRemoveEmptyLine(content string) (string, error) {
+	// 创建一个 bytes.Buffer 来存储结果
+	var result bytes.Buffer
+
+	// 使用 bytes.NewBuffer 将字符串转换为 io.Reader
+	reader := strings.NewReader(content)
+
+	// 创建一个新的 Scanner 来处理 reader
+	scanner := bufio.NewScanner(reader)
+
+	for scanner.Scan() {
+		// 获取当前行并去除首尾空白字符
+		line := strings.TrimSpace(scanner.Text())
+		// 如果行非空，则写入结果缓冲区
+		if line != "" {
+			if result.Len() > 0 {
+				// 如果不是第一行，则在新行前添加换行符
+				result.WriteString("\n")
+			}
+			result.WriteString(line)
+		}
+	}
+
+	// 检查扫描过程中是否有错误
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	return result.String(), nil
 }
 
 func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
@@ -88,13 +121,13 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	// 生成新证书名（需符合阿里云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
-
+	formatPubKey, _ := PermRemoveEmptyLine(certPem)
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-uploadservercertificate
 	uploadServerCertificateReq := &aliyunSlb.UploadServerCertificateRequest{
 		RegionId:              tea.String(u.config.Region),
 		ServerCertificateName: tea.String(certName),
-		ServerCertificate:     tea.String(certPem),
+		ServerCertificate:     tea.String(formatPubKey),
 		PrivateKey:            tea.String(privkeyPem),
 	}
 	uploadServerCertificateResp, err := u.sdkClient.UploadServerCertificate(uploadServerCertificateReq)
@@ -120,15 +153,9 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Cl
 	}
 
 	var endpoint string
-	switch region {
-	case "cn-hangzhou":
-	case "cn-hangzhou-finance":
-	case "cn-shanghai-finance-1":
-	case "cn-shenzhen-finance-1":
-		endpoint = "slb.aliyuncs.com"
-	default:
-		endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
-	}
+
+	endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
+
 	aConfig.Endpoint = tea.String(endpoint)
 
 	client, err := aliyunSlb.NewClient(aConfig)
