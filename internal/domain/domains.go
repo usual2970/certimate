@@ -3,6 +3,8 @@ package domain
 import (
 	"encoding/json"
 	"strings"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 type ApplyConfig struct {
@@ -29,7 +31,7 @@ type DeployConfig struct {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是字符串，则返回空字符串。
 func (dc *DeployConfig) GetConfigAsString(key string) string {
-	return dc.GetConfigOrDefaultAsString(key, "")
+	return maps.GetValueAsString(dc.Config, key)
 }
 
 // 以字符串形式获取配置项。
@@ -41,17 +43,7 @@ func (dc *DeployConfig) GetConfigAsString(key string) string {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是字符串，则返回默认值。
 func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue string) string {
-	if dc.Config == nil {
-		return defaultValue
-	}
-
-	if value, ok := dc.Config[key]; ok {
-		if result, ok := value.(string); ok {
-			return result
-		}
-	}
-
-	return defaultValue
+	return maps.GetValueOrDefaultAsString(dc.Config, key, defaultValue)
 }
 
 // 以 32 位整数形式获取配置项。
@@ -62,7 +54,7 @@ func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue stri
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是 32 位整数，则返回 0。
 func (dc *DeployConfig) GetConfigAsInt32(key string) int32 {
-	return dc.GetConfigOrDefaultAsInt32(key, 0)
+	return maps.GetValueAsInt32(dc.Config, key)
 }
 
 // 以 32 位整数形式获取配置项。
@@ -74,17 +66,7 @@ func (dc *DeployConfig) GetConfigAsInt32(key string) int32 {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是 32 位整数，则返回默认值。
 func (dc *DeployConfig) GetConfigOrDefaultAsInt32(key string, defaultValue int32) int32 {
-	if dc.Config == nil {
-		return defaultValue
-	}
-
-	if value, ok := dc.Config[key]; ok {
-		if result, ok := value.(int32); ok {
-			return result
-		}
-	}
-
-	return defaultValue
+	return maps.GetValueOrDefaultAsInt32(dc.Config, key, defaultValue)
 }
 
 // 以布尔形式获取配置项。
@@ -95,7 +77,7 @@ func (dc *DeployConfig) GetConfigOrDefaultAsInt32(key string, defaultValue int32
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是布尔，则返回 false。
 func (dc *DeployConfig) GetConfigAsBool(key string) bool {
-	return dc.GetConfigOrDefaultAsBool(key, false)
+	return maps.GetValueAsBool(dc.Config, key)
 }
 
 // 以布尔形式获取配置项。
@@ -107,17 +89,7 @@ func (dc *DeployConfig) GetConfigAsBool(key string) bool {
 // 出参：
 //   - 配置项的值。如果配置项不存在或者类型不是布尔，则返回默认值。
 func (dc *DeployConfig) GetConfigOrDefaultAsBool(key string, defaultValue bool) bool {
-	if dc.Config == nil {
-		return defaultValue
-	}
-
-	if value, ok := dc.Config[key]; ok {
-		if result, ok := value.(bool); ok {
-			return result
-		}
-	}
-
-	return defaultValue
+	return maps.GetValueOrDefaultAsBool(dc.Config, key, defaultValue)
 }
 
 // 以变量字典形式获取配置项。

@@ -22,12 +22,12 @@ export type NotifyChannels = {
 };
 
 export type NotifyChannel =
+  | NotifyChannelEmail
+  | NotifyChannelWebhook
   | NotifyChannelDingTalk
   | NotifyChannelLark
   | NotifyChannelTelegram
-  | NotifyChannelWebhook
   | NotifyChannelServerChan
-  | NotifyChannelMail
   | NotifyChannelBark;
 
 type ChannelLabel = {
@@ -66,6 +66,21 @@ export const channels: ChannelLabel[] = [
 ];
 
 export const channelLabelMap: Map<string, ChannelLabel> = new Map(channels.map((item) => [item.name, item]));
+export type NotifyChannelEmail = {
+  smtpHost: string;
+  smtpPort: number;
+  smtpTLS: boolean;
+  username: string;
+  password: string;
+  senderAddress: string;
+  receiverAddress: string;
+  enabled: boolean;
+};
+
+export type NotifyChannelWebhook = {
+  url: string;
+  enabled: boolean;
+};
 
 export type NotifyChannelDingTalk = {
   accessToken: string;
@@ -84,23 +99,8 @@ export type NotifyChannelTelegram = {
   enabled: boolean;
 };
 
-export type NotifyChannelWebhook = {
-  url: string;
-  enabled: boolean;
-};
-
 export type NotifyChannelServerChan = {
   url: string;
-  enabled: boolean;
-};
-
-export type NotifyChannelMail = {
-  senderAddress: string;
-  receiverAddresses: string;
-  smtpHostAddr: string;
-  smtpHostPort: string;
-  username: string;
-  password: string;
   enabled: boolean;
 };
 

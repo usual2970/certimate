@@ -1,50 +1,21 @@
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import End from "@/components/workflow/End";
-import NodeRender from "@/components/workflow/NodeRender";
-
-import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { WorkflowNode } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
-import { useMemo } from "react";
-
-import { useShallow } from "zustand/shallow";
-
-const selectState = (state: WorkflowState) => ({
-  root: state.root,
-});
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Workflow = () => {
-  // 3. 使用正确的选择器和 shallow 比较
-  const { root } = useWorkflowStore(useShallow(selectState));
-
-  const elements = useMemo(() => {
-    let current = root;
-
-    const elements: JSX.Element[] = [];
-
-    while (current) {
-      // 处理普通节点
-      elements.push(<NodeRender data={current} key={current.id} />);
-      current = current.next as WorkflowNode;
-    }
-
-    elements.push(<End key="workflow-end" />);
-
-    return elements;
-  }, [root]);
-
+  const navigate = useNavigate();
+  const handleCreateClick = () => {
+    navigate("/workflow/detail");
+  };
   return (
     <>
-      <WorkflowProvider>
-        <ScrollArea className="h-[100vh] w-full relative bg-background">
-          <div className="h-16 sticky  top-0 left-0 z-20 shadow-md bg-muted/40"></div>
-
-          <div className=" flex flex-col items-center mt-8">{elements}</div>
-
-          <ScrollBar orientation="vertical" />
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </WorkflowProvider>
+      <div className="flex justify-between items-center">
+        <div className="text-muted-foreground">工作流</div>
+        <Button onClick={handleCreateClick}>
+          <Plus size={16} />
+          新建工作流
+        </Button>
+      </div>
     </>
   );
 };

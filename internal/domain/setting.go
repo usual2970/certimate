@@ -24,7 +24,7 @@ func (s *Setting) GetChannelContent(channel string) (map[string]any, error) {
 
 	v, ok := (*conf)[channel]
 	if !ok {
-		return nil, fmt.Errorf("channel %s not found", channel)
+		return nil, fmt.Errorf("channel \"%s\" not found", channel)
 	}
 
 	return v, nil

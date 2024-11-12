@@ -14,6 +14,7 @@ import Account from "./pages/setting/Account";
 import Notify from "./pages/setting/Notify";
 import SSLProvider from "./pages/setting/SSLProvider";
 import Workflow from "./pages/workflow";
+import WorkflowDetail from "./pages/workflow/WorkflowDetail";
 
 export const router = createHashRouter([
   {
@@ -39,6 +40,10 @@ export const router = createHashRouter([
       {
         path: "/history",
         element: <History />,
+      },
+      {
+        path: "/workflow",
+        element: <Workflow />,
       },
       {
         path: "/setting",
@@ -75,7 +80,7 @@ export const router = createHashRouter([
     ],
   },
   {
-    path: "/about",
-    element: <Workflow />,
+    path: "/workflow/detail",
+    element: <WorkflowDetail />,
   },
 ]);

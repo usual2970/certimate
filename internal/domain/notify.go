@@ -1,12 +1,12 @@
 package domain
 
 const (
-	NotifyChannelDingtalk   = "dingtalk"
+	NotifyChannelEmail      = "email"
 	NotifyChannelWebhook    = "webhook"
-	NotifyChannelTelegram   = "telegram"
+	NotifyChannelDingtalk   = "dingtalk"
 	NotifyChannelLark       = "lark"
+	NotifyChannelTelegram   = "telegram"
 	NotifyChannelServerChan = "serverchan"
-	NotifyChannelMail       = "mail"
 	NotifyChannelBark       = "bark"
 )
 

@@ -7,7 +7,7 @@ import NotifyTemplate from "@/components/notify/NotifyTemplate";
 import Telegram from "@/components/notify/Telegram";
 import Webhook from "@/components/notify/Webhook";
 import ServerChan from "@/components/notify/ServerChan";
-import Mail from "@/components/notify/Mail";
+import Email from "@/components/notify/Email";
 import Bark from "@/components/notify/Bark";
 import { NotifyProvider } from "@/providers/notify";
 
@@ -27,51 +27,52 @@ const Notify = () => {
             </AccordionItem>
           </Accordion>
         </div>
+
         <div className="border rounded-md p-5 mt-7 shadow-lg">
           <Accordion type={"single"} className="dark:text-stone-200">
-            <AccordionItem value="item-2" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.dingtalk")}</AccordionTrigger>
+            <AccordionItem value="item-email" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.email")}</AccordionTrigger>
               <AccordionContent>
-                <DingTalk />
+                <Email />
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-3" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.lark")}</AccordionTrigger>
-              <AccordionContent>
-                <Lark />
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.telegram")}</AccordionTrigger>
-              <AccordionContent>
-                <Telegram />
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5" className="dark:border-stone-200">
+            <AccordionItem value="item-webhook" className="dark:border-stone-200">
               <AccordionTrigger>{t("common.provider.webhook")}</AccordionTrigger>
               <AccordionContent>
                 <Webhook />
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-6" className="dark:border-stone-200">
+            <AccordionItem value="item-dingtalk" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.dingtalk")}</AccordionTrigger>
+              <AccordionContent>
+                <DingTalk />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-lark" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.lark")}</AccordionTrigger>
+              <AccordionContent>
+                <Lark />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-telegram" className="dark:border-stone-200">
+              <AccordionTrigger>{t("common.provider.telegram")}</AccordionTrigger>
+              <AccordionContent>
+                <Telegram />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-serverchan" className="dark:border-stone-200">
               <AccordionTrigger>{t("common.provider.serverchan")}</AccordionTrigger>
               <AccordionContent>
                 <ServerChan />
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-7" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.mail")}</AccordionTrigger>
-              <AccordionContent>
-                <Mail />
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-8" className="dark:border-stone-200">
+            <AccordionItem value="item-bark" className="dark:border-stone-200">
               <AccordionTrigger>{t("common.provider.bark")}</AccordionTrigger>
               <AccordionContent>
                 <Bark />

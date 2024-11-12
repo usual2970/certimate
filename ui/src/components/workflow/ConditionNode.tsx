@@ -34,7 +34,7 @@ const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
         </DropdownMenu>
 
         <div className="w-[261px]  flex flex-col justify-center text-foreground rounded-md bg-white px-5 py-5">
-          <div contentEditable suppressContentEditableWarning onBlur={handleNameBlur} className="text-center outline-slate-200">
+          <div contentEditable suppressContentEditableWarning onBlur={handleNameBlur} className="text-center outline-slate-200 dark:text-stone-600">
             {data.name}
           </div>
         </div>

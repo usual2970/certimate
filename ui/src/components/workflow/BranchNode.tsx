@@ -35,7 +35,7 @@ const BranchNode = memo(({ data }: BrandNodeProps) => {
           }}
           size={"sm"}
           variant={"outline"}
-          className="text-xs px-2 h-6 rounded-full absolute  -top-3 left-[50%] -translate-x-1/2 z-10"
+          className="text-xs px-2 h-6 rounded-full absolute  -top-3 left-[50%] -translate-x-1/2 z-10 dark:text-stone-200"
         >
           {t("workflow.node.addBranch.label")}
         </Button>

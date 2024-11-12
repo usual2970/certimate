@@ -19,4 +19,3 @@ export const notifyTest = async (channel: string) => {
 
   return resp;
 };
-

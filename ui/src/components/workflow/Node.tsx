@@ -39,7 +39,6 @@ const Node = ({ data }: NodeProps) => {
   };
 
   const getSetting = () => {
-    console.log(data);
     if (!data.validated) {
       return <>{t(`${i18nPrefix}.setting.label`)}</>;
     }

@@ -123,22 +123,29 @@ const Telegram = () => {
     }
   };
 
+  const [testing, setTesting] = useState<boolean>(false);
   const handlePushTestClick = async () => {
+    if (testing) return;
+
     try {
+      setTesting(true);
+
       await notifyTest("telegram");
 
       toast({
-        title: t("settings.notification.config.push.test.message.success.message"),
-        description: t("settings.notification.config.push.test.message.success.message"),
+        title: t("settings.notification.push_test_message.succeeded.message"),
+        description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
       const msg = getErrMessage(e);
 
       toast({
-        title: t("settings.notification.config.push.test.message.failed.message"),
-        description: `${t("settings.notification.config.push.test.message.failed.message")}: ${msg}`,
+        title: t("settings.notification.push_test_message.failed.message"),
+        description: `${t("settings.notification.push_test_message.failed.message")}: ${msg}`,
         variant: "destructive",
       });
+    } finally {
+      setTesting(false);
     }
   };
 
@@ -177,67 +184,76 @@ const Telegram = () => {
   };
 
   return (
-    <div>
-      <Input
-        placeholder="ApiToken"
-        value={telegram.data.apiToken}
-        onChange={(e) => {
-          const newData = {
-            ...telegram,
-            data: {
-              ...telegram.data,
-              apiToken: e.target.value,
-            },
-          };
+    <div className="flex flex-col space-y-4">
+      <div>
+        <Label>{t("settings.notification.telegram.api_token.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.telegram.api_token.placeholder")}
+          value={telegram.data.apiToken}
+          onChange={(e) => {
+            const newData = {
+              ...telegram,
+              data: {
+                ...telegram.data,
+                apiToken: e.target.value,
+              },
+            };
 
-          checkChanged(newData.data);
-          setTelegram(newData);
-        }}
-      />
-
-      <Input
-        placeholder="ChatId"
-        value={telegram.data.chatId}
-        onChange={(e) => {
-          const newData = {
-            ...telegram,
-            data: {
-              ...telegram.data,
-              chatId: e.target.value,
-            },
-          };
-
-          checkChanged(newData.data);
-          setTelegram(newData);
-        }}
-      />
-
-      <div className="flex items-center space-x-1 mt-2">
-        <Switch id="airplane-mode" checked={telegram.data.enabled} onCheckedChange={handleSwitchChange} />
-        <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+            checkChanged(newData.data);
+            setTelegram(newData);
+          }}
+        />
       </div>
 
-      <div className="flex justify-end mt-2">
-        <Show when={changed}>
-          <Button
-            onClick={() => {
-              handleSaveClick();
-            }}
-          >
-            {t("common.save")}
-          </Button>
-        </Show>
+      <div>
+        <Label>{t("settings.notification.telegram.chat_id.label")}</Label>
+        <Input
+          placeholder={t("settings.notification.telegram.chat_id.placeholder")}
+          value={telegram.data.chatId}
+          onChange={(e) => {
+            const newData = {
+              ...telegram,
+              data: {
+                ...telegram.data,
+                chatId: e.target.value,
+              },
+            };
 
-        <Show when={!changed && telegram.id != ""}>
-          <Button
-            variant="secondary"
-            onClick={() => {
-              handlePushTestClick();
-            }}
-          >
-            {t("settings.notification.config.push.test.message")}
-          </Button>
-        </Show>
+            checkChanged(newData.data);
+            setTelegram(newData);
+          }}
+        />
+      </div>
+
+      <div className="flex justify-between gap-4">
+        <div className="flex items-center space-x-1">
+          <Switch id="airplane-mode" checked={telegram.data.enabled} onCheckedChange={handleSwitchChange} />
+          <Label htmlFor="airplane-mode">{t("settings.notification.config.enable")}</Label>
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <Show when={changed}>
+            <Button
+              onClick={() => {
+                handleSaveClick();
+              }}
+            >
+              {t("common.save")}
+            </Button>
+          </Show>
+
+          <Show when={!changed && telegram.id != ""}>
+            <Button
+              variant="secondary"
+              loading={testing}
+              onClick={() => {
+                handlePushTestClick();
+              }}
+            >
+              {t("settings.notification.push_test_message")}
+            </Button>
+          </Show>
+        </div>
       </div>
     </div>
   );

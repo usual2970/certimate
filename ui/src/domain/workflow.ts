@@ -3,6 +3,20 @@ import { nanoid } from "nanoid";
 import i18n from "@/i18n";
 import { deployTargets, KVType } from "./domain";
 
+export type Workflow = {
+  id?: string;
+  name: string;
+  description?: string;
+  type: string;
+  crontab?: string;
+  content?: WorkflowNode;
+  draft?: WorkflowNode;
+  enabled?: boolean;
+  hasDraft?: boolean;
+  created?: string;
+  updated?: string;
+};
+
 export enum WorkflowNodeType {
   Start = "start",
   End = "end",
@@ -92,6 +106,31 @@ export type WorkflowNode = {
 type NewWorkflowNodeOptions = {
   branchIndex?: number;
   providerType?: string;
+};
+
+export const initWorkflow = (): Workflow => {
+  // 开始节点
+  const rs = newWorkflowNode(WorkflowNodeType.Start, {});
+  let root = rs;
+
+  // 申请节点
+  root.next = newWorkflowNode(WorkflowNodeType.Apply, {});
+  root = root.next;
+
+  // 部署节点
+  root.next = newWorkflowNode(WorkflowNodeType.Deploy, {});
+  root = root.next;
+
+  // 通知节点
+  root.next = newWorkflowNode(WorkflowNodeType.Notify, {});
+
+  return {
+    name: i18n.t("workflow.default.name"),
+    type: "auto",
+    crontab: "0 0 * * *",
+    enabled: false,
+    draft: rs,
+  };
 };
 
 export const newWorkflowNode = (type: WorkflowNodeType, options: NewWorkflowNodeOptions): WorkflowNode | WorkflowBranchNode => {

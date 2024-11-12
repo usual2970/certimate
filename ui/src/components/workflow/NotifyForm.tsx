@@ -93,7 +93,7 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
             e.stopPropagation();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="space-y-8"
+          className="space-y-8 dark:text-stone-200"
         >
           <FormField
             control={form.control}

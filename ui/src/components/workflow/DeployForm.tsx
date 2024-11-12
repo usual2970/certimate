@@ -24,7 +24,7 @@ export type DeployFormProps = {
   defaultProivder?: string;
 };
 const DeployForm = ({ data, defaultProivder }: DeployFormProps) => {
-  return getForm(data, defaultProivder);
+  return <div className="dark:text-stone-200">{getForm(data, defaultProivder)}</div>;
 };
 
 export default memo(DeployForm);
