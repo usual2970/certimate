@@ -246,10 +246,10 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, aliLo
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
 	//
 	// 这里仅修改跟被替换证书一致的扩展域名
-	if describeDomainExtensionsResp.Body.DomainExtensions == nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension == nil {
+	if describeDomainExtensionsResp.Body.DomainExtensions != nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension != nil {
 		for _, domainExtension := range describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension {
-			if *domainExtension.ServerCertificateId == *describeLoadBalancerHTTPSListenerAttributeResp.Body.ServerCertificateId {
-				break
+			if *domainExtension.ServerCertificateId != *describeLoadBalancerHTTPSListenerAttributeResp.Body.ServerCertificateId {
+				continue
 			}
 
 			setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
