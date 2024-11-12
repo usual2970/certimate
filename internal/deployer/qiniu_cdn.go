@@ -71,7 +71,7 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context) error {
 
 	// 获取域名信息
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
-	domain := d.option.DeployConfig.GetConfigAsString("domain")
+	domain := d.option.DeployConfig.GetDomain()
 	getDomainInfoResp, err := d.sdkClient.GetDomainInfo(domain)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDomainInfo'")
