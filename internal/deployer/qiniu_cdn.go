@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/auth"
@@ -69,9 +70,14 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context) error {
 
 	d.infos = append(d.infos, toStr("已上传证书", upres))
 
+	// 在七牛 CDN 中泛域名表示为 .example.com，需去除前缀星号
+	domain := d.option.DeployConfig.GetConfigAsString("domain")
+	if strings.HasPrefix(domain, "*") {
+		domain = strings.TrimPrefix(domain, "*")
+	}
+
 	// 获取域名信息
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
-	domain := d.option.DeployConfig.GetConfigAsString("domain")
 	getDomainInfoResp, err := d.sdkClient.GetDomainInfo(domain)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDomainInfo'")
