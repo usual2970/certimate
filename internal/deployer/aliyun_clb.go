@@ -93,10 +93,11 @@ func (d *AliyunCLBDeployer) createSdkClient(accessKeyId, accessKeySecret, region
 
 	var endpoint string
 	switch region {
-	case "cn-hangzhou":
-	case "cn-hangzhou-finance":
-	case "cn-shanghai-finance-1":
-	case "cn-shenzhen-finance-1":
+	case
+		"cn-hangzhou",
+		"cn-hangzhou-finance",
+		"cn-shanghai-finance-1",
+		"cn-shenzhen-finance-1":
 		endpoint = "slb.aliyuncs.com"
 	default:
 		endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
