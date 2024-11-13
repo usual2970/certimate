@@ -33,6 +33,7 @@ func NewTencentCOSDeployer(option *DeployerOption) (Deployer, error) {
 	client, err := (&TencentCOSDeployer{}).createSdkClient(
 		access.SecretId,
 		access.SecretKey,
+		option.DeployConfig.GetConfigAsString("region"),
 	)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
@@ -95,9 +96,9 @@ func (d *TencentCOSDeployer) Deploy(ctx context.Context) error {
 	return nil
 }
 
-func (d *TencentCOSDeployer) createSdkClient(secretId, secretKey string) (*tcSsl.Client, error) {
+func (d *TencentCOSDeployer) createSdkClient(secretId, secretKey, region string) (*tcSsl.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
-	client, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
+	client, err := tcSsl.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}
