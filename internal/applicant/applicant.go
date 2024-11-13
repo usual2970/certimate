@@ -35,6 +35,7 @@ const (
 	configTypeGodaddy     = "godaddy"
 	configTypePdns        = "pdns"
 	configTypeHttpreq     = "httpreq"
+	configTypeVolcengine  = "volcengine"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -188,6 +189,8 @@ func Get(record *models.Record) (Applicant, error) {
 		return NewPdns(option), nil
 	case configTypeHttpreq:
 		return NewHttpreq(option), nil
+	case configTypeVolcengine:
+		return NewVolcengine(option), nil
 	default:
 		return nil, errors.New("unknown config type")
 	}

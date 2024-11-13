@@ -27,6 +27,7 @@ import DeployToLocal from "./DeployToLocal";
 import DeployToSSH from "./DeployToSSH";
 import DeployToWebhook from "./DeployToWebhook";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
+import DeployToVolcengineLive from "./DeployToVolcengineLive"
 import { deployTargetsMap, type DeployConfig } from "@/domain/domain";
 import { accessProvidersMap } from "@/domain/access";
 import { useConfigContext } from "@/providers/config";
@@ -173,6 +174,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "k8s-secret":
       childComponent = <DeployToKubernetesSecret />;
+      break;
+    case "volcengine-live":
+      childComponent = <DeployToVolcengineLive />;
       break;
   }
 

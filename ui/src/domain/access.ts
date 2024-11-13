@@ -18,6 +18,7 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     ["baiducloud", "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all", "百度智能云:百度云:baidu cloud"],
     ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛云:qiniu"],
     ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy", "多吉云:doge cloud"],
+    ["volcengine", "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all", "火山引擎"],
     ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply", "亚马逊:amazon:aws"],
     ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply", "cloudflare:cf:cloud flare"],
     ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply", "namesilo"],
@@ -49,6 +50,7 @@ export const accessTypeFormSchema = z.union(
     z.literal("ssh"),
     z.literal("webhook"),
     z.literal("k8s"),
+    z.literal("volcengine"),
   ],
   { message: "access.authorization.form.type.placeholder" }
 );
@@ -74,7 +76,8 @@ export type Access = {
     | LocalConfig
     | SSHConfig
     | WebhookConfig
-    | KubernetesConfig;
+    | KubernetesConfig
+    | VolcengineConfig;
   deleted?: string;
   created?: string;
   updated?: string;
@@ -161,4 +164,9 @@ export type WebhookConfig = {
 
 export type KubernetesConfig = {
   kubeConfig: string;
+};
+
+export type VolcengineConfig = {
+  accessKeyId: string;
+  secretAccessKey: string;
 };
