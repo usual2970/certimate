@@ -16,6 +16,10 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
 
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
@@ -35,6 +39,7 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
   const formSchema = z.object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     endpoint: z.string().min(1, {
       message: t("domain.deployment.form.aliyun_oss_endpoint.placeholder"),
@@ -49,7 +54,8 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-oss",
+    providerType: "",
+    access: "",
     endpoint: "",
     bucket: "",
     domain: "",
@@ -59,7 +65,8 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "aliyun-oss",
+      access: config.access as string,
       certificate: config.certificate as string,
       endpoint: config.endpoint as string,
       bucket: config.bucket as string,
@@ -82,6 +89,40 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="aliyun"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="aliyun-oss"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="certificate"

@@ -15,6 +15,9 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+import AccessSelect from "./AccessSelect";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
@@ -41,6 +44,7 @@ const DeployToHuaweiCloudELB = ({ data }: DeployFormProps) => {
   const formSchema = z
     .object({
       providerType: z.string(),
+      access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
       certificate: z.string().min(1),
       region: z.string().min(1, t("domain.deployment.form.huaweicloud_elb_region.placeholder")),
       resourceType: z.union([z.literal("certificate"), z.literal("loadbalancer"), z.literal("listener")], {
@@ -65,7 +69,8 @@ const DeployToHuaweiCloudELB = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "huaweicloud-elb",
+    providerType: "",
+    access: "",
     resouceType: "",
     certificateId: "",
     loadbalancerId: "",
@@ -76,7 +81,8 @@ const DeployToHuaweiCloudELB = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "huaweicloud-elb",
+      access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
       resourceType: config.resourceType as "certificate" | "loadbalancer" | "listener",
@@ -100,6 +106,41 @@ const DeployToHuaweiCloudELB = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="huaweicloud"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="huaweicloud-elb"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="certificate"

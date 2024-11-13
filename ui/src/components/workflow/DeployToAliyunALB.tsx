@@ -14,6 +14,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Button } from "../ui/button";
 
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
@@ -35,6 +39,7 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
   const formSchema = z
     .object({
       providerType: z.string(),
+      access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
       certificate: z.string().min(1),
       region: z.string().min(1, t("domain.deployment.form.aliyun_alb_region.placeholder")),
       resourceType: z.union([z.literal("loadbalancer"), z.literal("listener")], {
@@ -54,18 +59,20 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-alb",
+    providerType: "",
     region: "",
     resourceType: "",
     loadbalancerId: "",
     listenerId: "",
+    access: "",
   };
   if (data) config = data.config ?? config;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "aliyun-alb",
+      access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
       resourceType: config.resourceType as "loadbalancer" | "listener",
@@ -93,6 +100,41 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
         >
           <FormField
             control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="aliyun"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="aliyun-alb"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="certificate"
             render={({ field }) => (
               <FormItem>
@@ -110,18 +152,16 @@ const DeployToAliyunALB = ({ data }: DeployFormProps) => {
                     </SelectTrigger>
                     <SelectContent>
                       {beforeOutput.map((item) => (
-                        <>
-                          <SelectGroup key={item.id}>
-                            <SelectLabel>{item.name}</SelectLabel>
-                            {item.output?.map((output) => (
-                              <SelectItem key={output.name} value={`${item.id}#${output.name}`}>
-                                <div>
-                                  {item.name}-{output.label}
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </>
+                        <SelectGroup key={item.id}>
+                          <SelectLabel>{item.name}</SelectLabel>
+                          {item.output?.map((output) => (
+                            <SelectItem key={output.name} value={`${item.id}#${output.name}`}>
+                              <div>
+                                {item.name}-{output.label}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       ))}
                     </SelectContent>
                   </Select>

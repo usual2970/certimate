@@ -72,7 +72,7 @@ const Node = ({ data }: NodeProps) => {
         const channelLabel = channelLabelMap.get(data.config?.channel as string);
         return (
           <div className="flex space-x-2 items-baseline">
-            <div className="text-stone-700">{t(channelLabel?.label ?? "")}</div>
+            <div className="text-stone-700 w-12 truncate">{t(channelLabel?.label ?? "")}</div>
             <div className="text-muted-foreground truncate">{(data.config?.title as string) ?? ""}</div>
           </div>
         );

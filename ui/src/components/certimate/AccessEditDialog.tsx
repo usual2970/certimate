@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
@@ -29,14 +29,21 @@ type AccessEditProps = {
   className?: string;
   trigger: React.ReactNode;
   data?: Access;
+  outConfigType?: string;
 };
 
-const AccessEditDialog = ({ trigger, op, data, className }: AccessEditProps) => {
+const AccessEditDialog = ({ trigger, op, data, className, outConfigType }: AccessEditProps) => {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
 
   const [configType, setConfigType] = useState(data?.configType || "");
+
+  useEffect(() => {
+    if (outConfigType) {
+      setConfigType(outConfigType);
+    }
+  }, [outConfigType]);
 
   let childComponent = <> </>;
   switch (configType) {

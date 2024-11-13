@@ -16,6 +16,10 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
 
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
@@ -35,6 +39,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
 
   const formSchema = z.object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     region: z.string().min(1, {
       message: t("domain.deployment.form.huaweicloud_cdn_region.placeholder"),
@@ -46,7 +51,8 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "huaweicloud-cdn",
+    providerType: "",
+    access: "",
     region: "",
     domain: "",
   };
@@ -55,7 +61,8 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "huaweicloud-cdn",
+      access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
       domain: config.domain as string,
@@ -77,6 +84,41 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="huaweicloud"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="huaweicloud-cdn"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="certificate"

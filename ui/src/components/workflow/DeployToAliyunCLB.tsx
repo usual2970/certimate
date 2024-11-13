@@ -14,6 +14,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Button } from "../ui/button";
 
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
@@ -35,6 +39,7 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
   const formSchema = z
     .object({
       providerType: z.string(),
+      access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
       certificate: z.string().min(1),
       region: z.string().min(1, t("domain.deployment.form.aliyun_clb_region.placeholder")),
       resourceType: z.union([z.literal("certificate"), z.literal("loadbalancer"), z.literal("listener")], {
@@ -54,7 +59,8 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-clb",
+    providerType: "",
+    access: "",
     region: "",
     resourceType: "",
     loadbalancerId: "",
@@ -65,7 +71,8 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "aliyun-clb",
+      access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
       resourceType: config.resourceType as "loadbalancer" | "listener",
@@ -91,6 +98,40 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="aliyun"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="aliyun-clb"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="certificate"

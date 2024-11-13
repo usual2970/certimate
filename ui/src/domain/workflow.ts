@@ -332,6 +332,24 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNod
   return output;
 };
 
+export const allNodesValidated = (node: WorkflowNode | WorkflowBranchNode): boolean => {
+  let current = node;
+  while (current) {
+    if (!isWorkflowBranchNode(current) && !current.validated) {
+      return false;
+    }
+    if (isWorkflowBranchNode(current)) {
+      for (const branch of current.branches) {
+        if (!allNodesValidated(branch)) {
+          return false;
+        }
+      }
+    }
+    current = current.next as WorkflowNode;
+  }
+  return true;
+};
+
 export type WorkflowBranchNode = {
   id: string;
   name: string;

@@ -2,11 +2,14 @@ import Show from "@/components/Show";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
+import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/components/ui/use-toast";
 import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
+import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEditDialog";
 
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { WorkflowNode } from "@/domain/workflow";
+import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo } from "react";
@@ -36,6 +39,8 @@ const WorkflowDetail = () => {
 
   const navigate = useNavigate();
 
+  const { toast } = useToast();
+
   const elements = useMemo(() => {
     let current = workflow.draft as WorkflowNode;
 
@@ -57,24 +62,45 @@ const WorkflowDetail = () => {
   };
 
   const handleEnableChange = () => {
+    if (!workflow.enabled && !allNodesValidated(workflow.draft as WorkflowNode)) {
+      toast({
+        title: "无法启用",
+        description: "有尚未设置完成的节点",
+        variant: "destructive",
+      });
+      return;
+    }
     switchEnable();
   };
 
   const handleWorkflowSaveClick = () => {
+    if (!allNodesValidated(workflow.draft as WorkflowNode)) {
+      toast({
+        title: "保存失败",
+        description: "有尚未设置完成的节点",
+        variant: "destructive",
+      });
+      return;
+    }
     save();
   };
 
   return (
     <>
       <WorkflowProvider>
+        <Toaster />
         <ScrollArea className="h-[100vh] w-full relative bg-background">
           <div className="h-16 sticky  top-0 left-0 z-20 shadow-md bg-muted/40 flex justify-between items-center">
             <div className="px-5 text-stone-700 dark:text-stone-200 flex items-center space-x-2">
               <ArrowLeft className="cursor-pointer" onClick={handleBackClick} />
-              <div className="flex flex-col space-y-2">
-                <div className="">工作流</div>
-                <div className="text-sm text-muted-foreground">工作流详情</div>
-              </div>
+              <WorkflowBaseInfoEditDialog
+                trigger={
+                  <div className="flex flex-col space-y-1 cursor-pointer items-start">
+                    <div className="">{workflow.name ?? "未命名工作流"}</div>
+                    <div className="text-sm text-muted-foreground">{workflow.description ?? "添加流程说明"}</div>
+                  </div>
+                }
+              />
             </div>
             <div className="px-5 flex items-center space-x-3">
               <Show when={!!workflow.enabled}>

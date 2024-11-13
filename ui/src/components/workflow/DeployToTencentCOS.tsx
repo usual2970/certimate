@@ -15,6 +15,9 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessSelect from "./AccessSelect";
+import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
@@ -35,6 +38,7 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
 
   const formSchema = z.object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     region: z.string().min(1, t("domain.deployment.form.tencent_cos_region.placeholder")),
     bucket: z.string().min(1, t("domain.deployment.form.tencent_cos_bucket.placeholder")),
@@ -45,7 +49,8 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "tencent-cos",
+    providerType: "",
+    access: "",
     region: "",
     bucket: "",
     domain: "",
@@ -55,7 +60,8 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "tencent-cos",
+      access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
       bucket: config.bucket as string,
@@ -78,6 +84,41 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="tencent"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="tencent-cos"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="certificate"

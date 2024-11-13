@@ -28,13 +28,13 @@ const DeployToAliyunNLB = ({ data }: DeployFormProps) => {
 
   useEffect(() => {
     const rs = getWorkflowOuptutBeforeId(data.id, "certificate");
-    console.log(rs);
     setBeforeOutput(rs);
   }, [data]);
 
   const formSchema = z
     .object({
       providerType: z.string(),
+      access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
       certificate: z.string().min(1),
       region: z.string().min(1, t("domain.deployment.form.aliyun_nlb_region.placeholder")),
       resourceType: z.union([z.literal("loadbalancer"), z.literal("listener")], {
@@ -54,7 +54,8 @@ const DeployToAliyunNLB = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "aliyun-nlb",
+    providerType: "",
+    access: "",
     region: "",
     resourceType: "",
     loadbalancerId: "",
@@ -65,7 +66,7 @@ const DeployToAliyunNLB = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "aliyun-nlb",
       certificate: config.certificate as string,
       region: config.region as string,
       resourceType: config.resourceType as "loadbalancer" | "listener",

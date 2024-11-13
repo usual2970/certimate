@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
 import KVList from "../certimate/KVList";
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
@@ -39,13 +42,15 @@ const DeployToWebhook = ({ data }: DeployFormProps) => {
 
   const formSchema = z.object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     variables: z.array(KVTypeSchema).optional(),
   });
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "webhook",
+    providerType: "",
+    access: "",
 
     variables: [],
   };
@@ -54,7 +59,8 @@ const DeployToWebhook = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "webhook",
+      access: config.access as string,
       certificate: config.certificate as string,
       variables: config.variables as { key: string; value: string }[],
     },
@@ -76,6 +82,40 @@ const DeployToWebhook = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="webhook"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="webhook"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="certificate"

@@ -14,6 +14,9 @@ import { useEffect, useState } from "react";
 import i18n from "@/i18n";
 import { WorkflowNode } from "@/domain/workflow";
 import { Textarea } from "../ui/textarea";
+import AccessSelect from "./AccessSelect";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
@@ -25,6 +28,7 @@ const t = i18n.t;
 const formSchema = z
   .object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     format: z.union([z.literal("pem"), z.literal("pfx"), z.literal("jks")], {
       message: t("domain.deployment.form.file_format.placeholder"),
@@ -82,6 +86,7 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       providerType: "ssh",
+      access: data.config?.access as string,
       certificate: data.config?.certificate as string,
       format: (data.config?.format as "pem" | "pfx" | "jks") || "pem",
       certPath: (data.config?.certPath as string) || "/etc/ssl/certs/cert.crt",
@@ -116,6 +121,41 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="access"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex justify-between">
+                <div>{t("domain.deployment.form.access.label")}</div>
+
+                <AccessEditDialog
+                  trigger={
+                    <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                      <Plus size={14} />
+                      {t("common.add")}
+                    </div>
+                  }
+                  op="add"
+                  outConfigType="ssh"
+                />
+              </FormLabel>
+              <FormControl>
+                <AccessSelect
+                  {...field}
+                  value={field.value}
+                  onValueChange={(value) => {
+                    form.setValue("access", value);
+                  }}
+                  providerType="ssh"
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="certificate"

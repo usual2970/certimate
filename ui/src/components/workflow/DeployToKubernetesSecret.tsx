@@ -15,6 +15,9 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
+import AccessEditDialog from "../certimate/AccessEditDialog";
+import { Plus } from "lucide-react";
+import AccessSelect from "./AccessSelect";
 
 const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
@@ -35,6 +38,7 @@ const DeployToKubernetesSecret = ({ data }: DeployFormProps) => {
 
   const formSchema = z.object({
     providerType: z.string(),
+    access: z.string().min(1, t("domain.deployment.form.access.placeholder")),
     certificate: z.string().min(1),
     namespace: z.string().min(1, {
       message: t("domain.deployment.form.k8s_namespace.placeholder"),
@@ -52,7 +56,8 @@ const DeployToKubernetesSecret = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "k8s-secret",
+    providerType: "",
+    access: "",
     namespace: "",
     secretName: "",
     secretDataKeyForCrt: "",
@@ -63,7 +68,8 @@ const DeployToKubernetesSecret = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: config.providerType as string,
+      providerType: "k8s-secret",
+      access: config.access as string,
       certificate: config.certificate as string,
       namespace: config.namespace as string,
       secretName: config.secretName as string,
@@ -87,6 +93,41 @@ const DeployToKubernetesSecret = ({ data }: DeployFormProps) => {
           }}
           className="space-y-8"
         >
+          <FormField
+            control={form.control}
+            name="access"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex justify-between">
+                  <div>{t("domain.deployment.form.access.label")}</div>
+
+                  <AccessEditDialog
+                    trigger={
+                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
+                        <Plus size={14} />
+                        {t("common.add")}
+                      </div>
+                    }
+                    op="add"
+                    outConfigType="k8s"
+                  />
+                </FormLabel>
+                <FormControl>
+                  <AccessSelect
+                    {...field}
+                    value={field.value}
+                    onValueChange={(value) => {
+                      form.setValue("access", value);
+                    }}
+                    providerType="k8s-secret"
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="certificate"

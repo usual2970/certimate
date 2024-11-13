@@ -26,6 +26,7 @@ export type WorkflowState = {
   switchEnable(): void;
   save(): void;
   init(id?: string): void;
+  setBaseInfo: (name: string, description: string) => void;
 };
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -50,6 +51,23 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     set({
       workflow: data,
       initialized: true,
+    });
+  },
+  setBaseInfo: async (name: string, description: string) => {
+    const resp = await save({
+      id: (get().workflow.id as string) ?? "",
+      name: name,
+      description: description,
+    });
+    set((state: WorkflowState) => {
+      return {
+        workflow: {
+          ...state.workflow,
+          name,
+          description,
+          id: resp.id,
+        },
+      };
     });
   },
   switchEnable: async () => {
