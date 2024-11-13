@@ -3,13 +3,18 @@ package domains
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase/models"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/deployer"
 	"github.com/usual2970/certimate/internal/utils/app"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type Phase string
@@ -45,7 +50,10 @@ func deploy(ctx context.Context, record *models.Record) error {
 	cert := currRecord.GetString("certificate")
 	expiredAt := currRecord.GetDateTime("expiredAt").Time()
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") {
+	// 检查证书是否包含设置的所有域名
+	included := isAllDomainsIncludedInCert(cert, currRecord.GetString("domain"))
+
+	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") && included {
 		app.GetApp().Logger().Info("证书在有效期内")
 		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
@@ -60,7 +68,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// ############2.申请证书
 	history.record(applyPhase, "开始申请", nil)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24 {
+	if cert != "" && time.Until(expiredAt) > time.Hour*24 && included {
 		history.record(applyPhase, "证书在有效期内，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
 		})
@@ -120,4 +128,35 @@ func deploy(ctx context.Context, record *models.Record) error {
 	history.setWholeSuccess(true)
 
 	return nil
+}
+
+func isAllDomainsIncludedInCert(certificate, domains string) bool {
+	// 如果证书为空，直接返回false
+	if certificate == "" {
+		return false
+	}
+
+	// 解析证书
+	cert, err := x509.ParseCertificateFromPEM(certificate)
+	if err != nil {
+		app.GetApp().Logger().Error("解析证书失败", "err", err)
+		return false
+	}
+
+	// 遍历域名列表，检查是否都在证书中，找到第一个不存在证书中域名时提前返回false
+	for _, domain := range strings.Split(domains, ";") {
+		if !slices.Contains(cert.DNSNames, domain) && !slices.Contains(cert.DNSNames, "*."+removeLastSubdomain(domain)) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func removeLastSubdomain(domain string) string {
+	parts := strings.Split(domain, ".")
+	if len(parts) > 1 {
+		return strings.Join(parts[1:], ".")
+	}
+	return domain
 }
