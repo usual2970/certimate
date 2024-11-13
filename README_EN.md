@@ -78,6 +78,7 @@ password：1234567890
 | Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei Cloud; supports deployment to Huawei Cloud CDN, ELB                   |
 |  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                                      |
 |  Doge Cloud   |              |     √      | Supports deployment to Doge Cloud CDN                                                                       |
+|  Volcengine   |      √       |     √      | Supports domains registered on Volcengine; supports deployment to Volcengine Live                           |
 |      AWS      |      √       |            | Supports domains managed on AWS Route53                                                                     |
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates                   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                                      |
