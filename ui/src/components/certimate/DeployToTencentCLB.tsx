@@ -44,9 +44,7 @@ const DeployToTencentCLB = () => {
       }),
       loadbalancerId: z.string().min(1, t("domain.deployment.form.tencent_clb_loadbalancer_id.placeholder")),
       listenerId: z.string().optional(),
-      domain: z.string().regex(/^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-        message: t("common.errmsg.domain_invalid"),
-      }),
+      domain: z.string().optional(),
     })
     .refine(
       (data) => {
@@ -63,10 +61,20 @@ const DeployToTencentCLB = () => {
         path: ["listenerId"],
       }
     )
-    .refine((data) => (data.resourceType === "ruledomain" ? !!data.domain?.trim() : true), {
-      message: t("domain.deployment.form.tencent_clb_ruledomain.placeholder"),
-      path: ["domain"],
-    });
+    .refine(
+      (data) => {
+        switch (data.resourceType) {
+          case "ssl-deploy":
+          case "ruledomain":
+            return !!data.domain?.trim() && /^$|^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/.test(data.domain);
+        }
+        return true;
+      },
+      {
+        message: t("domain.deployment.form.tencent_clb_ruledomain.placeholder"),
+        path: ["domain"],
+      }
+    );
 
   useEffect(() => {
     const res = formSchema.safeParse(config.config);
