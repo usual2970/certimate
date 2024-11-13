@@ -14,9 +14,9 @@ require (
 	github.com/alibabacloud-go/tea v1.2.2
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/baidubce/bce-sdk-go v0.9.197
-	github.com/go-acme/lego/v4 v4.19.2
+	github.com/go-acme/lego/v4 v4.20.2
 	github.com/gojek/heimdall/v7 v7.0.3
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.114
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.120
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
 	github.com/nikoksr/notify v1.0.0
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
@@ -26,9 +26,10 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.22.0
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1017
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1031
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1031
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1034
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.992
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1030
+	github.com/volcengine/volc-sdk-golang v1.0.184
 	golang.org/x/crypto v0.28.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	k8s.io/api v0.31.1
@@ -43,7 +44,7 @@ require (
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/route53 v1.43.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/route53 v1.46.0 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
@@ -86,31 +87,31 @@ require (
 	github.com/alibabacloud-go/openapi-util v0.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils v1.4.5 // indirect
 	github.com/alibabacloud-go/tea-xml v1.1.3 // indirect
-	github.com/aliyun/alibaba-cloud-sdk-go v1.63.15 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.63.47 // indirect
 	github.com/aliyun/credentials-go v1.3.10 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.30.5 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.4 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.27.33 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.32 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.13 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.32.3 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.6 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.28.1 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.42 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.18 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.8 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.17 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.17 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.22 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.22 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.1 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.19 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.19 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.17 // indirect
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.61.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.22.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.30.7 // indirect
-	github.com/aws/smithy-go v1.20.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.22 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.4.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.66.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.24.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.32.3 // indirect
+	github.com/aws/smithy-go v1.22.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.5.6 // indirect
-	github.com/cloudflare/cloudflare-go v0.104.0 // indirect
+	github.com/cloudflare/cloudflare-go v0.108.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/domodwyer/mailyak/v3 v3.6.2
@@ -122,7 +123,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/gojek/valkyrie v0.0.0-20180215180059-6aee720afcdf // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -150,7 +151,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/stretchr/testify v1.9.0 // indirect
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1002 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1034 // indirect
 	github.com/tjfoc/gmsm v1.4.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
@@ -167,8 +168,8 @@ require (
 	golang.org/x/time v0.7.0 // indirect
 	golang.org/x/tools v0.25.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240716161551-93cc26a95ae9 // indirect
-	google.golang.org/api v0.202.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20241015192408-796eee8c2d53 // indirect
+	google.golang.org/api v0.204.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241021214115-324edc3d5d38 // indirect
 	google.golang.org/grpc v1.67.1 // indirect
 	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

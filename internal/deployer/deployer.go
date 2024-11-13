@@ -40,6 +40,7 @@ const (
 	targetSSH            = "ssh"
 	targetWebhook        = "webhook"
 	targetK8sSecret      = "k8s-secret"
+	targetVolcengineLive = "volcengine-live"
 )
 
 type DeployerOption struct {
@@ -150,6 +151,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewWebhookDeployer(option)
 	case targetK8sSecret:
 		return NewK8sSecretDeployer(option)
+	case targetVolcengineLive:
+		return NewVolcengineLiveDeployer(option)
 	}
 	return nil, errors.New("unsupported deploy target")
 }
