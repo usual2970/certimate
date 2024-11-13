@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -88,6 +89,12 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 	// 生成新证书名（需符合阿里云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
+
+	// 去除证书和私钥内容中的空白行，以符合阿里云 API 要求
+	// REF: https://github.com/usual2970/certimate/issues/326
+	re := regexp.MustCompile(`(?m)^\s*$\n?`)
+	certPem = strings.TrimSpace(re.ReplaceAllString(certPem, ""))
+	privkeyPem = strings.TrimSpace(re.ReplaceAllString(privkeyPem, ""))
 
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-uploadservercertificate

@@ -102,7 +102,7 @@ func (d *TencentCLBDeployer) Deploy(ctx context.Context) error {
 func (d *TencentCLBDeployer) createSdkClients(secretId, secretKey, region string) (*tencentCLBDeployerSdkClients, error) {
 	credential := common.NewCredential(secretId, secretKey)
 
-	sslClient, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
+	sslClient, err := tcSsl.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}
