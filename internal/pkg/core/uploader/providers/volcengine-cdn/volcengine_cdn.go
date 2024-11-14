@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	xerrors "github.com/pkg/errors"
@@ -68,7 +69,7 @@ func (u *VolcengineCDNUploader) Upload(ctx context.Context, certPem string, priv
 		if listCertResp.Result.CertInfo != nil {
 			for _, certDetail := range listCertResp.Result.CertInfo {
 				hash := sha256.Sum256(certX509.Raw)
-				isSameCert := hex.EncodeToString(hash[:]) == certDetail.CertFingerprint.Sha256
+				isSameCert := strings.EqualFold(hex.EncodeToString(hash[:]), certDetail.CertFingerprint.Sha256)
 				// 如果已存在相同证书，直接返回已有的证书信息
 				if isSameCert {
 					return &uploader.UploadResult{
