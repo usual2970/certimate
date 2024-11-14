@@ -54,20 +54,20 @@ func (u *VolcengineCDNUploader) Upload(ctx context.Context, certPem string, priv
 	pageNum := int64(1)
 	pageSize := int64(100)
 	certSource := "volc_cert_center"
-	listCertReq := &cdn.ListCertInfoRequest{
+	listCertInfoReq := &cdn.ListCertInfoRequest{
 		PageNum:  &pageNum,
 		PageSize: &pageSize,
 		Source:   certSource,
 	}
 	searchTotal := 0
 	for {
-		listCertResp, err := u.sdkClient.ListCertInfo(listCertReq)
+		listCertInfoResp, err := u.sdkClient.ListCertInfo(listCertInfoReq)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ListCertInfo'")
 		}
 
-		if listCertResp.Result.CertInfo != nil {
-			for _, certDetail := range listCertResp.Result.CertInfo {
+		if listCertInfoResp.Result.CertInfo != nil {
+			for _, certDetail := range listCertInfoResp.Result.CertInfo {
 				hash := sha256.Sum256(certX509.Raw)
 				isSameCert := strings.EqualFold(hex.EncodeToString(hash[:]), certDetail.CertFingerprint.Sha256)
 				// 如果已存在相同证书，直接返回已有的证书信息
@@ -80,8 +80,8 @@ func (u *VolcengineCDNUploader) Upload(ctx context.Context, certPem string, priv
 			}
 		}
 
-		searchTotal += len(listCertResp.Result.CertInfo)
-		if int(listCertResp.Result.Total) > searchTotal {
+		searchTotal += len(listCertInfoResp.Result.CertInfo)
+		if int(listCertInfoResp.Result.Total) > searchTotal {
 			pageNum++
 		} else {
 			break
@@ -99,12 +99,12 @@ func (u *VolcengineCDNUploader) Upload(ctx context.Context, certPem string, priv
 		Source:      &certSource,
 		Desc:        &certName,
 	}
-	createCertResp, err := u.sdkClient.AddCertificate(addCertificateReq)
+	addCertificateResp, err := u.sdkClient.AddCertificate(addCertificateReq)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.AddCertificate'")
 	}
 
-	certId = createCertResp.Result.CertId
+	certId = addCertificateResp.Result.CertId
 	return &uploader.UploadResult{
 		CertId:   certId,
 		CertName: certName,

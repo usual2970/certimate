@@ -104,11 +104,11 @@ func (d *VolcengineCDNDeployer) Deploy(ctx context.Context) error {
 			CertId: upres.CertId,
 			Domain: domains[i],
 		}
-		BindCertResp, err := d.sdkClient.BatchDeployCert(batchDeployCertReq)
+		batchDeployCertResp, err := d.sdkClient.BatchDeployCert(batchDeployCertReq)
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'cdn.BatchDeployCert'")
 		} else {
-			d.infos = append(d.infos, toStr(fmt.Sprintf("%s域名的证书已修改", domains[i]), BindCertResp))
+			d.infos = append(d.infos, toStr(fmt.Sprintf("%s域名的证书已修改", domains[i]), batchDeployCertResp))
 		}
 	}
 
