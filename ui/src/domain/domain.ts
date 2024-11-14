@@ -91,6 +91,7 @@ export const deployTargetList: string[][] = [
   ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg"],
   ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg"],
   ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"],
+  ["volcengine-live", "common.provider.volcengine.live", "/imgs/providers/volcengine.svg"],
 ];
 
 export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map(

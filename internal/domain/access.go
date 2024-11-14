@@ -56,6 +56,11 @@ type PdnsAccess struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type VolcengineAccess struct {
+	AccessKeyID     string
+	SecretAccessKey string
+}
+
 type HttpreqAccess struct {
 	Endpoint string `json:"endpoint"`
 	Mode     string `json:"mode"`

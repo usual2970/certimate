@@ -29,7 +29,7 @@ const Notify = () => {
         </div>
 
         <div className="border rounded-md p-5 mt-7 shadow-lg">
-          <Accordion type={"single"} className="dark:text-stone-200">
+          <Accordion type={"single"} collapsible={true} className="dark:text-stone-200">
             <AccordionItem value="item-email" className="dark:border-stone-200">
               <AccordionTrigger>{t("common.provider.email")}</AccordionTrigger>
               <AccordionContent>

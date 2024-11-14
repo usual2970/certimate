@@ -21,6 +21,7 @@ import AccessLocalForm from "./AccessLocalForm";
 import AccessSSHForm from "./AccessSSHForm";
 import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
+import AccessVolcengineForm from "./AccessVolcengineForm";
 import { Access } from "@/domain/access";
 import { AccessTypeSelect } from "./AccessTypeSelect";
 
@@ -215,6 +216,17 @@ const AccessEditDialog = ({ trigger, op, data, className, outConfigType }: Acces
     case "k8s":
       childComponent = (
         <AccessKubernetesForm
+          data={data}
+          op={op}
+          onAfterReq={() => {
+            setOpen(false);
+          }}
+        />
+      );
+      break;
+    case "volcengine":
+      childComponent = (
+        <AccessVolcengineForm
           data={data}
           op={op}
           onAfterReq={() => {

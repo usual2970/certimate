@@ -96,8 +96,8 @@ const WorkflowDetail = () => {
               <WorkflowBaseInfoEditDialog
                 trigger={
                   <div className="flex flex-col space-y-1 cursor-pointer items-start">
-                    <div className="">{workflow.name ?? "未命名工作流"}</div>
-                    <div className="text-sm text-muted-foreground">{workflow.description ?? "添加流程说明"}</div>
+                    <div className="">{workflow.name ? workflow.name : "未命名工作流"}</div>
+                    <div className="text-sm text-muted-foreground">{workflow.description ? workflow.description : "添加流程说明"}</div>
                   </div>
                 }
               />

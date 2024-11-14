@@ -14,3 +14,28 @@ export const save = async (data: Record<string, string | boolean | WorkflowNode>
   }
   return await getPb().collection("workflow").create<Workflow>(data);
 };
+
+type WorkflowListReq = {
+  page: number;
+  perPage?: number;
+};
+export const list = async (req: WorkflowListReq) => {
+  let page = 1;
+  if (req.page) {
+    page = req.page;
+  }
+  let perPage = 10;
+  if (req.perPage) {
+    perPage = req.perPage;
+  }
+
+  const response = await getPb().collection("workflow").getList<Workflow>(page, perPage, {
+    sort: "-created",
+  });
+
+  return response;
+};
+
+export const remove = async (id: string) => {
+  return await getPb().collection("workflow").delete(id);
+};

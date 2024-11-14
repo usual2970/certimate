@@ -44,6 +44,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
     if (!id) {
       data = initWorkflow();
+      data = await save(data);
     } else {
       data = await getWrokflow(id);
     }

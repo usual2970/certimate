@@ -90,5 +90,7 @@
   "common.provider.lark": "Lark",
   "common.provider.telegram": "Telegram",
   "common.provider.serverchan": "ServerChan",
-  "common.provider.bark": "Bark"
+  "common.provider.bark": "Bark",
+  "common.provider.volcengine": "Volcengine",
+  "common.provider.volcengine.live": "Volcengine - Live"
 }
