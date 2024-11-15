@@ -28,6 +28,7 @@ import DeployToSSH from "./DeployToSSH";
 import DeployToWebhook from "./DeployToWebhook";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
 import DeployToVolcengineLive from "./DeployToVolcengineLive"
+import DeployToVolcengineCDN from "./DeployToVolcengineCDN"
 import { deployTargetsMap, type DeployConfig } from "@/domain/domain";
 import { accessProvidersMap } from "@/domain/access";
 import { useConfigContext } from "@/providers/config";
@@ -177,6 +178,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "volcengine-live":
       childComponent = <DeployToVolcengineLive />;
+      break;
+    case "volcengine-cdn":
+      childComponent = <DeployToVolcengineCDN />;
       break;
   }
 

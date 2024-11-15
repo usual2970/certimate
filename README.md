@@ -79,7 +79,7 @@ make local.run
 |   华为云   |      √       |      √       | 可签发在华为云注册的域名；可部署到华为云 CDN、ELB                 |
 |   七牛云   |              |      √       | 可部署到七牛云 CDN                                                |
 |   多吉云   |              |      √       | 可部署到多吉云 CDN                                                |
-|  火山引擎  |       √       |      √       | 可签发在火山引擎注册的域名；可部署到火山引擎 Live                     |
+|  火山引擎  |       √       |      √       | 可签发在火山引擎注册的域名；可部署到火山引擎 Live、CDN                 |
 |    AWS     |      √       |              | 可签发在 AWS Route53 托管的域名                                   |
 | CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书      |
 |  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                       |
