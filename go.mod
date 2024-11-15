@@ -46,6 +46,7 @@ require (
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.46.0 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
+	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.35 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-lark/lark v1.14.1 // indirect
