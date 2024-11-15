@@ -30,7 +30,7 @@ func NewNotifyHandler(route *echo.Group, service NotifyService) {
 func (handler *notifyHandler) test(c echo.Context) error {
 	req := &domain.NotifyTestPushReq{}
 	if err := c.Bind(req); err != nil {
-		return err
+		return resp.Err(c, err)
 	}
 
 	if err := handler.service.Test(c.Request().Context(), req); err != nil {

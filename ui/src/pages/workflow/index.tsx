@@ -58,19 +58,19 @@ const Workflow = () => {
       },
     },
     {
-      accessorKey: "executionMethod",
+      accessorKey: "type",
       header: "执行方式",
       cell: ({ row }) => {
-        const method = row.getValue("executionMethod");
+        const method = row.getValue("type");
         if (!method) {
           return "-";
         } else if (method === "manual") {
           return "手动";
         } else if (method === "auto") {
-          const crontab: string = row.getValue("crontab");
+          const crontab: string = row.original.crontab ?? "";
           return (
-            <div className="flex flex-col">
-              定时
+            <div className="flex flex-col space-y-1">
+              <div>定时</div>
               <div className="text-muted-foreground text-xs">{crontab}</div>
             </div>
           );
@@ -211,3 +211,4 @@ const Workflow = () => {
 };
 
 export default Workflow;
+

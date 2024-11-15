@@ -97,7 +97,6 @@ export type WorkflowNode = {
 
   input?: WorkflowNodeIo[];
   config?: WorkflowNodeConfig;
-  configured?: boolean;
   output?: WorkflowNodeIo[];
 
   next?: WorkflowNode | WorkflowBranchNode;
@@ -429,3 +428,4 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     },
   },
 ];
+

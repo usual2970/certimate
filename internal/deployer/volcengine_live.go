@@ -91,11 +91,11 @@ func (d *VolcengineLiveDeployer) Deploy(ctx context.Context) error {
 			Domain:  domains[i],
 			HTTPS:   cast.BoolPtr(true),
 		}
-		BindCertResp, err := d.sdkClient.BindCert(apiCtx, bindCertReq)
+		bindCertResp, err := d.sdkClient.BindCert(apiCtx, bindCertReq)
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'live.BindCert'")
 		} else {
-			d.infos = append(d.infos, toStr(fmt.Sprintf("%s域名的证书已修改", domains[i]), BindCertResp))
+			d.infos = append(d.infos, toStr(fmt.Sprintf("%s域名的证书已修改", domains[i]), bindCertResp))
 		}
 	}
 

@@ -92,5 +92,6 @@
   "common.provider.serverchan": "ServerChan",
   "common.provider.bark": "Bark",
   "common.provider.volcengine": "Volcengine",
-  "common.provider.volcengine.live": "Volcengine - Live"
+  "common.provider.volcengine.live": "Volcengine - Live",
+  "common.provider.volcengine.cdn": "Volcengine - CDN"
 }
