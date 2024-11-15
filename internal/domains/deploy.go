@@ -137,20 +137,20 @@ func deploy(ctx context.Context, record *models.Record) error {
 func isCertChanged(certificate string, record *models.Record) bool {
 	// 如果证书为空，直接返回false
 	if certificate == "" {
-		return false
+		return true
 	}
 
 	// 解析证书
 	cert, err := x509.ParseCertificateFromPEM(certificate)
 	if err != nil {
 		app.GetApp().Logger().Error("解析证书失败", "err", err)
-		return false
+		return true
 	}
 
 	// 遍历域名列表，检查是否都在证书中，找到第一个不存在证书中域名时提前返回false
 	for _, domain := range strings.Split(record.GetString("domain"), ";") {
 		if !slices.Contains(cert.DNSNames, domain) && !slices.Contains(cert.DNSNames, "*."+removeLastSubdomain(domain)) {
-			return false
+			return true
 		}
 	}
 
@@ -166,30 +166,30 @@ func isCertChanged(certificate string, record *models.Record) bool {
 	  switch bitSize {
 		case 2048:
 		  // RSA2048
-		  if applyConfig.KeyAlgorithm != "" && applyConfig.KeyAlgorithm != "RSA2048" { return false }
+		  if applyConfig.KeyAlgorithm != "" && applyConfig.KeyAlgorithm != "RSA2048" { return true }
 		case 3072:
 		  // RSA3072
-		  if applyConfig.KeyAlgorithm != "RSA3072" { return false }
+		  if applyConfig.KeyAlgorithm != "RSA3072" { return true }
 		case 4096:
 		  // RSA4096
-		  if applyConfig.KeyAlgorithm != "RSA4096" { return false }
+		  if applyConfig.KeyAlgorithm != "RSA4096" { return true }
 		case 8192:
 		  // RSA8192
-		  if applyConfig.KeyAlgorithm != "RSA8192" { return false }
+		  if applyConfig.KeyAlgorithm != "RSA8192" { return true }
 	  }
 	case *ecdsa.PublicKey:
 	  bitSize := pubkey.Curve.Params().BitSize
 	  switch bitSize {
 		case 256:
 		  // EC256
-		  if applyConfig.KeyAlgorithm != "EC256" { return false }
+		  if applyConfig.KeyAlgorithm != "EC256" { return true }
 		case 384:
 		  // EC384
-		  if applyConfig.KeyAlgorithm != "EC384" { return false }
+		  if applyConfig.KeyAlgorithm != "EC384" { return true }
 	  }
 	}
 
-	return true
+	return false
 }
 
 func removeLastSubdomain(domain string) string {
