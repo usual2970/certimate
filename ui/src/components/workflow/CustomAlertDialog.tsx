@@ -24,12 +24,12 @@ const CustomAlertDialog = ({ open, title, description, confirm, onOpenChange }: 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
-        <AlertDialogHeader>
+        <AlertDialogHeader className="dark:text-stone-200">
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+          <AlertDialogCancel className="dark:text-stone-200">{t("common.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
               confirm && confirm();

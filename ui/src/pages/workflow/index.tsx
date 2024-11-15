@@ -90,6 +90,9 @@ const Workflow = () => {
               onCheckedChange={() => {
                 handleCheckedChange(row.original.id ?? "");
               }}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
             />
           </>
         );
@@ -127,7 +130,8 @@ const Workflow = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>操作</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   navigate(`/workflow/detail?id=${workflow.id}`);
                 }}
               >
@@ -135,7 +139,8 @@ const Workflow = () => {
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleDeleteClick(workflow.id ?? "");
                 }}
               >

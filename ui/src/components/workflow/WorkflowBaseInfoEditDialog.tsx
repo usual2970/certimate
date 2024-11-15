@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 type WorkflowNameEditDialogProps = {
   trigger: React.ReactNode;
@@ -28,10 +28,6 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: workflow.name,
-      description: workflow.description,
-    },
   });
 
   const { t } = useTranslation();
@@ -72,7 +68,14 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                     <FormItem>
                       <FormLabel>名称</FormLabel>
                       <FormControl>
-                        <Input placeholder="请输入流程名称" {...field} />
+                        <Input
+                          placeholder="请输入流程名称"
+                          {...field}
+                          defaultValue={workflow.name}
+                          onChange={(e) => {
+                            form.setValue("name", e.target.value);
+                          }}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -87,7 +90,14 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                     <FormItem>
                       <FormLabel>说明</FormLabel>
                       <FormControl>
-                        <Input placeholder="请输入流程说明" {...field} />
+                        <Input
+                          placeholder="请输入流程说明"
+                          {...field}
+                          defaultValue={workflow.description}
+                          onChange={(e) => {
+                            form.setValue("description", e.target.value);
+                          }}
+                        />
                       </FormControl>
 
                       <FormMessage />
@@ -107,4 +117,4 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
   );
 };
 
-export default WorkflowNameBaseInfoDialog;
+export default memo(WorkflowNameBaseInfoDialog);

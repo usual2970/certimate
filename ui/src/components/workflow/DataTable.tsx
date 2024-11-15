@@ -3,19 +3,22 @@ import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, Paginati
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
   onPageChange?: (pageIndex: number, pageSize?: number) => Promise<void>;
 }
 
-export function DataTable<TData, TValue>({ columns, data, onPageChange, pageCount }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { id: string }, TValue>({ columns, data, onPageChange, pageCount }: DataTableProps<TData, TValue>) {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const navigate = useNavigate();
 
   const pagination = {
     pageIndex,
@@ -39,13 +42,17 @@ export function DataTable<TData, TValue>({ columns, data, onPageChange, pageCoun
     onPageChange?.(pageIndex, pageSize);
   }, [pageIndex]);
 
+  const handleRowClick = (id: string) => {
+    navigate(`/workflow/detail?id=${id}`);
+  };
+
   return (
     <>
       <div className="rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-muted-foreground">
+              <TableRow key={headerGroup.id} className="dark:border-muted-foreground">
                 {headerGroup.headers.map((header) => {
                   return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
                 })}
@@ -55,7 +62,15 @@ export function DataTable<TData, TValue>({ columns, data, onPageChange, pageCoun
           <TableBody className="dark:text-stone-200">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"} className="border-muted-foreground">
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="dark:border-muted-foreground"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRowClick(row.original.id);
+                  }}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
@@ -84,4 +99,3 @@ export function DataTable<TData, TValue>({ columns, data, onPageChange, pageCoun
     </>
   );
 }
-

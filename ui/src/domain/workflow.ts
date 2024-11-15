@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { deployTargets, KVType } from "./domain";
 
 export type Workflow = {
-  id?: string;
+  id: string;
   name: string;
   description?: string;
   type: string;
@@ -125,6 +125,7 @@ export const initWorkflow = (): Workflow => {
   root.next = newWorkflowNode(WorkflowNodeType.Notify, {});
 
   return {
+    id: "",
     name: i18n.t("workflow.default.name"),
     type: "auto",
     crontab: "0 0 * * *",

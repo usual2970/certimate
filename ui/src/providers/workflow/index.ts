@@ -31,20 +31,20 @@ export type WorkflowState = {
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   workflow: {
-    id: "root",
+    id: "",
     name: "placeholder",
     type: WorkflowNodeType.Start,
   },
   initialized: false,
   init: async (id?: string) => {
     let data = {
+      id: "",
       name: "placeholder",
       type: "auto",
     };
 
     if (!id) {
       data = initWorkflow();
-      data = await save(data);
     } else {
       data = await getWrokflow(id);
     }
@@ -55,11 +55,15 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
   setBaseInfo: async (name: string, description: string) => {
-    const resp = await save({
+    const data: Record<string, string | boolean | WorkflowNode> = {
       id: (get().workflow.id as string) ?? "",
       name: name,
       description: description,
-    });
+    };
+    if (!data.id) {
+      data.draft = get().workflow.draft as WorkflowNode;
+    }
+    const resp = await save(data);
     set((state: WorkflowState) => {
       return {
         workflow: {
@@ -201,3 +205,4 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, id, type);
   },
 }));
+
