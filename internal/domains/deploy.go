@@ -57,7 +57,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// 检查证书是否包含设置的所有域名
 	changed := isCertChanged(cert, currRecord)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") && changed {
+	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") && !changed {
 		app.GetApp().Logger().Info("证书在有效期内")
 		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
@@ -72,7 +72,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// ############2.申请证书
 	history.record(applyPhase, "开始申请", nil)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24 && changed {
+	if cert != "" && time.Until(expiredAt) > time.Hour*24 && !changed {
 		history.record(applyPhase, "证书在有效期内，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
 		})
