@@ -135,7 +135,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 }
 
 func isCertChanged(certificate string, record *models.Record) bool {
-	// 如果证书为空，直接返回false
+	// 如果证书为空，直接返回true
 	if certificate == "" {
 		return true
 	}
@@ -147,7 +147,7 @@ func isCertChanged(certificate string, record *models.Record) bool {
 		return true
 	}
 
-	// 遍历域名列表，检查是否都在证书中，找到第一个不存在证书中域名时提前返回false
+	// 遍历域名列表，检查是否都在证书中，找到第一个不存在证书中域名时提前返回true
 	for _, domain := range strings.Split(record.GetString("domain"), ";") {
 		if !slices.Contains(cert.DNSNames, domain) && !slices.Contains(cert.DNSNames, "*."+removeLastSubdomain(domain)) {
 			return true
@@ -159,7 +159,7 @@ func isCertChanged(certificate string, record *models.Record) bool {
 	record.UnmarshalJSONField("applyConfig", applyConfig)
 
 	
-	// 检查证书加密算法是否一致
+	// 检查证书加密算法是否变更
 	switch pubkey := cert.PublicKey.(type) {
 	case *rsa.PublicKey:
 	  bitSize := pubkey.N.BitLen()
