@@ -98,7 +98,7 @@ func (d *ByteplusCDNDeployer) Deploy(ctx context.Context) error {
 		domains = append(domains, configDomain)
 	}
 	// 部署证书
-	// REF: https://www.volcengine.com/docs/6454/125712
+	// REF: https://github.com/byteplus-sdk/byteplus-sdk-golang/blob/master/service/cdn/api_list.go#L306
 	for i := range domains {
 		batchDeployCertReq := &cdn.BatchDeployCertRequest{
 			CertId: upres.CertId,
