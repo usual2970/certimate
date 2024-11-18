@@ -2,12 +2,11 @@ package domains
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"fmt"
 	"strings"
 	"time"
-
-	"crypto/rsa"
-	"crypto/ecdsa"
 
 	"github.com/pocketbase/pocketbase/models"
 
@@ -28,6 +27,8 @@ const (
 	applyPhase  Phase = "apply"
 	deployPhase Phase = "deploy"
 )
+
+const validityDuration = time.Hour * 24 * 10
 
 func deploy(ctx context.Context, record *models.Record) error {
 	defer func() {
@@ -57,7 +58,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// 检查证书是否包含设置的所有域名
 	changed := isCertChanged(cert, currRecord)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") && !changed {
+	if cert != "" && time.Until(expiredAt) > validityDuration && currRecord.GetBool("deployed") && !changed {
 		app.GetApp().Logger().Info("证书在有效期内")
 		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
@@ -72,7 +73,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// ############2.申请证书
 	history.record(applyPhase, "开始申请", nil)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24 && !changed {
+	if cert != "" && time.Until(expiredAt) > validityDuration && !changed {
 		history.record(applyPhase, "证书在有效期内，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
 		})
@@ -158,35 +159,46 @@ func isCertChanged(certificate string, record *models.Record) bool {
 	applyConfig := &domain.ApplyConfig{}
 	record.UnmarshalJSONField("applyConfig", applyConfig)
 
-	
 	// 检查证书加密算法是否变更
 	switch pubkey := cert.PublicKey.(type) {
 	case *rsa.PublicKey:
-	  bitSize := pubkey.N.BitLen()
-	  switch bitSize {
+		bitSize := pubkey.N.BitLen()
+		switch bitSize {
 		case 2048:
-		  // RSA2048
-		  if applyConfig.KeyAlgorithm != "" && applyConfig.KeyAlgorithm != "RSA2048" { return true }
+			// RSA2048
+			if applyConfig.KeyAlgorithm != "" && applyConfig.KeyAlgorithm != "RSA2048" {
+				return true
+			}
 		case 3072:
-		  // RSA3072
-		  if applyConfig.KeyAlgorithm != "RSA3072" { return true }
+			// RSA3072
+			if applyConfig.KeyAlgorithm != "RSA3072" {
+				return true
+			}
 		case 4096:
-		  // RSA4096
-		  if applyConfig.KeyAlgorithm != "RSA4096" { return true }
+			// RSA4096
+			if applyConfig.KeyAlgorithm != "RSA4096" {
+				return true
+			}
 		case 8192:
-		  // RSA8192
-		  if applyConfig.KeyAlgorithm != "RSA8192" { return true }
-	  }
+			// RSA8192
+			if applyConfig.KeyAlgorithm != "RSA8192" {
+				return true
+			}
+		}
 	case *ecdsa.PublicKey:
-	  bitSize := pubkey.Curve.Params().BitSize
-	  switch bitSize {
+		bitSize := pubkey.Curve.Params().BitSize
+		switch bitSize {
 		case 256:
-		  // EC256
-		  if applyConfig.KeyAlgorithm != "EC256" { return true }
+			// EC256
+			if applyConfig.KeyAlgorithm != "EC256" {
+				return true
+			}
 		case 384:
-		  // EC384
-		  if applyConfig.KeyAlgorithm != "EC384" { return true }
-	  }
+			// EC384
+			if applyConfig.KeyAlgorithm != "EC384" {
+				return true
+			}
+		}
 	}
 
 	return false
