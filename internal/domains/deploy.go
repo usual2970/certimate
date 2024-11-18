@@ -2,14 +2,22 @@ package domains
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/pocketbase/pocketbase/models"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/deployer"
+	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/app"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type Phase string
@@ -19,6 +27,8 @@ const (
 	applyPhase  Phase = "apply"
 	deployPhase Phase = "deploy"
 )
+
+const validityDuration = time.Hour * 24 * 10
 
 func deploy(ctx context.Context, record *models.Record) error {
 	defer func() {
@@ -45,7 +55,10 @@ func deploy(ctx context.Context, record *models.Record) error {
 	cert := currRecord.GetString("certificate")
 	expiredAt := currRecord.GetDateTime("expiredAt").Time()
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24*10 && currRecord.GetBool("deployed") {
+	// 检查证书是否包含设置的所有域名
+	changed := isCertChanged(cert, currRecord)
+
+	if cert != "" && time.Until(expiredAt) > validityDuration && currRecord.GetBool("deployed") && !changed {
 		app.GetApp().Logger().Info("证书在有效期内")
 		history.record(checkPhase, "证书在有效期内且已部署，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
@@ -60,7 +73,7 @@ func deploy(ctx context.Context, record *models.Record) error {
 	// ############2.申请证书
 	history.record(applyPhase, "开始申请", nil)
 
-	if cert != "" && time.Until(expiredAt) > time.Hour*24 {
+	if cert != "" && time.Until(expiredAt) > validityDuration && !changed {
 		history.record(applyPhase, "证书在有效期内，跳过", &RecordInfo{
 			Info: []string{fmt.Sprintf("证书有效期至 %s", expiredAt.Format("2006-01-02"))},
 		})
@@ -120,4 +133,81 @@ func deploy(ctx context.Context, record *models.Record) error {
 	history.setWholeSuccess(true)
 
 	return nil
+}
+
+func isCertChanged(certificate string, record *models.Record) bool {
+	// 如果证书为空，直接返回true
+	if certificate == "" {
+		return true
+	}
+
+	// 解析证书
+	cert, err := x509.ParseCertificateFromPEM(certificate)
+	if err != nil {
+		app.GetApp().Logger().Error("解析证书失败", "err", err)
+		return true
+	}
+
+	// 遍历域名列表，检查是否都在证书中，找到第一个不存在证书中域名时提前返回true
+	for _, domain := range strings.Split(record.GetString("domain"), ";") {
+		if !slices.Contains(cert.DNSNames, domain) && !slices.Contains(cert.DNSNames, "*."+removeLastSubdomain(domain)) {
+			return true
+		}
+	}
+
+	// 解析applyConfig
+	applyConfig := &domain.ApplyConfig{}
+	record.UnmarshalJSONField("applyConfig", applyConfig)
+
+	// 检查证书加密算法是否变更
+	switch pubkey := cert.PublicKey.(type) {
+	case *rsa.PublicKey:
+		bitSize := pubkey.N.BitLen()
+		switch bitSize {
+		case 2048:
+			// RSA2048
+			if applyConfig.KeyAlgorithm != "" && applyConfig.KeyAlgorithm != "RSA2048" {
+				return true
+			}
+		case 3072:
+			// RSA3072
+			if applyConfig.KeyAlgorithm != "RSA3072" {
+				return true
+			}
+		case 4096:
+			// RSA4096
+			if applyConfig.KeyAlgorithm != "RSA4096" {
+				return true
+			}
+		case 8192:
+			// RSA8192
+			if applyConfig.KeyAlgorithm != "RSA8192" {
+				return true
+			}
+		}
+	case *ecdsa.PublicKey:
+		bitSize := pubkey.Curve.Params().BitSize
+		switch bitSize {
+		case 256:
+			// EC256
+			if applyConfig.KeyAlgorithm != "EC256" {
+				return true
+			}
+		case 384:
+			// EC384
+			if applyConfig.KeyAlgorithm != "EC384" {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func removeLastSubdomain(domain string) string {
+	parts := strings.Split(domain, ".")
+	if len(parts) > 1 {
+		return strings.Join(parts[1:], ".")
+	}
+	return domain
 }
