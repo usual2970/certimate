@@ -8,7 +8,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useTranslation } from "react-i18next";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
+import { Textarea } from "../ui/textarea";
 
 type WorkflowNameEditDialogProps = {
   trigger: React.ReactNode;
@@ -29,6 +30,10 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+  useEffect(() => {
+    form.reset({ name: workflow.name, description: workflow.description });
+  }, [workflow]);
 
   const { t } = useTranslation();
 
@@ -71,6 +76,7 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                         <Input
                           placeholder="请输入流程名称"
                           {...field}
+                          value={field.value}
                           defaultValue={workflow.name}
                           onChange={(e) => {
                             form.setValue("name", e.target.value);
@@ -90,9 +96,10 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                     <FormItem>
                       <FormLabel>说明</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
                           placeholder="请输入流程说明"
                           {...field}
+                          value={field.value}
                           defaultValue={workflow.description}
                           onChange={(e) => {
                             form.setValue("description", e.target.value);

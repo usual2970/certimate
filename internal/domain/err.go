@@ -1,6 +1,16 @@
 package domain
 
-var ErrAuthFailed = NewXError(4999, "auth failed")
+var (
+	ErrInvalidParams  = NewXError(400, "invalid params")
+	ErrRecordNotFound = NewXError(404, "record not found")
+)
+
+func IsRecordNotFound(err error) bool {
+	if e, ok := err.(*XError); ok {
+		return e.GetCode() == ErrRecordNotFound.GetCode()
+	}
+	return false
+}
 
 type XError struct {
 	Code int    `json:"code"`

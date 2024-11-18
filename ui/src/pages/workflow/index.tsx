@@ -43,7 +43,7 @@ const Workflow = () => {
         if (!name) {
           name = "未命名工作流";
         }
-        return <div className="flex items-center">{name}</div>;
+        return <div className="max-w-[150px] truncate">{name}</div>;
       },
     },
     {
@@ -54,7 +54,7 @@ const Workflow = () => {
         if (!description) {
           description = "-";
         }
-        return description;
+        return <div className="max-w-[200px] truncate">{description}</div>;
       },
     },
     {
@@ -211,4 +211,3 @@ const Workflow = () => {
 };
 
 export default Workflow;
-

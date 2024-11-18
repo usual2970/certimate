@@ -1,5 +1,16 @@
 package domain
 
+import "time"
+
+type Access struct {
+	Meta
+	Name       string    `json:"name"`
+	Config     string    `json:"config"`
+	ConfigType string    `json:"configType"`
+	Deleted    time.Time `json:"deleted"`
+	Usage      string    `json:"usage"`
+}
+
 type AliyunAccess struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`

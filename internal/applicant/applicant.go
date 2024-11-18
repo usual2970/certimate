@@ -1,6 +1,7 @@
 package applicant
 
 import (
+	"context"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -170,7 +171,38 @@ func Get(record *models.Record) (Applicant, error) {
 		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
 	}
 
-	switch access.GetString("configType") {
+	return GetWithTypeOption(access.GetString("configType"), option)
+}
+
+func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
+	// 获取授权配置
+	accessRepo := repository.NewAccessRepository()
+
+	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("access"))
+	if err != nil {
+		return nil, fmt.Errorf("access record not found: %w", err)
+	}
+
+	timeout := node.GetConfigInt64("timeout")
+	if timeout == 0 {
+		timeout = defaultTimeout
+	}
+
+	applyConfig := &ApplyOption{
+		Email:              node.GetConfigString("email"),
+		Domain:             node.GetConfigString("domain"),
+		Access:             access.Config,
+		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
+		Nameservers:        node.GetConfigString("nameservers"),
+		Timeout:            timeout,
+		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
+	}
+
+	return GetWithTypeOption(access.ConfigType, applyConfig)
+}
+
+func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
+	switch t {
 	case configTypeAliyun:
 		return NewAliyun(option), nil
 	case configTypeTencent:

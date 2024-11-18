@@ -155,6 +155,10 @@ export const newWorkflowNode = (type: WorkflowNodeType, options: NewWorkflowNode
     };
   }
 
+  if (type == WorkflowNodeType.Condition) {
+    rs.validated = true;
+  }
+
   if (type === WorkflowNodeType.Branch) {
     rs = {
       ...rs,
@@ -350,6 +354,20 @@ export const allNodesValidated = (node: WorkflowNode | WorkflowBranchNode): bool
   return true;
 };
 
+export const getExecuteMethod = (node: WorkflowNode): { type: string; crontab: string } => {
+  if (node.type === WorkflowNodeType.Start) {
+    return {
+      type: (node.config?.executionMethod as string) ?? "",
+      crontab: (node.config?.crontab as string) ?? "",
+    };
+  } else {
+    return {
+      type: "",
+      crontab: "",
+    };
+  }
+};
+
 export type WorkflowBranchNode = {
   id: string;
   name: string;
@@ -428,4 +446,3 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     },
   },
 ];
-

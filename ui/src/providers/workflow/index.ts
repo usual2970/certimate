@@ -1,6 +1,7 @@
 import {
   addBranch,
   addNode,
+  getExecuteMethod,
   getWorkflowOutputBeforeId,
   initWorkflow,
   removeBranch,
@@ -76,11 +77,15 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
   switchEnable: async () => {
+    const root = get().workflow.draft as WorkflowNode;
+    const executeMethod = getExecuteMethod(root);
     const resp = await save({
       id: (get().workflow.id as string) ?? "",
-      content: get().workflow.draft as WorkflowNode,
+      content: root,
       enabled: !get().workflow.enabled,
       hasDraft: false,
+      type: executeMethod.type,
+      crontab: executeMethod.crontab,
     });
     set((state: WorkflowState) => {
       return {
@@ -90,15 +95,21 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
           content: resp.content,
           enabled: resp.enabled,
           hasDraft: false,
+          type: resp.type,
+          crontab: resp.crontab,
         },
       };
     });
   },
   save: async () => {
+    const root = get().workflow.draft as WorkflowNode;
+    const executeMethod = getExecuteMethod(root);
     const resp = await save({
       id: (get().workflow.id as string) ?? "",
-      content: get().workflow.draft as WorkflowNode,
+      content: root,
       hasDraft: false,
+      type: executeMethod.type,
+      crontab: executeMethod.crontab,
     });
     set((state: WorkflowState) => {
       return {
@@ -107,6 +118,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
           id: resp.id,
           content: resp.content,
           hasDraft: false,
+          type: resp.type,
+          crontab: resp.crontab,
         },
       };
     });
@@ -205,4 +218,3 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, id, type);
   },
 }));
-
