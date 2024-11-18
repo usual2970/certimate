@@ -1,21 +1,15 @@
 package deployer
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"time"
 
-	"github.com/pavlo-v-chernykh/keystore-go/v4"
 	"github.com/pocketbase/pocketbase/models"
-	"software.sslmate.com/src/go-pkcs12"
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 	"github.com/usual2970/certimate/internal/utils/app"
 )
 
@@ -166,58 +160,4 @@ func toStr(tag string, data any) string {
 	}
 	byts, _ := json.Marshal(data)
 	return tag + "：" + string(byts)
-}
-
-func convertPEMToPFX(certificate string, privateKey string, password string) ([]byte, error) {
-	cert, err := x509.ParseCertificateFromPEM(certificate)
-	if err != nil {
-		return nil, err
-	}
-
-	privkey, err := x509.ParsePKCS1PrivateKeyFromPEM(privateKey)
-	if err != nil {
-		return nil, err
-	}
-
-	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, password)
-	if err != nil {
-		return nil, err
-	}
-
-	return pfxData, nil
-}
-
-func convertPEMToJKS(certificate string, privateKey string, alias string, keypass string, storepass string) ([]byte, error) {
-	certBlock, _ := pem.Decode([]byte(certificate))
-	if certBlock == nil {
-		return nil, errors.New("failed to decode certificate PEM")
-	}
-
-	privkeyBlock, _ := pem.Decode([]byte(privateKey))
-	if privkeyBlock == nil {
-		return nil, errors.New("failed to decode private key PEM")
-	}
-
-	ks := keystore.New()
-	entry := keystore.PrivateKeyEntry{
-		CreationTime: time.Now(),
-		PrivateKey:   privkeyBlock.Bytes,
-		CertificateChain: []keystore.Certificate{
-			{
-				Type:    "X509",
-				Content: certBlock.Bytes,
-			},
-		},
-	}
-
-	if err := ks.SetPrivateKeyEntry(alias, entry, []byte(keypass)); err != nil {
-		return nil, err
-	}
-
-	var buf bytes.Buffer
-	if err := ks.Store(&buf, []byte(storepass)); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
 }

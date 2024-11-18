@@ -14,6 +14,7 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type SSHDeployer struct {
@@ -78,7 +79,7 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 		d.infos = append(d.infos, toStr("SSH 上传私钥成功", nil))
 
 	case certFormatPFX:
-		pfxData, err := convertPEMToPFX(
+		pfxData, err := x509.TransformCertificateFromPEMToPFX(
 			d.option.Certificate.Certificate,
 			d.option.Certificate.PrivateKey,
 			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
@@ -94,7 +95,7 @@ func (d *SSHDeployer) Deploy(ctx context.Context) error {
 		d.infos = append(d.infos, toStr("SSH 上传证书成功", nil))
 
 	case certFormatJKS:
-		jksData, err := convertPEMToJKS(
+		jksData, err := x509.TransformCertificateFromPEMToJKS(
 			d.option.Certificate.Certificate,
 			d.option.Certificate.PrivateKey,
 			d.option.DeployConfig.GetConfigAsString("jksAlias"),
