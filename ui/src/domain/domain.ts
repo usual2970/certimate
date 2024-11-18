@@ -93,6 +93,7 @@ export const deployTargetList: string[][] = [
   ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/k8s.svg"],
   ["volcengine-live", "common.provider.volcengine.live", "/imgs/providers/volcengine.svg"],
   ["volcengine-cdn", "common.provider.volcengine.cdn", "/imgs/providers/volcengine.svg"],
+  ["byteplus-cdn", "common.provider.byteplus.cdn", "/imgs/providers/byteplus.svg"],
 ];
 
 export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map(

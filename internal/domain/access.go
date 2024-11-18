@@ -16,6 +16,11 @@ type AliyunAccess struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
+type ByteplusAccess struct {
+	AccessKey string
+	SecretKey string
+}
+
 type TencentAccess struct {
 	SecretId  string `json:"secretId"`
 	SecretKey string `json:"secretKey"`

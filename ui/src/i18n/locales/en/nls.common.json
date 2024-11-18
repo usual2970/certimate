@@ -93,5 +93,7 @@
   "common.provider.bark": "Bark",
   "common.provider.volcengine": "Volcengine",
   "common.provider.volcengine.live": "Volcengine - Live",
-  "common.provider.volcengine.cdn": "Volcengine - CDN"
+  "common.provider.volcengine.cdn": "Volcengine - CDN",
+  "common.provider.byteplus": "BytePlus",
+  "common.provider.byteplus.cdn": "BytePlus - CDN"
 }

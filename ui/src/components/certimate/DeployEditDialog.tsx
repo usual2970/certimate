@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -29,6 +28,7 @@ import DeployToWebhook from "./DeployToWebhook";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
 import DeployToVolcengineLive from "./DeployToVolcengineLive";
 import DeployToVolcengineCDN from "./DeployToVolcengineCDN";
+import DeployToByteplusCDN from "./DeployToByteplusCDN";
 import { deployTargetsMap, type DeployConfig } from "@/domain/domain";
 import { accessProvidersMap } from "@/domain/access";
 import { useConfigContext } from "@/providers/config";
@@ -181,6 +181,9 @@ const DeployEditDialog = ({ trigger, deployConfig, onSave }: DeployEditDialogPro
       break;
     case "volcengine-cdn":
       childComponent = <DeployToVolcengineCDN />;
+      break;
+    case "byteplus-cdn":
+      childComponent = <DeployToByteplusCDN />;
       break;
   }
 

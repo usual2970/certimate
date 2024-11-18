@@ -18,6 +18,7 @@ export const accessProviders = [
   ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛云:qiniu"],
   ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy", "多吉云:doge cloud"],
   ["volcengine", "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all", "火山引擎:volcengine"],
+  ["byteplus", "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all", "BytePlus"],
   ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply", "亚马逊:amazon:aws"],
   ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply", "cloudflare:cf:cloud flare"],
   ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply", "namesilo"],
@@ -53,6 +54,7 @@ export const accessTypeFormSchema = z.union(
     z.literal("webhook"),
     z.literal("k8s"),
     z.literal("volcengine"),
+    z.literal("byteplus"),
   ],
   { message: "access.authorization.form.type.placeholder" }
 );
@@ -79,7 +81,8 @@ export type Access = {
     | SSHConfig
     | WebhookConfig
     | KubernetesConfig
-    | VolcengineConfig;
+    | VolcengineConfig
+    | ByteplusConfig;
   deleted?: string;
   created?: string;
   updated?: string;
@@ -171,4 +174,9 @@ export type KubernetesConfig = {
 export type VolcengineConfig = {
   accessKeyId: string;
   secretAccessKey: string;
+};
+
+export type ByteplusConfig = {
+  accessKey: string;
+  secretKey: string;
 };
