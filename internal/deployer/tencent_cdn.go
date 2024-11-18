@@ -101,9 +101,9 @@ func (d *TencentCDNDeployer) Deploy(ctx context.Context) error {
 		}
 
 		temp := make([]string, 0)
-		for _, aliInstanceId := range tcInstanceIds {
-			if !slices.Contains(deployedDomains, aliInstanceId) {
-				temp = append(temp, aliInstanceId)
+		for _, tcInstanceId := range tcInstanceIds {
+			if !slices.Contains(deployedDomains, tcInstanceId) {
+				temp = append(temp, tcInstanceId)
 			}
 		}
 		tcInstanceIds = temp
