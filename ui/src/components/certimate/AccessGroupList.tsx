@@ -116,7 +116,7 @@ const AccessGroupList = () => {
                         variant={"link"}
                         onClick={() => {
                           navigate(`/access?accessGroupId=${accessGroup.id}&tab=access`, {
-                            replace: true,
+                            replace: false,
                           });
                         }}
                       >

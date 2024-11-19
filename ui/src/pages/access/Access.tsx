@@ -53,8 +53,12 @@ const Access = () => {
   };
 
   const handleTabItemClick = (tab: string) => {
-    query.set("tab", tab);
-    navigate({ search: query.toString() });
+    if (tab == "access_group") {
+      navigate(`?tab=${tab}`);
+    } else {
+      query.set("tab", tab);
+      navigate({search: query.toString()});
+    }
   };
 
   return (
