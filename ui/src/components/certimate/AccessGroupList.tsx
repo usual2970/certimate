@@ -90,7 +90,7 @@ const AccessGroupList = () => {
                           </div>
                           <div className="ml-3">
                             <div className="text-sm font-semibold text-gray-700 dark:text-gray-200">{access.name}</div>
-                            <div className="text-xs text-muted-foreground">{accessProvidersMap.get(access.configType)!.name}</div>
+                            <div className="text-xs text-muted-foreground">{access.configType}</div>
                           </div>
                         </div>
                       </div>
