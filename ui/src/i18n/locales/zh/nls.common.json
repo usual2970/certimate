@@ -93,5 +93,7 @@
   "common.provider.bark": "Bark",
   "common.provider.volcengine": "火山引擎",
   "common.provider.volcengine.live": "火山引擎 - 视频直播",
-  "common.provider.volcengine.cdn": "火山引擎 - CDN"
+  "common.provider.volcengine.cdn": "火山引擎 - CDN",
+  "common.provider.byteplus": "BytePlus",
+  "common.provider.byteplus.cdn": "BytePlus - CDN"
 }

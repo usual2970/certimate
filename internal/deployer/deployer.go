@@ -36,6 +36,7 @@ const (
 	targetK8sSecret      = "k8s-secret"
 	targetVolcengineLive = "volcengine-live"
 	targetVolcengineCDN  = "volcengine-cdn"
+	targetByteplusCDN    = "byteplus-cdn"
 )
 
 type DeployerOption struct {
@@ -150,6 +151,8 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewVolcengineLiveDeployer(option)
 	case targetVolcengineCDN:
 		return NewVolcengineCDNDeployer(option)
+	case targetByteplusCDN:
+		return NewByteplusCDNDeployer(option)
 	}
 	return nil, errors.New("unsupported deploy target")
 }
