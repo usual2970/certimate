@@ -6,8 +6,8 @@ type AliyunAccess struct {
 }
 
 type ByteplusAccess struct {
-	AccessKey string
-	SecretKey string
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
 }
 
 type TencentAccess struct {
@@ -27,9 +27,9 @@ type BaiduCloudAccess struct {
 }
 
 type AwsAccess struct {
-	Region          string `json:"region"`
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
+	Region          string `json:"region"`
 	HostedZoneId    string `json:"hostedZoneId"`
 }
 
@@ -62,8 +62,8 @@ type PdnsAccess struct {
 }
 
 type VolcengineAccess struct {
-	AccessKeyID     string
-	SecretAccessKey string
+	AccessKeyID     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
 }
 
 type HttpreqAccess struct {
