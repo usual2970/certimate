@@ -2,39 +2,64 @@
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	dpWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 )
 
+var (
+	fInputCertPath string
+	fInputKeyPath  string
+	fUrl           string
+)
+
+func init() {
+	argsPrefix := "CERTIMATE_DEPLOYER_WEBHOOK_"
+
+	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
+	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
+	flag.StringVar(&fUrl, argsPrefix+"URL", "", "")
+}
+
 /*
 Shell command to run this test:
 
-	CERTIMATE_DEPLOYER_WEBHOOK_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url" \
-	go test -v -run TestDeploy webhook_test.go
+	go test -v webhook_test.go -args \
+	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url"
 */
-func TestDeploy(t *testing.T) {
-	envPrefix := "CERTIMATE_DEPLOYER_WEBHOOK_"
-	tInputCertData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTCERTPATH"))
-	tInputKeyData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTKEYPATH"))
-	tUrl := os.Getenv(envPrefix + "URL")
+func Test(t *testing.T) {
+	flag.Parse()
 
-	deployer, err := dpWebhook.New(&dpWebhook.WebhookDeployerConfig{
-		Url: tUrl,
+	t.Run("Notify", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
+			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
+			fmt.Sprintf("URL: %v", fUrl),
+		}, "\n"))
+
+		deployer, err := dpWebhook.New(&dpWebhook.WebhookDeployerConfig{
+			Url: fUrl,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		fInputCertData, _ := os.ReadFile(fInputCertPath)
+		fInputKeyData, _ := os.ReadFile(fInputKeyPath)
+		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		t.Logf("ok: %v", res)
 	})
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	res, err := deployer.Deploy(context.Background(), string(tInputCertData), string(tInputKeyData))
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	t.Logf("ok: %v", res)
 }

@@ -2,118 +2,185 @@
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	dLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 )
 
-/*
-Shell command to run this test:
+var (
+	fInputCertPath  string
+	fInputKeyPath   string
+	fOutputCertPath string
+	fOutputKeyPath  string
+	fPfxPassword    string
+	fJksAlias       string
+	fJksKeypass     string
+	fJksStorepass   string
+)
 
-	CERTIMATE_DEPLOYER_LOCAL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_OUTPUTCERTPATH="/path/to/your-output-cert.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_OUTPUTKEYPATH="/path/to/your-output-key.pem" \
-	go test -v -run TestDeploy local_test.go
-*/
-func TestDeploy(t *testing.T) {
-	envPrefix := "CERTIMATE_DEPLOYER_LOCAL_"
-	tInputCertData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTCERTPATH"))
-	tInputKeyData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTKEYPATH"))
-	tOutputCertPath := os.Getenv(envPrefix + "OUTPUTCERTPATH")
-	tOutputKeyPath := os.Getenv(envPrefix + "OUTPUTKEYPATH")
+func init() {
+	argsPrefix := "CERTIMATE_DEPLOYER_LOCAL_"
 
-	deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
-		OutputCertPath: tOutputCertPath,
-		OutputKeyPath:  tOutputKeyPath,
-	})
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	res, err := deployer.Deploy(context.Background(), string(tInputCertData), string(tInputKeyData))
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	t.Logf("ok: %v", res)
+	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
+	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
+	flag.StringVar(&fOutputCertPath, argsPrefix+"OUTPUTCERTPATH", "", "")
+	flag.StringVar(&fOutputKeyPath, argsPrefix+"OUTPUTKEYPATH", "", "")
+	flag.StringVar(&fPfxPassword, argsPrefix+"PFXPASSWORD", "", "")
+	flag.StringVar(&fJksAlias, argsPrefix+"JKSALIAS", "", "")
+	flag.StringVar(&fJksKeypass, argsPrefix+"JKSKEYPASS", "", "")
+	flag.StringVar(&fJksStorepass, argsPrefix+"JKSSTOREPASS", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	CERTIMATE_DEPLOYER_LOCAL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_OUTPUTCERTPATH="/path/to/your-output-cert.pem" \
-	CERTIMATE_DEPLOYER_LOCAL_PFXPASSWORD="your-pfx-password" \
-	go test -v -run TestDeploy_PFX local_test.go
+	go test -v local_test.go -args \
+	--CERTIMATE_DEPLOYER_LOCAL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_LOCAL_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_LOCAL_OUTPUTCERTPATH="/path/to/your-output-cert" \
+	--CERTIMATE_DEPLOYER_LOCAL_OUTPUTKEYPATH="/path/to/your-output-key" \
+	--CERTIMATE_DEPLOYER_LOCAL_PFXPASSWORD="your-pfx-password" \
+	--CERTIMATE_DEPLOYER_LOCAL_JKSALIAS="your-jks-alias" \
+	--CERTIMATE_DEPLOYER_LOCAL_JKSKEYPASS="your-jks-keypass" \
+	--CERTIMATE_DEPLOYER_LOCAL_JKSSTOREPASS="your-jks-storepass"
 */
-func TestDeploy_PFX(t *testing.T) {
-	envPrefix := "CERTIMATE_DEPLOYER_LOCAL_"
-	tInputCertData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTCERTPATH"))
-	tInputKeyData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTKEYPATH"))
-	tOutputCertPath := os.Getenv(envPrefix + "OUTPUTCERTPATH")
-	tPfxPassword := os.Getenv(envPrefix + "PFXPASSWORD")
+func Test(t *testing.T) {
+	flag.Parse()
 
-	deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
-		OutputFormat:   dLocal.OUTPUT_FORMAT_PFX,
-		OutputCertPath: tOutputCertPath,
-		PfxPassword:    tPfxPassword,
+	t.Run("Deploy_PEM", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
+			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
+			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
+			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
+		}, "\n"))
+
+		deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
+			OutputCertPath: fOutputCertPath,
+			OutputKeyPath:  fOutputKeyPath,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		fInputCertData, _ := os.ReadFile(fInputCertPath)
+		fInputKeyData, _ := os.ReadFile(fInputKeyPath)
+		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		fstat1, err := os.Stat(fOutputCertPath)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		} else if fstat1.Size() == 0 {
+			t.Errorf("err: empty output certificate file")
+			return
+		}
+
+		fstat2, err := os.Stat(fOutputKeyPath)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		} else if fstat2.Size() == 0 {
+			t.Errorf("err: empty output private key file")
+			return
+		}
+
+		t.Logf("ok: %v", res)
 	})
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
 
-	res, err := deployer.Deploy(context.Background(), string(tInputCertData), string(tInputKeyData))
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
+	t.Run("Deploy_PFX", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
+			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
+			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
+			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
+			fmt.Sprintf("PFXPASSWORD: %v", fPfxPassword),
+		}, "\n"))
 
-	t.Logf("ok: %v", res)
-}
+		deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
+			OutputFormat:   dLocal.OUTPUT_FORMAT_PFX,
+			OutputCertPath: fOutputCertPath,
+			OutputKeyPath:  fOutputKeyPath,
+			PfxPassword:    fPfxPassword,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
 
-/*
-Shell command to run this test:
+		fInputCertData, _ := os.ReadFile(fInputCertPath)
+		fInputKeyData, _ := os.ReadFile(fInputKeyPath)
+		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
 
-		CERTIMATE_DEPLOYER_LOCAL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-		CERTIMATE_DEPLOYER_LOCAL_INPUTKEYPATH="/path/to/your-input-key.pem" \
-		CERTIMATE_DEPLOYER_LOCAL_OUTPUTCERTPATH="/path/to/your-output-cert.pem" \
-		CERTIMATE_DEPLOYER_LOCAL_JKSALIAS="your-jks-alias" \
-	  CERTIMATE_DEPLOYER_LOCAL_JKSKEYPASS="your-jks-keypass" \
-	  CERTIMATE_DEPLOYER_LOCAL_JKSSTOREPASS="your-jks-storepass" \
-		go test -v -run TestDeploy_JKS local_test.go
-*/
-func TestDeploy_JKS(t *testing.T) {
-	envPrefix := "CERTIMATE_DEPLOYER_LOCAL_"
-	tInputCertData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTCERTPATH"))
-	tInputKeyData, _ := os.ReadFile(os.Getenv(envPrefix + "INPUTKEYPATH"))
-	tOutputCertPath := os.Getenv(envPrefix + "OUTPUTCERTPATH")
-	tJksAlias := os.Getenv(envPrefix + "JKSALIAS")
-	tJksKeypass := os.Getenv(envPrefix + "JKSKEYPASS")
-	tJksStorepass := os.Getenv(envPrefix + "JKSSTOREPASS")
+		fstat, err := os.Stat(fOutputCertPath)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		} else if fstat.Size() == 0 {
+			t.Errorf("err: empty output certificate file")
+			return
+		}
 
-	deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
-		OutputFormat:   dLocal.OUTPUT_FORMAT_JKS,
-		OutputCertPath: tOutputCertPath,
-		JksAlias:       tJksAlias,
-		JksKeypass:     tJksKeypass,
-		JksStorepass:   tJksStorepass,
+		t.Logf("ok: %v", res)
 	})
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
 
-	res, err := deployer.Deploy(context.Background(), string(tInputCertData), string(tInputKeyData))
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
+	t.Run("Deploy_JKS", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
+			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
+			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
+			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
+			fmt.Sprintf("JKSALIAS: %v", fJksAlias),
+			fmt.Sprintf("JKSKEYPASS: %v", fJksKeypass),
+			fmt.Sprintf("JKSSTOREPASS: %v", fJksStorepass),
+		}, "\n"))
 
-	t.Logf("ok: %v", res)
+		deployer, err := dLocal.New(&dLocal.LocalDeployerConfig{
+			OutputFormat:   dLocal.OUTPUT_FORMAT_JKS,
+			OutputCertPath: fOutputCertPath,
+			OutputKeyPath:  fOutputKeyPath,
+			JksAlias:       fJksAlias,
+			JksKeypass:     fJksKeypass,
+			JksStorepass:   fJksStorepass,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		fInputCertData, _ := os.ReadFile(fInputCertPath)
+		fInputKeyData, _ := os.ReadFile(fInputKeyPath)
+		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		fstat, err := os.Stat(fOutputCertPath)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		} else if fstat.Size() == 0 {
+			t.Errorf("err: empty output certificate file")
+			return
+		}
+
+		t.Logf("ok: %v", res)
+	})
 }

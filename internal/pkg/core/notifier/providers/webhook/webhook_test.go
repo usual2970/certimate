@@ -2,40 +2,56 @@
 
 import (
 	"context"
-	"os"
+	"flag"
+	"fmt"
+	"strings"
 	"testing"
 
 	npWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 )
 
 const (
-	MockSubject = "test_subject"
-	MockMessage = "test_message"
+	mockSubject = "test_subject"
+	mockMessage = "test_message"
 )
+
+var fUrl string
+
+func init() {
+	argsPrefix := "CERTIMATE_NOTIFIER_WEBHOOK_"
+
+	flag.StringVar(&fUrl, argsPrefix+"URL", "", "")
+}
 
 /*
 Shell command to run this test:
 
-	CERTIMATE_NOTIFIER_WEBHOOK_URL="https://example.com/your-webhook-url" \
-	go test -v -run TestNotify webhook_test.go
+	go test -v webhook_test.go -args \
+	--CERTIMATE_NOTIFIER_WEBHOOK_URL="https://example.com/your-webhook-url"
 */
-func TestNotify(t *testing.T) {
-	envPrefix := "CERTIMATE_NOTIFIER_WEBHOOK_"
-	tUrl := os.Getenv(envPrefix + "URL")
+func Test(t *testing.T) {
+	flag.Parse()
 
-	notifier, err := npWebhook.New(&npWebhook.WebhookNotifierConfig{
-		Url: tUrl,
+	t.Run("Notify", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("URL: %v", fUrl),
+		}, "\n"))
+
+		notifier, err := npWebhook.New(&npWebhook.WebhookNotifierConfig{
+			Url: fUrl,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		res, err := notifier.Notify(context.Background(), mockSubject, mockMessage)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		t.Logf("ok: %v", res)
 	})
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	res, err := notifier.Notify(context.Background(), MockSubject, MockMessage)
-	if err != nil {
-		t.Errorf("err: %+v", err)
-		panic(err)
-	}
-
-	t.Logf("ok: %v", res)
 }
