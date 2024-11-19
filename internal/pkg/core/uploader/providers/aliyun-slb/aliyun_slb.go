@@ -121,11 +121,6 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Cl
 		region = "cn-hangzhou" // SLB 服务默认区域：华东一杭州
 	}
 
-	aConfig := &aliyunOpen.Config{
-		AccessKeyId:     tea.String(accessKeyId),
-		AccessKeySecret: tea.String(accessKeySecret),
-	}
-
 	var endpoint string
 	switch region {
 	case
@@ -137,9 +132,14 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Cl
 	default:
 		endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
 	}
-	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := aliyunSlb.NewClient(aConfig)
+	config := &aliyunOpen.Config{
+		Endpoint:        tea.String(endpoint),
+		AccessKeyId:     tea.String(accessKeyId),
+		AccessKeySecret: tea.String(accessKeySecret),
+	}
+
+	client, err := aliyunSlb.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

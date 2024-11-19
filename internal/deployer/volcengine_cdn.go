@@ -29,7 +29,7 @@ func NewVolcengineCDNDeployer(option *DeployerOption) (Deployer, error) {
 	client := cdn.NewInstance()
 	client.Client.SetAccessKey(access.AccessKeyID)
 	client.Client.SetSecretKey(access.SecretAccessKey)
-	uploader, err := volcenginecdn.New(&volcenginecdn.VolcengineCDNUploaderConfig{
+	uploader, err := volcenginecdn.New(&volcenginecdn.VolcEngineCDNUploaderConfig{
 		AccessKeyId:     access.AccessKeyID,
 		AccessKeySecret: access.SecretAccessKey,
 	})

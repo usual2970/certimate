@@ -83,13 +83,13 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	switch d.config.OutputFormat {
 	case "", OUTPUT_FORMAT_PEM:
 		if err := fs.WriteFileString(d.config.OutputCertPath, certPem); err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 
 		d.logger.Appendt("certificate file saved")
 
 		if err := fs.WriteFileString(d.config.OutputKeyPath, privkeyPem); err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to save private key file")
 		}
 
 		d.logger.Appendt("private key file saved")
@@ -97,13 +97,13 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	case OUTPUT_FORMAT_PFX:
 		pfxData, err := x509.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
 		if err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
 
 		d.logger.Appendt("certificate transformed to PFX")
 
 		if err := fs.WriteFile(d.config.OutputCertPath, pfxData); err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 
 		d.logger.Appendt("certificate file saved")
@@ -111,13 +111,13 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	case OUTPUT_FORMAT_JKS:
 		jksData, err := x509.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}
 
 		d.logger.Appendt("certificate transformed to JKS")
 
 		if err := fs.WriteFile(d.config.OutputCertPath, jksData); err != nil {
-			return nil, err
+			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 
 		d.logger.Appendt("certificate file uploaded")

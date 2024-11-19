@@ -33,7 +33,7 @@ func NewVolcengineLiveDeployer(option *DeployerOption) (Deployer, error) {
 		AccessKeyID:     access.AccessKeyID,
 		SecretAccessKey: access.SecretAccessKey,
 	})
-	uploader, err := volcenginelive.New(&volcenginelive.VolcengineLiveUploaderConfig{
+	uploader, err := volcenginelive.New(&volcenginelive.VolcEngineLiveUploaderConfig{
 		AccessKeyId:     access.AccessKeyID,
 		AccessKeySecret: access.SecretAccessKey,
 	})

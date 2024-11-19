@@ -58,7 +58,7 @@ type webhookData struct {
 func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Wrap(err, "failed to parse x509")
 	}
 
 	data := &webhookData{
