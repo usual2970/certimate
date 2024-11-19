@@ -117,7 +117,7 @@ const Access = () => {
                     className="flex flex-col sm:flex-row text-secondary-foreground border-b dark:border-stone-500 sm:p-2 hover:bg-muted/50 text-sm"
                     key={access.id}
                   >
-                    <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-start">
+                    <div className="sm:w-48 w-full pt-1 sm:pt-0 flex items-center">
                       <div className="pr-3  truncate">{access.name}</div>
                     </div>
                     <div className="sm:w-48 w-full pt-1 sm:pt-0 flex  items-center space-x-2">
