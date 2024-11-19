@@ -34,7 +34,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v webhook_test.go -args \
+	go test -v k8s_secret_test.go -args \
 	--CERTIMATE_DEPLOYER_K8SSECRET_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_NAMESPACE="default" \
