@@ -9,7 +9,7 @@ const (
 	WorkflowNodeTypeStart     = "start"
 	WorkflowNodeTypeEnd       = "end"
 	WorkflowNodeTypeApply     = "apply"
-	WorkflowNodeTypeDeply     = "deploy"
+	WorkflowNodeTypeDeploy    = "deploy"
 	WorkflowNodeTypeNotify    = "notify"
 	WorkflowNodeTypeBranch    = "branch"
 	WorkflowNodeTypeCondition = "condition"

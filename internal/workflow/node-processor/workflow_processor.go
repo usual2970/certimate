@@ -50,6 +50,7 @@ func (w *workflowProcessor) runNode(ctx context.Context, node *domain.WorkflowNo
 				return err
 			}
 		}
+		current = current.Next
 
 	}
 	return nil

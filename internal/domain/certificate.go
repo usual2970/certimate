@@ -11,7 +11,9 @@ type Certificate struct {
 	CertUrl           string    `json:"certUrl"`
 	CertStableUrl     string    `json:"certStableUrl"`
 	Output            string    `json:"output"`
+	Workflow          string    `json:"workflow"`
 	ExpireAt          time.Time `json:"ExpireAt"`
+	NodeId            string    `json:"nodeId"`
 }
 
 type MetaData struct {

@@ -16,7 +16,7 @@ import (
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
-	"github.com/usual2970/certimate/internal/utils/app"
+	"github.com/usual2970/certimate/internal/repository"
 )
 
 const (
@@ -49,7 +49,7 @@ type DeployerOption struct {
 	DomainId     string                `json:"domainId"`
 	Domain       string                `json:"domain"`
 	Access       string                `json:"access"`
-	AccessRecord *models.Record        `json:"-"`
+	AccessRecord *domain.Access        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
 	Certificate  applicant.Certificate `json:"certificate"`
 	Variables    map[string]string     `json:"variables"`
@@ -90,16 +90,21 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 	return rs, nil
 }
 
+func GetWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
+	return getWithTypeAndOption(deployType, option)
+}
+
 func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
-	access, err := app.GetApp().Dao().FindRecordById("access", deployConfig.Access)
+	accessRepo := repository.NewAccessRepository()
+	access, err := accessRepo.GetById(context.Background(), deployConfig.Access)
 	if err != nil {
-		return nil, fmt.Errorf("access record not found: %w", err)
+		return nil, fmt.Errorf("获取access失败:%w", err)
 	}
 
 	option := &DeployerOption{
 		DomainId:     record.Id,
 		Domain:       record.GetString("domain"),
-		Access:       access.GetString("config"),
+		Access:       access.Config,
 		AccessRecord: access,
 		DeployConfig: deployConfig,
 	}
@@ -112,7 +117,11 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		}
 	}
 
-	switch deployConfig.Type {
+	return getWithTypeAndOption(deployConfig.Type, option)
+}
+
+func getWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
+	switch deployType {
 	case targetAliyunOSS:
 		return NewAliyunOSSDeployer(option)
 	case targetAliyunCDN:

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/utils/xtime"
 )
 
 type RunLog struct {
@@ -23,7 +24,7 @@ type RunLogOutput struct {
 type NodeProcessor interface {
 	Run(ctx context.Context) error
 	Log(ctx context.Context) *RunLog
-	AddOutput(ctx context.Context, time, title, content string, err ...string)
+	AddOutput(ctx context.Context, title, content string, err ...string)
 }
 
 type Logger struct {
@@ -43,9 +44,9 @@ func (l *Logger) Log(ctx context.Context) *RunLog {
 	return l.log
 }
 
-func (l *Logger) AddOutput(ctx context.Context, time, title, content string, err ...string) {
+func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...string) {
 	output := RunLogOutput{
-		Time:    time,
+		Time:    xtime.BeijingTimeStr(),
 		Title:   title,
 		Content: content,
 	}
@@ -64,6 +65,10 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 		return NewConditionNode(node), nil
 	case domain.WorkflowNodeTypeApply:
 		return NewApplyNode(node), nil
+	case domain.WorkflowNodeTypeDeploy:
+		return NewDeployNode(node), nil
+	case domain.WorkflowNodeTypeNotify:
+		return NewNotifyNode(node), nil
 	}
 	return nil, errors.New("not implemented")
 }

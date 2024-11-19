@@ -11,6 +11,16 @@ type Access struct {
 	Usage      string    `json:"usage"`
 }
 
+// 兼容一下原 pocketbase 的 record
+func (a *Access) GetString(key string) string {
+	switch key {
+	case "name":
+		return a.Name
+	default:
+		return ""
+	}
+}
+
 type AliyunAccess struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
