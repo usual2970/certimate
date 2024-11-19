@@ -22,7 +22,7 @@ func GetValueAsString(dict map[string]any, key string) string {
 //   - defaultValue: 默认值。
 //
 // 出参：
-//   - 字典中键对应的值。如果指定键不存在或者值的类型不是字符串，则返回默认值。
+//   - 字典中键对应的值。如果指定键不存在、值的类型不是字符串或者值为零值，则返回默认值。
 func GetValueOrDefaultAsString(dict map[string]any, key string, defaultValue string) string {
 	if dict == nil {
 		return defaultValue
@@ -30,7 +30,9 @@ func GetValueOrDefaultAsString(dict map[string]any, key string, defaultValue str
 
 	if value, ok := dict[key]; ok {
 		if result, ok := value.(string); ok {
-			return result
+			if result != "" {
+				return result
+			}
 		}
 	}
 
@@ -57,7 +59,7 @@ func GetValueAsInt32(dict map[string]any, key string) int32 {
 //   - defaultValue: 默认值。
 //
 // 出参：
-//   - 字典中键对应的值。如果指定键不存在或者值的类型不是 32 位整数，则返回默认值。
+//   - 字典中键对应的值。如果指定键不存在、值的类型不是 32 位整数或者值为零值，则返回默认值。
 func GetValueOrDefaultAsInt32(dict map[string]any, key string, defaultValue int32) int32 {
 	if dict == nil {
 		return defaultValue
@@ -65,13 +67,17 @@ func GetValueOrDefaultAsInt32(dict map[string]any, key string, defaultValue int3
 
 	if value, ok := dict[key]; ok {
 		if result, ok := value.(int32); ok {
-			return result
+			if result != 0 {
+				return result
+			}
 		}
 
 		// 兼容字符串类型的值
 		if str, ok := value.(string); ok {
 			if result, err := strconv.ParseInt(str, 10, 32); err == nil {
-				return int32(result)
+				if result != 0 {
+					return int32(result)
+				}
 			}
 		}
 	}
@@ -99,7 +105,7 @@ func GetValueAsInt64(dict map[string]any, key string) int64 {
 //   - defaultValue: 默认值。
 //
 // 出参：
-//   - 字典中键对应的值。如果指定键不存在或者值的类型不是 64 位整数，则返回默认值。
+//   - 字典中键对应的值。如果指定键不存在、值的类型不是 64 位整数或者值为零值，则返回默认值。
 func GetValueOrDefaultAsInt64(dict map[string]any, key string, defaultValue int64) int64 {
 	if dict == nil {
 		return defaultValue
@@ -107,13 +113,17 @@ func GetValueOrDefaultAsInt64(dict map[string]any, key string, defaultValue int6
 
 	if value, ok := dict[key]; ok {
 		if result, ok := value.(int64); ok {
-			return result
+			if result != 0 {
+				return result
+			}
 		}
 
 		// 兼容字符串类型的值
 		if str, ok := value.(string); ok {
 			if result, err := strconv.ParseInt(str, 10, 64); err == nil {
-				return result
+				if result != 0 {
+					return result
+				}
 			}
 		}
 	}
