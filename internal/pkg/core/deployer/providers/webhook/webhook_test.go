@@ -36,7 +36,7 @@ Shell command to run this test:
 func Test(t *testing.T) {
 	flag.Parse()
 
-	t.Run("Notify", func(t *testing.T) {
+	t.Run("Deploy", func(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
