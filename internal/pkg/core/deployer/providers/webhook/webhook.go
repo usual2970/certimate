@@ -77,5 +77,9 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 
 	d.logger.Appendt("Webhook Response", string(resp))
 
-	return &deployer.DeployResult{}, nil
+	return &deployer.DeployResult{
+		DeploymentData: map[string]any{
+			"responseText": string(resp),
+		},
+	}, nil
 }
