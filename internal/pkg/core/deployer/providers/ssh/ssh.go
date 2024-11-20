@@ -18,10 +18,10 @@ import (
 
 type SshDeployerConfig struct {
 	// SSH 主机。
-	// 空值时默认为 "localhost"。
+	// 零值时默认为 "localhost"。
 	SshHost string `json:"sshHost,omitempty"`
 	// SSH 端口。
-	// 空值时默认为 22。
+	// 零值时默认为 22。
 	SshPort int32 `json:"sshPort,omitempty"`
 	// SSH 登录用户名。
 	SshUsername string `json:"sshUsername,omitempty"`
@@ -36,7 +36,6 @@ type SshDeployerConfig struct {
 	// 后置命令。
 	PostCommand string `json:"postCommand,omitempty"`
 	// 输出证书格式。
-	// 空值时默认为 [OUTPUT_FORMAT_PEM]。
 	OutputFormat OutputFormatType `json:"outputFormat,omitempty"`
 	// 输出证书文件路径。
 	OutputCertPath string `json:"outputCertPath,omitempty"`
@@ -60,6 +59,8 @@ type SshDeployer struct {
 	config *SshDeployerConfig
 	logger deployer.Logger
 }
+
+var _ deployer.Deployer = (*SshDeployer)(nil)
 
 func New(config *SshDeployerConfig) (*SshDeployer, error) {
 	return NewWithLogger(config, deployer.NewNilLogger())
@@ -109,7 +110,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 
 	// 上传证书和私钥文件
 	switch d.config.OutputFormat {
-	case "", OUTPUT_FORMAT_PEM:
+	case OUTPUT_FORMAT_PEM:
 		if err := writeSftpFileString(client, d.config.OutputCertPath, certPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to upload certificate file")
 		}

@@ -17,14 +17,13 @@ import (
 
 type LocalDeployerConfig struct {
 	// Shell 执行环境。
-	// 空值时默认根据操作系统决定。
+	// 零值时默认根据操作系统决定。
 	ShellEnv ShellEnvType `json:"shellEnv,omitempty"`
 	// 前置命令。
 	PreCommand string `json:"preCommand,omitempty"`
 	// 后置命令。
 	PostCommand string `json:"postCommand,omitempty"`
 	// 输出证书格式。
-	// 空值时默认为 [OUTPUT_FORMAT_PEM]。
 	OutputFormat OutputFormatType `json:"outputFormat,omitempty"`
 	// 输出证书文件路径。
 	OutputCertPath string `json:"outputCertPath,omitempty"`
@@ -48,6 +47,8 @@ type LocalDeployer struct {
 	config *LocalDeployerConfig
 	logger deployer.Logger
 }
+
+var _ deployer.Deployer = (*LocalDeployer)(nil)
 
 func New(config *LocalDeployerConfig) (*LocalDeployer, error) {
 	return NewWithLogger(config, deployer.NewNilLogger())
@@ -81,7 +82,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 
 	// 写入证书和私钥文件
 	switch d.config.OutputFormat {
-	case "", OUTPUT_FORMAT_PEM:
+	case OUTPUT_FORMAT_PEM:
 		if err := fs.WriteFileString(d.config.OutputCertPath, certPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}

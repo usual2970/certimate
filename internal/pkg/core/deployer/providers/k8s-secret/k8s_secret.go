@@ -34,6 +34,8 @@ type K8sSecretDeployer struct {
 	logger deployer.Logger
 }
 
+var _ deployer.Deployer = (*K8sSecretDeployer)(nil)
+
 func New(config *K8sSecretDeployerConfig) (*K8sSecretDeployer, error) {
 	return NewWithLogger(config, deployer.NewNilLogger())
 }
