@@ -34,7 +34,7 @@ type HuaweiCloudELBDeployerConfig struct {
 	// 证书 ID。
 	// 部署资源类型为 [DEPLOY_RESOURCE_CERTIFICATE] 时必填。
 	CertificateId string `json:"certificateId,omitempty"`
-	// 负载均衡实例 ID。
+	// 负载均衡器 ID。
 	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER] 时必填。
 	LoadbalancerId string `json:"loadbalancerId,omitempty"`
 	// 负载均衡监听 ID。

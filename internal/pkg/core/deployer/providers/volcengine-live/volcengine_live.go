@@ -17,9 +17,9 @@ import (
 
 type VolcEngineLiveDeployerConfig struct {
 	// 火山引擎 AccessKey。
-	AccessKey string `json:"accessKeyId"`
+	AccessKey string `json:"accessKey"`
 	// 火山引擎 SecretKey。
-	SecretKey string `json:"secretAccessKey"`
+	SecretKey string `json:"secretKey"`
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
