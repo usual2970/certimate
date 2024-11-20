@@ -30,11 +30,11 @@ func NewVolcengineLiveDeployer(option *DeployerOption) (Deployer, error) {
 	}
 	client := live.NewInstance()
 	client.SetCredential(base.Credentials{
-		AccessKeyID:     access.AccessKeyID,
+		AccessKeyID:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
 	})
 	uploader, err := volcenginelive.New(&volcenginelive.VolcEngineLiveUploaderConfig{
-		AccessKeyId:     access.AccessKeyID,
+		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.SecretAccessKey,
 	})
 	if err != nil {

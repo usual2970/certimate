@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 )
 
 var (
@@ -44,7 +44,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("URL: %v", fUrl),
 		}, "\n"))
 
-		deployer, err := dpWebhook.New(&dpWebhook.WebhookDeployerConfig{
+		deployer, err := provider.New(&provider.WebhookDeployerConfig{
 			Url: fUrl,
 		})
 		if err != nil {

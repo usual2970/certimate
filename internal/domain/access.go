@@ -62,7 +62,12 @@ type PdnsAccess struct {
 }
 
 type VolcengineAccess struct {
-	AccessKeyID     string `json:"accessKeyId"`
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+
+	// Deprecated: Use [AccessKey] and [SecretKey] instead in the future
+	AccessKeyId string `json:"accessKeyId"`
+	// Deprecated: Use [AccessKey] and [SecretKey] instead in the future
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 

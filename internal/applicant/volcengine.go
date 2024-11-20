@@ -23,7 +23,7 @@ func (a *volcengine) Apply() (*Certificate, error) {
 	access := &domain.VolcengineAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("VOLC_ACCESSKEY", access.AccessKeyID)
+	os.Setenv("VOLC_ACCESSKEY", access.AccessKeyId)
 	os.Setenv("VOLC_SECRETKEY", access.SecretAccessKey)
 	os.Setenv("VOLC_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
 	dnsProvider, err := volcengineDns.NewDNSProvider()

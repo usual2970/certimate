@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	npWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 )
 
 const (
@@ -38,7 +38,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("URL: %v", fUrl),
 		}, "\n"))
 
-		notifier, err := npWebhook.New(&npWebhook.WebhookNotifierConfig{
+		notifier, err := provider.New(&provider.WebhookNotifierConfig{
 			Url: fUrl,
 		})
 		if err != nil {

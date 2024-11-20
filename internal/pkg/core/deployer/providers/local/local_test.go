@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 )
 
 var (
@@ -60,7 +60,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
 		}, "\n"))
 
-		deployer, err := dpLocal.New(&dpLocal.LocalDeployerConfig{
+		deployer, err := provider.New(&provider.LocalDeployerConfig{
 			OutputCertPath: fOutputCertPath,
 			OutputKeyPath:  fOutputKeyPath,
 		})
@@ -108,8 +108,8 @@ func Test(t *testing.T) {
 			fmt.Sprintf("PFXPASSWORD: %v", fPfxPassword),
 		}, "\n"))
 
-		deployer, err := dpLocal.New(&dpLocal.LocalDeployerConfig{
-			OutputFormat:   dpLocal.OUTPUT_FORMAT_PFX,
+		deployer, err := provider.New(&provider.LocalDeployerConfig{
+			OutputFormat:   provider.OUTPUT_FORMAT_PFX,
 			OutputCertPath: fOutputCertPath,
 			OutputKeyPath:  fOutputKeyPath,
 			PfxPassword:    fPfxPassword,
@@ -151,8 +151,8 @@ func Test(t *testing.T) {
 			fmt.Sprintf("JKSSTOREPASS: %v", fJksStorepass),
 		}, "\n"))
 
-		deployer, err := dpLocal.New(&dpLocal.LocalDeployerConfig{
-			OutputFormat:   dpLocal.OUTPUT_FORMAT_JKS,
+		deployer, err := provider.New(&provider.LocalDeployerConfig{
+			OutputFormat:   provider.OUTPUT_FORMAT_JKS,
 			OutputCertPath: fOutputCertPath,
 			OutputKeyPath:  fOutputKeyPath,
 			JksAlias:       fJksAlias,

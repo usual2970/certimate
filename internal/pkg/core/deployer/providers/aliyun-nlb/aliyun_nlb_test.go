@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpAliyunClb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 )
 
 var (
@@ -59,11 +59,11 @@ func Test(t *testing.T) {
 			fmt.Sprintf("LOADBALANCERID: %v", fLoadbalancerId),
 		}, "\n"))
 
-		deployer, err := dpAliyunClb.New(&dpAliyunClb.AliyunNLBDeployerConfig{
+		deployer, err := provider.New(&provider.AliyunNLBDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			ResourceType:    dpAliyunClb.DEPLOY_RESOURCE_LOADBALANCER,
+			ResourceType:    provider.DEPLOY_RESOURCE_LOADBALANCER,
 			LoadbalancerId:  fLoadbalancerId,
 		})
 		if err != nil {
@@ -94,11 +94,11 @@ func Test(t *testing.T) {
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
 
-		deployer, err := dpAliyunClb.New(&dpAliyunClb.AliyunNLBDeployerConfig{
+		deployer, err := provider.New(&provider.AliyunNLBDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			ResourceType:    dpAliyunClb.DEPLOY_RESOURCE_LISTENER,
+			ResourceType:    provider.DEPLOY_RESOURCE_LISTENER,
 			ListenerId:      fListenerId,
 		})
 		if err != nil {

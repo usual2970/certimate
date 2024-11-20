@@ -13,7 +13,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	upAliyunCas "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	providerCas "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
 type AliyunNLBDeployerConfig struct {
@@ -71,7 +71,7 @@ func NewWithLogger(config *AliyunNLBDeployerConfig, logger deployer.Logger) (*Al
 			aliyunCasRegion = "cn-hangzhou"
 		}
 	}
-	uploader, err := upAliyunCas.New(&upAliyunCas.AliyunCASUploaderConfig{
+	uploader, err := providerCas.New(&providerCas.AliyunCASUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          aliyunCasRegion,

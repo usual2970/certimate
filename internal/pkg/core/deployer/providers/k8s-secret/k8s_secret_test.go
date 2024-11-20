@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 )
 
 var (
@@ -56,7 +56,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("SECRETDATAKEYFORKEY: %v", fSecretDataKeyForKey),
 		}, "\n"))
 
-		deployer, err := dpK8sSecret.New(&dpK8sSecret.K8sSecretDeployerConfig{
+		deployer, err := provider.New(&provider.K8sSecretDeployerConfig{
 			Namespace:           fNamespace,
 			SecretName:          fSecretName,
 			SecretDataKeyForCrt: fSecretDataKeyForCrt,

@@ -27,10 +27,10 @@ func NewVolcengineCDNDeployer(option *DeployerOption) (Deployer, error) {
 		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 	client := cdn.NewInstance()
-	client.Client.SetAccessKey(access.AccessKeyID)
+	client.Client.SetAccessKey(access.AccessKeyId)
 	client.Client.SetSecretKey(access.SecretAccessKey)
 	uploader, err := volcenginecdn.New(&volcenginecdn.VolcEngineCDNUploaderConfig{
-		AccessKeyId:     access.AccessKeyID,
+		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.SecretAccessKey,
 	})
 	if err != nil {

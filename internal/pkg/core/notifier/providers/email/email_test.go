@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	npEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 )
 
 const (
@@ -64,7 +64,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("RECEIVERADDRESS: %v", fReceiverAddress),
 		}, "\n"))
 
-		notifier, err := npEmail.New(&npEmail.EmailNotifierConfig{
+		notifier, err := provider.New(&provider.EmailNotifierConfig{
 			SmtpHost:        fSmtpHost,
 			SmtpPort:        int32(fSmtpPort),
 			SmtpTLS:         fSmtpTLS,

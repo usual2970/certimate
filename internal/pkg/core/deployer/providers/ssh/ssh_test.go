@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpSsh "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 )
 
 var (
@@ -64,7 +64,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
 		}, "\n"))
 
-		deployer, err := dpSsh.New(&dpSsh.SshDeployerConfig{
+		deployer, err := provider.New(&provider.SshDeployerConfig{
 			SshHost:        fSshHost,
 			SshPort:        int32(fSshPort),
 			SshUsername:    fSshUsername,

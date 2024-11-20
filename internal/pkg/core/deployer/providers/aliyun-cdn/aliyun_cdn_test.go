@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	dpAliyunCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 )
 
 var (
@@ -37,7 +37,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNCDN_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNCDN_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_ALIYUNCDN_DOMAIN="example.com" \
+	--CERTIMATE_DEPLOYER_ALIYUNCDN_DOMAIN="example.com"
 */
 func Test(t *testing.T) {
 	flag.Parse()
@@ -52,7 +52,7 @@ func Test(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := dpAliyunCdn.New(&dpAliyunCdn.AliyunCDNDeployerConfig{
+		deployer, err := provider.New(&provider.AliyunCDNDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Domain:          fDomain,
