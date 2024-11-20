@@ -7,12 +7,14 @@ import { useToast } from "@/components/ui/use-toast";
 import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEditDialog";
+import WorkflowLog from "@/components/workflow/WorkflowLog";
 
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
+import { cn } from "@/lib/utils";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { ArrowLeft } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useShallow } from "zustand/shallow";
@@ -30,11 +32,17 @@ const WorkflowDetail = () => {
 
   // 从 url 中获取 workflowId
   const [searchParams] = useSearchParams();
+  const [locId, setLocId] = useState<string>("");
   const id = searchParams.get("id");
+
+  const [tab, setTab] = useState("workflow");
 
   useEffect(() => {
     console.log(id);
     init(id ?? "");
+    if (id) {
+      setLocId(id);
+    }
   }, [id]);
 
   const navigate = useNavigate();
@@ -85,6 +93,13 @@ const WorkflowDetail = () => {
     save();
   };
 
+  const getTabCls = (tabName: string) => {
+    if (tab === tabName) {
+      return "text-primary border-primary";
+    }
+    return "border-transparent hover:text-primary hover:border-b-primary";
+  };
+
   return (
     <>
       <WorkflowProvider>
@@ -102,6 +117,26 @@ const WorkflowDetail = () => {
                 }
               />
             </div>
+
+            <div className="flex justify-between space-x-5 text-muted-foreground text-lg h-full">
+              <div
+                className={cn("h-full flex items-center cursor-pointer border-b-2", getTabCls("workflow"))}
+                onClick={() => {
+                  setTab("workflow");
+                }}
+              >
+                <div>流程</div>
+              </div>
+              <div
+                className={cn("h-full flex items-center cursor-pointer border-b-2", getTabCls("history"))}
+                onClick={() => {
+                  setTab("history");
+                }}
+              >
+                <div>历史</div>
+              </div>
+            </div>
+
             <div className="px-5 flex items-center space-x-3">
               <Show when={!!workflow.enabled}>
                 <Show when={!!workflow.hasDraft} fallback={<Button variant={"secondary"}>立即执行</Button>}>
@@ -114,8 +149,15 @@ const WorkflowDetail = () => {
               <Switch className="dark:data-[state=unchecked]:bg-stone-400" checked={workflow.enabled ?? false} onCheckedChange={handleEnableChange} />
             </div>
           </div>
+          <Show when={tab === "workflow"}>
+            <div className=" flex flex-col items-center mt-8">{elements}</div>
+          </Show>
 
-          <div className=" flex flex-col items-center mt-8">{elements}</div>
+          <Show when={!!locId && tab === "history"}>
+            <div className=" flex flex-col items-center mt-8">
+              <WorkflowLog />
+            </div>
+          </Show>
 
           <ScrollBar orientation="vertical" />
           <ScrollBar orientation="horizontal" />

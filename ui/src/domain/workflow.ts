@@ -3,6 +3,29 @@ import { nanoid } from "nanoid";
 import i18n from "@/i18n";
 import { deployTargets, KVType } from "./domain";
 
+export type WorkflowRunLog = {
+  id: string;
+  workflow: string;
+  log: WorkflowRunLogItem[];
+  error: string;
+  succeed: boolean;
+  created: string;
+  updated: string;
+};
+
+export type WorkflowRunLogItem = {
+  nodeName: string;
+  error: string;
+  outputs: WorkflowOutput[];
+};
+
+export type WorkflowOutput = {
+  time: string;
+  title: string;
+  content: string;
+  error: string;
+};
+
 export type Workflow = {
   id: string;
   name: string;
@@ -446,3 +469,4 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     },
   },
 ];
+

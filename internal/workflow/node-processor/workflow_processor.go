@@ -8,13 +8,18 @@ import (
 
 type workflowProcessor struct {
 	workflow *domain.Workflow
-	logs     []RunLog
+	logs     []domain.RunLog
 }
 
 func NewWorkflowProcessor(workflow *domain.Workflow) *workflowProcessor {
 	return &workflowProcessor{
 		workflow: workflow,
+		logs:     make([]domain.RunLog, 0),
 	}
+}
+
+func (w *workflowProcessor) Log(ctx context.Context) []domain.RunLog {
+	return w.logs
 }
 
 func (w *workflowProcessor) Run(ctx context.Context) error {

@@ -32,10 +32,6 @@ func (d *deployNode) Run(ctx context.Context) error {
 		d.AddOutput(ctx, d.node.Name, "查询部署记录失败", err.Error())
 		return err
 	}
-	if output != nil && output.Succeed {
-		d.AddOutput(ctx, d.node.Name, "已部署过")
-		return nil
-	}
 	// 获取部署对象
 	// 获取证书
 	certSource := d.node.GetConfigString("certificate")
@@ -50,6 +46,15 @@ func (d *deployNode) Run(ctx context.Context) error {
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取证书失败", err.Error())
 		return err
+	}
+
+	// 未部署过，开始部署
+	// 部署过但是证书更新了，重新部署
+	// 部署过且证书未更新，直接返回
+
+	if d.deployed(output) && cert.Created.Before(output.Updated) {
+		d.AddOutput(ctx, d.node.Name, "已部署过且证书未更新")
+		return nil
 	}
 
 	accessRepo := repository.NewAccessRepository()
@@ -86,11 +91,16 @@ func (d *deployNode) Run(ctx context.Context) error {
 	d.AddOutput(ctx, d.node.Name, "部署成功")
 
 	// 记录部署结果
+	outputId := ""
+	if output != nil {
+		outputId = output.Id
+	}
 	output = &domain.WorkflowOutput{
 		Workflow: GetWorkflowId(ctx),
 		NodeId:   d.node.Id,
 		Node:     d.node,
 		Succeed:  true,
+		Meta:     domain.Meta{Id: outputId},
 	}
 
 	if err := d.outputRepo.Save(ctx, output, nil, nil); err != nil {
@@ -101,4 +111,8 @@ func (d *deployNode) Run(ctx context.Context) error {
 	d.AddOutput(ctx, d.node.Name, "保存部署记录成功")
 
 	return nil
+}
+
+func (d *deployNode) deployed(output *domain.WorkflowOutput) bool {
+	return output != nil && output.Succeed
 }

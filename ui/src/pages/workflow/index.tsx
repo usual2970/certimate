@@ -185,6 +185,10 @@ const Workflow = () => {
   const handleCreateClick = () => {
     navigate("/workflow/detail");
   };
+
+  const handleRowClick = (id: string) => {
+    navigate(`/workflow/detail?id=${id}`);
+  };
   return (
     <>
       <div className="flex justify-between items-center">
@@ -196,7 +200,7 @@ const Workflow = () => {
       </div>
 
       <div>
-        <DataTable columns={columns} data={data} onPageChange={fetchData} pageCount={pageCount} />
+        <DataTable columns={columns} data={data} onPageChange={fetchData} pageCount={pageCount} onRowClick={handleRowClick} />
       </div>
 
       <CustomAlertDialog

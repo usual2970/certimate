@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/xtime"
 )
 
 type startNode struct {
@@ -21,7 +20,7 @@ func NewStartNode(node *domain.WorkflowNode) *startNode {
 
 // 开始节点没有任何操作
 func (s *startNode) Run(ctx context.Context) error {
-	s.AddOutput(ctx, xtime.BeijingTimeStr(),
+	s.AddOutput(ctx,
 		s.node.Name,
 		"完成",
 	)

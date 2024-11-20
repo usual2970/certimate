@@ -8,51 +8,38 @@ import (
 	"github.com/usual2970/certimate/internal/utils/xtime"
 )
 
-type RunLog struct {
-	NodeName string         `json:"node_name"`
-	Err      string         `json:"err"`
-	Outputs  []RunLogOutput `json:"outputs"`
-}
-
-type RunLogOutput struct {
-	Time    string `json:"time"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Error   string `json:"error"`
-}
-
 type NodeProcessor interface {
 	Run(ctx context.Context) error
-	Log(ctx context.Context) *RunLog
+	Log(ctx context.Context) *domain.RunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
 }
 
 type Logger struct {
-	log *RunLog
+	log *domain.RunLog
 }
 
 func NewLogger(node *domain.WorkflowNode) *Logger {
 	return &Logger{
-		log: &RunLog{
+		log: &domain.RunLog{
 			NodeName: node.Name,
-			Outputs:  make([]RunLogOutput, 0),
+			Outputs:  make([]domain.RunLogOutput, 0),
 		},
 	}
 }
 
-func (l *Logger) Log(ctx context.Context) *RunLog {
+func (l *Logger) Log(ctx context.Context) *domain.RunLog {
 	return l.log
 }
 
 func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...string) {
-	output := RunLogOutput{
+	output := domain.RunLogOutput{
 		Time:    xtime.BeijingTimeStr(),
 		Title:   title,
 		Content: content,
 	}
 	if len(err) > 0 {
 		output.Error = err[0]
-		l.log.Err = err[0]
+		l.log.Error = err[0]
 	}
 	l.log.Outputs = append(l.log.Outputs, output)
 }

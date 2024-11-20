@@ -11,6 +11,7 @@ import (
 
 type WorkflowRepository interface {
 	Get(ctx context.Context, id string) (*domain.Workflow, error)
+	SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error
 }
 
 type WorkflowService struct {
@@ -43,11 +44,29 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 
 	processor := nodeprocessor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
+		log := &domain.WorkflowRunLog{
+			Workflow: workflow.Id,
+			Log:      processor.Log(ctx),
+			Succeed:  false,
+			Error:    err.Error(),
+		}
+		if err := s.repo.SaveRunLog(ctx, log); err != nil {
+			app.GetApp().Logger().Error("failed to save run log", "err", err)
+		}
 		return fmt.Errorf("failed to run workflow: %w", err)
 	}
 
 	// 保存执行日志
-	
+
+	log := &domain.WorkflowRunLog{
+		Workflow: workflow.Id,
+		Log:      processor.Log(ctx),
+		Succeed:  true,
+	}
+	if err := s.repo.SaveRunLog(ctx, log); err != nil {
+		app.GetApp().Logger().Error("failed to save run log", "err", err)
+		return err
+	}
 
 	return nil
 }

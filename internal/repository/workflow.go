@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/app"
 )
@@ -13,6 +14,21 @@ type WorkflowRepository struct{}
 
 func NewWorkflowRepository() *WorkflowRepository {
 	return &WorkflowRepository{}
+}
+
+func (w *WorkflowRepository) SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error {
+	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run_log")
+	if err != nil {
+		return err
+	}
+	record := models.NewRecord(collection)
+
+	record.Set("workflow", log.Workflow)
+	record.Set("log", log.Log)
+	record.Set("succeed", log.Succeed)
+	record.Set("error", log.Error)
+
+	return app.GetApp().Dao().SaveRecord(record)
 }
 
 func (w *WorkflowRepository) Get(ctx context.Context, id string) (*domain.Workflow, error) {

@@ -3,22 +3,20 @@ import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, Paginati
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageCount: number;
   onPageChange?: (pageIndex: number, pageSize?: number) => Promise<void>;
+  onRowClick?: (id: string) => void;
 }
 
-export function DataTable<TData extends { id: string }, TValue>({ columns, data, onPageChange, pageCount }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { id: string }, TValue>({ columns, data, onPageChange, pageCount, onRowClick }: DataTableProps<TData, TValue>) {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
-
-  const navigate = useNavigate();
 
   const pagination = {
     pageIndex,
@@ -43,11 +41,11 @@ export function DataTable<TData extends { id: string }, TValue>({ columns, data,
   }, [pageIndex]);
 
   const handleRowClick = (id: string) => {
-    navigate(`/workflow/detail?id=${id}`);
+    onRowClick?.(id);
   };
 
   return (
-    <>
+    <div>
       <div className="rounded-md">
         <Table>
           <TableHeader>
@@ -88,14 +86,19 @@ export function DataTable<TData extends { id: string }, TValue>({ columns, data,
       </div>
       <div className="flex items-center justify-end mt-5">
         <div className="flex items-center space-x-2 dark:text-stone-200">
-          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            上一页
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            下一页
-          </Button>
+          {table.getCanPreviousPage() && (
+            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+              上一页
+            </Button>
+          )}
+
+          {table.getCanNextPage && (
+            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+              下一页
+            </Button>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -2,6 +2,8 @@ package domain
 
 import "time"
 
+var ValidityDuration = time.Hour * 24 * 10
+
 type Certificate struct {
 	Meta
 	SAN               string    `json:"san"`
