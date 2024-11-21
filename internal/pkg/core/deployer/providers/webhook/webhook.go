@@ -75,7 +75,7 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 		return nil, xerrors.Wrap(err, "failed to send webhook request")
 	}
 
-	d.logger.Appendt("Webhook Response", string(resp))
+	d.logger.Logt("Webhook Response", string(resp))
 
 	return &deployer.DeployResult{
 		DeploymentData: map[string]any{

@@ -71,7 +71,7 @@ func (d *BaiduCloudCDNDeployer) Deploy(ctx context.Context, certPem string, priv
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.PutCert'")
 	}
 
-	d.logger.Appendt("已修改域名证书", putCertResp)
+	d.logger.Logt("已修改域名证书", putCertResp)
 
 	return &deployer.DeployResult{}, nil
 }

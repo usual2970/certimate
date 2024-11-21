@@ -80,7 +80,7 @@ func (d *TencentCloudECDNDeployer) Deploy(ctx context.Context, certPem string, p
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 获取待部署的 CDN 实例
 	// 如果是泛域名，根据证书匹配 CDN 实例
@@ -97,7 +97,7 @@ func (d *TencentCloudECDNDeployer) Deploy(ctx context.Context, certPem string, p
 	}
 
 	if len(instanceIds) == 0 {
-		d.logger.Appendt("已部署过或没有要部署的 ECDN 实例")
+		d.logger.Logt("已部署过或没有要部署的 ECDN 实例")
 	} else {
 		// 证书部署到 ECDN 实例
 		// REF: https://cloud.tencent.com/document/product/400/91667
@@ -111,7 +111,7 @@ func (d *TencentCloudECDNDeployer) Deploy(ctx context.Context, certPem string, p
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 		}
 
-		d.logger.Appendt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
+		d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 	}
 
 	return &deployer.DeployResult{}, nil

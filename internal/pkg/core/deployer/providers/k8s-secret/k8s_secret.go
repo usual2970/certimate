@@ -111,7 +111,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to create k8s secret")
 		} else {
-			d.logger.Appendf("k8s secret created", secretPayload)
+			d.logger.Logf("k8s secret created", secretPayload)
 			return &deployer.DeployResult{}, nil
 		}
 	}
@@ -130,7 +130,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to update k8s secret")
 	}
 
-	d.logger.Appendf("k8s secret updated", secretPayload)
+	d.logger.Logf("k8s secret updated", secretPayload)
 
 	return &deployer.DeployResult{}, nil
 }

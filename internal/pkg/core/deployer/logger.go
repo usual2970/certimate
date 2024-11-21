@@ -15,7 +15,7 @@ type Logger interface {
 	// 入参：
 	//   - tag：标签。
 	//   - data：数据。
-	Appendt(tag string, data ...any)
+	Logt(tag string, data ...any)
 
 	// 追加一条日志记录。
 	// 该方法会将 `args` 以 `format` 格式化。
@@ -23,13 +23,13 @@ type Logger interface {
 	// 入参：
 	//   - format：格式化字符串。
 	//   - args：格式化参数。
-	Appendf(format string, args ...any)
+	Logf(format string, args ...any)
 
 	// 获取所有日志记录。
 	GetRecords() []string
 
-	// 清空。
-	Flush()
+	// 清空所有日志记录。
+	FlushRecords()
 }
 
 // 表示默认的日志记录器类型。
@@ -39,7 +39,7 @@ type DefaultLogger struct {
 
 var _ Logger = (*DefaultLogger)(nil)
 
-func (l *DefaultLogger) Appendt(tag string, data ...any) {
+func (l *DefaultLogger) Logt(tag string, data ...any) {
 	l.ensureInitialized()
 
 	temp := make([]string, len(data)+1)
@@ -69,7 +69,7 @@ func (l *DefaultLogger) Appendt(tag string, data ...any) {
 	l.records = append(l.records, strings.Join(temp, ": "))
 }
 
-func (l *DefaultLogger) Appendf(format string, args ...any) {
+func (l *DefaultLogger) Logf(format string, args ...any) {
 	l.ensureInitialized()
 
 	l.records = append(l.records, fmt.Sprintf(format, args...))
@@ -83,7 +83,7 @@ func (l *DefaultLogger) GetRecords() []string {
 	return temp
 }
 
-func (l *DefaultLogger) Flush() {
+func (l *DefaultLogger) FlushRecords() {
 	l.records = make([]string, 0)
 }
 
@@ -105,12 +105,12 @@ type NilLogger struct{}
 
 var _ Logger = (*NilLogger)(nil)
 
-func (l *NilLogger) Appendt(string, ...any) {}
-func (l *NilLogger) Appendf(string, ...any) {}
+func (l *NilLogger) Logt(string, ...any) {}
+func (l *NilLogger) Logf(string, ...any) {}
 func (l *NilLogger) GetRecords() []string {
 	return make([]string, 0)
 }
-func (l *NilLogger) Flush() {}
+func (l *NilLogger) FlushRecords() {}
 
 func NewNilLogger() *NilLogger {
 	return &NilLogger{}

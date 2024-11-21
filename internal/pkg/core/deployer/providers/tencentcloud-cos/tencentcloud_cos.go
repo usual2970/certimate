@@ -85,7 +85,7 @@ func (d *TencentCloudCOSDeployer) Deploy(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 证书部署到 COS 实例
 	// REF: https://cloud.tencent.com/document/product/400/91667
@@ -99,7 +99,7 @@ func (d *TencentCloudCOSDeployer) Deploy(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 	}
 
-	d.logger.Appendt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
+	d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 
 	return &deployer.DeployResult{}, nil
 }

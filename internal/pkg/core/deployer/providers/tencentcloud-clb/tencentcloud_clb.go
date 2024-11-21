@@ -91,7 +91,7 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -148,7 +148,7 @@ func (d *TencentCloudCLBDeployer) deployToInstanceUseSsl(ctx context.Context, cl
 		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 	}
 
-	d.logger.Appendt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
+	d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 
 	return nil
 }
@@ -179,7 +179,7 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 		}
 	}
 
-	d.logger.Appendt("已查询到负载均衡器下的监听器", listenerIds)
+	d.logger.Logt("已查询到负载均衡器下的监听器", listenerIds)
 
 	// 批量更新监听器证书
 	if len(listenerIds) > 0 {
@@ -241,7 +241,7 @@ func (d *TencentCloudCLBDeployer) deployToRuleDomain(ctx context.Context, cloudC
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyDomainAttributes'")
 	}
 
-	d.logger.Appendt("已修改七层监听器转发规则的域名级别属性", modifyDomainAttributesResp.Response)
+	d.logger.Logt("已修改七层监听器转发规则的域名级别属性", modifyDomainAttributesResp.Response)
 
 	return nil
 }
@@ -260,7 +260,7 @@ func (d *TencentCloudCLBDeployer) modifyListenerCertificate(ctx context.Context,
 		return errors.New("listener not found")
 	}
 
-	d.logger.Appendt("已查询到监听器属性", describeListenersResp.Response)
+	d.logger.Logt("已查询到监听器属性", describeListenersResp.Response)
 
 	// 修改监听器属性
 	// REF: https://cloud.tencent.com/document/product/214/30681
@@ -279,7 +279,7 @@ func (d *TencentCloudCLBDeployer) modifyListenerCertificate(ctx context.Context,
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyListener'")
 	}
 
-	d.logger.Appendt("已修改监听器属性", modifyListenerResp.Response)
+	d.logger.Logt("已修改监听器属性", modifyListenerResp.Response)
 
 	return nil
 }

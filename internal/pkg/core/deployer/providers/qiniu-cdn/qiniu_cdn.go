@@ -70,7 +70,7 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// "*.example.com" → ".example.com"，适配七牛云 CDN 要求的泛域名格式
 	domain := strings.TrimPrefix(d.config.Domain, "*")
@@ -82,7 +82,7 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDomainInfo'")
 	}
 
-	d.logger.Appendt("已获取域名信息", getDomainInfoResp)
+	d.logger.Logt("已获取域名信息", getDomainInfoResp)
 
 	// 判断域名是否已启用 HTTPS。如果已启用，修改域名证书；否则，启用 HTTPS
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
@@ -92,14 +92,14 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ModifyDomainHttpsConf'")
 		}
 
-		d.logger.Appendt("已修改域名证书", modifyDomainHttpsConfResp)
+		d.logger.Logt("已修改域名证书", modifyDomainHttpsConfResp)
 	} else {
 		enableDomainHttpsResp, err := d.sdkClient.EnableDomainHttps(domain, upres.CertId, true, true)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.EnableDomainHttps'")
 		}
 
-		d.logger.Appendt("已将域名升级为 HTTPS", enableDomainHttpsResp)
+		d.logger.Logt("已将域名升级为 HTTPS", enableDomainHttpsResp)
 	}
 
 	return &deployer.DeployResult{}, nil

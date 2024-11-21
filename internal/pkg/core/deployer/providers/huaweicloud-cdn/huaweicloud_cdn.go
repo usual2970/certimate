@@ -82,7 +82,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 查询加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/ShowDomainFullConfig.html
@@ -94,7 +94,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ShowDomainFullConfig'")
 	}
 
-	d.logger.Appendt("已查询到加速域名配置", showDomainFullConfigResp)
+	d.logger.Logt("已查询到加速域名配置", showDomainFullConfigResp)
 
 	// 更新加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/UpdateDomainMultiCertificates.html
@@ -116,7 +116,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadDomainMultiCertificatesEx'")
 	}
 
-	d.logger.Appendt("已更新加速域名配置", updateDomainMultiCertificatesResp)
+	d.logger.Logt("已更新加速域名配置", updateDomainMultiCertificatesResp)
 
 	return &deployer.DeployResult{}, nil
 }

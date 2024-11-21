@@ -96,7 +96,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 	}
 	defer client.Close()
 
-	d.logger.Appendt("SSH connected")
+	d.logger.Logt("SSH connected")
 
 	// 执行前置命令
 	if d.config.PreCommand != "" {
@@ -105,7 +105,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 			return nil, xerrors.Wrapf(err, "failed to run pre-command: stdout: %s, stderr: %s", stdout, stderr)
 		}
 
-		d.logger.Appendt("SSH pre-command executed", stdout)
+		d.logger.Logt("SSH pre-command executed", stdout)
 	}
 
 	// 上传证书和私钥文件
@@ -115,13 +115,13 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 			return nil, xerrors.Wrap(err, "failed to upload certificate file")
 		}
 
-		d.logger.Appendt("certificate file uploaded")
+		d.logger.Logt("certificate file uploaded")
 
 		if err := writeSftpFileString(client, d.config.OutputKeyPath, privkeyPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to upload private key file")
 		}
 
-		d.logger.Appendt("private key file uploaded")
+		d.logger.Logt("private key file uploaded")
 
 	case OUTPUT_FORMAT_PFX:
 		pfxData, err := x509.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
@@ -129,13 +129,13 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
 
-		d.logger.Appendt("certificate transformed to PFX")
+		d.logger.Logt("certificate transformed to PFX")
 
 		if err := writeSftpFile(client, d.config.OutputCertPath, pfxData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to upload certificate file")
 		}
 
-		d.logger.Appendt("certificate file uploaded")
+		d.logger.Logt("certificate file uploaded")
 
 	case OUTPUT_FORMAT_JKS:
 		jksData, err := x509.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
@@ -143,13 +143,13 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}
 
-		d.logger.Appendt("certificate transformed to JKS")
+		d.logger.Logt("certificate transformed to JKS")
 
 		if err := writeSftpFile(client, d.config.OutputCertPath, jksData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to upload certificate file")
 		}
 
-		d.logger.Appendt("certificate file uploaded")
+		d.logger.Logt("certificate file uploaded")
 
 	default:
 		return nil, fmt.Errorf("unsupported output format: %s", d.config.OutputFormat)
@@ -162,7 +162,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 			return nil, xerrors.Wrapf(err, "failed to run command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
-		d.logger.Appendt("SSH post-command executed", stdout)
+		d.logger.Logt("SSH post-command executed", stdout)
 	}
 
 	return &deployer.DeployResult{}, nil

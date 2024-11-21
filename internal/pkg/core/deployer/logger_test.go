@@ -15,19 +15,19 @@ func TestLogger(t *testing.T) {
 	t.Run("Logger_Appendt", func(t *testing.T) {
 		logger := deployer.NewDefaultLogger()
 
-		logger.Appendt("test")
-		logger.Appendt("test_nil", nil)
-		logger.Appendt("test_int", 1024)
-		logger.Appendt("test_string", "certimate")
-		logger.Appendt("test_map", map[string]interface{}{"key": "value"})
-		logger.Appendt("test_struct", struct{ Name string }{Name: "certimate"})
-		logger.Appendt("test_slice", []string{"certimate"})
+		logger.Logt("test")
+		logger.Logt("test_nil", nil)
+		logger.Logt("test_int", 1024)
+		logger.Logt("test_string", "certimate")
+		logger.Logt("test_map", map[string]interface{}{"key": "value"})
+		logger.Logt("test_struct", struct{ Name string }{Name: "certimate"})
+		logger.Logt("test_slice", []string{"certimate"})
 		t.Log(logger.GetRecords())
 		if len(logger.GetRecords()) != 7 {
 			t.Errorf("expected 7 records, got %d", len(logger.GetRecords()))
 		}
 
-		logger.Flush()
+		logger.FlushRecords()
 		if len(logger.GetRecords()) != 0 {
 			t.Errorf("expected 0 records, got %d", len(logger.GetRecords()))
 		}
@@ -36,19 +36,19 @@ func TestLogger(t *testing.T) {
 	t.Run("Logger_Appendf", func(t *testing.T) {
 		logger := deployer.NewDefaultLogger()
 
-		logger.Appendf("test")
-		logger.Appendf("test_nil: %v", nil)
-		logger.Appendf("test_int: %v", 1024)
-		logger.Appendf("test_string: %v", "certimate")
-		logger.Appendf("test_map: %v", map[string]interface{}{"key": "value"})
-		logger.Appendf("test_struct: %v", struct{ Name string }{Name: "certimate"})
-		logger.Appendf("test_slice: %v", []string{"certimate"})
+		logger.Logf("test")
+		logger.Logf("test_nil: %v", nil)
+		logger.Logf("test_int: %v", 1024)
+		logger.Logf("test_string: %v", "certimate")
+		logger.Logf("test_map: %v", map[string]interface{}{"key": "value"})
+		logger.Logf("test_struct: %v", struct{ Name string }{Name: "certimate"})
+		logger.Logf("test_slice: %v", []string{"certimate"})
 		t.Log(logger.GetRecords())
 		if len(logger.GetRecords()) != 7 {
 			t.Errorf("expected 7 records, got %d", len(logger.GetRecords()))
 		}
 
-		logger.Flush()
+		logger.FlushRecords()
 		if len(logger.GetRecords()) != 0 {
 			t.Errorf("expected 0 records, got %d", len(logger.GetRecords()))
 		}

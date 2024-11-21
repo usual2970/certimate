@@ -85,7 +85,7 @@ func (d *TencentCloudTEODeployer) Deploy(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 配置域名证书
 	// REF: https://cloud.tencent.com/document/product/1552/80764
@@ -99,7 +99,7 @@ func (d *TencentCloudTEODeployer) Deploy(ctx context.Context, certPem string, pr
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'teo.ModifyHostsCertificate'")
 	}
 
-	d.logger.Appendt("已配置域名证书", modifyHostsCertificateResp.Response)
+	d.logger.Logt("已配置域名证书", modifyHostsCertificateResp.Response)
 
 	return &deployer.DeployResult{}, nil
 }

@@ -73,7 +73,7 @@ func (d *VolcEngineLiveDeployer) Deploy(ctx context.Context, certPem string, pri
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	domains := make([]string, 0)
 	if strings.HasPrefix(d.config.Domain, "*.") {
@@ -133,7 +133,7 @@ func (d *VolcEngineLiveDeployer) Deploy(ctx context.Context, certPem string, pri
 			if err != nil {
 				errs = append(errs, err)
 			} else {
-				d.logger.Appendt(fmt.Sprintf("已绑定证书到域名 %s", domain), bindCertResp)
+				d.logger.Logt(fmt.Sprintf("已绑定证书到域名 %s", domain), bindCertResp)
 			}
 		}
 

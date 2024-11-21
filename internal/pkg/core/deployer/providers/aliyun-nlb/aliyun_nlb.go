@@ -95,7 +95,7 @@ func (d *AliyunNLBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -133,7 +133,7 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetLoadBalancerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 NLB 负载均衡实例", getLoadBalancerAttributeResp)
+	d.logger.Logt("已查询到 NLB 负载均衡实例", getLoadBalancerAttributeResp)
 
 	// 查询 TCPSSL 监听列表
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-listlisteners
@@ -158,7 +158,7 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			}
 		}
 
-		if listListenersResp.Body.NextToken == nil {
+		if len(listListenersResp.Body.Listeners) == 0 || listListenersResp.Body.NextToken == nil {
 			break
 		} else {
 			listListenersToken = listListenersResp.Body.NextToken
@@ -166,7 +166,7 @@ func (d *AliyunNLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		}
 	}
 
-	d.logger.Appendt("已查询到 NLB 负载均衡实例下的全部 TCPSSL 监听", listenerIds)
+	d.logger.Logt("已查询到 NLB 负载均衡实例下的全部 TCPSSL 监听", listenerIds)
 
 	// 批量更新监听证书
 	var errs []error
@@ -206,7 +206,7 @@ func (d *AliyunNLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetListenerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 NLB 监听配置", getListenerAttributeResp)
+	d.logger.Logt("已查询到 NLB 监听配置", getListenerAttributeResp)
 
 	// 修改监听的属性
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-updatelistenerattribute
@@ -219,7 +219,7 @@ func (d *AliyunNLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.UpdateListenerAttribute'")
 	}
 
-	d.logger.Appendt("已更新 NLB 监听配置", updateListenerAttributeResp)
+	d.logger.Logt("已更新 NLB 监听配置", updateListenerAttributeResp)
 
 	return nil
 }

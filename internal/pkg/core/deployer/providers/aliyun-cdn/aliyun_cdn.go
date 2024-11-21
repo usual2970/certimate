@@ -72,7 +72,7 @@ func (d *AliyunCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.SetCdnDomainSSLCertificate'")
 	}
 
-	d.logger.Appendt("已设置 CDN 域名证书", setCdnDomainSSLCertificateResp)
+	d.logger.Logt("已设置 CDN 域名证书", setCdnDomainSSLCertificateResp)
 
 	return &deployer.DeployResult{}, nil
 }

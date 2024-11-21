@@ -93,7 +93,7 @@ func (d *HuaweiCloudELBDeployer) Deploy(ctx context.Context, certPem string, pri
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -140,7 +140,7 @@ func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context, certPe
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateCertificate'")
 	}
 
-	d.logger.Appendt("已更新 ELB 证书", updateCertificateResp)
+	d.logger.Logt("已更新 ELB 证书", updateCertificateResp)
 
 	return nil
 }
@@ -162,7 +162,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowLoadBalancer'")
 	}
 
-	d.logger.Appendt("已查询到 ELB 负载均衡器", showLoadBalancerResp)
+	d.logger.Logt("已查询到 ELB 负载均衡器", showLoadBalancerResp)
 
 	// 查询监听器列表
 	// REF: https://support.huaweicloud.com/api-elb/ListListeners.html
@@ -193,7 +193,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 		}
 	}
 
-	d.logger.Appendt("已查询到 ELB 负载均衡器下的监听器", listenerIds)
+	d.logger.Logt("已查询到 ELB 负载均衡器下的监听器", listenerIds)
 
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
@@ -201,7 +201,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 批量更新监听器证书
 	var errs []error
@@ -228,7 +228,7 @@ func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context, certPem s
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 更新监听器证书
 	if err := d.modifyListenerCertificate(ctx, d.config.ListenerId, upres.CertId); err != nil {
@@ -249,7 +249,7 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowListener'")
 	}
 
-	d.logger.Appendt("已查询到 ELB 监听器", showListenerResp)
+	d.logger.Logt("已查询到 ELB 监听器", showListenerResp)
 
 	// 更新监听器
 	// REF: https://support.huaweicloud.com/api-elb/UpdateListener.html
@@ -312,7 +312,7 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateListener'")
 	}
 
-	d.logger.Appendt("已更新 ELB 监听器", updateListenerResp)
+	d.logger.Logt("已更新 ELB 监听器", updateListenerResp)
 
 	return nil
 }
@@ -322,11 +322,7 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbCli
 		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}
 
-	projectId, err := (&HuaweiCloudELBDeployer{}).getSdkProjectId(
-		accessKeyId,
-		secretAccessKey,
-		region,
-	)
+	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
 	if err != nil {
 		return nil, err
 	}

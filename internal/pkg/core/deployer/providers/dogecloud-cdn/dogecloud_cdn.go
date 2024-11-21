@@ -69,7 +69,7 @@ func (d *DogeCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privk
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 绑定证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-bind
@@ -79,7 +79,7 @@ func (d *DogeCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privk
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.BindCdnCert'")
 	}
 
-	d.logger.Appendt("已绑定证书", bindCdnCertResp)
+	d.logger.Logt("已绑定证书", bindCdnCertResp)
 
 	return &deployer.DeployResult{}, nil
 }

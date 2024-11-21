@@ -95,7 +95,7 @@ func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -133,7 +133,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetLoadBalancerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 ALB 负载均衡实例", getLoadBalancerAttributeResp)
+	d.logger.Logt("已查询到 ALB 负载均衡实例", getLoadBalancerAttributeResp)
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
@@ -158,7 +158,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			}
 		}
 
-		if listListenersResp.Body.NextToken == nil {
+		if len(listListenersResp.Body.Listeners) == 0 || listListenersResp.Body.NextToken == nil {
 			break
 		} else {
 			listListenersToken = listListenersResp.Body.NextToken
@@ -166,7 +166,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		}
 	}
 
-	d.logger.Appendt("已查询到 ALB 负载均衡实例下的全部 HTTPS 监听", listenerIds)
+	d.logger.Logt("已查询到 ALB 负载均衡实例下的全部 HTTPS 监听", listenerIds)
 
 	// 查询 QUIC 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
@@ -190,7 +190,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			}
 		}
 
-		if listListenersResp.Body.NextToken == nil {
+		if len(listListenersResp.Body.Listeners) == 0 || listListenersResp.Body.NextToken == nil {
 			break
 		} else {
 			listListenersToken = listListenersResp.Body.NextToken
@@ -198,7 +198,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		}
 	}
 
-	d.logger.Appendt("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", listenerIds)
+	d.logger.Logt("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", listenerIds)
 
 	// 批量更新监听证书
 	var errs []error
@@ -238,7 +238,7 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetListenerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 ALB 监听配置", getListenerAttributeResp)
+	d.logger.Logt("已查询到 ALB 监听配置", getListenerAttributeResp)
 
 	// 修改监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-updatelistenerattribute
@@ -253,7 +253,7 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
 	}
 
-	d.logger.Appendt("已更新 ALB 监听配置", updateListenerAttributeResp)
+	d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
 
 	// TODO: #347
 

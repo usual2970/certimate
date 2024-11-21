@@ -83,7 +83,7 @@ func (d *AliyunCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	}
 
-	d.logger.Appendt("certificate file uploaded", upres)
+	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -122,7 +122,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp)
+	d.logger.Logt("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp)
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerlisteners
@@ -148,7 +148,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			}
 		}
 
-		if describeLoadBalancerListenersResp.Body.NextToken == nil {
+		if len(describeLoadBalancerListenersResp.Body.Listeners) == 0 || describeLoadBalancerListenersResp.Body.NextToken == nil {
 			break
 		} else {
 			listListenersToken = describeLoadBalancerListenersResp.Body.NextToken
@@ -156,7 +156,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		}
 	}
 
-	d.logger.Appendt("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", listenerPorts)
+	d.logger.Logt("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", listenerPorts)
 
 	// 批量更新监听证书
 	var errs []error
@@ -200,7 +200,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute'")
 	}
 
-	d.logger.Appendt("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp)
+	d.logger.Logt("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp)
 
 	// 查询扩展域名
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
@@ -214,7 +214,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
 	}
 
-	d.logger.Appendt("已查询到 CLB 扩展域名", describeDomainExtensionsResp)
+	d.logger.Logt("已查询到 CLB 扩展域名", describeDomainExtensionsResp)
 
 	// 遍历修改扩展域名
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
@@ -253,7 +253,7 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
 	}
 
-	d.logger.Appendt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
+	d.logger.Logt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
 
 	return nil
 }
