@@ -42,7 +42,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_HUAWEICLOUDCDN_REGION="cn-north-1" \
 	--CERTIMATE_DEPLOYER_HUAWEICLOUDCDN_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

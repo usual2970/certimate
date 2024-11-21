@@ -45,7 +45,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNALB_LOADBALANCERID="your-alb-instance-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNALB_LISTENERID="your-alb-listener-id"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_ToLoadbalancer", func(t *testing.T) {

@@ -48,7 +48,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCLB_LISTENERID="your-clb-lbl-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCLB_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_UseSslDeploy", func(t *testing.T) {

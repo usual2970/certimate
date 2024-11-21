@@ -39,7 +39,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDECDN_SECRETKEY="your-secret-key" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDECDN_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

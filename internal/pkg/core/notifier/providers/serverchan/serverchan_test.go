@@ -1,4 +1,4 @@
-﻿package webhook_test
+﻿package serverchan_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 var fUrl string
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_WEBHOOK_"
+	argsPrefix := "CERTIMATE_NOTIFIER_SERVERCHAN_"
 
 	flag.StringVar(&fUrl, argsPrefix+"URL", "", "")
 }
@@ -26,8 +26,8 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v webhook_test.go -args \
-	--CERTIMATE_NOTIFIER_WEBHOOK_URL="https://example.com/your-webhook-url"
+	go test -v serverchan_test.go -args \
+	--CERTIMATE_NOTIFIER_SERVERCHAN_URL="https://example.com/your-webhook-url" \
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
@@ -38,7 +38,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("URL: %v", fUrl),
 		}, "\n"))
 
-		notifier, err := provider.New(&provider.WebhookNotifierConfig{
+		notifier, err := provider.New(&provider.ServerChanNotifierConfig{
 			Url: fUrl,
 		})
 		if err != nil {

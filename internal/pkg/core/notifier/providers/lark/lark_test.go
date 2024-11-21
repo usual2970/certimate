@@ -1,4 +1,4 @@
-﻿package webhook_test
+﻿package lark_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
 )
 
 const (
@@ -15,19 +15,19 @@ const (
 	mockMessage = "test_message"
 )
 
-var fUrl string
+var fWebhookUrl string
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_WEBHOOK_"
+	argsPrefix := "CERTIMATE_NOTIFIER_LARK_"
 
-	flag.StringVar(&fUrl, argsPrefix+"URL", "", "")
+	flag.StringVar(&fWebhookUrl, argsPrefix+"WEBHOOKURL", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v webhook_test.go -args \
-	--CERTIMATE_NOTIFIER_WEBHOOK_URL="https://example.com/your-webhook-url"
+	go test -v lark_test.go -args \
+	--CERTIMATE_NOTIFIER_LARK_WEBHOOKURL="https://example.com/your-webhook-url"
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
@@ -35,11 +35,11 @@ func TestNotify(t *testing.T) {
 	t.Run("Notify", func(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
-			fmt.Sprintf("URL: %v", fUrl),
+			fmt.Sprintf("WEBHOOKURL: %v", fWebhookUrl),
 		}, "\n"))
 
-		notifier, err := provider.New(&provider.WebhookNotifierConfig{
-			Url: fUrl,
+		notifier, err := provider.New(&provider.LarkNotifierConfig{
+			WebhookUrl: fWebhookUrl,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

@@ -48,7 +48,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_HUAWEICLOUDELB_LOADBALANCERID="your-elb-loadbalancer-id" \
 	--CERTIMATE_DEPLOYER_HUAWEICLOUDELB_LISTENERID="your-elb-listener-id"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_ToCertificate", func(t *testing.T) {

@@ -42,7 +42,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_K8SSECRET_SECRETDATAKEYFORCRT="tls.crt" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_SECRETDATAKEYFORKEY="tls.key"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

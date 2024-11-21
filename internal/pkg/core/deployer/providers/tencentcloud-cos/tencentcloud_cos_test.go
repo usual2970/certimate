@@ -45,7 +45,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_BUCKET="your-cos-bucket" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

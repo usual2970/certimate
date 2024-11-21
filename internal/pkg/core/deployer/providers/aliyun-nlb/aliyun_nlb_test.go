@@ -45,7 +45,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNNLB_LOADBALANCERID="your-nlb-instance-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNNLB_LISTENERID="your-nlb-listener-id"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_ToLoadbalancer", func(t *testing.T) {

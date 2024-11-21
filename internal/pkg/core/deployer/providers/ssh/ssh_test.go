@@ -48,7 +48,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_SSH_OUTPUTCERTPATH="/path/to/your-output-cert.pem" \
 	--CERTIMATE_DEPLOYER_SSH_OUTPUTKEYPATH="/path/to/your-output-key.pem"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

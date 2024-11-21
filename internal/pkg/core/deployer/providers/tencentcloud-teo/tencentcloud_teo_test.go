@@ -42,7 +42,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_ZONEID="your-zone-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

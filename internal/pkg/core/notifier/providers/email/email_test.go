@@ -49,7 +49,7 @@ Shell command to run this test:
 	--CERTIMATE_NOTIFIER_EMAIL_SENDERADDRESS="sender@example.com" \
 	--CERTIMATE_NOTIFIER_EMAIL_RECEIVERADDRESS="receiver@example.com"
 */
-func Test(t *testing.T) {
+func TestNotify(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Notify", func(t *testing.T) {

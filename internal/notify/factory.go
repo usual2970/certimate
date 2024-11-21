@@ -1,7 +1,7 @@
 package notify
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
@@ -62,5 +62,5 @@ func createNotifier(channel string, channelConfig map[string]any) (notifier.Noti
 		})
 	}
 
-	return nil, errors.New("unsupported notifier channel")
+	return nil, fmt.Errorf("unsupported notifier channel: %s", channelConfig)
 }

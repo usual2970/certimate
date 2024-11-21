@@ -27,6 +27,9 @@ type Logger interface {
 
 	// 获取所有日志记录。
 	GetRecords() []string
+
+	// 清空。
+	Flush()
 }
 
 // 表示默认的日志记录器类型。
@@ -43,7 +46,9 @@ func (l *DefaultLogger) Appendt(tag string, data ...any) {
 	temp[0] = tag
 	for i, v := range data {
 		s := ""
-		if v != nil {
+		if v == nil {
+			s = "<nil>"
+		} else {
 			switch reflect.ValueOf(v).Kind() {
 			case reflect.String:
 				s = v.(string)
@@ -78,6 +83,10 @@ func (l *DefaultLogger) GetRecords() []string {
 	return temp
 }
 
+func (l *DefaultLogger) Flush() {
+	l.records = make([]string, 0)
+}
+
 func (l *DefaultLogger) ensureInitialized() {
 	if l.records == nil {
 		l.records = make([]string, 0)
@@ -101,6 +110,7 @@ func (l *NilLogger) Appendf(string, ...any) {}
 func (l *NilLogger) GetRecords() []string {
 	return make([]string, 0)
 }
+func (l *NilLogger) Flush() {}
 
 func NewNilLogger() *NilLogger {
 	return &NilLogger{}

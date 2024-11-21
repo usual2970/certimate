@@ -48,7 +48,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_LOCAL_JKSKEYPASS="your-jks-keypass" \
 	--CERTIMATE_DEPLOYER_LOCAL_JKSSTOREPASS="your-jks-storepass"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_PEM", func(t *testing.T) {

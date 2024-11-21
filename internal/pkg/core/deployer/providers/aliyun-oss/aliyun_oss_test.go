@@ -45,7 +45,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNOSS_BUCKET="your-oss-bucket" \
 	--CERTIMATE_DEPLOYER_ALIYUNOSS_DOMAIN="example.com"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {

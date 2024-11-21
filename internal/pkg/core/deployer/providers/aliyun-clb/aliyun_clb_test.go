@@ -45,7 +45,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNCLB_LOADBALANCERID="your-clb-instance-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNCLB_LISTENERPORT=443
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy_ToLoadbalancer", func(t *testing.T) {

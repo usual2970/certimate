@@ -33,7 +33,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url"
 */
-func Test(t *testing.T) {
+func TestDeploy(t *testing.T) {
 	flag.Parse()
 
 	t.Run("Deploy", func(t *testing.T) {
