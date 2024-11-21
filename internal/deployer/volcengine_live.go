@@ -24,7 +24,7 @@ type VolcengineLiveDeployer struct {
 }
 
 func NewVolcengineLiveDeployer(option *DeployerOption) (Deployer, error) {
-	access := &domain.VolcengineAccess{}
+	access := &domain.VolcEngineAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, xerrors.Wrap(err, "failed to get access")
 	}

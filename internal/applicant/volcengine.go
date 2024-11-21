@@ -20,7 +20,7 @@ func NewVolcengine(option *ApplyOption) Applicant {
 }
 
 func (a *volcengine) Apply() (*Certificate, error) {
-	access := &domain.VolcengineAccess{}
+	access := &domain.VolcEngineAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
 	os.Setenv("VOLC_ACCESSKEY", access.AccessKeyId)

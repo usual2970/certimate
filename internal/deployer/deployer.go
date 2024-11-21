@@ -28,15 +28,15 @@ const (
 	targetHuaweiCloudCDN = "huaweicloud-cdn"
 	targetHuaweiCloudELB = "huaweicloud-elb"
 	targetBaiduCloudCDN  = "baiducloud-cdn"
+	targetVolcEngineLive = "volcengine-live"
+	targetVolcEngineCDN  = "volcengine-cdn"
+	targetBytePlusCDN    = "byteplus-cdn"
 	targetQiniuCdn       = "qiniu-cdn"
 	targetDogeCloudCdn   = "dogecloud-cdn"
 	targetLocal          = "local"
 	targetSSH            = "ssh"
 	targetWebhook        = "webhook"
 	targetK8sSecret      = "k8s-secret"
-	targetVolcengineLive = "volcengine-live"
-	targetVolcengineCDN  = "volcengine-cdn"
-	targetByteplusCDN    = "byteplus-cdn"
 )
 
 type DeployerOption struct {
@@ -147,11 +147,11 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		return NewWebhookDeployer(option)
 	case targetK8sSecret:
 		return NewK8sSecretDeployer(option)
-	case targetVolcengineLive:
+	case targetVolcEngineLive:
 		return NewVolcengineLiveDeployer(option)
-	case targetVolcengineCDN:
+	case targetVolcEngineCDN:
 		return NewVolcengineCDNDeployer(option)
-	case targetByteplusCDN:
+	case targetBytePlusCDN:
 		return NewByteplusCDNDeployer(option)
 	}
 	return nil, errors.New("unsupported deploy target")
