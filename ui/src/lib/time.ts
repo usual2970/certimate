@@ -31,6 +31,14 @@ export const getLeftDays = (zuluTime: string) => {
   return days;
 };
 
+export const diffDays = (date1: string, date2: string) => {
+  const target1 = new Date(date1);
+  const target2 = new Date(date2);
+  const diff = target1.getTime() - target2.getTime();
+  const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+  return days;
+};
+
 export function getTimeBefore(days: number): string {
   // 获取当前时间
   const currentDate = new Date();

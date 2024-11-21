@@ -57,11 +57,18 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 	}
 
 	// 保存执行日志
-
+	logs := processor.Log(ctx)
+	runLogs := domain.RunLogs(logs)
+	runErr := runLogs.Error()
+	succeed := true
+	if runErr != "" {
+		succeed = false
+	}
 	log := &domain.WorkflowRunLog{
 		Workflow: workflow.Id,
 		Log:      processor.Log(ctx),
-		Succeed:  true,
+		Error:    runErr,
+		Succeed:  succeed,
 	}
 	if err := s.repo.SaveRunLog(ctx, log); err != nil {
 		app.GetApp().Logger().Error("failed to save run log", "err", err)

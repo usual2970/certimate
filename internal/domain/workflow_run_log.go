@@ -20,3 +20,14 @@ type WorkflowRunLog struct {
 	Succeed  bool     `json:"succeed"`
 	Error    string   `json:"error"`
 }
+
+type RunLogs []RunLog
+
+func (r RunLogs) Error() string {
+	for _, log := range r {
+		if log.Error != "" {
+			return log.Error
+		}
+	}
+	return ""
+}

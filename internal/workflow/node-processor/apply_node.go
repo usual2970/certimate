@@ -2,6 +2,7 @@ package nodeprocessor
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/usual2970/certimate/internal/applicant"
@@ -95,7 +96,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	certificateRecord := &domain.Certificate{
-		SAN:               cert.Subject.CommonName,
+		SAN:               strings.Join(cert.DNSNames, ";"),
 		Certificate:       certificate.Certificate,
 		PrivateKey:        certificate.PrivateKey,
 		IssuerCertificate: certificate.IssuerCertificate,

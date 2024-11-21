@@ -66,7 +66,8 @@ const WorkflowDetail = () => {
   }, [workflow]);
 
   const handleBackClick = () => {
-    navigate("/workflow");
+    // 返回上一步
+    navigate(-1);
   };
 
   const handleEnableChange = () => {

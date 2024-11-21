@@ -31,7 +31,7 @@ const WorkflowLog = () => {
         const succeed: boolean = row.getValue("succeed");
         if (succeed) {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 min-w-[150px]">
               <div className="text-white bg-green-500 w-8 h-8 rounded-full flex items-center justify-center">
                 <Check size={18} />
               </div>
@@ -40,7 +40,7 @@ const WorkflowLog = () => {
           );
         } else {
           return (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 min-w-[150px]">
               <div className="text-white bg-red-500 w-8 h-8 rounded-full flex items-center justify-center">
                 <X size={18} />
               </div>
@@ -58,7 +58,7 @@ const WorkflowLog = () => {
         if (!error) {
           error = "";
         }
-        return <div className="min-w-[250px] truncate">{error}</div>;
+        return <div className="max-w-[300px] truncate text-red-500">{error}</div>;
       },
     },
     {
@@ -89,4 +89,3 @@ const WorkflowLog = () => {
 };
 
 export default WorkflowLog;
-

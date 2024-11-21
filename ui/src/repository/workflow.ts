@@ -65,4 +65,3 @@ export const logs = async (req: WorkflowLogsReq) => {
 
   return response;
 };
-
