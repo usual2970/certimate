@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"sort"
-	"strings"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
@@ -17,6 +15,7 @@ import (
 	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 	xerrors "github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -163,9 +162,6 @@ func (u *HuaweiCloudELBDeployer) getSdkProjectId(accessKeyId, secretAccessKey, r
 	}
 
 	client := hcIam.NewIamClient(hcClient)
-	if err != nil {
-		return "", err
-	}
 
 	request := &hcIamModel.KeystoneListProjectsRequest{
 		Name: &region,
@@ -352,11 +348,7 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 				newCertificate := showNewCertificateResp.Certificate
 
 				if oldCertificate.SubjectAlternativeNames != nil && newCertificate.SubjectAlternativeNames != nil {
-					oldCertificateSans := oldCertificate.SubjectAlternativeNames
-					newCertificateSans := newCertificate.SubjectAlternativeNames
-					sort.Strings(*oldCertificateSans)
-					sort.Strings(*newCertificateSans)
-					if strings.Join(*oldCertificateSans, ";") == strings.Join(*newCertificateSans, ";") {
+					if slices.Equal(*oldCertificate.SubjectAlternativeNames, *newCertificate.SubjectAlternativeNames) {
 						continue
 					}
 				} else {

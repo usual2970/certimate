@@ -2,6 +2,7 @@ package bytepluscdn
 
 import (
 	"context"
+	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
@@ -9,9 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
+	bpCdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 	xerrors "github.com/pkg/errors"
+
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -22,7 +25,7 @@ type ByteplusCDNUploaderConfig struct {
 
 type ByteplusCDNUploader struct {
 	config    *ByteplusCDNUploaderConfig
-	sdkClient *cdn.CDN
+	sdkClient *bpCdn.CDN
 }
 
 var _ uploader.Uploader = (*ByteplusCDNUploader)(nil)
@@ -32,14 +35,13 @@ func New(config *ByteplusCDNUploaderConfig) (*ByteplusCDNUploader, error) {
 		return nil, errors.New("config is nil")
 	}
 
-	instance := cdn.NewInstance()
-	client := instance.Client
-	client.SetAccessKey(config.AccessKey)
-	client.SetSecretKey(config.SecretKey)
+	client := bpCdn.NewInstance()
+	client.Client.SetAccessKey(config.AccessKey)
+	client.Client.SetSecretKey(config.SecretKey)
 
 	return &ByteplusCDNUploader{
 		config:    config,
-		sdkClient: instance,
+		sdkClient: client,
 	}, nil
 }
 
@@ -49,17 +51,17 @@ func (u *ByteplusCDNUploader) Upload(ctx context.Context, certPem string, privke
 	if err != nil {
 		return nil, err
 	}
+
 	// 查询证书列表，避免重复上传
 	// REF: https://docs.byteplus.com/en/docs/byteplus-cdn/reference-listcertinfo
-	pageNum := int64(1)
-	pageSize := int64(100)
-	certSource := "cert_center"
-	listCertInfoReq := &cdn.ListCertInfoRequest{
-		PageNum:  &pageNum,
-		PageSize: &pageSize,
-		Source:   &certSource,
+	listCertInfoPageNum := int64(1)
+	listCertInfoPageSize := int64(100)
+	listCertInfoTotal := 0
+	listCertInfoReq := &bpCdn.ListCertInfoRequest{
+		PageNum:  cast.Int64Ptr(listCertInfoPageNum),
+		PageSize: cast.Int64Ptr(listCertInfoPageSize),
+		Source:   cast.StringPtr("cert_center"),
 	}
-	searchTotal := 0
 	for {
 		listCertInfoResp, err := u.sdkClient.ListCertInfo(listCertInfoReq)
 		if err != nil {
@@ -68,8 +70,10 @@ func (u *ByteplusCDNUploader) Upload(ctx context.Context, certPem string, privke
 
 		if listCertInfoResp.Result.CertInfo != nil {
 			for _, certDetail := range listCertInfoResp.Result.CertInfo {
-				hash := sha256.Sum256(certX509.Raw)
-				isSameCert := strings.EqualFold(hex.EncodeToString(hash[:]), certDetail.CertFingerprint.Sha256)
+				fingerprintSha1 := sha1.Sum(certX509.Raw)
+				fingerprintSha256 := sha256.Sum256(certX509.Raw)
+				isSameCert := strings.EqualFold(hex.EncodeToString(fingerprintSha1[:]), certDetail.CertFingerprint.Sha1) &&
+					strings.EqualFold(hex.EncodeToString(fingerprintSha256[:]), certDetail.CertFingerprint.Sha256)
 				// 如果已存在相同证书，直接返回已有的证书信息
 				if isSameCert {
 					return &uploader.UploadResult{
@@ -80,23 +84,26 @@ func (u *ByteplusCDNUploader) Upload(ctx context.Context, certPem string, privke
 			}
 		}
 
-		searchTotal += len(listCertInfoResp.Result.CertInfo)
-		if int(listCertInfoResp.Result.Total) > searchTotal {
-			pageNum++
-		} else {
+		listCertInfoLen := len(listCertInfoResp.Result.CertInfo)
+		if listCertInfoLen < int(listCertInfoPageSize) || int(listCertInfoResp.Result.Total) <= listCertInfoTotal+listCertInfoLen {
 			break
+		} else {
+			listCertInfoPageNum++
+			listCertInfoTotal += listCertInfoLen
 		}
-
 	}
+
+	// 生成新证书名（需符合 BytePlus 命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
+
 	// 上传新证书
 	// REF: https://docs.byteplus.com/en/docs/byteplus-cdn/reference-addcertificate
-	addCertificateReq := &cdn.AddCertificateRequest{
+	addCertificateReq := &bpCdn.AddCertificateRequest{
 		Certificate: certPem,
 		PrivateKey:  privkeyPem,
-		Source:      &certSource,
-		Desc:        &certName,
+		Source:      cast.StringPtr("cert_center"),
+		Desc:        cast.StringPtr(certName),
 	}
 	addCertificateResp, err := u.sdkClient.AddCertificate(addCertificateReq)
 	if err != nil {

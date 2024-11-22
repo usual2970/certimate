@@ -1,51 +1,89 @@
 ﻿package email_test
 
 import (
-	"os"
-	"strconv"
+	"context"
+	"flag"
+	"fmt"
+	"strings"
 	"testing"
 
-	notifierEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 )
+
+const (
+	mockSubject = "test_subject"
+	mockMessage = "test_message"
+)
+
+var (
+	fSmtpHost        string
+	fSmtpPort        int
+	fSmtpTLS         bool
+	fUsername        string
+	fPassword        string
+	fSenderAddress   string
+	fReceiverAddress string
+)
+
+func init() {
+	argsPrefix := "CERTIMATE_NOTIFIER_EMAIL_"
+
+	flag.StringVar(&fSmtpHost, argsPrefix+"SMTPHOST", "", "")
+	flag.IntVar(&fSmtpPort, argsPrefix+"SMTPPORT", 0, "")
+	flag.BoolVar(&fSmtpTLS, argsPrefix+"SMTPTLS", false, "")
+	flag.StringVar(&fUsername, argsPrefix+"USERNAME", "", "")
+	flag.StringVar(&fPassword, argsPrefix+"PASSWORD", "", "")
+	flag.StringVar(&fSenderAddress, argsPrefix+"SENDERADDRESS", "", "")
+	flag.StringVar(&fReceiverAddress, argsPrefix+"RECEIVERADDRESS", "", "")
+}
 
 /*
 Shell command to run this test:
 
-	CERTIMATE_NOTIFIER_EMAIL_SMTPPORT=465 \
-	CERTIMATE_NOTIFIER_EMAIL_SMTPTLS=true \
-	CERTIMATE_NOTIFIER_EMAIL_SMTPHOST="smtp.example.com" \
-	CERTIMATE_NOTIFIER_EMAIL_USERNAME="your-username" \
-	CERTIMATE_NOTIFIER_EMAIL_PASSWORD="your-password" \
-	CERTIMATE_NOTIFIER_EMAIL_SENDERADDRESS="sender@example.com" \
-	CERTIMATE_NOTIFIER_EMAIL_RECEIVERADDRESS="receiver@example.com" \
-	go test -v -run TestNotify email_test.go
+	go test -v email_test.go -args \
+	--CERTIMATE_NOTIFIER_EMAIL_SMTPHOST="smtp.example.com" \
+	--CERTIMATE_NOTIFIER_EMAIL_SMTPPORT=465 \
+	--CERTIMATE_NOTIFIER_EMAIL_SMTPTLS=true \
+	--CERTIMATE_NOTIFIER_EMAIL_USERNAME="your-username" \
+	--CERTIMATE_NOTIFIER_EMAIL_PASSWORD="your-password" \
+	--CERTIMATE_NOTIFIER_EMAIL_SENDERADDRESS="sender@example.com" \
+	--CERTIMATE_NOTIFIER_EMAIL_RECEIVERADDRESS="receiver@example.com"
 */
 func TestNotify(t *testing.T) {
-	smtpPort, err := strconv.ParseInt(os.Getenv("CERTIMATE_NOTIFIER_EMAIL_SMTPPORT"), 10, 32)
-	if err != nil {
-		t.Errorf("invalid envvar: %+v", err)
-		panic(err)
-	}
+	flag.Parse()
 
-	smtpTLS, err := strconv.ParseBool(os.Getenv("CERTIMATE_NOTIFIER_EMAIL_SMTPTLS"))
-	if err != nil {
-		t.Errorf("invalid envvar: %+v", err)
-		panic(err)
-	}
+	t.Run("Notify", func(t *testing.T) {
+		t.Log(strings.Join([]string{
+			"args:",
+			fmt.Sprintf("SMTPHOST: %v", fSmtpHost),
+			fmt.Sprintf("SMTPPORT: %v", fSmtpPort),
+			fmt.Sprintf("SMTPTLS: %v", fSmtpTLS),
+			fmt.Sprintf("USERNAME: %v", fUsername),
+			fmt.Sprintf("PASSWORD: %v", fPassword),
+			fmt.Sprintf("SENDERADDRESS: %v", fSenderAddress),
+			fmt.Sprintf("RECEIVERADDRESS: %v", fReceiverAddress),
+		}, "\n"))
 
-	res, err := notifierEmail.New(&notifierEmail.EmailNotifierConfig{
-		SmtpHost:        os.Getenv("CERTIMATE_NOTIFIER_EMAIL_SMTPHOST"),
-		SmtpPort:        int32(smtpPort),
-		SmtpTLS:         smtpTLS,
-		Username:        os.Getenv("CERTIMATE_NOTIFIER_EMAIL_USERNAME"),
-		Password:        os.Getenv("CERTIMATE_NOTIFIER_EMAIL_PASSWORD"),
-		SenderAddress:   os.Getenv("CERTIMATE_NOTIFIER_EMAIL_SENDERADDRESS"),
-		ReceiverAddress: os.Getenv("CERTIMATE_NOTIFIER_EMAIL_RECEIVERADDRESS"),
+		notifier, err := provider.New(&provider.EmailNotifierConfig{
+			SmtpHost:        fSmtpHost,
+			SmtpPort:        int32(fSmtpPort),
+			SmtpTLS:         fSmtpTLS,
+			Username:        fUsername,
+			Password:        fPassword,
+			SenderAddress:   fSenderAddress,
+			ReceiverAddress: fReceiverAddress,
+		})
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		res, err := notifier.Notify(context.Background(), mockSubject, mockMessage)
+		if err != nil {
+			t.Errorf("err: %+v", err)
+			return
+		}
+
+		t.Logf("ok: %v", res)
 	})
-	if err != nil {
-		t.Errorf("invalid envvar: %+v", err)
-		panic(err)
-	}
-
-	t.Logf("notify result: %v", res)
 }

@@ -92,12 +92,12 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 				if *exportCertificateResp.Certificate == certPem {
 					isSameCert = true
 				} else {
-					cert, err := x509.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
+					oldCertX509, err := x509.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = x509.EqualCertificate(certX509, cert)
+					isSameCert = x509.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回已有的证书信息

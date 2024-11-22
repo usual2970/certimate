@@ -11,6 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/utils/fs"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type LocalDeployer struct {
@@ -73,7 +74,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 		d.infos = append(d.infos, toStr("保存私钥成功", nil))
 
 	case certFormatPFX:
-		pfxData, err := convertPEMToPFX(
+		pfxData, err := x509.TransformCertificateFromPEMToPFX(
 			d.option.Certificate.Certificate,
 			d.option.Certificate.PrivateKey,
 			d.option.DeployConfig.GetConfigAsString("pfxPassword"),
@@ -89,7 +90,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context) error {
 		d.infos = append(d.infos, toStr("保存证书成功", nil))
 
 	case certFormatJKS:
-		jksData, err := convertPEMToJKS(
+		jksData, err := x509.TransformCertificateFromPEMToJKS(
 			d.option.Certificate.Certificate,
 			d.option.Certificate.PrivateKey,
 			d.option.DeployConfig.GetConfigAsString("jksAlias"),

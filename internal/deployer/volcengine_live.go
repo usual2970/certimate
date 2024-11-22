@@ -24,17 +24,17 @@ type VolcengineLiveDeployer struct {
 }
 
 func NewVolcengineLiveDeployer(option *DeployerOption) (Deployer, error) {
-	access := &domain.VolcengineAccess{}
+	access := &domain.VolcEngineAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 	client := live.NewInstance()
 	client.SetCredential(base.Credentials{
-		AccessKeyID:     access.AccessKeyID,
+		AccessKeyID:     access.AccessKeyId,
 		SecretAccessKey: access.SecretAccessKey,
 	})
-	uploader, err := volcenginelive.New(&volcenginelive.VolcengineLiveUploaderConfig{
-		AccessKeyId:     access.AccessKeyID,
+	uploader, err := volcenginelive.New(&volcenginelive.VolcEngineLiveUploaderConfig{
+		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.SecretAccessKey,
 	})
 	if err != nil {

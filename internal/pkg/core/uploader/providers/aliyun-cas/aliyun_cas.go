@@ -144,11 +144,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}
 
-	aConfig := &aliyunOpen.Config{
-		AccessKeyId:     tea.String(accessKeyId),
-		AccessKeySecret: tea.String(accessKeySecret),
-	}
-
+	// 接入点一览 https://help.aliyun.com/zh/ssl-certificate/developer-reference/endpoints
 	var endpoint string
 	switch region {
 	case "cn-hangzhou":
@@ -156,9 +152,14 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 	default:
 		endpoint = fmt.Sprintf("cas.%s.aliyuncs.com", region)
 	}
-	aConfig.Endpoint = tea.String(endpoint)
 
-	client, err := aliyunCas.NewClient(aConfig)
+	config := &aliyunOpen.Config{
+		Endpoint:        tea.String(endpoint),
+		AccessKeyId:     tea.String(accessKeyId),
+		AccessKeySecret: tea.String(accessKeySecret),
+	}
+
+	client, err := aliyunCas.NewClient(config)
 	if err != nil {
 		return nil, err
 	}
