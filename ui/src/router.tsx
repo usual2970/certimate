@@ -89,4 +89,3 @@ export const router = createHashRouter([
     element: <WorkflowDetail />,
   },
 ]);
-

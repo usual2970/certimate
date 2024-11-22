@@ -84,4 +84,3 @@ export function getTimeAfter(days: number): string {
 
   return formattedDate;
 }
-

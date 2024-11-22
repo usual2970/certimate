@@ -3,6 +3,7 @@ import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, Paginati
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
+import Show from "../Show";
 
 interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -10,9 +11,19 @@ interface DataTableProps<TData extends { id: string }, TValue> {
   pageCount: number;
   onPageChange?: (pageIndex: number, pageSize?: number) => Promise<void>;
   onRowClick?: (id: string) => void;
+  withPagination?: boolean;
+  fallback?: React.ReactNode;
 }
 
-export function DataTable<TData extends { id: string }, TValue>({ columns, data, onPageChange, pageCount, onRowClick }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { id: string }, TValue>({
+  columns,
+  data,
+  onPageChange,
+  pageCount,
+  onRowClick,
+  withPagination,
+  fallback,
+}: DataTableProps<TData, TValue>) {
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -77,28 +88,30 @@ export function DataTable<TData extends { id: string }, TValue>({ columns, data,
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                  {fallback ? fallback : "暂无数据"}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end mt-5">
-        <div className="flex items-center space-x-2 dark:text-stone-200">
-          {table.getCanPreviousPage() && (
-            <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-              上一页
-            </Button>
-          )}
+      <Show when={!!withPagination}>
+        <div className="flex items-center justify-end mt-5">
+          <div className="flex items-center space-x-2 dark:text-stone-200">
+            {table.getCanPreviousPage() && (
+              <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                上一页
+              </Button>
+            )}
 
-          {table.getCanNextPage && (
-            <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-              下一页
-            </Button>
-          )}
+            {table.getCanNextPage && (
+              <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                下一页
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      </Show>
     </div>
   );
 }

@@ -19,8 +19,8 @@ const (
 
 func PushExpireMsg() {
 	// 查询即将过期的证书
-	records, err := app.GetApp().Dao().FindRecordsByFilter("domains", "expiredAt<{:time}&&certUrl!=''", "-created", 500, 0,
-		dbx.Params{"time": xtime.GetTimeAfter(24 * time.Hour * 15)})
+	records, err := app.GetApp().Dao().FindRecordsByFilter("certificate", "expireAt<{:time}&&certUrl!=''", "-created", 500, 0,
+		dbx.Params{"time": xtime.GetTimeAfter(24 * time.Hour * 20)})
 	if err != nil {
 		app.GetApp().Logger().Error("find expired domains by filter", "error", err)
 		return
@@ -76,7 +76,7 @@ func buildMsg(records []*models.Record) *notifyMessage {
 	domains := make([]string, count)
 
 	for i, record := range records {
-		domains[i] = record.GetString("domain")
+		domains[i] = record.GetString("san")
 	}
 
 	countStr := strconv.Itoa(count)

@@ -1,3 +1,4 @@
+import { run } from "@/api/workflow";
 import Show from "@/components/Show";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -11,6 +12,7 @@ import WorkflowLog from "@/components/workflow/WorkflowLog";
 
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
+import { getErrMessage } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { ArrowLeft } from "lucide-react";
@@ -36,6 +38,8 @@ const WorkflowDetail = () => {
   const id = searchParams.get("id");
 
   const [tab, setTab] = useState("workflow");
+
+  const [running, setRunning] = useState(false);
 
   useEffect(() => {
     console.log(id);
@@ -101,6 +105,28 @@ const WorkflowDetail = () => {
     return "border-transparent hover:text-primary hover:border-b-primary";
   };
 
+  const handleRunClick = async () => {
+    if (running) {
+      return;
+    }
+    setRunning(true);
+    try {
+      await run(workflow.id as string);
+      toast({
+        title: "执行成功",
+        description: "工作流已成功执行",
+        variant: "default",
+      });
+    } catch (e) {
+      toast({
+        title: "执行失败",
+        description: getErrMessage(e),
+        variant: "destructive",
+      });
+    }
+    setRunning(false);
+  };
+
   return (
     <>
       <WorkflowProvider>
@@ -140,7 +166,14 @@ const WorkflowDetail = () => {
 
             <div className="px-5 flex items-center space-x-3">
               <Show when={!!workflow.enabled}>
-                <Show when={!!workflow.hasDraft} fallback={<Button variant={"secondary"}>立即执行</Button>}>
+                <Show
+                  when={!!workflow.hasDraft}
+                  fallback={
+                    <Button variant={"secondary"} onClick={handleRunClick}>
+                      {running ? "执行中" : "立即执行"}
+                    </Button>
+                  }
+                >
                   <Button variant={"secondary"} onClick={handleWorkflowSaveClick}>
                     保存变更
                   </Button>

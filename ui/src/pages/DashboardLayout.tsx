@@ -57,18 +57,22 @@ export default function Dashboard() {
                     <Home className="h-4 w-4" />
                     {t("dashboard.page.title")}
                   </Link>
-                  <Link to="/domains" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/domains"))}>
+                  <Link to="/workflow" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/workflow"))}>
                     <Earth className="h-4 w-4" />
-                    {t("domain.page.title")}
+                    工作流列表
                   </Link>
+
+                  <Link
+                    to="/certificate"
+                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/certificate"))}
+                  >
+                    <History className="h-4 w-4" />
+                    证书列表
+                  </Link>
+
                   <Link to="/access" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/access"))}>
                     <Server className="h-4 w-4" />
                     {t("access.page.title")}
-                  </Link>
-
-                  <Link to="/history" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/history"))}>
-                    <History className="h-4 w-4" />
-                    {t("history.page.title")}
                   </Link>
                 </nav>
               </div>
@@ -99,26 +103,27 @@ export default function Dashboard() {
                       {t("dashboard.page.title")}
                     </Link>
                     <Link
-                      to="/domains"
-                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/domains"))}
+                      to="/workflow"
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/workflow"))}
                     >
                       <Earth className="h-5 w-5" />
-                      {t("domain.page.title")}
+                      工作流
                     </Link>
+
+                    <Link
+                      to="/certificate"
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/certificate"))}
+                    >
+                      <History className="h-5 w-5" />
+                      证书
+                    </Link>
+
                     <Link
                       to="/access"
                       className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/access"))}
                     >
                       <Server className="h-5 w-5" />
                       {t("access.page.title")}
-                    </Link>
-
-                    <Link
-                      to="/history"
-                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/history"))}
-                    >
-                      <History className="h-5 w-5" />
-                      {t("history.page.title")}
                     </Link>
                   </nav>
                   <div className="">

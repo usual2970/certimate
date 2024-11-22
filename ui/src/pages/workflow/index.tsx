@@ -200,7 +200,7 @@ const Workflow = () => {
       </div>
 
       <div>
-        <DataTable columns={columns} data={data} onPageChange={fetchData} pageCount={pageCount} onRowClick={handleRowClick} />
+        <DataTable columns={columns} data={data} onPageChange={fetchData} pageCount={pageCount} onRowClick={handleRowClick} withPagination />
       </div>
 
       <CustomAlertDialog

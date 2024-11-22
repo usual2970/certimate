@@ -1,5 +1,5 @@
 import { getTimeAfter } from "@/lib/time";
-import { Domain, Statistic } from "@/domain/domain";
+import { Domain } from "@/domain/domain";
 import { getPb } from "./api";
 
 type DomainListReq = {
@@ -40,30 +40,6 @@ export const list = async (req: DomainListReq) => {
   });
 
   return response;
-};
-
-export const statistics = async (): Promise<Statistic> => {
-  const pb = getPb();
-  const total = await pb.collection("domains").getList(1, 1, {});
-  const expired = await pb.collection("domains").getList(1, 1, {
-    filter: pb.filter("expiredAt<{:expiredAt}", {
-      expiredAt: getTimeAfter(15),
-    }),
-  });
-
-  const enabled = await pb.collection("domains").getList(1, 1, {
-    filter: "enabled=true",
-  });
-  const disabled = await pb.collection("domains").getList(1, 1, {
-    filter: "enabled=false",
-  });
-
-  return {
-    total: total.totalItems,
-    expired: expired.totalItems,
-    enabled: enabled.totalItems,
-    disabled: disabled.totalItems,
-  };
 };
 
 export const get = async (id: string) => {

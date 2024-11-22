@@ -57,10 +57,13 @@ export type ApplyConfig = {
 };
 
 export type Statistic = {
-  total: number;
-  expired: number;
-  enabled: number;
-  disabled: number;
+  certificateTotal: number;
+  certificateExpired: number;
+  certificateExpireSoon: number;
+
+  workflowTotal: number;
+  workflowEnabled: number;
+  workflowDisabled: number;
 };
 
 export type DeployTarget = {
