@@ -22,15 +22,15 @@ type VolcengineCDNDeployer struct {
 }
 
 func NewVolcengineCDNDeployer(option *DeployerOption) (Deployer, error) {
-	access := &domain.VolcengineAccess{}
+	access := &domain.VolcEngineAccess{}
 	if err := json.Unmarshal([]byte(option.Access), access); err != nil {
 		return nil, xerrors.Wrap(err, "failed to get access")
 	}
 	client := cdn.NewInstance()
-	client.Client.SetAccessKey(access.AccessKeyID)
+	client.Client.SetAccessKey(access.AccessKeyId)
 	client.Client.SetSecretKey(access.SecretAccessKey)
-	uploader, err := volcenginecdn.New(&volcenginecdn.VolcengineCDNUploaderConfig{
-		AccessKeyId:     access.AccessKeyID,
+	uploader, err := volcenginecdn.New(&volcenginecdn.VolcEngineCDNUploaderConfig{
+		AccessKeyId:     access.AccessKeyId,
 		AccessKeySecret: access.SecretAccessKey,
 	})
 	if err != nil {

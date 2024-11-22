@@ -56,7 +56,7 @@ func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) 
 
 func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	newCert, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -83,12 +83,12 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 				if certDetail.Certificate == certPem {
 					isSameCert = true
 				} else {
-					cert, err := x509.ParseCertificateFromPEM(certDetail.Certificate)
+					oldCertX509, err := x509.ParseCertificateFromPEM(certDetail.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = x509.EqualCertificate(cert, newCert)
+					isSameCert = x509.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回已有的证书信息
@@ -205,9 +205,6 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 	}
 
 	client := hcIam.NewIamClient(hcClient)
-	if err != nil {
-		return "", err
-	}
 
 	request := &hcIamModel.KeystoneListProjectsRequest{
 		Name: &region,

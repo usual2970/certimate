@@ -41,7 +41,7 @@ func (dc *DeployConfig) GetConfigAsString(key string) string {
 //   - defaultValue: 默认值。
 //
 // 出参：
-//   - 配置项的值。如果配置项不存在或者类型不是字符串，则返回默认值。
+//   - 配置项的值。如果配置项不存在、类型不是字符串或者值为零值，则返回默认值。
 func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue string) string {
 	return maps.GetValueOrDefaultAsString(dc.Config, key, defaultValue)
 }
@@ -64,7 +64,7 @@ func (dc *DeployConfig) GetConfigAsInt32(key string) int32 {
 //   - defaultValue: 默认值。
 //
 // 出参：
-//   - 配置项的值。如果配置项不存在或者类型不是 32 位整数，则返回默认值。
+//   - 配置项的值。如果配置项不存在、类型不是 32 位整数或者值为零值，则返回默认值。
 func (dc *DeployConfig) GetConfigOrDefaultAsInt32(key string, defaultValue int32) int32 {
 	return maps.GetValueOrDefaultAsInt32(dc.Config, key, defaultValue)
 }
