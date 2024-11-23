@@ -1,6 +1,6 @@
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CircleUser, Earth, History, Home, Menu, Server } from "lucide-react";
+import { CircleUser, Home, Menu, Server, ShieldCheck, Workflow } from "lucide-react";
 
 import LocaleToggle from "@/components/LocaleToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -58,16 +58,16 @@ export default function Dashboard() {
                     {t("dashboard.page.title")}
                   </Link>
                   <Link to="/workflow" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/workflow"))}>
-                    <Earth className="h-4 w-4" />
-                    工作流列表
+                    <Workflow className="h-4 w-4" />
+                    {t("workflow.page.title")}
                   </Link>
 
                   <Link
                     to="/certificate"
                     className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/certificate"))}
                   >
-                    <History className="h-4 w-4" />
-                    证书列表
+                    <ShieldCheck className="h-4 w-4" />
+                    {t("certificate.page.title")}
                   </Link>
 
                   <Link to="/access" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/access"))}>
@@ -106,16 +106,16 @@ export default function Dashboard() {
                       to="/workflow"
                       className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/workflow"))}
                     >
-                      <Earth className="h-5 w-5" />
-                      工作流
+                      <Workflow className="h-5 w-5" />
+                      {t("workflow.page.title")}
                     </Link>
 
                     <Link
                       to="/certificate"
                       className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/certificate"))}
                     >
-                      <History className="h-5 w-5" />
-                      证书
+                      <ShieldCheck className="h-5 w-5" />
+                      {t("certificate.page.title")}
                     </Link>
 
                     <Link

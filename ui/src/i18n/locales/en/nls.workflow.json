@@ -1,4 +1,42 @@
 {
+  "workflow.page.title": "Workflows",
+  "workflow.detail.title": "Workflow",
+  "workflow.detail.history": "History",
+
+  "workflow.detail.action.save": "Save updates",
+  "workflow.detail.action.save.failed": "Save failed",
+  "workflow.detail.action.save.failed.uncompleted": "Save failed, please complete all node settings",
+  "workflow.detail.action.run": "Run",
+  "workflow.detail.action.run.failed": "Run failed",
+  "workflow.detail.action.run.success": "Run success",
+  "workflow.detail.action.running": "Running",
+
+  "workflow.baseinfo.title": "Basic Information",
+
+  "workflow.props.name": "Name",
+  "workflow.props.name.placeholder": "Please enter name",
+  "workflow.props.name.default": "Unnamed",
+  "workflow.props.description": "Description",
+  "workflow.props.description.placeholder": "Please enter description",
+  "workflow.props.executionMethod": "Execution Method",
+  "workflow.props.enabled": "Enabled",
+  "workflow.props.created": "Created",
+  "workflow.props.updated": "Updated",
+
+  "workflow.action": "Action",
+  "workflow.action.edit": "Edit",
+  "workflow.action.create": "Create Workflow",
+
+  "workflow.action.delete.alert.title": "Delete Workflow",
+  "workflow.action.delete.alert.description": "Are you sure you want to delete this workflow?",
+
+  "workflow.history.page.title": "Logs",
+  "workflow.history.props.state": "State",
+  "workflow.history.props.state.success": "Success",
+  "workflow.history.props.state.failed": "Failed",
+  "workflow.history.props.reason": "Reason",
+  "workflow.history.props.time": "Time",
+
   "workflow.common.certificate.label": "Certificate",
   "workflow.common.certificate.placeholder": "Please select certificate source",
 

@@ -6,6 +6,7 @@ import { DataTable } from "./DataTable";
 import { useSearchParams } from "react-router-dom";
 import { Check, X } from "lucide-react";
 import WorkflowLogDetail from "./WorkflowLogDetail";
+import { useTranslation } from "react-i18next";
 
 const WorkflowLog = () => {
   const [data, setData] = useState<WorkflowRunLog[]>([]);
@@ -13,6 +14,8 @@ const WorkflowLog = () => {
 
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
+
+  const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const [selectedLog, setSelectedLog] = useState<WorkflowRunLog>();
@@ -26,7 +29,7 @@ const WorkflowLog = () => {
   const columns: ColumnDef<WorkflowRunLog>[] = [
     {
       accessorKey: "succeed",
-      header: "状态",
+      header: t("workflow.history.props.state"),
       cell: ({ row }) => {
         const succeed: boolean = row.getValue("succeed");
         if (succeed) {
@@ -35,7 +38,7 @@ const WorkflowLog = () => {
               <div className="text-white bg-green-500 w-8 h-8 rounded-full flex items-center justify-center">
                 <Check size={18} />
               </div>
-              <div className="text-sone-700">通过</div>
+              <div className="text-sone-700">{t("workflow.history.props.state.success")}</div>
             </div>
           );
         } else {
@@ -44,7 +47,7 @@ const WorkflowLog = () => {
               <div className="text-white bg-red-500 w-8 h-8 rounded-full flex items-center justify-center">
                 <X size={18} />
               </div>
-              <div className="text-stone-700">失败</div>
+              <div className="text-stone-700">{t("workflow.history.props.state.failed")}</div>
             </div>
           );
         }
@@ -52,7 +55,7 @@ const WorkflowLog = () => {
     },
     {
       accessorKey: "error",
-      header: "原因",
+      header: t("workflow.history.props.reason"),
       cell: ({ row }) => {
         let error: string = row.getValue("error");
         if (!error) {
@@ -63,7 +66,7 @@ const WorkflowLog = () => {
     },
     {
       accessorKey: "created",
-      header: "时间",
+      header: t("workflow.history.props.time"),
       cell: ({ row }) => {
         const date: string = row.getValue("created");
         return new Date(date).toLocaleString();
@@ -79,7 +82,7 @@ const WorkflowLog = () => {
   return (
     <div className="w-full md:w-[960px]">
       <div>
-        <div className="text-muted-foreground mb-5">日志</div>
+        <div className="text-muted-foreground mb-5">{t("workflow.history.page.title")}</div>
         <DataTable columns={columns} data={data} onPageChange={fetchData} pageCount={pageCount} onRowClick={handleRowClick} />
       </div>
 

@@ -1,4 +1,42 @@
 {
+  "workflow.page.title": "工作流",
+  "workflow.detail.title": "流程",
+  "workflow.detail.history": "历史",
+
+  "workflow.detail.action.save": "保存变更",
+  "workflow.detail.action.save.failed": "保存失败",
+  "workflow.detail.action.save.failed.uncompleted": "保存失败，请完成所有节点设置",
+  "workflow.detail.action.run": "立即执行",
+  "workflow.detail.action.run.failed": "执行失败",
+  "workflow.detail.action.run.success": "执行成功",
+  "workflow.detail.action.running": "正在执行",
+
+  "workflow.baseinfo.title": "基本信息",
+
+  "workflow.props.name": "名称",
+  "workflow.props.name.placeholder": "请输入名称",
+  "workflow.props.name.default": "未命名工作流",
+  "workflow.props.description": "描述",
+  "workflow.props.description.placeholder": "请输入描述",
+  "workflow.props.executionMethod": "执行方式",
+  "workflow.props.enabled": "是否启用",
+  "workflow.props.created": "创建时间",
+  "workflow.props.updated": "更新时间",
+
+  "workflow.action": "操作",
+  "workflow.action.edit": "编辑",
+  "workflow.action.create": "创建工作流",
+
+  "workflow.action.delete.alert.title": "删除工作流",
+  "workflow.action.delete.alert.description": "确定要删除此工作流吗？",
+
+  "workflow.history.page.title": "日志",
+  "workflow.history.props.state": "状态",
+  "workflow.history.props.state.success": "通过",
+  "workflow.history.props.state.failed": "失败",
+  "workflow.history.props.reason": "原因",
+  "workflow.history.props.time": "时间",
+
   "workflow.common.certificate.label": "证书",
   "workflow.common.certificate.placeholder": "请选择证书来源",
 

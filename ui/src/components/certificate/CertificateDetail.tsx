@@ -5,6 +5,7 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { CustomFile, saveFiles2ZIP } from "@/lib/file";
+import { useTranslation } from "react-i18next";
 
 type WorkflowLogDetailProps = {
   open: boolean;
@@ -12,6 +13,7 @@ type WorkflowLogDetailProps = {
   certificate?: Certificate;
 };
 const CertificateDetail = ({ open, onOpenChange, certificate }: WorkflowLogDetailProps) => {
+  const { t } = useTranslation();
   const handleDownloadClick = async () => {
     const zipName = `${certificate?.id}-${certificate?.san}.zip`;
     const files: CustomFile[] = [
@@ -30,7 +32,7 @@ const CertificateDetail = ({ open, onOpenChange, certificate }: WorkflowLogDetai
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-2xl">
+      <SheetContent className="sm:max-w-2xl dark:text-stone-200">
         <SheetHeader>
           <SheetTitle></SheetTitle>
         </SheetHeader>
@@ -43,15 +45,15 @@ const CertificateDetail = ({ open, onOpenChange, certificate }: WorkflowLogDetai
                 handleDownloadClick();
               }}
             >
-              下载证书
+              {t("certificate.action.download")}
             </Button>
           </div>
           <div className="flex flex-col space-y-3">
-            <Label>证书</Label>
+            <Label>{t("certificate.props.certificate")}</Label>
             <Textarea value={certificate?.certificate} rows={10} readOnly={true} />
           </div>
           <div className="flex flex-col space-y-3">
-            <Label>密钥</Label>
+            <Label>{t("certificate.props.private.key")}</Label>
             <Textarea value={certificate?.privateKey} rows={10} readOnly={true} />
           </div>
         </div>

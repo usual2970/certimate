@@ -6,7 +6,8 @@ import { diffDays, getLeftDays } from "@/lib/time";
 import { list } from "@/repository/certificate";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 type CertificateListProps = {
   withPagination?: boolean;
@@ -18,8 +19,13 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
   const [open, setOpen] = useState(false);
   const [selectedCertificate, setSelectedCertificate] = useState<CertificateType>();
 
+  const { t } = useTranslation();
+
+  const [searchParams] = useSearchParams();
+
   const fetchData = async (page: number, pageSize?: number) => {
-    const resp = await list({ page: page, perPage: pageSize });
+    const state = searchParams.get("state");
+    const resp = await list({ page: page, perPage: pageSize, state: state ?? "" });
     setData(resp.items);
     setPageCount(resp.totalPages);
   };
@@ -29,7 +35,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
   const columns: ColumnDef<CertificateType>[] = [
     {
       accessorKey: "san",
-      header: "域名",
+      header: t("certificate.props.domain"),
       cell: ({ row }) => {
         let san: string = row.getValue("san");
         if (!san) {
@@ -51,7 +57,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
     },
     {
       accessorKey: "expireAt",
-      header: "有效期限",
+      header: t("certificate.props.expiry"),
       cell: ({ row }) => {
         const expireAt: string = row.getValue("expireAt");
         const data = row.original;
@@ -61,20 +67,22 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
           <div className="">
             {leftDays > 0 ? (
               <div className="text-green-500">
-                {leftDays} / {allDays} 天
+                {leftDays} / {allDays} {t("certificate.props.expiry.days")}
               </div>
             ) : (
-              <div className="text-red-500">已到期</div>
+              <div className="text-red-500">{t("certificate.props.expiry.expired")}</div>
             )}
 
-            <div>{new Date(expireAt).toLocaleString().split(" ")[0]} 到期</div>
+            <div>
+              {new Date(expireAt).toLocaleString().split(" ")[0]} {t("certificate.props.expiry.text.expire")}
+            </div>
           </div>
         );
       },
     },
     {
       accessorKey: "workflow",
-      header: "所属工作流",
+      header: t("certificate.props.workflow"),
       cell: ({ row }) => {
         const name = row.original.expand.workflow?.name;
         const workflowId: string = row.getValue("workflow");
@@ -95,7 +103,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
     },
     {
       accessorKey: "created",
-      header: "颁发时间",
+      header: t("certificate.props.created"),
       cell: ({ row }) => {
         const date: string = row.getValue("created");
         return new Date(date).toLocaleString();
@@ -113,7 +121,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
                 handleView(row.original.id);
               }}
             >
-              查看证书
+              {t("certificate.action.view")}
             </Button>
           </div>
         );
@@ -140,15 +148,16 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
         pageCount={pageCount}
         withPagination={withPagination}
         fallback={
-          <div className="flex flex-col">
-            <div className="text-muted-foreground">暂无证书，添加工作流去生成证书吧😀</div>
+          <div className="flex flex-col items-center">
+            <div className="text-muted-foreground">{t("certificate.nodata")}</div>
             <Button
               size={"sm"}
+              className="w-[120px] mt-3"
               onClick={() => {
                 navigate("/workflow/detail");
               }}
             >
-              添加工作流
+              {t("workflow.action.create")}
             </Button>
           </div>
         }

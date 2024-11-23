@@ -1,5 +1,6 @@
 import { Workflow, WorkflowNode, WorkflowRunLog } from "@/domain/workflow";
 import { getPb } from "./api";
+import { RecordListOptions } from "pocketbase";
 
 export const get = async (id: string) => {
   const response = await getPb().collection("workflow").getOne<Workflow>(id);
@@ -15,9 +16,10 @@ export const save = async (data: Record<string, string | boolean | WorkflowNode>
   return await getPb().collection("workflow").create<Workflow>(data);
 };
 
-type WorkflowListReq = {
+export type WorkflowListReq = {
   page: number;
   perPage?: number;
+  enabled?: boolean;
 };
 export const list = async (req: WorkflowListReq) => {
   let page = 1;
@@ -29,9 +31,17 @@ export const list = async (req: WorkflowListReq) => {
     perPage = req.perPage;
   }
 
-  const response = await getPb().collection("workflow").getList<Workflow>(page, perPage, {
+  const options: RecordListOptions = {
     sort: "-created",
-  });
+  };
+
+  if (req.enabled !== undefined) {
+    options.filter = getPb().filter("enabled={:enabled}", {
+      enabled: req.enabled,
+    });
+  }
+
+  const response = await getPb().collection("workflow").getList<Workflow>(page, perPage, options);
 
   return response;
 };

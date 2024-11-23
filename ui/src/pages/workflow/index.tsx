@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
 import { Workflow as WorkflowType } from "@/domain/workflow";
 import { DataTable } from "@/components/workflow/DataTable";
 import { useState } from "react";
-import { list, remove, save } from "@/repository/workflow";
+import { list, remove, save, WorkflowListReq } from "@/repository/workflow";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 
@@ -28,8 +28,15 @@ const Workflow = () => {
     onConfirm: () => void;
   }>();
 
+  const [searchParams] = useSearchParams();
+
   const fetchData = async (page: number, pageSize?: number) => {
-    const resp = await list({ page: page, perPage: pageSize });
+    const state = searchParams.get("state");
+    const req: WorkflowListReq = { page: page, perPage: pageSize };
+    if (state && state == "enabled") {
+      req.enabled = true;
+    }
+    const resp = await list(req);
     setData(resp.items);
     setPageCount(resp.totalPages);
   };
@@ -37,18 +44,18 @@ const Workflow = () => {
   const columns: ColumnDef<WorkflowType>[] = [
     {
       accessorKey: "name",
-      header: "名称",
+      header: t("workflow.props.name"),
       cell: ({ row }) => {
         let name: string = row.getValue("name");
         if (!name) {
-          name = "未命名工作流";
+          name = t("workflow.props.name.default");
         }
         return <div className="max-w-[150px] truncate">{name}</div>;
       },
     },
     {
       accessorKey: "description",
-      header: "描述",
+      header: t("workflow.props.description"),
       cell: ({ row }) => {
         let description: string = row.getValue("description");
         if (!description) {
@@ -59,18 +66,18 @@ const Workflow = () => {
     },
     {
       accessorKey: "type",
-      header: "执行方式",
+      header: t("workflow.props.executionMethod"),
       cell: ({ row }) => {
         const method = row.getValue("type");
         if (!method) {
           return "-";
         } else if (method === "manual") {
-          return "手动";
+          return t("workflow.node.start.form.executionMethod.options.manual");
         } else if (method === "auto") {
           const crontab: string = row.original.crontab ?? "";
           return (
             <div className="flex flex-col space-y-1">
-              <div>定时</div>
+              <div>{t("workflow.node.start.form.executionMethod.options.auto")}</div>
               <div className="text-muted-foreground text-xs">{crontab}</div>
             </div>
           );
@@ -79,7 +86,7 @@ const Workflow = () => {
     },
     {
       accessorKey: "enabled",
-      header: "是否启用",
+      header: t("workflow.props.enabled"),
       cell: ({ row }) => {
         const enabled: boolean = row.getValue("enabled");
 
@@ -100,7 +107,7 @@ const Workflow = () => {
     },
     {
       accessorKey: "created",
-      header: "创建时间",
+      header: t("workflow.props.created"),
       cell: ({ row }) => {
         const date: string = row.getValue("created");
         return new Date(date).toLocaleString();
@@ -108,7 +115,7 @@ const Workflow = () => {
     },
     {
       accessorKey: "updated",
-      header: "更新时间",
+      header: t("workflow.props.updated"),
       cell: ({ row }) => {
         const date: string = row.getValue("updated");
         return new Date(date).toLocaleString();
@@ -128,14 +135,14 @@ const Workflow = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>操作</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("workflow.action")}</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={(e) => {
                   e.stopPropagation();
                   navigate(`/workflow/detail?id=${workflow.id}`);
                 }}
               >
-                编辑
+                {t("workflow.action.edit")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-500"
@@ -169,8 +176,8 @@ const Workflow = () => {
 
   const handleDeleteClick = (id: string) => {
     setAlertProps({
-      title: "删除工作流",
-      description: "确定删除工作流吗？",
+      title: t("workflow.action.delete.alert.title"),
+      description: t("workflow.action.delete.alert.description"),
       onConfirm: async () => {
         const resp = await remove(id);
         if (resp) {
@@ -192,10 +199,10 @@ const Workflow = () => {
   return (
     <>
       <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">工作流</div>
+        <div className="text-muted-foreground">{t("workflow.page.title")}</div>
         <Button onClick={handleCreateClick}>
           <Plus size={16} />
-          新建工作流
+          {t("workflow.action.create")}
         </Button>
       </div>
 

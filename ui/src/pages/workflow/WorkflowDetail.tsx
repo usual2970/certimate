@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { useShallow } from "zustand/shallow";
@@ -53,6 +54,8 @@ const WorkflowDetail = () => {
 
   const { toast } = useToast();
 
+  const { t } = useTranslation();
+
   const elements = useMemo(() => {
     let current = workflow.draft as WorkflowNode;
 
@@ -77,8 +80,8 @@ const WorkflowDetail = () => {
   const handleEnableChange = () => {
     if (!workflow.enabled && !allNodesValidated(workflow.draft as WorkflowNode)) {
       toast({
-        title: "无法启用",
-        description: "有尚未设置完成的节点",
+        title: t("workflow.detail.action.save.failed"),
+        description: t("workflow.detail.action.save.failed.uncompleted"),
         variant: "destructive",
       });
       return;
@@ -89,8 +92,8 @@ const WorkflowDetail = () => {
   const handleWorkflowSaveClick = () => {
     if (!allNodesValidated(workflow.draft as WorkflowNode)) {
       toast({
-        title: "保存失败",
-        description: "有尚未设置完成的节点",
+        title: t("workflow.detail.action.save.failed"),
+        description: t("workflow.detail.action.save.failed.uncompleted"),
         variant: "destructive",
       });
       return;
@@ -113,13 +116,13 @@ const WorkflowDetail = () => {
     try {
       await run(workflow.id as string);
       toast({
-        title: "执行成功",
-        description: "工作流已成功执行",
+        title: t("workflow.detail.action.run.success"),
+        description: t("workflow.detail.action.run.success"),
         variant: "default",
       });
     } catch (e) {
       toast({
-        title: "执行失败",
+        title: t("workflow.detail.action.run.failed"),
         description: getErrMessage(e),
         variant: "destructive",
       });
@@ -138,8 +141,10 @@ const WorkflowDetail = () => {
               <WorkflowBaseInfoEditDialog
                 trigger={
                   <div className="flex flex-col space-y-1 cursor-pointer items-start">
-                    <div className="truncate  max-w-[200px]">{workflow.name ? workflow.name : "未命名工作流"}</div>
-                    <div className="text-sm text-muted-foreground truncate  max-w-[200px]">{workflow.description ? workflow.description : "添加流程说明"}</div>
+                    <div className="truncate  max-w-[200px]">{workflow.name ? workflow.name : t("workflow.props.name.default")}</div>
+                    <div className="text-sm text-muted-foreground truncate  max-w-[200px]">
+                      {workflow.description ? workflow.description : t("workflow.props.description.placeholder")}
+                    </div>
                   </div>
                 }
               />
@@ -152,7 +157,7 @@ const WorkflowDetail = () => {
                   setTab("workflow");
                 }}
               >
-                <div>流程</div>
+                <div>{t("workflow.detail.title")}</div>
               </div>
               <div
                 className={cn("h-full flex items-center cursor-pointer border-b-2", getTabCls("history"))}
@@ -160,7 +165,7 @@ const WorkflowDetail = () => {
                   setTab("history");
                 }}
               >
-                <div>历史</div>
+                <div>{t("workflow.detail.history")}</div>
               </div>
             </div>
 
@@ -170,12 +175,12 @@ const WorkflowDetail = () => {
                   when={!!workflow.hasDraft}
                   fallback={
                     <Button variant={"secondary"} onClick={handleRunClick}>
-                      {running ? "执行中" : "立即执行"}
+                      {running ? t("workflow.detail.action.running") : t("workflow.detail.action.run")}
                     </Button>
                   }
                 >
                   <Button variant={"secondary"} onClick={handleWorkflowSaveClick}>
-                    保存变更
+                    {t("workflow.detail.action.save")}
                   </Button>
                 </Show>
               </Show>

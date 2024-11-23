@@ -148,7 +148,7 @@ export const initWorkflow = (): Workflow => {
 
   return {
     id: "",
-    name: i18n.t("workflow.default.name"),
+    name: i18n.t("workflow.props.name.default"),
     type: "auto",
     crontab: "0 0 * * *",
     enabled: false,

@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useTranslation } from "react-i18next";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
 
 type WorkflowNameEditDialogProps = {
@@ -31,9 +31,11 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
     resolver: zodResolver(formSchema),
   });
 
+  const memoWorkflow = useMemo(() => workflow, [workflow]);
+
   useEffect(() => {
     form.reset({ name: workflow.name, description: workflow.description });
-  }, [workflow]);
+  }, [memoWorkflow]);
 
   const { t } = useTranslation();
 
@@ -55,7 +57,7 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
         <DialogTrigger>{trigger}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>基础信息</DialogTitle>
+            <DialogTitle className="dark:text-stone-200">{t("workflow.baseinfo.title")}</DialogTitle>
           </DialogHeader>
           <div>
             <Form {...form}>
@@ -64,17 +66,17 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                   e.stopPropagation();
                   form.handleSubmit(onSubmit)(e);
                 }}
-                className="space-y-8"
+                className="space-y-8 dark:text-stone-200"
               >
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>名称</FormLabel>
+                      <FormLabel>{t("workflow.props.name")}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="请输入流程名称"
+                          placeholder={t("workflow.props.name.placeholder")}
                           {...field}
                           value={field.value}
                           defaultValue={workflow.name}
@@ -94,10 +96,10 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>说明</FormLabel>
+                      <FormLabel>{t("workflow.props.description")}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="请输入流程说明"
+                          placeholder={t("workflow.props.description.placeholder")}
                           {...field}
                           value={field.value}
                           defaultValue={workflow.description}

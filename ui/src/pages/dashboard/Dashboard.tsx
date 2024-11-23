@@ -34,11 +34,11 @@ const Dashboard = () => {
             <SquareSigma size={48} strokeWidth={1} className="text-blue-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">全部证书</div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.all.certificate")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateTotal ? (
-                  <Link to="/domains" className="hover:underline">
+                  <Link to="/certificate" className="hover:underline">
                     {statistic?.certificateTotal}
                   </Link>
                 ) : (
@@ -55,11 +55,11 @@ const Dashboard = () => {
             <CalendarClock size={48} strokeWidth={1} className="text-yellow-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">即将过期证书</div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.near_expired.certificate")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateExpireSoon ? (
-                  <Link to="/domains?state=expired" className="hover:underline">
+                  <Link to="/certificate?state=expireSoon" className="hover:underline">
                     {statistic?.certificateExpireSoon}
                   </Link>
                 ) : (
@@ -76,11 +76,11 @@ const Dashboard = () => {
             <CalendarX2 size={48} strokeWidth={1} className="text-red-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">已过期证书</div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.expired.certificate")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateExpired ? (
-                  <Link to="/domains?state=enabled" className="hover:underline">
+                  <Link to="/certificate?state=expired" className="hover:underline">
                     {statistic?.certificateExpired}
                   </Link>
                 ) : (
@@ -97,11 +97,11 @@ const Dashboard = () => {
             <Workflow size={48} strokeWidth={1} className="text-emerald-500" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">全部工作流</div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.all.workflow")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.workflowTotal ? (
-                  <Link to="/domains?state=disabled" className="hover:underline">
+                  <Link to="/workflow" className="hover:underline">
                     {statistic?.workflowTotal}
                   </Link>
                 ) : (
@@ -118,11 +118,11 @@ const Dashboard = () => {
             <FolderCheck size={48} strokeWidth={1} className="text-green-400" />
           </div>
           <div>
-            <div className="text-muted-foreground font-semibold">已启用工作流</div>
+            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.enabled.workflow")}</div>
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.workflowEnabled ? (
-                  <Link to="/domains?state=disabled" className="hover:underline">
+                  <Link to="/workflow?state=enabled" className="hover:underline">
                     {statistic?.workflowEnabled}
                   </Link>
                 ) : (
@@ -140,7 +140,7 @@ const Dashboard = () => {
       </div>
 
       <div>
-        <div className="text-muted-foreground mt-5 text-sm">最新证书</div>
+        <div className="text-muted-foreground mt-5 text-sm">{t("dashboard.certificate")}</div>
 
         <CertificateList />
       </div>

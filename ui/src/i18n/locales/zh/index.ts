@@ -6,6 +6,7 @@ import nlsDomain from "./nls.domain.json";
 import nlsAccess from "./nls.access.json";
 import nlsHistory from "./nls.history.json";
 import nlsWorkflow from "./nls.workflow.json";
+import nlsCertificate from "./nls.certificate.json";
 
 export default Object.freeze({
   ...nlsCommon,
@@ -16,4 +17,5 @@ export default Object.freeze({
   ...nlsAccess,
   ...nlsHistory,
   ...nlsWorkflow,
+  ...nlsCertificate,
 });

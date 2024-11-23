@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import Show from "../Show";
+import { useTranslation } from "react-i18next";
 
 interface DataTableProps<TData extends { id: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -28,6 +29,8 @@ export function DataTable<TData extends { id: string }, TValue>({
     pageIndex: 0,
     pageSize: 10,
   });
+
+  const { t } = useTranslation();
 
   const pagination = {
     pageIndex,
@@ -88,7 +91,7 @@ export function DataTable<TData extends { id: string }, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  {fallback ? fallback : "暂无数据"}
+                  {fallback ? fallback : t("common.text.nodata")}
                 </TableCell>
               </TableRow>
             )}
@@ -100,13 +103,13 @@ export function DataTable<TData extends { id: string }, TValue>({
           <div className="flex items-center space-x-2 dark:text-stone-200">
             {table.getCanPreviousPage() && (
               <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                上一页
+                {t("common.pagination.prev")}
               </Button>
             )}
 
             {table.getCanNextPage && (
               <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                下一页
+                {t("common.pagination.next")}
               </Button>
             )}
           </div>

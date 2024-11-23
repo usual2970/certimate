@@ -2,6 +2,7 @@ import { WorkflowOutput, WorkflowRunLog, WorkflowRunLogItem } from "@/domain/wor
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { Check, X } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { useTranslation } from "react-i18next";
 
 type WorkflowLogDetailProps = {
   open: boolean;
@@ -9,11 +10,12 @@ type WorkflowLogDetailProps = {
   log?: WorkflowRunLog;
 };
 const WorkflowLogDetail = ({ open, onOpenChange, log }: WorkflowLogDetailProps) => {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="sm:max-w-5xl">
         <SheetHeader>
-          <SheetTitle>日志</SheetTitle>
+          <SheetTitle>{t("workflow.history.page.title")}</SheetTitle>
         </SheetHeader>
 
         <div className="flex flex-col">
@@ -23,7 +25,7 @@ const WorkflowLogDetail = ({ open, onOpenChange, log }: WorkflowLogDetailProps) 
                 <div className="w-8 h-8 bg-green-500 flex items-center justify-center rounded-full text-white">
                   <Check size={18} />
                 </div>
-                <div className="text-stone-700">成功</div>
+                <div className="text-stone-700">{t("workflow.history.props.state.success")}</div>
               </div>
 
               <div className="text-muted-foreground">{new Date(log.created).toLocaleString()}</div>
@@ -34,7 +36,7 @@ const WorkflowLogDetail = ({ open, onOpenChange, log }: WorkflowLogDetailProps) 
                 <div className="w-8 h-8 bg-red-500 flex items-center justify-center rounded-full text-white">
                   <X size={18} />
                 </div>
-                <div className="text-stone-700">失败</div>
+                <div className="text-stone-700">{t("workflow.history.props.state.failed")}</div>
               </div>
 
               <div className="text-red-500 max-w-[400px] truncate">{log?.error}</div>
