@@ -1,17 +1,15 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer } from "react";
 
 import { Access } from "@/domain/access";
-import { AccessGroup } from "@/domain/access_groups";
 import { EmailsSetting, Setting } from "@/domain/settings";
 import { list } from "@/repository/access";
-import { list as getAccessGroups } from "@/repository/access_group";
+
 import { getEmails } from "@/repository/settings";
 import { configReducer } from "./reducer";
 
 export type ConfigData = {
   accesses: Access[];
   emails: Setting<EmailsSetting>;
-  accessGroups: AccessGroup[];
 };
 
 export type ConfigContext = {
@@ -20,8 +18,6 @@ export type ConfigContext = {
   addAccess: (access: Access) => void;
   updateAccess: (access: Access) => void;
   deleteAccess: (id: string) => void;
-  setAccessGroups: (accessGroups: AccessGroup[]) => void;
-  reloadAccessGroups: () => void;
 };
 
 const Context = createContext({} as ConfigContext);
@@ -36,7 +32,6 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
   const [config, dispatchConfig] = useReducer(configReducer, {
     accesses: [],
     emails: { content: { emails: [] } },
-    accessGroups: [],
   });
 
   useEffect(() => {
@@ -55,19 +50,6 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     featchEmails();
   }, []);
 
-  useEffect(() => {
-    const featchAccessGroups = async () => {
-      const accessGroups = await getAccessGroups();
-      dispatchConfig({ type: "SET_ACCESS_GROUPS", payload: accessGroups });
-    };
-    featchAccessGroups();
-  }, []);
-
-  const reloadAccessGroups = useCallback(async () => {
-    const accessGroups = await getAccessGroups();
-    dispatchConfig({ type: "SET_ACCESS_GROUPS", payload: accessGroups });
-  }, []);
-
   const setEmails = useCallback((emails: Setting<EmailsSetting>) => {
     dispatchConfig({ type: "SET_EMAILS", payload: emails });
   }, []);
@@ -84,24 +66,17 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
     dispatchConfig({ type: "UPDATE_ACCESS", payload: access });
   }, []);
 
-  const setAccessGroups = useCallback((accessGroups: AccessGroup[]) => {
-    dispatchConfig({ type: "SET_ACCESS_GROUPS", payload: accessGroups });
-  }, []);
-
   return (
     <Context.Provider
       value={{
         config: {
           accesses: config.accesses,
           emails: config.emails,
-          accessGroups: config.accessGroups,
         },
         setEmails,
         addAccess,
         updateAccess,
         deleteAccess,
-        setAccessGroups,
-        reloadAccessGroups,
       }}
     >
       {children && children}

@@ -12,7 +12,6 @@ import { readFileContent } from "@/lib/file";
 import { PbErrorData } from "@/domain/base";
 import { accessProvidersMap, accessTypeFormSchema, type Access, type SSHConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { updateById } from "@/repository/access_group";
 import { useConfigContext } from "@/providers/config";
 
 type AccessSSHFormProps = {
@@ -22,14 +21,12 @@ type AccessSSHFormProps = {
 };
 
 const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
-  const { addAccess, updateAccess, reloadAccessGroups } = useConfigContext();
+  const { addAccess, updateAccess } = useConfigContext();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [fileName, setFileName] = useState("");
   const { t } = useTranslation();
-
-  const originGroup = data ? (data.group ? data.group : "") : "";
 
   const domainReg = /^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
   const ipReg =
@@ -136,25 +133,6 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
       } else {
         addAccess(req);
       }
-
-      // 同步更新授权组
-      if (group != originGroup) {
-        if (originGroup) {
-          await updateById({
-            id: originGroup,
-            "access-": req.id,
-          });
-        }
-
-        if (group) {
-          await updateById({
-            id: group,
-            "access+": req.id,
-          });
-        }
-      }
-
-      reloadAccessGroups();
     } catch (e) {
       const err = e as ClientResponseError;
 

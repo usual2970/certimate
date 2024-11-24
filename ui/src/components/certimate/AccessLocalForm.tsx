@@ -19,7 +19,7 @@ type AccessLocalFormProps = {
 };
 
 const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
-  const { addAccess, updateAccess, reloadAccessGroups } = useConfigContext();
+  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -64,8 +64,6 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
       } else {
         addAccess(req);
       }
-
-      reloadAccessGroups();
     } catch (e) {
       const err = e as ClientResponseError;
 

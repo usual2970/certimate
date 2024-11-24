@@ -1,5 +1,4 @@
 import { Access } from "@/domain/access";
-import { AccessGroup } from "@/domain/access_groups";
 import { EmailsSetting, Setting } from "@/domain/settings";
 import { ConfigData } from "./";
 
@@ -9,8 +8,7 @@ type Action =
   | { type: "UPDATE_ACCESS"; payload: Access }
   | { type: "SET_ACCESSES"; payload: Access[] }
   | { type: "SET_EMAILS"; payload: Setting<EmailsSetting> }
-  | { type: "ADD_EMAIL"; payload: string }
-  | { type: "SET_ACCESS_GROUPS"; payload: AccessGroup[] };
+  | { type: "ADD_EMAIL"; payload: string };
 
 export const configReducer = (state: ConfigData, action: Action): ConfigData => {
   switch (action.type) {
@@ -53,12 +51,6 @@ export const configReducer = (state: ConfigData, action: Action): ConfigData => 
             emails: [...(state.emails.content as EmailsSetting).emails, action.payload],
           },
         },
-      };
-    }
-    case "SET_ACCESS_GROUPS": {
-      return {
-        ...state,
-        accessGroups: action.payload,
       };
     }
     default:
