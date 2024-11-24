@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Next Docker Image CI
 
 on:
   push:
@@ -33,8 +33,9 @@ jobs:
             usual2970/certimate
             registry.cn-shanghai.aliyuncs.com/usual2970/certimate
           tags: |
-            type=ref,event=tag
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+            type=ref,event=tag,pattern={{version}}
+          flavor: |
+            latest=false
 
       - name: Log in to DOCKERHUB
         uses: docker/login-action@v3
