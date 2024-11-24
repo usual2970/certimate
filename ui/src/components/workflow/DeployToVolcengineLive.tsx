@@ -23,7 +23,7 @@ const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
   getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
 });
-const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
+const DeployToVolcengineLive = ({ data }: DeployFormProps) => {
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
@@ -46,7 +46,7 @@ const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
 
   let config: WorkflowNodeConfig = {
     certificate: "",
-    providerType: "baiducloud-cdn",
+    providerType: "volcengine-live",
     access: "",
 
     domain: "",
@@ -56,7 +56,7 @@ const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "baiducloud-cdn",
+      providerType: "volcengine-live",
       access: config.access as string,
       certificate: config.certificate as string,
       domain: config.domain as string,
@@ -94,7 +94,7 @@ const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
                       </div>
                     }
                     op="add"
-                    outConfigType="baiducloud"
+                    outConfigType="volcengine"
                   />
                 </FormLabel>
                 <FormControl>
@@ -104,7 +104,7 @@ const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="baiducloud-cdn"
+                    providerType="volcengine-live"
                   />
                 </FormControl>
 
@@ -178,4 +178,4 @@ const DeployToBaiduCloudCDN = ({ data }: DeployFormProps) => {
   );
 };
 
-export default DeployToBaiduCloudCDN;
+export default DeployToVolcengineLive;

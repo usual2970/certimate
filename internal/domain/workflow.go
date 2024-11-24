@@ -15,11 +15,17 @@ const (
 	WorkflowNodeTypeCondition = "condition"
 )
 
+const (
+	WorkflowTypeAuto   = "auto"
+	WorkflowTypeManual = "manual"
+)
+
 type Workflow struct {
 	Meta
 	Name        string        `json:"name"`
 	Description string        `json:"description"`
 	Type        string        `json:"type"`
+	Crontab     string        `json:"crontab"`
 	Content     *WorkflowNode `json:"content"`
 	Draft       *WorkflowNode `json:"draft"`
 	Enabled     bool          `json:"enabled"`

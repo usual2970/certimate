@@ -3,16 +3,12 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import AccessGroupEdit from "./AccessGroupEdit";
 import { readFileContent } from "@/lib/file";
-import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
 import { accessProvidersMap, accessTypeFormSchema, type Access, type SSHConfig } from "@/domain/access";
 import { save } from "@/repository/access";
@@ -26,12 +22,7 @@ type AccessSSHFormProps = {
 };
 
 const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
-  const {
-    addAccess,
-    updateAccess,
-    reloadAccessGroups,
-    config: { accessGroups },
-  } = useConfigContext();
+  const { addAccess, updateAccess, reloadAccessGroups } = useConfigContext();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -209,52 +200,6 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
                 <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
                 <FormControl>
                   <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="group"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="w-full flex justify-between">
-                  <div>{t("access.authorization.form.ssh_group.label")}</div>
-                  <AccessGroupEdit
-                    trigger={
-                      <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
-                        <Plus size={14} />
-                        {t("common.add")}
-                      </div>
-                    }
-                  />
-                </FormLabel>
-                <FormControl>
-                  <Select
-                    {...field}
-                    value={field.value}
-                    defaultValue="emptyId"
-                    onValueChange={(value) => {
-                      form.setValue("group", value);
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={t("access.authorization.form.access_group.placeholder")} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="emptyId">
-                        <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>--</div>
-                      </SelectItem>
-                      {accessGroups.map((item) => (
-                        <SelectItem value={item.id ? item.id : ""} key={item.id}>
-                          <div className={cn("flex items-center space-x-2 rounded cursor-pointer")}>{item.name}</div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </FormControl>
 
                 <FormMessage />

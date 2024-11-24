@@ -13,9 +13,10 @@ import (
 
 	_ "github.com/usual2970/certimate/migrations"
 
-	"github.com/usual2970/certimate/internal/domains"
 	"github.com/usual2970/certimate/internal/routes"
+	"github.com/usual2970/certimate/internal/scheduler"
 	"github.com/usual2970/certimate/internal/utils/app"
+	"github.com/usual2970/certimate/internal/workflow"
 	"github.com/usual2970/certimate/ui"
 
 	_ "time/tzdata"
@@ -38,12 +39,12 @@ func main() {
 		Automigrate: isGoRun,
 	})
 
-	domains.AddEvent()
+	workflow.AddEvent()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		domains.InitSchedule()
-
 		routes.Register(e.Router)
+
+		scheduler.Register()
 
 		e.Router.GET(
 			"/*",

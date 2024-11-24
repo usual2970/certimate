@@ -43,7 +43,6 @@ const WorkflowDetail = () => {
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
-    console.log(id);
     init(id ?? "");
     if (id) {
       setLocId(id);
@@ -87,6 +86,9 @@ const WorkflowDetail = () => {
       return;
     }
     switchEnable();
+    if (!locId) {
+      navigate(`/workflow/detail?id=${workflow.id}`);
+    }
   };
 
   const handleWorkflowSaveClick = () => {
@@ -99,6 +101,9 @@ const WorkflowDetail = () => {
       return;
     }
     save();
+    if (!locId) {
+      navigate(`/workflow/detail?id=${workflow.id}`);
+    }
   };
 
   const getTabCls = (tabName: string) => {

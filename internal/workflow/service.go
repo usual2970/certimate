@@ -12,6 +12,7 @@ import (
 type WorkflowRepository interface {
 	Get(ctx context.Context, id string) (*domain.Workflow, error)
 	SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error
+	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
 }
 
 type WorkflowService struct {
@@ -22,6 +23,29 @@ func NewWorkflowService(repo WorkflowRepository) *WorkflowService {
 	return &WorkflowService{
 		repo: repo,
 	}
+}
+
+func (s *WorkflowService) InitSchedule(ctx context.Context) error {
+	// 查询所有的 enabled auto workflow
+	workflows, err := s.repo.ListEnabledAuto(ctx)
+	if err != nil {
+		return err
+	}
+	scheduler := app.GetScheduler()
+	for _, workflow := range workflows {
+		err := scheduler.Add(workflow.Id, workflow.Crontab, func() {
+			s.Run(ctx, &domain.WorkflowRunReq{
+				Id: workflow.Id,
+			})
+		})
+		if err != nil {
+			app.GetApp().Logger().Error("failed to add schedule", "err", err)
+			return err
+		}
+	}
+	scheduler.Start()
+	app.GetApp().Logger().Info("workflow schedule started")
+	return nil
 }
 
 func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) error {

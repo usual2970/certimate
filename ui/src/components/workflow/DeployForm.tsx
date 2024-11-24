@@ -18,6 +18,9 @@ import DeployToTencentCOS from "./DeployToTencentCOS";
 import DeployToTencentTEO from "./DeployToTencentTEO";
 import DeployToSSH from "./DeployToSSH";
 import DeployToLocal from "./DeployToLocal";
+import DeployToByteplusCDN from "./DeployToByteplusCDN";
+import DeployToVolcengineCDN from "./DeployToVolcengineCDN";
+import DeployToVolcengineLive from "./DeployToVolcengineLive";
 
 export type DeployFormProps = {
   data: WorkflowNode;
@@ -70,6 +73,12 @@ const getForm = (data: WorkflowNode, defaultProivder?: string) => {
       return <DeployToSSH data={data} />;
     case "local":
       return <DeployToLocal data={data} />;
+    case "byteplus-cdn":
+      return <DeployToByteplusCDN data={data} />;
+    case "volcengine-cdn":
+      return <DeployToVolcengineCDN data={data} />;
+    case "volcengine-live":
+      return <DeployToVolcengineLive data={data} />;
     default:
       return <></>;
   }

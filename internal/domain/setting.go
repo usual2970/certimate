@@ -29,3 +29,17 @@ func (s *Setting) GetChannelContent(channel string) (map[string]any, error) {
 
 	return v, nil
 }
+
+type NotifyTemplates struct {
+	NotifyTemplates []NotifyTemplate `json:"notifyTemplates"`
+}
+
+type NotifyTemplate struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+type NotifyMessage struct {
+	Subject string
+	Message string
+}

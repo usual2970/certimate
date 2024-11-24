@@ -1,10 +1,7 @@
 import { createHashRouter } from "react-router-dom";
 
 import DashboardLayout from "./pages/DashboardLayout";
-import Home from "./pages/domains/Home";
-import Edit from "./pages/domains/Edit";
 import Access from "./pages/access/Access";
-import History from "./pages/history/History";
 import Login from "./pages/login/Login";
 import LoginLayout from "./pages/LoginLayout";
 import Password from "./pages/setting/Password";
@@ -27,20 +24,8 @@ export const router = createHashRouter([
         element: <Dashboard />,
       },
       {
-        path: "/domains",
-        element: <Home />,
-      },
-      {
-        path: "/edit",
-        element: <Edit />,
-      },
-      {
         path: "/access",
         element: <Access />,
-      },
-      {
-        path: "/history",
-        element: <History />,
       },
       {
         path: "/workflow",

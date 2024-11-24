@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/utils/app"
@@ -14,6 +15,26 @@ type WorkflowRepository struct{}
 
 func NewWorkflowRepository() *WorkflowRepository {
 	return &WorkflowRepository{}
+}
+
+func (w *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error) {
+	records, err := app.GetApp().Dao().FindRecordsByFilter(
+		"workflow",
+		"enabled={:enabled} && type={:type}",
+		"-created", 1000, 0, dbx.Params{"enabled": true, "type": domain.WorkflowTypeAuto},
+	)
+	if err != nil {
+		return nil, err
+	}
+	rs := make([]domain.Workflow, 0)
+	for _, record := range records {
+		workflow, err := record2Workflow(record)
+		if err != nil {
+			return nil, err
+		}
+		rs = append(rs, *workflow)
+	}
+	return rs, nil
 }
 
 func (w *WorkflowRepository) SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error {
@@ -40,6 +61,10 @@ func (w *WorkflowRepository) Get(ctx context.Context, id string) (*domain.Workfl
 		return nil, err
 	}
 
+	return record2Workflow(record)
+}
+
+func record2Workflow(record *models.Record) (*domain.Workflow, error) {
 	content := &domain.WorkflowNode{}
 	if err := record.UnmarshalJSONField("content", content); err != nil {
 		return nil, err
@@ -59,6 +84,7 @@ func (w *WorkflowRepository) Get(ctx context.Context, id string) (*domain.Workfl
 		Name:        record.GetString("name"),
 		Description: record.GetString("description"),
 		Type:        record.GetString("type"),
+		Crontab:     record.GetString("crontab"),
 		Enabled:     record.GetBool("enabled"),
 		HasDraft:    record.GetBool("hasDraft"),
 
