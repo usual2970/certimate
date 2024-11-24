@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     tags:
-      - "*-beta"
+      - "*-alpha*"
   workflow_dispatch:
     inputs:
       tag:
@@ -32,6 +32,9 @@ jobs:
           images: |
             usual2970/certimate
             registry.cn-shanghai.aliyuncs.com/usual2970/certimate
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Log in to DOCKERHUB
         uses: docker/login-action@v3
