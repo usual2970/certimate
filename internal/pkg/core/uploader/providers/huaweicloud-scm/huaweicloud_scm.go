@@ -18,9 +18,12 @@ import (
 )
 
 type HuaweiCloudSCMUploaderConfig struct {
-	AccessKeyId     string `json:"accessKeyId"`
+	// 华为云 AccessKeyId。
+	AccessKeyId string `json:"accessKeyId"`
+	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
-	Region          string `json:"region"`
+	// 华为云地域。
+	Region string `json:"region"`
 }
 
 type HuaweiCloudSCMUploader struct {
