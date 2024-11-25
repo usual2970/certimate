@@ -56,8 +56,8 @@ export const channels: ChannelLabel[] = [
     label: "common.provider.serverchan",
   },
   {
-    name: "mail",
-    label: "common.provider.mail",
+    name: "email",
+    label: "common.provider.email",
   },
   {
     name: "bark",

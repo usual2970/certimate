@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import { nanoid } from "nanoid";
+
 import i18n from "@/i18n";
 import { deployTargets, KVType } from "./domain";
 
@@ -399,44 +400,44 @@ export type WorkflowBranchNode = {
   next?: WorkflowNode | WorkflowBranchNode;
 };
 
-type WorkflowwNodeDropdwonItem = {
+type WorkflowNodeDropdwonItem = {
   type: WorkflowNodeType;
   providerType?: string;
   name: string;
-  icon: WorkflowwNodeDropdwonItemIcon;
+  icon: WorkflowNodeDropdwonItemIcon;
   leaf?: boolean;
-  children?: WorkflowwNodeDropdwonItem[];
+  children?: WorkflowNodeDropdwonItem[];
 };
 
-export enum WorkflowwNodeDropdwonItemIconType {
+export enum WorkflowNodeDropdwonItemIconType {
   Icon,
   Provider,
 }
 
-export type WorkflowwNodeDropdwonItemIcon = {
-  type: WorkflowwNodeDropdwonItemIconType;
+export type WorkflowNodeDropdwonItemIcon = {
+  type: WorkflowNodeDropdwonItemIconType;
   name: string;
 };
 
-const workflowNodeDropdownDeployList: WorkflowwNodeDropdwonItem[] = deployTargets.map((item) => {
+const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = deployTargets.map((item) => {
   return {
     type: WorkflowNodeType.Apply,
     providerType: item.type,
     name: i18n.t(item.name),
     leaf: true,
     icon: {
-      type: WorkflowwNodeDropdwonItemIconType.Provider,
+      type: WorkflowNodeDropdwonItemIconType.Provider,
       name: item.icon,
     },
   };
 });
 
-export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
+export const workflowNodeDropdownList: WorkflowNodeDropdwonItem[] = [
   {
     type: WorkflowNodeType.Apply,
     name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Apply) ?? "",
     icon: {
-      type: WorkflowwNodeDropdwonItemIconType.Icon,
+      type: WorkflowNodeDropdwonItemIconType.Icon,
       name: "NotebookPen",
     },
     leaf: true,
@@ -445,7 +446,7 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     type: WorkflowNodeType.Deploy,
     name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Deploy) ?? "",
     icon: {
-      type: WorkflowwNodeDropdwonItemIconType.Icon,
+      type: WorkflowNodeDropdwonItemIconType.Icon,
       name: "CloudUpload",
     },
     children: workflowNodeDropdownDeployList,
@@ -455,7 +456,7 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Branch) ?? "",
     leaf: true,
     icon: {
-      type: WorkflowwNodeDropdwonItemIconType.Icon,
+      type: WorkflowNodeDropdwonItemIconType.Icon,
       name: "GitFork",
     },
   },
@@ -464,7 +465,7 @@ export const workflowNodeDropdownList: WorkflowwNodeDropdwonItem[] = [
     name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Notify) ?? "",
     leaf: true,
     icon: {
-      type: WorkflowwNodeDropdwonItemIconType.Icon,
+      type: WorkflowNodeDropdwonItemIconType.Icon,
       name: "Megaphone",
     },
   },
