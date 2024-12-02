@@ -33,7 +33,7 @@ func (w *workflowProcessor) runNode(ctx context.Context, node *domain.WorkflowNo
 		if current.Type == domain.WorkflowNodeTypeBranch {
 			for _, branch := range current.Branches {
 				if err := w.runNode(ctx, &branch); err != nil {
-					return err
+					continue
 				}
 			}
 		}
