@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { getErrMessage } from "@/lib/error";
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 const formSchema = z.object({
   username: z.string().email({
@@ -33,7 +33,7 @@ const Login = () => {
   // 2. Define a submit handler.
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await getPb().admins.authWithPassword(values.username, values.password);
+      await getPocketBase().admins.authWithPassword(values.username, values.password);
       navigage("/");
     } catch (e) {
       const message = getErrMessage(e);

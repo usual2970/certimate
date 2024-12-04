@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 import { ConfigProvider } from "@/providers/config";
 
 import Version from "@/components/certimate/Version";
@@ -18,7 +18,7 @@ export default function Dashboard() {
   const location = useLocation();
   const { t } = useTranslation();
 
-  if (!getPb().authStore.isValid || !getPb().authStore.isAdmin) {
+  if (!getPocketBase().authStore.isValid || !getPocketBase().authStore.isAdmin) {
     return <Navigate to="/login" />;
   }
 
@@ -31,7 +31,7 @@ export default function Dashboard() {
   };
 
   const handleLogoutClick = () => {
-    getPb().authStore.clear();
+    getPocketBase().authStore.clear();
     navigate("/login");
   };
 
@@ -57,7 +57,10 @@ export default function Dashboard() {
                     <Home className="h-4 w-4" />
                     {t("dashboard.page.title")}
                   </Link>
-                  <Link to="/workflow" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/workflow"))}>
+                  <Link
+                    to="/workflows"
+                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/workflows"))}
+                  >
                     <Workflow className="h-4 w-4" />
                     {t("workflow.page.title")}
                   </Link>
@@ -103,8 +106,8 @@ export default function Dashboard() {
                       {t("dashboard.page.title")}
                     </Link>
                     <Link
-                      to="/workflow"
-                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/workflow"))}
+                      to="/workflows"
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2  hover:text-foreground", getClass("/workflows"))}
                     >
                       <Workflow className="h-5 w-5" />
                       {t("workflow.page.title")}

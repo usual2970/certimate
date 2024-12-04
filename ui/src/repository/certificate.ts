@@ -1,5 +1,5 @@
 import { Certificate } from "@/domain/certificate";
-import { getPb } from "./api";
+import { getPocketBase } from "./pocketbase";
 import { RecordListOptions } from "pocketbase";
 import { getTimeAfter } from "@/lib/time";
 
@@ -10,7 +10,7 @@ type CertificateListReq = {
 };
 
 export const list = async (req: CertificateListReq) => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
   let page = 1;
   if (req.page) {

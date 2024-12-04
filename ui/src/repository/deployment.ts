@@ -1,5 +1,5 @@
 import { Deployment, DeploymentListReq } from "@/domain/deployment";
-import { getPb } from "./api";
+import { getPocketBase } from "./pocketbase";
 
 export const list = async (req: DeploymentListReq) => {
   let page = 1;
@@ -17,7 +17,7 @@ export const list = async (req: DeploymentListReq) => {
     filter = `domain="${req.domain}"`;
   }
 
-  return await getPb().collection("deployments").getList<Deployment>(page, perPage, {
+  return await getPocketBase().collection("deployments").getList<Deployment>(page, perPage, {
     filter: filter,
     sort: "-deployedAt",
     expand: "domain",

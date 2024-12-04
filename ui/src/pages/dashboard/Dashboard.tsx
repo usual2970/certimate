@@ -101,7 +101,7 @@ const Dashboard = () => {
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.workflowTotal ? (
-                  <Link to="/workflow" className="hover:underline">
+                  <Link to="/workflows" className="hover:underline">
                     {statistic?.workflowTotal}
                   </Link>
                 ) : (
@@ -122,7 +122,7 @@ const Dashboard = () => {
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.workflowEnabled ? (
-                  <Link to="/workflow?state=enabled" className="hover:underline">
+                  <Link to="/workflows?state=enabled" className="hover:underline">
                     {statistic?.workflowEnabled}
                   </Link>
                 ) : (

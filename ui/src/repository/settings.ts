@@ -1,9 +1,9 @@
 import { EmailsSetting, Setting } from "@/domain/settings";
-import { getPb } from "./api";
+import { getPocketBase } from "./pocketbase";
 
 export const getEmails = async () => {
   try {
-    const resp = await getPb().collection("settings").getFirstListItem<Setting<EmailsSetting>>("name='emails'");
+    const resp = await getPocketBase().collection("settings").getFirstListItem<Setting<EmailsSetting>>("name='emails'");
     return resp;
   } catch (e) {
     return {
@@ -14,7 +14,7 @@ export const getEmails = async () => {
 
 export const getSetting = async <T>(name: string) => {
   try {
-    const resp = await getPb().collection("settings").getFirstListItem<Setting<T>>(`name='${name}'`);
+    const resp = await getPocketBase().collection("settings").getFirstListItem<Setting<T>>(`name='${name}'`);
     return resp;
   } catch (e) {
     const rs: Setting<T> = {
@@ -25,7 +25,7 @@ export const getSetting = async <T>(name: string) => {
 };
 
 export const update = async <T>(setting: Setting<T>) => {
-  const pb = getPb();
+  const pb = getPocketBase();
   let resp: Setting<T>;
   if (setting.id) {
     resp = await pb.collection("settings").update(setting.id, setting);

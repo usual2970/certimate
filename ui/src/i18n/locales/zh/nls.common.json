@@ -30,6 +30,7 @@
   "common.text.updated_at": "更新时间",
   "common.text.operations": "操作",
   "common.text.nodata": "暂无数据",
+  "common.text.request_error": "请求错误",
 
   "common.menu.settings": "系统设置",
   "common.menu.logout": "退出登录",

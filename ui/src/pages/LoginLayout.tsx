@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import Version from "@/components/certimate/Version";
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 const LoginLayout = () => {
-  if (getPb().authStore.isValid && getPb().authStore.isAdmin) {
+  if (getPocketBase().authStore.isValid && getPocketBase().authStore.isAdmin) {
     return <Navigate to="/" />;
   }
 

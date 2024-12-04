@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 const formSchema = z.object({
   email: z.string().email("settings.account.email.errmsg.invalid"),
@@ -26,17 +26,17 @@ const Account = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: getPb().authStore.model?.email,
+      email: getPocketBase().authStore.model?.email,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await getPb().admins.update(getPb().authStore.model?.id, {
+      await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
         email: values.email,
       });
 
-      getPb().authStore.clear();
+      getPocketBase().authStore.clear();
       toast({
         title: t("settings.account.email.changed.message"),
         description: t("settings.account.relogin.message"),

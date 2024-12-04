@@ -30,6 +30,7 @@
   "common.text.updated_at": "Updated At",
   "common.text.operations": "Operations",
   "common.text.nodata": "No data available",
+  "common.text.request_error": "Request error",
 
   "common.menu.settings": "Settings",
   "common.menu.logout": "Logout",

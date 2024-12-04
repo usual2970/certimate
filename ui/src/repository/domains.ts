@@ -1,6 +1,6 @@
 import { getTimeAfter } from "@/lib/time";
 import { Domain } from "@/domain/domain";
-import { getPb } from "./api";
+import { getPocketBase } from "./pocketbase";
 
 type DomainListReq = {
   domain?: string;
@@ -10,7 +10,7 @@ type DomainListReq = {
 };
 
 export const list = async (req: DomainListReq) => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
   let page = 1;
   if (req.page) {
@@ -43,24 +43,24 @@ export const list = async (req: DomainListReq) => {
 };
 
 export const get = async (id: string) => {
-  const response = await getPb().collection("domains").getOne<Domain>(id);
+  const response = await getPocketBase().collection("domains").getOne<Domain>(id);
   return response;
 };
 
 export const save = async (data: Domain) => {
   if (data.id) {
-    return await getPb().collection("domains").update<Domain>(data.id, data);
+    return await getPocketBase().collection("domains").update<Domain>(data.id, data);
   }
-  return await getPb().collection("domains").create<Domain>(data);
+  return await getPocketBase().collection("domains").create<Domain>(data);
 };
 
 export const remove = async (id: string) => {
-  return await getPb().collection("domains").delete(id);
+  return await getPocketBase().collection("domains").delete(id);
 };
 
 type Callback = (data: Domain) => void;
 export const subscribeId = (id: string, callback: Callback) => {
-  return getPb()
+  return getPocketBase()
     .collection("domains")
     .subscribe<Domain>(
       id,
@@ -76,5 +76,5 @@ export const subscribeId = (id: string, callback: Callback) => {
 };
 
 export const unsubscribeId = (id: string) => {
-  getPb().collection("domains").unsubscribe(id);
+  getPocketBase().collection("domains").unsubscribe(id);
 };

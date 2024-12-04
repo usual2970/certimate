@@ -20,15 +20,15 @@
   "workflow.props.description.placeholder": "请输入描述",
   "workflow.props.executionMethod": "执行方式",
   "workflow.props.enabled": "是否启用",
-  "workflow.props.created": "创建时间",
-  "workflow.props.updated": "更新时间",
+  "workflow.props.createdAt": "创建时间",
+  "workflow.props.updatedAt": "更新时间",
 
   "workflow.action": "操作",
   "workflow.action.edit": "编辑",
-  "workflow.action.create": "创建工作流",
+  "workflow.action.create": "新建工作流",
 
   "workflow.action.delete.alert.title": "删除工作流",
-  "workflow.action.delete.alert.description": "确定要删除此工作流吗？",
+  "workflow.action.delete.alert.content": "确定要删除此工作流吗？",
 
   "workflow.history.page.title": "日志",
   "workflow.history.props.state": "状态",
@@ -68,4 +68,3 @@
   "workflow.node.notify.form.channel.placeholder": "请选择推送渠道",
   "workflow.node.notify.form.settingChannel.label": "设置推送渠道"
 }
-
