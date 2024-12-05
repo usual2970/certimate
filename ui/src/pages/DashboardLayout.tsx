@@ -66,8 +66,8 @@ export default function Dashboard() {
                   </Link>
 
                   <Link
-                    to="/certificate"
-                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/certificate"))}
+                    to="/certificates"
+                    className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/certificates"))}
                   >
                     <ShieldCheck className="h-4 w-4" />
                     {t("certificate.page.title")}
@@ -114,8 +114,8 @@ export default function Dashboard() {
                     </Link>
 
                     <Link
-                      to="/certificate"
-                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/certificate"))}
+                      to="/certificates"
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/certificates"))}
                     >
                       <ShieldCheck className="h-5 w-5" />
                       {t("certificate.page.title")}

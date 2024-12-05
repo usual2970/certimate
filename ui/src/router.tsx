@@ -10,9 +10,9 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Account from "./pages/setting/Account";
 import Notify from "./pages/setting/Notify";
 import SSLProvider from "./pages/setting/SSLProvider";
-import WorkflowList from "./pages/workflow/WorkflowList";
-import WorkflowDetail from "./pages/workflow/WorkflowDetail";
-import Certificate from "./pages/certificate";
+import WorkflowList from "./pages/workflows/WorkflowList";
+import WorkflowDetail from "./pages/workflows/WorkflowDetail";
+import CertificateList from "./pages/certificates/CertificateList";
 
 export const router = createHashRouter([
   {
@@ -32,8 +32,8 @@ export const router = createHashRouter([
         element: <WorkflowList />,
       },
       {
-        path: "/certificate",
-        element: <Certificate />,
+        path: "/certificates",
+        element: <CertificateList />,
       },
       {
         path: "/setting",

@@ -10,15 +10,17 @@ export type WorkflowListReq = {
 };
 
 export const list = async (req: WorkflowListReq) => {
+  const pb = getPocketBase();
+
   const page = req.page || 1;
   const perPage = req.perPage || 10;
 
   const options: RecordListOptions = { sort: "-created" };
   if (req.enabled != null) {
-    options.filter = getPocketBase().filter("enabled={:enabled}", { enabled: req.enabled });
+    options.filter = pb.filter("enabled={:enabled}", { enabled: req.enabled });
   }
 
-  return await getPocketBase().collection("workflow").getList<Workflow>(page, perPage, options);
+  return await pb.collection("workflow").getList<Workflow>(page, perPage, options);
 };
 
 export const get = async (id: string) => {

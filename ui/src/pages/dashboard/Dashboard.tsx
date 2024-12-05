@@ -38,7 +38,7 @@ const Dashboard = () => {
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateTotal ? (
-                  <Link to="/certificate" className="hover:underline">
+                  <Link to="/certificates" className="hover:underline">
                     {statistic?.certificateTotal}
                   </Link>
                 ) : (
@@ -59,7 +59,7 @@ const Dashboard = () => {
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateExpireSoon ? (
-                  <Link to="/certificate?state=expireSoon" className="hover:underline">
+                  <Link to="/certificates?state=expireSoon" className="hover:underline">
                     {statistic?.certificateExpireSoon}
                   </Link>
                 ) : (
@@ -80,7 +80,7 @@ const Dashboard = () => {
             <div className="flex items-baseline">
               <div className="text-3xl text-stone-700 dark:text-stone-200">
                 {statistic?.certificateExpired ? (
-                  <Link to="/certificate?state=expired" className="hover:underline">
+                  <Link to="/certificates?state=expired" className="hover:underline">
                     {statistic?.certificateExpired}
                   </Link>
                 ) : (

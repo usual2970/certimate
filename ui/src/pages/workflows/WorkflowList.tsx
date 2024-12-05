@@ -9,16 +9,15 @@ import { Workflow as WorkflowType } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow, type WorkflowListReq } from "@/repository/workflow";
 
 const WorkflowList = () => {
-  const navigate = useNavigate();
-
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const [loading, setLoading] = useState<boolean>(false);
-
-  const [searchParams] = useSearchParams();
 
   const tableColumns: TableProps<WorkflowType>["columns"] = [
     {
@@ -200,6 +199,8 @@ const WorkflowList = () => {
   const handleCreateClick = () => {
     navigate("/workflow/detail");
   };
+
+  // TODO: Empty 样式
 
   return (
     <>

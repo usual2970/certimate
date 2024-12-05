@@ -9,6 +9,7 @@
   "certificate.props.expiry.expired": "Expired",
   "certificate.props.expiry.text.expire": "Expire",
   "certificate.props.workflow": "Workflow",
+  "certificate.props.source": "Source",
   "certificate.props.created": "Created",
   "certificate.props.certificate": "Certificate",
   "certificate.props.private.key": "Private Key",
@@ -16,4 +17,3 @@
   "certificate.action.view": "View Certificate",
   "certificate.action.download": "Download Certificate"
 }
-
