@@ -10,10 +10,10 @@ import { Workflow as WorkflowType } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow, type WorkflowListReq } from "@/repository/workflow";
 
 const WorkflowList = () => {
-  const { t } = useTranslation();
-
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  const { t } = useTranslation();
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();

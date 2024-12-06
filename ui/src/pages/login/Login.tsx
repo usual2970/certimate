@@ -1,90 +1,67 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Button, Card, Form, Input, notification } from "antd";
+import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { getErrMessage } from "@/lib/error";
 import { getPocketBase } from "@/repository/pocketbase";
 
-const formSchema = z.object({
-  username: z.string().email({
-    message: "login.username.errmsg.invalid",
-  }),
-  password: z.string().min(10, {
-    message: "login.password.errmsg.invalid",
-  }),
-});
-
 const Login = () => {
+  const navigage = useNavigate();
+
   const { t } = useTranslation();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  // 2. Define a submit handler.
+  const formSchema = z.object({
+    username: z.string().email(t("login.username.errmsg.invalid")),
+    password: z.string().min(10, t("login.password.errmsg.invalid")),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const [form] = Form.useForm();
+
+  const [submitting, setSubmitting] = useState(false);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setSubmitting(true);
+
     try {
       await getPocketBase().admins.authWithPassword(values.username, values.password);
       navigage("/");
-    } catch (e) {
-      const message = getErrMessage(e);
-      form.setError("username", { message });
-      form.setError("password", { message });
+    } catch (err) {
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const navigage = useNavigate();
   return (
-    <div className="max-w-[35em] border dark:border-stone-500 mx-auto mt-32 p-10 rounded-md shadow-md">
-      <div className="flex justify-center mb-10">
-        <img src="/vite.svg" className="w-16" />
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 dark:text-stone-200">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("login.username.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("login.username.placeholder")} {...field} />
-                </FormControl>
+    <>
+      {NotificationContextHolder}
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <Card className="mx-auto mt-32 p-10 max-w-[35em] border dark:border-stone-500 rounded-md shadow-md">
+        <div className="flex items-center justify-center mb-10">
+          <img src="/logo.svg" className="w-16" />
+        </div>
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("login.password.label")}</FormLabel>
-                <FormControl>
-                  <Input placeholder={t("login.password.placeholder")} {...field} type="password" />
-                </FormControl>
+        <Form form={form} disabled={submitting} layout="vertical" onFinish={onSubmit}>
+          <Form.Item name="username" label={t("login.username.label")} rules={[formRule]}>
+            <Input placeholder={t("login.username.placeholder")} />
+          </Form.Item>
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end">
-            <Button type="submit">{t("login.submit")}</Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+          <Form.Item name="password" label={t("login.password.label")} rules={[formRule]}>
+            <Input type="password" placeholder={t("login.password.placeholder")} />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block loading={submitting}>
+              {t("login.submit")}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Card>
+    </>
   );
 };
 

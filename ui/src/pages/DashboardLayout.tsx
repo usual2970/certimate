@@ -47,7 +47,7 @@ export default function Dashboard() {
             <div className="flex h-full max-h-screen flex-col gap-2">
               <div className="flex h-14 items-center border-b dark:border-stone-500 px-4 lg:h-[60px] lg:px-6">
                 <Link to="/" className="flex items-center gap-2 font-semibold">
-                  <img src="/vite.svg" className="w-[36px] h-[36px]" />
+                  <img src="/logo.svg" className="w-[36px] h-[36px]" />
                   <span className="dark:text-white">Certimate</span>
                 </Link>
               </div>
@@ -97,7 +97,7 @@ export default function Dashboard() {
                 <SheetContent side="left" className="flex flex-col">
                   <nav className="grid gap-2 text-lg font-medium">
                     <Link to="/" className="flex items-center gap-2 text-lg font-semibold">
-                      <img src="/vite.svg" className="w-[36px] h-[36px]" />
+                      <img src="/logo.svg" className="w-[36px] h-[36px]" />
                       <span className="dark:text-white">Certimate</span>
                       <span className="sr-only">Certimate</span>
                     </Link>

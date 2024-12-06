@@ -4,7 +4,8 @@ import Version from "@/components/certimate/Version";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const LoginLayout = () => {
-  if (getPocketBase().authStore.isValid && getPocketBase().authStore.isAdmin) {
+  const auth = getPocketBase().authStore;
+  if (auth.isValid && auth.isAdmin) {
     return <Navigate to="/" />;
   }
 
@@ -12,7 +13,7 @@ const LoginLayout = () => {
     <div className="container">
       <Outlet />
 
-      <Version className="fixed right-0 bottom-0 justify-end pr-5" />
+      <Version className="fixed right-8 bottom-4" />
     </div>
   );
 };

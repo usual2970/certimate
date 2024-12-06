@@ -138,6 +138,7 @@ const AccessList = () => {
       title: t("access.action.delete"),
       content: t("access.action.delete.confirm"),
       onOk: async () => {
+        // TODO: 有关联数据的不允许被删除
         try {
           const res = await removeAccess(data);
           configContext.deleteAccess(res.id);

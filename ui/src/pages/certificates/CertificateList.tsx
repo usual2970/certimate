@@ -11,10 +11,10 @@ import { list as listCertificate, type CertificateListReq } from "@/repository/c
 import { diffDays, getLeftDays } from "@/lib/time";
 
 const CertificateList = () => {
-  const { t } = useTranslation();
-
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  const { t } = useTranslation();
 
   const [loading, setLoading] = useState<boolean>(false);
 
