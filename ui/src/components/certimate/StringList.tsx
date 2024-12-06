@@ -3,12 +3,12 @@ import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Edit, Plus, Trash2 } from "lucide-react";
 
+import { cn } from "@/components/ui/utils";
 import Show from "@/components/Show";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { FormControl, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 type StringListProps = {
   className?: string;

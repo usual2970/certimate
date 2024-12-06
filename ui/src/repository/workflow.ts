@@ -37,8 +37,8 @@ export const save = async (data: Record<string, string | boolean | WorkflowNode>
   return await getPocketBase().collection("workflow").create<Workflow>(data);
 };
 
-export const remove = async (id: string) => {
-  return await getPocketBase().collection("workflow").delete(id);
+export const remove = async (workflow: Workflow) => {
+  return await getPocketBase().collection("workflow").delete(workflow.id);
 };
 
 type WorkflowLogsReq = {

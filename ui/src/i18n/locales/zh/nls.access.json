@@ -1,14 +1,13 @@
 ﻿{
   "access.page.title": "授权管理",
 
-  "access.authorization.tab": "授权",
-  "access.authorization.nodata": "请添加授权开始部署证书吧。",
+  "access.nodata": "请添加授权开始部署证书吧。",
 
-  "access.authorization.add": "新增授权",
-  "access.authorization.edit": "编辑授权",
-  "access.authorization.copy": "复制授权",
-  "access.authorization.delete": "删除授权",
-  "access.authorization.delete.confirm": "确定要删除授权吗？",
+  "access.action.add": "新建授权",
+  "access.action.edit": "编辑授权",
+  "access.action.copy": "复制授权",
+  "access.action.delete": "删除授权",
+  "access.action.delete.confirm": "确定要删除此授权吗？",
 
   "access.authorization.form.type.label": "服务商",
   "access.authorization.form.type.placeholder": "请选择服务商",
@@ -73,21 +72,5 @@
   "access.authorization.form.webhook_url.placeholder": "请输入 Webhook URL",
   "access.authorization.form.k8s_kubeconfig.label": "KubeConfig（不选将使用Pod的ServiceAccount）",
   "access.authorization.form.k8s_kubeconfig.placeholder": "请输入 KubeConfig",
-  "access.authorization.form.k8s_kubeconfig_file.placeholder": "请选择文件",
-
-  "access.group.tab": "授权组",
-
-  "access.group.nodata": "暂无部署授权配置，请添加后开始使用吧",
-  "access.group.total": "共有 {{total}} 个部署授权配置",
-
-  "access.group.add": "添加授权组",
-  "access.group.delete": "删除组",
-  "access.group.delete.confirm": "确定要删除部署授权组吗？",
-
-  "access.group.form.name.label": "组名",
-  "access.group.form.name.errmsg.empty": "请输入组名",
-
-  "access.group.domains": "所有授权",
-  "access.group.domains.nodata": "请添加域名开始部署证书吧。"
+  "access.authorization.form.k8s_kubeconfig_file.placeholder": "请选择文件"
 }
-

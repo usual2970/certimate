@@ -1,6 +1,6 @@
 import { type RecordListOptions } from "pocketbase";
 
-import { Certificate } from "@/domain/certificate";
+import { type Certificate } from "@/domain/certificate";
 import { getTimeAfter } from "@/lib/time";
 import { getPocketBase } from "./pocketbase";
 

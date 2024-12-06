@@ -103,7 +103,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
     },
     {
       accessorKey: "created",
-      header: t("certificate.props.created"),
+      header: t("common.text.created_at"),
       cell: ({ row }) => {
         const date: string = row.getValue("created");
         return new Date(date).toLocaleString();

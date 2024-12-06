@@ -10,10 +10,10 @@ import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEditDialog";
 import WorkflowLog from "@/components/workflow/WorkflowLog";
 
+import { cn } from "@/components/ui/utils";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
 import { getErrMessage } from "@/lib/error";
-import { cn } from "@/lib/utils";
 import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";

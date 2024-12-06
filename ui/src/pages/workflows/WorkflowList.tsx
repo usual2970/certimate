@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Modal, notification, Space, Switch, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
+import moment from "moment";
 
 import { Workflow as WorkflowType } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow, type WorkflowListReq } from "@/repository/workflow";
@@ -68,7 +69,7 @@ const WorkflowList = () => {
             <Switch
               checked={enabled}
               onChange={() => {
-                handleEnabledChange(record.id);
+                handleEnabledChange(record);
               }}
             />
           </>
@@ -88,7 +89,7 @@ const WorkflowList = () => {
       title: t("common.text.created_at"),
       ellipsis: true,
       render: (_, record) => {
-        return new Date(record.created!).toLocaleString();
+        return moment(record.created!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
@@ -96,15 +97,16 @@ const WorkflowList = () => {
       title: t("common.text.updated_at"),
       ellipsis: true,
       render: (_, record) => {
-        return new Date(record.updated!).toLocaleString();
+        return moment(record.updated!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
-      key: "$operations",
+      key: "$action",
       align: "end",
-      width: 100,
+      fixed: "right",
+      width: 120,
       render: (_, record) => (
-        <Space>
+        <Space size={0}>
           <Tooltip title={t("common.edit")}>
             <Button
               type="link"
@@ -120,7 +122,7 @@ const WorkflowList = () => {
               danger={true}
               icon={<Trash2Icon size={16} />}
               onClick={() => {
-                handleDeleteClick(record.id);
+                handleDeleteClick(record);
               }}
             />
           </Tooltip>
@@ -161,13 +163,16 @@ const WorkflowList = () => {
     fetchTableData();
   }, [page, pageSize]);
 
-  const handleEnabledChange = async (id: string) => {
+  const handleEnabledChange = async (workflow: WorkflowType) => {
     try {
-      const resp = await saveWorkflow({ id, enabled: !tableData.find((item) => item.id === id)?.enabled });
+      const resp = await saveWorkflow({
+        id: workflow.id,
+        enabled: !tableData.find((item) => item.id === workflow.id)?.enabled,
+      });
       if (resp) {
         setTableData((prev) => {
           return prev.map((item) => {
-            if (item.id === id) {
+            if (item.id === workflow.id) {
               return resp;
             }
             return item;
@@ -179,15 +184,15 @@ const WorkflowList = () => {
     }
   };
 
-  const handleDeleteClick = (id: string) => {
+  const handleDeleteClick = (workflow: WorkflowType) => {
     modalApi.confirm({
       title: t("workflow.action.delete.alert.title"),
       content: t("workflow.action.delete.alert.content"),
       onOk: async () => {
         try {
-          const resp = await removeWorkflow(id);
+          const resp = await removeWorkflow(workflow);
           if (resp) {
-            setTableData((prev) => prev.filter((item) => item.id !== id));
+            setTableData((prev) => prev.filter((item) => item.id !== workflow.id));
           }
         } catch (err) {
           notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
@@ -201,9 +206,13 @@ const WorkflowList = () => {
   };
 
   // TODO: Empty 样式
+  // TODO: 响应式表格
 
   return (
     <>
+      {ModelContextHolder}
+      {NotificationContextHolder}
+
       <PageHeader
         title={t("workflow.page.title")}
         extra={[
@@ -223,7 +232,6 @@ const WorkflowList = () => {
       <Table<WorkflowType>
         columns={tableColumns}
         dataSource={tableData}
-        rowKey={(record) => record.id}
         loading={loading}
         pagination={{
           current: page,
@@ -238,10 +246,8 @@ const WorkflowList = () => {
             setPageSize(pageSize);
           },
         }}
+        rowKey={(record) => record.id}
       />
-
-      {ModelContextHolder}
-      {NotificationContextHolder}
     </>
   );
 };

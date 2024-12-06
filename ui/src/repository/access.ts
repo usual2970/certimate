@@ -1,6 +1,6 @@
 import moment from "moment";
 
-import { Access } from "@/domain/access";
+import { type Access } from "@/domain/access";
 import { getPocketBase } from "./pocketbase";
 
 export const list = async () => {

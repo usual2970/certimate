@@ -4,10 +4,10 @@ import { CircleUser, Home, Menu, Server, ShieldCheck, Workflow } from "lucide-re
 
 import LocaleToggle from "@/components/LocaleToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 import { getPocketBase } from "@/repository/pocketbase";
 import { ConfigProvider } from "@/providers/config";
 
@@ -73,7 +73,7 @@ export default function Dashboard() {
                     {t("certificate.page.title")}
                   </Link>
 
-                  <Link to="/access" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/access"))}>
+                  <Link to="/accesses" className={cn("flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary", getClass("/accesses"))}>
                     <Server className="h-4 w-4" />
                     {t("access.page.title")}
                   </Link>
@@ -122,8 +122,8 @@ export default function Dashboard() {
                     </Link>
 
                     <Link
-                      to="/access"
-                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/access"))}
+                      to="/accesses"
+                      className={cn("mx-[-0.65rem] flex items-center gap-4 rounded-xl  px-3 py-2  hover:text-foreground", getClass("/accesses"))}
                     >
                       <Server className="h-5 w-5" />
                       {t("access.page.title")}

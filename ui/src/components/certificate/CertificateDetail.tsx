@@ -53,7 +53,7 @@ const CertificateDetail = ({ open, onOpenChange, certificate }: WorkflowLogDetai
             <Textarea value={certificate?.certificate} rows={10} readOnly={true} />
           </div>
           <div className="flex flex-col space-y-3">
-            <Label>{t("certificate.props.private.key")}</Label>
+            <Label>{t("certificate.props.private_key")}</Label>
             <Textarea value={certificate?.privateKey} rows={10} readOnly={true} />
           </div>
         </div>

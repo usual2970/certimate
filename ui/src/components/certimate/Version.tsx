@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { BookOpen } from "lucide-react";
 
+import { cn } from "@/components/ui/utils";
 import { Separator } from "@/components/ui/separator";
 import { version } from "@/domain/version";
-import { cn } from "@/lib/utils";
 
 type VersionProps = {
   className?: string;
@@ -29,4 +29,3 @@ const Version = ({ className }: VersionProps) => {
 };
 
 export default Version;
-

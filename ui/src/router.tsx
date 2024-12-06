@@ -1,15 +1,15 @@
 import { createHashRouter } from "react-router-dom";
 
-import DashboardLayout from "./pages/DashboardLayout";
-import Access from "./pages/access/Access";
-import Login from "./pages/login/Login";
 import LoginLayout from "./pages/LoginLayout";
-import Password from "./pages/setting/Password";
+import DashboardLayout from "./pages/DashboardLayout";
 import SettingLayout from "./pages/SettingLayout";
-import Dashboard from "./pages/dashboard/Dashboard";
+import Login from "./pages/login/Login";
 import Account from "./pages/setting/Account";
+import Password from "./pages/setting/Password";
 import Notify from "./pages/setting/Notify";
 import SSLProvider from "./pages/setting/SSLProvider";
+import Dashboard from "./pages/dashboard/Dashboard";
+import AccessList from "./pages/accesses/AccessList";
 import WorkflowList from "./pages/workflows/WorkflowList";
 import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import CertificateList from "./pages/certificates/CertificateList";
@@ -24,16 +24,16 @@ export const router = createHashRouter([
         element: <Dashboard />,
       },
       {
-        path: "/access",
-        element: <Access />,
-      },
-      {
-        path: "/workflows",
-        element: <WorkflowList />,
+        path: "/accesses",
+        element: <AccessList />,
       },
       {
         path: "/certificates",
         element: <CertificateList />,
+      },
+      {
+        path: "/workflows",
+        element: <WorkflowList />,
       },
       {
         path: "/setting",

@@ -1,14 +1,13 @@
 ﻿{
   "access.page.title": "Authorization Management",
 
-  "access.authorization.tab": "Authorization",
-  "access.authorization.nodata": "Please add authorization to start deploying certificate.",
+  "access.nodata": "Please add authorization to start deploying certificate.",
 
-  "access.authorization.add": "Add Authorization",
-  "access.authorization.edit": "Edit Authorization",
-  "access.authorization.copy": "Copy Authorization",
-  "access.authorization.delete": "Delete Authorization",
-  "access.authorization.delete.confirm": "Are you sure you want to delete the deployment authorization?",
+  "access.action.add": "Create Authorization",
+  "access.action.edit": "Edit Authorization",
+  "access.action.copy": "Copy Authorization",
+  "access.action.delete": "Delete Authorization",
+  "access.action.delete.confirm": "Are you sure you want to delete the deployment authorization?",
 
   "access.authorization.form.type.label": "Provider",
   "access.authorization.form.type.placeholder": "Please select a provider",
@@ -73,21 +72,5 @@
   "access.authorization.form.webhook_url.placeholder": "Please enter Webhook URL",
   "access.authorization.form.k8s_kubeconfig.label": "KubeConfig (Null will use pod's ServiceAccount)",
   "access.authorization.form.k8s_kubeconfig.placeholder": "Please enter KubeConfig",
-  "access.authorization.form.k8s_kubeconfig_file.placeholder": "Please select file (Null will use pod's ServiceAccount)",
-
-  "access.group.tab": "Authorization Group",
-
-  "access.group.nodata": "No deployment authorization configuration yet, please add after starting use.",
-  "access.group.total": "Totally {{total}} deployment authorization configuration",
-
-  "access.group.add": "Add Group",
-  "access.group.delete": "Delete Group",
-  "access.group.delete.confirm": "Are you sure you want to delete the deployment authorization group?",
-
-  "access.group.form.name.label": "Group Name",
-  "access.group.form.name.errmsg.empty": "Please enter group name",
-
-  "access.group.domains": "All Authorizations",
-  "access.group.domains.nodata": "Please add a domain to start deploying the certificate."
+  "access.authorization.form.k8s_kubeconfig_file.placeholder": "Please select file (Null will use pod's ServiceAccount)"
 }
-

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon } from "lucide-react";
+import moment from "moment";
 
 import { Certificate as CertificateType } from "@/domain/certificate";
 import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
@@ -27,7 +28,7 @@ const CertificateList = () => {
     },
     {
       key: "name",
-      title: t("common.text.domain"),
+      title: t("certificate.props.domain"),
       render: (_, record) => <Typography.Text>{record.san}</Typography.Text>,
     },
     {
@@ -47,7 +48,7 @@ const CertificateList = () => {
             )}
 
             <Typography.Text type="secondary">
-              {new Date(record.expireAt).toLocaleString().split(" ")[0]} {t("certificate.props.expiry.text.expire")}
+              {moment(record.expireAt).format("YYYY-MM-DD")} {t("certificate.props.expiry.text.expire")}
             </Typography.Text>
           </Space>
         );
@@ -81,7 +82,7 @@ const CertificateList = () => {
       title: t("common.text.created_at"),
       ellipsis: true,
       render: (_, record) => {
-        return new Date(record.created!).toLocaleString();
+        return moment(record.created!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
@@ -89,16 +90,17 @@ const CertificateList = () => {
       title: t("common.text.updated_at"),
       ellipsis: true,
       render: (_, record) => {
-        return new Date(record.updated!).toLocaleString();
+        return moment(record.updated!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
-      key: "$operations",
+      key: "$action",
       align: "end",
-      width: 100,
+      fixed: "right",
+      width: 120,
       render: (_, record) => (
-        <Space>
-          <Tooltip title={t("common.view")}>
+        <Space size={0}>
+          <Tooltip title={t("certificate.action.view")}>
             <Button
               type="link"
               icon={<EyeIcon size={16} />}
@@ -145,6 +147,7 @@ const CertificateList = () => {
   }, [page, pageSize]);
 
   // TODO: Empty 样式
+  // TODO: 响应式表格
 
   return (
     <>
@@ -153,7 +156,6 @@ const CertificateList = () => {
       <Table<CertificateType>
         columns={tableColumns}
         dataSource={tableData}
-        rowKey={(record) => record.id}
         loading={loading}
         pagination={{
           current: page,
@@ -168,6 +170,7 @@ const CertificateList = () => {
             setPageSize(pageSize);
           },
         }}
+        rowKey={(record) => record.id}
       />
     </>
   );

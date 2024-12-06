@@ -1,7 +1,10 @@
 {
   "certificate.page.title": "Certificates",
 
-  "certificate.nodata": "No certificates yet, add a workflow to generate certificates!😀",
+  "certificate.nodata": "No certificates yet, create a workflow to generate certificates! 😀",
+
+  "certificate.action.view": "View Certificate",
+  "certificate.action.download": "Download Certificate",
 
   "certificate.props.domain": "Name",
   "certificate.props.expiry": "Expiry",
@@ -10,10 +13,6 @@
   "certificate.props.expiry.text.expire": "Expire",
   "certificate.props.workflow": "Workflow",
   "certificate.props.source": "Source",
-  "certificate.props.created": "Created",
   "certificate.props.certificate": "Certificate",
-  "certificate.props.private.key": "Private Key",
-
-  "certificate.action.view": "View Certificate",
-  "certificate.action.download": "Download Certificate"
+  "certificate.props.private_key": "Private Key"
 }
