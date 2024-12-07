@@ -87,7 +87,7 @@ const WorkflowDetail = () => {
     }
     switchEnable();
     if (!locId) {
-      navigate(`/workflow/detail?id=${workflow.id}`);
+      navigate(`/workflows/detail?id=${workflow.id}`);
     }
   };
 
@@ -102,7 +102,7 @@ const WorkflowDetail = () => {
     }
     save();
     if (!locId) {
-      navigate(`/workflow/detail?id=${workflow.id}`);
+      navigate(`/workflows/detail?id=${workflow.id}`);
     }
   };
 

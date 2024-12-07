@@ -1,13 +1,13 @@
 import { createHashRouter } from "react-router-dom";
 
-import LoginLayout from "./pages/LoginLayout";
-import DashboardLayout from "./pages/DashboardLayout";
-import SettingLayout from "./pages/SettingLayout";
+import AuthLayout from "./pages/AuthLayout";
+import ConsoleLayout from "./pages/ConsoleLayout";
+import SettingsLayout from "./pages/SettingsLayout";
 import Login from "./pages/login/Login";
-import Account from "./pages/setting/Account";
-import Password from "./pages/setting/Password";
-import Notify from "./pages/setting/Notify";
-import SSLProvider from "./pages/setting/SSLProvider";
+import Account from "./pages/settings/Account";
+import Password from "./pages/settings/Password";
+import Notify from "./pages/settings/Notify";
+import SSLProvider from "./pages/settings/SSLProvider";
 import Dashboard from "./pages/dashboard/Dashboard";
 import AccessList from "./pages/accesses/AccessList";
 import WorkflowList from "./pages/workflows/WorkflowList";
@@ -17,7 +17,7 @@ import CertificateList from "./pages/certificates/CertificateList";
 export const router = createHashRouter([
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: <ConsoleLayout />,
     children: [
       {
         path: "/",
@@ -36,23 +36,27 @@ export const router = createHashRouter([
         element: <WorkflowList />,
       },
       {
-        path: "/setting",
-        element: <SettingLayout />,
+        path: "/workflows/detail",
+        element: <WorkflowDetail />,
+      },
+      {
+        path: "/settings",
+        element: <SettingsLayout />,
         children: [
           {
-            path: "/setting/password",
+            path: "/settings/password",
             element: <Password />,
           },
           {
-            path: "/setting/account",
+            path: "/settings/account",
             element: <Account />,
           },
           {
-            path: "/setting/notify",
+            path: "/settings/notify",
             element: <Notify />,
           },
           {
-            path: "/setting/ssl-provider",
+            path: "/settings/ssl-provider",
             element: <SSLProvider />,
           },
         ],
@@ -61,16 +65,12 @@ export const router = createHashRouter([
   },
   {
     path: "/login",
-    element: <LoginLayout />,
+    element: <AuthLayout />,
     children: [
       {
         path: "/login",
         element: <Login />,
       },
     ],
-  },
-  {
-    path: "/workflow/detail",
-    element: <WorkflowDetail />,
   },
 ]);

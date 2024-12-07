@@ -21,10 +21,10 @@ const Login = () => {
   const formRule = createSchemaFieldRule(formSchema);
   const [form] = Form.useForm();
 
-  const [submitting, setSubmitting] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setSubmitting(true);
+    setIsPending(true);
 
     try {
       await getPocketBase().admins.authWithPassword(values.username, values.password);
@@ -32,7 +32,7 @@ const Login = () => {
     } catch (err) {
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {
-      setSubmitting(false);
+      setIsPending(false);
     }
   };
 
@@ -45,7 +45,7 @@ const Login = () => {
           <img src="/logo.svg" className="w-16" />
         </div>
 
-        <Form form={form} disabled={submitting} layout="vertical" onFinish={onSubmit}>
+        <Form form={form} disabled={isPending} layout="vertical" onFinish={onSubmit}>
           <Form.Item name="username" label={t("login.username.label")} rules={[formRule]}>
             <Input placeholder={t("login.username.placeholder")} />
           </Form.Item>
@@ -55,7 +55,7 @@ const Login = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block loading={submitting}>
+            <Button type="primary" htmlType="submit" block loading={isPending}>
               {t("login.submit")}
             </Button>
           </Form.Item>

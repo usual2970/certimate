@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Version from "@/components/certimate/Version";
 import { getPocketBase } from "@/repository/pocketbase";
 
-const LoginLayout = () => {
+const AuthLayout = () => {
   const auth = getPocketBase().authStore;
   if (auth.isValid && auth.isAdmin) {
     return <Navigate to="/" />;
@@ -18,4 +18,4 @@ const LoginLayout = () => {
   );
 };
 
-export default LoginLayout;
+export default AuthLayout;

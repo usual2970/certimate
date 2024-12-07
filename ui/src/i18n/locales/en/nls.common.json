@@ -34,6 +34,8 @@
   "common.text.nodata": "No data available",
   "common.text.request_error": "Request error",
 
+  "common.menu.theme": "Change Theme",
+  "common.menu.locale": "Change Language",
   "common.menu.settings": "Settings",
   "common.menu.logout": "Logout",
   "common.menu.document": "Document",

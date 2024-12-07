@@ -130,7 +130,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
   ];
 
   const handleWorkflowClick = (id: string) => {
-    navigate(`/workflow/detail?id=${id}`);
+    navigate(`/workflows/detail?id=${id}`);
   };
 
   const handleView = (id: string) => {
@@ -154,7 +154,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
               size={"sm"}
               className="w-[120px] mt-3"
               onClick={() => {
-                navigate("/workflow/detail");
+                navigate("/workflows/detail");
               }}
             >
               {t("workflow.action.create")}
