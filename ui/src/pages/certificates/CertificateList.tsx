@@ -6,6 +6,7 @@ import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon } from "lucide-react";
 import moment from "moment";
 
+import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { Certificate as CertificateType } from "@/domain/certificate";
 import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
 import { diffDays, getLeftDays } from "@/lib/time";
@@ -73,7 +74,7 @@ const CertificateList = () => {
             </Typography.Link>
           </Space>
         ) : (
-          <>TODO: 手动上传</>
+          <>TODO: 支持手动上传</>
         );
       },
     },
@@ -105,8 +106,7 @@ const CertificateList = () => {
               type="link"
               icon={<EyeIcon size={16} />}
               onClick={() => {
-                // TODO: 查看证书详情
-                alert("TODO");
+                handleViewClick(record);
               }}
             />
           </Tooltip>
@@ -146,6 +146,14 @@ const CertificateList = () => {
     fetchTableData();
   }, [page, pageSize]);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState<CertificateType>();
+
+  const handleViewClick = (certificate: CertificateType) => {
+    setDrawerOpen(true);
+    setCurrentRecord(certificate);
+  };
+
   // TODO: Empty 样式
   // TODO: 响应式表格
 
@@ -171,6 +179,15 @@ const CertificateList = () => {
           },
         }}
         rowKey={(record) => record.id}
+      />
+
+      <CertificateDetailDrawer
+        data={currentRecord}
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          setCurrentRecord(undefined);
+        }}
       />
     </>
   );

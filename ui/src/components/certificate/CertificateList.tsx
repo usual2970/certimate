@@ -1,4 +1,4 @@
-import CertificateDetail from "@/components/certificate/CertificateDetail";
+import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/workflow/DataTable";
 import { Certificate as CertificateType } from "@/domain/certificate";
@@ -163,7 +163,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
         }
       />
 
-      <CertificateDetail open={open} onOpenChange={setOpen} certificate={selectedCertificate} />
+      <CertificateDetailDrawer data={selectedCertificate} open={open} onClose={() => setOpen(false)} />
     </>
   );
 };

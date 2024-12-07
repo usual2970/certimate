@@ -13,6 +13,6 @@
   "certificate.props.expiry.text.expire": "Expire",
   "certificate.props.workflow": "Workflow",
   "certificate.props.source": "Source",
-  "certificate.props.certificate": "Certificate",
+  "certificate.props.certificate_chain": "Certificate Chain",
   "certificate.props.private_key": "Private Key"
 }

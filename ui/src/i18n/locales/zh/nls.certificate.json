@@ -13,6 +13,6 @@
   "certificate.props.expiry.text.expire": "到期",
   "certificate.props.workflow": "所属工作流",
   "certificate.props.source": "来源",
-  "certificate.props.certificate": "证书内容",
+  "certificate.props.certificate_chain": "证书内容",
   "certificate.props.private_key": "私钥内容"
 }

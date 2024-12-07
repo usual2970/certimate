@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
@@ -54,7 +54,7 @@ const ConsoleLayout = () => {
       onClick: () => navigate("/accesses"),
     },
   ];
-  const [menuSelectedKey, setMenuSelectedKey] = useState<string | null>(null);
+  const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
   useEffect(() => {
     const item =
@@ -64,7 +64,7 @@ const ConsoleLayout = () => {
     if (item) {
       setMenuSelectedKey(item.key as string);
     } else {
-      setMenuSelectedKey(null);
+      setMenuSelectedKey(undefined);
     }
   }, [location.pathname]);
 
