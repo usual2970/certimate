@@ -11,6 +11,7 @@
   "common.delete.succeeded.message": "Delete Successful",
   "common.delete.failed.message": "Delete Failed",
   "common.next": "Next",
+  "common.reset": "Reset",
   "common.confirm": "Confirm",
   "common.cancel": "Cancel",
   "common.submit": "Submit",

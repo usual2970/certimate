@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
+import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { Eye as EyeIcon } from "lucide-react";
+import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
 import moment from "moment";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { Certificate as CertificateType } from "@/domain/certificate";
 import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
-import { diffDays, getLeftDays } from "@/lib/time";
 
 const CertificateList = () => {
   const navigate = useNavigate();
@@ -17,8 +16,7 @@ const CertificateList = () => {
 
   const { t } = useTranslation();
 
-  // a flag to fix the twice-rendering issue in strict mode
-  const mountRef = useRef(true);
+  const { token: themeToken } = theme.useToken();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
@@ -40,21 +38,65 @@ const CertificateList = () => {
     {
       key: "expiry",
       title: t("certificate.props.expiry"),
+      filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
+        const items: Required<MenuProps>["items"] = [
+          ["expireSoon", "certificate.props.expiry.filter.expire_soon"],
+          ["expired", "certificate.props.expiry.filter.expired"],
+        ].map(([key, label]) => {
+          return {
+            key,
+            label: <Radio checked={filters["state"] === key}>{t(label)}</Radio>,
+            onClick: () => {
+              if (filters["state"] !== key) {
+                setFilters((prev) => ({ ...prev, state: key }));
+                setSelectedKeys([key]);
+              }
+
+              confirm({ closeDropdown: true });
+            },
+          };
+        });
+
+        const handleResetClick = () => {
+          setFilters((prev) => ({ ...prev, state: undefined }));
+          setSelectedKeys([]);
+          clearFilters?.();
+          confirm();
+        };
+
+        const handleConfirmClick = () => {
+          confirm();
+        };
+
+        return (
+          <div style={{ padding: 0 }}>
+            <Menu items={items} selectable={false} />
+            <Divider style={{ margin: 0 }} />
+            <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
+              <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
+                {t("common.reset")}
+              </Button>
+              <Button type="primary" size="small" onClick={handleConfirmClick}>
+                {t("common.confirm")}
+              </Button>
+            </Space>
+          </div>
+        );
+      },
+      filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
-        const leftDays = getLeftDays(record.expireAt);
-        const allDays = diffDays(record.expireAt, record.created);
+        const total = moment(record.expireAt).diff(moment(record.created), "d") + 1;
+        const left = moment(record.expireAt).diff(moment(), "d");
         return (
           <Space className="max-w-full" direction="vertical" size={4}>
-            {leftDays > 0 ? (
-              <Typography.Text type="success">
-                {leftDays} / {allDays} {t("certificate.props.expiry.days")}
-              </Typography.Text>
+            {left > 0 ? (
+              <Typography.Text type="success">{t("certificate.props.expiry.left_days", { left, total })}</Typography.Text>
             ) : (
               <Typography.Text type="danger">{t("certificate.props.expiry.expired")}</Typography.Text>
             )}
 
             <Typography.Text type="secondary">
-              {moment(record.expireAt).format("YYYY-MM-DD")} {t("certificate.props.expiry.text.expire")}
+              {t("certificate.props.expiry.expiration", { date: moment(record.expireAt).format("YYYY-MM-DD") })}
             </Typography.Text>
           </Space>
         );
@@ -122,21 +164,31 @@ const CertificateList = () => {
   const [tableData, setTableData] = useState<CertificateType[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
+  const [filters, setFilters] = useState<Record<string, unknown>>({});
+
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+
+  const [currentRecord, setCurrentRecord] = useState<CertificateType>();
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    setFilters({ ...filters, state: searchParams.get("state") });
+    setPage(parseInt(+searchParams.get("page")! + "") || 1);
+    setPageSize(parseInt(+searchParams.get("perPage")! + "") || 10);
+  }, []);
 
   const fetchTableData = useCallback(async () => {
     if (loading) return;
     setLoading(true);
 
-    const state = searchParams.get("state");
-    const req: CertificateListReq = { page: page, perPage: pageSize };
-    if (state) {
-      req.state = state as CertificateListReq["state"];
-    }
-
     try {
-      const resp = await listCertificate(req);
+      const resp = await listCertificate({
+        page: page,
+        perPage: pageSize,
+        state: filters["state"] as CertificateListReq["state"],
+      });
 
       setTableData(resp.items);
       setTableTotal(resp.totalItems);
@@ -146,19 +198,11 @@ const CertificateList = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize]);
+  }, [filters, page, pageSize]);
 
   useEffect(() => {
-    if (mountRef.current) {
-      mountRef.current = false;
-      return;
-    }
-
     fetchTableData();
   }, [fetchTableData]);
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [currentRecord, setCurrentRecord] = useState<CertificateType>();
 
   const handleViewClick = (certificate: CertificateType) => {
     setDrawerOpen(true);
@@ -194,6 +238,10 @@ const CertificateList = () => {
           },
         }}
         rowKey={(record) => record.id}
+        onChange={(_, filters, __, extra) => {
+          console.log(filters);
+          extra.action === "filter" && fetchTableData();
+        }}
       />
 
       <CertificateDetailDrawer

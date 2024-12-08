@@ -1,7 +1,7 @@
 import { type RecordListOptions } from "pocketbase";
+import moment from "moment";
 
 import { type Certificate } from "@/domain/certificate";
-import { getTimeAfter } from "@/lib/time";
 import { getPocketBase } from "./pocketbase";
 
 export type CertificateListReq = {
@@ -23,7 +23,7 @@ export const list = async (req: CertificateListReq) => {
 
   if (req.state === "expireSoon") {
     options.filter = pb.filter("expireAt<{:expiredAt}", {
-      expiredAt: getTimeAfter(15),
+      expiredAt: moment().add(15, "d").toDate(),
     });
   } else if (req.state === "expired") {
     options.filter = pb.filter("expireAt<={:expiredAt}", {

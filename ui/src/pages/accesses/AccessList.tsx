@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
@@ -12,9 +12,6 @@ import { useConfigContext } from "@/providers/config";
 
 const AccessList = () => {
   const { t } = useTranslation();
-
-  // a flag to fix the twice-rendering issue in strict mode
-  const mountRef = useRef(true);
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -134,11 +131,6 @@ const AccessList = () => {
   }, [page, pageSize, configContext.config.accesses]);
 
   useEffect(() => {
-    if (mountRef.current) {
-      mountRef.current = false;
-      return;
-    }
-
     fetchTableData();
   }, [fetchTableData]);
 

@@ -8,9 +8,11 @@
 
   "certificate.props.domain": "Name",
   "certificate.props.expiry": "Expiry",
-  "certificate.props.expiry.days": "Days",
+  "certificate.props.expiry.left_days": "{{left}} / {{total}} days left",
   "certificate.props.expiry.expired": "Expired",
-  "certificate.props.expiry.text.expire": "Expire",
+  "certificate.props.expiry.expiration": "Expire on {{date}}",
+  "certificate.props.expiry.filter.expire_soon": "Expire Soon",
+  "certificate.props.expiry.filter.expired": "Expired",
   "certificate.props.workflow": "Workflow",
   "certificate.props.source": "Source",
   "certificate.props.certificate_chain": "Certificate Chain",

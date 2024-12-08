@@ -1,7 +1,7 @@
 ﻿{
   "access.page.title": "授权管理",
 
-  "access.nodata": "暂无授权信息，请先创建。",
+  "access.nodata": "暂无授权信息，请先新建",
 
   "access.action.add": "新建授权",
   "access.action.edit": "编辑授权",

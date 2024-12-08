@@ -66,16 +66,12 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
         return (
           <div className="">
             {leftDays > 0 ? (
-              <div className="text-green-500">
-                {leftDays} / {allDays} {t("certificate.props.expiry.days")}
-              </div>
+              <div className="text-green-500">{t("certificate.props.expiry.left_days", { left: leftDays, total: allDays })}</div>
             ) : (
               <div className="text-red-500">{t("certificate.props.expiry.expired")}</div>
             )}
 
-            <div>
-              {new Date(expireAt).toLocaleString().split(" ")[0]} {t("certificate.props.expiry.text.expire")}
-            </div>
+            <div>{t("certificate.props.expiry.expiration", { date: new Date(expireAt).toLocaleString().split(" ")[0] })}</div>
           </div>
         );
       },

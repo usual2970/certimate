@@ -24,9 +24,7 @@ const ConsoleLayout = () => {
 
   const { t } = useTranslation();
 
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  const { token: themeToken } = theme.useToken();
 
   const menuItems: Required<MenuProps>["items"] = [
     {
@@ -56,10 +54,15 @@ const ConsoleLayout = () => {
   ];
   const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
-  useEffect(() => {
+  const getActiveMenuItem = () => {
     const item =
       menuItems.find((item) => item!.key === location.pathname) ??
       menuItems.find((item) => item!.key !== "/" && location.pathname.startsWith(item!.key as string));
+    return item;
+  };
+
+  useEffect(() => {
+    const item = getActiveMenuItem();
     if (item) {
       setMenuSelectedKey(item.key as string);
     } else {
@@ -68,7 +71,7 @@ const ConsoleLayout = () => {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (menuSelectedKey) {
+    if (menuSelectedKey && menuSelectedKey !== getActiveMenuItem()?.key) {
       navigate(menuSelectedKey);
     }
   }, [menuSelectedKey]);
@@ -116,7 +119,7 @@ const ConsoleLayout = () => {
           </Layout.Sider>
 
           <Layout>
-            <Layout.Header style={{ padding: 0, background: colorBgContainer }}>
+            <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
               <div className="flex items-center justify-between size-full px-4 overflow-hidden">
                 <div className="flex items-center gap-4 size-full">{/* <Button icon={<MenuIcon />} size="large" /> */}</div>
                 <div className="flex-grow flex items-center justify-end gap-4 size-full overflow-hidden">

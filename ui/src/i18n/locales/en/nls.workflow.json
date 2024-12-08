@@ -21,7 +21,9 @@
   "workflow.props.description": "Description",
   "workflow.props.description.placeholder": "Please enter description",
   "workflow.props.executionMethod": "Execution Method",
-  "workflow.props.enabled": "Enabled",
+  "workflow.props.state": "State",
+  "workflow.props.state.filter.enabled": "Enabled",
+  "workflow.props.state.filter.disabled": "Disabled",
   "workflow.props.createdAt": "Created",
   "workflow.props.updatedAt": "Updated",
 

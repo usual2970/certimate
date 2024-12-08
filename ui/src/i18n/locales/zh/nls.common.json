@@ -11,6 +11,7 @@
   "common.delete.succeeded.message": "删除成功",
   "common.delete.failed.message": "删除失败",
   "common.next": "下一步",
+  "common.reset": "重置",
   "common.confirm": "确认",
   "common.cancel": "取消",
   "common.submit": "提交",
