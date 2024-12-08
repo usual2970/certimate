@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button, Space, Table, Tooltip, Typography, type TableProps } from "antd";
+import { Button, Empty, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon } from "lucide-react";
 import moment from "moment";
@@ -16,6 +16,11 @@ const CertificateList = () => {
   const [searchParams] = useSearchParams();
 
   const { t } = useTranslation();
+
+  // a flag to fix the twice-rendering issue in strict mode
+  const mountRef = useRef(true);
+
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -120,7 +125,7 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const fetchTableData = async () => {
+  const fetchTableData = useCallback(async () => {
     if (loading) return;
     setLoading(true);
 
@@ -137,14 +142,20 @@ const CertificateList = () => {
       setTableTotal(resp.totalItems);
     } catch (err) {
       console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize]);
 
   useEffect(() => {
+    if (mountRef.current) {
+      mountRef.current = false;
+      return;
+    }
+
     fetchTableData();
-  }, [page, pageSize]);
+  }, [fetchTableData]);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [currentRecord, setCurrentRecord] = useState<CertificateType>();
@@ -154,17 +165,21 @@ const CertificateList = () => {
     setCurrentRecord(certificate);
   };
 
-  // TODO: Empty 样式
   // TODO: 响应式表格
 
   return (
     <>
+      {NotificationContextHolder}
+
       <PageHeader title={t("certificate.page.title")} />
 
       <Table<CertificateType>
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}
+        locale={{
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("certificate.nodata")} />,
+        }}
         pagination={{
           current: page,
           pageSize: pageSize,

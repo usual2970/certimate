@@ -1,7 +1,7 @@
 ﻿{
   "access.page.title": "Authorization",
 
-  "access.nodata": "Please add authorization to start deploying certificate.",
+  "access.nodata": "No accesses. Please create an authorization first.",
 
   "access.action.add": "Create Authorization",
   "access.action.edit": "Edit Authorization",

@@ -60,7 +60,6 @@ const ConsoleLayout = () => {
     const item =
       menuItems.find((item) => item!.key === location.pathname) ??
       menuItems.find((item) => item!.key !== "/" && location.pathname.startsWith(item!.key as string));
-    console.log(item);
     if (item) {
       setMenuSelectedKey(item.key as string);
     } else {

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Button, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
+import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import moment from "moment";
@@ -12,6 +12,9 @@ import { useConfigContext } from "@/providers/config";
 
 const AccessList = () => {
   const { t } = useTranslation();
+
+  // a flag to fix the twice-rendering issue in strict mode
+  const mountRef = useRef(true);
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -111,7 +114,7 @@ const AccessList = () => {
 
   const configContext = useConfigContext();
 
-  const fetchTableData = async () => {
+  const fetchTableData = useCallback(async () => {
     if (loading) return;
     setLoading(true);
 
@@ -124,14 +127,20 @@ const AccessList = () => {
       setTableTotal(configContext.config.accesses.length);
     } catch (err) {
       console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, pageSize, configContext.config.accesses]);
 
   useEffect(() => {
+    if (mountRef.current) {
+      mountRef.current = false;
+      return;
+    }
+
     fetchTableData();
-  }, [page, pageSize, configContext.config.accesses]);
+  }, [fetchTableData]);
 
   const handleDeleteClick = async (data: AccessType) => {
     modalApi.confirm({
@@ -143,13 +152,13 @@ const AccessList = () => {
           const res = await removeAccess(data);
           configContext.deleteAccess(res.id);
         } catch (err) {
+          console.error(err);
           notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
         }
       },
     });
   };
 
-  // TODO: Empty 样式
   // TODO: 响应式表格
 
   return (
@@ -176,6 +185,9 @@ const AccessList = () => {
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}
+        locale={{
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("access.nodata")} />,
+        }}
         pagination={{
           current: page,
           pageSize: pageSize,

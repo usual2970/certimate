@@ -1,7 +1,7 @@
 {
   "certificate.page.title": "Certificates",
 
-  "certificate.nodata": "No certificates yet, create a workflow to generate certificates! 😀",
+  "certificate.nodata": "No certificates. Please create a workflow to generate certificates! 😀",
 
   "certificate.action.view": "View Certificate",
   "certificate.action.download": "Download Certificate",

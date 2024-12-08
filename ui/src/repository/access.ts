@@ -10,14 +10,15 @@ export const list = async () => {
   });
 };
 
-export const save = async (data: Access) => {
-  if (data.id) {
-    return await getPocketBase().collection("access").update(data.id, data);
+export const save = async (record: Access) => {
+  if (record.id) {
+    return await getPocketBase().collection("access").update(record.id, record);
   }
-  return await getPocketBase().collection("access").create(data);
+
+  return await getPocketBase().collection("access").create(record);
 };
 
-export const remove = async (data: Access) => {
-  data.deleted = moment.utc().format("YYYY-MM-DD HH:mm:ss");
-  return await getPocketBase().collection("access").update(data.id, data);
+export const remove = async (record: Access) => {
+  record.deleted = moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  return await getPocketBase().collection("access").update(record.id, record);
 };

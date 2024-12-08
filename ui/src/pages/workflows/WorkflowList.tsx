@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button, Modal, notification, Space, Switch, Table, Tooltip, Typography, type TableProps } from "antd";
+import { Button, Empty, Modal, notification, Space, Switch, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import moment from "moment";
@@ -14,6 +14,9 @@ const WorkflowList = () => {
   const [searchParams] = useSearchParams();
 
   const { t } = useTranslation();
+
+  // a flag to fix the twice-rendering issue in strict mode
+  const mountRef = useRef(true);
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -137,7 +140,7 @@ const WorkflowList = () => {
   const [pageSize, setPageSize] = useState<number>(10);
 
   // TODO: 表头筛选
-  const fetchTableData = async () => {
+  const fetchTableData = useCallback(async () => {
     if (loading) return;
     setLoading(true);
 
@@ -154,14 +157,20 @@ const WorkflowList = () => {
       setTableTotal(resp.totalItems);
     } catch (err) {
       console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams, page, pageSize]);
 
   useEffect(() => {
+    if (mountRef.current) {
+      mountRef.current = false;
+      return;
+    }
+
     fetchTableData();
-  }, [page, pageSize]);
+  }, [fetchTableData]);
 
   const handleEnabledChange = async (workflow: WorkflowType) => {
     try {
@@ -180,6 +189,7 @@ const WorkflowList = () => {
         });
       }
     } catch (err) {
+      console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     }
   };
@@ -195,6 +205,7 @@ const WorkflowList = () => {
             setTableData((prev) => prev.filter((item) => item.id !== workflow.id));
           }
         } catch (err) {
+          console.error(err);
           notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
         }
       },
@@ -205,7 +216,6 @@ const WorkflowList = () => {
     navigate("/workflows/detail");
   };
 
-  // TODO: Empty 样式
   // TODO: 响应式表格
 
   return (
@@ -233,6 +243,9 @@ const WorkflowList = () => {
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}
+        locale={{
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("workflow.nodata")} />,
+        }}
         pagination={{
           current: page,
           pageSize: pageSize,

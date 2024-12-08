@@ -1,8 +1,10 @@
 {
   "workflow.page.title": "Workflows",
+
+  "workflow.nodata": "No workflows. Please create a workflow to generate certificates! 😀",
+
   "workflow.detail.title": "Workflow",
   "workflow.detail.history": "History",
-
   "workflow.detail.action.save": "Save updates",
   "workflow.detail.action.save.failed": "Save failed",
   "workflow.detail.action.save.failed.uncompleted": "Save failed, please complete all node settings",

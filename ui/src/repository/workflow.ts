@@ -27,18 +27,18 @@ export const get = async (id: string) => {
   return await getPocketBase().collection("workflow").getOne<Workflow>(id);
 };
 
-export const save = async (data: Record<string, string | boolean | WorkflowNode>) => {
-  if (data.id) {
+export const save = async (record: Record<string, string | boolean | WorkflowNode>) => {
+  if (record.id) {
     return await getPocketBase()
       .collection("workflow")
-      .update<Workflow>(data.id as string, data);
+      .update<Workflow>(record.id as string, record);
   }
 
-  return await getPocketBase().collection("workflow").create<Workflow>(data);
+  return await getPocketBase().collection("workflow").create<Workflow>(record);
 };
 
-export const remove = async (workflow: Workflow) => {
-  return await getPocketBase().collection("workflow").delete(workflow.id);
+export const remove = async (record: Workflow) => {
+  return await getPocketBase().collection("workflow").delete(record.id);
 };
 
 type WorkflowLogsReq = {
