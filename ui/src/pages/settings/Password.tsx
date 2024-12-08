@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 const formSchema = z
   .object({
@@ -44,19 +44,19 @@ const Password = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await getPb().admins.authWithPassword(getPb().authStore.model?.email, values.oldPassword);
+      await getPocketBase().admins.authWithPassword(getPocketBase().authStore.model?.email, values.oldPassword);
     } catch (e) {
       const message = getErrMessage(e);
       form.setError("oldPassword", { message });
     }
 
     try {
-      await getPb().admins.update(getPb().authStore.model?.id, {
+      await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
         password: values.newPassword,
         passwordConfirm: values.confirmPassword,
       });
 
-      getPb().authStore.clear();
+      getPocketBase().authStore.clear();
       toast({
         title: t("settings.password.changed.message"),
         description: t("settings.account.relogin.message"),

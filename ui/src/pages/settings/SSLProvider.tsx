@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMessage } from "@/lib/error";
-import { cn } from "@/lib/utils";
 import { SSLProvider as SSLProviderType, SSLProviderSetting, Setting } from "@/domain/settings";
 import { getSetting, update } from "@/repository/settings";
 import { produce } from "immer";
@@ -443,4 +443,3 @@ const SSLProviderGtsForm = () => {
 };
 
 export default SSLProvider;
-

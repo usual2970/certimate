@@ -1,26 +1,20 @@
-import { Certificate } from "@/domain/certificate";
-import { getPb } from "./api";
-import { RecordListOptions } from "pocketbase";
-import { getTimeAfter } from "@/lib/time";
+import { type RecordListOptions } from "pocketbase";
+import moment from "moment";
 
-type CertificateListReq = {
+import { type Certificate } from "@/domain/certificate";
+import { getPocketBase } from "./pocketbase";
+
+export type CertificateListReq = {
   page?: number;
   perPage?: number;
-  state?: string;
+  state?: "expireSoon" | "expired";
 };
 
 export const list = async (req: CertificateListReq) => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
-  let page = 1;
-  if (req.page) {
-    page = req.page;
-  }
-
-  let perPage = 2;
-  if (req.perPage) {
-    perPage = req.perPage;
-  }
+  const page = req.page || 1;
+  const perPage = req.perPage || 10;
 
   const options: RecordListOptions = {
     sort: "-created",
@@ -29,7 +23,7 @@ export const list = async (req: CertificateListReq) => {
 
   if (req.state === "expireSoon") {
     options.filter = pb.filter("expireAt<{:expiredAt}", {
-      expiredAt: getTimeAfter(15),
+      expiredAt: moment().add(15, "d").toDate(),
     });
   } else if (req.state === "expired") {
     options.filter = pb.filter("expireAt<={:expiredAt}", {
@@ -37,7 +31,5 @@ export const list = async (req: CertificateListReq) => {
     });
   }
 
-  const response = pb.collection("certificate").getList<Certificate>(page, perPage, options);
-
-  return response;
+  return pb.collection("certificate").getList<Certificate>(page, perPage, options);
 };

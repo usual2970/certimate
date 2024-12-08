@@ -1,7 +1,7 @@
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 export const notifyTest = async (channel: string) => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
   const resp = await pb.send("/api/notify/test", {
     method: "POST",

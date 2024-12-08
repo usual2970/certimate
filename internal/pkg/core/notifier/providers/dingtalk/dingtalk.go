@@ -10,8 +10,10 @@ import (
 )
 
 type DingTalkNotifierConfig struct {
+	// 钉钉机器人的 Token。
 	AccessToken string `json:"accessToken"`
-	Secret      string `json:"secret"`
+	// 钉钉机器人的 Secret。
+	Secret string `json:"secret"`
 }
 
 type DingTalkNotifier struct {

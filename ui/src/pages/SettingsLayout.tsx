@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Card } from "antd";
 import { KeyRound, Megaphone, ShieldCheck, UserRound } from "lucide-react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Toaster } from "@/components/ui/toaster";
 
-const SettingLayout = () => {
+const SettingsLayout = () => {
   const location = useLocation();
   const [tabValue, setTabValue] = useState("account");
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const SettingLayout = () => {
   }, [location]);
 
   return (
-    <div>
+    <Card>
       <Toaster />
       <div className="text-muted-foreground border-b dark:border-stone-500 py-5">{t("settings.page.title")}</div>
       <div className="w-full mt-5 p-0 md:p-3 flex justify-center">
@@ -28,7 +29,7 @@ const SettingLayout = () => {
             <TabsTrigger
               value="account"
               onClick={() => {
-                navigate("/setting/account");
+                navigate("/settings/account");
               }}
               className="px-5"
             >
@@ -39,7 +40,7 @@ const SettingLayout = () => {
             <TabsTrigger
               value="password"
               onClick={() => {
-                navigate("/setting/password");
+                navigate("/settings/password");
               }}
               className="px-5"
             >
@@ -50,7 +51,7 @@ const SettingLayout = () => {
             <TabsTrigger
               value="notify"
               onClick={() => {
-                navigate("/setting/notify");
+                navigate("/settings/notify");
               }}
               className="px-5"
             >
@@ -61,7 +62,7 @@ const SettingLayout = () => {
             <TabsTrigger
               value="ssl-provider"
               onClick={() => {
-                navigate("/setting/ssl-provider");
+                navigate("/settings/ssl-provider");
               }}
               className="px-5"
             >
@@ -76,8 +77,8 @@ const SettingLayout = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </Card>
   );
 };
 
-export default SettingLayout;
+export default SettingsLayout;

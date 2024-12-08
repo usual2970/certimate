@@ -18,12 +18,7 @@ export function readFileContent(file: File): Promise<string> {
   });
 }
 
-export type CustomFile = {
-  name: string;
-  content: string;
-};
-
-export const saveFiles2ZIP = async (zipName: string, files: CustomFile[]) => {
+export const saveFiles2Zip = async (zipName: string, files: { name: string; content: string }[]) => {
   const zip = new JSZip();
 
   files.forEach((file) => {

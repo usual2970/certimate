@@ -19,7 +19,9 @@ import (
 )
 
 type VolcEngineCDNUploaderConfig struct {
-	AccessKeyId     string `json:"accessKeyId"`
+	// 火山引擎 AccessKeyId。
+	AccessKeyId string `json:"accessKeyId"`
+	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 

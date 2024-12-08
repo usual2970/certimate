@@ -5,11 +5,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
 
+import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { PbErrorData } from "@/domain/base";
 import { EmailsSetting } from "@/domain/settings";
 import { update } from "@/repository/settings";

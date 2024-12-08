@@ -1,4 +1,4 @@
-import CertificateDetail from "@/components/certificate/CertificateDetail";
+import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/workflow/DataTable";
 import { Certificate as CertificateType } from "@/domain/certificate";
@@ -66,16 +66,12 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
         return (
           <div className="">
             {leftDays > 0 ? (
-              <div className="text-green-500">
-                {leftDays} / {allDays} {t("certificate.props.expiry.days")}
-              </div>
+              <div className="text-green-500">{t("certificate.props.expiry.left_days", { left: leftDays, total: allDays })}</div>
             ) : (
               <div className="text-red-500">{t("certificate.props.expiry.expired")}</div>
             )}
 
-            <div>
-              {new Date(expireAt).toLocaleString().split(" ")[0]} {t("certificate.props.expiry.text.expire")}
-            </div>
+            <div>{t("certificate.props.expiry.expiration", { date: new Date(expireAt).toLocaleString().split(" ")[0] })}</div>
           </div>
         );
       },
@@ -103,7 +99,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
     },
     {
       accessorKey: "created",
-      header: t("certificate.props.created"),
+      header: t("common.text.created_at"),
       cell: ({ row }) => {
         const date: string = row.getValue("created");
         return new Date(date).toLocaleString();
@@ -130,7 +126,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
   ];
 
   const handleWorkflowClick = (id: string) => {
-    navigate(`/workflow/detail?id=${id}`);
+    navigate(`/workflows/detail?id=${id}`);
   };
 
   const handleView = (id: string) => {
@@ -154,7 +150,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
               size={"sm"}
               className="w-[120px] mt-3"
               onClick={() => {
-                navigate("/workflow/detail");
+                navigate("/workflows/detail");
               }}
             >
               {t("workflow.action.create")}
@@ -163,7 +159,7 @@ const CertificateList = ({ withPagination }: CertificateListProps) => {
         }
       />
 
-      <CertificateDetail open={open} onOpenChange={setOpen} certificate={selectedCertificate} />
+      <CertificateDetailDrawer data={selectedCertificate} open={open} onClose={() => setOpen(false)} />
     </>
   );
 };

@@ -15,7 +15,9 @@ import (
 )
 
 type QiniuSSLCertUploaderConfig struct {
+	// 七牛云 AccessKey。
 	AccessKey string `json:"accessKey"`
+	// 七牛云 SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 

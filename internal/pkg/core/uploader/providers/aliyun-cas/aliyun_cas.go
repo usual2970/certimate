@@ -17,9 +17,12 @@ import (
 )
 
 type AliyunCASUploaderConfig struct {
-	AccessKeyId     string `json:"accessKeyId"`
+	// 阿里云 AccessKeyId。
+	AccessKeyId string `json:"accessKeyId"`
+	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	Region          string `json:"region"`
+	// 阿里云地域。
+	Region string `json:"region"`
 }
 
 type AliyunCASUploader struct {
