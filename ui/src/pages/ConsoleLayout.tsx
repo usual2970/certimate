@@ -7,6 +7,7 @@ import {
   LogOut as LogOutIcon,
   Home as HomeIcon,
   Menu as MenuIcon,
+  Moon as MoonIcon,
   Server as ServerIcon,
   Settings as SettingsIcon,
   ShieldCheck as ShieldCheckIcon,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 
 import Version from "@/components/certimate/Version";
+import { useTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 import { ConfigProvider } from "@/providers/config";
 
@@ -25,6 +27,7 @@ const ConsoleLayout = () => {
   const { t } = useTranslation();
 
   const { token: themeToken } = theme.useToken();
+  const { theme: browserTheme } = useTheme();
 
   const menuItems: Required<MenuProps>["items"] = [
     {
@@ -96,7 +99,7 @@ const ConsoleLayout = () => {
     <>
       <ConfigProvider>
         <Layout className="w-full min-h-screen">
-          <Layout.Sider theme="light" width={256}>
+          <Layout.Sider theme={browserTheme} width={256}>
             <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
               <Link to="/" className="flex items-center gap-2 w-full px-4 font-semibold overflow-hidden">
                 <img src="/logo.svg" className="w-[36px] h-[36px]" />
@@ -104,9 +107,10 @@ const ConsoleLayout = () => {
               </Link>
               <div className="flex-grow w-full overflow-x-hidden overflow-y-auto">
                 <Menu
-                  mode="vertical"
                   items={menuItems}
+                  mode="vertical"
                   selectedKeys={menuSelectedKey ? [menuSelectedKey] : []}
+                  theme={browserTheme}
                   onSelect={({ key }) => {
                     setMenuSelectedKey(key);
                   }}
@@ -152,12 +156,31 @@ const ConsoleLayout = () => {
 };
 
 const ThemeToggleButton = ({ size }: { size?: ButtonProps["size"] }) => {
-  // TODO: 主题切换
-  const items: Required<MenuProps>["items"] = [];
+  const { t } = useTranslation();
+
+  const { theme, setThemeMode } = useTheme();
+
+  const items: Required<MenuProps>["items"] = [
+    {
+      key: "light",
+      label: <>{t("common.theme.light")}</>,
+      onClick: () => setThemeMode("light"),
+    },
+    {
+      key: "dark",
+      label: <>{t("common.theme.dark")}</>,
+      onClick: () => setThemeMode("dark"),
+    },
+    {
+      key: "system",
+      label: <>{t("common.theme.system")}</>,
+      onClick: () => setThemeMode("system"),
+    },
+  ];
 
   return (
     <Dropdown menu={{ items }} trigger={["click"]}>
-      <Button icon={<SunIcon size={18} />} size={size} onClick={() => alert("TODO")} />
+      <Button icon={theme === "dark" ? <MoonIcon size={18} /> : <SunIcon size={18} />} size={size} />
     </Dropdown>
   );
 };
