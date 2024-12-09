@@ -65,7 +65,7 @@ const Dashboard = () => {
 
       <PageHeader title={t("dashboard.page.title")} />
 
-      <Row gutter={[16, 16]}>
+      <Row className="justify-stretch" gutter={[16, 16]}>
         <Col {...statisticGridSpans}>
           <StatisticCard
             icon={<SquareSigmaIcon size={48} strokeWidth={1} color={themeToken.colorInfo} />}
@@ -134,7 +134,7 @@ const StatisticCard = ({
   onClick?: () => void;
 }) => {
   return (
-    <Card className="overflow-hidden" bordered={false} hoverable onClick={onClick}>
+    <Card className="size-full overflow-hidden" bordered={false} hoverable onClick={onClick}>
       <Space size="middle">
         {icon}
         <Statistic

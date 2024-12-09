@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, message, Tooltip } from "antd";
+import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Clipboard as ClipboardIcon } from "lucide-react";
+import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
 
 import { type Certificate } from "@/domain/certificate";
 import { saveFiles2Zip } from "@/utils/file";
@@ -15,8 +15,7 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
 
   const [messageApi, MessageContextHolder] = message.useMessage();
 
-  const handleDownloadClick = async () => {
-    // TODO: 支持下载多种格式
+  const handleDownloadPEMClick = async () => {
     const zipName = `${data.id}-${data.san}.zip`;
     const files = [
       {
@@ -73,14 +72,41 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
       </Form>
 
       <div className="flex items-center justify-end">
-        <Button
-          type="primary"
-          onClick={() => {
-            handleDownloadClick();
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "PEM",
+                label: "PEM",
+                extra: <ThumbsUpIcon size="14" />,
+                onClick: () => handleDownloadPEMClick(),
+              },
+              {
+                key: "PFX",
+                label: "PFX",
+                onClick: () => {
+                  // TODO: 下载 PFX 格式证书
+                  alert("TODO");
+                },
+              },
+              {
+                key: "JKS",
+                label: "JKS",
+                onClick: () => {
+                  // TODO: 下载 JKS 格式证书
+                  alert("TODO");
+                },
+              },
+            ],
           }}
         >
-          {t("certificate.action.download")}
-        </Button>
+          <Button type="primary">
+            <Space>
+              <span>{t("certificate.action.download")}</span>
+              <ChevronDownIcon size={14} />
+            </Space>
+          </Button>
+        </Dropdown>
       </div>
     </div>
   );
