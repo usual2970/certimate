@@ -43,13 +43,14 @@ const WorkflowList = () => {
     {
       key: "$index",
       align: "center",
-      title: "",
+      fixed: "left",
       width: 50,
       render: (_, __, index) => (page - 1) * pageSize + index + 1,
     },
     {
       key: "name",
       title: t("common.text.name"),
+      ellipsis: true,
       render: (_, record) => (
         <Space className="max-w-full" direction="vertical" size={4}>
           <Typography.Text ellipsis>{record.name}</Typography.Text>
@@ -62,6 +63,7 @@ const WorkflowList = () => {
     {
       key: "type",
       title: t("workflow.props.executionMethod"),
+      ellipsis: true,
       render: (_, record) => {
         const method = record.type;
         if (!method) {
@@ -279,8 +281,6 @@ const WorkflowList = () => {
     navigate("/workflows/detail");
   };
 
-  // TODO: 响应式表格
-
   return (
     <>
       {ModelContextHolder}
@@ -323,6 +323,7 @@ const WorkflowList = () => {
           },
         }}
         rowKey={(record) => record.id}
+        scroll={{ x: "max(100%, 960px)" }}
       />
     </>
   );

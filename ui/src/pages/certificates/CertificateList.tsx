@@ -27,7 +27,7 @@ const CertificateList = () => {
     {
       key: "$index",
       align: "center",
-      title: "",
+      fixed: "left",
       width: 50,
       render: (_, __, index) => (page - 1) * pageSize + index + 1,
     },
@@ -39,6 +39,7 @@ const CertificateList = () => {
     {
       key: "expiry",
       title: t("certificate.props.expiry"),
+      ellipsis: true,
       defaultFilteredValue: searchParams.has("state") ? [searchParams.get("state") as string] : undefined,
       filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
         const items: Required<MenuProps>["items"] = [
@@ -107,6 +108,7 @@ const CertificateList = () => {
     {
       key: "source",
       title: t("certificate.props.source"),
+      ellipsis: true,
       render: (_, record) => {
         const workflowId = record.workflow;
         return workflowId ? (
@@ -213,8 +215,6 @@ const CertificateList = () => {
     setCurrentRecord(certificate);
   };
 
-  // TODO: 响应式表格
-
   return (
     <>
       {NotificationContextHolder}
@@ -242,6 +242,7 @@ const CertificateList = () => {
           },
         }}
         rowKey={(record) => record.id}
+        scroll={{ x: "max(100%, 960px)" }}
       />
 
       <CertificateDetailDrawer

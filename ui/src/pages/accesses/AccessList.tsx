@@ -23,7 +23,7 @@ const AccessList = () => {
     {
       key: "$index",
       align: "center",
-      title: "",
+      fixed: "left",
       width: 50,
       render: (_, __, index) => (page - 1) * pageSize + index + 1,
     },
@@ -36,11 +36,12 @@ const AccessList = () => {
     {
       key: "provider",
       title: t("common.text.provider"),
+      ellipsis: true,
       render: (_, record) => {
         return (
-          <Space className="max-w-full" size={4}>
+          <Space className="max-w-full truncate" size={4}>
             <Avatar src={accessProvidersMap.get(record.configType)?.icon} size="small" />
-            <Typography.Text>{t(accessProvidersMap.get(record.configType)?.name ?? "")}</Typography.Text>
+            <Typography.Text ellipsis>{t(accessProvidersMap.get(record.configType)?.name ?? "")}</Typography.Text>
           </Space>
         );
       },
@@ -156,8 +157,6 @@ const AccessList = () => {
     });
   };
 
-  // TODO: 响应式表格
-
   return (
     <>
       {ModelContextHolder}
@@ -199,6 +198,7 @@ const AccessList = () => {
           },
         }}
         rowKey={(record) => record.id}
+        scroll={{ x: "max(100%, 960px)" }}
       />
     </>
   );
