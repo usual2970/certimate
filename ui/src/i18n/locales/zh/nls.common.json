@@ -6,6 +6,7 @@
   "common.view": "查看",
   "common.edit": "编辑",
   "common.copy": "复制",
+  "common.copy.done": "已复制",
   "common.download": "下载",
   "common.delete": "刪除",
   "common.delete.succeeded.message": "删除成功",

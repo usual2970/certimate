@@ -6,6 +6,7 @@
   "common.view": "View",
   "common.edit": "Edit",
   "common.copy": "Copy",
+  "common.copy.done": "Copied",
   "common.download": "Download",
   "common.delete": "Delete",
   "common.delete.succeeded.message": "Delete Successful",

@@ -1,3 +1,3 @@
-﻿import useTheme from "./use-theme";
+﻿import useTheme from "./useTheme";
 
-export { useTheme };
+export { useResponsive, useTheme };
