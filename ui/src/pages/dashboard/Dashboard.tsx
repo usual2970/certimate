@@ -1,150 +1,146 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { CalendarClock, CalendarX2, FolderCheck, SquareSigma, Workflow } from "lucide-react";
+import { Card, Col, Divider, notification, Row, Space, Statistic, theme, Typography } from "antd";
+import { PageHeader } from "@ant-design/pro-components";
+import {
+  CalendarClock as CalendarClockIcon,
+  CalendarX2 as CalendarX2Icon,
+  FolderCheck as FolderCheckIcon,
+  SquareSigma as SquareSigmaIcon,
+  Workflow as WorkflowIcon,
+} from "lucide-react";
 
-import { Statistic } from "@/domain/domain";
-
-import { get } from "@/api/statistics";
-
-import CertificateList from "@/components/certificate/CertificateList";
+import { type Statistic as StatisticType } from "@/domain/domain";
+import { get as getStatistics } from "@/api/statistics";
 
 const Dashboard = () => {
-  const [statistic, setStatistic] = useState<Statistic>();
+  const navigate = useNavigate();
 
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const fetchStatistic = async () => {
-      const data = await get();
-      setStatistic(data);
-    };
+  const { token: themeToken } = theme.useToken();
 
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const statisticGridSpans = {
+    xs: { flex: "50%" },
+    md: { flex: "50%" },
+    lg: { flex: "33.3333%" },
+    xl: { flex: "33.3333%" },
+    xxl: { flex: "20%" },
+  };
+
+  const [statistic, setStatistic] = useState<StatisticType>();
+
+  const fetchStatistic = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const data = await getStatistics();
+      setStatistic(data);
+    } catch (err) {
+      console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
     fetchStatistic();
   }, []);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex justify-between items-center">
-        <div className="text-muted-foreground">{t("dashboard.page.title")}</div>
-      </div>
-      <div className="flex mt-10 gap-5 flex-col flex-wrap md:flex-row">
-        <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
-          <div className="p-3">
-            <SquareSigma size={48} strokeWidth={1} className="text-blue-400" />
-          </div>
-          <div>
-            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.all.certificate")}</div>
-            <div className="flex items-baseline">
-              <div className="text-3xl text-stone-700 dark:text-stone-200">
-                {statistic?.certificateTotal ? (
-                  <Link to="/certificates" className="hover:underline">
-                    {statistic?.certificateTotal}
-                  </Link>
-                ) : (
-                  0
-                )}
-              </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
-            </div>
-          </div>
-        </div>
+    <>
+      {NotificationContextHolder}
 
-        <div className="w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg border">
-          <div className="p-3">
-            <CalendarClock size={48} strokeWidth={1} className="text-yellow-400" />
-          </div>
-          <div>
-            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.near_expired.certificate")}</div>
-            <div className="flex items-baseline">
-              <div className="text-3xl text-stone-700 dark:text-stone-200">
-                {statistic?.certificateExpireSoon ? (
-                  <Link to="/certificates?state=expireSoon" className="hover:underline">
-                    {statistic?.certificateExpireSoon}
-                  </Link>
-                ) : (
-                  0
-                )}
-              </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
-            </div>
-          </div>
-        </div>
+      <PageHeader title={t("dashboard.page.title")} />
 
-        <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
-          <div className="p-3">
-            <CalendarX2 size={48} strokeWidth={1} className="text-red-400" />
-          </div>
-          <div>
-            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.expired.certificate")}</div>
-            <div className="flex items-baseline">
-              <div className="text-3xl text-stone-700 dark:text-stone-200">
-                {statistic?.certificateExpired ? (
-                  <Link to="/certificates?state=expired" className="hover:underline">
-                    {statistic?.certificateExpired}
-                  </Link>
-                ) : (
-                  0
-                )}
-              </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
-            </div>
-          </div>
-        </div>
+      <Row gutter={[16, 16]}>
+        <Col {...statisticGridSpans}>
+          <StatisticCard
+            icon={<SquareSigmaIcon size={48} strokeWidth={1} color={themeToken.colorInfo} />}
+            label={t("dashboard.statistics.all_certificates")}
+            value={statistic?.certificateTotal ?? "-"}
+            suffix={t("dashboard.statistics.unit")}
+            onClick={() => navigate("/certificates")}
+          />
+        </Col>
+        <Col {...statisticGridSpans}>
+          <StatisticCard
+            icon={<CalendarClockIcon size={48} strokeWidth={1} color={themeToken.colorWarning} />}
+            label={t("dashboard.statistics.expire_soon_certificates")}
+            value={statistic?.certificateExpireSoon ?? "-"}
+            suffix={t("dashboard.statistics.unit")}
+            onClick={() => navigate("/certificates?state=expireSoon")}
+          />
+        </Col>
+        <Col {...statisticGridSpans}>
+          <StatisticCard
+            icon={<CalendarX2Icon size={48} strokeWidth={1} color={themeToken.colorError} />}
+            label={t("dashboard.statistics.expired_certificates")}
+            value={statistic?.certificateExpired ?? "-"}
+            suffix={t("dashboard.statistics.unit")}
+            onClick={() => navigate("/certificates?state=expired")}
+          />
+        </Col>
+        <Col {...statisticGridSpans}>
+          <StatisticCard
+            icon={<WorkflowIcon size={48} strokeWidth={1} color={themeToken.colorInfo} />}
+            label={t("dashboard.statistics.all_workflows")}
+            value={statistic?.workflowTotal ?? "-"}
+            suffix={t("dashboard.statistics.unit")}
+            onClick={() => navigate("/workflows")}
+          />
+        </Col>
+        <Col {...statisticGridSpans}>
+          <StatisticCard
+            icon={<FolderCheckIcon size={48} strokeWidth={1} color={themeToken.colorSuccess} />}
+            label={t("dashboard.statistics.enabled_workflows")}
+            value={statistic?.workflowEnabled ?? "-"}
+            suffix={t("dashboard.statistics.unit")}
+            onClick={() => navigate("/workflows?state=enabled")}
+          />
+        </Col>
+      </Row>
 
-        <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
-          <div className="p-3">
-            <Workflow size={48} strokeWidth={1} className="text-emerald-500" />
-          </div>
-          <div>
-            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.all.workflow")}</div>
-            <div className="flex items-baseline">
-              <div className="text-3xl text-stone-700 dark:text-stone-200">
-                {statistic?.workflowTotal ? (
-                  <Link to="/workflows" className="hover:underline">
-                    {statistic?.workflowTotal}
-                  </Link>
-                ) : (
-                  0
-                )}
-              </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
-            </div>
-          </div>
-        </div>
+      <Divider />
 
-        <div className="border w-full md:w-[250px] 3xl:w-[300px] flex items-center rounded-md p-3 shadow-lg">
-          <div className="p-3">
-            <FolderCheck size={48} strokeWidth={1} className="text-green-400" />
-          </div>
-          <div>
-            <div className="text-muted-foreground font-semibold">{t("dashboard.statistics.enabled.workflow")}</div>
-            <div className="flex items-baseline">
-              <div className="text-3xl text-stone-700 dark:text-stone-200">
-                {statistic?.workflowEnabled ? (
-                  <Link to="/workflows?state=enabled" className="hover:underline">
-                    {statistic?.workflowEnabled}
-                  </Link>
-                ) : (
-                  0
-                )}
-              </div>
-              <div className="ml-1 text-stone-700 dark:text-stone-200">{t("dashboard.statistics.unit")}</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div>TODO: 最近执行的工作流 LatestWorkflowRun</div>
+    </>
+  );
+};
 
-      <div className="my-4">
-        <hr />
-      </div>
-
-      <div>
-        <div className="text-muted-foreground mt-5 text-sm">{t("dashboard.certificate")}</div>
-
-        <CertificateList />
-      </div>
-    </div>
+const StatisticCard = ({
+  label,
+  icon,
+  value,
+  suffix,
+  onClick,
+}: {
+  label: React.ReactNode;
+  icon: React.ReactNode;
+  value?: string | number | React.ReactNode;
+  suffix?: React.ReactNode;
+  onClick?: () => void;
+}) => {
+  return (
+    <Card className="overflow-hidden" bordered={false} hoverable onClick={onClick}>
+      <Space size="middle">
+        {icon}
+        <Statistic
+          title={label}
+          valueRender={() => {
+            return <Typography.Text className="text-4xl">{value}</Typography.Text>;
+          }}
+          suffix={<Typography.Text className="text-sm">{suffix}</Typography.Text>}
+        />
+      </Space>
+    </Card>
   );
 };
 

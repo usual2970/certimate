@@ -38,6 +38,7 @@ const CertificateList = () => {
     {
       key: "expiry",
       title: t("certificate.props.expiry"),
+      defaultFilteredValue: searchParams.has("state") ? [searchParams.get("state") as string] : undefined,
       filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
         const items: Required<MenuProps>["items"] = [
           ["expireSoon", "certificate.props.expiry.filter.expire_soon"],
@@ -164,20 +165,18 @@ const CertificateList = () => {
   const [tableData, setTableData] = useState<CertificateType[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>(() => {
+    return {
+      state: searchParams.get("state"),
+    };
+  });
 
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
+  const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
   const [currentRecord, setCurrentRecord] = useState<CertificateType>();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  useEffect(() => {
-    setFilters({ ...filters, state: searchParams.get("state") });
-    setPage(parseInt(+searchParams.get("page")! + "") || 1);
-    setPageSize(parseInt(+searchParams.get("perPage")! + "") || 10);
-  }, []);
 
   const fetchTableData = useCallback(async () => {
     if (loading) return;
@@ -238,10 +237,6 @@ const CertificateList = () => {
           },
         }}
         rowKey={(record) => record.id}
-        onChange={(_, filters, __, extra) => {
-          console.log(filters);
-          extra.action === "filter" && fetchTableData();
-        }}
       />
 
       <CertificateDetailDrawer

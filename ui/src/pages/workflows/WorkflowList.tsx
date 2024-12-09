@@ -80,6 +80,7 @@ const WorkflowList = () => {
     {
       key: "state",
       title: t("workflow.props.state"),
+      defaultFilteredValue: searchParams.has("state") ? [searchParams.get("state") as string] : undefined,
       filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
         const items: Required<MenuProps>["items"] = [
           ["enabled", "workflow.props.state.filter.enabled"],
@@ -195,16 +196,14 @@ const WorkflowList = () => {
   const [tableData, setTableData] = useState<WorkflowType[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
+  const [filters, setFilters] = useState<Record<string, unknown>>(() => {
+    return {
+      state: searchParams.get("state"),
+    };
+  });
 
-  const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-
-  useEffect(() => {
-    setFilters({ ...filters, state: searchParams.get("state") });
-    setPage(parseInt(+searchParams.get("page")! + "") || 1);
-    setPageSize(parseInt(+searchParams.get("perPage")! + "") || 10);
-  }, []);
+  const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
+  const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
   const fetchTableData = useCallback(async () => {
     if (loading) return;
