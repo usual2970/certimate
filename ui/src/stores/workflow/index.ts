@@ -1,3 +1,5 @@
+import { create } from "zustand";
+
 import {
   addBranch,
   addNode,
@@ -12,8 +14,7 @@ import {
   WorkflowNode,
   WorkflowNodeType,
 } from "@/domain/workflow";
-import { save, get as getWrokflow } from "@/repository/workflow";
-import { create } from "zustand";
+import { get as getWorkflow, save as saveWorkflow } from "@/repository/workflow";
 
 export type WorkflowState = {
   workflow: Workflow;
@@ -47,7 +48,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     if (!id) {
       data = initWorkflow();
     } else {
-      data = await getWrokflow(id);
+      data = await getWorkflow(id);
     }
 
     set({
@@ -64,7 +65,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     if (!data.id) {
       data.draft = get().workflow.draft as WorkflowNode;
     }
-    const resp = await save(data);
+    const resp = await saveWorkflow(data);
     set((state: WorkflowState) => {
       return {
         workflow: {
@@ -79,7 +80,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   switchEnable: async () => {
     const root = get().workflow.draft as WorkflowNode;
     const executeMethod = getExecuteMethod(root);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       content: root,
       enabled: !get().workflow.enabled,
@@ -104,7 +105,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   save: async () => {
     const root = get().workflow.draft as WorkflowNode;
     const executeMethod = getExecuteMethod(root);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       content: root,
       hasDraft: false,
@@ -126,7 +127,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   updateNode: async (node: WorkflowNode | WorkflowBranchNode) => {
     const newRoot = updateNode(get().workflow.draft as WorkflowNode, node);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       draft: newRoot,
       hasDraft: true,
@@ -144,7 +145,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   addNode: async (node: WorkflowNode | WorkflowBranchNode, preId: string) => {
     const newRoot = addNode(get().workflow.draft as WorkflowNode, preId, node);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       draft: newRoot,
       hasDraft: true,
@@ -162,7 +163,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   addBranch: async (branchId: string) => {
     const newRoot = addBranch(get().workflow.draft as WorkflowNode, branchId);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       draft: newRoot,
       hasDraft: true,
@@ -180,7 +181,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   removeBranch: async (branchId: string, index: number) => {
     const newRoot = removeBranch(get().workflow.draft as WorkflowNode, branchId, index);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       draft: newRoot,
       hasDraft: true,
@@ -198,7 +199,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   removeNode: async (nodeId: string) => {
     const newRoot = removeNode(get().workflow.draft as WorkflowNode, nodeId);
-    const resp = await save({
+    const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
       draft: newRoot,
       hasDraft: true,

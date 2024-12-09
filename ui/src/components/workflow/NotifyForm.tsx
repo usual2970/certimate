@@ -5,7 +5,7 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "../ui/select";
 import { Input } from "../ui/input";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 import { useTranslation } from "react-i18next";

@@ -14,7 +14,7 @@ import { cn } from "@/components/ui/utils";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
 import { getErrMessage } from "@/lib/error";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
