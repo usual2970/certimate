@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import AccessEditDialog from "@/components/certimate/AccessEditDialog";
@@ -50,7 +50,7 @@ const AccessList = () => {
       title: t("common.text.created_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.created!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
@@ -58,7 +58,7 @@ const AccessList = () => {
       title: t("common.text.updated_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.updated!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
@@ -87,8 +87,8 @@ const CertificateList = () => {
       },
       filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
-        const total = moment(record.expireAt).diff(moment(record.created), "d") + 1;
-        const left = moment(record.expireAt).diff(moment(), "d");
+        const total = dayjs(record.expireAt).diff(dayjs(record.created), "d") + 1;
+        const left = dayjs(record.expireAt).diff(dayjs(), "d");
         return (
           <Space className="max-w-full" direction="vertical" size={4}>
             {left > 0 ? (
@@ -98,7 +98,7 @@ const CertificateList = () => {
             )}
 
             <Typography.Text type="secondary">
-              {t("certificate.props.expiry.expiration", { date: moment(record.expireAt).format("YYYY-MM-DD") })}
+              {t("certificate.props.expiry.expiration", { date: dayjs(record.expireAt).format("YYYY-MM-DD") })}
             </Typography.Text>
           </Space>
         );
@@ -132,7 +132,7 @@ const CertificateList = () => {
       title: t("common.text.created_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.created!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
@@ -140,7 +140,7 @@ const CertificateList = () => {
       title: t("common.text.updated_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.updated!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {

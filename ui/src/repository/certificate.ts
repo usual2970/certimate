@@ -1,5 +1,5 @@
+import dayjs from "dayjs";
 import { type RecordListOptions } from "pocketbase";
-import moment from "moment";
 
 import { type Certificate } from "@/domain/certificate";
 import { getPocketBase } from "./pocketbase";
@@ -23,7 +23,7 @@ export const list = async (req: CertificateListReq) => {
 
   if (req.state === "expireSoon") {
     options.filter = pb.filter("expireAt<{:expiredAt}", {
-      expiredAt: moment().add(15, "d").toDate(),
+      expiredAt: dayjs().add(15, "d").toDate(),
     });
   } else if (req.state === "expired") {
     options.filter = pb.filter("expireAt<={:expiredAt}", {

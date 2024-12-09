@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 import { type Access } from "@/domain/access";
 import { getPocketBase } from "./pocketbase";
@@ -19,6 +19,6 @@ export const save = async (record: Access) => {
 };
 
 export const remove = async (record: Access) => {
-  record.deleted = moment.utc().format("YYYY-MM-DD HH:mm:ss");
+  record.deleted = dayjs.utc().format("YYYY-MM-DD HH:mm:ss");
   return await getPocketBase().collection("access").update(record.id, record);
 };

@@ -20,7 +20,7 @@ import {
 } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import { Workflow as WorkflowType } from "@/domain/workflow";
@@ -153,7 +153,7 @@ const WorkflowList = () => {
       title: t("common.text.created_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.created!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
@@ -161,7 +161,7 @@ const WorkflowList = () => {
       title: t("common.text.updated_at"),
       ellipsis: true,
       render: (_, record) => {
-        return moment(record.updated!).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");
       },
     },
     {
