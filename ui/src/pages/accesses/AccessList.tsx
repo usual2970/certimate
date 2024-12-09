@@ -4,6 +4,7 @@ import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typo
 import { PageHeader } from "@ant-design/pro-components";
 import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import moment from "moment";
+import { ClientResponseError } from "pocketbase";
 
 import AccessEditDialog from "@/components/certimate/AccessEditDialog";
 import { Access as AccessType, accessProvidersMap } from "@/domain/access";
@@ -123,6 +124,10 @@ const AccessList = () => {
       setTableData(items);
       setTableTotal(configContext.config.accesses.length);
     } catch (err) {
+      if (err instanceof ClientResponseError && err.isAbort) {
+        return;
+      }
+
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {

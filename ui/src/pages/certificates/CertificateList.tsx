@@ -5,6 +5,7 @@ import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme,
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
 import moment from "moment";
+import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { Certificate as CertificateType } from "@/domain/certificate";
@@ -192,6 +193,10 @@ const CertificateList = () => {
       setTableData(resp.items);
       setTableTotal(resp.totalItems);
     } catch (err) {
+      if (err instanceof ClientResponseError && err.isAbort) {
+        return;
+      }
+
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {

@@ -10,6 +10,7 @@ import {
   SquareSigma as SquareSigmaIcon,
   Workflow as WorkflowIcon,
 } from "lucide-react";
+import { ClientResponseError } from "pocketbase";
 
 import { type Statistic as StatisticType } from "@/domain/domain";
 import { get as getStatistics } from "@/api/statistics";
@@ -43,6 +44,10 @@ const Dashboard = () => {
       const data = await getStatistics();
       setStatistic(data);
     } catch (err) {
+      if (err instanceof ClientResponseError && err.isAbort) {
+        return;
+      }
+
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {

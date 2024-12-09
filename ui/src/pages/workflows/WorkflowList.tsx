@@ -21,6 +21,7 @@ import {
 import { PageHeader } from "@ant-design/pro-components";
 import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import moment from "moment";
+import { ClientResponseError } from "pocketbase";
 
 import { Workflow as WorkflowType } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
@@ -219,6 +220,10 @@ const WorkflowList = () => {
       setTableData(resp.items);
       setTableTotal(resp.totalItems);
     } catch (err) {
+      if (err instanceof ClientResponseError && err.isAbort) {
+        return;
+      }
+
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
     } finally {
