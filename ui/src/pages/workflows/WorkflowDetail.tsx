@@ -13,7 +13,7 @@ import WorkflowLog from "@/components/workflow/WorkflowLog";
 import { cn } from "@/components/ui/utils";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -128,7 +128,7 @@ const WorkflowDetail = () => {
     } catch (e) {
       toast({
         title: t("workflow.detail.action.run.failed"),
-        description: getErrMessage(e),
+        description: getErrMsg(e),
         variant: "destructive",
       });
     }

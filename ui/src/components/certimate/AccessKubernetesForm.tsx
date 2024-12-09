@@ -8,7 +8,7 @@ import { ClientResponseError } from "pocketbase";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { readFileContent } from "@/lib/file";
+import { readFileContent } from "@/utils/file";
 import { PbErrorData } from "@/domain/base";
 import { accessProvidersMap, accessTypeFormSchema, type Access, type KubernetesConfig } from "@/domain/access";
 import { save } from "@/repository/access";

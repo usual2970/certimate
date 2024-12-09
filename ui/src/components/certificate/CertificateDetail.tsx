@@ -4,7 +4,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Clipboard as ClipboardIcon } from "lucide-react";
 
 import { type Certificate } from "@/domain/certificate";
-import { saveFiles2Zip } from "@/lib/file";
+import { saveFiles2Zip } from "@/utils/file";
 
 type CertificateDetailProps = {
   data: Certificate;

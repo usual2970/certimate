@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { SSLProvider as SSLProviderType, SSLProviderSetting, Setting } from "@/domain/settings";
 import { getSetting, update } from "@/repository/settings";
 import { produce } from "immer";
@@ -84,7 +84,7 @@ const SSLProvider = () => {
         description: t("common.update.succeeded.message"),
       });
     } catch (e) {
-      const message = getErrMessage(e);
+      const message = getErrMsg(e);
       toast({
         title: t("common.update.failed.message"),
         description: message,

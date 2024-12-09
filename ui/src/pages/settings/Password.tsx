@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const formSchema = z
@@ -46,7 +46,7 @@ const Password = () => {
     try {
       await getPocketBase().admins.authWithPassword(getPocketBase().authStore.model?.email, values.oldPassword);
     } catch (e) {
-      const message = getErrMessage(e);
+      const message = getErrMsg(e);
       form.setError("oldPassword", { message });
     }
 
@@ -65,7 +65,7 @@ const Password = () => {
         navigate("/login");
       }, 500);
     } catch (e) {
-      const message = getErrMessage(e);
+      const message = getErrMsg(e);
       toast({
         title: t("settings.password.failed.message"),
         description: message,
