@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
+import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
 import {
   Languages as LanguagesIcon,
   LogOut as LogOutIcon,
@@ -21,65 +21,21 @@ import { getPocketBase } from "@/repository/pocketbase";
 import { ConfigProvider } from "@/providers/config";
 
 const ConsoleLayout = () => {
-  const location = useLocation();
   const navigate = useNavigate();
 
   const { t } = useTranslation();
 
   const { token: themeToken } = theme.useToken();
-  const { theme: browserTheme } = useTheme();
 
-  const menuItems: Required<MenuProps>["items"] = [
-    {
-      key: "/",
-      icon: <HomeIcon size={16} />,
-      label: t("dashboard.page.title"),
-      onClick: () => navigate("/"),
-    },
-    {
-      key: "/workflows",
-      icon: <WorkflowIcon size={16} />,
-      label: t("workflow.page.title"),
-      onClick: () => navigate("/workflows"),
-    },
-    {
-      key: "/certificates",
-      icon: <ShieldCheckIcon size={16} />,
-      label: t("certificate.page.title"),
-      onClick: () => navigate("/certificates"),
-    },
-    {
-      key: "/accesses",
-      icon: <ServerIcon size={16} />,
-      label: t("access.page.title"),
-      onClick: () => navigate("/accesses"),
-    },
-  ];
-  const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
+  const [siderOpen, setSiderOpen] = useState(false);
 
-  const getActiveMenuItem = () => {
-    const item =
-      menuItems.find((item) => item!.key === location.pathname) ??
-      menuItems.find((item) => item!.key !== "/" && location.pathname.startsWith(item!.key as string));
-    return item;
+  const handleSiderOpen = () => {
+    setSiderOpen(true);
   };
 
-  useEffect(() => {
-    const item = getActiveMenuItem();
-    if (item) {
-      setMenuSelectedKey(item.key as string);
-    } else {
-      setMenuSelectedKey(undefined);
-    }
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (menuSelectedKey && menuSelectedKey !== getActiveMenuItem()?.key) {
-      navigate(menuSelectedKey);
-    }
-  }, [menuSelectedKey]);
-
-  // TODO: 响应式侧边栏菜单
+  const handleSiderClose = () => {
+    setSiderOpen(false);
+  };
 
   const handleLogoutClick = () => {
     auth.clear();
@@ -99,22 +55,10 @@ const ConsoleLayout = () => {
     <>
       <ConfigProvider>
         <Layout className="w-full min-h-screen">
-          <Layout.Sider theme={browserTheme} width={256}>
+          <Layout.Sider className="max-md:hidden" theme="light" width={256}>
             <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
-              <Link to="/" className="flex items-center gap-2 w-full px-4 font-semibold overflow-hidden">
-                <img src="/logo.svg" className="w-[36px] h-[36px]" />
-                <span className="w-[64px] h-[64px] leading-[64px] dark:text-white truncate">Certimate</span>
-              </Link>
-              <div className="flex-grow w-full overflow-x-hidden overflow-y-auto">
-                <Menu
-                  items={menuItems}
-                  mode="vertical"
-                  selectedKeys={menuSelectedKey ? [menuSelectedKey] : []}
-                  theme={browserTheme}
-                  onSelect={({ key }) => {
-                    setMenuSelectedKey(key);
-                  }}
-                />
+              <div className="w-full">
+                <SiderMenu />
               </div>
               <div className="w-full py-2 text-center">
                 <Version />
@@ -125,7 +69,22 @@ const ConsoleLayout = () => {
           <Layout>
             <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
               <div className="flex items-center justify-between size-full px-4 overflow-hidden">
-                <div className="flex items-center gap-4 size-full">{/* <Button icon={<MenuIcon />} size="large" /> */}</div>
+                <div className="flex items-center gap-4 size-full">
+                  <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
+                  <Drawer
+                    closable={false}
+                    destroyOnClose
+                    open={siderOpen}
+                    placement="left"
+                    styles={{
+                      content: { paddingTop: themeToken.paddingSM, paddingBottom: themeToken.paddingSM },
+                      body: { padding: 0 },
+                    }}
+                    onClose={handleSiderClose}
+                  >
+                    <SiderMenu onSelect={() => handleSiderClose()} />
+                  </Drawer>
+                </div>
                 <div className="flex-grow flex items-center justify-end gap-4 size-full overflow-hidden">
                   <Tooltip title={t("common.menu.theme")} mouseEnterDelay={2}>
                     <ThemeToggleButton size="large" />
@@ -155,7 +114,99 @@ const ConsoleLayout = () => {
   );
 };
 
-const ThemeToggleButton = ({ size }: { size?: ButtonProps["size"] }) => {
+const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
+  const MENU_KEY_HOME = "/";
+  const MENU_KEY_WORKFLOWS = "/workflows";
+  const MENU_KEY_CERTIFICATES = "/certificates";
+  const MENU_KEY_ACCESSES = "/accesses";
+  const menuItems: Required<MenuProps>["items"] = [
+    {
+      key: MENU_KEY_HOME,
+      icon: <HomeIcon size={16} />,
+      label: t("dashboard.page.title"),
+      onClick: () => {
+        navigate(MENU_KEY_HOME);
+        onSelect?.(MENU_KEY_HOME);
+      },
+    },
+    {
+      key: MENU_KEY_WORKFLOWS,
+      icon: <WorkflowIcon size={16} />,
+      label: t("workflow.page.title"),
+      onClick: () => {
+        navigate(MENU_KEY_WORKFLOWS);
+        onSelect?.(MENU_KEY_WORKFLOWS);
+      },
+    },
+    {
+      key: MENU_KEY_CERTIFICATES,
+      icon: <ShieldCheckIcon size={16} />,
+      label: t("certificate.page.title"),
+      onClick: () => {
+        navigate(MENU_KEY_CERTIFICATES);
+        onSelect?.(MENU_KEY_CERTIFICATES);
+      },
+    },
+    {
+      key: MENU_KEY_ACCESSES,
+      icon: <ServerIcon size={16} />,
+      label: t("access.page.title"),
+      onClick: () => {
+        navigate(MENU_KEY_ACCESSES);
+        onSelect?.(MENU_KEY_ACCESSES);
+      },
+    },
+  ];
+  const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
+
+  const getActiveMenuItem = () => {
+    const item =
+      menuItems.find((item) => item!.key === location.pathname) ??
+      menuItems.find((item) => item!.key !== MENU_KEY_HOME && location.pathname.startsWith(item!.key as string));
+    return item;
+  };
+
+  useEffect(() => {
+    const item = getActiveMenuItem();
+    if (item) {
+      setMenuSelectedKey(item.key as string);
+    } else {
+      setMenuSelectedKey(undefined);
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (menuSelectedKey && menuSelectedKey !== getActiveMenuItem()?.key) {
+      navigate(menuSelectedKey);
+    }
+  }, [menuSelectedKey]);
+
+  return (
+    <>
+      <Link to="/" className="flex items-center gap-2 w-full px-4 font-semibold overflow-hidden">
+        <img src="/logo.svg" className="w-[36px] h-[36px]" />
+        <span className="w-[64px] h-[64px] leading-[64px] dark:text-white truncate">Certimate</span>
+      </Link>
+      <div className="flex-grow w-full overflow-x-hidden overflow-y-auto">
+        <Menu
+          items={menuItems}
+          mode="vertical"
+          selectedKeys={menuSelectedKey ? [menuSelectedKey] : []}
+          onSelect={({ key }) => {
+            setMenuSelectedKey(key);
+          }}
+        />
+      </div>
+    </>
+  );
+});
+
+const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { t } = useTranslation();
 
   const { theme, setThemeMode } = useTheme();
@@ -183,9 +234,9 @@ const ThemeToggleButton = ({ size }: { size?: ButtonProps["size"] }) => {
       <Button icon={theme === "dark" ? <MoonIcon size={18} /> : <SunIcon size={18} />} size={size} />
     </Dropdown>
   );
-};
+});
 
-const LocaleToggleButton = ({ size }: { size?: ButtonProps["size"] }) => {
+const LocaleToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { i18n } = useTranslation();
 
   const items: Required<MenuProps>["items"] = Object.keys(i18n.store.data).map((key) => {
@@ -201,6 +252,6 @@ const LocaleToggleButton = ({ size }: { size?: ButtonProps["size"] }) => {
       <Button icon={<LanguagesIcon size={18} />} size={size} />
     </Dropdown>
   );
-};
+});
 
 export default ConsoleLayout;
