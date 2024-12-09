@@ -1,4 +1,4 @@
-import { WorkflowwNodeDropdwonItemIcon, WorkflowwNodeDropdwonItemIconType } from "@/domain/workflow";
+import { WorkflowNodeDropdwonItemIcon, WorkflowNodeDropdwonItemIconType } from "@/domain/workflow";
 import { CloudUpload, GitFork, Megaphone, NotebookPen } from "lucide-react";
 
 const icons = new Map([
@@ -8,9 +8,9 @@ const icons = new Map([
   ["Megaphone", <Megaphone size={16} />],
 ]);
 
-const DropdownMenuItemIcon = ({ type, name }: WorkflowwNodeDropdwonItemIcon) => {
+const DropdownMenuItemIcon = ({ type, name }: WorkflowNodeDropdwonItemIcon) => {
   const getIcon = () => {
-    if (type === WorkflowwNodeDropdwonItemIconType.Icon) {
+    if (type === WorkflowNodeDropdwonItemIconType.Icon) {
       return icons.get(name);
     } else {
       return <img src={name} className="w-4" />;

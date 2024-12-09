@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
 import { useNotifyContext } from "@/providers/notify";
 import { update } from "@/repository/settings";
@@ -113,7 +113,7 @@ const DingTalk = () => {
         description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("common.save.failed.message"),
@@ -139,7 +139,7 @@ const DingTalk = () => {
         description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("settings.notification.push_test_message.failed.message"),
@@ -173,7 +173,7 @@ const DingTalk = () => {
 
       setChannels(resp);
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("common.save.failed.message"),

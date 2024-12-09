@@ -10,8 +10,10 @@ import (
 )
 
 type TelegramNotifierConfig struct {
+	// Telegram API Token。
 	ApiToken string `json:"apiToken"`
-	ChatId   int64  `json:"chatId"`
+	// Telegram Chat ID。
+	ChatId int64 `json:"chatId"`
 }
 
 type TelegramNotifier struct {

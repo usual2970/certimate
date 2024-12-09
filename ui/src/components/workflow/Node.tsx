@@ -1,6 +1,6 @@
 import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import AddNode from "./AddNode";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Ellipsis, Trash2 } from "lucide-react";

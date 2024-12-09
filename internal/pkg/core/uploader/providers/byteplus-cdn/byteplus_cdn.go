@@ -19,7 +19,9 @@ import (
 )
 
 type ByteplusCDNUploaderConfig struct {
+	// BytePlus AccessKey。
 	AccessKey string `json:"accessKey"`
+	// BytePlus SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 

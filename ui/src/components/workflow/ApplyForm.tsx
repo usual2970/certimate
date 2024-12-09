@@ -22,7 +22,7 @@ import { useConfigContext } from "@/providers/config";
 import { Switch } from "@/components/ui/switch";
 import { TooltipFast } from "@/components/ui/tooltip";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 

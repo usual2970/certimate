@@ -6,7 +6,7 @@ import { useNotifyContext } from "@/providers/notify";
 import { NotifyChannelLark, NotifyChannels } from "@/domain/settings";
 import { useEffect, useState } from "react";
 import { update } from "@/repository/settings";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { notifyTest } from "@/api/notify";
@@ -109,7 +109,7 @@ const Lark = () => {
         description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("common.save.failed.message"),
@@ -135,7 +135,7 @@ const Lark = () => {
         description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("settings.notification.push_test_message.failed.message"),
@@ -169,7 +169,7 @@ const Lark = () => {
 
       setChannels(resp);
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("common.save.failed.message"),

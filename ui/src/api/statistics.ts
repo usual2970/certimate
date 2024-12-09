@@ -1,7 +1,7 @@
-import { getPb } from "@/repository/api";
+import { getPocketBase } from "@/repository/pocketbase";
 
 export const get = async () => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
   const resp = await pb.send("/api/statistics/get", {
     method: "GET",

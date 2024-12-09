@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { BrandNodeProps, NodeProps } from "./types";
 
 import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import {
   DropdownMenu,

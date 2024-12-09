@@ -1,4 +1,4 @@
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import AddNode from "./AddNode";
 import { NodeProps } from "./types";
 import { useShallow } from "zustand/shallow";

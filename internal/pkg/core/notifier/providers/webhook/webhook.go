@@ -10,6 +10,7 @@ import (
 )
 
 type WebhookNotifierConfig struct {
+	// Webhook URL。
 	Url string `json:"url"`
 }
 

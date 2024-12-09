@@ -1,19 +1,20 @@
 {
-  "certificate.page.title": "证书",
+  "certificate.page.title": "证书管理",
 
-  "certificate.nodata": "暂无证书，添加工作流去生成证书吧😀",
+  "certificate.nodata": "暂无证书，新建一个工作流去生成证书吧～ 😀",
+
+  "certificate.action.view": "查看证书",
+  "certificate.action.download": "下载证书",
 
   "certificate.props.domain": "名称",
   "certificate.props.expiry": "有效期限",
-  "certificate.props.expiry.days": "天",
+  "certificate.props.expiry.left_days": "{{left}} / {{total}} 天",
   "certificate.props.expiry.expired": "已到期",
-  "certificate.props.expiry.text.expire": "到期",
+  "certificate.props.expiry.expiration": "{{date}} 到期",
+  "certificate.props.expiry.filter.expire_soon": "即将到期",
+  "certificate.props.expiry.filter.expired": "已到期",
   "certificate.props.workflow": "所属工作流",
-  "certificate.props.created": "颁发时间",
-  "certificate.props.certificate": "证书",
-  "certificate.props.private.key": "私钥",
-
-  "certificate.action.view": "查看证书",
-  "certificate.action.download": "下载证书"
+  "certificate.props.source": "来源",
+  "certificate.props.certificate_chain": "证书内容",
+  "certificate.props.private_key": "私钥内容"
 }
-

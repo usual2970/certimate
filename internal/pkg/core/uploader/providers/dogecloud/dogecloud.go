@@ -13,7 +13,9 @@ import (
 )
 
 type DogeCloudUploaderConfig struct {
+	// 多吉云 AccessKey。
 	AccessKey string `json:"accessKey"`
+	// 多吉云 SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 
