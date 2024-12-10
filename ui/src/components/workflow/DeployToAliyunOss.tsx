@@ -101,7 +101,7 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                     op="add"
@@ -209,7 +209,7 @@ const DeployToAliyunOSS = ({ data }: DeployFormProps) => {
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

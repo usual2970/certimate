@@ -15,6 +15,9 @@
   "certificate.props.expiry.filter.expired": "已到期",
   "certificate.props.workflow": "所属工作流",
   "certificate.props.source": "来源",
+  "certificate.props.source.workflow": "工作流",
   "certificate.props.certificate_chain": "证书内容",
-  "certificate.props.private_key": "私钥内容"
+  "certificate.props.private_key": "私钥内容",
+  "certificate.props.created_at": "创建时间",
+  "certificate.props.updated_at": "更新时间"
 }

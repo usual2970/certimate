@@ -77,10 +77,10 @@ const CertificateList = () => {
             <Divider style={{ margin: 0 }} />
             <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
               <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
-                {t("common.reset")}
+                {t("common.button.reset")}
               </Button>
               <Button type="primary" size="small" onClick={handleConfirmClick}>
-                {t("common.confirm")}
+                {t("common.button.ok")}
               </Button>
             </Space>
           </div>
@@ -113,7 +113,7 @@ const CertificateList = () => {
         const workflowId = record.workflow;
         return workflowId ? (
           <Space className="max-w-full" direction="vertical" size={4}>
-            <Typography.Text>{t("common.text.workflow")}</Typography.Text>
+            <Typography.Text>{t("certificate.props.source.workflow")}</Typography.Text>
             <Typography.Link
               type="secondary"
               ellipsis
@@ -131,7 +131,7 @@ const CertificateList = () => {
     },
     {
       key: "createdAt",
-      title: t("common.text.created_at"),
+      title: t("certificate.props.created_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
@@ -139,7 +139,7 @@ const CertificateList = () => {
     },
     {
       key: "updatedAt",
-      title: t("common.text.updated_at"),
+      title: t("certificate.props.updated_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");

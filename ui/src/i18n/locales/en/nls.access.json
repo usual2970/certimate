@@ -7,7 +7,12 @@
   "access.action.edit": "Edit Authorization",
   "access.action.copy": "Copy Authorization",
   "access.action.delete": "Delete Authorization",
-  "access.action.delete.confirm": "Are you sure you want to delete the deployment authorization?",
+  "access.action.delete.confirm": "Are you sure to delete this authorization?",
+
+  "access.props.name": "Name",
+  "access.props.provider": "Provider",
+  "access.props.created_at": "Created At",
+  "access.props.updated_at": "Updated At",
 
   "access.authorization.form.type.label": "Provider",
   "access.authorization.form.type.placeholder": "Please select a provider",

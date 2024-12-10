@@ -29,13 +29,13 @@ const AccessList = () => {
     },
     {
       key: "name",
-      title: t("common.text.name"),
+      title: t("access.props.name"),
       ellipsis: true,
       render: (_, record) => <>{record.name}</>,
     },
     {
       key: "provider",
-      title: t("common.text.provider"),
+      title: t("access.props.provider"),
       ellipsis: true,
       render: (_, record) => {
         return (
@@ -48,7 +48,7 @@ const AccessList = () => {
     },
     {
       key: "createdAt",
-      title: t("common.text.created_at"),
+      title: t("access.props.created_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
@@ -56,7 +56,7 @@ const AccessList = () => {
     },
     {
       key: "updatedAt",
-      title: t("common.text.updated_at"),
+      title: t("access.props.updated_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");

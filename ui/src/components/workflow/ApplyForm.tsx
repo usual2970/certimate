@@ -122,7 +122,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                   />
@@ -168,7 +168,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                     op="add"
@@ -342,7 +342,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

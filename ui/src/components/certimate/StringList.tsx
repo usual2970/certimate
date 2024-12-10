@@ -79,7 +79,7 @@ const StringList = ({ value, className, onValueChange, valueType = "domain" }: S
                   <div className="flex items-center text-primary">
                     <Plus size={16} className="cursor-pointer " />
 
-                    <div className="text-sm ">{t("common.add")}</div>
+                    <div className="text-sm ">{t("common.button.add")}</div>
                   </div>
                 }
               />
@@ -92,7 +92,7 @@ const StringList = ({ value, className, onValueChange, valueType = "domain" }: S
                 <div className="border rounded-md p-3 text-sm flex flex-col items-center">
                   <div className="text-muted-foreground">{t("common.text." + valueType + ".empty")}</div>
 
-                  <StringEdit value={""} trigger={t("common.add")} onValueChange={addVal} valueType={valueType} />
+                  <StringEdit value={""} trigger={t("common.button.add")} onValueChange={addVal} valueType={valueType} />
                 </div>
               }
             >
@@ -208,7 +208,7 @@ const StringEdit = ({ trigger, value, onValueChange, op = "add", valueType }: St
               onSaveClick();
             }}
           >
-            {op === "add" ? t("common.add") : t("common.confirm")}
+            {op === "add" ? t("common.button.add") : t("common.button.ok")}
           </Button>
         </DialogFooter>
       </DialogContent>

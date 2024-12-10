@@ -3,6 +3,23 @@
 
   "workflow.nodata": "No workflows. Please create a workflow to generate certificates! 😀",
 
+  "workflow.action.create": "Create Workflow",
+  "workflow.action.edit": "Edit Workflow",
+  "workflow.action.delete": "Delete Workflow",
+  "workflow.action.delete.confirm": "Are you sure to delete this workflow?",
+
+  "workflow.props.name": "Name",
+  "workflow.props.name.placeholder": "Please enter name",
+  "workflow.props.name.default": "Unnamed",
+  "workflow.props.description": "Description",
+  "workflow.props.description.placeholder": "Please enter description",
+  "workflow.props.execution_method": "Execution Method",
+  "workflow.props.state": "State",
+  "workflow.props.state.filter.enabled": "Enabled",
+  "workflow.props.state.filter.disabled": "Disabled",
+  "workflow.props.created_at": "Created At",
+  "workflow.props.updated_at": "Updated At",
+
   "workflow.detail.title": "Workflow",
   "workflow.detail.history": "History",
   "workflow.detail.action.save": "Save updates",
@@ -14,25 +31,6 @@
   "workflow.detail.action.running": "Running",
 
   "workflow.baseinfo.title": "Basic Information",
-
-  "workflow.props.name": "Name",
-  "workflow.props.name.placeholder": "Please enter name",
-  "workflow.props.name.default": "Unnamed",
-  "workflow.props.description": "Description",
-  "workflow.props.description.placeholder": "Please enter description",
-  "workflow.props.executionMethod": "Execution Method",
-  "workflow.props.state": "State",
-  "workflow.props.state.filter.enabled": "Enabled",
-  "workflow.props.state.filter.disabled": "Disabled",
-  "workflow.props.createdAt": "Created",
-  "workflow.props.updatedAt": "Updated",
-
-  "workflow.action": "Action",
-  "workflow.action.edit": "Edit",
-  "workflow.action.create": "Create Workflow",
-
-  "workflow.action.delete.alert.title": "Delete Workflow",
-  "workflow.action.delete.alert.content": "Are you sure you want to delete this workflow?",
 
   "workflow.history.page.title": "Logs",
   "workflow.history.props.state": "State",

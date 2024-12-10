@@ -115,7 +115,7 @@ const Dashboard = () => {
 
       <Divider />
 
-      <div>TODO: 最近执行的工作流 LatestWorkflowRun</div>
+      <div>TODO: {t("dashboard.latest_workflow_run")}</div>
     </>
   );
 };

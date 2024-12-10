@@ -15,6 +15,9 @@
   "certificate.props.expiry.filter.expired": "Expired",
   "certificate.props.workflow": "Workflow",
   "certificate.props.source": "Source",
+  "certificate.props.source.workflow": "Workflow",
   "certificate.props.certificate_chain": "Certificate Chain",
-  "certificate.props.private_key": "Private Key"
+  "certificate.props.private_key": "Private Key",
+  "certificate.props.created_at": "Created At",
+  "certificate.props.updated_at": "Updated At"
 }

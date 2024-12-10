@@ -84,10 +84,10 @@ const Account = () => {
 
             <div className="flex justify-end">
               {changed ? (
-                <Button type="submit">{t("common.update")}</Button>
+                <Button type="submit">{t("common.button.save")}</Button>
               ) : (
                 <Button type="submit" disabled variant={"secondary"}>
-                  {t("common.update")}
+                  {t("common.button.save")}
                 </Button>
               )}
             </div>

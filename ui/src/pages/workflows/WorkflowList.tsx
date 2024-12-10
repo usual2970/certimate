@@ -49,7 +49,7 @@ const WorkflowList = () => {
     },
     {
       key: "name",
-      title: t("common.text.name"),
+      title: t("workflow.props.name"),
       ellipsis: true,
       render: (_, record) => (
         <Space className="max-w-full" direction="vertical" size={4}>
@@ -62,7 +62,7 @@ const WorkflowList = () => {
     },
     {
       key: "type",
-      title: t("workflow.props.executionMethod"),
+      title: t("workflow.props.execution_method"),
       ellipsis: true,
       render: (_, record) => {
         const method = record.type;
@@ -120,10 +120,10 @@ const WorkflowList = () => {
             <Divider style={{ margin: 0 }} />
             <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
               <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
-                {t("common.reset")}
+                {t("common.button.reset")}
               </Button>
               <Button type="primary" size="small" onClick={handleConfirmClick}>
-                {t("common.confirm")}
+                {t("common.button.ok")}
               </Button>
             </Space>
           </div>
@@ -152,7 +152,7 @@ const WorkflowList = () => {
     },
     {
       key: "createdAt",
-      title: t("common.text.created_at"),
+      title: t("workflow.props.created_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.created!).format("YYYY-MM-DD HH:mm:ss");
@@ -160,7 +160,7 @@ const WorkflowList = () => {
     },
     {
       key: "updatedAt",
-      title: t("common.text.updated_at"),
+      title: t("workflow.props.updated_at"),
       ellipsis: true,
       render: (_, record) => {
         return dayjs(record.updated!).format("YYYY-MM-DD HH:mm:ss");
@@ -173,7 +173,7 @@ const WorkflowList = () => {
       width: 120,
       render: (_, record) => (
         <Space size={0}>
-          <Tooltip title={t("common.edit")}>
+          <Tooltip title={t("workflow.action.edit")}>
             <Button
               type="link"
               icon={<PencilIcon size={16} />}
@@ -182,7 +182,7 @@ const WorkflowList = () => {
               }}
             />
           </Tooltip>
-          <Tooltip title={t("common.delete")}>
+          <Tooltip title={t("workflow.action.delete")}>
             <Button
               type="link"
               danger={true}
@@ -261,8 +261,8 @@ const WorkflowList = () => {
 
   const handleDeleteClick = (workflow: WorkflowType) => {
     modalApi.confirm({
-      title: t("workflow.action.delete.alert.title"),
-      content: t("workflow.action.delete.alert.content"),
+      title: t("workflow.action.delete"),
+      content: t("workflow.action.delete.confirm"),
       onOk: async () => {
         try {
           const resp = await removeWorkflow(workflow);

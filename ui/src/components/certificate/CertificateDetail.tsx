@@ -39,11 +39,11 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
         <Form.Item>
           <div className="flex items-center justify-between w-full mb-2">
             <label className="font-medium">{t("certificate.props.certificate_chain")}</label>
-            <Tooltip title={t("common.copy")}>
+            <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.certificate}
                 onCopy={() => {
-                  messageApi.success(t("common.copy.done"));
+                  messageApi.success(t("common.text.copied"));
                 }}
               >
                 <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
@@ -56,11 +56,11 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
         <Form.Item>
           <div className="flex items-center justify-between w-full mb-2">
             <label className="font-medium">{t("certificate.props.private_key")}</label>
-            <Tooltip title={t("common.copy")}>
+            <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.privateKey}
                 onCopy={() => {
-                  messageApi.success(t("common.copy.done"));
+                  messageApi.success(t("common.text.copied"));
                 }}
               >
                 <Button type="text" icon={<ClipboardIcon size={14} />}></Button>

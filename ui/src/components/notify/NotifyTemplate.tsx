@@ -63,7 +63,7 @@ const NotifyTemplate = () => {
     }
 
     toast({
-      title: t("common.save.succeeded.message"),
+      title: t("common.text.operation_succeeded"),
       description: t("settings.notification.template.saved.message"),
     });
   };
@@ -88,7 +88,7 @@ const NotifyTemplate = () => {
       ></Textarea>
       <div className="text-muted-foreground text-sm mt-1">{t("settings.notification.template.variables.tips.content")}</div>
       <div className="flex justify-end mt-2">
-        <Button onClick={handleSaveClick}>{t("common.save")}</Button>
+        <Button onClick={handleSaveClick}>{t("common.button.save")}</Button>
       </div>
     </div>
   );

@@ -124,7 +124,7 @@ const Password = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button type="submit">{t("common.update")}</Button>
+              <Button type="submit">{t("common.button.save")}</Button>
             </div>
           </form>
         </Form>

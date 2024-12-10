@@ -179,7 +179,7 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

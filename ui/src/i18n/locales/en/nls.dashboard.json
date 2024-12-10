@@ -8,5 +8,5 @@
   "dashboard.statistics.enabled_workflows": "Enabled Workflows",
   "dashboard.statistics.unit": "",
 
-  "dashboard.certificate": "Latest Certificate"
+  "dashboard.latest_workflow_run": "Latest Workflow Run"
 }

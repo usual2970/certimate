@@ -132,14 +132,14 @@ const Mail = () => {
 
       setChannels(resp);
       toast({
-        title: t("common.save.succeeded.message"),
+        title: t("common.text.operation_succeeded"),
         description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
       const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -199,7 +199,7 @@ const Mail = () => {
       const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -360,7 +360,7 @@ const Mail = () => {
                 handleSaveClick();
               }}
             >
-              {t("common.save")}
+              {t("common.button.save")}
             </Button>
           </Show>
 

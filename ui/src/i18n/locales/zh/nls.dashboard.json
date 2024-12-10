@@ -8,5 +8,5 @@
   "dashboard.statistics.enabled_workflows": "已启用工作流",
   "dashboard.statistics.unit": "个",
 
-  "dashboard.certificate": "最新证书"
+  "dashboard.latest_workflow_run": "最近执行的工作流"
 }

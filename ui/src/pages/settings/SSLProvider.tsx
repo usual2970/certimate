@@ -80,13 +80,13 @@ const SSLProvider = () => {
       const resp = await update({ ...data });
       setConfig(resp);
       toast({
-        title: t("common.update.succeeded.message"),
-        description: t("common.update.succeeded.message"),
+        title: t("common.text.operation_succeeded"),
+        description: t("common.text.operation_succeeded"),
       });
     } catch (e) {
       const message = getErrMsg(e);
       toast({
-        title: t("common.update.failed.message"),
+        title: t("common.text.operation_failed"),
         description: message,
         variant: "destructive",
       });
@@ -222,7 +222,7 @@ const SSLProviderLetsEncryptForm = () => {
         <FormMessage />
 
         <div className="flex justify-end">
-          <Button type="submit">{t("common.update")}</Button>
+          <Button type="submit">{t("common.button.save")}</Button>
         </div>
       </form>
     </Form>
@@ -328,7 +328,7 @@ const SSLProviderZeroSSLForm = () => {
         <FormMessage />
 
         <div className="flex justify-end">
-          <Button type="submit">{t("common.update")}</Button>
+          <Button type="submit">{t("common.button.save")}</Button>
         </div>
       </form>
     </Form>
@@ -435,7 +435,7 @@ const SSLProviderGtsForm = () => {
         <FormMessage />
 
         <div className="flex justify-end">
-          <Button type="submit">{t("common.update")}</Button>
+          <Button type="submit">{t("common.button.save")}</Button>
         </div>
       </form>
     </Form>

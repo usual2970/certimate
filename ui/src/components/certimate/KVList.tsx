@@ -75,7 +75,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
               <div className="flex items-center text-primary">
                 <Plus size={16} className="cursor-pointer " />
 
-                <div className="text-sm ">{t("common.add")}</div>
+                <div className="text-sm ">{t("common.button.add")}</div>
               </div>
             }
             onSave={(variable) => {
@@ -96,7 +96,7 @@ const KVList = ({ variables, onValueChange }: KVListProps) => {
                 <div className="flex items-center text-primary">
                   <Plus size={16} className="cursor-pointer " />
 
-                  <div className="text-sm ">{t("common.add")}</div>
+                  <div className="text-sm ">{t("common.button.add")}</div>
                 </div>
               }
               variable={{
@@ -231,7 +231,7 @@ const KVEdit = ({ variable, trigger, onSave }: KVEditProps) => {
                 handleSaveClick();
               }}
             >
-              {t("common.save")}
+              {t("common.button.save")}
             </Button>
           </div>
         </DialogFooter>
