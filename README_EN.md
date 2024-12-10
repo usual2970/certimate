@@ -1,5 +1,10 @@
 [中文](README.md) | [English](README_EN.md)
 
+> [!WARNING]
+> The current branch is `next`, which is the development branch for v0.3.x. It is currently unstable and should not be used in production environments.
+> 
+> To access the previous versions, please switch to the `main` branch.
+
 # 🔒Certimate
 
 For individuals managing personal projects or those responsible for IT operations in small businesses who need to manage multiple domain names, applying for certificates manually comes with several drawbacks:
