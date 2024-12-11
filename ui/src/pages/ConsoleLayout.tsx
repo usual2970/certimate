@@ -185,7 +185,7 @@ const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }
     <>
       <Link to="/" className="flex items-center gap-2 w-full px-4 font-semibold overflow-hidden">
         <img src="/logo.svg" className="w-[36px] h-[36px]" />
-        <span className="w-[64px] h-[64px] leading-[64px] dark:text-white truncate">Certimate</span>
+        <span className="w-[74px] h-[64px] leading-[64px] dark:text-white truncate">Certimate</span>
       </Link>
       <div className="flex-grow w-full overflow-x-hidden overflow-y-auto">
         <Menu
