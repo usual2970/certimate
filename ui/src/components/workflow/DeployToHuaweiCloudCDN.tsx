@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 import { Button } from "../ui/button";
@@ -96,7 +96,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                     op="add"
@@ -191,7 +191,7 @@ const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

@@ -1,8 +1,27 @@
 {
   "workflow.page.title": "工作流",
+
+  "workflow.nodata": "暂无工作流，请先新建工作流",
+
+  "workflow.action.create": "新建工作流",
+  "workflow.action.edit": "编辑工作流",
+  "workflow.action.delete": "删除工作流",
+  "workflow.action.delete.confirm": "确定要删除此工作流吗？",
+
+  "workflow.props.name": "名称",
+  "workflow.props.name.placeholder": "请输入名称",
+  "workflow.props.name.default": "未命名工作流",
+  "workflow.props.description": "描述",
+  "workflow.props.description.placeholder": "请输入描述",
+  "workflow.props.execution_method": "执行方式",
+  "workflow.props.state": "启用状态",
+  "workflow.props.state.filter.enabled": "启用",
+  "workflow.props.state.filter.disabled": "未启用",
+  "workflow.props.created_at": "创建时间",
+  "workflow.props.updated_at": "更新时间",
+
   "workflow.detail.title": "流程",
   "workflow.detail.history": "历史",
-
   "workflow.detail.action.save": "保存变更",
   "workflow.detail.action.save.failed": "保存失败",
   "workflow.detail.action.save.failed.uncompleted": "保存失败，请完成所有节点设置",
@@ -12,23 +31,6 @@
   "workflow.detail.action.running": "正在执行",
 
   "workflow.baseinfo.title": "基本信息",
-
-  "workflow.props.name": "名称",
-  "workflow.props.name.placeholder": "请输入名称",
-  "workflow.props.name.default": "未命名工作流",
-  "workflow.props.description": "描述",
-  "workflow.props.description.placeholder": "请输入描述",
-  "workflow.props.executionMethod": "执行方式",
-  "workflow.props.enabled": "是否启用",
-  "workflow.props.created": "创建时间",
-  "workflow.props.updated": "更新时间",
-
-  "workflow.action": "操作",
-  "workflow.action.edit": "编辑",
-  "workflow.action.create": "创建工作流",
-
-  "workflow.action.delete.alert.title": "删除工作流",
-  "workflow.action.delete.alert.description": "确定要删除此工作流吗？",
 
   "workflow.history.page.title": "日志",
   "workflow.history.props.state": "状态",
@@ -68,4 +70,3 @@
   "workflow.node.notify.form.channel.placeholder": "请选择推送渠道",
   "workflow.node.notify.form.settingChannel.label": "设置推送渠道"
 }
-

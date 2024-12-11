@@ -8,18 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type GodaddyConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type GodaddyConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessGodaddyFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -56,7 +56,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -80,7 +80,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
         updateAccess(req);
         return;
       }
-      addAccess(req);
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -179,7 +179,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

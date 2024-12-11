@@ -3,6 +3,7 @@
 import (
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core"
 	hcCdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
+	hcCdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
 )
 
 type Client struct {
@@ -21,6 +22,7 @@ func (c *Client) UploadDomainMultiCertificatesEx(request *UpdateDomainMultiCerti
 	if resp, err := c.HcClient.Sync(request, requestDef); err != nil {
 		return nil, err
 	} else {
-		return resp.(*UpdateDomainMultiCertificatesExResponse), nil
+		temp := resp.(*hcCdnModel.UpdateDomainMultiCertificatesResponse)
+		return &UpdateDomainMultiCertificatesExResponse{UpdateDomainMultiCertificatesResponse: *temp}, nil
 	}
 }

@@ -13,12 +13,20 @@ import (
 )
 
 type EmailNotifierConfig struct {
-	SmtpHost        string `json:"smtpHost"`
-	SmtpPort        int32  `json:"smtpPort"`
-	SmtpTLS         bool   `json:"smtpTLS"`
-	Username        string `json:"username"`
-	Password        string `json:"password"`
-	SenderAddress   string `json:"senderAddress"`
+	// SMTP 服务器地址。
+	SmtpHost string `json:"smtpHost"`
+	// SMTP 服务器端口。
+	// 零值时根据是否启用 TLS 决定。
+	SmtpPort int32 `json:"smtpPort"`
+	// 是否启用 TLS。
+	SmtpTLS bool `json:"smtpTLS"`
+	// 用户名。
+	Username string `json:"username"`
+	// 密码。
+	Password string `json:"password"`
+	// 发件人邮箱。
+	SenderAddress string `json:"senderAddress"`
+	// 收件人邮箱。
 	ReceiverAddress string `json:"receiverAddress"`
 }
 

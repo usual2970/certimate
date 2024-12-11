@@ -1,19 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ClientResponseError } from "pocketbase";
 
+import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { PbErrorData } from "@/domain/base";
-import { EmailsSetting } from "@/domain/settings";
-import { update } from "@/repository/settings";
-import { useConfigContext } from "@/providers/config";
+import { type PbErrorData } from "@/domain/base";
+import { useContactStore } from "@/stores/contact";
 
 type EmailsEditProps = {
   className?: string;
@@ -21,10 +19,7 @@ type EmailsEditProps = {
 };
 
 const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
-  const {
-    config: { emails },
-    setEmails,
-  } = useConfigContext();
+  const { emails, setEmails, fetchEmails } = useContactStore();
 
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
@@ -40,30 +35,21 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
     },
   });
 
+  useEffect(() => {
+    fetchEmails();
+  }, []);
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    if ((emails.content as EmailsSetting).emails.includes(data.email)) {
+    if (emails.includes(data.email)) {
       form.setError("email", {
         message: "common.errmsg.email_duplicate",
       });
       return;
     }
 
-    // 保存到 config
-    const newEmails = [...(emails.content as EmailsSetting).emails, data.email];
-
     try {
-      const resp = await update({
-        ...emails,
-        name: "emails",
-        content: {
-          emails: newEmails,
-        },
-      });
+      await setEmails([...emails, data.email]);
 
-      // 更新本地状态
-      setEmails(resp);
-
-      // 关闭弹窗
       form.reset();
       form.clearErrors();
 
@@ -115,7 +101,7 @@ const EmailsEdit = ({ className, trigger }: EmailsEditProps) => {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">{t("common.save")}</Button>
+                <Button type="submit">{t("common.button.save")}</Button>
               </div>
             </form>
           </Form>

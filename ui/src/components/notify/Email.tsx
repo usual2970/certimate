@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
-import { getErrMessage } from "@/lib/error";
+import { getErrMsg } from "@/utils/error";
 import { NotifyChannelEmail, NotifyChannels } from "@/domain/settings";
 import { useNotifyContext } from "@/providers/notify";
-import { update } from "@/repository/settings";
+import { save } from "@/repository/settings";
 import Show from "@/components/Show";
 import { notifyTest } from "@/api/notify";
 
@@ -119,7 +119,7 @@ const Mail = () => {
 
   const handleSaveClick = async () => {
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -132,14 +132,14 @@ const Mail = () => {
 
       setChannels(resp);
       toast({
-        title: t("common.save.succeeded.message"),
+        title: t("common.text.operation_succeeded"),
         description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -160,7 +160,7 @@ const Mail = () => {
         description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("settings.notification.push_test_message.failed.message"),
@@ -183,7 +183,7 @@ const Mail = () => {
     setMail(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -196,10 +196,10 @@ const Mail = () => {
 
       setChannels(resp);
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -360,7 +360,7 @@ const Mail = () => {
                 handleSaveClick();
               }}
             >
-              {t("common.save")}
+              {t("common.button.save")}
             </Button>
           </Show>
 

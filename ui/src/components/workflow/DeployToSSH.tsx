@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { DeployFormProps } from "./DeployForm";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 import { useEffect, useState } from "react";
@@ -133,7 +133,7 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
                   trigger={
                     <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                       <Plus size={14} />
-                      {t("common.add")}
+                      {t("common.button.add")}
                     </div>
                   }
                   op="add"
@@ -339,7 +339,7 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
         />
 
         <div className="flex justify-end">
-          <Button type="submit">{t("common.save")}</Button>
+          <Button type="submit">{t("common.button.save")}</Button>
         </div>
       </form>
     </Form>

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -115,7 +115,7 @@ const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) =>
                 />
 
                 <div className="flex justify-end">
-                  <Button type="submit">{t("common.save")}</Button>
+                  <Button type="submit">{t("common.button.save")}</Button>
                 </div>
               </form>
             </Form>

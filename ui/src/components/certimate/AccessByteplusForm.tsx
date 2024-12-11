@@ -8,18 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type ByteplusConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type ByteplusConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessByteplusFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -56,7 +56,7 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -80,7 +80,7 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
         updateAccess(req);
         return;
       }
-      addAccess(req);
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -183,7 +183,7 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
           <FormMessage />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

@@ -4,7 +4,7 @@ import { WorkflowBranchNode, WorkflowNode } from "@/domain/workflow";
 import NodeRender from "./NodeRender";
 import { memo } from "react";
 import { BrandNodeProps } from "./types";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { useTranslation } from "react-i18next";
 

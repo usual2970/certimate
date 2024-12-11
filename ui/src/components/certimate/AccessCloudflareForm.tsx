@@ -8,18 +8,18 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type CloudflareConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type CloudflareConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessCloudflareFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -50,7 +50,7 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -73,7 +73,7 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
         updateAccess(req);
         return;
       }
-      addAccess(req);
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -157,7 +157,7 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

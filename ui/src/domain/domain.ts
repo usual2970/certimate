@@ -56,16 +56,6 @@ export type ApplyConfig = {
   disableFollowCNAME?: boolean;
 };
 
-export type Statistic = {
-  certificateTotal: number;
-  certificateExpired: number;
-  certificateExpireSoon: number;
-
-  workflowTotal: number;
-  workflowEnabled: number;
-  workflowDisabled: number;
-};
-
 export type DeployTarget = {
   type: string;
   provider: string;

@@ -1,26 +1,22 @@
-import { Certificate } from "@/domain/certificate";
-import { getPb } from "./api";
-import { RecordListOptions } from "pocketbase";
-import { getTimeAfter } from "@/lib/time";
+import dayjs from "dayjs";
+import { type RecordListOptions } from "pocketbase";
 
-type CertificateListReq = {
+import { type CertificateModel } from "@/domain/certificate";
+import { getPocketBase } from "./pocketbase";
+
+const COLLECTION_NAME = "certificate";
+
+export type CertificateListReq = {
   page?: number;
   perPage?: number;
-  state?: string;
+  state?: "expireSoon" | "expired";
 };
 
 export const list = async (req: CertificateListReq) => {
-  const pb = getPb();
+  const pb = getPocketBase();
 
-  let page = 1;
-  if (req.page) {
-    page = req.page;
-  }
-
-  let perPage = 2;
-  if (req.perPage) {
-    perPage = req.perPage;
-  }
+  const page = req.page || 1;
+  const perPage = req.perPage || 10;
 
   const options: RecordListOptions = {
     sort: "-created",
@@ -29,7 +25,7 @@ export const list = async (req: CertificateListReq) => {
 
   if (req.state === "expireSoon") {
     options.filter = pb.filter("expireAt<{:expiredAt}", {
-      expiredAt: getTimeAfter(15),
+      expiredAt: dayjs().add(15, "d").toDate(),
     });
   } else if (req.state === "expired") {
     options.filter = pb.filter("expireAt<={:expiredAt}", {
@@ -37,7 +33,5 @@ export const list = async (req: CertificateListReq) => {
     });
   }
 
-  const response = pb.collection("certificate").getList<Certificate>(page, perPage, options);
-
-  return response;
+  return pb.collection(COLLECTION_NAME).getList<CertificateModel>(page, perPage, options);
 };

@@ -40,7 +40,7 @@
   "domain.application.form.key_algorithm.label": "Certificate Key Algorithm (Default: RSA2048)",
   "domain.application.form.key_algorithm.placeholder": "Please select certificate key algorithm",
   "domain.application.form.timeout.label": "DNS Propagation Timeout (Seconds)",
-  "domain.application.form.timeoue.placeholder": "Please enter maximum waiting time for DNS propagation",
+  "domain.application.form.timeout.placeholder": "Please enter maximum waiting time for DNS propagation",
   "domain.application.form.disable_follow_cname.label": "Disable DNS CNAME following",
   "domain.application.form.disable_follow_cname.tips": "This option will disable Acme DNS authentication CNAME follow. If you don't understand this option, just keep it by default. ",
   "domain.application.form.disable_follow_cname.tips_link": "Learn more",
