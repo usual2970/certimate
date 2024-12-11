@@ -1,5 +1,4 @@
-import { memo } from "react";
-
+import { memo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import z from "zod";
@@ -16,8 +15,7 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
 
 import { accessProvidersMap } from "@/domain/access";
-import { EmailsSetting } from "@/domain/settings";
-
+import { useContactStore } from "@/stores/contact";
 import { useConfigContext } from "@/providers/config";
 import { Switch } from "@/components/ui/switch";
 import { TooltipFast } from "@/components/ui/tooltip";
@@ -36,8 +34,13 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
   const { updateNode } = useWorkflowStore(useShallow(selectState));
 
   const {
-    config: { accesses, emails },
+    config: { accesses },
   } = useConfigContext();
+  const { emails, fetchEmails } = useContactStore();
+
+  useEffect(() => {
+    fetchEmails();
+  }, []);
 
   const { t } = useTranslation();
 
@@ -141,7 +144,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>{t("domain.application.form.email.list")}</SelectLabel>
-                        {(emails.content as EmailsSetting).emails.map((item) => (
+                        {emails.map((item) => (
                           <SelectItem key={item} value={item}>
                             <div>{item}</div>
                           </SelectItem>

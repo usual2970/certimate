@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getErrMsg } from "@/utils/error";
 import { isValidURL } from "@/utils/url";
 import { NotifyChannels, NotifyChannelWebhook } from "@/domain/settings";
-import { update } from "@/repository/settings";
+import { save } from "@/repository/settings";
 import { useNotifyContext } from "@/providers/notify";
 import { notifyTest } from "@/api/notify";
 import Show from "@/components/Show";
@@ -103,7 +103,7 @@ const Webhook = () => {
         return;
       }
 
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -167,7 +167,7 @@ const Webhook = () => {
     setWebhook(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {

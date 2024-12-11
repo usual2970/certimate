@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getErrMsg } from "@/utils/error";
 import { NotifyChannelDingTalk, NotifyChannels } from "@/domain/settings";
 import { useNotifyContext } from "@/providers/notify";
-import { update } from "@/repository/settings";
+import { save } from "@/repository/settings";
 import Show from "@/components/Show";
 import { notifyTest } from "@/api/notify";
 
@@ -96,7 +96,7 @@ const DingTalk = () => {
 
   const handleSaveClick = async () => {
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -160,7 +160,7 @@ const DingTalk = () => {
     setDingtalk(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {

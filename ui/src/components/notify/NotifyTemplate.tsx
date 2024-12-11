@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { defaultNotifyTemplate, NotifyTemplates, NotifyTemplate as NotifyTemplateT } from "@/domain/settings";
-import { getSetting, update } from "@/repository/settings";
+import { get, save } from "@/repository/settings";
 
 const NotifyTemplate = () => {
   const [id, setId] = useState("");
@@ -17,7 +17,7 @@ const NotifyTemplate = () => {
 
   useEffect(() => {
     const featchData = async () => {
-      const resp = await getSetting("templates");
+      const resp = await get("templates");
 
       if (resp.content) {
         setTemplates((resp.content as NotifyTemplates).notifyTemplates);
@@ -50,7 +50,7 @@ const NotifyTemplate = () => {
   };
 
   const handleSaveClick = async () => {
-    const resp = await update({
+    const resp = await save({
       id: id,
       content: {
         notifyTemplates: templates,

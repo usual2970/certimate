@@ -12,14 +12,14 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMsg } from "@/utils/error";
-import { SSLProvider as SSLProviderType, SSLProviderSetting, Setting } from "@/domain/settings";
-import { getSetting, update } from "@/repository/settings";
+import { SSLProvider as SSLProviderType, SSLProviderSetting, Settings } from "@/domain/settings";
+import { get, save } from "@/repository/settings";
 import { produce } from "immer";
 
 type SSLProviderContext = {
-  setting: Setting<SSLProviderSetting>;
-  onSubmit: (data: Setting<SSLProviderSetting>) => void;
-  setConfig: (config: Setting<SSLProviderSetting>) => void;
+  setting: Settings<SSLProviderSetting>;
+  onSubmit: (data: Settings<SSLProviderSetting>) => void;
+  setConfig: (config: Settings<SSLProviderSetting>) => void;
 };
 
 const Context = createContext({} as SSLProviderContext);
@@ -31,19 +31,18 @@ export const useSSLProviderContext = () => {
 const SSLProvider = () => {
   const { t } = useTranslation();
 
-  const [config, setConfig] = useState<Setting<SSLProviderSetting>>({
-    id: "",
+  const [config, setConfig] = useState<Settings<SSLProviderSetting>>({
     content: {
       provider: "letsencrypt",
       config: {},
     },
-  });
+  } as Settings<SSLProviderSetting>);
 
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchData = async () => {
-      const setting = await getSetting<SSLProviderSetting>("ssl-provider");
+      const setting = await get<SSLProviderSetting>("ssl-provider");
 
       if (setting) {
         setConfig(setting);
@@ -74,10 +73,10 @@ const SSLProvider = () => {
     return "";
   };
 
-  const onSubmit = async (data: Setting<SSLProviderSetting>) => {
+  const onSubmit = async (data: Settings<SSLProviderSetting>) => {
     try {
       console.log(data);
-      const resp = await update({ ...data });
+      const resp = await save({ ...data });
       setConfig(resp);
       toast({
         title: t("common.text.operation_succeeded"),

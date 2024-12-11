@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useNotifyContext } from "@/providers/notify";
 import { NotifyChannelLark, NotifyChannels } from "@/domain/settings";
 import { useEffect, useState } from "react";
-import { update } from "@/repository/settings";
+import { save } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
@@ -92,7 +92,7 @@ const Lark = () => {
 
   const handleSaveClick = async () => {
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -156,7 +156,7 @@ const Lark = () => {
     setLark(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {

@@ -1,36 +1,22 @@
-import { EmailsSetting, Setting } from "@/domain/settings";
+import { Settings } from "@/domain/settings";
 import { getPocketBase } from "./pocketbase";
 
-export const getEmails = async () => {
+export const get = async <T>(name: string) => {
   try {
-    const resp = await getPocketBase().collection("settings").getFirstListItem<Setting<EmailsSetting>>("name='emails'");
+    const resp = await getPocketBase().collection("settings").getFirstListItem<Settings<T>>(`name='${name}'`);
     return resp;
-  } catch (e) {
+  } catch {
     return {
-      content: { emails: [] },
-    };
-  }
-};
-
-export const getSetting = async <T>(name: string) => {
-  try {
-    const resp = await getPocketBase().collection("settings").getFirstListItem<Setting<T>>(`name='${name}'`);
-    return resp;
-  } catch (e) {
-    const rs: Setting<T> = {
       name: name,
-    };
-    return rs;
+      content: {} as T,
+    } as Settings<T>;
   }
 };
 
-export const update = async <T>(setting: Setting<T>) => {
-  const pb = getPocketBase();
-  let resp: Setting<T>;
-  if (setting.id) {
-    resp = await pb.collection("settings").update(setting.id, setting);
-  } else {
-    resp = await pb.collection("settings").create(setting);
+export const save = async <T>(record: Settings<T>) => {
+  if (record.id) {
+    return await getPocketBase().collection("settings").update<Settings<T>>(record.id, record);
   }
-  return resp;
+
+  return await getPocketBase().collection("settings").create<Settings<T>>(record);
 };

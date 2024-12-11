@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import AccessEditDialog from "@/components/certimate/AccessEditDialog";
-import { Access as AccessType, accessProvidersMap } from "@/domain/access";
+import { accessProvidersMap, type Access as AccessType } from "@/domain/access";
 import { remove as removeAccess } from "@/repository/access";
 import { useConfigContext } from "@/providers/config";
 
@@ -120,10 +120,10 @@ const AccessList = () => {
     try {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      const items = configContext.config.accesses.slice(startIndex, endIndex);
+      const items = configContext.config?.accesses?.slice(startIndex, endIndex) ?? [];
 
       setTableData(items);
-      setTableTotal(configContext.config.accesses.length);
+      setTableTotal(configContext.config?.accesses?.length ?? 0);
     } catch (err) {
       if (err instanceof ClientResponseError && err.isAbort) {
         return;

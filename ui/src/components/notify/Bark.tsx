@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMsg } from "@/utils/error";
 import { NotifyChannels, NotifyChannelBark } from "@/domain/settings";
-import { update } from "@/repository/settings";
+import { save } from "@/repository/settings";
 import { useNotifyContext } from "@/providers/notify";
 import { notifyTest } from "@/api/notify";
 import Show from "@/components/Show";
@@ -96,7 +96,7 @@ const Bark = () => {
 
   const handleSaveClick = async () => {
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -160,7 +160,7 @@ const Bark = () => {
     setBark(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {

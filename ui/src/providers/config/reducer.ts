@@ -1,14 +1,11 @@
 import { Access } from "@/domain/access";
-import { EmailsSetting, Setting } from "@/domain/settings";
 import { ConfigData } from "./";
 
 type Action =
   | { type: "ADD_ACCESS"; payload: Access }
   | { type: "DELETE_ACCESS"; payload: string }
   | { type: "UPDATE_ACCESS"; payload: Access }
-  | { type: "SET_ACCESSES"; payload: Access[] }
-  | { type: "SET_EMAILS"; payload: Setting<EmailsSetting> }
-  | { type: "ADD_EMAIL"; payload: string };
+  | { type: "SET_ACCESSES"; payload: Access[] };
 
 export const configReducer = (state: ConfigData, action: Action): ConfigData => {
   switch (action.type) {
@@ -34,23 +31,6 @@ export const configReducer = (state: ConfigData, action: Action): ConfigData => 
       return {
         ...state,
         accesses: state.accesses.map((access) => (access.id === action.payload.id ? action.payload : access)),
-      };
-    }
-    case "SET_EMAILS": {
-      return {
-        ...state,
-        emails: action.payload,
-      };
-    }
-    case "ADD_EMAIL": {
-      return {
-        ...state,
-        emails: {
-          ...state.emails,
-          content: {
-            emails: [...(state.emails.content as EmailsSetting).emails, action.payload],
-          },
-        },
       };
     }
     default:

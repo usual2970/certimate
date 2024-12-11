@@ -1,22 +1,17 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useReducer } from "react";
+import { createContext, useCallback, useContext, useEffect, useReducer, type ReactNode } from "react";
 
-import { Access } from "@/domain/access";
-import { EmailsSetting, Setting } from "@/domain/settings";
-import { list } from "@/repository/access";
-
-import { getEmails } from "@/repository/settings";
+import { type Access as AccessType } from "@/domain/access";
+import { list as listAccess } from "@/repository/access";
 import { configReducer } from "./reducer";
 
 export type ConfigData = {
-  accesses: Access[];
-  emails: Setting<EmailsSetting>;
+  accesses: AccessType[];
 };
 
 export type ConfigContext = {
   config: ConfigData;
-  setEmails: (email: Setting<EmailsSetting>) => void;
-  addAccess: (access: Access) => void;
-  updateAccess: (access: Access) => void;
+  addAccess: (access: AccessType) => void;
+  updateAccess: (access: AccessType) => void;
   deleteAccess: (id: string) => void;
 };
 
@@ -24,45 +19,28 @@ const Context = createContext({} as ConfigContext);
 
 export const useConfigContext = () => useContext(Context);
 
-interface ConfigProviderProps {
-  children: ReactNode;
-}
-
-export const ConfigProvider = ({ children }: ConfigProviderProps) => {
+export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [config, dispatchConfig] = useReducer(configReducer, {
     accesses: [],
-    emails: { content: { emails: [] } },
   });
 
   useEffect(() => {
     const featchData = async () => {
-      const data = await list();
+      const data = await listAccess();
       dispatchConfig({ type: "SET_ACCESSES", payload: data });
     };
     featchData();
-  }, []);
-
-  useEffect(() => {
-    const featchEmails = async () => {
-      const emails = await getEmails();
-      dispatchConfig({ type: "SET_EMAILS", payload: emails });
-    };
-    featchEmails();
-  }, []);
-
-  const setEmails = useCallback((emails: Setting<EmailsSetting>) => {
-    dispatchConfig({ type: "SET_EMAILS", payload: emails });
   }, []);
 
   const deleteAccess = useCallback((id: string) => {
     dispatchConfig({ type: "DELETE_ACCESS", payload: id });
   }, []);
 
-  const addAccess = useCallback((access: Access) => {
+  const addAccess = useCallback((access: AccessType) => {
     dispatchConfig({ type: "ADD_ACCESS", payload: access });
   }, []);
 
-  const updateAccess = useCallback((access: Access) => {
+  const updateAccess = useCallback((access: AccessType) => {
     dispatchConfig({ type: "UPDATE_ACCESS", payload: access });
   }, []);
 
@@ -71,15 +49,13 @@ export const ConfigProvider = ({ children }: ConfigProviderProps) => {
       value={{
         config: {
           accesses: config.accesses,
-          emails: config.emails,
         },
-        setEmails,
         addAccess,
         updateAccess,
         deleteAccess,
       }}
     >
-      {children && children}
+      {children}
     </Context.Provider>
   );
 };

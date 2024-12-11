@@ -1,10 +1,11 @@
-export type Setting<T> = {
-  id?: string;
-  name?: string;
-  content?: T;
-};
+import { type BaseModel } from "pocketbase";
 
-export type EmailsSetting = {
+export interface Settings<T> extends BaseModel {
+  name: string;
+  content: T;
+}
+
+export type EmailsSettingsContent = {
   emails: string[];
 };
 
