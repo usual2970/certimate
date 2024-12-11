@@ -40,7 +40,7 @@ export const save = async (record: Record<string, string | boolean | WorkflowNod
 };
 
 export const remove = async (record: WorkflowModel) => {
-  await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
+  return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
 };
 
 type WorkflowLogsReq = {

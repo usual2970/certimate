@@ -20,7 +20,7 @@ interface NotifyProviderProps {
 }
 
 export const NotifyProvider = ({ children }: NotifyProviderProps) => {
-  const [notify, dispatchNotify] = useReducer(notifyReducer, {});
+  const [notify, dispatchNotify] = useReducer(notifyReducer, {} as SettingsModel<NotifyChannels>);
 
   useEffect(() => {
     featchData();

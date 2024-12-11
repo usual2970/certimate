@@ -265,7 +265,7 @@ const WorkflowList = () => {
       content: t("workflow.action.delete.confirm"),
       onOk: async () => {
         try {
-          const resp = await removeWorkflow(workflow);
+          const resp: boolean = await removeWorkflow(workflow);
           if (resp) {
             setTableData((prev) => prev.filter((item) => item.id !== workflow.id));
           }
@@ -313,16 +313,16 @@ const WorkflowList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
-          onChange: (page, pageSize) => {
+          onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
           },
-          onShowSizeChange: (page, pageSize) => {
+          onShowSizeChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
           },
         }}
-        rowKey={(record) => record.id}
+        rowKey={(record: WorkflowModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
     </>

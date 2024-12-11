@@ -232,16 +232,16 @@ const CertificateList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
-          onChange: (page, pageSize) => {
+          onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
           },
-          onShowSizeChange: (page, pageSize) => {
+          onShowSizeChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
           },
         }}
-        rowKey={(record) => record.id}
+        rowKey={(record: CertificateModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
 
