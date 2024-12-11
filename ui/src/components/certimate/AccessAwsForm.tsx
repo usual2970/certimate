@@ -8,19 +8,21 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { Access, accessProvidersMap, accessTypeFormSchema, type AwsConfig } from "@/domain/access";
+import { AccessModel, accessProvidersMap, accessTypeFormSchema, type AwsConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessAwsFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessAwsForm = ({ data, op, onAfterReq }: AccessAwsFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
+
+  const { createAccess, updateAccess } = useAccessStore();
+
   const formSchema = z.object({
     id: z.string().optional(),
     name: z
@@ -68,7 +70,7 @@ const AccessAwsForm = ({ data, op, onAfterReq }: AccessAwsFormProps) => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -94,7 +96,8 @@ const AccessAwsForm = ({ data, op, onAfterReq }: AccessAwsFormProps) => {
         updateAccess(req);
         return;
       }
-      addAccess(req);
+
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 

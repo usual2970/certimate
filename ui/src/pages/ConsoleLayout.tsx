@@ -18,7 +18,6 @@ import {
 import Version from "@/components/certimate/Version";
 import { useTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
-import { ConfigProvider } from "@/providers/config";
 
 const ConsoleLayout = () => {
   const navigate = useNavigate();
@@ -52,65 +51,61 @@ const ConsoleLayout = () => {
   }
 
   return (
-    <>
-      <ConfigProvider>
-        <Layout className="w-full min-h-screen">
-          <Layout.Sider className="max-md:hidden" theme="light" width={256}>
-            <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
-              <div className="w-full">
-                <SiderMenu />
-              </div>
-              <div className="w-full py-2 text-center">
-                <Version />
-              </div>
+    <Layout className="w-full min-h-screen">
+      <Layout.Sider className="max-md:hidden" theme="light" width={256}>
+        <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
+          <div className="w-full">
+            <SiderMenu />
+          </div>
+          <div className="w-full py-2 text-center">
+            <Version />
+          </div>
+        </div>
+      </Layout.Sider>
+
+      <Layout>
+        <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
+          <div className="flex items-center justify-between size-full px-4 overflow-hidden">
+            <div className="flex items-center gap-4 size-full">
+              <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
+              <Drawer
+                closable={false}
+                destroyOnClose
+                open={siderOpen}
+                placement="left"
+                styles={{
+                  content: { paddingTop: themeToken.paddingSM, paddingBottom: themeToken.paddingSM },
+                  body: { padding: 0 },
+                }}
+                onClose={handleSiderClose}
+              >
+                <SiderMenu onSelect={() => handleSiderClose()} />
+              </Drawer>
             </div>
-          </Layout.Sider>
+            <div className="flex-grow flex items-center justify-end gap-4 size-full overflow-hidden">
+              <Tooltip title={t("common.menu.theme")} mouseEnterDelay={2}>
+                <ThemeToggleButton size="large" />
+              </Tooltip>
+              <Tooltip title={t("common.menu.locale")} mouseEnterDelay={2}>
+                <LocaleToggleButton size="large" />
+              </Tooltip>
+              <Tooltip title={t("common.menu.settings")} mouseEnterDelay={2}>
+                <Button icon={<SettingsIcon size={18} />} size="large" onClick={handleSettingsClick} />
+              </Tooltip>
+              <Tooltip title={t("common.menu.logout")} mouseEnterDelay={2}>
+                <Button danger icon={<LogOutIcon size={18} />} size="large" onClick={handleLogoutClick} />
+              </Tooltip>
+            </div>
+          </div>
+        </Layout.Header>
 
-          <Layout>
-            <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
-              <div className="flex items-center justify-between size-full px-4 overflow-hidden">
-                <div className="flex items-center gap-4 size-full">
-                  <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
-                  <Drawer
-                    closable={false}
-                    destroyOnClose
-                    open={siderOpen}
-                    placement="left"
-                    styles={{
-                      content: { paddingTop: themeToken.paddingSM, paddingBottom: themeToken.paddingSM },
-                      body: { padding: 0 },
-                    }}
-                    onClose={handleSiderClose}
-                  >
-                    <SiderMenu onSelect={() => handleSiderClose()} />
-                  </Drawer>
-                </div>
-                <div className="flex-grow flex items-center justify-end gap-4 size-full overflow-hidden">
-                  <Tooltip title={t("common.menu.theme")} mouseEnterDelay={2}>
-                    <ThemeToggleButton size="large" />
-                  </Tooltip>
-                  <Tooltip title={t("common.menu.locale")} mouseEnterDelay={2}>
-                    <LocaleToggleButton size="large" />
-                  </Tooltip>
-                  <Tooltip title={t("common.menu.settings")} mouseEnterDelay={2}>
-                    <Button icon={<SettingsIcon size={18} />} size="large" onClick={handleSettingsClick} />
-                  </Tooltip>
-                  <Tooltip title={t("common.menu.logout")} mouseEnterDelay={2}>
-                    <Button danger icon={<LogOutIcon size={18} />} size="large" onClick={handleLogoutClick} />
-                  </Tooltip>
-                </div>
-              </div>
-            </Layout.Header>
-
-            <Layout.Content>
-              <div className="p-4">
-                <Outlet />
-              </div>
-            </Layout.Content>
-          </Layout>
-        </Layout>
-      </ConfigProvider>
-    </>
+        <Layout.Content>
+          <div className="p-4">
+            <Outlet />
+          </div>
+        </Layout.Content>
+      </Layout>
+    </Layout>
   );
 };
 

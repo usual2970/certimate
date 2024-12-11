@@ -1,3 +1,4 @@
+import { Statistics } from "@/domain/statistics";
 import { getPocketBase } from "@/repository/pocketbase";
 
 export const get = async () => {
@@ -7,9 +8,9 @@ export const get = async () => {
     method: "GET",
   });
 
-  if (resp.code != 0) {
+  if (resp.code !== 0) {
     throw new Error(resp.msg);
   }
 
-  return resp.data;
+  return resp.data as Statistics;
 };

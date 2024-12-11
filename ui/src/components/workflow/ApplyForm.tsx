@@ -15,8 +15,8 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
 
 import { accessProvidersMap } from "@/domain/access";
+import { useAccessStore } from "@/stores/access";
 import { useContactStore } from "@/stores/contact";
-import { useConfigContext } from "@/providers/config";
 import { Switch } from "@/components/ui/switch";
 import { TooltipFast } from "@/components/ui/tooltip";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
@@ -33,9 +33,7 @@ const selectState = (state: WorkflowState) => ({
 const ApplyForm = ({ data }: ApplyFormProps) => {
   const { updateNode } = useWorkflowStore(useShallow(selectState));
 
-  const {
-    config: { accesses },
-  } = useConfigContext();
+  const { accesses } = useAccessStore();
   const { emails, fetchEmails } = useContactStore();
 
   useEffect(() => {

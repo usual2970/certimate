@@ -1,7 +1,9 @@
 import { type RecordListOptions } from "pocketbase";
 
-import { type Workflow, type WorkflowNode, type WorkflowRunLog } from "@/domain/workflow";
+import { type WorkflowModel, type WorkflowNode, type WorkflowRunLog } from "@/domain/workflow";
 import { getPocketBase } from "./pocketbase";
+
+const COLLECTION_NAME = "workflow";
 
 export type WorkflowListReq = {
   page?: number;
@@ -20,25 +22,25 @@ export const list = async (req: WorkflowListReq) => {
     options.filter = pb.filter("enabled={:enabled}", { enabled: req.enabled });
   }
 
-  return await pb.collection("workflow").getList<Workflow>(page, perPage, options);
+  return await pb.collection(COLLECTION_NAME).getList<WorkflowModel>(page, perPage, options);
 };
 
 export const get = async (id: string) => {
-  return await getPocketBase().collection("workflow").getOne<Workflow>(id);
+  return await getPocketBase().collection(COLLECTION_NAME).getOne<WorkflowModel>(id);
 };
 
 export const save = async (record: Record<string, string | boolean | WorkflowNode>) => {
   if (record.id) {
     return await getPocketBase()
-      .collection("workflow")
-      .update<Workflow>(record.id as string, record);
+      .collection(COLLECTION_NAME)
+      .update<WorkflowModel>(record.id as string, record);
   }
 
-  return await getPocketBase().collection("workflow").create<Workflow>(record);
+  return await getPocketBase().collection(COLLECTION_NAME).create<WorkflowModel>(record);
 };
 
-export const remove = async (record: Workflow) => {
-  return await getPocketBase().collection("workflow").delete(record.id);
+export const remove = async (record: WorkflowModel) => {
+  await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
 };
 
 type WorkflowLogsReq = {

@@ -8,18 +8,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessLocalFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,7 +41,7 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -62,7 +62,7 @@ const AccessLocalForm = ({ data, op, onAfterReq }: AccessLocalFormProps) => {
       if (data.id && op == "edit") {
         updateAccess(req);
       } else {
-        addAccess(req);
+        createAccess(req);
       }
     } catch (e) {
       const err = e as ClientResponseError;

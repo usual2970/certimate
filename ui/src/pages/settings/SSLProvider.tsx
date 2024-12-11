@@ -12,14 +12,14 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrMsg } from "@/utils/error";
-import { SSLProvider as SSLProviderType, SSLProviderSetting, Settings } from "@/domain/settings";
+import { SSLProvider as SSLProviderType, SSLProviderSetting, SettingsModel } from "@/domain/settings";
 import { get, save } from "@/repository/settings";
 import { produce } from "immer";
 
 type SSLProviderContext = {
-  setting: Settings<SSLProviderSetting>;
-  onSubmit: (data: Settings<SSLProviderSetting>) => void;
-  setConfig: (config: Settings<SSLProviderSetting>) => void;
+  setting: SettingsModel<SSLProviderSetting>;
+  onSubmit: (data: SettingsModel<SSLProviderSetting>) => void;
+  setConfig: (config: SettingsModel<SSLProviderSetting>) => void;
 };
 
 const Context = createContext({} as SSLProviderContext);
@@ -31,12 +31,12 @@ export const useSSLProviderContext = () => {
 const SSLProvider = () => {
   const { t } = useTranslation();
 
-  const [config, setConfig] = useState<Settings<SSLProviderSetting>>({
+  const [config, setConfig] = useState<SettingsModel<SSLProviderSetting>>({
     content: {
       provider: "letsencrypt",
       config: {},
     },
-  } as Settings<SSLProviderSetting>);
+  } as SettingsModel<SSLProviderSetting>);
 
   const { toast } = useToast();
 
@@ -73,7 +73,7 @@ const SSLProvider = () => {
     return "";
   };
 
-  const onSubmit = async (data: Settings<SSLProviderSetting>) => {
+  const onSubmit = async (data: SettingsModel<SSLProviderSetting>) => {
     try {
       console.log(data);
       const resp = await save({ ...data });

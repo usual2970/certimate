@@ -8,18 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type VolcengineConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type VolcengineConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessVolcengineFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
@@ -56,7 +56,7 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -80,7 +80,7 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
         updateAccess(req);
         return;
       }
-      addAccess(req);
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 

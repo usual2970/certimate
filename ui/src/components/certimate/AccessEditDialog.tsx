@@ -23,14 +23,14 @@ import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
 import AccessVolcengineForm from "./AccessVolcengineForm";
 import AccessByteplusForm from "./AccessByteplusForm";
-import { Access } from "@/domain/access";
+import { AccessModel } from "@/domain/access";
 import { AccessTypeSelect } from "./AccessTypeSelect";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
   className?: string;
   trigger: React.ReactNode;
-  data?: Access;
+  data?: AccessModel;
   outConfigType?: string;
 };
 

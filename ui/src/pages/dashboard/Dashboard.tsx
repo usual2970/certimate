@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
-import { type Statistic as StatisticType } from "@/domain/domain";
+import { type Statistics } from "@/domain/statistics";
 import { get as getStatistics } from "@/api/statistics";
 
 const Dashboard = () => {
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const statisticGridSpans = {
+  const statisticsGridSpans = {
     xs: { flex: "50%" },
     md: { flex: "50%" },
     lg: { flex: "33.3333%" },
@@ -34,15 +34,15 @@ const Dashboard = () => {
     xxl: { flex: "20%" },
   };
 
-  const [statistic, setStatistic] = useState<StatisticType>();
+  const [statistics, setStatistics] = useState<Statistics>();
 
-  const fetchStatistic = useCallback(async () => {
+  const fetchStatistics = useCallback(async () => {
     if (loading) return;
     setLoading(true);
 
     try {
       const data = await getStatistics();
-      setStatistic(data);
+      setStatistics(data);
     } catch (err) {
       if (err instanceof ClientResponseError && err.isAbort) {
         return;
@@ -56,7 +56,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchStatistic();
+    fetchStatistics();
   }, []);
 
   return (
@@ -66,47 +66,47 @@ const Dashboard = () => {
       <PageHeader title={t("dashboard.page.title")} />
 
       <Row className="justify-stretch" gutter={[16, 16]}>
-        <Col {...statisticGridSpans}>
+        <Col {...statisticsGridSpans}>
           <StatisticCard
             icon={<SquareSigmaIcon size={48} strokeWidth={1} color={themeToken.colorInfo} />}
             label={t("dashboard.statistics.all_certificates")}
-            value={statistic?.certificateTotal ?? "-"}
+            value={statistics?.certificateTotal ?? "-"}
             suffix={t("dashboard.statistics.unit")}
             onClick={() => navigate("/certificates")}
           />
         </Col>
-        <Col {...statisticGridSpans}>
+        <Col {...statisticsGridSpans}>
           <StatisticCard
             icon={<CalendarClockIcon size={48} strokeWidth={1} color={themeToken.colorWarning} />}
             label={t("dashboard.statistics.expire_soon_certificates")}
-            value={statistic?.certificateExpireSoon ?? "-"}
+            value={statistics?.certificateExpireSoon ?? "-"}
             suffix={t("dashboard.statistics.unit")}
             onClick={() => navigate("/certificates?state=expireSoon")}
           />
         </Col>
-        <Col {...statisticGridSpans}>
+        <Col {...statisticsGridSpans}>
           <StatisticCard
             icon={<CalendarX2Icon size={48} strokeWidth={1} color={themeToken.colorError} />}
             label={t("dashboard.statistics.expired_certificates")}
-            value={statistic?.certificateExpired ?? "-"}
+            value={statistics?.certificateExpired ?? "-"}
             suffix={t("dashboard.statistics.unit")}
             onClick={() => navigate("/certificates?state=expired")}
           />
         </Col>
-        <Col {...statisticGridSpans}>
+        <Col {...statisticsGridSpans}>
           <StatisticCard
             icon={<WorkflowIcon size={48} strokeWidth={1} color={themeToken.colorInfo} />}
             label={t("dashboard.statistics.all_workflows")}
-            value={statistic?.workflowTotal ?? "-"}
+            value={statistics?.workflowTotal ?? "-"}
             suffix={t("dashboard.statistics.unit")}
             onClick={() => navigate("/workflows")}
           />
         </Col>
-        <Col {...statisticGridSpans}>
+        <Col {...statisticsGridSpans}>
           <StatisticCard
             icon={<FolderCheckIcon size={48} strokeWidth={1} color={themeToken.colorSuccess} />}
             label={t("dashboard.statistics.enabled_workflows")}
-            value={statistic?.workflowEnabled ?? "-"}
+            value={statistics?.workflowEnabled ?? "-"}
             suffix={t("dashboard.statistics.unit")}
             onClick={() => navigate("/workflows?state=enabled")}
           />

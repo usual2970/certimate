@@ -9,7 +9,7 @@ import {
   removeBranch,
   removeNode,
   updateNode,
-  Workflow,
+  WorkflowModel,
   WorkflowBranchNode,
   WorkflowNode,
   WorkflowNodeType,
@@ -17,7 +17,7 @@ import {
 import { get as getWorkflow, save as saveWorkflow } from "@/repository/workflow";
 
 export type WorkflowState = {
-  workflow: Workflow;
+  workflow: WorkflowModel;
   initialized: boolean;
   updateNode: (node: WorkflowNode) => void;
   addNode: (node: WorkflowNode, preId: string) => void;

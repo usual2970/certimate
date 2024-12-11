@@ -3,11 +3,11 @@ import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
 
-import { type Certificate } from "@/domain/certificate";
+import { type CertificateModel } from "@/domain/certificate";
 import { saveFiles2Zip } from "@/utils/file";
 
 type CertificateDetailProps = {
-  data: Certificate;
+  data: CertificateModel;
 };
 
 const CertificateDetail = ({ data }: CertificateDetailProps) => {

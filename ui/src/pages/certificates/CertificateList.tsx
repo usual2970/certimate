@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
-import { Certificate as CertificateType } from "@/domain/certificate";
+import { CertificateModel } from "@/domain/certificate";
 import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
 
 const CertificateList = () => {
@@ -23,7 +23,7 @@ const CertificateList = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const tableColumns: TableProps<CertificateType>["columns"] = [
+  const tableColumns: TableProps<CertificateModel>["columns"] = [
     {
       key: "$index",
       align: "center",
@@ -165,7 +165,7 @@ const CertificateList = () => {
       ),
     },
   ];
-  const [tableData, setTableData] = useState<CertificateType[]>([]);
+  const [tableData, setTableData] = useState<CertificateModel[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
   const [filters, setFilters] = useState<Record<string, unknown>>(() => {
@@ -177,7 +177,7 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const [currentRecord, setCurrentRecord] = useState<CertificateType>();
+  const [currentRecord, setCurrentRecord] = useState<CertificateModel>();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -210,7 +210,7 @@ const CertificateList = () => {
     fetchTableData();
   }, [fetchTableData]);
 
-  const handleViewClick = (certificate: CertificateType) => {
+  const handleViewClick = (certificate: CertificateModel) => {
     setDrawerOpen(true);
     setCurrentRecord(certificate);
   };
@@ -221,7 +221,7 @@ const CertificateList = () => {
 
       <PageHeader title={t("certificate.page.title")} />
 
-      <Table<CertificateType>
+      <Table<CertificateModel>
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}

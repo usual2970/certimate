@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Drawer } from "antd";
 
-import { type Certificate } from "@/domain/certificate";
+import { type CertificateModel } from "@/domain/certificate";
 import CertificateDetail from "./CertificateDetail";
 
 type CertificateDetailDrawerProps = {
-  data?: Certificate;
+  data?: CertificateModel;
   open?: boolean;
   onClose?: () => void;
 };

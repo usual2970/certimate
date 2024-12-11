@@ -7,9 +7,8 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import AccessEditDialog from "@/components/certimate/AccessEditDialog";
-import { accessProvidersMap, type Access as AccessType } from "@/domain/access";
-import { remove as removeAccess } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { accessProvidersMap, type AccessModel } from "@/domain/access";
+import { useAccessStore } from "@/stores/access";
 
 const AccessList = () => {
   const { t } = useTranslation();
@@ -17,9 +16,11 @@ const AccessList = () => {
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
+  const { accesses, fetchAccesses, deleteAccess } = useAccessStore();
+
   const [loading, setLoading] = useState<boolean>(false);
 
-  const tableColumns: TableProps<AccessType>["columns"] = [
+  const tableColumns: TableProps<AccessModel>["columns"] = [
     {
       key: "$index",
       align: "center",
@@ -105,13 +106,15 @@ const AccessList = () => {
       ),
     },
   ];
-  const [tableData, setTableData] = useState<AccessType[]>([]);
+  const [tableData, setTableData] = useState<AccessModel[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const configContext = useConfigContext();
+  useEffect(() => {
+    fetchAccesses();
+  }, []);
 
   const fetchTableData = useCallback(async () => {
     if (loading) return;
@@ -120,10 +123,10 @@ const AccessList = () => {
     try {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      const items = configContext.config?.accesses?.slice(startIndex, endIndex) ?? [];
+      const items = accesses.slice(startIndex, endIndex);
 
       setTableData(items);
-      setTableTotal(configContext.config?.accesses?.length ?? 0);
+      setTableTotal(accesses.length);
     } catch (err) {
       if (err instanceof ClientResponseError && err.isAbort) {
         return;
@@ -134,21 +137,20 @@ const AccessList = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, configContext.config.accesses]);
+  }, [page, pageSize, accesses]);
 
   useEffect(() => {
     fetchTableData();
   }, [fetchTableData]);
 
-  const handleDeleteClick = async (data: AccessType) => {
+  const handleDeleteClick = async (data: AccessModel) => {
     modalApi.confirm({
       title: t("access.action.delete"),
       content: t("access.action.delete.confirm"),
       onOk: async () => {
         // TODO: 有关联数据的不允许被删除
         try {
-          const res = await removeAccess(data);
-          configContext.deleteAccess(res.id);
+          await deleteAccess(data);
         } catch (err) {
           console.error(err);
           notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
@@ -177,7 +179,7 @@ const AccessList = () => {
         ]}
       />
 
-      <Table<AccessType>
+      <Table<AccessModel>
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}

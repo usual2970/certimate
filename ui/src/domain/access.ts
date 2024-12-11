@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type BaseModel } from "pocketbase";
 
 type AccessUsages = "apply" | "deploy" | "all";
 
@@ -59,8 +60,7 @@ export const accessTypeFormSchema = z.union(
   { message: "access.authorization.form.type.placeholder" }
 );
 
-export type Access = {
-  id: string;
+export interface AccessModel extends BaseModel {
   name: string;
   configType: string;
   usage: AccessUsages;
@@ -83,10 +83,7 @@ export type Access = {
     | KubernetesConfig
     | VolcengineConfig
     | ByteplusConfig;
-  deleted?: string;
-  created?: string;
-  updated?: string;
-};
+}
 
 export type AliyunConfig = {
   accessKeyId: string;

@@ -1,4 +1,4 @@
-import { NotifyChannel, NotifyChannels, Settings } from "@/domain/settings";
+import { NotifyChannel, NotifyChannels, SettingsModel } from "@/domain/settings";
 
 type Action =
   | {
@@ -10,10 +10,10 @@ type Action =
     }
   | {
       type: "SET_CHANNELS";
-      payload: Settings<NotifyChannels>;
+      payload: SettingsModel<NotifyChannels>;
     };
 
-export const notifyReducer = (state: Settings<NotifyChannels>, action: Action) => {
+export const notifyReducer = (state: SettingsModel<NotifyChannels>, action: Action) => {
   switch (action.type) {
     case "SET_CHANNEL": {
       const channel = action.payload.channel;

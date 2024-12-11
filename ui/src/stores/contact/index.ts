@@ -1,7 +1,7 @@
 ﻿import { create } from "zustand";
 import { produce } from "immer";
 
-import { type EmailsSettingsContent, type Settings } from "@/domain/settings";
+import { type EmailsSettingsContent, type SettingsModel } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
 export interface ContactState {
@@ -11,7 +11,7 @@ export interface ContactState {
 }
 
 export const useContactStore = create<ContactState>((set) => {
-  let settings: Settings<EmailsSettingsContent>;
+  let settings: SettingsModel<EmailsSettingsContent>;
 
   return {
     emails: [],

@@ -1,24 +1,26 @@
 import dayjs from "dayjs";
 
-import { type Access } from "@/domain/access";
+import { type AccessModel } from "@/domain/access";
 import { getPocketBase } from "./pocketbase";
 
+const COLLECTION_NAME = "access";
+
 export const list = async () => {
-  return await getPocketBase().collection("access").getFullList<Access>({
+  return await getPocketBase().collection(COLLECTION_NAME).getFullList<AccessModel>({
     sort: "-created",
-    filter: "deleted = null",
+    filter: "deleted=null",
   });
 };
 
-export const save = async (record: Access) => {
+export const save = async (record: AccessModel) => {
   if (record.id) {
-    return await getPocketBase().collection("access").update(record.id, record);
+    return await getPocketBase().collection(COLLECTION_NAME).update<AccessModel>(record.id, record);
   }
 
-  return await getPocketBase().collection("access").create(record);
+  return await getPocketBase().collection(COLLECTION_NAME).create<AccessModel>(record);
 };
 
-export const remove = async (record: Access) => {
-  record.deleted = dayjs.utc().format("YYYY-MM-DD HH:mm:ss");
-  return await getPocketBase().collection("access").update(record.id, record);
+export const remove = async (record: AccessModel) => {
+  record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
+  await getPocketBase().collection(COLLECTION_NAME).update<AccessModel>(record.id, record);
 };

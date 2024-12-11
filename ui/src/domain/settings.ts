@@ -1,6 +1,6 @@
 import { type BaseModel } from "pocketbase";
 
-export interface Settings<T> extends BaseModel {
+export interface SettingsModel<T> extends BaseModel {
   name: string;
   content: T;
 }

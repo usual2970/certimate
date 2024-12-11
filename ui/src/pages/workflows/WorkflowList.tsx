@@ -23,7 +23,7 @@ import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { Workflow as WorkflowType } from "@/domain/workflow";
+import { WorkflowModel } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 
 const WorkflowList = () => {
@@ -39,7 +39,7 @@ const WorkflowList = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const tableColumns: TableProps<WorkflowType>["columns"] = [
+  const tableColumns: TableProps<WorkflowModel>["columns"] = [
     {
       key: "$index",
       align: "center",
@@ -196,7 +196,7 @@ const WorkflowList = () => {
       ),
     },
   ];
-  const [tableData, setTableData] = useState<WorkflowType[]>([]);
+  const [tableData, setTableData] = useState<WorkflowModel[]>([]);
   const [tableTotal, setTableTotal] = useState<number>(0);
 
   const [filters, setFilters] = useState<Record<string, unknown>>(() => {
@@ -237,7 +237,7 @@ const WorkflowList = () => {
     fetchTableData();
   }, [fetchTableData]);
 
-  const handleEnabledChange = async (workflow: WorkflowType) => {
+  const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
       const resp = await saveWorkflow({
         id: workflow.id,
@@ -259,7 +259,7 @@ const WorkflowList = () => {
     }
   };
 
-  const handleDeleteClick = (workflow: WorkflowType) => {
+  const handleDeleteClick = (workflow: WorkflowModel) => {
     modalApi.confirm({
       title: t("workflow.action.delete"),
       content: t("workflow.action.delete.confirm"),
@@ -302,7 +302,7 @@ const WorkflowList = () => {
         ]}
       />
 
-      <Table<WorkflowType>
+      <Table<WorkflowModel>
         columns={tableColumns}
         dataSource={tableData}
         loading={loading}

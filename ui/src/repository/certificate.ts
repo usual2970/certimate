@@ -1,8 +1,10 @@
 import dayjs from "dayjs";
 import { type RecordListOptions } from "pocketbase";
 
-import { type Certificate } from "@/domain/certificate";
+import { type CertificateModel } from "@/domain/certificate";
 import { getPocketBase } from "./pocketbase";
+
+const COLLECTION_NAME = "certificate";
 
 export type CertificateListReq = {
   page?: number;
@@ -31,5 +33,5 @@ export const list = async (req: CertificateListReq) => {
     });
   }
 
-  return pb.collection("certificate").getList<Certificate>(page, perPage, options);
+  return pb.collection(COLLECTION_NAME).getList<CertificateModel>(page, perPage, options);
 };

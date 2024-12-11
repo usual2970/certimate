@@ -1,13 +1,13 @@
 import { ReactNode, useContext, createContext, useEffect, useReducer, useCallback } from "react";
 
-import { NotifyChannel, NotifyChannels, Settings } from "@/domain/settings";
+import { NotifyChannel, NotifyChannels, SettingsModel } from "@/domain/settings";
 import { get } from "@/repository/settings";
 import { notifyReducer } from "./reducer";
 
 export type NotifyContext = {
-  config: Settings<NotifyChannels>;
+  config: SettingsModel<NotifyChannels>;
   setChannel: (data: { channel: string; data: NotifyChannel }) => void;
-  setChannels: (data: Settings<NotifyChannels>) => void;
+  setChannels: (data: SettingsModel<NotifyChannels>) => void;
   initChannels: () => void;
 };
 
@@ -45,7 +45,7 @@ export const NotifyProvider = ({ children }: NotifyProviderProps) => {
     });
   }, []);
 
-  const setChannels = useCallback((setting: Settings<NotifyChannels>) => {
+  const setChannels = useCallback((setting: SettingsModel<NotifyChannels>) => {
     dispatchNotify({
       type: "SET_CHANNELS",
       payload: setting,
