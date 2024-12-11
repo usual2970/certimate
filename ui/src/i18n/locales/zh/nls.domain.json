@@ -40,7 +40,7 @@
   "domain.application.form.key_algorithm.label": "数字证书算法（默认：RSA2048）",
   "domain.application.form.key_algorithm.placeholder": "请选择数字证书算法",
   "domain.application.form.timeout.label": "DNS 传播检查超时时间（单位：秒）",
-  "domain.application.form.timeoue.placeholder": "请输入 DNS 传播检查超时时间",
+  "domain.application.form.timeout.placeholder": "请输入 DNS 传播检查超时时间",
   "domain.application.form.disable_follow_cname.label": "禁用 DNS CNAME 跟随",
   "domain.application.form.disable_follow_cname.tips": "该选项将禁用 Acme DNS 认证 CNAME 跟随，如果你不了解此选项保持默认即可，",
   "domain.application.form.disable_follow_cname.tips_link": "了解更多",

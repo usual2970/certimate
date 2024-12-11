@@ -8,20 +8,20 @@ import { ClientResponseError } from "pocketbase";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { readFileContent } from "@/lib/file";
+import { readFileContent } from "@/utils/file";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type SSHConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type SSHConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessSSHFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
+  const { createAccess, updateAccess } = useAccessStore();
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -103,7 +103,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
     let group = data.group;
     if (group == "emptyId") group = "";
 
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -131,7 +131,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
       if (data.id && op == "edit") {
         updateAccess(req);
       } else {
-        addAccess(req);
+        createAccess(req);
       }
     } catch (e) {
       const err = e as ClientResponseError;
@@ -337,7 +337,7 @@ const AccessSSHForm = ({ data, op, onAfterReq }: AccessSSHFormProps) => {
           <FormMessage />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

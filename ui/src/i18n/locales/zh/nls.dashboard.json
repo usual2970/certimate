@@ -1,15 +1,12 @@
 ﻿{
   "dashboard.page.title": "仪表盘",
 
-  "dashboard.statistics.all.certificate": "所有证书",
-  "dashboard.statistics.near_expired.certificate": "即将过期证书",
-  "dashboard.statistics.expired.certificate": "已过期证书",
-
-  "dashboard.statistics.all.workflow": "所有工作流",
-  "dashboard.statistics.enabled.workflow": "已启用工作流",
-
+  "dashboard.statistics.all_certificates": "所有证书",
+  "dashboard.statistics.expire_soon_certificates": "即将过期证书",
+  "dashboard.statistics.expired_certificates": "已过期证书",
+  "dashboard.statistics.all_workflows": "所有工作流",
+  "dashboard.statistics.enabled_workflows": "已启用工作流",
   "dashboard.statistics.unit": "个",
 
-  "dashboard.certificate": "最新证书"
+  "dashboard.latest_workflow_run": "最近执行的工作流"
 }
-

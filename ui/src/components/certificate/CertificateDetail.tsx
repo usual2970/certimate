@@ -1,64 +1,114 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
-
-import { Certificate } from "@/domain/certificate";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { CustomFile, saveFiles2ZIP } from "@/lib/file";
 import { useTranslation } from "react-i18next";
+import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
 
-type WorkflowLogDetailProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  certificate?: Certificate;
+import { type CertificateModel } from "@/domain/certificate";
+import { saveFiles2Zip } from "@/utils/file";
+
+type CertificateDetailProps = {
+  data: CertificateModel;
 };
-const CertificateDetail = ({ open, onOpenChange, certificate }: WorkflowLogDetailProps) => {
+
+const CertificateDetail = ({ data }: CertificateDetailProps) => {
   const { t } = useTranslation();
-  const handleDownloadClick = async () => {
-    const zipName = `${certificate?.id}-${certificate?.san}.zip`;
-    const files: CustomFile[] = [
+
+  const [messageApi, MessageContextHolder] = message.useMessage();
+
+  const handleDownloadPEMClick = async () => {
+    const zipName = `${data.id}-${data.san}.zip`;
+    const files = [
       {
-        name: `${certificate?.san}.pem`,
-        content: certificate?.certificate ? certificate?.certificate : "",
+        name: `${data.san}.pem`,
+        content: data.certificate ?? "",
       },
       {
-        name: `${certificate?.san}.key`,
-        content: certificate?.privateKey ? certificate?.privateKey : "",
+        name: `${data.san}.key`,
+        content: data.privateKey ?? "",
       },
     ];
 
-    await saveFiles2ZIP(zipName, files);
+    await saveFiles2Zip(zipName, files);
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-2xl dark:text-stone-200">
-        <SheetHeader>
-          <SheetTitle></SheetTitle>
-        </SheetHeader>
+    <div>
+      {MessageContextHolder}
 
-        <div className="flex flex-col space-y-5 mt-9">
-          <div className="flex justify-end">
-            <Button
-              size={"sm"}
-              onClick={() => {
-                handleDownloadClick();
-              }}
-            >
-              {t("certificate.action.download")}
-            </Button>
+      <Form layout="vertical">
+        <Form.Item>
+          <div className="flex items-center justify-between w-full mb-2">
+            <label className="font-medium">{t("certificate.props.certificate_chain")}</label>
+            <Tooltip title={t("common.button.copy")}>
+              <CopyToClipboard
+                text={data.certificate}
+                onCopy={() => {
+                  messageApi.success(t("common.text.copied"));
+                }}
+              >
+                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+              </CopyToClipboard>
+            </Tooltip>
           </div>
-          <div className="flex flex-col space-y-3">
-            <Label>{t("certificate.props.certificate")}</Label>
-            <Textarea value={certificate?.certificate} rows={10} readOnly={true} />
+          <Input.TextArea value={data.certificate} rows={10} autoSize={{ maxRows: 10 }} readOnly />
+        </Form.Item>
+
+        <Form.Item>
+          <div className="flex items-center justify-between w-full mb-2">
+            <label className="font-medium">{t("certificate.props.private_key")}</label>
+            <Tooltip title={t("common.button.copy")}>
+              <CopyToClipboard
+                text={data.privateKey}
+                onCopy={() => {
+                  messageApi.success(t("common.text.copied"));
+                }}
+              >
+                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+              </CopyToClipboard>
+            </Tooltip>
           </div>
-          <div className="flex flex-col space-y-3">
-            <Label>{t("certificate.props.private.key")}</Label>
-            <Textarea value={certificate?.privateKey} rows={10} readOnly={true} />
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
+          <Input.TextArea value={data.privateKey} rows={10} autoSize={{ maxRows: 10 }} readOnly />
+        </Form.Item>
+      </Form>
+
+      <div className="flex items-center justify-end">
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "PEM",
+                label: "PEM",
+                extra: <ThumbsUpIcon size="14" />,
+                onClick: () => handleDownloadPEMClick(),
+              },
+              {
+                key: "PFX",
+                label: "PFX",
+                onClick: () => {
+                  // TODO: 下载 PFX 格式证书
+                  alert("TODO");
+                },
+              },
+              {
+                key: "JKS",
+                label: "JKS",
+                onClick: () => {
+                  // TODO: 下载 JKS 格式证书
+                  alert("TODO");
+                },
+              },
+            ],
+          }}
+        >
+          <Button type="primary">
+            <Space>
+              <span>{t("certificate.action.download")}</span>
+              <ChevronDownIcon size={14} />
+            </Space>
+          </Button>
+        </Dropdown>
+      </div>
+    </div>
   );
 };
 

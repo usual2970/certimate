@@ -10,7 +10,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { useTranslation } from "react-i18next";
 import { parseExpression } from "cron-parser";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 
@@ -135,7 +135,7 @@ const StartForm = ({ data }: StartFormProps) => {
           />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

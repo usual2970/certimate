@@ -11,6 +11,7 @@ import (
 )
 
 type ServerChanNotifierConfig struct {
+	// ServerChan 服务地址。
 	Url string `json:"url"`
 }
 

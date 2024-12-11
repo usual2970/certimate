@@ -1,10 +1,11 @@
-export type Setting<T> = {
-  id?: string;
-  name?: string;
-  content?: T;
-};
+import { type BaseModel } from "pocketbase";
 
-export type EmailsSetting = {
+export interface SettingsModel<T> extends BaseModel {
+  name: string;
+  content: T;
+}
+
+export type EmailsSettingsContent = {
   emails: string[];
 };
 
@@ -56,8 +57,8 @@ export const channels: ChannelLabel[] = [
     label: "common.provider.serverchan",
   },
   {
-    name: "mail",
-    label: "common.provider.mail",
+    name: "email",
+    label: "common.provider.email",
   },
   {
     name: "bark",

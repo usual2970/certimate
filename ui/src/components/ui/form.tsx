@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 
+import { cn } from "./utils";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 
 const Form = FormProvider;
 

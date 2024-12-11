@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { accessProvidersMap } from "@/domain/access";
 import { useTranslation } from "react-i18next";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 import { deployTargetsMap } from "@/domain/domain";
 
 type AccessSelectProps = {
@@ -13,9 +13,7 @@ type AccessSelectProps = {
 const AccessSelect = ({ value, onValueChange, providerType }: AccessSelectProps) => {
   const [localValue, setLocalValue] = React.useState<string>("");
   const { t } = useTranslation();
-  const {
-    config: { accesses },
-  } = useConfigContext();
+  const { accesses } = useAccessStore();
 
   useEffect(() => {
     setLocalValue(value);

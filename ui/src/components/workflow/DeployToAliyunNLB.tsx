@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeployFormProps } from "./DeployForm";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 import { useForm } from "react-hook-form";
@@ -213,7 +213,7 @@ const DeployToAliyunNLB = ({ data }: DeployFormProps) => {
           )}
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

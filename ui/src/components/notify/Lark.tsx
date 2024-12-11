@@ -5,8 +5,8 @@ import { Label } from "@/components/ui/label";
 import { useNotifyContext } from "@/providers/notify";
 import { NotifyChannelLark, NotifyChannels } from "@/domain/settings";
 import { useEffect, useState } from "react";
-import { update } from "@/repository/settings";
-import { getErrMessage } from "@/lib/error";
+import { save } from "@/repository/settings";
+import { getErrMsg } from "@/utils/error";
 import { useToast } from "@/components/ui/use-toast";
 import { useTranslation } from "react-i18next";
 import { notifyTest } from "@/api/notify";
@@ -92,7 +92,7 @@ const Lark = () => {
 
   const handleSaveClick = async () => {
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -105,14 +105,14 @@ const Lark = () => {
 
       setChannels(resp);
       toast({
-        title: t("common.save.succeeded.message"),
+        title: t("common.text.operation_succeeded"),
         description: t("settings.notification.config.saved.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -135,7 +135,7 @@ const Lark = () => {
         description: t("settings.notification.push_test_message.succeeded.message"),
       });
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
         title: t("settings.notification.push_test_message.failed.message"),
@@ -156,7 +156,7 @@ const Lark = () => {
     setLark(newData);
 
     try {
-      const resp = await update({
+      const resp = await save({
         ...config,
         name: "notifyChannels",
         content: {
@@ -169,10 +169,10 @@ const Lark = () => {
 
       setChannels(resp);
     } catch (e) {
-      const msg = getErrMessage(e);
+      const msg = getErrMsg(e);
 
       toast({
-        title: t("common.save.failed.message"),
+        title: t("common.text.operation_failed"),
         description: `${t("settings.notification.config.failed.message")}: ${msg}`,
         variant: "destructive",
       });
@@ -214,7 +214,7 @@ const Lark = () => {
                 handleSaveClick();
               }}
             >
-              {t("common.save")}
+              {t("common.button.save")}
             </Button>
           </Show>
 

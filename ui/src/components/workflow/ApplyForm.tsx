@@ -1,5 +1,4 @@
-import { memo } from "react";
-
+import { memo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import z from "zod";
@@ -16,13 +15,12 @@ import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
 
 import { accessProvidersMap } from "@/domain/access";
-import { EmailsSetting } from "@/domain/settings";
-
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
+import { useContactStore } from "@/stores/contact";
 import { Switch } from "@/components/ui/switch";
 import { TooltipFast } from "@/components/ui/tooltip";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/providers/workflow";
+import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 
@@ -35,9 +33,12 @@ const selectState = (state: WorkflowState) => ({
 const ApplyForm = ({ data }: ApplyFormProps) => {
   const { updateNode } = useWorkflowStore(useShallow(selectState));
 
-  const {
-    config: { accesses, emails },
-  } = useConfigContext();
+  const { accesses } = useAccessStore();
+  const { emails, fetchEmails } = useContactStore();
+
+  useEffect(() => {
+    fetchEmails();
+  }, []);
 
   const { t } = useTranslation();
 
@@ -122,7 +123,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                   />
@@ -141,7 +142,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>{t("domain.application.form.email.list")}</SelectLabel>
-                        {(emails.content as EmailsSetting).emails.map((item) => (
+                        {emails.map((item) => (
                           <SelectItem key={item} value={item}>
                             <div>{item}</div>
                           </SelectItem>
@@ -168,7 +169,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <Plus size={14} />
-                        {t("common.add")}
+                        {t("common.button.add")}
                       </div>
                     }
                     op="add"
@@ -342,7 +343,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

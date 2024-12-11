@@ -8,19 +8,21 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type Access, type BaiduCloudConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type BaiduCloudConfig } from "@/domain/access";
 import { save } from "@/repository/access";
-import { useConfigContext } from "@/providers/config";
+import { useAccessStore } from "@/stores/access";
 
 type AccessBaiduCloudFormProps = {
   op: "add" | "edit" | "copy";
-  data?: Access;
+  data?: AccessModel;
   onAfterReq: () => void;
 };
 
 const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProps) => {
-  const { addAccess, updateAccess } = useConfigContext();
   const { t } = useTranslation();
+
+  const { createAccess, updateAccess } = useAccessStore();
+
   const formSchema = z.object({
     id: z.string().optional(),
     name: z
@@ -56,7 +58,7 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    const req: Access = {
+    const req: AccessModel = {
       id: data.id as string,
       name: data.name,
       configType: data.configType,
@@ -80,7 +82,8 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
         updateAccess(req);
         return;
       }
-      addAccess(req);
+
+      createAccess(req);
     } catch (e) {
       const err = e as ClientResponseError;
 
@@ -183,7 +186,7 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
           <FormMessage />
 
           <div className="flex justify-end">
-            <Button type="submit">{t("common.save")}</Button>
+            <Button type="submit">{t("common.button.save")}</Button>
           </div>
         </form>
       </Form>

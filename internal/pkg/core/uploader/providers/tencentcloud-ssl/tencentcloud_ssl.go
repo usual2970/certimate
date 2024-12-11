@@ -13,7 +13,9 @@ import (
 )
 
 type TencentCloudSSLUploaderConfig struct {
-	SecretId  string `json:"secretId"`
+	// 腾讯云 SecretId。
+	SecretId string `json:"secretId"`
+	// 腾讯云 SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 

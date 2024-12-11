@@ -1,7 +1,8 @@
-import { Workflow } from "./workflow";
+import { type BaseModel } from "pocketbase";
 
-export type Certificate = {
-  id: string;
+import { WorkflowModel } from "./workflow";
+
+export interface CertificateModel extends BaseModel {
   san: string;
   certificate: string;
   privateKey: string;
@@ -12,10 +13,7 @@ export type Certificate = {
   expireAt: string;
   workflow: string;
   nodeId: string;
-  created: string;
-  updated: string;
-
   expand: {
-    workflow?: Workflow;
+    workflow?: WorkflowModel;
   };
-};
+}

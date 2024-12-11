@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/components/ui/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -23,14 +23,14 @@ import AccessWebhookForm from "./AccessWebhookForm";
 import AccessKubernetesForm from "./AccessKubernetesForm";
 import AccessVolcengineForm from "./AccessVolcengineForm";
 import AccessByteplusForm from "./AccessByteplusForm";
-import { Access } from "@/domain/access";
+import { AccessModel } from "@/domain/access";
 import { AccessTypeSelect } from "./AccessTypeSelect";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
   className?: string;
   trigger: React.ReactNode;
-  data?: Access;
+  data?: AccessModel;
   outConfigType?: string;
 };
 
@@ -273,9 +273,9 @@ const AccessEditDialog = ({ trigger, op, data, className, outConfigType }: Acces
           <DialogTitle>
             {
               {
-                ["add"]: t("access.authorization.add"),
-                ["edit"]: t("access.authorization.edit"),
-                ["copy"]: t("access.authorization.copy"),
+                ["add"]: t("access.action.add"),
+                ["edit"]: t("access.action.edit"),
+                ["copy"]: t("access.action.copy"),
               }[op]
             }
           </DialogTitle>
