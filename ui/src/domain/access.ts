@@ -60,7 +60,7 @@ export const accessTypeFormSchema = z.union(
   { message: "access.authorization.form.type.placeholder" }
 );
 
-export interface AccessModel extends BaseModel {
+export interface AccessModel extends Omit<BaseModel, "created" | "updated"> {
   name: string;
   configType: string;
   usage: AccessUsages;

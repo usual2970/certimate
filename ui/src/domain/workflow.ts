@@ -28,7 +28,7 @@ export type WorkflowOutput = {
   error: string;
 };
 
-export interface WorkflowModel extends BaseModel {
+export interface WorkflowModel extends Omit<BaseModel, "created" | "updated"> {
   name: string;
   description?: string;
   type: string;

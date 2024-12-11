@@ -9,8 +9,8 @@ import {
   removeBranch,
   removeNode,
   updateNode,
-  WorkflowModel,
   WorkflowBranchNode,
+  WorkflowModel,
   WorkflowNode,
   WorkflowNodeType,
 } from "@/domain/workflow";
@@ -39,7 +39,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
   initialized: false,
   init: async (id?: string) => {
-    let data = {
+    let data: WorkflowModel = {
       id: "",
       name: "placeholder",
       type: "auto",

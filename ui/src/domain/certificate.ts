@@ -2,7 +2,7 @@ import { type BaseModel } from "pocketbase";
 
 import { WorkflowModel } from "./workflow";
 
-export interface CertificateModel extends BaseModel {
+export interface CertificateModel extends Omit<BaseModel, "created" | "updated"> {
   san: string;
   certificate: string;
   privateKey: string;
