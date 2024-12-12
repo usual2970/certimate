@@ -8,32 +8,29 @@ type AccessProvider = {
   name: string;
   icon: string;
   usage: AccessUsages;
-  searchContent: string;
 };
 
-export const accessProviders = [
-  ["aliyun", "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all", "阿里云:alibaba cloud"],
-  ["tencent", "common.provider.tencent", "/imgs/providers/tencent.svg", "all", "腾讯云:tencent cloud"],
-  ["huaweicloud", "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all", "华为云:huawei cloud"],
-  ["baiducloud", "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all", "百度智能云:百度云:baidu cloud"],
-  ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛云:qiniu"],
-  ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy", "多吉云:doge cloud"],
-  ["volcengine", "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all", "火山引擎:volcengine"],
-  ["byteplus", "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all", "BytePlus"],
-  ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply", "亚马逊:amazon:aws"],
-  ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply", "cloudflare:cf:cloud flare"],
-  ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply", "namesilo"],
-  ["godaddy", "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply", "godaddy"],
-  ["pdns", "common.provider.pdns", "/imgs/providers/pdns.svg", "apply", "powerdns:pdns"],
-  ["httpreq", "common.provider.httpreq", "/imgs/providers/httpreq.svg", "apply", "httpreq"],
-  ["local", "common.provider.local", "/imgs/providers/local.svg", "deploy", "local:bendi:本地"],
-  ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy", "ssh"],
-  ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy", "webhook"],
-  ["k8s", "common.provider.kubernetes", "/imgs/providers/k8s.svg", "deploy", "k8s:kubernetes"],
-];
-
 export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
-  accessProviders.map(([type, name, icon, usage, searchContent]) => [type, { type, name, icon, usage: usage as AccessUsages, searchContent: searchContent }])
+  [
+    ["aliyun", "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all"],
+    ["tencent", "common.provider.tencent", "/imgs/providers/tencent.svg", "all"],
+    ["huaweicloud", "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all"],
+    ["baiducloud", "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all"],
+    ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy"],
+    ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy"],
+    ["volcengine", "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all"],
+    ["byteplus", "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all"],
+    ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply"],
+    ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply"],
+    ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply"],
+    ["godaddy", "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply"],
+    ["pdns", "common.provider.pdns", "/imgs/providers/pdns.svg", "apply"],
+    ["httpreq", "common.provider.httpreq", "/imgs/providers/httpreq.svg", "apply"],
+    ["local", "common.provider.local", "/imgs/providers/local.svg", "deploy"],
+    ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
+    ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
+    ["k8s", "common.provider.kubernetes", "/imgs/providers/k8s.svg", "deploy"],
+  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
 );
 
 export const accessTypeFormSchema = z.union(

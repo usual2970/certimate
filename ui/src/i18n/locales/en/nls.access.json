@@ -16,7 +16,6 @@
 
   "access.authorization.form.type.label": "Provider",
   "access.authorization.form.type.placeholder": "Please select a provider",
-  "access.authorization.form.type.search.placeholder": "Search provider ...",
   "access.authorization.form.type.search.notfound": "Provider not found",
   "access.authorization.form.type.list": "Authorization List",
   "access.authorization.form.name.label": "Name",

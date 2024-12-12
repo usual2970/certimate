@@ -40,7 +40,7 @@ const AccessList = () => {
       ellipsis: true,
       render: (_, record) => {
         return (
-          <Space className="max-w-full truncate" size={4}>
+          <Space className="max-w-full truncate" align="center" size={4}>
             <Avatar src={accessProvidersMap.get(record.configType)?.icon} size="small" />
             <Typography.Text ellipsis>{t(accessProvidersMap.get(record.configType)?.name ?? "")}</Typography.Text>
           </Space>

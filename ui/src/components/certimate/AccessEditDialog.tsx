@@ -5,6 +5,7 @@ import { cn } from "@/components/ui/utils";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import AccessProviderSelect from "@/components/access/AccessProviderSelect";
 import AccessAliyunForm from "./AccessAliyunForm";
 import AccessTencentForm from "./AccessTencentForm";
 import AccessHuaweiCloudForm from "./AccessHuaweicloudForm";
@@ -24,7 +25,6 @@ import AccessKubernetesForm from "./AccessKubernetesForm";
 import AccessVolcengineForm from "./AccessVolcengineForm";
 import AccessByteplusForm from "./AccessByteplusForm";
 import { AccessModel } from "@/domain/access";
-import { AccessTypeSelect } from "./AccessTypeSelect";
 
 type AccessEditProps = {
   op: "add" | "edit" | "copy";
@@ -284,14 +284,14 @@ const AccessEditDialog = ({ trigger, op, data, className, outConfigType }: Acces
           <div className="container py-3">
             <div>
               <Label>{t("access.authorization.form.type.label")}</Label>
-              <AccessTypeSelect
+              <AccessProviderSelect
+                className="w-full mt-3"
+                placeholder={t("access.authorization.form.type.placeholder")}
                 value={configType}
+                showSearch={true}
                 onChange={(val) => {
                   setConfigType(val);
                 }}
-                className="w-full mt-3"
-                placeholder={t("access.authorization.form.type.placeholder")}
-                searchPlaceholder={t("access.authorization.form.type.search.placeholder")}
               />
             </div>
 
