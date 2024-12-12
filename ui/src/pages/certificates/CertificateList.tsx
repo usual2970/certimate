@@ -33,7 +33,7 @@ const CertificateList = () => {
     },
     {
       key: "name",
-      title: t("certificate.props.domain"),
+      title: t("certificate.props.san"),
       render: (_, record) => <Typography.Text>{record.san}</Typography.Text>,
     },
     {

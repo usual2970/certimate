@@ -120,43 +120,21 @@ const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }
   const MENU_KEY_CERTIFICATES = "/certificates";
   const MENU_KEY_ACCESSES = "/accesses";
   const menuItems: Required<MenuProps>["items"] = [
-    {
-      key: MENU_KEY_HOME,
-      icon: <HomeIcon size={16} />,
-      label: t("dashboard.page.title"),
+    [MENU_KEY_HOME, <HomeIcon size={16} />, t("dashboard.page.title")],
+    [MENU_KEY_WORKFLOWS, <WorkflowIcon size={16} />, t("workflow.page.title")],
+    [MENU_KEY_CERTIFICATES, <ShieldCheckIcon size={16} />, t("certificate.page.title")],
+    [MENU_KEY_ACCESSES, <ServerIcon size={16} />, t("access.page.title")],
+  ].map(([key, icon, label]) => {
+    return {
+      key: key as string,
+      icon: icon,
+      label: label,
       onClick: () => {
-        navigate(MENU_KEY_HOME);
-        onSelect?.(MENU_KEY_HOME);
+        navigate(key as string);
+        onSelect?.(key as string);
       },
-    },
-    {
-      key: MENU_KEY_WORKFLOWS,
-      icon: <WorkflowIcon size={16} />,
-      label: t("workflow.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_WORKFLOWS);
-        onSelect?.(MENU_KEY_WORKFLOWS);
-      },
-    },
-    {
-      key: MENU_KEY_CERTIFICATES,
-      icon: <ShieldCheckIcon size={16} />,
-      label: t("certificate.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_CERTIFICATES);
-        onSelect?.(MENU_KEY_CERTIFICATES);
-      },
-    },
-    {
-      key: MENU_KEY_ACCESSES,
-      icon: <ServerIcon size={16} />,
-      label: t("access.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_ACCESSES);
-        onSelect?.(MENU_KEY_ACCESSES);
-      },
-    },
-  ];
+    };
+  });
   const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
   const getActiveMenuItem = () => {
@@ -207,22 +185,19 @@ const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) 
   const { theme, setThemeMode } = useTheme();
 
   const items: Required<MenuProps>["items"] = [
-    {
-      key: "light",
-      label: <>{t("common.theme.light")}</>,
-      onClick: () => setThemeMode("light"),
-    },
-    {
-      key: "dark",
-      label: <>{t("common.theme.dark")}</>,
-      onClick: () => setThemeMode("dark"),
-    },
-    {
-      key: "system",
-      label: <>{t("common.theme.system")}</>,
-      onClick: () => setThemeMode("system"),
-    },
-  ];
+    ["light", t("common.theme.light")],
+    ["dark", t("common.theme.dark")],
+    ["system", t("common.theme.system")],
+  ].map(([key, label]) => {
+    return {
+      key: key as string,
+      label: label,
+      onClick: () => {
+        setThemeMode(key as Parameters<typeof setThemeMode>[0]);
+        window.location.reload();
+      },
+    };
+  });
 
   return (
     <Dropdown menu={{ items }} trigger={["click"]}>

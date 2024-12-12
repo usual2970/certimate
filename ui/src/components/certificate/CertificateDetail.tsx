@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
+import dayjs from "dayjs";
 
 import { type CertificateModel } from "@/domain/certificate";
 import { saveFiles2Zip } from "@/utils/file";
@@ -36,6 +37,10 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
       {MessageContextHolder}
 
       <Form layout="vertical">
+        <Form.Item label={t("certificate.props.san")}>{data.san}</Form.Item>
+
+        <Form.Item label={t("certificate.props.expiry")}>{dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}</Form.Item>
+
         <Form.Item>
           <div className="flex items-center justify-between w-full mb-2">
             <label className="font-medium">{t("certificate.props.certificate_chain")}</label>

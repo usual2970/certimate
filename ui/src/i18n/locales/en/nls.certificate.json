@@ -6,7 +6,7 @@
   "certificate.action.view": "View Certificate",
   "certificate.action.download": "Download Certificate",
 
-  "certificate.props.domain": "Name",
+  "certificate.props.san": "Name",
   "certificate.props.expiry": "Expiry",
   "certificate.props.expiry.left_days": "{{left}} / {{total}} days left",
   "certificate.props.expiry.expired": "Expired",
