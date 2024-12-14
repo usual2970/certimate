@@ -1,8 +1,29 @@
 package domain
 
-import "time"
+import (
+	"time"
+	"os"
+	"strconv"
+)
 
-var ValidityDuration = time.Hour * 24 * 10
+// 获取环境变量"day"的值
+dayStr := os.Getenv("day")
+
+// 检查环境变量是否存在
+if dayStr == "" {
+	// 如果不存在，设置默认值为"10"
+	dayStr = "10"
+}
+
+// 将字符串转换为整数
+day, err := strconv.Atoi(dayStr)
+if err != nil {
+	// 如果转换失败，打印错误并设置默认值
+	fmt.Println("Error converting day to integer:", err)
+	day = 10
+}
+
+var ValidityDuration = time.Hour * 24 * day
 
 type Certificate struct {
 	Meta
