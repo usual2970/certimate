@@ -8,10 +8,12 @@ import { type CertificateModel } from "@/domain/certificate";
 import { saveFiles2Zip } from "@/utils/file";
 
 type CertificateDetailProps = {
+  className?: string;
+  style?: React.CSSProperties;
   data: CertificateModel;
 };
 
-const CertificateDetail = ({ data }: CertificateDetailProps) => {
+const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
   const { t } = useTranslation();
 
   const [messageApi, MessageContextHolder] = message.useMessage();
@@ -33,7 +35,7 @@ const CertificateDetail = ({ data }: CertificateDetailProps) => {
   };
 
   return (
-    <div>
+    <div {...props}>
       {MessageContextHolder}
 
       <Form layout="vertical">

@@ -152,15 +152,14 @@ const CertificateList = () => {
       width: 120,
       render: (_, record) => (
         <Space size={0}>
-          <Tooltip title={t("certificate.action.view")}>
-            <Button
-              type="link"
-              icon={<EyeIcon size={16} />}
-              onClick={() => {
-                handleViewClick(record);
-              }}
-            />
-          </Tooltip>
+          <CertificateDetailDrawer
+            data={record}
+            trigger={
+              <Tooltip title={t("certificate.action.view")}>
+                <Button type="link" icon={<EyeIcon size={16} />} />
+              </Tooltip>
+            }
+          />
         </Space>
       ),
     },
@@ -176,10 +175,6 @@ const CertificateList = () => {
 
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
-
-  const [currentRecord, setCurrentRecord] = useState<CertificateModel>();
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const fetchTableData = useCallback(async () => {
     if (loading) return;
@@ -210,11 +205,6 @@ const CertificateList = () => {
     fetchTableData();
   }, [fetchTableData]);
 
-  const handleViewClick = (certificate: CertificateModel) => {
-    setDrawerOpen(true);
-    setCurrentRecord(certificate);
-  };
-
   return (
     <>
       {NotificationContextHolder}
@@ -243,15 +233,6 @@ const CertificateList = () => {
         }}
         rowKey={(record: CertificateModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
-      />
-
-      <CertificateDetailDrawer
-        data={currentRecord}
-        open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-          setCurrentRecord(undefined);
-        }}
       />
     </>
   );

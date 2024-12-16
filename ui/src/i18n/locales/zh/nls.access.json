@@ -11,6 +11,8 @@
 
   "access.props.name": "名称",
   "access.props.provider": "服务商",
+  "access.props.provider.usage.dns": "DNS 服务商",
+  "access.props.provider.usage.host": "主机服务商",
   "access.props.created_at": "创建时间",
   "access.props.updated_at": "更新时间",
 

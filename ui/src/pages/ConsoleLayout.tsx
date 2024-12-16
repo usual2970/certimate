@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
@@ -109,7 +109,7 @@ const ConsoleLayout = () => {
   );
 };
 
-const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
+const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -179,7 +179,7 @@ const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }
   );
 });
 
-const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
+const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { t } = useTranslation();
 
   const { theme, setThemeMode } = useTheme();
@@ -206,7 +206,7 @@ const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) 
   );
 });
 
-const LocaleToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
+const LocaleToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { i18n } = useTranslation();
 
   const items: Required<MenuProps>["items"] = Object.keys(i18n.store.data).map((key) => {

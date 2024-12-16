@@ -19,7 +19,7 @@ const Login = () => {
     password: z.string().min(10, t("login.password.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<z.infer<typeof formSchema>>();
 
   const [isPending, setIsPending] = useState(false);
 
