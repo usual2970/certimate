@@ -178,7 +178,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.type.tooltip") }}></span>}
           >
-            <AccessTypeSelect disabled={mode === "edit"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
+            <AccessTypeSelect disabled={mode !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
           </Form.Item>
 
           <Form.Item name="config" hidden />

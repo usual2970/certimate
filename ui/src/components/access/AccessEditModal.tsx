@@ -56,9 +56,17 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
     }
 
     try {
-      if (mode === "add") {
+      if (mode === "add" || mode === "copy") {
+        if (data?.id) {
+          throw "Invalid props: `data`";
+        }
+
         await createAccess(formRef.current!.getFieldsValue() as AccessModel);
-      } else {
+      } else if (mode === "edit") {
+        if (!data?.id) {
+          throw "Invalid props: `data`";
+        }
+
         await updateAccess({ ...data, ...formRef.current!.getFieldsValue() } as AccessModel);
       }
 
