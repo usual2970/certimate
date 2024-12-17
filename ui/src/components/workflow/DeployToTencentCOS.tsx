@@ -60,7 +60,7 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "tencent-cos",
+      providerType: "tencentcloud-cos",
       access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
@@ -100,7 +100,7 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
                       </div>
                     }
                     op="add"
-                    outConfigType="tencent"
+                    outConfigType="tencentcloud"
                   />
                 </FormLabel>
                 <FormControl>
@@ -110,7 +110,7 @@ const DeployToTencentCOS = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="tencent-cos"
+                    providerType="tencentcloud-cos"
                   />
                 </FormControl>
 

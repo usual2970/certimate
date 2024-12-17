@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type BaiduCloudConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type BaiduCloudAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -27,24 +27,24 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     accessKeyId: z
       .string()
-      .min(1, "access.authorization.form.access_key_id.placeholder")
+      .min(1, "access.form.access_key_id.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
-      .min(1, "access.authorization.form.secret_access_key.placeholder")
+      .min(1, "access.form.secret_access_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: BaiduCloudConfig = {
+  let config: BaiduCloudAccessConfig = {
     accessKeyId: "",
     secretAccessKey: "",
   };
-  if (data) config = data.config as BaiduCloudConfig;
+  if (data) config = data.config as BaiduCloudAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -113,9 +113,9 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -128,7 +128,7 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -143,7 +143,7 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -158,9 +158,9 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
             name="accessKeyId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key_id.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key_id.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -173,9 +173,9 @@ const AccessBaiduCloudForm = ({ data, op, onAfterReq }: AccessBaiduCloudFormProp
             name="secretAccessKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_access_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_access_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

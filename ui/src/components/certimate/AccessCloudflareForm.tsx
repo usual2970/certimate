@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type CloudflareConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type CloudflareAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,19 +25,19 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     dnsApiToken: z
       .string()
-      .min(1, "access.authorization.form.cloud_dns_api_token.placeholder")
+      .min(1, "access.form.cloud_dns_api_token.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: CloudflareConfig = {
+  let config: CloudflareAccessConfig = {
     dnsApiToken: "",
   };
-  if (data) config = data.config as CloudflareConfig;
+  if (data) config = data.config as CloudflareAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,9 +101,9 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -116,7 +116,7 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -131,7 +131,7 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -146,9 +146,9 @@ const AccessCloudflareForm = ({ data, op, onAfterReq }: AccessCloudflareFormProp
             name="dnsApiToken"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.cloud_dns_api_token.label")}</FormLabel>
+                <FormLabel>{t("access.form.cloud_dns_api_token.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.cloud_dns_api_token.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.cloud_dns_api_token.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type HttpreqConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type ACMEHttpReqAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,35 +25,35 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     endpoint: z.string().url("common.errmsg.url_invalid"),
     mode: z.enum(["RAW", ""]),
     username: z
       .string()
-      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .min(1, "access.form.access_key_secret.placeholder")
       .max(128, t("common.errmsg.string_max", { max: 128 })),
     password: z
       .string()
-      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .min(1, "access.form.access_key_secret.placeholder")
       .max(128, t("common.errmsg.string_max", { max: 128 })),
   });
 
-  let config: HttpreqConfig = {
+  let config: ACMEHttpReqAccessConfig = {
     endpoint: "",
     mode: "",
     username: "",
     password: "",
   };
-  if (data) config = data.config as HttpreqConfig;
+  if (data) config = data.config as ACMEHttpReqAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "httpreq",
+      configType: "acmehttpreq",
       endpoint: config.endpoint,
       mode: config.mode === "RAW" ? "RAW" : "",
       username: config.username,
@@ -119,9 +119,9 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -134,7 +134,7 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -149,7 +149,7 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -164,9 +164,9 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="endpoint"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.httpreq_endpoint.label")}</FormLabel>
+                <FormLabel>{t("access.form.httpreq_endpoint.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.httpreq_endpoint.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.httpreq_endpoint.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -179,9 +179,9 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="mode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.httpreq_mode.label")}</FormLabel>
+                <FormLabel>{t("access.form.httpreq_mode.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.httpreq_mode.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.httpreq_mode.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -194,9 +194,9 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.username.label")}</FormLabel>
+                <FormLabel>{t("access.form.username.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.username.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.username.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -209,9 +209,9 @@ const AccessHttpreqForm = ({ data, op, onAfterReq }: AccessHttpreqFormProps) => 
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.password.label")}</FormLabel>
+                <FormLabel>{t("access.form.password.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.password.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.password.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

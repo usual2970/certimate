@@ -8,36 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type NamesiloConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type NameSiloAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
-type AccessNamesiloFormProps = {
+type AccessNameSiloFormProps = {
   op: "add" | "edit" | "copy";
   data?: AccessModel;
   onAfterReq: () => void;
 };
 
-const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) => {
+const AccessNameSiloForm = ({ data, op, onAfterReq }: AccessNameSiloFormProps) => {
   const { createAccess, updateAccess } = useAccessStore();
   const { t } = useTranslation();
   const formSchema = z.object({
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     apiKey: z
       .string()
-      .min(1, "access.authorization.form.namesilo_api_key.placeholder")
+      .min(1, "access.form.namesilo_api_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: NamesiloConfig = {
+  let config: NameSiloAccessConfig = {
     apiKey: "",
   };
-  if (data) config = data.config as NamesiloConfig;
+  if (data) config = data.config as NameSiloAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,9 +101,9 @@ const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) =
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -116,7 +116,7 @@ const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) =
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -131,7 +131,7 @@ const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) =
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -146,9 +146,9 @@ const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) =
             name="apiKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.namesilo_api_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.namesilo_api_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.namesilo_api_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.namesilo_api_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -165,4 +165,4 @@ const AccessNamesiloForm = ({ data, op, onAfterReq }: AccessNamesiloFormProps) =
   );
 };
 
-export default AccessNamesiloForm;
+export default AccessNameSiloForm;

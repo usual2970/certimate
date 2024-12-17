@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type VolcengineConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type VolcEngineAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,24 +25,24 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     accessKeyId: z
       .string()
-      .min(1, "access.authorization.form.access_key_id.placeholder")
+      .min(1, "access.form.access_key_id.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
-      .min(1, "access.authorization.form.secret_access_key.placeholder")
+      .min(1, "access.form.secret_access_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: VolcengineConfig = {
+  let config: VolcEngineAccessConfig = {
     accessKeyId: "",
     secretAccessKey: "",
   };
-  if (data) config = data.config as VolcengineConfig;
+  if (data) config = data.config as VolcEngineAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,9 +110,9 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -125,7 +125,7 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -140,7 +140,7 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -155,9 +155,9 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
             name="accessKeyId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key_id.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key_id.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -170,9 +170,9 @@ const AccessVolcengineForm = ({ data, op, onAfterReq }: AccessVolcengineFormProp
             name="secretAccessKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_access_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_access_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_access_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_access_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

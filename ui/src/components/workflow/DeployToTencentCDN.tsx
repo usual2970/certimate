@@ -56,7 +56,7 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "tencent-cdn",
+      providerType: "tencentcloud-cdn",
       access: config.access as string,
       certificate: config.certificate as string,
       domain: config.domain as string,
@@ -94,7 +94,7 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
                       </div>
                     }
                     op="add"
-                    outConfigType="tencent"
+                    outConfigType="tencentcloud"
                   />
                 </FormLabel>
                 <FormControl>
@@ -104,7 +104,7 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="tencent-cdn"
+                    providerType="tencentcloud-cdn"
                   />
                 </FormControl>
 

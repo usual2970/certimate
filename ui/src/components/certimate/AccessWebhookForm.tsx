@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { AccessModel, accessProvidersMap, accessTypeFormSchema, WebhookConfig } from "@/domain/access";
+import { AccessModel, accessProvidersMap, accessTypeFormSchema, WebhookAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,16 +25,16 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     url: z.string().url("common.errmsg.url_invalid"),
   });
 
-  let config: WebhookConfig = {
+  let config: WebhookAccessConfig = {
     url: "",
   };
-  if (data) config = data.config as WebhookConfig;
+  if (data) config = data.config as WebhookAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,9 +98,9 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -113,7 +113,7 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -128,7 +128,7 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -143,9 +143,9 @@ const AccessWebhookForm = ({ data, op, onAfterReq }: AccessWebhookFormProps) => 
             name="url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.webhook_url.label")}</FormLabel>
+                <FormLabel>{t("access.form.webhook_url.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.webhook_url.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.webhook_url.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

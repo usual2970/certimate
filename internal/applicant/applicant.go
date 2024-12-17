@@ -26,17 +26,23 @@ import (
 	"github.com/pocketbase/pocketbase/models"
 )
 
+/*
+提供商类型常量值。
+
+	注意：如果追加新的枚举值，请保持以 ASCII 排序。
+	NOTICE: If you add new enum, please keep ASCII order.
+*/
 const (
-	configTypeAliyun      = "aliyun"
-	configTypeTencent     = "tencent"
-	configTypeHuaweiCloud = "huaweicloud"
-	configTypeAws         = "aws"
-	configTypeCloudflare  = "cloudflare"
-	configTypeNamesilo    = "namesilo"
-	configTypeGodaddy     = "godaddy"
-	configTypePdns        = "pdns"
-	configTypeHttpreq     = "httpreq"
-	configTypeVolcengine  = "volcengine"
+	configTypeACMEHttpReq  = "acmehttpreq"
+	configTypeAliyun       = "aliyun"
+	configTypeAWS          = "aws"
+	configTypeCloudflare   = "cloudflare"
+	configTypeGoDaddy      = "godaddy"
+	configTypeHuaweiCloud  = "huaweicloud"
+	configTypeNamesilo     = "namesilo"
+	configTypePowerDNS     = "powerdns"
+	configTypeTencentCloud = "tencentcloud"
+	configTypeVolcEngine   = "volcengine"
 )
 
 const defaultSSLProvider = "letsencrypt"
@@ -205,23 +211,23 @@ func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
 	switch t {
 	case configTypeAliyun:
 		return NewAliyun(option), nil
-	case configTypeTencent:
+	case configTypeTencentCloud:
 		return NewTencent(option), nil
 	case configTypeHuaweiCloud:
 		return NewHuaweiCloud(option), nil
-	case configTypeAws:
+	case configTypeAWS:
 		return NewAws(option), nil
 	case configTypeCloudflare:
 		return NewCloudflare(option), nil
 	case configTypeNamesilo:
 		return NewNamesilo(option), nil
-	case configTypeGodaddy:
+	case configTypeGoDaddy:
 		return NewGodaddy(option), nil
-	case configTypePdns:
+	case configTypePowerDNS:
 		return NewPdns(option), nil
-	case configTypeHttpreq:
+	case configTypeACMEHttpReq:
 		return NewHttpreq(option), nil
-	case configTypeVolcengine:
+	case configTypeVolcEngine:
 		return NewVolcengine(option), nil
 	default:
 		return nil, errors.New("unknown config type")

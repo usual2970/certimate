@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type AliyunConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type AliyunAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -27,24 +27,24 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     accessKeyId: z
       .string()
-      .min(1, "access.authorization.form.access_key_id.placeholder")
+      .min(1, "access.form.access_key_id.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     accessSecretId: z
       .string()
-      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .min(1, "access.form.access_key_secret.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: AliyunConfig = {
+  let config: AliyunAccessConfig = {
     accessKeyId: "",
     accessKeySecret: "",
   };
-  if (data) config = data.config as AliyunConfig;
+  if (data) config = data.config as AliyunAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -113,9 +113,9 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -128,7 +128,7 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -143,7 +143,7 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -158,9 +158,9 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
             name="accessKeyId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key_id.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key_id.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key_id.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key_id.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -173,9 +173,9 @@ const AccessAliyunForm = ({ data, op, onAfterReq }: AccessAliyunFormProps) => {
             name="accessSecretId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key_secret.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key_secret.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key_secret.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key_secret.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type TencentConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type TencentCloudAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,31 +25,31 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     secretId: z
       .string()
-      .min(1, "access.authorization.form.secret_id.placeholder")
+      .min(1, "access.form.secret_id.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretKey: z
       .string()
-      .min(1, "access.authorization.form.secret_key.placeholder")
+      .min(1, "access.form.secret_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: TencentConfig = {
+  let config: TencentCloudAccessConfig = {
     secretId: "",
     secretKey: "",
   };
-  if (data) config = data.config as TencentConfig;
+  if (data) config = data.config as TencentCloudAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "tencent",
+      configType: "tencentcloud",
       secretId: config.secretId,
       secretKey: config.secretKey,
     },
@@ -108,9 +108,9 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -123,7 +123,7 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -138,7 +138,7 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -153,9 +153,9 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
             name="secretId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_id.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_id.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_id.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_id.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -168,9 +168,9 @@ const AccessTencentForm = ({ data, op, onAfterReq }: AccessTencentFormProps) => 
             name="secretKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

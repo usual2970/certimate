@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type ByteplusConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type BytePlusAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,24 +25,24 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     accessKey: z
       .string()
-      .min(1, "access.authorization.form.access_key.placeholder")
+      .min(1, "access.form.access_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretKey: z
       .string()
-      .min(1, "access.authorization.form.secret_key.placeholder")
+      .min(1, "access.form.secret_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: ByteplusConfig = {
+  let config: BytePlusAccessConfig = {
     accessKey: "",
     secretKey: "",
   };
-  if (data) config = data.config as ByteplusConfig;
+  if (data) config = data.config as BytePlusAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,9 +110,9 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -125,7 +125,7 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -140,7 +140,7 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -155,9 +155,9 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
             name="accessKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -170,9 +170,9 @@ const AccessByteplusForm = ({ data, op, onAfterReq }: AccessByteplusFormProps) =
             name="secretKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

@@ -58,7 +58,7 @@ const DeployToTencentTEO = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "tencent-teo",
+      providerType: "tencentcloud-eo",
       access: config.access as string,
       certificate: config.certificate as string,
       zoneId: config.zoneId as string,
@@ -97,7 +97,7 @@ const DeployToTencentTEO = ({ data }: DeployFormProps) => {
                       </div>
                     }
                     op="add"
-                    outConfigType="tencent"
+                    outConfigType="tencentcloud"
                   />
                 </FormLabel>
                 <FormControl>
@@ -107,7 +107,7 @@ const DeployToTencentTEO = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="tencent-teo"
+                    providerType="tencentcloud-eo"
                   />
                 </FormControl>
 

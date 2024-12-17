@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type DogeCloudConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type DogeCloudAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,18 +25,18 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
-    accessKey: z.string().min(1, "access.authorization.form.access_key.placeholder").max(64),
-    secretKey: z.string().min(1, "access.authorization.form.secret_key.placeholder").max(64),
+    accessKey: z.string().min(1, "access.form.access_key.placeholder").max(64),
+    secretKey: z.string().min(1, "access.form.secret_key.placeholder").max(64),
   });
 
-  let config: DogeCloudConfig = {
+  let config: DogeCloudAccessConfig = {
     accessKey: "",
     secretKey: "",
   };
-  if (data) config = data.config as DogeCloudConfig;
+  if (data) config = data.config as DogeCloudAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -104,9 +104,9 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -119,7 +119,7 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -134,7 +134,7 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -149,9 +149,9 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
             name="accessKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.access_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.access_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.access_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.access_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -164,9 +164,9 @@ const AccessDogeCloudForm = ({ data, op, onAfterReq }: AccessDogeCloudFormProps)
             name="secretKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.secret_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.secret_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.secret_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.secret_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

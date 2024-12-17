@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type PdnsConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type PowerDNSAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,28 +25,28 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     apiUrl: z.string().url("common.errmsg.url_invalid"),
     apiKey: z
       .string()
-      .min(1, "access.authorization.form.access_key_secret.placeholder")
+      .min(1, "access.form.access_key_secret.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: PdnsConfig = {
+  let config: PowerDNSAccessConfig = {
     apiUrl: "",
     apiKey: "",
   };
-  if (data) config = data.config as PdnsConfig;
+  if (data) config = data.config as PowerDNSAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: data?.id,
       name: data?.name || "",
-      configType: "pdns",
+      configType: "powerdns",
       apiUrl: config.apiUrl,
       apiKey: config.apiKey,
     },
@@ -108,9 +108,9 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -123,7 +123,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -138,7 +138,7 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -153,9 +153,9 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
             name="apiUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.pdns_api_url.label")}</FormLabel>
+                <FormLabel>{t("access.form.pdns_api_url.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.pdns_api_url.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.pdns_api_url.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -168,9 +168,9 @@ const AccessPdnsForm = ({ data, op, onAfterReq }: AccessPdnsFormProps) => {
             name="apiKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.pdns_api_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.pdns_api_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.pdns_api_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.pdns_api_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

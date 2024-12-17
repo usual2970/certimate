@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { readFileContent } from "@/utils/file";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type KubernetesConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type KubernetesAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -32,17 +32,17 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     kubeConfig: z
       .string()
-      .min(0, "access.authorization.form.k8s_kubeconfig.placeholder")
+      .min(0, "access.form.k8s_kubeconfig.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 })),
     kubeConfigFile: z.any().optional(),
   });
 
-  let config: KubernetesConfig & { kubeConfigFile?: string } = {
+  let config: KubernetesAccessConfig & { kubeConfigFile?: string } = {
     kubeConfig: "",
     kubeConfigFile: "",
   };
@@ -126,9 +126,9 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -141,9 +141,9 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
             name="kubeConfig"
             render={({ field }) => (
               <FormItem hidden>
-                <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
+                <FormLabel>{t("access.form.k8s_kubeconfig.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.k8s_kubeconfig.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -156,14 +156,14 @@ const AccessKubernetesForm = ({ data, op, onAfterReq }: AccessKubernetesFormProp
             name="kubeConfigFile"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.k8s_kubeconfig.label")}</FormLabel>
+                <FormLabel>{t("access.form.k8s_kubeconfig.label")}</FormLabel>
                 <FormControl>
                   <div>
                     <Button type={"button"} variant={"secondary"} size={"sm"} className="w-48" onClick={handleSelectFileClick}>
-                      {fileName ? fileName : t("access.authorization.form.k8s_kubeconfig_file.placeholder")}
+                      {fileName ? fileName : t("access.form.k8s_kubeconfig_file.placeholder")}
                     </Button>
                     <Input
-                      placeholder={t("access.authorization.form.k8s_kubeconfig.placeholder")}
+                      placeholder={t("access.form.k8s_kubeconfig.placeholder")}
                       {...field}
                       ref={fileInputRef}
                       className="hidden"

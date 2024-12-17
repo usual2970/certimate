@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { PbErrorData } from "@/domain/base";
-import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type GodaddyConfig } from "@/domain/access";
+import { accessProvidersMap, accessTypeFormSchema, type AccessModel, type GoDaddyAccessConfig } from "@/domain/access";
 import { save } from "@/repository/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -25,24 +25,24 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
     id: z.string().optional(),
     name: z
       .string()
-      .min(1, "access.authorization.form.name.placeholder")
+      .min(1, "access.form.name.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     configType: accessTypeFormSchema,
     apiKey: z
       .string()
-      .min(1, "access.authorization.form.godaddy_api_key.placeholder")
+      .min(1, "access.form.godaddy_api_key.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiSecret: z
       .string()
-      .min(1, "access.authorization.form.godaddy_api_secret.placeholder")
+      .min(1, "access.form.godaddy_api_secret.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
 
-  let config: GodaddyConfig = {
+  let config: GoDaddyAccessConfig = {
     apiKey: "",
     apiSecret: "",
   };
-  if (data) config = data.config as GodaddyConfig;
+  if (data) config = data.config as GoDaddyAccessConfig;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -108,9 +108,9 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.name.label")}</FormLabel>
+                <FormLabel>{t("access.form.name.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.name.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.name.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -123,7 +123,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
             name="id"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -138,7 +138,7 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
             name="configType"
             render={({ field }) => (
               <FormItem className="hidden">
-                <FormLabel>{t("access.authorization.form.config.label")}</FormLabel>
+                <FormLabel>{t("access.form.config.label")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -153,9 +153,9 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
             name="apiKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.godaddy_api_key.label")}</FormLabel>
+                <FormLabel>{t("access.form.godaddy_api_key.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.godaddy_api_key.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.godaddy_api_key.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -168,9 +168,9 @@ const AccessGodaddyForm = ({ data, op, onAfterReq }: AccessGodaddyFormProps) => 
             name="apiSecret"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("access.authorization.form.godaddy_api_secret.label")}</FormLabel>
+                <FormLabel>{t("access.form.godaddy_api_secret.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("access.authorization.form.godaddy_api_secret.placeholder")} {...field} />
+                  <Input placeholder={t("access.form.godaddy_api_secret.placeholder")} {...field} />
                 </FormControl>
 
                 <FormMessage />

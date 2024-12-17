@@ -7,27 +7,27 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	providerAliyunAlb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
-	providerAliyunCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
-	providerAliyunClb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
-	providerAliyunDcdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
-	providerAliyunNlb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
-	providerAliyunOss "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
-	providerBaiduCloudCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
-	providerBytePlusCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
-	providerDogeCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
-	providerHuaweiCloudCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
-	providerHuaweiCloudElb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
+	providerAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	providerAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
+	providerAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
+	providerAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
+	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
+	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
+	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
+	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
+	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
+	providerHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
+	providerHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	providerK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	providerLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
-	providerQiniuCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
+	providerQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	providerSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
-	providerTencentCloudCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
-	providerTencentCloudClb "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
-	providerTencentCloudCos "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
-	providerTencentCloudEcdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
-	providerTencentCloudTeo "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-teo"
-	providerVolcEngineCdn "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
+	providerTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
+	providerTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
+	providerTencentCloudCOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
+	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	providerVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
@@ -47,18 +47,18 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 
 			switch target {
 			case targetAliyunALB:
-				deployer, err := providerAliyunAlb.NewWithLogger(&providerAliyunAlb.AliyunALBDeployerConfig{
+				deployer, err := providerAliyunALB.NewWithLogger(&providerAliyunALB.AliyunALBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunAlb.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
+					ResourceType:    providerAliyunALB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 
 			case targetAliyunCDN:
-				deployer, err := providerAliyunCdn.NewWithLogger(&providerAliyunCdn.AliyunCDNDeployerConfig{
+				deployer, err := providerAliyunCDN.NewWithLogger(&providerAliyunCDN.AliyunCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(deployConfig, "domain"),
@@ -66,18 +66,18 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return deployer, logger, err
 
 			case targetAliyunCLB:
-				deployer, err := providerAliyunClb.NewWithLogger(&providerAliyunClb.AliyunCLBDeployerConfig{
+				deployer, err := providerAliyunCLB.NewWithLogger(&providerAliyunCLB.AliyunCLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunClb.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
+					ResourceType:    providerAliyunCLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
 					ListenerPort:    maps.GetValueAsInt32(deployConfig, "listenerPort"),
 				}, logger)
 				return deployer, logger, err
 
 			case targetAliyunDCDN:
-				deployer, err := providerAliyunDcdn.NewWithLogger(&providerAliyunDcdn.AliyunDCDNDeployerConfig{
+				deployer, err := providerAliyunDCDN.NewWithLogger(&providerAliyunDCDN.AliyunDCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(deployConfig, "domain"),
@@ -85,18 +85,18 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return deployer, logger, err
 
 			case targetAliyunNLB:
-				deployer, err := providerAliyunNlb.NewWithLogger(&providerAliyunNlb.AliyunNLBDeployerConfig{
+				deployer, err := providerAliyunNLB.NewWithLogger(&providerAliyunNLB.AliyunNLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunNlb.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
+					ResourceType:    providerAliyunNLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 
 			case targetAliyunOSS:
-				deployer, err := providerAliyunOss.NewWithLogger(&providerAliyunOss.AliyunOSSDeployerConfig{
+				deployer, err := providerAliyunOSS.NewWithLogger(&providerAliyunOSS.AliyunOSSDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
@@ -117,7 +117,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			deployer, err := providerBaiduCloudCdn.NewWithLogger(&providerBaiduCloudCdn.BaiduCloudCDNDeployerConfig{
+			deployer, err := providerBaiduCloudCDN.NewWithLogger(&providerBaiduCloudCDN.BaiduCloudCDNDeployerConfig{
 				AccessKeyId:     access.AccessKeyId,
 				SecretAccessKey: access.SecretAccessKey,
 				Domain:          maps.GetValueAsString(deployConfig, "domain"),
@@ -132,7 +132,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			deployer, err := providerBytePlusCdn.NewWithLogger(&providerBytePlusCdn.BytePlusCDNDeployerConfig{
+			deployer, err := providerBytePlusCDN.NewWithLogger(&providerBytePlusCDN.BytePlusCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
 				Domain:    maps.GetValueAsString(deployConfig, "domain"),
@@ -140,14 +140,14 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetDogeCloudCdn:
+	case targetDogeCloudCDN:
 		{
 			access := &domain.DogeCloudAccess{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			deployer, err := providerDogeCdn.NewWithLogger(&providerDogeCdn.DogeCloudCDNDeployerConfig{
+			deployer, err := providerDogeCDN.NewWithLogger(&providerDogeCDN.DogeCloudCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
 				Domain:    maps.GetValueAsString(deployConfig, "domain"),
@@ -164,7 +164,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 
 			switch target {
 			case targetHuaweiCloudCDN:
-				deployer, err := providerHuaweiCloudCdn.NewWithLogger(&providerHuaweiCloudCdn.HuaweiCloudCDNDeployerConfig{
+				deployer, err := providerHuaweiCloudCDN.NewWithLogger(&providerHuaweiCloudCDN.HuaweiCloudCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
@@ -173,11 +173,11 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return deployer, logger, err
 
 			case targetHuaweiCloudELB:
-				deployer, err := providerHuaweiCloudElb.NewWithLogger(&providerHuaweiCloudElb.HuaweiCloudELBDeployerConfig{
+				deployer, err := providerHuaweiCloudELB.NewWithLogger(&providerHuaweiCloudELB.HuaweiCloudELBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerHuaweiCloudElb.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
+					ResourceType:    providerHuaweiCloudELB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
 					CertificateId:   maps.GetValueAsString(deployConfig, "certificateId"),
 					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
@@ -223,14 +223,14 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetQiniuCdn:
+	case targetQiniuCDN:
 		{
 			access := &domain.QiniuAccess{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			deployer, err := providerQiniuCdn.NewWithLogger(&providerQiniuCdn.QiniuCDNDeployerConfig{
+			deployer, err := providerQiniuCDN.NewWithLogger(&providerQiniuCDN.QiniuCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
 				Domain:    maps.GetValueAsString(deployConfig, "domain"),
@@ -266,7 +266,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetTencentCDN, targetTencentCLB, targetTencentCOS, targetTencentECDN, targetTencentTEO:
+	case targetTencentCloudCDN, targetTencentCloudCLB, targetTencentCloudCOS, targetTencentCloudECDN, targetTencentCloudEO:
 		{
 			access := &domain.TencentAccess{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -274,28 +274,28 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			}
 
 			switch target {
-			case targetTencentCDN:
-				deployer, err := providerTencentCloudCdn.NewWithLogger(&providerTencentCloudCdn.TencentCloudCDNDeployerConfig{
+			case targetTencentCloudCDN:
+				deployer, err := providerTencentCloudCDN.NewWithLogger(&providerTencentCloudCDN.TencentCloudCDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					Domain:    maps.GetValueAsString(deployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCLB:
-				deployer, err := providerTencentCloudClb.NewWithLogger(&providerTencentCloudClb.TencentCloudCLBDeployerConfig{
+			case targetTencentCloudCLB:
+				deployer, err := providerTencentCloudCLB.NewWithLogger(&providerTencentCloudCLB.TencentCloudCLBDeployerConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
 					Region:         maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:   providerTencentCloudClb.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
+					ResourceType:   providerTencentCloudCLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
 					LoadbalancerId: maps.GetValueAsString(deployConfig, "loadbalancerId"),
 					ListenerId:     maps.GetValueAsString(deployConfig, "listenerId"),
 					Domain:         maps.GetValueAsString(deployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCOS:
-				deployer, err := providerTencentCloudCos.NewWithLogger(&providerTencentCloudCos.TencentCloudCOSDeployerConfig{
+			case targetTencentCloudCOS:
+				deployer, err := providerTencentCloudCOD.NewWithLogger(&providerTencentCloudCOD.TencentCloudCOSDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					Region:    maps.GetValueAsString(deployConfig, "region"),
@@ -304,16 +304,16 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentECDN:
-				deployer, err := providerTencentCloudEcdn.NewWithLogger(&providerTencentCloudEcdn.TencentCloudECDNDeployerConfig{
+			case targetTencentCloudECDN:
+				deployer, err := providerTencentCloudECDN.NewWithLogger(&providerTencentCloudECDN.TencentCloudECDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					Domain:    maps.GetValueAsString(deployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentTEO:
-				deployer, err := providerTencentCloudTeo.NewWithLogger(&providerTencentCloudTeo.TencentCloudTEODeployerConfig{
+			case targetTencentCloudEO:
+				deployer, err := providerTencentCloudEO.NewWithLogger(&providerTencentCloudEO.TencentCloudEODeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(deployConfig, "zoneId"),
@@ -335,7 +335,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 
 			switch target {
 			case targetVolcEngineCDN:
-				deployer, err := providerVolcEngineCdn.NewWithLogger(&providerVolcEngineCdn.VolcEngineCDNDeployerConfig{
+				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
 					Domain:    maps.GetValueAsString(deployConfig, "domain"),

@@ -92,7 +92,7 @@ const DeployToTencentCLB = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "tencent-clb",
+      providerType: "tencentcloud-clb",
       access: config.access as string,
       certificate: config.certificate as string,
       region: config.region as string,
@@ -134,7 +134,7 @@ const DeployToTencentCLB = ({ data }: DeployFormProps) => {
                       </div>
                     }
                     op="add"
-                    outConfigType="tencent"
+                    outConfigType="tencentcloud"
                   />
                 </FormLabel>
                 <FormControl>
@@ -144,7 +144,7 @@ const DeployToTencentCLB = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="tencent-clb"
+                    providerType="tencentcloud-clb"
                   />
                 </FormControl>
 
