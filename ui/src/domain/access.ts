@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { type BaseModel } from "pocketbase";
 
 /*
@@ -44,7 +43,7 @@ export const ACCESS_PROVIDER_TYPES = Object.freeze({
   WEBHOOK: ACCESS_PROVIDER_TYPE_WEBHOOK,
 } as const);
 
-export interface AccessModel extends Omit<BaseModel, "created" | "updated"> {
+export interface AccessModel extends BaseModel {
   name: string;
   configType: string;
   usage: AccessUsages;
@@ -201,28 +200,4 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     [ACCESS_PROVIDER_TYPE_KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
   ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
-);
-
-export const accessTypeFormSchema = z.union(
-  [
-    z.literal("aliyun"),
-    z.literal("tencentcloud"),
-    z.literal("huaweicloud"),
-    z.literal("baiducloud"),
-    z.literal("qiniu"),
-    z.literal("dogecloud"),
-    z.literal("aws"),
-    z.literal("cloudflare"),
-    z.literal("namesilo"),
-    z.literal("godaddy"),
-    z.literal("powerdns"),
-    z.literal("acmehttpreq"),
-    z.literal("local"),
-    z.literal("ssh"),
-    z.literal("webhook"),
-    z.literal("k8s"),
-    z.literal("volcengine"),
-    z.literal("byteplus"),
-  ],
-  { message: "access.form.type.placeholder" }
 );
