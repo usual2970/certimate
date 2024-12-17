@@ -15,17 +15,44 @@ const AccessTypeSelect = memo((props: AccessTypeSelectProps) => {
     label: t(item.name),
   }));
 
+  const renderOption = (key: string) => {
+    const provider = accessProvidersMap.get(key);
+    return (
+      <div className="flex items-center justify-between gap-4 max-w-full overflow-hidden">
+        <Space className="flex-grow max-w-full truncate" size={4}>
+          <Avatar src={provider?.icon} size="small" />
+          <Typography.Text className="leading-loose" ellipsis>
+            {t(provider?.name ?? "")}
+          </Typography.Text>
+        </Space>
+        <div>
+          {provider?.usage === "apply" && (
+            <>
+              <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
+            </>
+          )}
+          {provider?.usage === "deploy" && (
+            <>
+              <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
+            </>
+          )}
+          {provider?.usage === "all" && (
+            <>
+              <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
+              <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Select
       {...props}
       labelRender={({ label, value }) => {
         if (label) {
-          return (
-            <Space className="max-w-full truncate" size={4}>
-              <Avatar src={accessProvidersMap.get(String(value))?.icon} size="small" />
-              {label}
-            </Space>
-          );
+          return renderOption(value as string);
         }
 
         return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
@@ -33,32 +60,7 @@ const AccessTypeSelect = memo((props: AccessTypeSelectProps) => {
       options={options}
       optionFilterProp={undefined}
       optionLabelProp={undefined}
-      optionRender={(option) => (
-        <div className="flex items-center justify-between gap-4 max-w-full overflow-hidden">
-          <Space className="flex-grow max-w-full truncate" size={4}>
-            <Avatar src={accessProvidersMap.get(option.data.value)?.icon} size="small" />
-            <Typography.Text ellipsis>{t(accessProvidersMap.get(option.data.value)?.name ?? "")}</Typography.Text>
-          </Space>
-          <div>
-            {accessProvidersMap.get(option.data.value)?.usage === "apply" && (
-              <>
-                <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
-              </>
-            )}
-            {accessProvidersMap.get(option.data.value)?.usage === "deploy" && (
-              <>
-                <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
-              </>
-            )}
-            {accessProvidersMap.get(option.data.value)?.usage === "all" && (
-              <>
-                <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
-                <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      optionRender={(option) => renderOption(option.data.value)}
     />
   );
 });

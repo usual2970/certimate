@@ -2,7 +2,7 @@
 
 > [!WARNING]
 > The current branch is `next`, which is the development branch for v0.3.x. It is currently unstable and should not be used in production environments.
-> 
+>
 > To access the previous versions, please switch to the `main` branch.
 
 # 🔒Certimate
@@ -76,7 +76,7 @@ password：1234567890
 ## List of Supported Providers
 
 |   Provider    | Registration | Deployment | Remarks                                                                                                     |
-| :-----------: | :----------: | :--------: |-------------------------------------------------------------------------------------------------------------|
+| :-----------: | :----------: | :--------: | ----------------------------------------------------------------------------------------------------------- |
 | Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN,SLB             |
 | Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud COS, CDN, ECDN, CLB, TEO |
 |  Baidu Cloud  |              |     √      | Supports deployment to Baidu Cloud CDN                                                                      |
@@ -87,7 +87,7 @@ password：1234567890
 |      AWS      |      √       |            | Supports domains managed on AWS Route53                                                                     |
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates                   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                                      |
-|   Namesilo    |      √       |            | Supports domains registered on Namesilo                                                                     |
+|   NameSilo    |      √       |            | Supports domains registered on NameSilo                                                                     |
 |   PowerDNS    |      √       |            | Supports domains managed on PowerDNS                                                                        |
 | HTTP Request  |      √       |            | Supports domains which allow managing DNS by HTTP request                                                   |
 | Local Deploy  |              |     √      | Supports deployment to local servers                                                                        |

@@ -6,7 +6,7 @@ import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Tra
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import AccessEditDialog from "@/components/certimate/AccessEditDialog";
+import AccessEditModal from "@/components/access/AccessEditModal";
 import { accessProvidersMap, type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
 
@@ -71,24 +71,24 @@ const AccessList = () => {
       render: (_, record) => (
         <>
           <Space size={0}>
-            <AccessEditDialog
+            <AccessEditModal
+              data={record}
+              mode="edit"
               trigger={
                 <Tooltip title={t("access.action.edit")}>
                   <Button type="link" icon={<PencilIcon size={16} />} />
                 </Tooltip>
               }
-              op="edit"
-              data={record}
             />
 
-            <AccessEditDialog
+            <AccessEditModal
+              data={{ ...record, id: undefined, name: `${record.name}-copy` }}
+              mode="copy"
               trigger={
                 <Tooltip title={t("access.action.copy")}>
                   <Button type="link" icon={<CopyIcon size={16} />} />
                 </Tooltip>
               }
-              op="copy"
-              data={record}
             />
 
             <Tooltip title={t("access.action.delete")}>
@@ -113,7 +113,14 @@ const AccessList = () => {
   const [pageSize, setPageSize] = useState<number>(10);
 
   useEffect(() => {
-    fetchAccesses();
+    fetchAccesses().catch((err) => {
+      if (err instanceof ClientResponseError && err.isAbort) {
+        return;
+      }
+
+      console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+    });
   }, []);
 
   const fetchTableData = useCallback(async () => {
@@ -167,14 +174,14 @@ const AccessList = () => {
       <PageHeader
         title={t("access.page.title")}
         extra={[
-          <AccessEditDialog
+          <AccessEditModal
             key="create"
+            mode="add"
             trigger={
-              <Button key="create" type="primary" icon={<PlusIcon size={16} />}>
+              <Button type="primary" icon={<PlusIcon size={16} />}>
                 {t("access.action.add")}
               </Button>
             }
-            op="add"
           />,
         ]}
       />
@@ -190,6 +197,7 @@ const AccessList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
+          showSizeChanger: true,
           onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);

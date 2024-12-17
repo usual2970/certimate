@@ -222,6 +222,7 @@ const CertificateList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
+          showSizeChanger: true,
           onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);

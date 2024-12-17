@@ -2,8 +2,8 @@
 
 > [!WARNING]
 > 当前分支为 `next`，是 v0.3.x 的开发分支，目前还没有稳定，请勿在生产环境中使用。
-> 
-> 如需访问 v0.2.x 源码，请切换至 `main` 分支。
+>
+> 如需访问之前的版本，请切换至 `main` 分支。
 
 # 🔒Certimate
 
@@ -84,11 +84,11 @@ make local.run
 |   华为云   |      √       |      √       | 可签发在华为云注册的域名；可部署到华为云 CDN、ELB                 |
 |   七牛云   |              |      √       | 可部署到七牛云 CDN                                                |
 |   多吉云   |              |      √       | 可部署到多吉云 CDN                                                |
-|  火山引擎  |       √       |      √       | 可签发在火山引擎注册的域名；可部署到火山引擎 Live、CDN                 |
+|  火山引擎  |      √       |      √       | 可签发在火山引擎注册的域名；可部署到火山引擎 Live、CDN            |
 |    AWS     |      √       |              | 可签发在 AWS Route53 托管的域名                                   |
 | CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书      |
 |  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                       |
-|  Namesilo  |      √       |              | 可签发在 Namesilo 注册的域名                                      |
+|  NameSilo  |      √       |              | 可签发在 NameSilo 注册的域名                                      |
 |  PowerDNS  |      √       |              | 可签发在 PowerDNS 托管的域名                                      |
 | HTTP 请求  |      √       |              | 可签发允许通过 HTTP 请求修改 DNS 的域名                           |
 |  本地部署  |              |      √       | 可部署到本地服务器                                                |
@@ -194,4 +194,3 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 ## 十、Star 趋势图
 
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
-

@@ -39,7 +39,7 @@ const (
 	configTypeCloudflare   = "cloudflare"
 	configTypeGoDaddy      = "godaddy"
 	configTypeHuaweiCloud  = "huaweicloud"
-	configTypeNamesilo     = "namesilo"
+	configTypeNameSilo     = "namesilo"
 	configTypePowerDNS     = "powerdns"
 	configTypeTencentCloud = "tencentcloud"
 	configTypeVolcEngine   = "volcengine"
@@ -219,7 +219,7 @@ func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
 		return NewAws(option), nil
 	case configTypeCloudflare:
 		return NewCloudflare(option), nil
-	case configTypeNamesilo:
+	case configTypeNameSilo:
 		return NewNamesilo(option), nil
 	case configTypeGoDaddy:
 		return NewGodaddy(option), nil

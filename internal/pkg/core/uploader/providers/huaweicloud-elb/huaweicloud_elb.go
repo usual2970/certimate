@@ -26,7 +26,7 @@ type HuaweiCloudELBUploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
-	// 华为云地域。
+	// 华为云区域。
 	Region string `json:"region"`
 }
 

@@ -41,6 +41,7 @@
   "common.errmsg.email_duplicate": "邮箱已存在",
   "common.errmsg.domain_invalid": "请输入正确的域名",
   "common.errmsg.host_invalid": "请输入正确的域名或 IP 地址",
+  "common.errmsg.port_invalid": "请输入正确的端口号",
   "common.errmsg.ip_invalid": "请输入正确的 IP 地址",
   "common.errmsg.url_invalid": "请输入正确的 URL",
 
@@ -68,7 +69,7 @@
   "common.provider.dogecloud.cdn": "多吉云 - 内容分发网络 CDN",
   "common.provider.aws": "AWS",
   "common.provider.cloudflare": "Cloudflare",
-  "common.provider.namesilo": "Namesilo",
+  "common.provider.namesilo": "NameSilo",
   "common.provider.godaddy": "GoDaddy",
   "common.provider.powerdns": "PowerDNS",
   "common.provider.acmehttpreq": "Http Request (ACME Proxy)",

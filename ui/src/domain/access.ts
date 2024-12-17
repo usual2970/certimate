@@ -65,7 +65,7 @@ export interface AccessModel extends Omit<BaseModel, "created" | "updated"> {
       | HuaweiCloudAccessConfig
       | KubernetesAccessConfig
       | LocalAccessConfig
-      | NamesiloAccessConfig
+      | NameSiloAccessConfig
       | PowerDNSAccessConfig
       | QiniuAccessConfig
       | SSHAccessConfig
@@ -119,18 +119,18 @@ export type GoDaddyAccessConfig = {
 };
 
 export type HuaweiCloudAccessConfig = {
-  region: string;
   accessKeyId: string;
   secretAccessKey: string;
+  region?: string;
 };
 
 export type KubernetesAccessConfig = {
-  kubeConfig: string;
+  kubeConfig?: string;
 };
 
 export type LocalAccessConfig = never;
 
-export type NamesiloAccessConfig = {
+export type NameSiloAccessConfig = {
   apiKey: string;
 };
 
@@ -146,11 +146,10 @@ export type QiniuAccessConfig = {
 
 export type SSHAccessConfig = {
   host: string;
-  port: string;
+  port: number;
   username: string;
   password?: string;
   key?: string;
-  keyFile?: string;
   keyPassphrase?: string;
 };
 
@@ -168,12 +167,10 @@ export type WebhookAccessConfig = {
   url: string;
 };
 
-type AccessTypes = (typeof ACCESS_PROVIDER_TYPES)[keyof typeof ACCESS_PROVIDER_TYPES];
-
 type AccessUsages = "apply" | "deploy" | "all";
 
 type AccessProvider = {
-  type: AccessTypes;
+  type: string;
   name: string;
   icon: string;
   usage: AccessUsages;
@@ -203,7 +200,7 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     [ACCESS_PROVIDER_TYPE_WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
-  ].map(([type, name, icon, usage]) => [type as AccessTypes, { type: type as AccessTypes, name, icon, usage: usage as AccessUsages }])
+  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
 );
 
 export const accessTypeFormSchema = z.union(

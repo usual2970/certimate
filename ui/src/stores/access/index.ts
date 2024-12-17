@@ -6,7 +6,7 @@ import { list as listAccess, save as saveAccess, remove as removeAccess } from "
 
 export interface AccessState {
   accesses: AccessModel[];
-  createAccess: (access: AccessModel) => void;
+  createAccess: (access: Omit<AccessModel, "id" | "created" | "udpated" | "deleted">) => void;
   updateAccess: (access: AccessModel) => void;
   deleteAccess: (access: AccessModel) => void;
   fetchAccesses: () => Promise<void>;
@@ -17,22 +17,24 @@ export const useAccessStore = create<AccessState>((set) => {
     accesses: [],
 
     createAccess: async (access) => {
-      access = await saveAccess(access);
+      const record = await saveAccess(access);
 
       set(
         produce((state: AccessState) => {
-          state.accesses.unshift(access);
+          state.accesses.unshift(record);
         })
       );
     },
 
     updateAccess: async (access) => {
-      access = await saveAccess(access);
+      const record = await saveAccess(access);
 
       set(
         produce((state: AccessState) => {
-          const index = state.accesses.findIndex((e) => e.id === access.id);
-          state.accesses[index] = access;
+          const index = state.accesses.findIndex((e) => e.id === record.id);
+          if (index !== -1) {
+            state.accesses[index] = record;
+          }
         })
       );
     },

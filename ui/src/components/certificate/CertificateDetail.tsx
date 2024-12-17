@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { type CertificateModel } from "@/domain/certificate";
 import { saveFiles2Zip } from "@/utils/file";
 
-type CertificateDetailProps = {
+export type CertificateDetailProps = {
   className?: string;
   style?: React.CSSProperties;
   data: CertificateModel;
