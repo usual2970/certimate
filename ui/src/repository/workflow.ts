@@ -39,7 +39,7 @@ export const save = async (record: Record<string, string | boolean | WorkflowNod
   return await getPocketBase().collection(COLLECTION_NAME).create<WorkflowModel>(record);
 };
 
-export const remove = async (record: WorkflowModel) => {
+export const remove = async (record: MaybeModelRecordWithId<WorkflowModel>) => {
   return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
 };
 

@@ -46,7 +46,7 @@ import AccessEditFormTencentCloudConfig from "./AccessEditFormTencentCloudConfig
 import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
 
-type AccessEditFormModelType = Partial<Omit<AccessModel, "id" | "created" | "updated" | "deleted">>;
+type AccessEditFormModelType = Partial<MaybeModelRecord<AccessModel>>;
 
 export type AccessEditFormProps = {
   className?: string;
@@ -79,9 +79,9 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   const formRule = createSchemaFieldRule(formSchema);
   const [form] = Form.useForm<z.infer<typeof formSchema>>();
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? {});
+  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model as Partial<z.infer<typeof formSchema>>);
   useEffect(() => {
-    setInitialValues(model ?? {});
+    setInitialValues(model as Partial<z.infer<typeof formSchema>>);
   }, [model]);
 
   const [configType, setConfigType] = useState(model?.configType);

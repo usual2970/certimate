@@ -6,9 +6,9 @@ import { list as listAccess, save as saveAccess, remove as removeAccess } from "
 
 export interface AccessState {
   accesses: AccessModel[];
-  createAccess: (access: Omit<AccessModel, "id" | "created" | "udpated" | "deleted">) => void;
-  updateAccess: (access: AccessModel) => void;
-  deleteAccess: (access: AccessModel) => void;
+  createAccess: (access: MaybeModelRecord<AccessModel>) => void;
+  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
+  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
   fetchAccesses: () => Promise<void>;
 }
 

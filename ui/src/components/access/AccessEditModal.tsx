@@ -9,7 +9,7 @@ import { getErrMsg } from "@/utils/error";
 import AccessEditForm, { type AccessEditFormInstance } from "./AccessEditForm";
 
 export type AccessEditModalProps = {
-  data?: Partial<AccessModel>;
+  data?: Partial<MaybeModelRecord<AccessModel>>;
   loading?: boolean;
   mode: "add" | "edit" | "copy";
   open?: boolean;
