@@ -4,7 +4,10 @@ import { Avatar, Select, Space, Tag, Typography, type SelectProps } from "antd";
 
 import { accessProvidersMap } from "@/domain/access";
 
-export type AccessTypeSelectProps = Omit<SelectProps, "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender">;
+export type AccessTypeSelectProps = Omit<
+  SelectProps,
+  "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
+>;
 
 const AccessTypeSelect = memo((props: AccessTypeSelectProps) => {
   const { t } = useTranslation();

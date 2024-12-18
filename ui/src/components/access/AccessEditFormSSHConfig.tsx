@@ -66,7 +66,8 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
       .string()
       .min(0, "access.form.ssh_key_passphrase.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
-      .nullish(),
+      .nullish()
+      .refine((v) => !v || form.getFieldValue("key"), { message: t("access.form.ssh_key.placeholder") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
