@@ -51,8 +51,8 @@ const ConsoleLayout = () => {
   }
 
   return (
-    <Layout className="w-full min-h-screen">
-      <Layout.Sider className="max-md:hidden" theme="light" width={256}>
+    <Layout className="min-h-screen" hasSider>
+      <Layout.Sider className="max-md:hidden max-md:static fixed top-0 left-0 h-full z-[9]" width="256px" theme="light">
         <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
           <div className="w-full">
             <SiderMenu />
@@ -63,8 +63,8 @@ const ConsoleLayout = () => {
         </div>
       </Layout.Sider>
 
-      <Layout>
-        <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
+      <Layout className="pl-[256px] max-md:pl-0">
+        <Layout.Header className="sticky top-0 left-0 right-0 p-0 z-[8] shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex items-center justify-between size-full px-4 overflow-hidden">
             <div className="flex items-center gap-4 size-full">
               <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
@@ -99,7 +99,7 @@ const ConsoleLayout = () => {
           </div>
         </Layout.Header>
 
-        <Layout.Content>
+        <Layout.Content style={{ overflow: "initial" }}>
           <div className="p-4">
             <Outlet />
           </div>
