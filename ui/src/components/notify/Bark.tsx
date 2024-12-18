@@ -53,7 +53,7 @@ const Bark = () => {
     const data = getDetailBark();
     setOriginBark({
       id: config.id ?? "",
-      name: "common.provider.bark",
+      name: "common.notifier.bark",
       data,
     });
   }, [config]);
@@ -62,7 +62,7 @@ const Bark = () => {
     const data = getDetailBark();
     setBark({
       id: config.id ?? "",
-      name: "common.provider.bark",
+      name: "common.notifier.bark",
       data,
     });
   }, [config]);

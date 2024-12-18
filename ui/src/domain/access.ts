@@ -164,7 +164,16 @@ export type WebhookAccessConfig = {
   url: string;
 };
 
-type AccessUsages = "apply" | "deploy" | "all";
+export const ACCESS_PROVIDER_USAGE_ALL = "all" as const;
+export const ACCESS_PROVIDER_USAGE_APPLY = "apply" as const;
+export const ACCESS_PROVIDER_USAGE_DEPLOY = "deploy" as const;
+export const ACCESS_PROVIDER_USAGES = Object.freeze({
+  ALL: ACCESS_PROVIDER_USAGE_ALL,
+  APPLY: ACCESS_PROVIDER_USAGE_APPLY,
+  DEPLOY: ACCESS_PROVIDER_USAGE_DEPLOY,
+} as const);
+
+type AccessUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
 
 type AccessProvider = {
   type: string;

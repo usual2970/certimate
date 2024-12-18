@@ -53,7 +53,7 @@ const Telegram = () => {
     const data = getDetailTelegram();
     setOriginTelegram({
       id: config.id ?? "",
-      name: "common.provider.telegram",
+      name: "common.notifier.telegram",
       data,
     });
   }, [config]);
@@ -62,7 +62,7 @@ const Telegram = () => {
     const data = getDetailTelegram();
     setTelegram({
       id: config.id ?? "",
-      name: "common.provider.telegram",
+      name: "common.notifier.telegram",
       data,
     });
   }, [config]);

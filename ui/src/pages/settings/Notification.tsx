@@ -11,7 +11,7 @@ import Email from "@/components/notify/Email";
 import Bark from "@/components/notify/Bark";
 import { NotifyProvider } from "@/providers/notify";
 
-const Notify = () => {
+const Notification = () => {
   const { t } = useTranslation();
 
   return (
@@ -31,49 +31,49 @@ const Notify = () => {
         <div className="border rounded-md p-5 mt-7 shadow-lg">
           <Accordion type={"single"} collapsible={true} className="dark:text-stone-200">
             <AccordionItem value="item-email" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.email")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.email")}</AccordionTrigger>
               <AccordionContent>
                 <Email />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-webhook" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.webhook")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.webhook")}</AccordionTrigger>
               <AccordionContent>
                 <Webhook />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-dingtalk" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.dingtalk")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.dingtalk")}</AccordionTrigger>
               <AccordionContent>
                 <DingTalk />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-lark" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.lark")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.lark")}</AccordionTrigger>
               <AccordionContent>
                 <Lark />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-telegram" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.telegram")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.telegram")}</AccordionTrigger>
               <AccordionContent>
                 <Telegram />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-serverchan" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.serverchan")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.serverchan")}</AccordionTrigger>
               <AccordionContent>
                 <ServerChan />
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-bark" className="dark:border-stone-200">
-              <AccordionTrigger>{t("common.provider.bark")}</AccordionTrigger>
+              <AccordionTrigger>{t("common.notifier.bark")}</AccordionTrigger>
               <AccordionContent>
                 <Bark />
               </AccordionContent>
@@ -85,4 +85,4 @@ const Notify = () => {
   );
 };
 
-export default Notify;
+export default Notification;

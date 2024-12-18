@@ -138,7 +138,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   const handleFormProviderChange = (name: string) => {
     if (name === "configForm") {
       form.setFieldValue("config", configFormInst.getFieldsValue());
-      onModelChange?.(form.getFieldsValue());
+      onModelChange?.(form.getFieldsValue(true));
     }
   };
 
@@ -152,7 +152,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
 
   useImperativeHandle(ref, () => ({
     getFieldsValue: () => {
-      return form.getFieldsValue();
+      return form.getFieldsValue(true);
     },
     resetFields: () => {
       return form.resetFields();
@@ -180,8 +180,6 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
           >
             <AccessTypeSelect disabled={mode !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
           </Form.Item>
-
-          <Form.Item name="config" hidden />
         </Form>
 
         {configForm}

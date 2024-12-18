@@ -36,31 +36,31 @@ type ChannelLabel = {
 export const channels: ChannelLabel[] = [
   {
     name: "dingtalk",
-    label: "common.provider.dingtalk",
+    label: "common.notifier.dingtalk",
   },
   {
     name: "lark",
-    label: "common.provider.lark",
+    label: "common.notifier.lark",
   },
   {
     name: "telegram",
-    label: "common.provider.telegram",
+    label: "common.notifier.telegram",
   },
   {
     name: "webhook",
-    label: "common.provider.webhook",
+    label: "common.notifier.webhook",
   },
   {
     name: "serverchan",
-    label: "common.provider.serverchan",
+    label: "common.notifier.serverchan",
   },
   {
     name: "email",
-    label: "common.provider.email",
+    label: "common.notifier.email",
   },
   {
     name: "bark",
-    label: "common.provider.bark",
+    label: "common.notifier.bark",
   },
 ];
 
