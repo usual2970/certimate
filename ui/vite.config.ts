@@ -12,7 +12,7 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
       // 在构建开始时将要保留的文件或目录移动到临时位置
       filesToPreserve.forEach((file) => {
         const srcPath = path.resolve(__dirname, file);
-        const tempPath = path.resolve(__dirname, `temp_${file}`);
+        const tempPath = path.resolve(__dirname, `node_modules`, `.tmp`, `build_${file}`);
         if (fs.existsSync(srcPath)) {
           fs.moveSync(srcPath, tempPath, { overwrite: true });
         }
@@ -22,7 +22,7 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
       // 在构建完成后将临时位置的文件或目录移回原来的位置
       filesToPreserve.forEach((file) => {
         const srcPath = path.resolve(__dirname, file);
-        const tempPath = path.resolve(__dirname, `temp_${file}`);
+        const tempPath = path.resolve(__dirname, `node_modules`, `.tmp`, `build_${file}`);
         if (fs.existsSync(tempPath)) {
           fs.moveSync(tempPath, srcPath, { overwrite: true });
         }

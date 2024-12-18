@@ -15,7 +15,7 @@ import (
 	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudTEODeployerConfig struct {
+type TencentCloudEODeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -26,25 +26,25 @@ type TencentCloudTEODeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type TencentCloudTEODeployer struct {
-	config      *TencentCloudTEODeployerConfig
+type TencentCloudEODeployer struct {
+	config      *TencentCloudEODeployerConfig
 	logger      deployer.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudTEODeployer)(nil)
+var _ deployer.Deployer = (*TencentCloudEODeployer)(nil)
 
 type wSdkClients struct {
 	ssl *tcSsl.Client
 	teo *tcTeo.Client
 }
 
-func New(config *TencentCloudTEODeployerConfig) (*TencentCloudTEODeployer, error) {
+func New(config *TencentCloudEODeployerConfig) (*TencentCloudEODeployer, error) {
 	return NewWithLogger(config, deployer.NewNilLogger())
 }
 
-func NewWithLogger(config *TencentCloudTEODeployerConfig, logger deployer.Logger) (*TencentCloudTEODeployer, error) {
+func NewWithLogger(config *TencentCloudEODeployerConfig, logger deployer.Logger) (*TencentCloudEODeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -66,7 +66,7 @@ func NewWithLogger(config *TencentCloudTEODeployerConfig, logger deployer.Logger
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudTEODeployer{
+	return &TencentCloudEODeployer{
 		logger:      logger,
 		config:      config,
 		sdkClients:  clients,
@@ -74,7 +74,7 @@ func NewWithLogger(config *TencentCloudTEODeployerConfig, logger deployer.Logger
 	}, nil
 }
 
-func (d *TencentCloudTEODeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *TencentCloudEODeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.ZoneId == "" {
 		return nil, xerrors.New("config `zoneId` is required")
 	}

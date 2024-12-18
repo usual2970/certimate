@@ -10,7 +10,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import AccessEditDialog from "@/components/certimate/AccessEditDialog";
+import AccessEditModal from "@/components/access/AccessEditModal";
 import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
 
@@ -165,14 +165,14 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
               <FormItem>
                 <FormLabel className="flex justify-between w-full">
                   <div>{t("domain.application.form.access.label")}</div>
-                  <AccessEditDialog
+                  <AccessEditModal
+                    mode="add"
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <Plus size={14} />
                         {t("common.button.add")}
                       </div>
                     }
-                    op="add"
                   />
                 </FormLabel>
                 <FormControl>

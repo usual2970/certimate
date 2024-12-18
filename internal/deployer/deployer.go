@@ -13,30 +13,36 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
+/*
+提供商部署目标常量值。
+
+	注意：如果追加新的枚举值，请保持以 ASCII 排序。
+	NOTICE: If you add new enum, please keep ASCII order.
+*/
 const (
-	targetAliyunOSS      = "aliyun-oss"
-	targetAliyunCDN      = "aliyun-cdn"
-	targetAliyunDCDN     = "aliyun-dcdn"
-	targetAliyunCLB      = "aliyun-clb"
-	targetAliyunALB      = "aliyun-alb"
-	targetAliyunNLB      = "aliyun-nlb"
-	targetTencentCDN     = "tencent-cdn"
-	targetTencentECDN    = "tencent-ecdn"
-	targetTencentCLB     = "tencent-clb"
-	targetTencentCOS     = "tencent-cos"
-	targetTencentTEO     = "tencent-teo"
-	targetHuaweiCloudCDN = "huaweicloud-cdn"
-	targetHuaweiCloudELB = "huaweicloud-elb"
-	targetBaiduCloudCDN  = "baiducloud-cdn"
-	targetVolcEngineLive = "volcengine-live"
-	targetVolcEngineCDN  = "volcengine-cdn"
-	targetBytePlusCDN    = "byteplus-cdn"
-	targetQiniuCdn       = "qiniu-cdn"
-	targetDogeCloudCdn   = "dogecloud-cdn"
-	targetLocal          = "local"
-	targetSSH            = "ssh"
-	targetWebhook        = "webhook"
-	targetK8sSecret      = "k8s-secret"
+	targetAliyunALB        = "aliyun-alb"
+	targetAliyunCDN        = "aliyun-cdn"
+	targetAliyunCLB        = "aliyun-clb"
+	targetAliyunDCDN       = "aliyun-dcdn"
+	targetAliyunNLB        = "aliyun-nlb"
+	targetAliyunOSS        = "aliyun-oss"
+	targetBaiduCloudCDN    = "baiducloud-cdn"
+	targetBytePlusCDN      = "byteplus-cdn"
+	targetDogeCloudCDN     = "dogecloud-cdn"
+	targetHuaweiCloudCDN   = "huaweicloud-cdn"
+	targetHuaweiCloudELB   = "huaweicloud-elb"
+	targetK8sSecret        = "k8s-secret"
+	targetLocal            = "local"
+	targetQiniuCDN         = "qiniu-cdn"
+	targetSSH              = "ssh"
+	targetTencentCloudCDN  = "tencentcloud-cdn"
+	targetTencentCloudCLB  = "tencentcloud-clb"
+	targetTencentCloudCOS  = "tencentcloud-cos"
+	targetTencentCloudECDN = "tencentcloud-ecdn"
+	targetTencentCloudEO   = "tencentcloud-eo"
+	targetVolcEngineCDN    = "volcengine-cdn"
+	targetVolcEngineLive   = "volcengine-live"
+	targetWebhook          = "webhook"
 )
 
 type DeployerOption struct {
@@ -128,15 +134,15 @@ func getWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, 
 		return NewAliyunALBDeployer(option)
 	case targetAliyunNLB:
 		return NewAliyunNLBDeployer(option)
-	case targetTencentCDN:
+	case targetTencentCloudCDN:
 		return NewTencentCDNDeployer(option)
-	case targetTencentECDN:
+	case targetTencentCloudECDN:
 		return NewTencentECDNDeployer(option)
-	case targetTencentCLB:
+	case targetTencentCloudCLB:
 		return NewTencentCLBDeployer(option)
-	case targetTencentCOS:
+	case targetTencentCloudCOS:
 		return NewTencentCOSDeployer(option)
-	case targetTencentTEO:
+	case targetTencentCloudEO:
 		return NewTencentTEODeployer(option)
 	case targetHuaweiCloudCDN:
 		return NewHuaweiCloudCDNDeployer(option)
@@ -144,9 +150,9 @@ func getWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, 
 		return NewHuaweiCloudELBDeployer(option)
 	case targetBaiduCloudCDN:
 		return NewBaiduCloudCDNDeployer(option)
-	case targetQiniuCdn:
+	case targetQiniuCDN:
 		return NewQiniuCDNDeployer(option)
-	case targetDogeCloudCdn:
+	case targetDogeCloudCDN:
 		return NewDogeCloudCDNDeployer(option)
 	case targetLocal:
 		return NewLocalDeployer(option)

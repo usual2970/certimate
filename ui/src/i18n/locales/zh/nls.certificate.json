@@ -6,7 +6,7 @@
   "certificate.action.view": "查看证书",
   "certificate.action.download": "下载证书",
 
-  "certificate.props.domain": "名称",
+  "certificate.props.san": "名称",
   "certificate.props.expiry": "有效期限",
   "certificate.props.expiry.left_days": "{{left}} / {{total}} 天",
   "certificate.props.expiry.expired": "已到期",

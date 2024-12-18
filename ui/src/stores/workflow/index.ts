@@ -36,14 +36,14 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     id: "",
     name: "placeholder",
     type: WorkflowNodeType.Start,
-  },
+  } as WorkflowModel,
   initialized: false,
   init: async (id?: string) => {
-    let data: WorkflowModel = {
+    let data = {
       id: "",
       name: "placeholder",
       type: "auto",
-    };
+    } as WorkflowModel;
 
     if (!id) {
       data = initWorkflow();

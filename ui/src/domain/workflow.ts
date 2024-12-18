@@ -1,6 +1,5 @@
 import { produce } from "immer";
 import { nanoid } from "nanoid";
-import { type BaseModel } from "pocketbase";
 
 import i18n from "@/i18n";
 import { deployTargets, KVType } from "./domain";
@@ -28,7 +27,7 @@ export type WorkflowOutput = {
   error: string;
 };
 
-export interface WorkflowModel extends Omit<BaseModel, "created" | "updated"> {
+export interface WorkflowModel extends BaseModel {
   name: string;
   description?: string;
   type: string;
@@ -152,6 +151,8 @@ export const initWorkflow = (): WorkflowModel => {
     crontab: "0 0 * * *",
     enabled: false,
     draft: rs,
+    created: new Date().toUTCString(),
+    updated: new Date().toUTCString(),
   };
 };
 

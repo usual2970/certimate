@@ -4,15 +4,16 @@ import { BookOpen as BookOpenIcon } from "lucide-react";
 
 import { version } from "@/domain/version";
 
-type VersionProps = {
+export type VersionProps = {
   className?: string;
+  style?: React.CSSProperties;
 };
 
-const Version = ({ className }: VersionProps) => {
+const Version = ({ className, style }: VersionProps) => {
   const { t } = useTranslation();
 
   return (
-    <Space className={className} size={4}>
+    <Space className={className} style={style} size={4}>
       <Typography.Link type="secondary" href="https://docs.certimate.me" target="_blank">
         <div className="flex items-center justify-center space-x-1">
           <BookOpenIcon size={16} />

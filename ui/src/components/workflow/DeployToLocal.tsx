@@ -16,7 +16,7 @@ import { WorkflowNode } from "@/domain/workflow";
 import { Textarea } from "../ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -211,15 +211,15 @@ Remove-Item -Path "$pfxPath" -Force
               <FormLabel className="flex justify-between">
                 <div>{t("domain.deployment.form.access.label")}</div>
 
-                <AccessEditDialog
+                <AccessEditModal
+                  data={{ configType: "local" }}
+                  mode="add"
                   trigger={
                     <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                       <Plus size={14} />
                       {t("common.button.add")}
                     </div>
                   }
-                  op="add"
-                  outConfigType="local"
                 />
               </FormLabel>
               <FormControl>

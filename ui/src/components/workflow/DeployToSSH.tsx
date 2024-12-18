@@ -15,7 +15,7 @@ import i18n from "@/i18n";
 import { WorkflowNode } from "@/domain/workflow";
 import { Textarea } from "../ui/textarea";
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -129,15 +129,15 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
               <FormLabel className="flex justify-between">
                 <div>{t("domain.deployment.form.access.label")}</div>
 
-                <AccessEditDialog
+                <AccessEditModal
+                  data={{ configType: "ssh" }}
+                  mode="add"
                   trigger={
                     <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                       <Plus size={14} />
                       {t("common.button.add")}
                     </div>
                   }
-                  op="add"
-                  outConfigType="ssh"
                 />
               </FormLabel>
               <FormControl>

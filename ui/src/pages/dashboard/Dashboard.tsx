@@ -14,6 +14,7 @@ import { ClientResponseError } from "pocketbase";
 
 import { type Statistics } from "@/domain/statistics";
 import { get as getStatistics } from "@/api/statistics";
+import { getErrMsg } from "@/utils/error";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const Dashboard = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     } finally {
       setLoading(false);
     }

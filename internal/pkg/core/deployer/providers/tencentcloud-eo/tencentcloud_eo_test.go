@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-teo"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_"
+	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -35,12 +35,12 @@ func init() {
 Shell command to run this test:
 
 	go test -v tencentcloud_cdn_test.go -args \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_SECRETID="your-secret-id" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_ZONEID="your-zone-id" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDETEO_DOMAIN="example.com"
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_SECRETID="your-secret-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_SECRETKEY="your-secret-key" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_ZONEID="your-zone-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudTEODeployerConfig{
+		deployer, err := provider.New(&provider.TencentCloudEODeployerConfig{
 			SecretId:  fSecretId,
 			SecretKey: fSecretKey,
 			ZoneId:    fZoneId,

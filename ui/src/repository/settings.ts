@@ -1,4 +1,4 @@
-import { SettingsModel } from "@/domain/settings";
+import { type SettingsModel } from "@/domain/settings";
 import { getPocketBase } from "./pocketbase";
 
 export const get = async <T>(name: string) => {
@@ -13,7 +13,7 @@ export const get = async <T>(name: string) => {
   }
 };
 
-export const save = async <T>(record: SettingsModel<T>) => {
+export const save = async <T>(record: MaybeModelRecordWithId<SettingsModel<T>>) => {
   if (record.id) {
     return await getPocketBase().collection("settings").update<SettingsModel<T>>(record.id, record);
   }

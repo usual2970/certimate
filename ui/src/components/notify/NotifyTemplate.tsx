@@ -28,7 +28,7 @@ const NotifyTemplate = () => {
   }, []);
 
   const handleTitleChange = (val: string) => {
-    const template = templates[0];
+    const template = templates?.[0] ?? {};
 
     setTemplates([
       {
@@ -39,7 +39,7 @@ const NotifyTemplate = () => {
   };
 
   const handleContentChange = (val: string) => {
-    const template = templates[0];
+    const template = templates?.[0] ?? {};
 
     setTemplates([
       {
@@ -71,7 +71,7 @@ const NotifyTemplate = () => {
   return (
     <div>
       <Input
-        value={templates[0].title}
+        value={templates?.[0]?.title}
         onChange={(e) => {
           handleTitleChange(e.target.value);
         }}
@@ -81,7 +81,7 @@ const NotifyTemplate = () => {
 
       <Textarea
         className="mt-2"
-        value={templates[0].content}
+        value={templates?.[0]?.content}
         onChange={(e) => {
           handleContentChange(e.target.value);
         }}

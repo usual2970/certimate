@@ -1,6 +1,4 @@
-import { type BaseModel } from "pocketbase";
-
-export interface SettingsModel<T> extends Omit<BaseModel, "created" | "updated"> {
+export interface SettingsModel<T> extends BaseModel {
   name: string;
   content: T;
 }

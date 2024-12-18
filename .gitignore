@@ -15,8 +15,6 @@ vendor
 pb_data
 build
 main
-/ui/dist/*
-!/ui/dist/.gitkeep
-./dist
-./certimate
+/dist
 /docker/data
+/certimate
