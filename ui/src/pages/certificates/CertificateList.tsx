@@ -10,6 +10,7 @@ import { ClientResponseError } from "pocketbase";
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { CertificateModel } from "@/domain/certificate";
 import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
+import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
   const navigate = useNavigate();
@@ -195,7 +196,7 @@ const CertificateList = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     } finally {
       setLoading(false);
     }

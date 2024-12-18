@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import Version from "@/components/Version";
-import { useTheme } from "@/hooks";
+import { useBrowserTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const ConsoleLayout = () => {
@@ -182,7 +182,7 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
 const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { t } = useTranslation();
 
-  const { theme, setThemeMode } = useTheme();
+  const { theme, setThemeMode } = useBrowserTheme();
 
   const items: Required<MenuProps>["items"] = [
     ["light", t("common.theme.light")],

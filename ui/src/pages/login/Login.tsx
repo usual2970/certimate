@@ -6,6 +6,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { getPocketBase } from "@/repository/pocketbase";
+import { getErrMsg } from "@/utils/error";
 
 const Login = () => {
   const navigage = useNavigate();
@@ -29,7 +30,7 @@ const Login = () => {
       await getPocketBase().admins.authWithPassword(fields.username, fields.password);
       navigage("/");
     } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     } finally {
       setFormPending(false);
     }

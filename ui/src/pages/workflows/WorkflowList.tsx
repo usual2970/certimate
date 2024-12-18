@@ -25,6 +25,7 @@ import { ClientResponseError } from "pocketbase";
 
 import { WorkflowModel } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
+import { getErrMsg } from "@/utils/error";
 
 const WorkflowList = () => {
   const navigate = useNavigate();
@@ -227,7 +228,7 @@ const WorkflowList = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     } finally {
       setLoading(false);
     }
@@ -255,7 +256,7 @@ const WorkflowList = () => {
       }
     } catch (err) {
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     }
   };
 
@@ -271,7 +272,7 @@ const WorkflowList = () => {
           }
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
         }
       },
     });

@@ -9,6 +9,7 @@ import { ClientResponseError } from "pocketbase";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import { accessProvidersMap, type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
+import { getErrMsg } from "@/utils/error";
 
 const AccessList = () => {
   const { t } = useTranslation();
@@ -119,7 +120,7 @@ const AccessList = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     });
   }, []);
 
@@ -140,7 +141,7 @@ const AccessList = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
     } finally {
       setLoading(false);
     }
@@ -160,7 +161,7 @@ const AccessList = () => {
           await deleteAccess(data);
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
         }
       },
     });

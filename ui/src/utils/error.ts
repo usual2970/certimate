@@ -11,5 +11,5 @@ export const getErrMsg = (error: unknown): string => {
     return error;
   }
 
-  return "Something went wrong";
+  return String(error ?? "Unknown error");
 };

@@ -5,6 +5,7 @@ import { Modal, notification } from "antd";
 
 import { type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
+import { getErrMsg } from "@/utils/error";
 import AccessEditForm, { type AccessEditFormInstance } from "./AccessEditForm";
 
 export type AccessEditModalProps = {
@@ -72,7 +73,7 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
 
       setOpen(false);
     } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
 
       throw err;
     } finally {
