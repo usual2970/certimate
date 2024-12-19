@@ -54,7 +54,7 @@ const AccessEditFormQiniuConfig = ({ form, disabled, loading, model, onModelChan
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.qiniu_access_key.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.qiniu_access_key.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.qiniu_access_key.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -63,7 +63,7 @@ const AccessEditFormQiniuConfig = ({ form, disabled, loading, model, onModelChan
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.qiniu_secret_key.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.qiniu_secret_key.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.qiniu_secret_key.placeholder")} />
       </Form.Item>
     </Form>
   );

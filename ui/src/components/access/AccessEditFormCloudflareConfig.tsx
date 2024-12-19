@@ -49,7 +49,7 @@ const AccessEditFormCloudflareConfig = ({ form, disabled, loading, model, onMode
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.cloudflare_dns_api_token.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.cloudflare_dns_api_token.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.cloudflare_dns_api_token.placeholder")} />
       </Form.Item>
     </Form>
   );

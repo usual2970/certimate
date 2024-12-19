@@ -49,7 +49,7 @@ const AccessEditFormNameSiloConfig = ({ form, disabled, loading, model, onModelC
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.namesilo_api_key.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.namesilo_api_key.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.namesilo_api_key.placeholder")} />
       </Form.Item>
     </Form>
   );

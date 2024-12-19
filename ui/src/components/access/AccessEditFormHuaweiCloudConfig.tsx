@@ -63,7 +63,7 @@ const AccessEditFormHuaweiCloudConfig = ({ form, disabled, loading, model, onMod
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_access_key_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.huaweicloud_access_key_id.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.huaweicloud_access_key_id.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -72,7 +72,7 @@ const AccessEditFormHuaweiCloudConfig = ({ form, disabled, loading, model, onMod
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_secret_access_key.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.huaweicloud_secret_access_key.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.huaweicloud_secret_access_key.placeholder")} />
       </Form.Item>
 
       <Form.Item

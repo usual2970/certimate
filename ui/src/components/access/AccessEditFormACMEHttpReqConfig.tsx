@@ -85,7 +85,7 @@ const AccessEditFormACMEHttpReqConfig = ({ form, disabled, loading, model, onMod
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmehttpreq_username.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.acmehttpreq_username.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.acmehttpreq_username.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -94,7 +94,7 @@ const AccessEditFormACMEHttpReqConfig = ({ form, disabled, loading, model, onMod
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmehttpreq_password.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.acmehttpreq_password.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.acmehttpreq_password.placeholder")} />
       </Form.Item>
     </Form>
   );

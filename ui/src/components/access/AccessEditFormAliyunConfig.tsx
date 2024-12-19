@@ -54,7 +54,7 @@ const AccessEditFormAliyunConfig = ({ form, disabled, loading, model, onModelCha
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_access_key_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.aliyun_access_key_id.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.aliyun_access_key_id.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -63,7 +63,7 @@ const AccessEditFormAliyunConfig = ({ form, disabled, loading, model, onModelCha
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_access_key_secret.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.aliyun_access_key_secret.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.aliyun_access_key_secret.placeholder")} />
       </Form.Item>
     </Form>
   );

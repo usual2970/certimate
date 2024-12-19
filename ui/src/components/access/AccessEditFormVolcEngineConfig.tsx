@@ -54,7 +54,7 @@ const AccessEditFormVolcEngineConfig = ({ form, disabled, loading, model, onMode
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.volcengine_access_key_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.volcengine_access_key_id.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.volcengine_access_key_id.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -63,7 +63,7 @@ const AccessEditFormVolcEngineConfig = ({ form, disabled, loading, model, onMode
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.volcengine_secret_access_key.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.volcengine_secret_access_key.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.volcengine_secret_access_key.placeholder")} />
       </Form.Item>
     </Form>
   );

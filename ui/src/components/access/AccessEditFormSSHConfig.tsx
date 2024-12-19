@@ -114,7 +114,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
       <div className="flex space-x-2">
         <div className="w-1/2">
           <Form.Item name="username" label={t("access.form.ssh_username.label")} rules={[formRule]}>
-            <Input placeholder={t("access.form.ssh_username.placeholder")} />
+            <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
           </Form.Item>
         </div>
 
@@ -125,7 +125,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_password.tooltip") }}></span>}
           >
-            <Input.Password placeholder={t("access.form.ssh_password.placeholder")} />
+            <Input.Password autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
           </Form.Item>
         </div>
       </div>
@@ -138,7 +138,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}
           >
-            <Input.TextArea hidden placeholder={t("access.form.ssh_key.placeholder")} value={form.getFieldValue("key")} />
+            <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.ssh_key.placeholder")} value={form.getFieldValue("key")} />
             <Upload beforeUpload={() => false} fileList={keyFileList} maxCount={1} onChange={handleUploadChange}>
               <Button icon={<UploadIcon size={16} />}>{t("access.form.ssh_key.upload")}</Button>
             </Upload>
@@ -152,7 +152,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key_passphrase.tooltip") }}></span>}
           >
-            <Input.Password placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
+            <Input.Password autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
           </Form.Item>
         </div>
       </div>

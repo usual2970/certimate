@@ -54,7 +54,7 @@ const AccessEditFormGoDaddyConfig = ({ form, disabled, loading, model, onModelCh
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.godaddy_api_key.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.godaddy_api_key.placeholder")} />
+        <Input autoComplete="new-password" placeholder={t("access.form.godaddy_api_key.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -63,7 +63,7 @@ const AccessEditFormGoDaddyConfig = ({ form, disabled, loading, model, onModelCh
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.godaddy_api_secret.tooltip") }}></span>}
       >
-        <Input.Password placeholder={t("access.form.godaddy_api_secret.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.godaddy_api_secret.placeholder")} />
       </Form.Item>
     </Form>
   );
