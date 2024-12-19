@@ -51,6 +51,7 @@ const CertificateList = () => {
             label: <Radio checked={filters["state"] === key}>{t(label)}</Radio>,
             onClick: () => {
               if (filters["state"] !== key) {
+                setPage(1);
                 setFilters((prev) => ({ ...prev, state: key }));
                 setSelectedKeys([key]);
               }
@@ -61,6 +62,7 @@ const CertificateList = () => {
         });
 
         const handleResetClick = () => {
+          setPage(1);
           setFilters((prev) => ({ ...prev, state: undefined }));
           setSelectedKeys([]);
           clearFilters?.();

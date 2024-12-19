@@ -1,4 +1,5 @@
 import path from "path";
+import legacy from "@vitejs/plugin-legacy";
 import react from "@vitejs/plugin-react";
 import { defineConfig, Plugin } from "vite";
 
@@ -32,7 +33,13 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
 };
 
 export default defineConfig({
-  plugins: [react(), preserveFilesPlugin(["dist/.gitkeep"])],
+  plugins: [
+    react({}),
+    legacy({
+      targets: ["defaults", "not IE 11"],
+    }),
+    preserveFilesPlugin(["dist/.gitkeep"]),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
