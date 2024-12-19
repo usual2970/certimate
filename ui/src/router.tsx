@@ -9,7 +9,7 @@ import WorkflowList from "./pages/workflows/WorkflowList";
 import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import CertificateList from "./pages/certificates/CertificateList";
 import Settings from "./pages/settings/Settings";
-import SettingsAccount from "./pages/settings/Account";
+import SettingsAccount from "./pages/settings/SettingsAccount";
 import SettingsPassword from "./pages/settings/Password";
 import SettingsNotification from "./pages/settings/Notification";
 import SettingsSSLProvider from "./pages/settings/SSLProvider";

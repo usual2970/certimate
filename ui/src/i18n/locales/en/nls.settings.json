@@ -4,11 +4,8 @@
   "settings.account.relogin.message": "Please login again",
 
   "settings.account.tab": "Account",
-  "settings.account.email.label": "Email",
-  "settings.account.email.placeholder": "Please enter email",
-  "settings.account.email.errmsg.invalid": "Please enter a valid email address",
-  "settings.account.email.changed.message": "Account email altered successfully",
-  "settings.account.email.failed.message": "Account email alteration failed",
+  "settings.account.form.email.label": "Email",
+  "settings.account.form.email.placeholder": "Please enter email",
 
   "settings.password.tab": "Password",
   "settings.password.current_password.label": "Current Password",

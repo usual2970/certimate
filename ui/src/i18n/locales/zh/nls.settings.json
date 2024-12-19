@@ -3,14 +3,11 @@
 
   "settings.account.relogin.message": "请重新登录",
 
-  "settings.account.tab": "账号",
-  "settings.account.email.label": "登录邮箱",
-  "settings.account.email.errmsg.invalid": "请输入正确的邮箱地址",
-  "settings.account.email.placeholder": "请输入邮箱",
-  "settings.account.email.changed.message": "修改账户邮箱成功",
-  "settings.account.email.failed.message": "修改账户邮箱失败",
+  "settings.account.tab": "登录账号",
+  "settings.account.form.email.label": "登录邮箱",
+  "settings.account.form.email.placeholder": "请输入邮箱",
 
-  "settings.password.tab": "密码",
+  "settings.password.tab": "登录密码",
   "settings.password.password.errmsg.length": "密码至少10个字符",
   "settings.password.password.errmsg.not_matched": "两次密码不一致",
   "settings.password.current_password.label": "当前密码",

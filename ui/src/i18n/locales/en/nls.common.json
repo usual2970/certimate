@@ -36,8 +36,8 @@
   "common.theme.system": "System",
 
   "common.errmsg.string_max": "Please enter no more than {{max}} characters",
-  "common.errmsg.email_invalid": "Please enter a valid email address",
   "common.errmsg.email_empty": "Please enter email",
+  "common.errmsg.email_invalid": "Please enter a valid email address",
   "common.errmsg.email_duplicate": "Email already exists",
   "common.errmsg.domain_invalid": "Please enter domain",
   "common.errmsg.host_invalid": "Please enter a valid domain name or IP",
