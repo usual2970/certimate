@@ -17,7 +17,7 @@ const SettingsAccount = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const formSchema = z.object({
-    username: z.string().email(t("common.errmsg.email_invalid")),
+    username: z.string({ message: "settings.account.form.email.placeholder" }).email({ message: t("common.errmsg.email_invalid") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const [form] = Form.useForm<z.infer<typeof formSchema>>();
@@ -32,12 +32,12 @@ const SettingsAccount = () => {
     setInitialChanged(form.getFieldValue("username") !== initialValues.username);
   };
 
-  const handleFormFinish = async (values: z.infer<typeof formSchema>) => {
+  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
     setFormPending(true);
 
     try {
       await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
-        email: values.username,
+        email: fields.username,
       });
 
       messageApi.success(t("common.text.operation_succeeded"));

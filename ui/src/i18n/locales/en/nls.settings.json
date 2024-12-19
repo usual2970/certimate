@@ -1,23 +1,19 @@
 ﻿{
   "settings.page.title": "Settings",
 
-  "settings.account.relogin.message": "Please login again",
-
   "settings.account.tab": "Account",
   "settings.account.form.email.label": "Email",
   "settings.account.form.email.placeholder": "Please enter email",
 
   "settings.password.tab": "Password",
-  "settings.password.current_password.label": "Current Password",
-  "settings.password.current_password.placeholder": "Please enter the current password",
-  "settings.password.new_password.label": "New Password",
-  "settings.password.new_password.placeholder": "Please enter the new password",
-  "settings.password.confirm_password.label": "Confirm Password",
-  "settings.password.confirm_password.placeholder": "Please enter the new password again",
-  "settings.password.password.errmsg.length": "Password should be at least 10 characters",
-  "settings.password.password.errmsg.not_matched": "Passwords do not match",
-  "settings.password.changed.message": "Password changed successfully",
-  "settings.password.failed.message": "Password change failed",
+  "settings.password.form.old_password.label": "Current Password",
+  "settings.password.form.old_password.placeholder": "Please enter the current password",
+  "settings.password.form.new_password.label": "New Password",
+  "settings.password.form.new_password.placeholder": "Please enter the new password",
+  "settings.password.form.confirm_password.label": "Confirm Password",
+  "settings.password.form.confirm_password.placeholder": "Please enter the new password again",
+  "settings.password.form.password.errmsg.invalid": "Password should be at least 10 characters",
+  "settings.password.form.password.errmsg.not_matched": "Passwords do not match",
 
   "settings.notification.tab": "Notification",
   "settings.notification.template.label": "Template",

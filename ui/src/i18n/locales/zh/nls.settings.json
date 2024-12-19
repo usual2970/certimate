@@ -1,23 +1,19 @@
 ﻿{
   "settings.page.title": "系统设置",
 
-  "settings.account.relogin.message": "请重新登录",
-
   "settings.account.tab": "登录账号",
   "settings.account.form.email.label": "登录邮箱",
   "settings.account.form.email.placeholder": "请输入邮箱",
 
   "settings.password.tab": "登录密码",
-  "settings.password.password.errmsg.length": "密码至少10个字符",
-  "settings.password.password.errmsg.not_matched": "两次密码不一致",
-  "settings.password.current_password.label": "当前密码",
-  "settings.password.current_password.placeholder": "请输入旧密码",
-  "settings.password.new_password.label": "新密码",
-  "settings.password.new_password.placeholder": "请输入新密码",
-  "settings.password.confirm_password.label": "确认密码",
-  "settings.password.confirm_password.placeholder": "请再次输入新密码",
-  "settings.password.changed.message": "修改密码成功",
-  "settings.password.failed.message": "修改密码失败",
+  "settings.password.form.old_password.label": "当前密码",
+  "settings.password.form.old_password.placeholder": "请输入旧密码",
+  "settings.password.form.new_password.label": "新密码",
+  "settings.password.form.new_password.placeholder": "请输入新密码",
+  "settings.password.form.confirm_password.label": "确认密码",
+  "settings.password.form.confirm_password.placeholder": "请再次输入新密码",
+  "settings.password.form.password.errmsg.invalid": "密码至少 10 个字符",
+  "settings.password.form.password.errmsg.not_matched": "两次密码不一致",
 
   "settings.notification.tab": "消息推送",
   "settings.notification.template.label": "内容模板",
