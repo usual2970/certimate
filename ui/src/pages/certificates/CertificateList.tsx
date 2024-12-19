@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
@@ -21,8 +22,6 @@ const CertificateList = () => {
   const { token: themeToken } = theme.useToken();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const tableColumns: TableProps<CertificateModel>["columns"] = [
     {
@@ -177,34 +176,30 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const fetchTableData = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const resp = await listCertificate({
+  const { loading } = useRequest(
+    () => {
+      return listCertificate({
         page: page,
         perPage: pageSize,
         state: filters["state"] as CertificateListReq["state"],
       });
+    },
+    {
+      refreshDeps: [filters, page, pageSize],
+      onSuccess: (data) => {
+        setTableData(data.items);
+        setTableTotal(data.totalItems);
+      },
+      onError: (err) => {
+        if (err instanceof ClientResponseError && err.isAbort) {
+          return;
+        }
 
-      setTableData(resp.items);
-      setTableTotal(resp.totalItems);
-    } catch (err) {
-      if (err instanceof ClientResponseError && err.isAbort) {
-        return;
-      }
-
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
-    } finally {
-      setLoading(false);
+        console.error(err);
+        notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      },
     }
-  }, [filters, page, pageSize]);
-
-  useEffect(() => {
-    fetchTableData();
-  }, [fetchTableData]);
+  );
 
   return (
     <>

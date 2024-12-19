@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRequest } from "ahooks";
 import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
@@ -18,8 +19,6 @@ const AccessList = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { accesses, fetchAccesses, deleteAccess } = useAccessStore();
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const tableColumns: TableProps<AccessModel>["columns"] = [
     {
@@ -124,32 +123,24 @@ const AccessList = () => {
     });
   }, []);
 
-  const fetchTableData = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
+  const { loading } = useRequest(
+    () => {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       const items = accesses.slice(startIndex, endIndex);
-
-      setTableData(items);
-      setTableTotal(accesses.length);
-    } catch (err) {
-      if (err instanceof ClientResponseError && err.isAbort) {
-        return;
-      }
-
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
-    } finally {
-      setLoading(false);
+      return Promise.resolve({
+        items,
+        totalItems: accesses.length,
+      });
+    },
+    {
+      refreshDeps: [accesses, page, pageSize],
+      onSuccess: (data) => {
+        setTableData(data.items);
+        setTableTotal(data.totalItems);
+      },
     }
-  }, [page, pageSize, accesses]);
-
-  useEffect(() => {
-    fetchTableData();
-  }, [fetchTableData]);
+  );
 
   const handleDeleteClick = async (data: AccessModel) => {
     modalApi.confirm({
