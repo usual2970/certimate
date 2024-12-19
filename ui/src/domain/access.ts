@@ -41,15 +41,24 @@ export const ACCESS_PROVIDER_TYPES = Object.freeze({
   WEBHOOK: ACCESS_PROVIDER_TYPE_WEBHOOK,
 } as const);
 
+export const ACCESS_PROVIDER_USAGE_ALL = "all" as const;
+export const ACCESS_PROVIDER_USAGE_APPLY = "apply" as const;
+export const ACCESS_PROVIDER_USAGE_DEPLOY = "deploy" as const;
+export const ACCESS_PROVIDER_USAGES = Object.freeze({
+  ALL: ACCESS_PROVIDER_USAGE_ALL,
+  APPLY: ACCESS_PROVIDER_USAGE_APPLY,
+  DEPLOY: ACCESS_PROVIDER_USAGE_DEPLOY,
+} as const);
+
+// #region AccessModel
 export interface AccessModel extends BaseModel {
   name: string;
   configType: string;
   usage: AccessUsages;
   config: /*
-  注意：如果追加新的类型，请保持以 ASCII 排序。
-  NOTICE: If you add new type, please keep ASCII order.
- */
-  Record<string, unknown> &
+    注意：如果追加新的类型，请保持以 ASCII 排序。
+    NOTICE: If you add new type, please keep ASCII order.
+  */ Record<string, unknown> &
     (
       | ACMEHttpReqAccessConfig
       | AliyunAccessConfig
@@ -71,7 +80,9 @@ export interface AccessModel extends BaseModel {
       | WebhookAccessConfig
     );
 }
+// #endregion
 
+// #region AccessConfig
 export type ACMEHttpReqAccessConfig = {
   endpoint: string;
   mode?: string;
@@ -163,19 +174,12 @@ export type VolcEngineAccessConfig = {
 export type WebhookAccessConfig = {
   url: string;
 };
+// #endregion
 
-export const ACCESS_PROVIDER_USAGE_ALL = "all" as const;
-export const ACCESS_PROVIDER_USAGE_APPLY = "apply" as const;
-export const ACCESS_PROVIDER_USAGE_DEPLOY = "deploy" as const;
-export const ACCESS_PROVIDER_USAGES = Object.freeze({
-  ALL: ACCESS_PROVIDER_USAGE_ALL,
-  APPLY: ACCESS_PROVIDER_USAGE_APPLY,
-  DEPLOY: ACCESS_PROVIDER_USAGE_DEPLOY,
-} as const);
+// #region AccessProvider
+export type AccessUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
 
-type AccessUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
-
-type AccessProvider = {
+export type AccessProvider = {
   type: string;
   name: string;
   icon: string;
@@ -208,3 +212,4 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
   ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
 );
+// #endregion

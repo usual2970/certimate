@@ -30,7 +30,7 @@ const Login = () => {
       await getPocketBase().admins.authWithPassword(fields.username, fields.password);
       navigage("/");
     } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     } finally {
       setFormPending(false);
     }

@@ -182,7 +182,7 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
 const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { t } = useTranslation();
 
-  const { theme, setThemeMode } = useBrowserTheme();
+  const { theme, themeMode, setThemeMode } = useBrowserTheme();
 
   const items: Required<MenuProps>["items"] = [
     ["light", t("common.theme.light")],
@@ -194,7 +194,9 @@ const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
       label: label,
       onClick: () => {
         setThemeMode(key as Parameters<typeof setThemeMode>[0]);
-        window.location.reload();
+        if (key !== themeMode) {
+          window.location.reload();
+        }
       },
     };
   });

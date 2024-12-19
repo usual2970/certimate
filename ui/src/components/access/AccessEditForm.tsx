@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDeepCompareEffect } from "ahooks";
 import { Form, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -80,7 +81,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   const [form] = Form.useForm<z.infer<typeof formSchema>>();
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model as Partial<z.infer<typeof formSchema>>);
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model as Partial<z.infer<typeof formSchema>>);
   }, [model]);
 
@@ -90,7 +91,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   }, [model?.configType]);
 
   const [configFormInst] = Form.useForm();
-  const configForm = useMemo(() => {
+  const configFormComponent = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
@@ -182,7 +183,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
           </Form.Item>
         </Form>
 
-        {configForm}
+        {configFormComponent}
       </div>
     </Form.Provider>
   );

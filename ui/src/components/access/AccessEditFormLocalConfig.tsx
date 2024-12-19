@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useDeepCompareEffect } from "ahooks";
 import { Form, type FormInstance } from "antd";
 
 import { type LocalAccessConfig } from "@/domain/access";
@@ -19,7 +20,7 @@ const initModel = () => {
 
 const AccessEditFormLocalConfig = ({ form, disabled, loading, model }: AccessEditFormLocalConfigProps) => {
   const [initialValues, setInitialValues] = useState(model ?? initModel());
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
   }, [model]);
 

@@ -24,7 +24,10 @@ const AccessEditFormWebhookConfig = ({ form, disabled, loading, model, onModelCh
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    url: z.string().url(t("common.errmsg.url_invalid")),
+    url: z
+      .string()
+      .min(1, { message: t("access.form.webhook_url.placeholder") })
+      .url({ message: t("common.errmsg.url_invalid") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

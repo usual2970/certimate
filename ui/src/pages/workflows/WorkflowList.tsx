@@ -230,7 +230,7 @@ const WorkflowList = () => {
         }
 
         console.error(err);
-        notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
       },
     }
   );
@@ -253,7 +253,7 @@ const WorkflowList = () => {
       }
     } catch (err) {
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     }
   };
 
@@ -269,7 +269,7 @@ const WorkflowList = () => {
           }
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
         }
       },
     });

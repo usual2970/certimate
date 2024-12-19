@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
+import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, InputNumber, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -72,7 +73,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
   const formRule = createSchemaFieldRule(formSchema);
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
     setKeyFileList(model?.key?.trim() ? [{ uid: "-1", name: "sshkey", status: "done" }] : []);
   }, [model]);

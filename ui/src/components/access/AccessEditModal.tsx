@@ -6,12 +6,12 @@ import { Modal, notification } from "antd";
 import { type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
-import AccessEditForm, { type AccessEditFormInstance } from "./AccessEditForm";
+import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps } from "./AccessEditForm";
 
 export type AccessEditModalProps = {
-  data?: Partial<MaybeModelRecord<AccessModel>>;
+  data?: AccessEditFormProps["model"];
   loading?: boolean;
-  mode: "add" | "edit" | "copy";
+  mode: AccessEditFormProps["mode"];
   open?: boolean;
   trigger?: React.ReactElement;
   onOpenChange?: (open: boolean) => void;
@@ -57,7 +57,7 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
     }
 
     try {
-      if (mode === "add" || mode === "copy") {
+      if (mode === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
@@ -73,7 +73,7 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
 
       setOpen(false);
     } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
 
       throw err;
     } finally {

@@ -1,7 +1,6 @@
-﻿import { useEffect, useLayoutEffect, useState } from "react";
+﻿import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { RouterProvider } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useCreation } from "ahooks";
 import { App, ConfigProvider, theme, type ThemeConfig } from "antd";
 import { type Locale } from "antd/es/locale";
 import AntdLocaleEnUs from "antd/locale/en_US";
@@ -18,7 +17,7 @@ const RootApp = () => {
 
   const { theme: browserTheme } = useBrowserTheme();
 
-  const antdLocalesMap: Record<string, Locale> = useCreation(
+  const antdLocalesMap: Record<string, Locale> = useMemo(
     () => ({
       [localeNames.ZH]: AntdLocaleZhCN,
       [localeNames.EN]: AntdLocaleEnUs,
@@ -33,7 +32,7 @@ const RootApp = () => {
   i18n.on("languageChanged", handleLanguageChanged);
   useLayoutEffect(handleLanguageChanged, [antdLocalesMap, i18n]);
 
-  const antdThemesMap: Record<string, ThemeConfig> = useCreation(
+  const antdThemesMap: Record<string, ThemeConfig> = useMemo(
     () => ({
       ["light"]: { algorithm: theme.defaultAlgorithm },
       ["dark"]: { algorithm: theme.darkAlgorithm },

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, Select, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -45,7 +46,7 @@ const AccessEditFormACMEHttpReqConfig = ({ form, disabled, loading, model, onMod
   const formRule = createSchemaFieldRule(formSchema);
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
   }, [model]);
 

@@ -83,7 +83,7 @@ const AccessList = () => {
 
             <AccessEditModal
               data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-              mode="copy"
+              mode="add"
               trigger={
                 <Tooltip title={t("access.action.copy")}>
                   <Button type="link" icon={<CopyIcon size={16} />} />
@@ -119,7 +119,7 @@ const AccessList = () => {
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     });
   }, []);
 
@@ -152,7 +152,7 @@ const AccessList = () => {
           await deleteAccess(data);
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
         }
       },
     });

@@ -198,7 +198,7 @@ const CertificateList = () => {
         }
 
         console.error(err);
-        notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
       },
     }
   );

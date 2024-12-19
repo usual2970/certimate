@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -38,7 +39,7 @@ const AccessEditFormBytePlusConfig = ({ form, disabled, loading, model, onModelC
   const formRule = createSchemaFieldRule(formSchema);
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
   }, [model]);
 

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
+import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -36,7 +37,7 @@ const AccessEditFormKubernetesConfig = ({ form, disabled, loading, model, onMode
   const formRule = createSchemaFieldRule(formSchema);
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
     setKubeFileList(model?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
   }, [model]);
