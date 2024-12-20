@@ -27,7 +27,6 @@
   "settings.notification.channel.enabled.on": "On",
   "settings.notification.channel.enabled.off": "Off",
   "settings.notification.push_test.button": "Send Test Notification",
-  "settings.notification.push_test.tooltip": "Note: Please save settings before testing push.",
   "settings.notification.push_test.pushed": "Sent",
   "settings.notification.channel.form.bark_server_url.label": "Server URL",
   "settings.notification.channel.form.bark_server_url.placeholder": "Please enter server URL",

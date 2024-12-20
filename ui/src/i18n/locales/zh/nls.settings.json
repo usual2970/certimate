@@ -27,7 +27,6 @@
   "settings.notification.channel.enabled.on": "启用",
   "settings.notification.channel.enabled.off": "未启用",
   "settings.notification.push_test.button": "推送测试消息",
-  "settings.notification.push_test.tooltip": "提示：修改后请先保存设置再测试推送。",
   "settings.notification.push_test.pushed": "已推送",
   "settings.notification.channel.form.bark_server_url.label": "服务器地址",
   "settings.notification.channel.form.bark_server_url.placeholder": "请输入服务器地址",
