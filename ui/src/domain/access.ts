@@ -190,7 +190,7 @@ export type AccessProvider = {
 
 export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
   /*
-   注意：与定义常量值时不同，此处的顺序决定显示在前端的顺序。
+   注意：此处的顺序决定显示在前端的顺序。
    NOTICE: The following order determines the order displayed at the frontend.
   */
   [

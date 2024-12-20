@@ -10,7 +10,7 @@ import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { CertificateModel } from "@/domain/certificate";
-import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
+import { list as listCertificate, type ListCertificateRequest } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
@@ -183,7 +183,7 @@ const CertificateList = () => {
       return listCertificate({
         page: page,
         perPage: pageSize,
-        state: filters["state"] as CertificateListReq["state"],
+        state: filters["state"] as ListCertificateRequest["state"],
       });
     },
     {

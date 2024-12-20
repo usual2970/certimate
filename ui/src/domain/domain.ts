@@ -1,35 +1,17 @@
-import { Deployment, Pahse } from "./deployment";
-
-export type Domain = {
-  id?: string;
-  domain: string;
-  email?: string;
-  crontab: string;
-  access: string;
-  targetAccess?: string;
-  targetType?: string;
-  expiredAt?: string;
-  phase?: Pahse;
-  phaseSuccess?: boolean;
-  lastDeployedAt?: string;
-  variables?: string;
-  nameservers?: string;
-  group?: string;
-  enabled?: boolean;
-  deployed?: boolean;
-  created?: string;
-  updated?: string;
-  deleted?: string;
-  rightnow?: boolean;
-  certificate?: string;
-  privateKey?: string;
-  expand?: {
-    lastDeployment?: Deployment;
-  };
-
-  applyConfig?: ApplyConfig;
-  deployConfig?: DeployConfig[];
-};
+import {
+  ACCESS_PROVIDER_TYPE_ALIYUN,
+  ACCESS_PROVIDER_TYPE_BAIDUCLOUD,
+  ACCESS_PROVIDER_TYPE_BYTEPLUS,
+  ACCESS_PROVIDER_TYPE_DOGECLOUD,
+  ACCESS_PROVIDER_TYPE_HUAWEICLOUD,
+  ACCESS_PROVIDER_TYPE_KUBERNETES,
+  ACCESS_PROVIDER_TYPE_LOCAL,
+  ACCESS_PROVIDER_TYPE_QINIU,
+  ACCESS_PROVIDER_TYPE_SSH,
+  ACCESS_PROVIDER_TYPE_TENCENTCLOUD,
+  ACCESS_PROVIDER_TYPE_VOLCENGINE,
+  ACCESS_PROVIDER_TYPE_WEBHOOK,
+} from "./access";
 
 export type KVType = {
   key: string;
@@ -64,29 +46,33 @@ export type DeployTarget = {
 };
 
 export const deployTargetList: string[][] = [
-  ["aliyun-oss", "common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"],
-  ["aliyun-cdn", "common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"],
-  ["aliyun-dcdn", "common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"],
-  ["aliyun-clb", "common.provider.aliyun.clb", "/imgs/providers/aliyun.svg"],
-  ["aliyun-alb", "common.provider.aliyun.alb", "/imgs/providers/aliyun.svg"],
-  ["aliyun-nlb", "common.provider.aliyun.nlb", "/imgs/providers/aliyun.svg"],
-  ["tencentcloud-cdn", "common.provider.tencentcloud.cdn", "/imgs/providers/tencentcloud.svg"],
-  ["tencentcloud-ecdn", "common.provider.tencentcloud.ecdn", "/imgs/providers/tencentcloud.svg"],
-  ["tencentcloud-clb", "common.provider.tencentcloud.clb", "/imgs/providers/tencentcloud.svg"],
-  ["tencentcloud-cos", "common.provider.tencentcloud.cos", "/imgs/providers/tencentcloud.svg"],
-  ["tencentcloud-eo", "common.provider.tencentcloud.eo", "/imgs/providers/tencentcloud.svg"],
-  ["huaweicloud-cdn", "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
-  ["huaweicloud-elb", "common.provider.huaweicloud.elb", "/imgs/providers/huaweicloud.svg"],
-  ["baiducloud-cdn", "common.provider.baiducloud.cdn", "/imgs/providers/baiducloud.svg"],
-  ["qiniu-cdn", "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
-  ["dogecloud-cdn", "common.provider.dogecloud.cdn", "/imgs/providers/dogecloud.svg"],
-  ["local", "common.provider.local", "/imgs/providers/local.svg"],
-  ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg"],
-  ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg"],
-  ["k8s-secret", "common.provider.kubernetes.secret", "/imgs/providers/kubernetes.svg"],
-  ["volcengine-live", "common.provider.volcengine.live", "/imgs/providers/volcengine.svg"],
-  ["volcengine-cdn", "common.provider.volcengine.cdn", "/imgs/providers/volcengine.svg"],
-  ["byteplus-cdn", "common.provider.byteplus.cdn", "/imgs/providers/byteplus.svg"],
+  /*
+   注意：此处的顺序决定显示在前端的顺序。
+   NOTICE: The following order determines the order displayed at the frontend.
+  */
+  [`${ACCESS_PROVIDER_TYPE_LOCAL}`, "common.provider.local", "/imgs/providers/local.svg"],
+  [`${ACCESS_PROVIDER_TYPE_SSH}`, "common.provider.ssh", "/imgs/providers/ssh.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-oss`, "common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-cdn`, "common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-dcdn`, "common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-clb`, "common.provider.aliyun.clb", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-alb`, "common.provider.aliyun.alb", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_ALIYUN}-nlb`, "common.provider.aliyun.nlb", "/imgs/providers/aliyun.svg"],
+  [`${ACCESS_PROVIDER_TYPE_TENCENTCLOUD}-cdn`, "common.provider.tencentcloud.cdn", "/imgs/providers/tencentcloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_TENCENTCLOUD}-ecdn`, "common.provider.tencentcloud.ecdn", "/imgs/providers/tencentcloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_TENCENTCLOUD}-clb`, "common.provider.tencentcloud.clb", "/imgs/providers/tencentcloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_TENCENTCLOUD}-cos`, "common.provider.tencentcloud.cos", "/imgs/providers/tencentcloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_TENCENTCLOUD}-eo`, "common.provider.tencentcloud.eo", "/imgs/providers/tencentcloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_HUAWEICLOUD}-cdn`, "common.provider.huaweicloud.cdn", "/imgs/providers/huaweicloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_HUAWEICLOUD}-elb`, "common.provider.huaweicloud.elb", "/imgs/providers/huaweicloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_BAIDUCLOUD}-cdn`, "common.provider.baiducloud.cdn", "/imgs/providers/baiducloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_VOLCENGINE}-cdn`, "common.provider.volcengine.cdn", "/imgs/providers/volcengine.svg"],
+  [`${ACCESS_PROVIDER_TYPE_VOLCENGINE}-live`, "common.provider.volcengine.live", "/imgs/providers/volcengine.svg"],
+  [`${ACCESS_PROVIDER_TYPE_QINIU}-cdn`, "common.provider.qiniu.cdn", "/imgs/providers/qiniu.svg"],
+  [`${ACCESS_PROVIDER_TYPE_DOGECLOUD}-cdn`, "common.provider.dogecloud.cdn", "/imgs/providers/dogecloud.svg"],
+  [`${ACCESS_PROVIDER_TYPE_BYTEPLUS}-cdn`, "common.provider.byteplus.cdn", "/imgs/providers/byteplus.svg"],
+  [`${ACCESS_PROVIDER_TYPE_KUBERNETES}-secret`, "common.provider.kubernetes.secret", "/imgs/providers/kubernetes.svg"],
+  [`${ACCESS_PROVIDER_TYPE_WEBHOOK}`, "common.provider.webhook", "/imgs/providers/webhook.svg"],
 ];
 
 export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map(
