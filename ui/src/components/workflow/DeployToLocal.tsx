@@ -324,7 +324,7 @@ Remove-Item -Path "$pfxPath" -Force
             <FormItem>
               <FormLabel>密钥路径</FormLabel>
               <FormControl>
-                <Input placeholder="输入密钥路径" {...field} />
+                <Input placeholder="输入密钥路径" {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -339,7 +339,7 @@ Remove-Item -Path "$pfxPath" -Force
               <FormItem>
                 <FormLabel>PFX 密码</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="输入 PFX 密码" {...field} />
+                  <Input type="password" placeholder="输入 PFX 密码" {...(field as any)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -356,7 +356,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS 别名</FormLabel>
                   <FormControl>
-                    <Input placeholder="输入 JKS 别名" {...field} />
+                    <Input placeholder="输入 JKS 别名" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -370,7 +370,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS Keypass</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="输入 JKS Keypass" {...field} />
+                    <Input type="password" placeholder="输入 JKS Keypass" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -384,7 +384,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS Storepass</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="输入 JKS Storepass" {...field} />
+                    <Input type="password" placeholder="输入 JKS Storepass" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -423,7 +423,7 @@ Remove-Item -Path "$pfxPath" -Force
             <FormItem>
               <FormLabel>{t("domain.deployment.form.shell_pre_command.label")}</FormLabel>
               <FormControl>
-                <Textarea placeholder={t("domain.deployment.form.shell_pre_command.placeholder")} {...field} />
+                <Textarea placeholder={t("domain.deployment.form.shell_pre_command.placeholder")} {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -455,7 +455,7 @@ Remove-Item -Path "$pfxPath" -Force
                 </DropdownMenu>
               </FormLabel>
               <FormControl>
-                <Textarea placeholder={t("domain.deployment.form.shell_command.placeholder")} {...field} />
+                <Textarea placeholder={t("domain.deployment.form.shell_command.placeholder")} {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>

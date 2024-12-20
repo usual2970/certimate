@@ -2,7 +2,7 @@ import { produce } from "immer";
 import { nanoid } from "nanoid";
 
 import i18n from "@/i18n";
-import { deployTargets, KVType } from "./domain";
+import { deployTargets } from "./domain";
 
 export type WorkflowRunLog = {
   id: string;
@@ -108,7 +108,7 @@ export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo
   [WorkflowNodeType.Notify, []],
 ]);
 
-export type WorkflowNodeConfig = Record<string, string | boolean | number | KVType[] | string[] | undefined>;
+export type WorkflowNodeConfig = Record<string, unknown>;
 
 export type WorkflowNode = {
   id: string;
