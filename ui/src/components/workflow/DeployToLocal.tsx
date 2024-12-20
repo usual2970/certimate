@@ -41,13 +41,14 @@ const formSchema = z
     keyPath: z
       .string()
       .min(0, t("domain.deployment.form.file_key_path.placeholder"))
-      .max(255, t("common.errmsg.string_max", { max: 255 })),
-    pfxPassword: z.string().optional(),
-    jksAlias: z.string().optional(),
-    jksKeypass: z.string().optional(),
-    jksStorepass: z.string().optional(),
-    preCommand: z.string().optional(),
-    command: z.string().optional(),
+      .max(255, t("common.errmsg.string_max", { max: 255 }))
+      .nullish(),
+    pfxPassword: z.string().nullish(),
+    jksAlias: z.string().nullish(),
+    jksKeypass: z.string().nullish(),
+    jksStorepass: z.string().nullish(),
+    preCommand: z.string().nullish(),
+    command: z.string().nullish(),
     shell: z.union([z.literal("sh"), z.literal("cmd"), z.literal("powershell")], {
       message: t("domain.deployment.form.shell.placeholder"),
     }),

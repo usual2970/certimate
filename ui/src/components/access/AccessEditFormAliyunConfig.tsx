@@ -19,7 +19,10 @@ export type AccessEditFormAliyunConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormAliyunConfigModelType;
+  return {
+    accessKeyId: "",
+    accessKeySecret: "",
+  } as AccessEditFormAliyunConfigModelType;
 };
 
 const AccessEditFormAliyunConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormAliyunConfigProps) => {

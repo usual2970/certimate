@@ -19,7 +19,10 @@ export type AccessEditFormPowerDNSConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormPowerDNSConfigModelType;
+  return {
+    apiUrl: "",
+    apiKey: "",
+  } as AccessEditFormPowerDNSConfigModelType;
 };
 
 const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormPowerDNSConfigProps) => {

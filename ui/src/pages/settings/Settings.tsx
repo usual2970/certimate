@@ -5,8 +5,6 @@ import { Card, Space } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { KeyRound as KeyRoundIcon, Megaphone as MegaphoneIcon, ShieldCheck as ShieldCheckIcon, UserRound as UserRoundIcon } from "lucide-react";
 
-import { Toaster } from "@/components/ui/toaster";
-
 const Settings = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,7 +71,6 @@ const Settings = () => {
           navigate(`/settings/${key}`);
         }}
       >
-        <Toaster />
         <Outlet />
       </Card>
     </>

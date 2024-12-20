@@ -60,7 +60,7 @@ const SettingsPassword = () => {
         navigate("/login");
       }, 500);
     } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{getErrMsg(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     } finally {
       setFormPending(false);
     }
@@ -71,7 +71,7 @@ const SettingsPassword = () => {
       {MessageContextHolder}
       {NotificationContextHolder}
 
-      <div className="w-full md:max-w-[35em]">
+      <div className="md:max-w-[40rem]">
         <Form form={form} disabled={formPending} layout="vertical" onFinish={handleFormFinish}>
           <Form.Item name="oldPassword" label={t("settings.password.form.old_password.label")} rules={[formRule]}>
             <Input.Password placeholder={t("settings.password.form.old_password.placeholder")} onChange={handleInputChange} />

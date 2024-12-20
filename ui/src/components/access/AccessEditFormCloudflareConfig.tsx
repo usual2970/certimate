@@ -19,7 +19,9 @@ export type AccessEditFormCloudflareConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormCloudflareConfigModelType;
+  return {
+    dnsApiToken: "",
+  } as AccessEditFormCloudflareConfigModelType;
 };
 
 const AccessEditFormCloudflareConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormCloudflareConfigProps) => {

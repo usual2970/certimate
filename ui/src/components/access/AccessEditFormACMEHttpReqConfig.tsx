@@ -22,6 +22,8 @@ const initModel = () => {
   return {
     endpoint: "https://example.com/api/",
     mode: "",
+    username: "",
+    password: "",
   } as AccessEditFormACMEHttpReqConfigModelType;
 };
 

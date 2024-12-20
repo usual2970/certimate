@@ -19,7 +19,9 @@ export type AccessEditFormNameSiloConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormNameSiloConfigModelType;
+  return {
+    apiKey: "",
+  } as AccessEditFormNameSiloConfigModelType;
 };
 
 const AccessEditFormNameSiloConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormNameSiloConfigProps) => {

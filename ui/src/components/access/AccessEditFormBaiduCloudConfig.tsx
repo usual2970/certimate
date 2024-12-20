@@ -19,7 +19,10 @@ export type AccessEditFormBaiduCloudConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormBaiduCloudConfigModelType;
+  return {
+    accessKeyId: "",
+    secretAccessKey: "",
+  } as AccessEditFormBaiduCloudConfigModelType;
 };
 
 const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormBaiduCloudConfigProps) => {

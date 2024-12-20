@@ -19,7 +19,10 @@ export type AccessEditFormDogeCloudConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormDogeCloudConfigModelType;
+  return {
+    accessKey: "",
+    secretKey: "",
+  } as AccessEditFormDogeCloudConfigModelType;
 };
 
 const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormDogeCloudConfigProps) => {

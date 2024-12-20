@@ -19,7 +19,10 @@ export type AccessEditFormTencentCloudConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormTencentCloudConfigModelType;
+  return {
+    secretId: "",
+    secretKey: "",
+  } as AccessEditFormTencentCloudConfigModelType;
 };
 
 const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormTencentCloudConfigProps) => {

@@ -11,8 +11,8 @@ import CertificateList from "./pages/certificates/CertificateList";
 import Settings from "./pages/settings/Settings";
 import SettingsAccount from "./pages/settings/SettingsAccount";
 import SettingsPassword from "./pages/settings/SettingsPassword";
-import SettingsNotification from "./pages/settings/Notification";
-import SettingsSSLProvider from "./pages/settings/SSLProvider";
+import SettingsNotification from "./pages/settings/SettingsNotification";
+import SSLProvider from "./pages/settings/SSLProvider";
 
 export const router = createHashRouter([
   {
@@ -57,7 +57,7 @@ export const router = createHashRouter([
           },
           {
             path: "/settings/ssl-provider",
-            element: <SettingsSSLProvider />,
+            element: <SSLProvider />,
           },
         ],
       },

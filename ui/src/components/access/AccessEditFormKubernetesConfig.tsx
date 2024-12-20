@@ -59,7 +59,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, mod
       setKubeFileList([]);
     }
 
-    flushSync(() => onModelChange?.(form.getFieldsValue()));
+    flushSync(() => onModelChange?.(form.getFieldsValue(true)));
   };
 
   return (

@@ -19,7 +19,10 @@ export type AccessEditFormQiniuConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormQiniuConfigModelType;
+  return {
+    accessKey: "",
+    secretKey: "",
+  } as AccessEditFormQiniuConfigModelType;
 };
 
 const AccessEditFormQiniuConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormQiniuConfigProps) => {

@@ -19,7 +19,10 @@ export type AccessEditFormGoDaddyConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormGoDaddyConfigModelType;
+  return {
+    apiKey: "",
+    apiSecret: "",
+  } as AccessEditFormGoDaddyConfigModelType;
 };
 
 const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormGoDaddyConfigProps) => {

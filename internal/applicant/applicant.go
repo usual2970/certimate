@@ -250,7 +250,7 @@ type SSLProviderEab struct {
 }
 
 func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
-	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='ssl-provider'")
+	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='sslProvider'")
 
 	sslProvider := &SSLProviderConfig{
 		Config:   SSLProviderConfigContent{},

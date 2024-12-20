@@ -20,6 +20,8 @@ export type AccessEditFormHuaweiCloudConfigProps = {
 
 const initModel = () => {
   return {
+    accessKeyId: "",
+    secretAccessKey: "",
     region: "cn-north-1",
   } as AccessEditFormHuaweiCloudConfigModelType;
 };

@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { produce } from "immer";
 
 import { cn } from "@/components/ui/utils";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/use-toast";
-import { getErrMsg } from "@/utils/error";
-import { SSLProvider as SSLProviderType, SSLProviderSetting, SettingsModel } from "@/domain/settings";
+import { SETTINGS_NAMES, SSLProvider as SSLProviderType, SSLProviderSetting, SettingsModel } from "@/domain/settings";
 import { get, save } from "@/repository/settings";
-import { produce } from "immer";
+import { getErrMsg } from "@/utils/error";
 
 type SSLProviderContext = {
   setting: SettingsModel<SSLProviderSetting>;
@@ -26,6 +26,16 @@ const Context = createContext({} as SSLProviderContext);
 
 export const useSSLProviderContext = () => {
   return useContext(Context);
+};
+
+const getConfigStr = (content: SSLProviderSetting, kind: string, key: string) => {
+  if (!content.config) {
+    return "";
+  }
+  if (!content.config[kind]) {
+    return "";
+  }
+  return content.config[kind][key] ?? "";
 };
 
 const SSLProvider = () => {
@@ -42,7 +52,7 @@ const SSLProvider = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const setting = await get<SSLProviderSetting>("ssl-provider");
+      const setting = await get<SSLProviderSetting>(SETTINGS_NAMES.SSL_PROVIDER);
 
       if (setting) {
         setConfig(setting);
@@ -95,7 +105,7 @@ const SSLProvider = () => {
   return (
     <>
       <Context.Provider value={{ onSubmit, setConfig, setting: config }}>
-        <div className="w-full md:max-w-[35em]">
+        <div className="md:max-w-[40rem]">
           <Label className="dark:text-stone-200">{t("common.text.ca")}</Label>
           <RadioGroup
             className="flex mt-3 dark:text-stone-200"
@@ -147,7 +157,7 @@ const SSLProviderForm = ({ kind }: { kind: string }) => {
       case "zerossl":
         return <SSLProviderZeroSSLForm />;
       case "gts":
-        return <SSLProviderGtsForm />;
+        return <SSLProviderGoogleTrustServicesForm />;
       default:
         return <SSLProviderLetsEncryptForm />;
     }
@@ -158,16 +168,6 @@ const SSLProviderForm = ({ kind }: { kind: string }) => {
       <div className="mt-5">{getForm()}</div>
     </>
   );
-};
-
-const getConfigStr = (content: SSLProviderSetting, kind: string, key: string) => {
-  if (!content.config) {
-    return "";
-  }
-  if (!content.config[kind]) {
-    return "";
-  }
-  return content.config[kind][key] ?? "";
 };
 
 const SSLProviderLetsEncryptForm = () => {
@@ -227,6 +227,7 @@ const SSLProviderLetsEncryptForm = () => {
     </Form>
   );
 };
+
 const SSLProviderZeroSSLForm = () => {
   const { t } = useTranslation();
 
@@ -334,7 +335,7 @@ const SSLProviderZeroSSLForm = () => {
   );
 };
 
-const SSLProviderGtsForm = () => {
+const SSLProviderGoogleTrustServicesForm = () => {
   const { t } = useTranslation();
 
   const { setting, onSubmit } = useSSLProviderContext();

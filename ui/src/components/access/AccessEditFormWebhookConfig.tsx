@@ -18,7 +18,9 @@ export type AccessEditFormWebhookConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormWebhookConfigModelType;
+  return {
+    url: "",
+  } as AccessEditFormWebhookConfigModelType;
 };
 
 const AccessEditFormWebhookConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormWebhookConfigProps) => {

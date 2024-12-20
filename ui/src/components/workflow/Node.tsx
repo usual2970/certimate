@@ -9,7 +9,7 @@ import PanelBody from "./PanelBody";
 import { useTranslation } from "react-i18next";
 import Show from "../Show";
 import { deployTargetsMap } from "@/domain/domain";
-import { channelLabelMap } from "@/domain/settings";
+import { notifyChannelsMap } from "@/domain/settings";
 
 type NodeProps = {
   data: WorkflowNode;
@@ -69,10 +69,10 @@ const Node = ({ data }: NodeProps) => {
         );
       }
       case WorkflowNodeType.Notify: {
-        const channelLabel = channelLabelMap.get(data.config?.channel as string);
+        const channelLabel = notifyChannelsMap.get(data.config?.channel as string);
         return (
           <div className="flex space-x-2 items-baseline">
-            <div className="text-stone-700 w-12 truncate">{t(channelLabel?.label ?? "")}</div>
+            <div className="text-stone-700 w-12 truncate">{t(channelLabel?.name ?? "")}</div>
             <div className="text-muted-foreground truncate">{(data.config?.title as string) ?? ""}</div>
           </div>
         );

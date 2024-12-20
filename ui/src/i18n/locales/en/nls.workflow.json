@@ -68,5 +68,5 @@
   "workflow.node.notify.form.content.placeholder": "Please enter content",
   "workflow.node.notify.form.channel.label": "Channel",
   "workflow.node.notify.form.channel.placeholder": "Please select channel",
-  "workflow.node.notify.form.settingChannel.label": "Setting Channel"
+  "workflow.node.notify.form.settingChannel.label": "Configure Channels"
 }

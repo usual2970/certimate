@@ -94,7 +94,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
       setKeyFileList([]);
     }
 
-    flushSync(() => onModelChange?.(form.getFieldsValue()));
+    flushSync(() => onModelChange?.(form.getFieldsValue(true)));
   };
 
   return (

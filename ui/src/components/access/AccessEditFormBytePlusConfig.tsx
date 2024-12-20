@@ -19,7 +19,10 @@ export type AccessEditFormBytePlusConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormBytePlusConfigModelType;
+  return {
+    accessKey: "",
+    secretKey: "",
+  } as AccessEditFormBytePlusConfigModelType;
 };
 
 const AccessEditFormBytePlusConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormBytePlusConfigProps) => {

@@ -20,7 +20,10 @@ export type AccessEditFormAWSConfigProps = {
 
 const initModel = () => {
   return {
+    accessKeyId: "",
+    secretAccessKey: "",
     region: "us-east-1",
+    hostedZoneId: "",
   } as AccessEditFormAWSConfigModelType;
 };
 

@@ -19,7 +19,10 @@ export type AccessEditFormVolcEngineConfigProps = {
 };
 
 const initModel = () => {
-  return {} as AccessEditFormVolcEngineConfigModelType;
+  return {
+    accessKeyId: "",
+    secretAccessKey: "",
+  } as AccessEditFormVolcEngineConfigModelType;
 };
 
 const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormVolcEngineConfigProps) => {
