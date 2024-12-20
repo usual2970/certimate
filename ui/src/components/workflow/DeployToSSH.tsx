@@ -47,7 +47,7 @@ const formSchema = z
     jksKeypass: z.string().nullish(),
     jksStorepass: z.string().nullish(),
     preCommand: z.string().nullish(),
-    command: z.string().nullish(),
+    postCommand: z.string().nullish(),
   })
   .refine((data) => (data.format === "pem" ? !!data.keyPath?.trim() : true), {
     message: t("domain.deployment.form.file_key_path.placeholder"),
@@ -97,7 +97,7 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
       jksKeypass: (data.config?.jksKeypass as string) || "",
       jksStorepass: (data.config?.jksStorepass as string) || "",
       preCommand: (data.config?.preCommand as string) || "",
-      command: (data.config?.command as string) || "service nginx reload",
+      postCommand: (data.config?.postCommand as string) || "",
     },
   });
 
@@ -327,7 +327,7 @@ const DeployToSSH = ({ data }: DeployFormProps) => {
 
         <FormField
           control={form.control}
-          name="command"
+          name="postCommand"
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t("domain.deployment.form.shell_command.label")}</FormLabel>

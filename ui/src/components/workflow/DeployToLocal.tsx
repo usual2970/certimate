@@ -48,7 +48,7 @@ const formSchema = z
     jksKeypass: z.string().nullish(),
     jksStorepass: z.string().nullish(),
     preCommand: z.string().nullish(),
-    command: z.string().nullish(),
+    postCommand: z.string().nullish(),
     shell: z.union([z.literal("sh"), z.literal("cmd"), z.literal("powershell")], {
       message: t("domain.deployment.form.shell.placeholder"),
     }),
@@ -100,9 +100,9 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
       jksAlias: (data.config?.jksAlias as string) || "",
       jksKeypass: (data.config?.jksKeypass as string) || "",
       jksStorepass: (data.config?.jksStorepass as string) || "",
-      preCommand: (data.config?.preCommand as string) || "",
-      command: (data.config?.command as string) || "service nginx reload",
       shell: (data.config?.shell as "sh" | "cmd" | "powershell") || "sh",
+      preCommand: (data.config?.preCommand as string) || "",
+      postCommand: (data.config?.postCommand as string) || "service nginx reload",
     },
   });
 
@@ -129,7 +129,7 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
       case "reload_nginx":
         {
           form.setValue("shell", "sh");
-          form.setValue("command", "sudo service nginx reload");
+          form.setValue("postCommand", "sudo service nginx reload");
         }
         break;
 
@@ -137,7 +137,7 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
         {
           form.setValue("shell", "powershell");
           form.setValue(
-            "command",
+            "postCommand",
             `# 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -174,7 +174,7 @@ Remove-Item -Path "$pfxPath" -Force
         {
           form.setValue("shell", "powershell");
           form.setValue(
-            "command",
+            "postCommand",
             `# 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -432,7 +432,7 @@ Remove-Item -Path "$pfxPath" -Force
 
         <FormField
           control={form.control}
-          name="command"
+          name="postCommand"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex justify-between items-center">
