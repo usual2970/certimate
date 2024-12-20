@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/qiniu/go-sdk/v7/auth"
-
-	xhttp "github.com/usual2970/certimate/internal/utils/http"
 )
 
 const qiniuHost = "https://api.qiniu.com"
@@ -136,25 +135,29 @@ func (c *Client) UploadSslCert(name, commonName, certificate, privateKey string)
 }
 
 func (c *Client) sendReq(method string, path string, body io.Reader) ([]byte, error) {
-	req := xhttp.BuildReq(fmt.Sprintf("%s/%s", qiniuHost, path), method, body, map[string]string{
-		"Content-Type": "application/json",
-	})
+	path = strings.TrimPrefix(path, "/")
+
+	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", qiniuHost, path), body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "application/json")
 
 	if err := c.mac.AddToken(auth.TokenQBox, req); err != nil {
 		return nil, err
 	}
 
-	respBody, err := xhttp.ToRequest(req)
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	r, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	defer respBody.Close()
-
-	res, err := io.ReadAll(respBody)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
+	return r, nil
 }
