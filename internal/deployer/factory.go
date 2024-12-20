@@ -362,9 +362,23 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
+			variables := make(map[string]string)
+			if deployConfig != nil {
+				value, ok := deployConfig["variables"]
+				if ok {
+					kvs := make([]domain.KV, 0)
+					bts, _ := json.Marshal(value)
+					if err := json.Unmarshal(bts, &kvs); err == nil {
+						for _, kv := range kvs {
+							variables[kv.Key] = kv.Value
+						}
+					}
+				}
+			}
+
 			deployer, err := providerWebhook.NewWithLogger(&providerWebhook.WebhookDeployerConfig{
 				Url:       access.Url,
-				Variables: nil, // TODO: 尚未实现
+				Variables: variables,
 			}, logger)
 			return deployer, logger, err
 		}
