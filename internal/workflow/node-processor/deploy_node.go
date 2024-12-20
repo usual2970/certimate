@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/deployer"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
@@ -68,6 +69,13 @@ func (d *deployNode) Run(ctx context.Context) error {
 		Domain:       cert.SAN,
 		Access:       access.Config,
 		AccessRecord: access,
+		Certificate: applicant.Certificate{
+			CertUrl:           cert.CertUrl,
+			CertStableUrl:     cert.CertStableUrl,
+			PrivateKey:        cert.PrivateKey,
+			Certificate:       cert.Certificate,
+			IssuerCertificate: cert.IssuerCertificate,
+		},
 		DeployConfig: domain.DeployConfig{
 			Id:     d.node.Id,
 			Access: access.Id,

@@ -52,6 +52,7 @@ export const deployTargetList: string[][] = [
   */
   [`${ACCESS_PROVIDER_TYPE_LOCAL}`, "common.provider.local", "/imgs/providers/local.svg"],
   [`${ACCESS_PROVIDER_TYPE_SSH}`, "common.provider.ssh", "/imgs/providers/ssh.svg"],
+  [`${ACCESS_PROVIDER_TYPE_WEBHOOK}`, "common.provider.webhook", "/imgs/providers/webhook.svg"],
   [`${ACCESS_PROVIDER_TYPE_ALIYUN}-oss`, "common.provider.aliyun.oss", "/imgs/providers/aliyun.svg"],
   [`${ACCESS_PROVIDER_TYPE_ALIYUN}-cdn`, "common.provider.aliyun.cdn", "/imgs/providers/aliyun.svg"],
   [`${ACCESS_PROVIDER_TYPE_ALIYUN}-dcdn`, "common.provider.aliyun.dcdn", "/imgs/providers/aliyun.svg"],
@@ -72,7 +73,6 @@ export const deployTargetList: string[][] = [
   [`${ACCESS_PROVIDER_TYPE_DOGECLOUD}-cdn`, "common.provider.dogecloud.cdn", "/imgs/providers/dogecloud.svg"],
   [`${ACCESS_PROVIDER_TYPE_BYTEPLUS}-cdn`, "common.provider.byteplus.cdn", "/imgs/providers/byteplus.svg"],
   [`${ACCESS_PROVIDER_TYPE_KUBERNETES}-secret`, "common.provider.kubernetes.secret", "/imgs/providers/kubernetes.svg"],
-  [`${ACCESS_PROVIDER_TYPE_WEBHOOK}`, "common.provider.webhook", "/imgs/providers/webhook.svg"],
 ];
 
 export const deployTargetsMap: Map<DeployTarget["type"], DeployTarget> = new Map(
