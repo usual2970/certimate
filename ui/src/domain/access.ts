@@ -41,6 +41,8 @@ export const ACCESS_PROVIDER_TYPES = Object.freeze({
   WEBHOOK: ACCESS_PROVIDER_TYPE_WEBHOOK,
 } as const);
 
+export type AccessProviderTypes = (typeof ACCESS_PROVIDER_TYPES)[keyof typeof ACCESS_PROVIDER_TYPES];
+
 export const ACCESS_PROVIDER_USAGE_ALL = "all" as const;
 export const ACCESS_PROVIDER_USAGE_APPLY = "apply" as const;
 export const ACCESS_PROVIDER_USAGE_DEPLOY = "deploy" as const;
@@ -50,11 +52,13 @@ export const ACCESS_PROVIDER_USAGES = Object.freeze({
   DEPLOY: ACCESS_PROVIDER_USAGE_DEPLOY,
 } as const);
 
+export type AccessProviderUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
+
 // #region AccessModel
 export interface AccessModel extends BaseModel {
   name: string;
   configType: string;
-  usage: AccessUsages;
+  usage: AccessProviderUsages;
   config: /*
     注意：如果追加新的类型，请保持以 ASCII 排序。
     NOTICE: If you add new type, please keep ASCII order.
@@ -136,7 +140,7 @@ export type KubernetesAccessConfig = {
   kubeConfig?: string;
 };
 
-export type LocalAccessConfig = never;
+export type LocalAccessConfig = NonNullable<unknown>;
 
 export type NameSiloAccessConfig = {
   apiKey: string;
@@ -177,13 +181,11 @@ export type WebhookAccessConfig = {
 // #endregion
 
 // #region AccessProvider
-export type AccessUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
-
 export type AccessProvider = {
   type: string;
   name: string;
   icon: string;
-  usage: AccessUsages;
+  usage: AccessProviderUsages;
 };
 
 export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
@@ -210,6 +212,6 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     [ACCESS_PROVIDER_TYPE_WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
-  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessUsages }])
+  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessProviderUsages }])
 );
 // #endregion

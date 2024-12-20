@@ -9,7 +9,9 @@ export const SETTINGS_NAMES = Object.freeze({
   SSL_PROVIDER: SETTINGS_NAME_SSLPROVIDER,
 } as const);
 
-export interface SettingsModel<T> extends BaseModel {
+export type SettingsNames = (typeof SETTINGS_NAMES)[keyof typeof SETTINGS_NAMES];
+
+export interface SettingsModel<T extends NonNullable<unknown> = NonNullable<unknown>> extends BaseModel {
   name: string;
   content: T;
 }
@@ -115,14 +117,36 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 // #endregion
 
 // #region Settings: SSLProvider
-export type SSLProvider = "letsencrypt" | "zerossl" | "gts";
+export const SSLPROVIDER_LETSENCRYPT = "letsencrypt" as const;
+export const SSLPROVIDER_ZEROSSL = "zerossl" as const;
+export const SSLPROVIDER_GOOGLETRUSTSERVICES = "gts" as const;
+export const SSLPROVIDERS = Object.freeze({
+  LETS_ENCRYPT: SSLPROVIDER_LETSENCRYPT,
+  ZERO_SSL: SSLPROVIDER_ZEROSSL,
+  GOOGLE_TRUST_SERVICES: SSLPROVIDER_GOOGLETRUSTSERVICES,
+} as const);
 
-export type SSLProviderSetting = {
-  provider: SSLProvider;
+export type SSLProviders = (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
+
+export type SSLProviderSettingsContent = {
+  provider: (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
   config: {
-    [key: string]: {
-      [key: string]: string;
-    };
+    [key: string]: Record<string, unknown> | undefined;
+    letsencrypt?: SSLProviderLetsEncryptConfig;
+    zerossl?: SSLProviderZeroSSLConfig;
+    gts?: SSLProviderGoogleTrustServicesConfig;
   };
+};
+
+export type SSLProviderLetsEncryptConfig = NonNullable<unknown>;
+
+export type SSLProviderZeroSSLConfig = {
+  eabKid: string;
+  eabHmacKey: string;
+};
+
+export type SSLProviderGoogleTrustServicesConfig = {
+  eabKid: string;
+  eabHmacKey: string;
 };
 // #endregion

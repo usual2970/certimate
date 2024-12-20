@@ -88,7 +88,7 @@
   "common.notifier.dingtalk": "钉钉",
   "common.notifier.email": "电子邮件",
   "common.notifier.lark": "飞书",
-  "common.notifier.serverchan": "Server酱",
+  "common.notifier.serverchan": "Server 酱",
   "common.notifier.telegram": "Telegram",
   "common.notifier.webhook": "Webhook"
 }

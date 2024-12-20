@@ -22,10 +22,12 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
 
     setChannel: async (channel, config) => {
       settings ??= await getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
-      return get().setChannels({
-        ...settings.content,
-        [channel]: { ...settings.content[channel], ...config },
-      });
+      return get().setChannels(
+        produce(settings, (draft) => {
+          draft.content ??= {};
+          draft.content[channel] = { ...draft.content[channel], ...config };
+        })
+      );
     },
 
     setChannels: async (channels) => {

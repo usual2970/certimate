@@ -60,7 +60,7 @@ const Settings = () => {
             label: (
               <Space>
                 <ShieldCheckIcon size={14} />
-                <label>{t("settings.ca.tab")}</label>
+                <label>{t("settings.sslprovider.tab")}</label>
               </Space>
             ),
           },

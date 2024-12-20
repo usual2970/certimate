@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareMemo } from "@ant-design/pro-components";
-import { Button, Collapse, message, notification, Skeleton, Space, Switch, Tooltip, type CollapseProps } from "antd";
+import { Button, Collapse, message, notification, Skeleton, Space, Switch, type CollapseProps } from "antd";
 
 import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
 import NotifyTestButton from "./NotifyTestButton";
@@ -45,9 +45,9 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
       {MessageContextHolder}
       {NotificationContextHolder}
 
-      <NotifyChannelEditForm ref={channelFormRef} channel={channel} model={channelConfig} onModelChange={() => setChannelFormChanged(true)} />
+      <NotifyChannelEditForm ref={channelFormRef} className="mt-2" channel={channel} model={channelConfig} onModelChange={() => setChannelFormChanged(true)} />
 
-      <Space>
+      <Space className="mb-2">
         <Button type="primary" disabled={!channelFormChanged} onClick={handleClickSubmit}>
           {t("common.button.save")}
         </Button>
