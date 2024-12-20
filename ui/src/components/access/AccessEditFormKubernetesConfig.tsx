@@ -14,6 +14,7 @@ type AccessEditFormKubernetesConfigModelType = Partial<KubernetesAccessConfig>;
 
 export type AccessEditFormKubernetesConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormKubernetesConfigModelType;
@@ -24,7 +25,7 @@ const initModel = () => {
   return {} as AccessEditFormKubernetesConfigModelType;
 };
 
-const AccessEditFormKubernetesConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
+const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -32,7 +33,8 @@ const AccessEditFormKubernetesConfig = ({ form, disabled, loading, model, onMode
       .string()
       .trim()
       .min(0, t("access.form.k8s_kubeconfig.placeholder"))
-      .max(20480, t("common.errmsg.string_max", { max: 20480 })),
+      .max(20480, t("common.errmsg.string_max", { max: 20480 }))
+      .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -61,7 +63,7 @@ const AccessEditFormKubernetesConfig = ({ form, disabled, loading, model, onMode
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="kubeConfig"
         label={t("access.form.k8s_kubeconfig.label")}

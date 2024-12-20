@@ -43,7 +43,7 @@
   "common.errmsg.host_invalid": "请输入正确的域名或 IP 地址",
   "common.errmsg.port_invalid": "请输入正确的端口号",
   "common.errmsg.ip_invalid": "请输入正确的 IP 地址",
-  "common.errmsg.url_invalid": "请输入正确的 URL",
+  "common.errmsg.url_invalid": "请输入正确的 URL 地址",
 
   "common.provider.acmehttpreq": "Http Request (ACME Proxy)",
   "common.provider.aliyun": "阿里云",

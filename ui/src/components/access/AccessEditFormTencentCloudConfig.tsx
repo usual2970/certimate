@@ -11,6 +11,7 @@ type AccessEditFormTencentCloudConfigModelType = Partial<TencentCloudAccessConfi
 
 export type AccessEditFormTencentCloudConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormTencentCloudConfigModelType;
@@ -21,7 +22,7 @@ const initModel = () => {
   return {} as AccessEditFormTencentCloudConfigModelType;
 };
 
-const AccessEditFormTencentCloudConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormTencentCloudConfigProps) => {
+const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormTencentCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -48,7 +49,7 @@ const AccessEditFormTencentCloudConfig = ({ form, disabled, loading, model, onMo
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="secretId"
         label={t("access.form.tencentcloud_secret_id.label")}

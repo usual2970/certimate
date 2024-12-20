@@ -7,8 +7,9 @@ const COLLECTION_NAME = "access";
 
 export const list = async () => {
   return await getPocketBase().collection(COLLECTION_NAME).getFullList<AccessModel>({
-    sort: "-created",
     filter: "deleted=null",
+    sort: "-created",
+    requestKey: null,
   });
 };
 

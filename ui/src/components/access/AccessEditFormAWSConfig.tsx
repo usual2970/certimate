@@ -11,6 +11,7 @@ type AccessEditFormAWSConfigModelType = Partial<AWSAccessConfig>;
 
 export type AccessEditFormAWSConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormAWSConfigModelType;
@@ -23,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormAWSConfigModelType;
 };
 
-const AccessEditFormAWSConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormAWSConfigProps) => {
+const AccessEditFormAWSConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormAWSConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -64,7 +65,7 @@ const AccessEditFormAWSConfig = ({ form, disabled, loading, model, onModelChange
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.aws_access_key_id.label")}

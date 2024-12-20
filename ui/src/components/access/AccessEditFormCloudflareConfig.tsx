@@ -11,6 +11,7 @@ type AccessEditFormCloudflareConfigModelType = Partial<CloudflareAccessConfig>;
 
 export type AccessEditFormCloudflareConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormCloudflareConfigModelType;
@@ -21,7 +22,7 @@ const initModel = () => {
   return {} as AccessEditFormCloudflareConfigModelType;
 };
 
-const AccessEditFormCloudflareConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormCloudflareConfigProps) => {
+const AccessEditFormCloudflareConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormCloudflareConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -43,7 +44,7 @@ const AccessEditFormCloudflareConfig = ({ form, disabled, loading, model, onMode
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="dnsApiToken"
         label={t("access.form.cloudflare_dns_api_token.label")}

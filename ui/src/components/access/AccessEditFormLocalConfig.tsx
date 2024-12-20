@@ -8,6 +8,7 @@ type AccessEditFormLocalConfigModelType = Partial<LocalAccessConfig>;
 
 export type AccessEditFormLocalConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormLocalConfigModelType;
@@ -18,13 +19,13 @@ const initModel = () => {
   return {} as AccessEditFormLocalConfigModelType;
 };
 
-const AccessEditFormLocalConfig = ({ form, disabled, loading, model }: AccessEditFormLocalConfigProps) => {
+const AccessEditFormLocalConfig = ({ form, formName, disabled, loading, model }: AccessEditFormLocalConfigProps) => {
   const [initialValues, setInitialValues] = useState(model ?? initModel());
   useDeepCompareEffect(() => {
     setInitialValues(model ?? initModel());
   }, [model]);
 
-  return <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm"></Form>;
+  return <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName}></Form>;
 };
 
 export default AccessEditFormLocalConfig;

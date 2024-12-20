@@ -6,13 +6,13 @@ import { useAccessStore } from "@/stores/access";
 
 export type AccessTypeSelectProps = Omit<
   SelectProps,
-  "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
+  "filterOption" | "filterSort" | "labelRender" | "loading" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: AccessModel) => boolean;
 };
 
 const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
-  const { accesses, fetchAccesses } = useAccessStore();
+  const { initialized, accesses, fetchAccesses } = useAccessStore();
   useEffect(() => {
     fetchAccesses();
   }, [fetchAccesses]);
@@ -64,6 +64,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
 
         return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
       }}
+      loading={!initialized}
       options={options}
       optionFilterProp="label"
       optionLabelProp={undefined}

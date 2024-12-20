@@ -11,6 +11,7 @@ type AccessEditFormACMEHttpReqConfigModelType = Partial<ACMEHttpReqAccessConfig>
 
 export type AccessEditFormACMEHttpReqConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormACMEHttpReqConfigModelType;
@@ -24,7 +25,7 @@ const initModel = () => {
   } as AccessEditFormACMEHttpReqConfigModelType;
 };
 
-const AccessEditFormACMEHttpReqConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormACMEHttpReqConfigProps) => {
+const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormACMEHttpReqConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -55,7 +56,7 @@ const AccessEditFormACMEHttpReqConfig = ({ form, disabled, loading, model, onMod
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="endpoint"
         label={t("access.form.acmehttpreq_endpoint.label")}

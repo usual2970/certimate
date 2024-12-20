@@ -11,6 +11,7 @@ type AccessEditFormHuaweiCloudConfigModelType = Partial<HuaweiCloudAccessConfig>
 
 export type AccessEditFormHuaweiCloudConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormHuaweiCloudConfigModelType;
@@ -23,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormHuaweiCloudConfigModelType;
 };
 
-const AccessEditFormHuaweiCloudConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormHuaweiCloudConfigProps) => {
+const AccessEditFormHuaweiCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormHuaweiCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -57,7 +58,7 @@ const AccessEditFormHuaweiCloudConfig = ({ form, disabled, loading, model, onMod
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.huaweicloud_access_key_id.label")}

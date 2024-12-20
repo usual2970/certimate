@@ -11,6 +11,7 @@ type AccessEditFormBytePlusConfigModelType = Partial<BytePlusAccessConfig>;
 
 export type AccessEditFormBytePlusConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormBytePlusConfigModelType;
@@ -21,7 +22,7 @@ const initModel = () => {
   return {} as AccessEditFormBytePlusConfigModelType;
 };
 
-const AccessEditFormBytePlusConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormBytePlusConfigProps) => {
+const AccessEditFormBytePlusConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormBytePlusConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -48,7 +49,7 @@ const AccessEditFormBytePlusConfig = ({ form, disabled, loading, model, onModelC
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.byteplus_access_key.label")}

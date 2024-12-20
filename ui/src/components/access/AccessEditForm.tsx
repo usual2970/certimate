@@ -1,32 +1,11 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
+import { useCreation, useDeepCompareEffect } from "ahooks";
 import { Form, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import {
-  ACCESS_PROVIDER_TYPES,
-  type AccessModel,
-  type ACMEHttpReqAccessConfig,
-  type AliyunAccessConfig,
-  type AWSAccessConfig,
-  type BaiduCloudAccessConfig,
-  type BytePlusAccessConfig,
-  type CloudflareAccessConfig,
-  type DogeCloudAccessConfig,
-  type GoDaddyAccessConfig,
-  type HuaweiCloudAccessConfig,
-  type KubernetesAccessConfig,
-  type LocalAccessConfig,
-  type NameSiloAccessConfig,
-  type PowerDNSAccessConfig,
-  type QiniuAccessConfig,
-  type SSHAccessConfig,
-  type TencentCloudAccessConfig,
-  type VolcEngineAccessConfig,
-  type WebhookAccessConfig,
-} from "@/domain/access";
+import { ACCESS_PROVIDER_TYPES, type AccessModel } from "@/domain/access";
 import AccessTypeSelect from "./AccessTypeSelect";
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
 import AccessEditFormAliyunConfig from "./AccessEditFormAliyunConfig";
@@ -48,13 +27,14 @@ import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
 
 type AccessEditFormModelType = Partial<MaybeModelRecord<AccessModel>>;
+type AccessEditFormModes = "add" | "edit";
 
 export type AccessEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
   loading?: boolean;
-  mode: "add" | "edit";
+  mode: AccessEditFormModes;
   model?: AccessEditFormModelType;
   onModelChange?: (model: AccessEditFormModelType) => void;
 };
@@ -91,53 +71,55 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   }, [model?.configType]);
 
   const [configFormInst] = Form.useForm();
+  const configFormName = useCreation(() => `accessEditForm_config${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
   const configFormComponent = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
      */
+    const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, loading: loading, model: model?.config };
     switch (configType) {
       case ACCESS_PROVIDER_TYPES.ACMEHTTPREQ:
-        return <AccessEditFormACMEHttpReqConfig form={configFormInst} model={model?.config as ACMEHttpReqAccessConfig} />;
+        return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.ALIYUN:
-        return <AccessEditFormAliyunConfig form={configFormInst} model={model?.config as AliyunAccessConfig} />;
+        return <AccessEditFormAliyunConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.AWS:
-        return <AccessEditFormAWSConfig form={configFormInst} model={model?.config as AWSAccessConfig} />;
+        return <AccessEditFormAWSConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.BAIDUCLOUD:
-        return <AccessEditFormBaiduCloudConfig form={configFormInst} model={model?.config as BaiduCloudAccessConfig} />;
+        return <AccessEditFormBaiduCloudConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.BYTEPLUS:
-        return <AccessEditFormBytePlusConfig form={configFormInst} model={model?.config as BytePlusAccessConfig} />;
+        return <AccessEditFormBytePlusConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.CLOUDFLARE:
-        return <AccessEditFormCloudflareConfig form={configFormInst} model={model?.config as CloudflareAccessConfig} />;
+        return <AccessEditFormCloudflareConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.DOGECLOUD:
-        return <AccessEditFormDogeCloudConfig form={configFormInst} model={model?.config as DogeCloudAccessConfig} />;
+        return <AccessEditFormDogeCloudConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.GODADDY:
-        return <AccessEditFormGoDaddyConfig form={configFormInst} model={model?.config as GoDaddyAccessConfig} />;
+        return <AccessEditFormGoDaddyConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.HUAWEICLOUD:
-        return <AccessEditFormHuaweiCloudConfig form={configFormInst} model={model?.config as HuaweiCloudAccessConfig} />;
+        return <AccessEditFormHuaweiCloudConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.KUBERNETES:
-        return <AccessEditFormKubernetesConfig form={configFormInst} model={model?.config as KubernetesAccessConfig} />;
+        return <AccessEditFormKubernetesConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.LOCAL:
-        return <AccessEditFormLocalConfig form={configFormInst} model={model?.config as LocalAccessConfig} />;
+        return <AccessEditFormLocalConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.NAMESILO:
-        return <AccessEditFormNameSiloConfig form={configFormInst} model={model?.config as NameSiloAccessConfig} />;
+        return <AccessEditFormNameSiloConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.POWERDNS:
-        return <AccessEditFormPowerDNSConfig form={configFormInst} model={model?.config as PowerDNSAccessConfig} />;
+        return <AccessEditFormPowerDNSConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.QINIU:
-        return <AccessEditFormQiniuConfig form={configFormInst} model={model?.config as QiniuAccessConfig} />;
+        return <AccessEditFormQiniuConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.SSH:
-        return <AccessEditFormSSHConfig form={configFormInst} model={model?.config as SSHAccessConfig} />;
+        return <AccessEditFormSSHConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.TENCENTCLOUD:
-        return <AccessEditFormTencentCloudConfig form={configFormInst} model={model?.config as TencentCloudAccessConfig} />;
+        return <AccessEditFormTencentCloudConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.VOLCENGINE:
-        return <AccessEditFormVolcEngineConfig form={configFormInst} model={model?.config as VolcEngineAccessConfig} />;
+        return <AccessEditFormVolcEngineConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.WEBHOOK:
-        return <AccessEditFormWebhookConfig form={configFormInst} model={model?.config as WebhookAccessConfig} />;
+        return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
   }, [model, configType, configFormInst]);
 
   const handleFormProviderChange = (name: string) => {
-    if (name === "configForm") {
+    if (name === configFormName) {
       form.setFieldValue("config", configFormInst.getFieldsValue());
       onModelChange?.(form.getFieldsValue(true));
     }

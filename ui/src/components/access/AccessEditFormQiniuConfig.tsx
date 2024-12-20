@@ -11,6 +11,7 @@ type AccessEditFormQiniuConfigModelType = Partial<QiniuAccessConfig>;
 
 export type AccessEditFormQiniuConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormQiniuConfigModelType;
@@ -21,7 +22,7 @@ const initModel = () => {
   return {} as AccessEditFormQiniuConfigModelType;
 };
 
-const AccessEditFormQiniuConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormQiniuConfigProps) => {
+const AccessEditFormQiniuConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormQiniuConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -48,7 +49,7 @@ const AccessEditFormQiniuConfig = ({ form, disabled, loading, model, onModelChan
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.qiniu_access_key.label")}

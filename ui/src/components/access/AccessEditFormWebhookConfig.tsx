@@ -10,6 +10,7 @@ type AccessEditFormWebhookConfigModelType = Partial<WebhookAccessConfig>;
 
 export type AccessEditFormWebhookConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormWebhookConfigModelType;
@@ -20,7 +21,7 @@ const initModel = () => {
   return {} as AccessEditFormWebhookConfigModelType;
 };
 
-const AccessEditFormWebhookConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormWebhookConfigProps) => {
+const AccessEditFormWebhookConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormWebhookConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,7 +42,7 @@ const AccessEditFormWebhookConfig = ({ form, disabled, loading, model, onModelCh
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item name="url" label={t("access.form.webhook_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.webhook_url.placeholder")} />
       </Form.Item>

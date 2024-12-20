@@ -14,6 +14,7 @@ type AccessEditFormSSHConfigModelType = Partial<SSHAccessConfig>;
 
 export type AccessEditFormSSHConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormSSHConfigModelType;
@@ -28,7 +29,7 @@ const initModel = () => {
   } as AccessEditFormSSHConfigModelType;
 };
 
-const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormSSHConfigProps) => {
+const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormSSHConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -97,7 +98,7 @@ const AccessEditFormSSHConfig = ({ form, disabled, loading, model, onModelChange
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <div className="flex space-x-2">
         <div className="w-2/3">
           <Form.Item name="host" label={t("access.form.ssh_host.label")} rules={[formRule]}>

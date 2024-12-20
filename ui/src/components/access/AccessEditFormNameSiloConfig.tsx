@@ -11,6 +11,7 @@ type AccessEditFormNameSiloConfigModelType = Partial<NameSiloAccessConfig>;
 
 export type AccessEditFormNameSiloConfigProps = {
   form: FormInstance;
+  formName: string;
   disabled?: boolean;
   loading?: boolean;
   model?: AccessEditFormNameSiloConfigModelType;
@@ -21,7 +22,7 @@ const initModel = () => {
   return {} as AccessEditFormNameSiloConfigModelType;
 };
 
-const AccessEditFormNameSiloConfig = ({ form, disabled, loading, model, onModelChange }: AccessEditFormNameSiloConfigProps) => {
+const AccessEditFormNameSiloConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormNameSiloConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -43,7 +44,7 @@ const AccessEditFormNameSiloConfig = ({ form, disabled, loading, model, onModelC
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name="configForm" onValuesChange={handleFormChange}>
+    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="apiKey"
         label={t("access.form.namesilo_api_key.label")}

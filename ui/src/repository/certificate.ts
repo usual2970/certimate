@@ -21,6 +21,7 @@ export const list = async (req: CertificateListReq) => {
   const options: RecordListOptions = {
     sort: "-created",
     expand: "workflow",
+    requestKey: null,
   };
 
   if (req.state === "expireSoon") {
