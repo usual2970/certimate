@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { message, notification, Switch } from "antd";
+import { Button, message, notification, Switch } from "antd";
 import { useShallow } from "zustand/shallow";
 import { ArrowLeft as ArrowLeftIcon } from "lucide-react";
 
 import Show from "@/components/Show";
-import { Button } from "@/components/ui/button";
 import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEditDialog";
@@ -160,12 +159,12 @@ const WorkflowDetail = () => {
               <Show
                 when={!!workflow.hasDraft}
                 fallback={
-                  <Button variant={"secondary"} onClick={handleRunClick}>
+                  <Button type="text" onClick={handleRunClick}>
                     {running ? t("workflow.detail.action.running") : t("workflow.detail.action.run")}
                   </Button>
                 }
               >
-                <Button variant={"secondary"} onClick={handleWorkflowSaveClick}>
+                <Button type="primary" onClick={handleWorkflowSaveClick}>
                   {t("workflow.detail.action.save")}
                 </Button>
               </Show>
