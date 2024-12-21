@@ -15,8 +15,8 @@ import (
 /*
 提供商部署目标常量值。
 
-	注意：如果追加新的枚举值，请保持以 ASCII 排序。
-	NOTICE: If you add new enum, please keep ASCII order.
+	注意：如果追加新的常量值，请保持以 ASCII 排序。
+	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
 	targetAliyunALB        = "aliyun-alb"

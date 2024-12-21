@@ -55,7 +55,7 @@ const Dashboard = () => {
   );
 
   return (
-    <>
+    <div className="p-4">
       {NotificationContextHolder}
 
       <PageHeader title={t("dashboard.page.title")} />
@@ -116,7 +116,7 @@ const Dashboard = () => {
       <Divider />
 
       <div>TODO: {t("dashboard.latest_workflow_run")}</div>
-    </>
+    </div>
   );
 };
 

@@ -33,10 +33,13 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-// TODO: 该方法目前未实际使用，将在后续迭代中替换
 func createDeployer(target string, accessConfig string, deployConfig map[string]any) (deployer.Deployer, deployer.Logger, error) {
 	logger := deployer.NewDefaultLogger()
 
+	/*
+	  注意：如果追加新的常量值，请保持以 ASCII 排序。
+	  NOTICE: If you add new constant, please keep ASCII order.
+	*/
 	switch target {
 	case targetAliyunALB, targetAliyunCDN, targetAliyunCLB, targetAliyunDCDN, targetAliyunNLB, targetAliyunOSS:
 		{

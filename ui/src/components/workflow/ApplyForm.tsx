@@ -1,6 +1,7 @@
 import { memo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { Switch, Tooltip } from "antd";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, Plus, CircleHelp } from "lucide-react";
@@ -17,8 +18,6 @@ import StringList from "@/components/certimate/StringList";
 import { accessProvidersMap } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
 import { useContactStore } from "@/stores/contact";
-import { Switch } from "@/components/ui/switch";
-import { TooltipFast } from "@/components/ui/tooltip";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
 import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { useShallow } from "zustand/shallow";
@@ -304,9 +303,8 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                         <FormLabel>
                           <div className="flex">
                             <span className="mr-1">{t("domain.application.form.disable_follow_cname.label")} </span>
-                            <TooltipFast
-                              className="max-w-[20rem]"
-                              contentView={
+                            <Tooltip
+                              title={
                                 <p>
                                   {t("domain.application.form.disable_follow_cname.tips")}
                                   <a
@@ -320,14 +318,14 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                               }
                             >
                               <CircleHelp size={14} />
-                            </TooltipFast>
+                            </Tooltip>
                           </div>
                         </FormLabel>
                         <FormControl>
                           <div>
                             <Switch
                               defaultChecked={field.value}
-                              onCheckedChange={(value) => {
+                              onChange={(value) => {
                                 form.setValue(field.name, value);
                               }}
                             />

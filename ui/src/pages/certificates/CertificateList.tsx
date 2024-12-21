@@ -204,7 +204,7 @@ const CertificateList = () => {
   );
 
   return (
-    <>
+    <div className="p-4">
       {NotificationContextHolder}
 
       <PageHeader title={t("certificate.page.title")} />
@@ -233,7 +233,7 @@ const CertificateList = () => {
         rowKey={(record: CertificateModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-    </>
+    </div>
   );
 };
 

@@ -280,7 +280,7 @@ const WorkflowList = () => {
   };
 
   return (
-    <>
+    <div className="p-4">
       {ModelContextHolder}
       {NotificationContextHolder}
 
@@ -324,7 +324,7 @@ const WorkflowList = () => {
         rowKey={(record: WorkflowModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-    </>
+    </div>
   );
 };
 

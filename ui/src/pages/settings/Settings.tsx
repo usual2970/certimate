@@ -23,7 +23,7 @@ const Settings = () => {
   }, [location]);
 
   return (
-    <>
+    <div className="p-4">
       <PageHeader title={t("settings.page.title")} />
 
       <Card
@@ -73,7 +73,7 @@ const Settings = () => {
       >
         <Outlet />
       </Card>
-    </>
+    </div>
   );
 };
 

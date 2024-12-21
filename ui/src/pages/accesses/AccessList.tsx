@@ -159,7 +159,7 @@ const AccessList = () => {
   };
 
   return (
-    <>
+    <div className="p-4">
       {ModelContextHolder}
       {NotificationContextHolder}
 
@@ -202,7 +202,7 @@ const AccessList = () => {
         rowKey={(record: AccessModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-    </>
+    </div>
   );
 };
 
