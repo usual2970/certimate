@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
@@ -15,8 +15,8 @@ import {
   Workflow as WorkflowIcon,
 } from "lucide-react";
 
-import Version from "@/components/certimate/Version";
-import { useTheme } from "@/hooks";
+import Version from "@/components/Version";
+import { useBrowserTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const ConsoleLayout = () => {
@@ -51,8 +51,8 @@ const ConsoleLayout = () => {
   }
 
   return (
-    <Layout className="w-full min-h-screen">
-      <Layout.Sider className="max-md:hidden" theme="light" width={256}>
+    <Layout className="min-h-screen" hasSider>
+      <Layout.Sider className="max-md:hidden max-md:static fixed top-0 left-0 h-full z-[20]" width="256px" theme="light">
         <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
           <div className="w-full">
             <SiderMenu />
@@ -63,8 +63,8 @@ const ConsoleLayout = () => {
         </div>
       </Layout.Sider>
 
-      <Layout>
-        <Layout.Header style={{ padding: 0, background: themeToken.colorBgContainer }}>
+      <Layout className="pl-[256px] max-md:pl-0">
+        <Layout.Header className="sticky top-0 left-0 right-0 p-0 z-[19] shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex items-center justify-between size-full px-4 overflow-hidden">
             <div className="flex items-center gap-4 size-full">
               <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
@@ -99,17 +99,15 @@ const ConsoleLayout = () => {
           </div>
         </Layout.Header>
 
-        <Layout.Content>
-          <div className="p-4">
-            <Outlet />
-          </div>
+        <Layout.Content style={{ overflow: "initial" }}>
+          <Outlet />
         </Layout.Content>
       </Layout>
     </Layout>
   );
 };
 
-const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
+const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -120,43 +118,21 @@ const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }
   const MENU_KEY_CERTIFICATES = "/certificates";
   const MENU_KEY_ACCESSES = "/accesses";
   const menuItems: Required<MenuProps>["items"] = [
-    {
-      key: MENU_KEY_HOME,
-      icon: <HomeIcon size={16} />,
-      label: t("dashboard.page.title"),
+    [MENU_KEY_HOME, <HomeIcon size={16} />, t("dashboard.page.title")],
+    [MENU_KEY_WORKFLOWS, <WorkflowIcon size={16} />, t("workflow.page.title")],
+    [MENU_KEY_CERTIFICATES, <ShieldCheckIcon size={16} />, t("certificate.page.title")],
+    [MENU_KEY_ACCESSES, <ServerIcon size={16} />, t("access.page.title")],
+  ].map(([key, icon, label]) => {
+    return {
+      key: key as string,
+      icon: icon,
+      label: label,
       onClick: () => {
-        navigate(MENU_KEY_HOME);
-        onSelect?.(MENU_KEY_HOME);
+        navigate(key as string);
+        onSelect?.(key as string);
       },
-    },
-    {
-      key: MENU_KEY_WORKFLOWS,
-      icon: <WorkflowIcon size={16} />,
-      label: t("workflow.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_WORKFLOWS);
-        onSelect?.(MENU_KEY_WORKFLOWS);
-      },
-    },
-    {
-      key: MENU_KEY_CERTIFICATES,
-      icon: <ShieldCheckIcon size={16} />,
-      label: t("certificate.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_CERTIFICATES);
-        onSelect?.(MENU_KEY_CERTIFICATES);
-      },
-    },
-    {
-      key: MENU_KEY_ACCESSES,
-      icon: <ServerIcon size={16} />,
-      label: t("access.page.title"),
-      onClick: () => {
-        navigate(MENU_KEY_ACCESSES);
-        onSelect?.(MENU_KEY_ACCESSES);
-      },
-    },
-  ];
+    };
+  });
   const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
   const getActiveMenuItem = () => {
@@ -201,28 +177,27 @@ const SiderMenu = React.memo(({ onSelect }: { onSelect?: (key: string) => void }
   );
 });
 
-const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
+const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { t } = useTranslation();
 
-  const { theme, setThemeMode } = useTheme();
+  const { theme, themeMode, setThemeMode } = useBrowserTheme();
 
   const items: Required<MenuProps>["items"] = [
-    {
-      key: "light",
-      label: <>{t("common.theme.light")}</>,
-      onClick: () => setThemeMode("light"),
-    },
-    {
-      key: "dark",
-      label: <>{t("common.theme.dark")}</>,
-      onClick: () => setThemeMode("dark"),
-    },
-    {
-      key: "system",
-      label: <>{t("common.theme.system")}</>,
-      onClick: () => setThemeMode("system"),
-    },
-  ];
+    ["light", t("common.theme.light")],
+    ["dark", t("common.theme.dark")],
+    ["system", t("common.theme.system")],
+  ].map(([key, label]) => {
+    return {
+      key: key as string,
+      label: label,
+      onClick: () => {
+        setThemeMode(key as Parameters<typeof setThemeMode>[0]);
+        if (key !== themeMode) {
+          window.location.reload();
+        }
+      },
+    };
+  });
 
   return (
     <Dropdown menu={{ items }} trigger={["click"]}>
@@ -231,7 +206,7 @@ const ThemeToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) 
   );
 });
 
-const LocaleToggleButton = React.memo(({ size }: { size?: ButtonProps["size"] }) => {
+const LocaleToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
   const { i18n } = useTranslation();
 
   const items: Required<MenuProps>["items"] = Object.keys(i18n.store.data).map((key) => {

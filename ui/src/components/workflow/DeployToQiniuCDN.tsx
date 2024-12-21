@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -87,15 +87,15 @@ const DeployToQiniuCDN = ({ data }: DeployFormProps) => {
                 <FormLabel className="flex justify-between">
                   <div>{t("domain.deployment.form.access.label")}</div>
 
-                  <AccessEditDialog
+                  <AccessEditModal
+                    data={{ configType: "qiniu" }}
+                    mode="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />
                         {t("common.button.add")}
                       </div>
                     }
-                    op="add"
-                    outConfigType="qiniu"
                   />
                 </FormLabel>
                 <FormControl>

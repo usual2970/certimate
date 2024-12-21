@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
@@ -9,7 +10,8 @@ import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { CertificateModel } from "@/domain/certificate";
-import { list as listCertificate, type CertificateListReq } from "@/repository/certificate";
+import { list as listCertificate, type ListCertificateRequest } from "@/repository/certificate";
+import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
   const navigate = useNavigate();
@@ -21,8 +23,6 @@ const CertificateList = () => {
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const [loading, setLoading] = useState<boolean>(false);
-
   const tableColumns: TableProps<CertificateModel>["columns"] = [
     {
       key: "$index",
@@ -33,7 +33,7 @@ const CertificateList = () => {
     },
     {
       key: "name",
-      title: t("certificate.props.domain"),
+      title: t("certificate.props.san"),
       render: (_, record) => <Typography.Text>{record.san}</Typography.Text>,
     },
     {
@@ -51,6 +51,7 @@ const CertificateList = () => {
             label: <Radio checked={filters["state"] === key}>{t(label)}</Radio>,
             onClick: () => {
               if (filters["state"] !== key) {
+                setPage(1);
                 setFilters((prev) => ({ ...prev, state: key }));
                 setSelectedKeys([key]);
               }
@@ -61,6 +62,7 @@ const CertificateList = () => {
         });
 
         const handleResetClick = () => {
+          setPage(1);
           setFilters((prev) => ({ ...prev, state: undefined }));
           setSelectedKeys([]);
           clearFilters?.();
@@ -152,15 +154,14 @@ const CertificateList = () => {
       width: 120,
       render: (_, record) => (
         <Space size={0}>
-          <Tooltip title={t("certificate.action.view")}>
-            <Button
-              type="link"
-              icon={<EyeIcon size={16} />}
-              onClick={() => {
-                handleViewClick(record);
-              }}
-            />
-          </Tooltip>
+          <CertificateDetailDrawer
+            data={record}
+            trigger={
+              <Tooltip title={t("certificate.action.view")}>
+                <Button type="link" icon={<EyeIcon size={16} />} />
+              </Tooltip>
+            }
+          />
         </Space>
       ),
     },
@@ -177,46 +178,33 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const [currentRecord, setCurrentRecord] = useState<CertificateModel>();
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const fetchTableData = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const resp = await listCertificate({
+  const { loading } = useRequest(
+    () => {
+      return listCertificate({
         page: page,
         perPage: pageSize,
-        state: filters["state"] as CertificateListReq["state"],
+        state: filters["state"] as ListCertificateRequest["state"],
       });
+    },
+    {
+      refreshDeps: [filters, page, pageSize],
+      onSuccess: (data) => {
+        setTableData(data.items);
+        setTableTotal(data.totalItems);
+      },
+      onError: (err) => {
+        if (err instanceof ClientResponseError && err.isAbort) {
+          return;
+        }
 
-      setTableData(resp.items);
-      setTableTotal(resp.totalItems);
-    } catch (err) {
-      if (err instanceof ClientResponseError && err.isAbort) {
-        return;
-      }
-
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
-    } finally {
-      setLoading(false);
+        console.error(err);
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+      },
     }
-  }, [filters, page, pageSize]);
-
-  useEffect(() => {
-    fetchTableData();
-  }, [fetchTableData]);
-
-  const handleViewClick = (certificate: CertificateModel) => {
-    setDrawerOpen(true);
-    setCurrentRecord(certificate);
-  };
+  );
 
   return (
-    <>
+    <div className="p-4">
       {NotificationContextHolder}
 
       <PageHeader title={t("certificate.page.title")} />
@@ -232,6 +220,7 @@ const CertificateList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
+          showSizeChanger: true,
           onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
@@ -244,16 +233,7 @@ const CertificateList = () => {
         rowKey={(record: CertificateModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-
-      <CertificateDetailDrawer
-        data={currentRecord}
-        open={drawerOpen}
-        onClose={() => {
-          setDrawerOpen(false);
-          setCurrentRecord(undefined);
-        }}
-      />
-    </>
+    </div>
   );
 };
 

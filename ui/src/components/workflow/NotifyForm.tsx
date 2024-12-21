@@ -10,9 +10,9 @@ import { useShallow } from "zustand/shallow";
 import { usePanel } from "./PanelProvider";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
-import { useNotifyContext } from "@/providers/notify";
+import { useNotifyChannelStore } from "@/stores/notify";
 import { useEffect, useState } from "react";
-import { NotifyChannels, channels as supportedChannels } from "@/domain/settings";
+import { notifyChannelsMap } from "@/domain/settings";
 import { SelectValue } from "@radix-ui/react-select";
 import { Textarea } from "../ui/textarea";
 import { RefreshCw, Settings } from "lucide-react";
@@ -25,7 +25,7 @@ const selectState = (state: WorkflowState) => ({
   updateNode: state.updateNode,
 });
 type ChannelName = {
-  name: string;
+  key: string;
   label: string;
 };
 
@@ -34,28 +34,23 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
   const { updateNode } = useWorkflowStore(useShallow(selectState));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
-  const { config: notifyConfig, initChannels } = useNotifyContext();
+  const { channels: supportedChannels, fetchChannels } = useNotifyChannelStore();
 
-  const [chanels, setChanels] = useState<ChannelName[]>([]);
+  const [channels, setChannels] = useState<ChannelName[]>([]);
 
   useEffect(() => {
-    setChanels(getChannels());
-  }, [notifyConfig]);
+    fetchChannels();
+  }, [fetchChannels]);
 
-  const getChannels = () => {
+  useEffect(() => {
     const rs: ChannelName[] = [];
-    if (!notifyConfig.content) {
-      return rs;
-    }
-
-    const chanels = notifyConfig.content as NotifyChannels;
-    for (const channel of supportedChannels) {
-      if (chanels[channel.name] && chanels[channel.name].enabled) {
-        rs.push(channel);
+    for (const channel of notifyChannelsMap.values()) {
+      if (supportedChannels[channel.type]?.enabled) {
+        rs.push({ key: channel.type, label: channel.name });
       }
     }
-    return rs;
-  };
+    setChannels(rs);
+  }, [supportedChannels]);
 
   const formSchema = z.object({
     channel: z.string(),
@@ -103,10 +98,10 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
                 <FormLabel className="flex justify-between items-center">
                   <div className="flex space-x-2 items-center">
                     <div>{t(`${i18nPrefix}.channel.label`)}</div>
-                    <RefreshCw size={16} className="cursor-pointer" onClick={() => initChannels()} />
+                    <RefreshCw size={16} className="cursor-pointer" onClick={() => fetchChannels()} />
                   </div>
                   <a
-                    href="#/setting/notify"
+                    href="#/settings/notification"
                     target="_blank"
                     className="flex justify-between items-center space-x-1 font-normal text-primary hover:underline cursor-pointer"
                   >
@@ -126,8 +121,8 @@ const NotifyForm = ({ data }: NotifyFormProps) => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {chanels.map((item) => (
-                          <SelectItem key={item.name} value={item.name}>
+                        {channels.map((item) => (
+                          <SelectItem key={item.key} value={item.key}>
                             <div>{t(item.label)}</div>
                           </SelectItem>
                         ))}

@@ -61,7 +61,7 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 
 	// 查询模板信息
 	settingRepo := repository.NewSettingRepository()
-	setting, err := settingRepo.GetByName(context.Background(), "templates")
+	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
 
 	subject := defaultExpireSubject
 	message := defaultExpireMessage

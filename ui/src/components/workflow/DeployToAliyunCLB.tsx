@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Button } from "../ui/button";
 
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -106,15 +106,15 @@ const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
                 <FormLabel className="flex justify-between">
                   <div>{t("domain.deployment.form.access.label")}</div>
 
-                  <AccessEditDialog
+                  <AccessEditModal
+                    data={{ configType: "aliyun" }}
+                    mode="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />
                         {t("common.button.add")}
                       </div>
                     }
-                    op="add"
-                    outConfigType="aliyun"
                   />
                 </FormLabel>
                 <FormControl>

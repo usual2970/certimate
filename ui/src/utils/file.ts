@@ -14,7 +14,7 @@ export function readFileContent(file: File): Promise<string> {
 
     reader.onerror = () => reject(reader.error);
 
-    reader.readAsText(file);
+    reader.readAsText(file, "utf-8");
   });
 }
 

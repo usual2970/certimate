@@ -1,17 +1,17 @@
-import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Radio } from "antd";
+import { parseExpression } from "cron-parser";
 import { z } from "zod";
+import { useShallow } from "zustand/shallow";
+
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Label } from "../ui/label";
-import { useTranslation } from "react-i18next";
-import { parseExpression } from "cron-parser";
 import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
 import { usePanel } from "./PanelProvider";
 
 const formSchema = z
@@ -49,7 +49,7 @@ const StartForm = ({ data }: StartFormProps) => {
 
   const { t } = useTranslation();
 
-  const [method, setMethod] = React.useState("auto");
+  const [method, setMethod] = useState("auto");
 
   useEffect(() => {
     if (data.config && data.config.executionMethod) {
@@ -95,23 +95,17 @@ const StartForm = ({ data }: StartFormProps) => {
               <FormItem>
                 <FormLabel>{t(`${i18nPrefix}.executionMethod.label`)}</FormLabel>
                 <FormControl>
-                  <RadioGroup
+                  <Radio.Group
                     {...field}
                     value={method}
-                    onValueChange={(val: string) => {
-                      setMethod(val);
+                    onChange={(e) => {
+                      setMethod(e.target.value);
                     }}
                     className="flex space-x-3"
                   >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="auto" id="option-one" />
-                      <Label htmlFor="option-one">{t(`${i18nPrefix}.executionMethod.options.auto`)}</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="manual" id="option-two" />
-                      <Label htmlFor="option-two">{t(`${i18nPrefix}.executionMethod.options.manual`)}</Label>
-                    </div>
-                  </RadioGroup>
+                    <Radio value="auto">{t(`${i18nPrefix}.executionMethod.options.auto`)}</Radio>
+                    <Radio value="manual">{t(`${i18nPrefix}.executionMethod.options.manual`)}</Radio>
+                  </Radio.Group>
                 </FormControl>
 
                 <FormMessage />

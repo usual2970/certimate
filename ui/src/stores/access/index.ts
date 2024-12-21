@@ -5,34 +5,40 @@ import { type AccessModel } from "@/domain/access";
 import { list as listAccess, save as saveAccess, remove as removeAccess } from "@/repository/access";
 
 export interface AccessState {
+  initialized: boolean;
   accesses: AccessModel[];
-  createAccess: (access: AccessModel) => void;
-  updateAccess: (access: AccessModel) => void;
-  deleteAccess: (access: AccessModel) => void;
+  createAccess: (access: MaybeModelRecord<AccessModel>) => void;
+  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
+  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
   fetchAccesses: () => Promise<void>;
 }
 
 export const useAccessStore = create<AccessState>((set) => {
+  let fetcher: Promise<AccessModel[]> | null = null; // 防止多次重复请求
+
   return {
+    initialized: false,
     accesses: [],
 
     createAccess: async (access) => {
-      access = await saveAccess(access);
+      const record = await saveAccess(access);
 
       set(
         produce((state: AccessState) => {
-          state.accesses.unshift(access);
+          state.accesses.unshift(record);
         })
       );
     },
 
     updateAccess: async (access) => {
-      access = await saveAccess(access);
+      const record = await saveAccess(access);
 
       set(
         produce((state: AccessState) => {
-          const index = state.accesses.findIndex((e) => e.id === access.id);
-          state.accesses[index] = access;
+          const index = state.accesses.findIndex((e) => e.id === record.id);
+          if (index !== -1) {
+            state.accesses[index] = record;
+          }
         })
       );
     },
@@ -48,11 +54,14 @@ export const useAccessStore = create<AccessState>((set) => {
     },
 
     fetchAccesses: async () => {
-      const accesses = await listAccess();
+      fetcher ??= listAccess();
 
-      set({
-        accesses: accesses ?? [],
-      });
+      try {
+        const accesses = await fetcher;
+        set({ accesses: accesses ?? [], initialized: true });
+      } finally {
+        fetcher = null;
+      }
     },
   };
 });

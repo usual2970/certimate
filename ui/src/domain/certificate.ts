@@ -1,8 +1,6 @@
-import { type BaseModel } from "pocketbase";
+import { type WorkflowModel } from "./workflow";
 
-import { WorkflowModel } from "./workflow";
-
-export interface CertificateModel extends Omit<BaseModel, "created" | "updated"> {
+export interface CertificateModel extends BaseModel {
   san: string;
   certificate: string;
   privateKey: string;

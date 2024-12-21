@@ -2,41 +2,46 @@ package deployer
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/pocketbase/pocketbase/models"
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
+/*
+提供商部署目标常量值。
+
+	注意：如果追加新的常量值，请保持以 ASCII 排序。
+	NOTICE: If you add new constant, please keep ASCII order.
+*/
 const (
-	targetAliyunOSS      = "aliyun-oss"
-	targetAliyunCDN      = "aliyun-cdn"
-	targetAliyunDCDN     = "aliyun-dcdn"
-	targetAliyunCLB      = "aliyun-clb"
-	targetAliyunALB      = "aliyun-alb"
-	targetAliyunNLB      = "aliyun-nlb"
-	targetTencentCDN     = "tencent-cdn"
-	targetTencentECDN    = "tencent-ecdn"
-	targetTencentCLB     = "tencent-clb"
-	targetTencentCOS     = "tencent-cos"
-	targetTencentTEO     = "tencent-teo"
-	targetHuaweiCloudCDN = "huaweicloud-cdn"
-	targetHuaweiCloudELB = "huaweicloud-elb"
-	targetBaiduCloudCDN  = "baiducloud-cdn"
-	targetVolcEngineLive = "volcengine-live"
-	targetVolcEngineCDN  = "volcengine-cdn"
-	targetBytePlusCDN    = "byteplus-cdn"
-	targetQiniuCdn       = "qiniu-cdn"
-	targetDogeCloudCdn   = "dogecloud-cdn"
-	targetLocal          = "local"
-	targetSSH            = "ssh"
-	targetWebhook        = "webhook"
-	targetK8sSecret      = "k8s-secret"
+	targetAliyunALB        = "aliyun-alb"
+	targetAliyunCDN        = "aliyun-cdn"
+	targetAliyunCLB        = "aliyun-clb"
+	targetAliyunDCDN       = "aliyun-dcdn"
+	targetAliyunNLB        = "aliyun-nlb"
+	targetAliyunOSS        = "aliyun-oss"
+	targetBaiduCloudCDN    = "baiducloud-cdn"
+	targetBytePlusCDN      = "byteplus-cdn"
+	targetDogeCloudCDN     = "dogecloud-cdn"
+	targetHuaweiCloudCDN   = "huaweicloud-cdn"
+	targetHuaweiCloudELB   = "huaweicloud-elb"
+	targetK8sSecret        = "k8s-secret"
+	targetLocal            = "local"
+	targetQiniuCDN         = "qiniu-cdn"
+	targetSSH              = "ssh"
+	targetTencentCloudCDN  = "tencentcloud-cdn"
+	targetTencentCloudCLB  = "tencentcloud-clb"
+	targetTencentCloudCOS  = "tencentcloud-cos"
+	targetTencentCloudECDN = "tencentcloud-ecdn"
+	targetTencentCloudEO   = "tencentcloud-eo"
+	targetVolcEngineCDN    = "volcengine-cdn"
+	targetVolcEngineLive   = "volcengine-live"
+	targetWebhook          = "webhook"
 )
 
 type DeployerOption struct {
@@ -73,7 +78,7 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 	}
 
 	for _, deployConfig := range deployConfigs {
-		deployer, err := getWithDeployConfig(record, cert, deployConfig)
+		deployer, err := newWithDeployConfig(record, cert, deployConfig)
 		if err != nil {
 			return nil, err
 		}
@@ -85,10 +90,10 @@ func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error
 }
 
 func GetWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
-	return getWithTypeAndOption(deployType, option)
+	return newWithTypeAndOption(deployType, option)
 }
 
-func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
+func newWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
 	accessRepo := repository.NewAccessRepository()
 	access, err := accessRepo.GetById(context.Background(), deployConfig.Access)
 	if err != nil {
@@ -111,65 +116,38 @@ func getWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		}
 	}
 
-	return getWithTypeAndOption(deployConfig.Type, option)
+	return newWithTypeAndOption(deployConfig.Type, option)
 }
 
-func getWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
-	switch deployType {
-	case targetAliyunOSS:
-		return NewAliyunOSSDeployer(option)
-	case targetAliyunCDN:
-		return NewAliyunCDNDeployer(option)
-	case targetAliyunDCDN:
-		return NewAliyunDCDNDeployer(option)
-	case targetAliyunCLB:
-		return NewAliyunCLBDeployer(option)
-	case targetAliyunALB:
-		return NewAliyunALBDeployer(option)
-	case targetAliyunNLB:
-		return NewAliyunNLBDeployer(option)
-	case targetTencentCDN:
-		return NewTencentCDNDeployer(option)
-	case targetTencentECDN:
-		return NewTencentECDNDeployer(option)
-	case targetTencentCLB:
-		return NewTencentCLBDeployer(option)
-	case targetTencentCOS:
-		return NewTencentCOSDeployer(option)
-	case targetTencentTEO:
-		return NewTencentTEODeployer(option)
-	case targetHuaweiCloudCDN:
-		return NewHuaweiCloudCDNDeployer(option)
-	case targetHuaweiCloudELB:
-		return NewHuaweiCloudELBDeployer(option)
-	case targetBaiduCloudCDN:
-		return NewBaiduCloudCDNDeployer(option)
-	case targetQiniuCdn:
-		return NewQiniuCDNDeployer(option)
-	case targetDogeCloudCdn:
-		return NewDogeCloudCDNDeployer(option)
-	case targetLocal:
-		return NewLocalDeployer(option)
-	case targetSSH:
-		return NewSSHDeployer(option)
-	case targetWebhook:
-		return NewWebhookDeployer(option)
-	case targetK8sSecret:
-		return NewK8sSecretDeployer(option)
-	case targetVolcEngineLive:
-		return NewVolcengineLiveDeployer(option)
-	case targetVolcEngineCDN:
-		return NewVolcengineCDNDeployer(option)
-	case targetBytePlusCDN:
-		return NewByteplusCDNDeployer(option)
+func newWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
+	deployer, logger, err := createDeployer(deployType, option.AccessRecord.Config, option.DeployConfig.Config)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("unsupported deploy target")
+
+	return &proxyDeployer{
+		option:   option,
+		logger:   logger,
+		deployer: deployer,
+	}, nil
 }
 
-func toStr(tag string, data any) string {
-	if data == nil {
-		return tag
-	}
-	byts, _ := json.Marshal(data)
-	return tag + "：" + string(byts)
+// TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
+type proxyDeployer struct {
+	option   *DeployerOption
+	logger   deployer.Logger
+	deployer deployer.Deployer
+}
+
+func (d *proxyDeployer) GetID() string {
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
+}
+
+func (d *proxyDeployer) GetInfos() []string {
+	return d.logger.GetRecords()
+}
+
+func (d *proxyDeployer) Deploy(ctx context.Context) error {
+	_, err := d.deployer.Deploy(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
+	return err
 }

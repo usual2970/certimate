@@ -2,17 +2,17 @@ import { createHashRouter } from "react-router-dom";
 
 import AuthLayout from "./pages/AuthLayout";
 import ConsoleLayout from "./pages/ConsoleLayout";
-import SettingsLayout from "./pages/SettingsLayout";
 import Login from "./pages/login/Login";
-import Account from "./pages/settings/Account";
-import Password from "./pages/settings/Password";
-import Notify from "./pages/settings/Notify";
-import SSLProvider from "./pages/settings/SSLProvider";
 import Dashboard from "./pages/dashboard/Dashboard";
 import AccessList from "./pages/accesses/AccessList";
 import WorkflowList from "./pages/workflows/WorkflowList";
 import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import CertificateList from "./pages/certificates/CertificateList";
+import Settings from "./pages/settings/Settings";
+import SettingsAccount from "./pages/settings/SettingsAccount";
+import SettingsPassword from "./pages/settings/SettingsPassword";
+import SettingsNotification from "./pages/settings/SettingsNotification";
+import SettingsSSLProvider from "./pages/settings/SettingsSSLProvider";
 
 export const router = createHashRouter([
   {
@@ -41,23 +41,23 @@ export const router = createHashRouter([
       },
       {
         path: "/settings",
-        element: <SettingsLayout />,
+        element: <Settings />,
         children: [
           {
-            path: "/settings/password",
-            element: <Password />,
-          },
-          {
             path: "/settings/account",
-            element: <Account />,
+            element: <SettingsAccount />,
           },
           {
-            path: "/settings/notify",
-            element: <Notify />,
+            path: "/settings/password",
+            element: <SettingsPassword />,
+          },
+          {
+            path: "/settings/notification",
+            element: <SettingsNotification />,
           },
           {
             path: "/settings/ssl-provider",
-            element: <SSLProvider />,
+            element: <SettingsSSLProvider />,
           },
         ],
       },

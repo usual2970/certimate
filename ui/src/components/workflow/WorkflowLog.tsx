@@ -1,5 +1,5 @@
 import { WorkflowRunLog } from "@/domain/workflow";
-import { logs } from "@/repository/workflow";
+import { list as logs } from "@/repository/workflowRunLog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTable } from "./DataTable";
