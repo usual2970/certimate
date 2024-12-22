@@ -1,5 +1,5 @@
 ﻿{
-  "login.username.label": "用户名",
+  "login.username.label": "用户名/邮箱",
   "login.username.placeholder": "请输入用户名/邮箱",
   "login.username.errmsg.invalid": "请输入正确的用户名/邮箱",
   "login.password.label": "密码",

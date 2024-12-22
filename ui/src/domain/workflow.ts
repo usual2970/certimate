@@ -1,9 +1,8 @@
 import { produce } from "immer";
 import { nanoid } from "nanoid";
-import { type BaseModel } from "pocketbase";
 
 import i18n from "@/i18n";
-import { deployTargets, KVType } from "./domain";
+import { deployTargets } from "./domain";
 
 export type WorkflowRunLog = {
   id: string;
@@ -28,7 +27,7 @@ export type WorkflowOutput = {
   error: string;
 };
 
-export interface WorkflowModel extends Omit<BaseModel, "created" | "updated"> {
+export interface WorkflowModel extends BaseModel {
   name: string;
   description?: string;
   type: string;
@@ -109,7 +108,7 @@ export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo
   [WorkflowNodeType.Notify, []],
 ]);
 
-export type WorkflowNodeConfig = Record<string, string | boolean | number | KVType[] | string[] | undefined>;
+export type WorkflowNodeConfig = Record<string, unknown>;
 
 export type WorkflowNode = {
   id: string;
@@ -152,6 +151,8 @@ export const initWorkflow = (): WorkflowModel => {
     crontab: "0 0 * * *",
     enabled: false,
     draft: rs,
+    created: new Date().toUTCString(),
+    updated: new Date().toUTCString(),
   };
 };
 

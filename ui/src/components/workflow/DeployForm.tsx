@@ -60,14 +60,14 @@ const getForm = (data: WorkflowNode, defaultProivder?: string) => {
       return <DeployToQiniuCDN data={data} />;
     case "webhook":
       return <DeployToWebhook data={data} />;
-    case "tencent-cdn":
-    case "tencent-ecdn":
+    case "tencentcloud-cdn":
+    case "tencentcloud-ecdn":
       return <DeployToTencentCDN data={data} />;
-    case "tencent-clb":
+    case "tencentcloud-clb":
       return <DeployToTencentCLB data={data} />;
-    case "tencent-cos":
+    case "tencentcloud-cos":
       return <DeployToTencentCOS data={data} />;
-    case "tencent-teo":
+    case "tencentcloud-eo":
       return <DeployToTencentTEO data={data} />;
     case "ssh":
       return <DeployToSSH data={data} />;

@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useRequest } from "ahooks";
 import {
   Button,
   Divider,
@@ -25,6 +26,7 @@ import { ClientResponseError } from "pocketbase";
 
 import { WorkflowModel } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
+import { getErrMsg } from "@/utils/error";
 
 const WorkflowList = () => {
   const navigate = useNavigate();
@@ -36,8 +38,6 @@ const WorkflowList = () => {
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
-
-  const [loading, setLoading] = useState<boolean>(false);
 
   const tableColumns: TableProps<WorkflowModel>["columns"] = [
     {
@@ -94,6 +94,7 @@ const WorkflowList = () => {
             label: <Radio checked={filters["state"] === key}>{t(label)}</Radio>,
             onClick: () => {
               if (filters["state"] !== key) {
+                setPage(1);
                 setFilters((prev) => ({ ...prev, state: key }));
                 setSelectedKeys([key]);
               }
@@ -104,6 +105,7 @@ const WorkflowList = () => {
         });
 
         const handleResetClick = () => {
+          setPage(1);
           setFilters((prev) => ({ ...prev, state: undefined }));
           setSelectedKeys([]);
           clearFilters?.();
@@ -208,34 +210,30 @@ const WorkflowList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const fetchTableData = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const resp = await listWorkflow({
+  const { loading } = useRequest(
+    () => {
+      return listWorkflow({
         page: page,
         perPage: pageSize,
         enabled: (filters["state"] as string) === "enabled" ? true : (filters["state"] as string) === "disabled" ? false : undefined,
       });
+    },
+    {
+      refreshDeps: [filters, page, pageSize],
+      onSuccess: (data) => {
+        setTableData(data.items);
+        setTableTotal(data.totalItems);
+      },
+      onError: (err) => {
+        if (err instanceof ClientResponseError && err.isAbort) {
+          return;
+        }
 
-      setTableData(resp.items);
-      setTableTotal(resp.totalItems);
-    } catch (err) {
-      if (err instanceof ClientResponseError && err.isAbort) {
-        return;
-      }
-
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
-    } finally {
-      setLoading(false);
+        console.error(err);
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+      },
     }
-  }, [filters, page, pageSize]);
-
-  useEffect(() => {
-    fetchTableData();
-  }, [fetchTableData]);
+  );
 
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
@@ -255,7 +253,7 @@ const WorkflowList = () => {
       }
     } catch (err) {
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     }
   };
 
@@ -271,7 +269,7 @@ const WorkflowList = () => {
           }
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
         }
       },
     });
@@ -282,7 +280,7 @@ const WorkflowList = () => {
   };
 
   return (
-    <>
+    <div className="p-4">
       {ModelContextHolder}
       {NotificationContextHolder}
 
@@ -313,6 +311,7 @@ const WorkflowList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
+          showSizeChanger: true,
           onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
@@ -325,7 +324,7 @@ const WorkflowList = () => {
         rowKey={(record: WorkflowModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-    </>
+    </div>
   );
 };
 

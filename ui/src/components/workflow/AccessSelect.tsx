@@ -13,7 +13,11 @@ type AccessSelectProps = {
 const AccessSelect = ({ value, onValueChange, providerType }: AccessSelectProps) => {
   const [localValue, setLocalValue] = React.useState<string>("");
   const { t } = useTranslation();
-  const { accesses } = useAccessStore();
+  const { accesses, fetchAccesses } = useAccessStore();
+
+  useEffect(() => {
+    fetchAccesses();
+  }, []);
 
   useEffect(() => {
     setLocalValue(value);

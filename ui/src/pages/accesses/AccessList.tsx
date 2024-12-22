@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useRequest } from "ahooks";
 import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import AccessEditDialog from "@/components/certimate/AccessEditDialog";
+import AccessEditModal from "@/components/access/AccessEditModal";
 import { accessProvidersMap, type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
+import { getErrMsg } from "@/utils/error";
 
 const AccessList = () => {
   const { t } = useTranslation();
@@ -16,9 +18,7 @@ const AccessList = () => {
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { accesses, fetchAccesses, deleteAccess } = useAccessStore();
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const { initialized, accesses, fetchAccesses, deleteAccess } = useAccessStore();
 
   const tableColumns: TableProps<AccessModel>["columns"] = [
     {
@@ -71,24 +71,24 @@ const AccessList = () => {
       render: (_, record) => (
         <>
           <Space size={0}>
-            <AccessEditDialog
+            <AccessEditModal
+              data={record}
+              mode="edit"
               trigger={
                 <Tooltip title={t("access.action.edit")}>
                   <Button type="link" icon={<PencilIcon size={16} />} />
                 </Tooltip>
               }
-              op="edit"
-              data={record}
             />
 
-            <AccessEditDialog
+            <AccessEditModal
+              data={{ ...record, id: undefined, name: `${record.name}-copy` }}
+              mode="add"
               trigger={
                 <Tooltip title={t("access.action.copy")}>
                   <Button type="link" icon={<CopyIcon size={16} />} />
                 </Tooltip>
               }
-              op="copy"
-              data={record}
             />
 
             <Tooltip title={t("access.action.delete")}>
@@ -113,35 +113,34 @@ const AccessList = () => {
   const [pageSize, setPageSize] = useState<number>(10);
 
   useEffect(() => {
-    fetchAccesses();
-  }, []);
-
-  const fetchTableData = useCallback(async () => {
-    if (loading) return;
-    setLoading(true);
-
-    try {
-      const startIndex = (page - 1) * pageSize;
-      const endIndex = startIndex + pageSize;
-      const items = accesses.slice(startIndex, endIndex);
-
-      setTableData(items);
-      setTableTotal(accesses.length);
-    } catch (err) {
+    fetchAccesses().catch((err) => {
       if (err instanceof ClientResponseError && err.isAbort) {
         return;
       }
 
       console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
-    } finally {
-      setLoading(false);
-    }
-  }, [page, pageSize, accesses]);
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+    });
+  }, []);
 
-  useEffect(() => {
-    fetchTableData();
-  }, [fetchTableData]);
+  const { loading } = useRequest(
+    () => {
+      const startIndex = (page - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const items = accesses.slice(startIndex, endIndex);
+      return Promise.resolve({
+        items,
+        totalItems: accesses.length,
+      });
+    },
+    {
+      refreshDeps: [accesses, page, pageSize],
+      onSuccess: (data) => {
+        setTableData(data.items);
+        setTableTotal(data.totalItems);
+      },
+    }
+  );
 
   const handleDeleteClick = async (data: AccessModel) => {
     modalApi.confirm({
@@ -153,28 +152,28 @@ const AccessList = () => {
           await deleteAccess(data);
         } catch (err) {
           console.error(err);
-          notificationApi.error({ message: t("common.text.request_error"), description: <>{String(err)}</> });
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
         }
       },
     });
   };
 
   return (
-    <>
+    <div className="p-4">
       {ModelContextHolder}
       {NotificationContextHolder}
 
       <PageHeader
         title={t("access.page.title")}
         extra={[
-          <AccessEditDialog
+          <AccessEditModal
             key="create"
+            mode="add"
             trigger={
-              <Button key="create" type="primary" icon={<PlusIcon size={16} />}>
+              <Button type="primary" icon={<PlusIcon size={16} />}>
                 {t("access.action.add")}
               </Button>
             }
-            op="add"
           />,
         ]}
       />
@@ -182,7 +181,7 @@ const AccessList = () => {
       <Table<AccessModel>
         columns={tableColumns}
         dataSource={tableData}
-        loading={loading}
+        loading={!initialized || loading}
         locale={{
           emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("access.nodata")} />,
         }}
@@ -190,6 +189,7 @@ const AccessList = () => {
           current: page,
           pageSize: pageSize,
           total: tableTotal,
+          showSizeChanger: true,
           onChange: (page: number, pageSize: number) => {
             setPage(page);
             setPageSize(pageSize);
@@ -202,7 +202,7 @@ const AccessList = () => {
         rowKey={(record: AccessModel) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
-    </>
+    </div>
   );
 };
 

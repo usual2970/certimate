@@ -10,7 +10,7 @@ import (
 )
 
 type LarkNotifierConfig struct {
-	// 飞书 Webhook 地址。
+	// 飞书机器人 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
 }
 

@@ -16,7 +16,7 @@ import { WorkflowNode } from "@/domain/workflow";
 import { Textarea } from "../ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -41,13 +41,14 @@ const formSchema = z
     keyPath: z
       .string()
       .min(0, t("domain.deployment.form.file_key_path.placeholder"))
-      .max(255, t("common.errmsg.string_max", { max: 255 })),
-    pfxPassword: z.string().optional(),
-    jksAlias: z.string().optional(),
-    jksKeypass: z.string().optional(),
-    jksStorepass: z.string().optional(),
-    preCommand: z.string().optional(),
-    command: z.string().optional(),
+      .max(255, t("common.errmsg.string_max", { max: 255 }))
+      .nullish(),
+    pfxPassword: z.string().nullish(),
+    jksAlias: z.string().nullish(),
+    jksKeypass: z.string().nullish(),
+    jksStorepass: z.string().nullish(),
+    preCommand: z.string().nullish(),
+    postCommand: z.string().nullish(),
     shell: z.union([z.literal("sh"), z.literal("cmd"), z.literal("powershell")], {
       message: t("domain.deployment.form.shell.placeholder"),
     }),
@@ -99,9 +100,9 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
       jksAlias: (data.config?.jksAlias as string) || "",
       jksKeypass: (data.config?.jksKeypass as string) || "",
       jksStorepass: (data.config?.jksStorepass as string) || "",
-      preCommand: (data.config?.preCommand as string) || "",
-      command: (data.config?.command as string) || "service nginx reload",
       shell: (data.config?.shell as "sh" | "cmd" | "powershell") || "sh",
+      preCommand: (data.config?.preCommand as string) || "",
+      postCommand: (data.config?.postCommand as string) || "service nginx reload",
     },
   });
 
@@ -128,7 +129,7 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
       case "reload_nginx":
         {
           form.setValue("shell", "sh");
-          form.setValue("command", "sudo service nginx reload");
+          form.setValue("postCommand", "sudo service nginx reload");
         }
         break;
 
@@ -136,7 +137,7 @@ const DeployToLocal = ({ data }: DeployFormProps) => {
         {
           form.setValue("shell", "powershell");
           form.setValue(
-            "command",
+            "postCommand",
             `# 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -173,7 +174,7 @@ Remove-Item -Path "$pfxPath" -Force
         {
           form.setValue("shell", "powershell");
           form.setValue(
-            "command",
+            "postCommand",
             `# 请将以下变量替换为实际值
 $pfxPath = "<your-pfx-path>" # PFX 文件路径
 $pfxPassword = "<your-pfx-password>" # PFX 密码
@@ -211,15 +212,15 @@ Remove-Item -Path "$pfxPath" -Force
               <FormLabel className="flex justify-between">
                 <div>{t("domain.deployment.form.access.label")}</div>
 
-                <AccessEditDialog
+                <AccessEditModal
+                  data={{ configType: "local" }}
+                  mode="add"
                   trigger={
                     <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                       <Plus size={14} />
                       {t("common.button.add")}
                     </div>
                   }
-                  op="add"
-                  outConfigType="local"
                 />
               </FormLabel>
               <FormControl>
@@ -323,7 +324,7 @@ Remove-Item -Path "$pfxPath" -Force
             <FormItem>
               <FormLabel>密钥路径</FormLabel>
               <FormControl>
-                <Input placeholder="输入密钥路径" {...field} />
+                <Input placeholder="输入密钥路径" {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -338,7 +339,7 @@ Remove-Item -Path "$pfxPath" -Force
               <FormItem>
                 <FormLabel>PFX 密码</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="输入 PFX 密码" {...field} />
+                  <Input type="password" placeholder="输入 PFX 密码" {...(field as any)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -355,7 +356,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS 别名</FormLabel>
                   <FormControl>
-                    <Input placeholder="输入 JKS 别名" {...field} />
+                    <Input placeholder="输入 JKS 别名" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -369,7 +370,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS Keypass</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="输入 JKS Keypass" {...field} />
+                    <Input type="password" placeholder="输入 JKS Keypass" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -383,7 +384,7 @@ Remove-Item -Path "$pfxPath" -Force
                 <FormItem>
                   <FormLabel>JKS Storepass</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="输入 JKS Storepass" {...field} />
+                    <Input type="password" placeholder="输入 JKS Storepass" {...(field as any)} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -422,7 +423,7 @@ Remove-Item -Path "$pfxPath" -Force
             <FormItem>
               <FormLabel>{t("domain.deployment.form.shell_pre_command.label")}</FormLabel>
               <FormControl>
-                <Textarea placeholder={t("domain.deployment.form.shell_pre_command.placeholder")} {...field} />
+                <Textarea placeholder={t("domain.deployment.form.shell_pre_command.placeholder")} {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -431,7 +432,7 @@ Remove-Item -Path "$pfxPath" -Force
 
         <FormField
           control={form.control}
-          name="command"
+          name="postCommand"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="flex justify-between items-center">
@@ -454,7 +455,7 @@ Remove-Item -Path "$pfxPath" -Force
                 </DropdownMenu>
               </FormLabel>
               <FormControl>
-                <Textarea placeholder={t("domain.deployment.form.shell_command.placeholder")} {...field} />
+                <Textarea placeholder={t("domain.deployment.form.shell_command.placeholder")} {...(field as any)} />
               </FormControl>
               <FormMessage />
             </FormItem>

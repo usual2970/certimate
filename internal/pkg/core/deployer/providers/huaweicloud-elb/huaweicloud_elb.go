@@ -27,7 +27,7 @@ type HuaweiCloudELBDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
-	// 华为云地域。
+	// 华为云区域。
 	Region string `json:"region"`
 	// 部署资源类型。
 	ResourceType DeployResourceType `json:"resourceType"`

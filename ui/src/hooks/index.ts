@@ -1,3 +1,3 @@
-﻿import useTheme from "./useTheme";
+﻿import useBrowserTheme from "./useBrowserTheme";
 
-export { useTheme };
+export { useBrowserTheme };

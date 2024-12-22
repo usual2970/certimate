@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SelectLabel } from "@radix-ui/react-select";
 import AccessSelect from "./AccessSelect";
-import AccessEditDialog from "../certimate/AccessEditDialog";
+import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
 const selectState = (state: WorkflowState) => ({
@@ -56,7 +56,7 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      providerType: "tencent-cdn",
+      providerType: "tencentcloud-cdn",
       access: config.access as string,
       certificate: config.certificate as string,
       domain: config.domain as string,
@@ -86,15 +86,15 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
                 <FormLabel className="flex justify-between">
                   <div>{t("domain.deployment.form.access.label")}</div>
 
-                  <AccessEditDialog
+                  <AccessEditModal
+                    data={{ configType: "tencentcloud" }}
+                    mode="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />
                         {t("common.button.add")}
                       </div>
                     }
-                    op="add"
-                    outConfigType="tencent"
                   />
                 </FormLabel>
                 <FormControl>
@@ -104,7 +104,7 @@ const DeployToTencentCDN = ({ data }: DeployFormProps) => {
                     onValueChange={(value) => {
                       form.setValue("access", value);
                     }}
-                    providerType="tencent-cdn"
+                    providerType="tencentcloud-cdn"
                   />
                 </FormControl>
 

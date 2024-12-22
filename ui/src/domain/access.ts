@@ -1,179 +1,217 @@
-import { z } from "zod";
-import { type BaseModel } from "pocketbase";
+/*
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
+export const ACCESS_PROVIDER_TYPE_ACMEHTTPREQ = "acmehttpreq" as const;
+export const ACCESS_PROVIDER_TYPE_ALIYUN = "aliyun" as const;
+export const ACCESS_PROVIDER_TYPE_AWS = "aws" as const;
+export const ACCESS_PROVIDER_TYPE_BAIDUCLOUD = "baiducloud" as const;
+export const ACCESS_PROVIDER_TYPE_BYTEPLUS = "byteplus" as const;
+export const ACCESS_PROVIDER_TYPE_CLOUDFLARE = "cloudflare" as const;
+export const ACCESS_PROVIDER_TYPE_DOGECLOUD = "dogecloud" as const;
+export const ACCESS_PROVIDER_TYPE_GODADDY = "godaddy" as const;
+export const ACCESS_PROVIDER_TYPE_HUAWEICLOUD = "huaweicloud" as const;
+export const ACCESS_PROVIDER_TYPE_KUBERNETES = "k8s" as const;
+export const ACCESS_PROVIDER_TYPE_LOCAL = "local" as const;
+export const ACCESS_PROVIDER_TYPE_NAMESILO = "namesilo" as const;
+export const ACCESS_PROVIDER_TYPE_POWERDNS = "powerdns" as const;
+export const ACCESS_PROVIDER_TYPE_QINIU = "qiniu" as const;
+export const ACCESS_PROVIDER_TYPE_SSH = "ssh" as const;
+export const ACCESS_PROVIDER_TYPE_TENCENTCLOUD = "tencentcloud" as const;
+export const ACCESS_PROVIDER_TYPE_VOLCENGINE = "volcengine" as const;
+export const ACCESS_PROVIDER_TYPE_WEBHOOK = "webhook" as const;
+export const ACCESS_PROVIDER_TYPES = Object.freeze({
+  ACMEHTTPREQ: ACCESS_PROVIDER_TYPE_ACMEHTTPREQ,
+  ALIYUN: ACCESS_PROVIDER_TYPE_ALIYUN,
+  AWS: ACCESS_PROVIDER_TYPE_AWS,
+  BAIDUCLOUD: ACCESS_PROVIDER_TYPE_BAIDUCLOUD,
+  BYTEPLUS: ACCESS_PROVIDER_TYPE_BYTEPLUS,
+  CLOUDFLARE: ACCESS_PROVIDER_TYPE_CLOUDFLARE,
+  DOGECLOUD: ACCESS_PROVIDER_TYPE_DOGECLOUD,
+  GODADDY: ACCESS_PROVIDER_TYPE_GODADDY,
+  HUAWEICLOUD: ACCESS_PROVIDER_TYPE_HUAWEICLOUD,
+  KUBERNETES: ACCESS_PROVIDER_TYPE_KUBERNETES,
+  LOCAL: ACCESS_PROVIDER_TYPE_LOCAL,
+  NAMESILO: ACCESS_PROVIDER_TYPE_NAMESILO,
+  POWERDNS: ACCESS_PROVIDER_TYPE_POWERDNS,
+  QINIU: ACCESS_PROVIDER_TYPE_QINIU,
+  SSH: ACCESS_PROVIDER_TYPE_SSH,
+  TENCENTCLOUD: ACCESS_PROVIDER_TYPE_TENCENTCLOUD,
+  VOLCENGINE: ACCESS_PROVIDER_TYPE_VOLCENGINE,
+  WEBHOOK: ACCESS_PROVIDER_TYPE_WEBHOOK,
+} as const);
 
-type AccessUsages = "apply" | "deploy" | "all";
+export type AccessProviderTypes = (typeof ACCESS_PROVIDER_TYPES)[keyof typeof ACCESS_PROVIDER_TYPES];
 
-type AccessProvider = {
-  type: string;
-  name: string;
-  icon: string;
-  usage: AccessUsages;
-  searchContent: string;
-};
+export const ACCESS_PROVIDER_USAGE_ALL = "all" as const;
+export const ACCESS_PROVIDER_USAGE_APPLY = "apply" as const;
+export const ACCESS_PROVIDER_USAGE_DEPLOY = "deploy" as const;
+export const ACCESS_PROVIDER_USAGES = Object.freeze({
+  ALL: ACCESS_PROVIDER_USAGE_ALL,
+  APPLY: ACCESS_PROVIDER_USAGE_APPLY,
+  DEPLOY: ACCESS_PROVIDER_USAGE_DEPLOY,
+} as const);
 
-export const accessProviders = [
-  ["aliyun", "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all", "阿里云:alibaba cloud"],
-  ["tencent", "common.provider.tencent", "/imgs/providers/tencent.svg", "all", "腾讯云:tencent cloud"],
-  ["huaweicloud", "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all", "华为云:huawei cloud"],
-  ["baiducloud", "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all", "百度智能云:百度云:baidu cloud"],
-  ["qiniu", "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy", "七牛云:qiniu"],
-  ["dogecloud", "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy", "多吉云:doge cloud"],
-  ["volcengine", "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all", "火山引擎:volcengine"],
-  ["byteplus", "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all", "BytePlus"],
-  ["aws", "common.provider.aws", "/imgs/providers/aws.svg", "apply", "亚马逊:amazon:aws"],
-  ["cloudflare", "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply", "cloudflare:cf:cloud flare"],
-  ["namesilo", "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply", "namesilo"],
-  ["godaddy", "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply", "godaddy"],
-  ["pdns", "common.provider.pdns", "/imgs/providers/pdns.svg", "apply", "powerdns:pdns"],
-  ["httpreq", "common.provider.httpreq", "/imgs/providers/httpreq.svg", "apply", "httpreq"],
-  ["local", "common.provider.local", "/imgs/providers/local.svg", "deploy", "local:bendi:本地"],
-  ["ssh", "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy", "ssh"],
-  ["webhook", "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy", "webhook"],
-  ["k8s", "common.provider.kubernetes", "/imgs/providers/k8s.svg", "deploy", "k8s:kubernetes"],
-];
+export type AccessProviderUsages = (typeof ACCESS_PROVIDER_USAGES)[keyof typeof ACCESS_PROVIDER_USAGES];
 
-export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
-  accessProviders.map(([type, name, icon, usage, searchContent]) => [type, { type, name, icon, usage: usage as AccessUsages, searchContent: searchContent }])
-);
-
-export const accessTypeFormSchema = z.union(
-  [
-    z.literal("aliyun"),
-    z.literal("tencent"),
-    z.literal("huaweicloud"),
-    z.literal("baiducloud"),
-    z.literal("qiniu"),
-    z.literal("dogecloud"),
-    z.literal("aws"),
-    z.literal("cloudflare"),
-    z.literal("namesilo"),
-    z.literal("godaddy"),
-    z.literal("pdns"),
-    z.literal("httpreq"),
-    z.literal("local"),
-    z.literal("ssh"),
-    z.literal("webhook"),
-    z.literal("k8s"),
-    z.literal("volcengine"),
-    z.literal("byteplus"),
-  ],
-  { message: "access.authorization.form.type.placeholder" }
-);
-
-export interface AccessModel extends Omit<BaseModel, "created" | "updated"> {
+// #region AccessModel
+export interface AccessModel extends BaseModel {
   name: string;
   configType: string;
-  usage: AccessUsages;
-  group?: string;
-  config:
-    | AliyunConfig
-    | TencentConfig
-    | HuaweiCloudConfig
-    | QiniuConfig
-    | DogeCloudConfig
-    | AwsConfig
-    | CloudflareConfig
-    | NamesiloConfig
-    | GodaddyConfig
-    | PdnsConfig
-    | HttpreqConfig
-    | LocalConfig
-    | SSHConfig
-    | WebhookConfig
-    | KubernetesConfig
-    | VolcengineConfig
-    | ByteplusConfig;
+  usage: AccessProviderUsages;
+  config: /*
+    注意：如果追加新的类型，请保持以 ASCII 排序。
+    NOTICE: If you add new type, please keep ASCII order.
+  */ Record<string, unknown> &
+    (
+      | ACMEHttpReqAccessConfig
+      | AliyunAccessConfig
+      | AWSAccessConfig
+      | BaiduCloudAccessConfig
+      | BytePlusAccessConfig
+      | CloudflareAccessConfig
+      | DogeCloudAccessConfig
+      | GoDaddyAccessConfig
+      | HuaweiCloudAccessConfig
+      | KubernetesAccessConfig
+      | LocalAccessConfig
+      | NameSiloAccessConfig
+      | PowerDNSAccessConfig
+      | QiniuAccessConfig
+      | SSHAccessConfig
+      | TencentCloudAccessConfig
+      | VolcEngineAccessConfig
+      | WebhookAccessConfig
+    );
 }
+// #endregion
 
-export type AliyunConfig = {
+// #region AccessConfig
+export type ACMEHttpReqAccessConfig = {
+  endpoint: string;
+  mode?: string;
+  username?: string;
+  password?: string;
+};
+
+export type AliyunAccessConfig = {
   accessKeyId: string;
   accessKeySecret: string;
 };
 
-export type TencentConfig = {
-  secretId: string;
-  secretKey: string;
-};
-
-export type HuaweiCloudConfig = {
-  region: string;
+export type AWSAccessConfig = {
   accessKeyId: string;
   secretAccessKey: string;
-};
-
-export type BaiduCloudConfig = {
-  accessKeyId: string;
-  secretAccessKey: string;
-};
-
-export type QiniuConfig = {
-  accessKey: string;
-  secretKey: string;
-};
-
-export type DogeCloudConfig = {
-  accessKey: string;
-  secretKey: string;
-};
-
-export type AwsConfig = {
-  region: string;
-  accessKeyId: string;
-  secretAccessKey: string;
+  region?: string;
   hostedZoneId?: string;
 };
 
-export type CloudflareConfig = {
+export type BaiduCloudAccessConfig = {
+  accessKeyId: string;
+  secretAccessKey: string;
+};
+
+export type BytePlusAccessConfig = {
+  accessKey: string;
+  secretKey: string;
+};
+
+export type CloudflareAccessConfig = {
   dnsApiToken: string;
 };
 
-export type NamesiloConfig = {
-  apiKey: string;
+export type DogeCloudAccessConfig = {
+  accessKey: string;
+  secretKey: string;
 };
 
-export type GodaddyConfig = {
+export type GoDaddyAccessConfig = {
   apiKey: string;
   apiSecret: string;
 };
 
-export type PdnsConfig = {
+export type HuaweiCloudAccessConfig = {
+  accessKeyId: string;
+  secretAccessKey: string;
+  region?: string;
+};
+
+export type KubernetesAccessConfig = {
+  kubeConfig?: string;
+};
+
+export type LocalAccessConfig = NonNullable<unknown>;
+
+export type NameSiloAccessConfig = {
+  apiKey: string;
+};
+
+export type PowerDNSAccessConfig = {
   apiUrl: string;
   apiKey: string;
 };
 
-export type HttpreqConfig = {
-  endpoint: string;
-  mode: string;
-  username: string;
-  password: string;
+export type QiniuAccessConfig = {
+  accessKey: string;
+  secretKey: string;
 };
 
-export type LocalConfig = Record<string, string>;
-
-export type SSHConfig = {
+export type SSHAccessConfig = {
   host: string;
-  port: string;
+  port: number;
   username: string;
   password?: string;
   key?: string;
-  keyFile?: string;
   keyPassphrase?: string;
 };
 
-export type WebhookConfig = {
-  url: string;
+export type TencentCloudAccessConfig = {
+  secretId: string;
+  secretKey: string;
 };
 
-export type KubernetesConfig = {
-  kubeConfig: string;
-};
-
-export type VolcengineConfig = {
+export type VolcEngineAccessConfig = {
   accessKeyId: string;
   secretAccessKey: string;
 };
 
-export type ByteplusConfig = {
-  accessKey: string;
-  secretKey: string;
+export type WebhookAccessConfig = {
+  url: string;
 };
+// #endregion
+
+// #region AccessProvider
+export type AccessProvider = {
+  type: string;
+  name: string;
+  icon: string;
+  usage: AccessProviderUsages;
+};
+
+export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = new Map(
+  /*
+   注意：此处的顺序决定显示在前端的顺序。
+   NOTICE: The following order determines the order displayed at the frontend.
+  */
+  [
+    [ACCESS_PROVIDER_TYPE_ALIYUN, "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_TENCENTCLOUD, "common.provider.tencentcloud", "/imgs/providers/tencentcloud.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_HUAWEICLOUD, "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_BAIDUCLOUD, "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_QINIU, "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_DOGECLOUD, "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all"],
+    [ACCESS_PROVIDER_TYPE_AWS, "common.provider.aws", "/imgs/providers/aws.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_LOCAL, "common.provider.local", "/imgs/providers/local.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_SSH, "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
+  ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessProviderUsages }])
+);
+// #endregion

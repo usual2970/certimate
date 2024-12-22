@@ -23,7 +23,7 @@ type DeployConfig struct {
 	Config map[string]any `json:"config"`
 }
 
-// 以字符串形式获取配置项。
+// Deprecated: 以字符串形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -34,7 +34,7 @@ func (dc *DeployConfig) GetConfigAsString(key string) string {
 	return maps.GetValueAsString(dc.Config, key)
 }
 
-// 以字符串形式获取配置项。
+// Deprecated: 以字符串形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -46,7 +46,7 @@ func (dc *DeployConfig) GetConfigOrDefaultAsString(key string, defaultValue stri
 	return maps.GetValueOrDefaultAsString(dc.Config, key, defaultValue)
 }
 
-// 以 32 位整数形式获取配置项。
+// Deprecated: 以 32 位整数形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -57,7 +57,7 @@ func (dc *DeployConfig) GetConfigAsInt32(key string) int32 {
 	return maps.GetValueAsInt32(dc.Config, key)
 }
 
-// 以 32 位整数形式获取配置项。
+// Deprecated: 以 32 位整数形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -69,7 +69,7 @@ func (dc *DeployConfig) GetConfigOrDefaultAsInt32(key string, defaultValue int32
 	return maps.GetValueOrDefaultAsInt32(dc.Config, key, defaultValue)
 }
 
-// 以布尔形式获取配置项。
+// Deprecated: 以布尔形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -80,7 +80,7 @@ func (dc *DeployConfig) GetConfigAsBool(key string) bool {
 	return maps.GetValueAsBool(dc.Config, key)
 }
 
-// 以布尔形式获取配置项。
+// Deprecated: 以布尔形式获取配置项。
 //
 // 入参：
 //   - key: 配置项的键。
@@ -92,7 +92,7 @@ func (dc *DeployConfig) GetConfigOrDefaultAsBool(key string, defaultValue bool) 
 	return maps.GetValueOrDefaultAsBool(dc.Config, key, defaultValue)
 }
 
-// 以变量字典形式获取配置项。
+// Deprecated: 以变量字典形式获取配置项。
 //
 // 出参：
 //   - 变量字典。
@@ -119,7 +119,7 @@ func (dc *DeployConfig) GetConfigAsVariables() map[string]string {
 	return rs
 }
 
-// GetDomain returns the domain from the deploy config
+// Deprecated: GetDomain returns the domain from the deploy config,
 // if the domain is a wildcard domain, and wildcard is true, return the wildcard domain
 func (dc *DeployConfig) GetDomain(wildcard ...bool) string {
 	val := dc.GetConfigAsString("domain")
