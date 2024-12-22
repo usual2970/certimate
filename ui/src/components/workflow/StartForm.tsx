@@ -98,7 +98,7 @@ const StartForm = ({ data }: StartFormProps) => {
                   <Radio.Group
                     {...field}
                     value={method}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setMethod(e.target.value);
                     }}
                     className="flex space-x-3"
