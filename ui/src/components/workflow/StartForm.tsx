@@ -13,6 +13,7 @@ import { Input } from "../ui/input";
 import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
 import { usePanel } from "./PanelProvider";
+import { RadioChangeEvent } from "antd/lib";
 
 const formSchema = z
   .object({
@@ -98,7 +99,7 @@ const StartForm = ({ data }: StartFormProps) => {
                   <Radio.Group
                     {...field}
                     value={method}
-                    onChange={(e) => {
+                    onChange={(e: RadioChangeEvent) => {
                       setMethod(e.target.value);
                     }}
                     className="flex space-x-3"
