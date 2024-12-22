@@ -64,13 +64,13 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, mod
 
   return (
     <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+      <Form.Item name="kubeConfig" noStyle rules={[formRule]}>
+        <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.k8s_kubeconfig.placeholder")} value={form.getFieldValue("kubeConfig")} />
+      </Form.Item>
       <Form.Item
-        name="kubeConfig"
         label={t("access.form.k8s_kubeconfig.label")}
-        rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.k8s_kubeconfig.tooltip") }}></span>}
       >
-        <Input.TextArea hidden placeholder={t("access.form.k8s_kubeconfig.placeholder")} value={form.getFieldValue("kubeConfig")} />
         <Upload beforeUpload={() => false} fileList={kubeFileList} maxCount={1} onChange={handleUploadChange}>
           <Button icon={<UploadIcon size={16} />}>{t("access.form.k8s_kubeconfig.upload")}</Button>
         </Upload>

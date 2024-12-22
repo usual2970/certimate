@@ -87,10 +87,10 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
 
   const handleUploadChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
-      form.setFieldValue("kubeConfig", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
+      form.setFieldValue("key", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
       setKeyFileList([file]);
     } else {
-      form.setFieldValue("kubeConfig", "");
+      form.setFieldValue("key", "");
       setKeyFileList([]);
     }
 
@@ -134,13 +134,10 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
 
       <div className="flex space-x-2">
         <div className="w-1/2">
-          <Form.Item
-            name="key"
-            label={t("access.form.ssh_key.label")}
-            rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}
-          >
+          <Form.Item name="key" noStyle rules={[formRule]}>
             <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.ssh_key.placeholder")} value={form.getFieldValue("key")} />
+          </Form.Item>
+          <Form.Item label={t("access.form.ssh_key.label")} tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}>
             <Upload beforeUpload={() => false} fileList={keyFileList} maxCount={1} onChange={handleUploadChange}>
               <Button icon={<UploadIcon size={16} />}>{t("access.form.ssh_key.upload")}</Button>
             </Upload>
