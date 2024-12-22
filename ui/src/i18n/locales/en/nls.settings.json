@@ -67,10 +67,12 @@
   "settings.notification.channel.form.telegram_chat_id.tooltip": "For more information, see <a href=\"https://gist.github.com/nafiesl/4ad622f344cd1dc3bb1ecbe468ff9f8a\" target=\"_blank\">https://gist.github.com/nafiesl/4ad622f344cd1dc3bb1ecbe468ff9f8a</a>",
   "settings.notification.channel.form.webhook_url.label": "Webhook URL",
   "settings.notification.channel.form.webhook_url.placeholder": "Please enter Webhook URL",
+  "settings.notification.channel.form.wecom_webhook_url.label": "Webhook URL",
+  "settings.notification.channel.form.wecom_webhook_url.placeholder": "Please enter Webhook URL",
+  "settings.notification.channel.form.wecom_webhook_url.tooltip": "For more information, see <a href=\"https://open.work.weixin.qq.com/help2/pc/18401#%E5%85%AD%E3%80%81%E7%BE%A4%E6%9C%BA%E5%99%A8%E4%BA%BAWebhook%E5%9C%B0%E5%9D%80\" target=\"_blank\">https://open.work.weixin.qq.com/help2/pc/18401</a>",
 
   "settings.sslprovider.tab": "Certificate Authority",
   "settings.sslprovider.form.provider.label": "ACME Provider",
-  "settings.sslprovider.provider.errmsg.empty": "Please select a Certificate Authority",
   "settings.sslprovider.form.zerossl_eab_kid.label": "EAB KID",
   "settings.sslprovider.form.zerossl_eab_kid.placeholder": "Please enter EAB KID",
   "settings.sslprovider.form.zerossl_eab_kid.tooltip": "For more information, see <a href=\"https://zerossl.com/documentation/acme/\" target=\"_blank\">https://zerossl.com/documentation/acme/</a>",

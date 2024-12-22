@@ -12,6 +12,7 @@ import (
 	providerServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 	providerTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	providerWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
@@ -63,6 +64,11 @@ func createNotifier(channel string, channelConfig map[string]any) (notifier.Noti
 	case domain.NotifyChannelWebhook:
 		return providerWebhook.New(&providerWebhook.WebhookNotifierConfig{
 			Url: maps.GetValueAsString(channelConfig, "url"),
+		})
+
+	case domain.NotifyChannelWeCom:
+		return providerWeCom.New(&providerWeCom.WeComNotifierConfig{
+			WebhookUrl: maps.GetValueAsString(channelConfig, "webhookUrl"),
 		})
 	}
 

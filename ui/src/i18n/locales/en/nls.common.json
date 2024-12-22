@@ -90,5 +90,6 @@
   "common.notifier.lark": "Lark",
   "common.notifier.serverchan": "ServerChan",
   "common.notifier.telegram": "Telegram",
-  "common.notifier.webhook": "Webhook"
+  "common.notifier.webhook": "Webhook",
+  "common.notifier.wecom": "WeCom"
 }

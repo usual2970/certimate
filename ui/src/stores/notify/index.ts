@@ -26,7 +26,7 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
         produce(settings, (draft) => {
           draft.content ??= {};
           draft.content[channel] = { ...draft.content[channel], ...config };
-        })
+        }).content
       );
     },
 

@@ -86,9 +86,10 @@
 
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "钉钉",
-  "common.notifier.email": "电子邮件",
+  "common.notifier.email": "邮件",
   "common.notifier.lark": "飞书",
   "common.notifier.serverchan": "Server 酱",
   "common.notifier.telegram": "Telegram",
-  "common.notifier.webhook": "Webhook"
+  "common.notifier.webhook": "Webhook",
+  "common.notifier.wecom": "企业微信"
 }

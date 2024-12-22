@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { useCreation, useDeepCompareEffect } from "ahooks";
 import { Form } from "antd";
 
-import { type NotifyChannelsSettingsContent } from "@/domain/settings";
+import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
 import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields";
@@ -10,13 +10,14 @@ import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
+import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
 
 type NotifyChannelEditFormModelType = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 
 export type NotifyChannelEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
-  channel: keyof NotifyChannelsSettingsContent;
+  channel: string;
   disabled?: boolean;
   loading?: boolean;
   model?: NotifyChannelEditFormModelType;
@@ -39,20 +40,22 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (channel) {
-        case "bark":
+        case NOTIFY_CHANNELS.BARK:
           return <NotifyChannelEditFormBarkFields />;
-        case "dingtalk":
+        case NOTIFY_CHANNELS.DINGTALK:
           return <NotifyChannelEditFormDingTalkFields />;
-        case "email":
+        case NOTIFY_CHANNELS.EMAIL:
           return <NotifyChannelEditFormEmailFields />;
-        case "lark":
+        case NOTIFY_CHANNELS.LARK:
           return <NotifyChannelEditFormLarkFields />;
-        case "serverchan":
+        case NOTIFY_CHANNELS.SERVERCHAN:
           return <NotifyChannelEditFormServerChanFields />;
-        case "telegram":
+        case NOTIFY_CHANNELS.TELEGRAM:
           return <NotifyChannelEditFormTelegramFields />;
-        case "webhook":
+        case NOTIFY_CHANNELS.WEBHOOK:
           return <NotifyChannelEditFormWebhookFields />;
+        case NOTIFY_CHANNELS.WECOM:
+          return <NotifyChannelEditFormWeComFields />;
       }
     }, [channel]);
 
