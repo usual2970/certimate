@@ -16,5 +16,6 @@ export const list = async (request: ListWorkflowLogsRequest) => {
     .getList<WorkflowRunLog>(page, perPage, {
       filter: getPocketBase().filter("workflow={:workflowId}", { workflowId: request.id }),
       sort: "-created",
+      requestKey: null,
     });
 };

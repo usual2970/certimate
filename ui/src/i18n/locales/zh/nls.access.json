@@ -128,11 +128,11 @@
   "access.form.ssh_username.placeholder": "请输入用户名",
   "access.form.ssh_password.label": "密码",
   "access.form.ssh_password.placeholder": "请输入密码",
-  "access.form.ssh_password.tooltip": "使用密码连接到 SSH 时必填。",
+  "access.form.ssh_password.tooltip": "使用密码连接到 SSH 时必填。<br>该字段与密钥文件字段二选一。",
   "access.form.ssh_key.label": "SSH 密钥",
   "access.form.ssh_key.placeholder": "请输入 SSH 密钥文件",
   "access.form.ssh_key.upload": "选择文件",
-  "access.form.ssh_key.tooltip": "使用 SSH 密钥连接到 SSH 时必填。",
+  "access.form.ssh_key.tooltip": "使用 SSH 密钥连接到 SSH 时必填。<br>该字段与密码字段二选一。",
   "access.form.ssh_key_passphrase.label": "SSH 密钥口令",
   "access.form.ssh_key_passphrase.placeholder": "请输入 SSH 密钥口令",
   "access.form.ssh_key_passphrase.tooltip": "使用 SSH 密钥连接到 SSH 时选填。"

@@ -17,7 +17,7 @@ export const list = async (request: ListWorkflowRequest) => {
   const page = request.page || 1;
   const perPage = request.perPage || 10;
 
-  const options: RecordListOptions = { sort: "-created" };
+  const options: RecordListOptions = { requestKey: null, sort: "-created" };
   if (request.enabled != null) {
     options.filter = pb.filter("enabled={:enabled}", { enabled: request.enabled });
   }
@@ -26,7 +26,9 @@ export const list = async (request: ListWorkflowRequest) => {
 };
 
 export const get = async (id: string) => {
-  return await getPocketBase().collection(COLLECTION_NAME).getOne<WorkflowModel>(id);
+  return await getPocketBase().collection(COLLECTION_NAME).getOne<WorkflowModel>(id, {
+    requestKey: null,
+  });
 };
 
 export const save = async (record: Record<string, string | boolean | WorkflowNode>) => {
