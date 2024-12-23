@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	defaultExpireSubject = "您有 {COUNT} 张证书即将过期"
-	defaultExpireMessage = "有 {COUNT} 张证书即将过期，域名分别为 {DOMAINS}，请保持关注！"
+	defaultExpireSubject = "您有 ${COUNT} 张证书即将过期"
+	defaultExpireMessage = "有 ${COUNT} 张证书即将过期，域名分别为 ${DOMAINS}，请保持关注！"
 )
 
 type CertificateRepository interface {
@@ -88,11 +88,11 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 	countStr := strconv.Itoa(count)
 	domainStr := strings.Join(domains, ";")
 
-	subject = strings.ReplaceAll(subject, "{COUNT}", countStr)
-	subject = strings.ReplaceAll(subject, "{DOMAINS}", domainStr)
+	subject = strings.ReplaceAll(subject, "${COUNT}", countStr)
+	subject = strings.ReplaceAll(subject, "${DOMAINS}", domainStr)
 
-	message = strings.ReplaceAll(message, "{COUNT}", countStr)
-	message = strings.ReplaceAll(message, "{DOMAINS}", domainStr)
+	message = strings.ReplaceAll(message, "${COUNT}", countStr)
+	message = strings.ReplaceAll(message, "${DOMAINS}", domainStr)
 
 	// 返回消息
 	return &domain.NotifyMessage{
