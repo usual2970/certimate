@@ -208,29 +208,33 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 }
 
 func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
+	/*
+	  注意：如果追加新的常量值，请保持以 ASCII 排序。
+	  NOTICE: If you add new constant, please keep ASCII order.
+	*/
 	switch t {
-	case configTypeAliyun:
-		return NewAliyun(option), nil
-	case configTypeTencentCloud:
-		return NewTencent(option), nil
-	case configTypeHuaweiCloud:
-		return NewHuaweiCloud(option), nil
-	case configTypeAWS:
-		return NewAws(option), nil
-	case configTypeCloudflare:
-		return NewCloudflare(option), nil
-	case configTypeNameSilo:
-		return NewNamesilo(option), nil
-	case configTypeGoDaddy:
-		return NewGodaddy(option), nil
-	case configTypePowerDNS:
-		return NewPdns(option), nil
 	case configTypeACMEHttpReq:
-		return NewHttpreq(option), nil
+		return NewACMEHttpReqApplicant(option), nil
+	case configTypeAliyun:
+		return NewAliyunApplicant(option), nil
+	case configTypeAWS:
+		return NewAWSApplicant(option), nil
+	case configTypeCloudflare:
+		return NewCloudflareApplicant(option), nil
+	case configTypeGoDaddy:
+		return NewGoDaddyApplicant(option), nil
+	case configTypeHuaweiCloud:
+		return NewHuaweiCloudApplicant(option), nil
+	case configTypeNameSilo:
+		return NewNamesiloApplicant(option), nil
+	case configTypePowerDNS:
+		return NewPowerDNSApplicant(option), nil
+	case configTypeTencentCloud:
+		return NewTencentCloudApplicant(option), nil
 	case configTypeVolcEngine:
-		return NewVolcengine(option), nil
+		return NewVolcEngineApplicant(option), nil
 	default:
-		return nil, errors.New("unknown config type")
+		return nil, fmt.Errorf("unsupported applicant type: %s", t)
 	}
 }
 

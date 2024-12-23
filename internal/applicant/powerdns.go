@@ -2,34 +2,37 @@ package applicant
 
 import (
 	"encoding/json"
+	"net/url"
 	"time"
 
-	namesilo "github.com/go-acme/lego/v4/providers/dns/namesilo"
+	"github.com/go-acme/lego/v4/providers/dns/pdns"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type namesiloApplicant struct {
+type powerdnsApplicant struct {
 	option *ApplyOption
 }
 
-func NewNamesiloApplicant(option *ApplyOption) Applicant {
-	return &namesiloApplicant{
+func NewPowerDNSApplicant(option *ApplyOption) Applicant {
+	return &powerdnsApplicant{
 		option: option,
 	}
 }
 
-func (a *namesiloApplicant) Apply() (*Certificate, error) {
-	access := &domain.NameSiloAccess{}
+func (a *powerdnsApplicant) Apply() (*Certificate, error) {
+	access := &domain.PdnsAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
-	config := namesilo.NewDefaultConfig()
+	config := pdns.NewDefaultConfig()
+	host, _ := url.Parse(access.ApiUrl)
+	config.Host = host
 	config.APIKey = access.ApiKey
 	if a.option.Timeout != 0 {
 		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
 	}
 
-	provider, err := namesilo.NewDNSProviderConfig(config)
+	provider, err := pdns.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}

@@ -2,42 +2,45 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
-	huaweicloudProvider "github.com/go-acme/lego/v4/providers/dns/huaweicloud"
+	huaweicloud "github.com/go-acme/lego/v4/providers/dns/huaweicloud"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type huaweicloud struct {
+type huaweicloudApplicant struct {
 	option *ApplyOption
 }
 
-func NewHuaweiCloud(option *ApplyOption) Applicant {
-	return &huaweicloud{
+func NewHuaweiCloudApplicant(option *ApplyOption) Applicant {
+	return &huaweicloudApplicant{
 		option: option,
 	}
 }
 
-func (t *huaweicloud) Apply() (*Certificate, error) {
+func (a *huaweicloudApplicant) Apply() (*Certificate, error) {
 	access := &domain.HuaweiCloudAccess{}
-	json.Unmarshal([]byte(t.option.Access), access)
+	json.Unmarshal([]byte(a.option.Access), access)
 
 	region := access.Region
 	if region == "" {
+		// 华为云的 SDK 要求必须传一个区域，实际上 DNS-01 流程里用不到，但不传会报错
 		region = "cn-north-1"
 	}
 
-	os.Setenv("HUAWEICLOUD_REGION", region) // 华为云的 SDK 要求必须传一个区域，实际上 DNS-01 流程里用不到，但不传会报错
-	os.Setenv("HUAWEICLOUD_ACCESS_KEY_ID", access.AccessKeyId)
-	os.Setenv("HUAWEICLOUD_SECRET_ACCESS_KEY", access.SecretAccessKey)
-	os.Setenv("HUAWEICLOUD_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", t.option.Timeout))
+	config := huaweicloud.NewDefaultConfig()
+	config.AccessKeyID = access.AccessKeyId
+	config.SecretAccessKey = access.SecretAccessKey
+	config.Region = region
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
 
-	dnsProvider, err := huaweicloudProvider.NewDNSProvider()
+	provider, err := huaweicloud.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(t.option, dnsProvider)
+	return apply(a.option, provider)
 }

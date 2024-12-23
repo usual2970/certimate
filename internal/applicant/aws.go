@@ -2,38 +2,40 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
 	"github.com/go-acme/lego/v4/providers/dns/route53"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type aws struct {
+type awsApplicant struct {
 	option *ApplyOption
 }
 
-func NewAws(option *ApplyOption) Applicant {
-	return &aws{
+func NewAWSApplicant(option *ApplyOption) Applicant {
+	return &awsApplicant{
 		option: option,
 	}
 }
 
-func (t *aws) Apply() (*Certificate, error) {
+func (a *awsApplicant) Apply() (*Certificate, error) {
 	access := &domain.AwsAccess{}
-	json.Unmarshal([]byte(t.option.Access), access)
+	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("AWS_REGION", access.Region)
-	os.Setenv("AWS_ACCESS_KEY_ID", access.AccessKeyId)
-	os.Setenv("AWS_SECRET_ACCESS_KEY", access.SecretAccessKey)
-	os.Setenv("AWS_HOSTED_ZONE_ID", access.HostedZoneId)
-	os.Setenv("AWS_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", t.option.Timeout))
+	config := route53.NewDefaultConfig()
+	config.AccessKeyID = access.AccessKeyId
+	config.SecretAccessKey = access.SecretAccessKey
+	config.Region = access.Region
+	config.HostedZoneID = access.HostedZoneId
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
 
-	dnsProvider, err := route53.NewDNSProvider()
+	provider, err := route53.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(t.option, dnsProvider)
+	return apply(a.option, provider)
 }

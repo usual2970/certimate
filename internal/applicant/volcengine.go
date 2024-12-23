@@ -2,34 +2,37 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
-	volcengineDns "github.com/go-acme/lego/v4/providers/dns/volcengine"
+	"github.com/go-acme/lego/v4/providers/dns/volcengine"
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type volcengine struct {
+type volcengineApplicant struct {
 	option *ApplyOption
 }
 
-func NewVolcengine(option *ApplyOption) Applicant {
-	return &volcengine{
+func NewVolcEngineApplicant(option *ApplyOption) Applicant {
+	return &volcengineApplicant{
 		option: option,
 	}
 }
 
-func (a *volcengine) Apply() (*Certificate, error) {
+func (a *volcengineApplicant) Apply() (*Certificate, error) {
 	access := &domain.VolcEngineAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("VOLC_ACCESSKEY", access.AccessKeyId)
-	os.Setenv("VOLC_SECRETKEY", access.SecretAccessKey)
-	os.Setenv("VOLC_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
-	dnsProvider, err := volcengineDns.NewDNSProvider()
+	config := volcengine.NewDefaultConfig()
+	config.AccessKey = access.AccessKeyId
+	config.SecretKey = access.SecretAccessKey
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
+
+	provider, err := volcengine.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(a.option, dnsProvider)
+	return apply(a.option, provider)
 }

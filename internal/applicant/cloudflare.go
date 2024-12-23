@@ -2,35 +2,37 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
-	cf "github.com/go-acme/lego/v4/providers/dns/cloudflare"
+	"github.com/go-acme/lego/v4/providers/dns/cloudflare"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type cloudflare struct {
+type cloudflareApplicant struct {
 	option *ApplyOption
 }
 
-func NewCloudflare(option *ApplyOption) Applicant {
-	return &cloudflare{
+func NewCloudflareApplicant(option *ApplyOption) Applicant {
+	return &cloudflareApplicant{
 		option: option,
 	}
 }
 
-func (c *cloudflare) Apply() (*Certificate, error) {
+func (a *cloudflareApplicant) Apply() (*Certificate, error) {
 	access := &domain.CloudflareAccess{}
-	json.Unmarshal([]byte(c.option.Access), access)
+	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("CLOUDFLARE_DNS_API_TOKEN", access.DnsApiToken)
-	os.Setenv("CLOUDFLARE_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", c.option.Timeout))
+	config := cloudflare.NewDefaultConfig()
+	config.AuthToken = access.DnsApiToken
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
 
-	provider, err := cf.NewDNSProvider()
+	provider, err := cloudflare.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(c.option, provider)
+	return apply(a.option, provider)
 }

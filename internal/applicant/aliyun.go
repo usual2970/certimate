@@ -2,35 +2,38 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
 	"github.com/go-acme/lego/v4/providers/dns/alidns"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type aliyun struct {
+type aliyunApplicant struct {
 	option *ApplyOption
 }
 
-func NewAliyun(option *ApplyOption) Applicant {
-	return &aliyun{
+func NewAliyunApplicant(option *ApplyOption) Applicant {
+	return &aliyunApplicant{
 		option: option,
 	}
 }
 
-func (a *aliyun) Apply() (*Certificate, error) {
+func (a *aliyunApplicant) Apply() (*Certificate, error) {
 	access := &domain.AliyunAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("ALICLOUD_ACCESS_KEY", access.AccessKeyId)
-	os.Setenv("ALICLOUD_SECRET_KEY", access.AccessKeySecret)
-	os.Setenv("ALICLOUD_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
-	dnsProvider, err := alidns.NewDNSProvider()
+	config := alidns.NewDefaultConfig()
+	config.APIKey = access.AccessKeyId
+	config.SecretKey = access.AccessKeySecret
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
+
+	provider, err := alidns.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(a.option, dnsProvider)
+	return apply(a.option, provider)
 }

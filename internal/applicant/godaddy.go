@@ -2,36 +2,38 @@ package applicant
 
 import (
 	"encoding/json"
-	"fmt"
-	"os"
+	"time"
 
-	godaddyProvider "github.com/go-acme/lego/v4/providers/dns/godaddy"
+	"github.com/go-acme/lego/v4/providers/dns/godaddy"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type godaddy struct {
+type godaddyApplicant struct {
 	option *ApplyOption
 }
 
-func NewGodaddy(option *ApplyOption) Applicant {
-	return &godaddy{
+func NewGoDaddyApplicant(option *ApplyOption) Applicant {
+	return &godaddyApplicant{
 		option: option,
 	}
 }
 
-func (a *godaddy) Apply() (*Certificate, error) {
+func (a *godaddyApplicant) Apply() (*Certificate, error) {
 	access := &domain.GodaddyAccess{}
 	json.Unmarshal([]byte(a.option.Access), access)
 
-	os.Setenv("GODADDY_API_KEY", access.ApiKey)
-	os.Setenv("GODADDY_API_SECRET", access.ApiSecret)
-	os.Setenv("GODADDY_PROPAGATION_TIMEOUT", fmt.Sprintf("%d", a.option.Timeout))
+	config := godaddy.NewDefaultConfig()
+	config.APIKey = access.ApiKey
+	config.APISecret = access.ApiSecret
+	if a.option.Timeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	}
 
-	dnsProvider, err := godaddyProvider.NewDNSProvider()
+	provider, err := godaddy.NewDNSProviderConfig(config)
 	if err != nil {
 		return nil, err
 	}
 
-	return apply(a.option, dnsProvider)
+	return apply(a.option, provider)
 }
