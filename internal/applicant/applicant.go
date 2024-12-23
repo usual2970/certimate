@@ -12,11 +12,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
-	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/internal/utils/app"
-
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge"
@@ -24,6 +19,11 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/pocketbase/models"
+
+	"github.com/usual2970/certimate/internal/app"
+	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/repository"
 )
 
 /*

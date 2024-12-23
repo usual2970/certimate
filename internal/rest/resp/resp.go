@@ -3,9 +3,9 @@ package resp
 import (
 	"net/http"
 
-	"github.com/usual2970/certimate/internal/domain"
-
 	"github.com/labstack/echo/v5"
+
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type Response struct {

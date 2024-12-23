@@ -7,9 +7,9 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 const tableName = "workflow"

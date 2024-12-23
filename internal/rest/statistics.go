@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/resp"
+	"github.com/usual2970/certimate/internal/rest/resp"
 )
 
 type StatisticsService interface {

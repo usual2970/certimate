@@ -3,9 +3,9 @@ package nodeprocessor
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/xtime"
 )
 
 type NodeProcessor interface {
@@ -33,7 +33,7 @@ func (l *Logger) Log(ctx context.Context) *domain.RunLog {
 
 func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...string) {
 	output := domain.RunLogOutput{
-		Time:    xtime.BeijingTimeStr(),
+		Time:    time.Now().UTC().Format(time.RFC3339),
 		Title:   title,
 		Content: content,
 	}

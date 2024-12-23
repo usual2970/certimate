@@ -6,9 +6,9 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
-	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 func SendToAllChannels(subject, message string) error {

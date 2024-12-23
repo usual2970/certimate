@@ -14,7 +14,7 @@ var scheduler *cron.Cron
 func GetScheduler() *cron.Cron {
 	schedulerOnce.Do(func() {
 		scheduler = cron.New()
-		location, err := time.LoadLocation("Asia/Shanghai")
+		location, err := time.LoadLocation("Local")
 		if err == nil {
 			scheduler.SetTimezone(location)
 		}

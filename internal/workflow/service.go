@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/app"
 	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
 )
 
