@@ -61,19 +61,19 @@ const WorkflowList = () => {
       ),
     },
     {
-      key: "type",
-      title: t("workflow.props.execution_method"),
+      key: "trigger",
+      title: t("workflow.props.trigger"),
       ellipsis: true,
       render: (_, record) => {
-        const method = record.type;
-        if (!method) {
+        const trigger = record.type;
+        if (!trigger) {
           return "-";
-        } else if (method === "manual") {
-          return <Typography.Text>{t("workflow.node.start.form.executionMethod.options.manual")}</Typography.Text>;
-        } else if (method === "auto") {
+        } else if (trigger === "manual") {
+          return <Typography.Text>{t("workflow.props.trigger.manual")}</Typography.Text>;
+        } else if (trigger === "auto") {
           return (
             <Space className="max-w-full" direction="vertical" size={4}>
-              <Typography.Text>{t("workflow.node.start.form.executionMethod.options.auto")}</Typography.Text>
+              <Typography.Text>{t("workflow.props.trigger.auto")}</Typography.Text>
               <Typography.Text type="secondary">{record.crontab ?? ""}</Typography.Text>
             </Space>
           );
