@@ -13,7 +13,6 @@ export type AccessEditFormBaiduCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormBaiduCloudConfigModelType;
   onModelChange?: (model: AccessEditFormBaiduCloudConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormBaiduCloudConfigModelType;
 };
 
-const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormBaiduCloudConfigProps) => {
+const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormBaiduCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -52,7 +51,7 @@ const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, loading, mod
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.baiducloud_access_key_id.label")}

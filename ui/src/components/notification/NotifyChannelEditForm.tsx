@@ -19,7 +19,6 @@ export type NotifyChannelEditFormProps = {
   style?: React.CSSProperties;
   channel: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: NotifyChannelEditFormModelType;
   onModelChange?: (model: NotifyChannelEditFormModelType) => void;
 };
@@ -31,7 +30,7 @@ export type NotifyChannelEditFormInstance = {
 };
 
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
-  ({ className, style, channel, disabled, loading, model, onModelChange }, ref) => {
+  ({ className, style, channel, disabled, model, onModelChange }, ref) => {
     const [form] = Form.useForm();
     const formName = useCreation(() => `notifyChannelEditForm_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
     const formFieldsComponent = useMemo(() => {
@@ -85,7 +84,7 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
         className={className}
         style={style}
         form={form}
-        disabled={loading || disabled}
+        disabled={disabled}
         initialValues={initialValues}
         layout="vertical"
         name={formName}

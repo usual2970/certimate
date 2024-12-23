@@ -13,7 +13,6 @@ export type AccessEditFormGoDaddyConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormGoDaddyConfigModelType;
   onModelChange?: (model: AccessEditFormGoDaddyConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormGoDaddyConfigModelType;
 };
 
-const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormGoDaddyConfigProps) => {
+const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormGoDaddyConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -52,7 +51,7 @@ const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, loading, model,
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="apiKey"
         label={t("access.form.godaddy_api_key.label")}

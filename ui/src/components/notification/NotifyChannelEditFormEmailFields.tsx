@@ -36,7 +36,7 @@ const NotifyChannelEditFormEmailFields = () => {
       .email({ message: t("common.errmsg.email_invalid") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const form = Form.useFormInstance();
+  const form = Form.useFormInstance<z.infer<typeof formSchema>>();
 
   const handleTLSSwitchChange = (checked: boolean) => {
     const oldPort = form.getFieldValue("smtpPort");

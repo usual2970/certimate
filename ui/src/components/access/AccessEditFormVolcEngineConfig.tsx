@@ -13,7 +13,6 @@ export type AccessEditFormVolcEngineConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormVolcEngineConfigModelType;
   onModelChange?: (model: AccessEditFormVolcEngineConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormVolcEngineConfigModelType;
 };
 
-const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormVolcEngineConfigProps) => {
+const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormVolcEngineConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -52,7 +51,7 @@ const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, loading, mod
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.volcengine_access_key_id.label")}

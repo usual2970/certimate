@@ -13,7 +13,6 @@ export type AccessEditFormDogeCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormDogeCloudConfigModelType;
   onModelChange?: (model: AccessEditFormDogeCloudConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormDogeCloudConfigModelType;
 };
 
-const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormDogeCloudConfigProps) => {
+const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormDogeCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -52,7 +51,7 @@ const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, loading, mode
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.dogecloud_access_key.label")}

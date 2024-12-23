@@ -33,7 +33,6 @@ export type AccessEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
-  loading?: boolean;
   mode: AccessEditFormModes;
   model?: AccessEditFormModelType;
   onModelChange?: (model: AccessEditFormModelType) => void;
@@ -45,7 +44,7 @@ export type AccessEditFormInstance = {
   validateFields: () => Promise<AccessEditFormModelType>;
 };
 
-const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, loading, mode, model, onModelChange }, ref) => {
+const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, mode, model, onModelChange }, ref) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -77,7 +76,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
      */
-    const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, loading: loading, model: model?.config };
+    const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, model: model?.config };
     switch (configType) {
       case ACCESS_PROVIDER_TYPES.ACMEHTTPREQ:
         return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
@@ -150,7 +149,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   return (
     <Form.Provider onFormChange={handleFormProviderChange}>
       <div className={className} style={style}>
-        <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" onValuesChange={handleFormChange}>
+        <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" onValuesChange={handleFormChange}>
           <Form.Item name="name" label={t("access.form.name.label")} rules={[formRule]}>
             <Input placeholder={t("access.form.name.placeholder")} />
           </Form.Item>

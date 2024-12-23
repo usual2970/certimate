@@ -54,7 +54,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
       },
       onFinally: (_, resp) => {
         const template = resp?.content?.notifyTemplates?.[0] ?? defaultNotifyTemplate;
-        setInitialValues({ ...template });
+        setInitialValues(template);
       },
     }
   );

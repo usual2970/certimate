@@ -16,7 +16,6 @@ export type AccessEditFormKubernetesConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormKubernetesConfigModelType;
   onModelChange?: (model: AccessEditFormKubernetesConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   return {} as AccessEditFormKubernetesConfigModelType;
 };
 
-const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
+const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -37,6 +36,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, mod
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const formInst = form as FormInstance<z.infer<typeof formSchema>>;
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
   useDeepCompareEffect(() => {
@@ -52,20 +52,25 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, loading, mod
 
   const handleUploadChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
-      form.setFieldValue("kubeConfig", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
+      formInst.setFieldValue("kubeConfig", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
       setKubeFileList([file]);
     } else {
-      form.setFieldValue("kubeConfig", "");
+      formInst.setFieldValue("kubeConfig", "");
       setKubeFileList([]);
     }
 
-    flushSync(() => onModelChange?.(form.getFieldsValue(true)));
+    flushSync(() => onModelChange?.(formInst.getFieldsValue(true)));
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item name="kubeConfig" noStyle rules={[formRule]}>
-        <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.k8s_kubeconfig.placeholder")} value={form.getFieldValue("kubeConfig")} />
+        <Input.TextArea
+          autoComplete="new-password"
+          hidden
+          placeholder={t("access.form.k8s_kubeconfig.placeholder")}
+          value={formInst.getFieldValue("kubeConfig")}
+        />
       </Form.Item>
       <Form.Item
         label={t("access.form.k8s_kubeconfig.label")}

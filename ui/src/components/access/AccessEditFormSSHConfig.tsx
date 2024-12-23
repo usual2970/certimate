@@ -16,7 +16,6 @@ export type AccessEditFormSSHConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormSSHConfigModelType;
   onModelChange?: (model: AccessEditFormSSHConfigModelType) => void;
 };
@@ -29,7 +28,7 @@ const initModel = () => {
   } as AccessEditFormSSHConfigModelType;
 };
 
-const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormSSHConfigProps) => {
+const AccessEditFormSSHConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormSSHConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -69,9 +68,10 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
       .min(0, "access.form.ssh_key_passphrase.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish()
-      .refine((v) => !v || form.getFieldValue("key"), { message: t("access.form.ssh_key.placeholder") }),
+      .and(z.string().refine((v) => !v || form.getFieldValue("key"), { message: t("access.form.ssh_key.placeholder") })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const formInst = form as FormInstance<z.infer<typeof formSchema>>;
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
   useDeepCompareEffect(() => {
@@ -87,18 +87,18 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
 
   const handleUploadChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
-      form.setFieldValue("key", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
+      formInst.setFieldValue("key", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
       setKeyFileList([file]);
     } else {
-      form.setFieldValue("key", "");
+      formInst.setFieldValue("key", "");
       setKeyFileList([]);
     }
 
-    flushSync(() => onModelChange?.(form.getFieldsValue(true)));
+    flushSync(() => onModelChange?.(formInst.getFieldsValue(true)));
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <div className="flex space-x-2">
         <div className="w-2/3">
           <Form.Item name="host" label={t("access.form.ssh_host.label")} rules={[formRule]}>
@@ -135,7 +135,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, loading, model, onM
       <div className="flex space-x-2">
         <div className="w-1/2">
           <Form.Item name="key" noStyle rules={[formRule]}>
-            <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.ssh_key.placeholder")} value={form.getFieldValue("key")} />
+            <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.ssh_key.placeholder")} value={formInst.getFieldValue("key")} />
           </Form.Item>
           <Form.Item label={t("access.form.ssh_key.label")} tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}>
             <Upload beforeUpload={() => false} fileList={keyFileList} maxCount={1} onChange={handleUploadChange}>

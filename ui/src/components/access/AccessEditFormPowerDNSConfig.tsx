@@ -13,7 +13,6 @@ export type AccessEditFormPowerDNSConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormPowerDNSConfigModelType;
   onModelChange?: (model: AccessEditFormPowerDNSConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormPowerDNSConfigModelType;
 };
 
-const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormPowerDNSConfigProps) => {
+const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormPowerDNSConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -48,7 +47,7 @@ const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, loading, model
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="apiUrl"
         label={t("access.form.powerdns_api_url.label")}

@@ -13,7 +13,6 @@ export type AccessEditFormAliyunConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
   model?: AccessEditFormAliyunConfigModelType;
   onModelChange?: (model: AccessEditFormAliyunConfigModelType) => void;
 };
@@ -25,7 +24,7 @@ const initModel = () => {
   } as AccessEditFormAliyunConfigModelType;
 };
 
-const AccessEditFormAliyunConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormAliyunConfigProps) => {
+const AccessEditFormAliyunConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormAliyunConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -52,7 +51,7 @@ const AccessEditFormAliyunConfig = ({ form, formName, disabled, loading, model, 
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.aliyun_access_key_id.label")}

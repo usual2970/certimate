@@ -24,7 +24,7 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
 
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<NonNullable<unknown>>();
 
   const [initialValues, setInitialValues] = useState(settings?.content?.config?.[SSLPROVIDERS.LETS_ENCRYPT]);
   const [initialChanged, setInitialChanged] = useState(false);
@@ -209,7 +209,7 @@ const SettingsSSLProvider = () => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<{ provider?: string }>();
   const [formPending, setFormPending] = useState(false);
 
   const [settings, setSettings] = useState<SettingsModel<SSLProviderSettingsContent>>();
