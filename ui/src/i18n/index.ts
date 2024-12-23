@@ -17,6 +17,9 @@ i18n
     backend: {
       loadPath: "/locales/{{lng}}.json",
     },
+    detection: {
+      lookupLocalStorage: "certimate-ui-lang",
+    },
   });
 
 export const localeNames = {

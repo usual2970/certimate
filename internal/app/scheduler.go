@@ -7,9 +7,9 @@ import (
 	"github.com/pocketbase/pocketbase/tools/cron"
 )
 
-var schedulerOnce sync.Once
-
 var scheduler *cron.Cron
+
+var schedulerOnce sync.Once
 
 func GetScheduler() *cron.Cron {
 	schedulerOnce.Do(func() {
