@@ -1,0 +1,275 @@
+﻿import { forwardRef, useImperativeHandle, useMemo, useRef, type ChangeEvent } from "react";
+import { useTranslation } from "react-i18next";
+import { useControllableValue } from "ahooks";
+import { Button, Input, Space, type InputRef, type InputProps } from "antd";
+import { produce } from "immer";
+import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon, Minus as MinusIcon, Plus as PlusIcon } from "lucide-react";
+
+export type MultipleInputProps = Omit<InputProps, "count" | "defaultValue" | "showCount" | "value" | "onChange" | "onPressEnter" | "onClear"> & {
+  allowClear?: boolean;
+  defaultValue?: string[];
+  maxCount?: number;
+  minCount?: number;
+  showSortButton?: boolean;
+  value?: string[];
+  onChange?: (index: number, e: ChangeEvent<HTMLInputElement>) => void;
+  onCreate?: (index: number) => void;
+  onRemove?: (index: number) => void;
+  onSort?: (oldIndex: number, newIndex: number) => void;
+  onValueChange?: (value: string[]) => void;
+};
+
+const MultipleInput = ({
+  allowClear = false,
+  disabled,
+  maxCount,
+  minCount,
+  showSortButton = true,
+  onChange,
+  onCreate,
+  onSort,
+  onRemove,
+  ...props
+}: MultipleInputProps) => {
+  const { t } = useTranslation();
+
+  const itemRefs = useRef<MultipleInputItemInstance[]>([]);
+
+  const [value, setValue] = useControllableValue<string[]>(props, {
+    valuePropName: "value",
+    defaultValue: [],
+    defaultValuePropName: "defaultValue",
+    trigger: "onValueChange",
+  });
+
+  const handleCreate = () => {
+    const newValue = produce(value, (draft) => {
+      draft.push("");
+    });
+    setValue(newValue);
+    setTimeout(() => itemRefs.current[newValue.length - 1]?.focus(), 0);
+
+    onCreate?.(newValue.length - 1);
+  };
+
+  const handleInputChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = produce(value, (draft) => {
+      draft[index] = e.target.value;
+    });
+    setValue(newValue);
+
+    onChange?.(index, e);
+  };
+
+  const handleInputBlur = (index: number) => {
+    if (!allowClear && !value[index]) {
+      const newValue = produce(value, (draft) => {
+        draft.splice(index, 1);
+      });
+      setValue(newValue);
+    }
+  };
+
+  const handleClickUp = (index: number) => {
+    if (index === 0) {
+      return;
+    }
+
+    const newValue = produce(value, (draft) => {
+      const temp = draft[index - 1];
+      draft[index - 1] = draft[index];
+      draft[index] = temp;
+    });
+    setValue(newValue);
+
+    onSort?.(index, index - 1);
+  };
+
+  const handleClickDown = (index: number) => {
+    if (index === value.length - 1) {
+      return;
+    }
+
+    const newValue = produce(value, (draft) => {
+      const temp = draft[index + 1];
+      draft[index + 1] = draft[index];
+      draft[index] = temp;
+    });
+    setValue(newValue);
+
+    onSort?.(index, index + 1);
+  };
+
+  const handleClickAdd = (index: number) => {
+    const newValue = produce(value, (draft) => {
+      draft.splice(index + 1, 0, "");
+    });
+    setValue(newValue);
+    setTimeout(() => itemRefs.current[index + 1]?.focus(), 0);
+
+    onCreate?.(index + 1);
+  };
+
+  const handleClickRemove = (index: number) => {
+    const newValue = produce(value, (draft) => {
+      draft.splice(index, 1);
+    });
+    setValue(newValue);
+
+    onRemove?.(index);
+  };
+
+  return value == null || value.length === 0 ? (
+    <Button block color="primary" disabled={disabled || maxCount === 0} size={props.size} variant="dashed" onClick={handleCreate}>
+      {t("common.button.add")}
+    </Button>
+  ) : (
+    <Space className="w-full" direction="vertical" size="small">
+      {value.map((element, index) => {
+        const allowUp = index > 0;
+        const allowDown = index < value.length - 1;
+        const allowRemove = minCount == null || value.length > minCount;
+        const allowAdd = maxCount == null || value.length < maxCount;
+
+        return (
+          <MultipleInputItem
+            {...props}
+            ref={(ref) => (itemRefs.current[index] = ref!)}
+            allowAdd={allowAdd}
+            allowClear={allowClear}
+            allowDown={allowDown}
+            allowRemove={allowRemove}
+            allowUp={allowUp}
+            disabled={disabled}
+            defaultValue={undefined}
+            showSortButton={showSortButton}
+            value={element}
+            onBlur={() => handleInputBlur(index)}
+            onChange={(val) => handleInputChange(index, val)}
+            onClickAdd={() => handleClickAdd(index)}
+            onClickDown={() => handleClickDown(index)}
+            onClickUp={() => handleClickUp(index)}
+            onClickRemove={() => handleClickRemove(index)}
+            onValueChange={undefined}
+          />
+        );
+      })}
+    </Space>
+  );
+};
+
+type MultipleInputItemProps = Omit<
+  MultipleInputProps,
+  "defaultValue" | "maxCount" | "minCount" | "preset" | "value" | "onChange" | "onCreate" | "onRemove" | "onSort" | "onValueChange"
+> & {
+  allowAdd: boolean;
+  allowRemove: boolean;
+  allowUp: boolean;
+  allowDown: boolean;
+  defaultValue?: string;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onClickAdd?: () => void;
+  onClickDown?: () => void;
+  onClickUp?: () => void;
+  onClickRemove?: () => void;
+  onValueChange?: (value: string) => void;
+};
+
+type MultipleInputItemInstance = {
+  focus: () => void;
+  blur: () => void;
+  select: () => void;
+};
+
+const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputItemProps>(
+  (
+    {
+      allowAdd,
+      allowClear,
+      allowDown,
+      allowRemove,
+      allowUp,
+      disabled,
+      showSortButton,
+      onChange,
+      onClickAdd,
+      onClickDown,
+      onClickUp,
+      onClickRemove,
+      ...props
+    }: MultipleInputItemProps,
+    ref
+  ) => {
+    const inputRef = useRef<InputRef>(null);
+
+    const [value, setValue] = useControllableValue<string>(props, {
+      valuePropName: "value",
+      defaultValue: "",
+      defaultValuePropName: "defaultValue",
+      trigger: "onValueChange",
+    });
+
+    const upBtn = useMemo(() => {
+      if (!showSortButton) return null;
+      return <Button icon={<ArrowUpIcon size={14} />} color="default" disabled={disabled || !allowUp} shape="circle" variant="text" onClick={onClickUp} />;
+    }, [allowUp, disabled, showSortButton, onClickUp]);
+    const downBtn = useMemo(() => {
+      if (!showSortButton) return null;
+      return (
+        <Button icon={<ArrowDownIcon size={14} />} color="default" disabled={disabled || !allowDown} shape="circle" variant="text" onClick={onClickDown} />
+      );
+    }, [allowDown, disabled, showSortButton, onClickDown]);
+    const removeBtn = useMemo(() => {
+      return (
+        <Button icon={<MinusIcon size={14} />} color="default" disabled={disabled || !allowRemove} shape="circle" variant="text" onClick={onClickRemove} />
+      );
+    }, [allowRemove, disabled, onClickRemove]);
+    const addBtn = useMemo(() => {
+      return <Button icon={<PlusIcon size={14} />} color="default" disabled={disabled || !allowAdd} shape="circle" variant="text" onClick={onClickAdd} />;
+    }, [allowAdd, disabled, onClickAdd]);
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(e.target.value);
+
+      onChange?.(e);
+    };
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+      blur: () => {
+        inputRef.current?.blur();
+      },
+      select: () => {
+        inputRef.current?.select();
+      },
+    }));
+
+    return (
+      <div className="flex flex-nowrap items-center space-x-2">
+        <div className="flex-grow">
+          <Input
+            {...props}
+            ref={inputRef}
+            className={undefined}
+            style={undefined}
+            allowClear={allowClear}
+            defaultValue={undefined}
+            value={value}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          {removeBtn}
+          {upBtn}
+          {downBtn}
+          {addBtn}
+        </div>
+      </div>
+    );
+  }
+);
+
+export default MultipleInput;
