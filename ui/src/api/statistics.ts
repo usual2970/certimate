@@ -10,8 +10,8 @@ export const get = async () => {
     method: "GET",
   });
 
-  if (resp.status != 0 && resp.status !== 200) {
-    throw new ClientResponseError({ status: resp.status, response: resp, data: {} });
+  if (resp.code != 0) {
+    throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
 
   return resp.data as Statistics;
