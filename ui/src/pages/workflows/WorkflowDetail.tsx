@@ -1,11 +1,12 @@
 import { cloneElement, memo, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "ahooks";
-import { Button, Card, Form, Input, message, Modal, notification, Tabs, Typography, type FormInstance } from "antd";
+import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PageHeader } from "@ant-design/pro-components";
 import { z } from "zod";
+import { Ellipsis as EllipsisIcon, Trash2 as Trash2Icon } from "lucide-react";
 
 import Show from "@/components/Show";
 import End from "@/components/workflow/End";
@@ -15,13 +16,17 @@ import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
+import { remove as removeWorkflow } from "@/repository/workflow";
 import { run as runWorkflow } from "@/api/workflow";
 import { getErrMsg } from "@/utils/error";
 
 const WorkflowDetail = () => {
+  const navigate = useNavigate();
+
   const { t } = useTranslation();
 
   const [messageApi, MessageContextHolder] = message.useMessage();
+  const [modalApi, ModalContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
@@ -30,7 +35,7 @@ const WorkflowDetail = () => {
   );
   useEffect(() => {
     init(workflowId);
-  }, [workflowId]);
+  }, [workflowId, init]);
 
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
@@ -70,6 +75,24 @@ const WorkflowDetail = () => {
     switchEnable();
   };
 
+  const handleDeleteClick = () => {
+    modalApi.confirm({
+      title: t("workflow.action.delete"),
+      content: t("workflow.action.delete.confirm"),
+      onOk: async () => {
+        try {
+          const resp: boolean = await removeWorkflow(workflow);
+          if (resp) {
+            navigate("/workflows");
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
   // const handleWorkflowSaveClick = () => {
   //   if (!allNodesValidated(workflow.draft as WorkflowNode)) {
   //     messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
@@ -96,6 +119,7 @@ const WorkflowDetail = () => {
   return (
     <div>
       {MessageContextHolder}
+      {ModalContextHolder}
       {NotificationContextHolder}
 
       <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }}>
@@ -104,19 +128,27 @@ const WorkflowDetail = () => {
           title={workflow.name}
           extra={[
             <Button.Group key="actions">
-              <WorkflowBaseInfoModalForm
-                model={workflow}
-                trigger={
-                  <Button ghost type="primary">
-                    {t("common.button.edit")}
-                  </Button>
-                }
-                onFinish={handleBaseInfoFormFinish}
-              />
+              <WorkflowBaseInfoModalForm model={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
 
-              <Button ghost type="primary" onClick={handleEnableChange}>
-                {workflow.enabled ? t("common.button.disable") : t("common.button.enable")}
-              </Button>
+              <Button onClick={handleEnableChange}>{workflow.enabled ? t("common.button.disable") : t("common.button.enable")}</Button>
+
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "delete",
+                      label: t("common.button.delete"),
+                      danger: true,
+                      icon: <Trash2Icon size={14} />,
+                      onClick: () => {
+                        handleDeleteClick();
+                      },
+                    },
+                  ],
+                }}
+              >
+                <Button icon={<EllipsisIcon size={14} />} />
+              </Dropdown>
             </Button.Group>,
           ]}
         >

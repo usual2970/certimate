@@ -4,6 +4,7 @@
   "certificate.nodata": "No certificates. Please create a workflow to generate certificates! 😀",
 
   "certificate.action.view": "View Certificate",
+  "certificate.action.delete": "Delete Certificate",
   "certificate.action.download": "Download Certificate",
 
   "certificate.props.san": "Name",

@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Empty, notification, Space, Table, theme, Tooltip, Typography, type TableProps } from "antd";
 import { CircleCheck as CircleCheckIcon, CircleX as CircleXIcon, Eye as EyeIcon } from "lucide-react";
-import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
@@ -64,7 +63,7 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
       key: "startedAt",
       title: t("workflow_run.props.started_at"),
       ellipsis: true,
-      render: (_, record) => {
+      render: () => {
         return "TODO";
       },
     },
@@ -72,7 +71,7 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
       key: "completedAt",
       title: t("workflow_run.props.completed_at"),
       ellipsis: true,
-      render: (_, record) => {
+      render: () => {
         return "TODO";
       },
     },

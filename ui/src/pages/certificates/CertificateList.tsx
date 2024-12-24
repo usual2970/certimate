@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
+import { Eye as EyeIcon, Filter as FilterIcon, Trash2 as Trash2Icon } from "lucide-react";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -162,6 +162,17 @@ const CertificateList = () => {
               </Tooltip>
             }
           />
+
+          <Tooltip title={t("certificate.action.delete")}>
+            <Button
+              color="danger"
+              icon={<Trash2Icon size={16} />}
+              variant="text"
+              onClick={() => {
+                alert("TODO");
+              }}
+            />
+          </Tooltip>
         </Button.Group>
       ),
     },

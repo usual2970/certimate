@@ -2,6 +2,7 @@ import { cloneElement, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { Alert, Drawer } from "antd";
+import { CircleCheck as CircleCheckIcon, CircleX as CircleXIcon } from "lucide-react";
 
 import Show from "@/components/Show";
 import { type WorkflowRunModel } from "@/domain/workflowRun";
@@ -9,6 +10,7 @@ import { type WorkflowRunModel } from "@/domain/workflowRun";
 export type WorkflowRunDetailDrawerProps = {
   data?: WorkflowRunModel;
   loading?: boolean;
+  open?: boolean;
   trigger?: React.ReactElement;
   onOpenChange?: (open: boolean) => void;
 };
@@ -43,11 +45,11 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
       <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
           <Show when={data!.succeed}>
-            <Alert showIcon type="success" message={t("workflow_run.props.status.succeeded")} />
+            <Alert showIcon type="success" message={t("workflow_run.props.status.succeeded")} icon={<CircleCheckIcon size={16} />} />
           </Show>
 
-          <Show when={!data!.succeed}>
-            <Alert showIcon type="error" message={t("workflow_run.props.status.failed")} description={data!.error} />
+          <Show when={!!data!.error}>
+            <Alert showIcon type="error" message={t("workflow_run.props.status.failed")} description={data!.error} icon={<CircleXIcon size={16} />} />
           </Show>
 
           <div className="mt-4 p-4 bg-black text-stone-200 rounded-md">

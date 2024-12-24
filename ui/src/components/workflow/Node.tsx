@@ -44,8 +44,8 @@ const Node = ({ data }: NodeProps) => {
         return (
           <div className="flex space-x-2 items-baseline">
             <div className="text-stone-700">
-              <Show when={data.config?.executionMethod == "auto"} fallback={<>{t(`workflow.node.start.form.executionMethod.options.manual`)}</>}>
-                {t(`workflow.node.start.form.executionMethod.options.auto`) + ":"}
+              <Show when={data.config?.executionMethod == "auto"} fallback={<>{t(`workflow.props.trigger.manual`)}</>}>
+                {t(`workflow.props.trigger.auto`) + ":"}
               </Show>
             </div>
             <Show when={data.config?.executionMethod == "auto"}>

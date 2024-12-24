@@ -1,5 +1,5 @@
 import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
-import StartForm from "./StartForm";
+import StartNodeForm from "./node/StartNodeForm";
 import DeployPanelBody from "./DeployPanelBody";
 import ApplyForm from "./ApplyForm";
 import NotifyForm from "./NotifyForm";
@@ -11,7 +11,7 @@ const PanelBody = ({ data }: PanelBodyProps) => {
   const getBody = () => {
     switch (data.type) {
       case WorkflowNodeType.Start:
-        return <StartForm data={data} />;
+        return <StartNodeForm data={data} />;
       case WorkflowNodeType.Apply:
         return <ApplyForm data={data} />;
       case WorkflowNodeType.Deploy:

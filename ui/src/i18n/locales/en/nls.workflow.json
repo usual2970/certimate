@@ -21,13 +21,25 @@
   "workflow.props.updated_at": "Updated At",
 
   "workflow.detail.orchestration.tab": "Orchestration",
-  "workflow.detail.runs.tab": "Workflow Runs",
+  "workflow.detail.runs.tab": "History Runs",
 
   "workflow.baseinfo.modal.title": "Workflow Base Information",
   "workflow.baseinfo.form.name.label": "Name",
   "workflow.baseinfo.form.name.placeholder": "Please enter name",
   "workflow.baseinfo.form.description.label": "Description",
   "workflow.baseinfo.form.description.placeholder": "Please enter description",
+
+  "workflow.nodes.start.form.trigger.label": "Trigger",
+  "workflow.nodes.start.form.trigger.placeholder": "Please select trigger",
+  "workflow.nodes.start.form.trigger.tooltip": "Auto: Time triggered based on cron expression.<br>Manual: Manually triggered.",
+  "workflow.nodes.start.form.trigger.option.auto.label": "Auto",
+  "workflow.nodes.start.form.trigger.option.manual.label": "Manual",
+  "workflow.nodes.start.form.trigger_cron.label": "Cron Expression",
+  "workflow.nodes.start.form.trigger_cron.placeholder": "Please enter cron expression",
+  "workflow.nodes.start.form.trigger_cron.errmsg.invalid": "Please enter a valid cron expression",
+  "workflow.nodes.start.form.trigger_cron.tooltip": "Time zone is based on the server.",
+  "workflow.nodes.start.form.trigger_cron.extra": "Expected execution time for the last 5 times:",
+  "workflow.nodes.start.form.trigger_cron_alert.content": "Tips: If you have multiple workflows, it is recommended to set them to run at multiple times of the day instead of always running at specific times.<br><br>Reference links:<br>1. <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt rate limits</a><br>2. <a href=\"https://letsencrypt.org/docs/faq/#why-should-my-let-s-encrypt-acme-client-run-at-a-random-time\" target=\"_blank\">Why should my Let’s Encrypt (ACME) client run at a random time?</a>",
 
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "Status",
@@ -59,13 +71,6 @@
   "workflow.node.delete.label": "Delete Node",
   "workflow.node.addBranch.label": "Add Branch",
   "workflow.node.selectNodeType.label": "Select Node Type",
-
-  "workflow.node.start.form.executionMethod.label": "Execution Method",
-  "workflow.node.start.form.executionMethod.placeholder": "Please select execution method",
-  "workflow.node.start.form.executionMethod.options.manual": "Manual",
-  "workflow.node.start.form.executionMethod.options.auto": "Auto",
-  "workflow.node.start.form.crontab.label": "Crontab",
-  "workflow.node.start.form.crontab.placeholder": "Please enter crontab",
 
   "workflow.node.notify.form.title.label": "Title",
   "workflow.node.notify.form.title.placeholder": "Please enter title",
