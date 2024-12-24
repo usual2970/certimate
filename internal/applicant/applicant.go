@@ -39,6 +39,7 @@ const (
 	configTypeCloudflare   = "cloudflare"
 	configTypeGoDaddy      = "godaddy"
 	configTypeHuaweiCloud  = "huaweicloud"
+	configTypeNameDotCom   = "namedotcom"
 	configTypeNameSilo     = "namesilo"
 	configTypePowerDNS     = "powerdns"
 	configTypeTencentCloud = "tencentcloud"
@@ -219,6 +220,8 @@ func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
 		return NewAws(option), nil
 	case configTypeCloudflare:
 		return NewCloudflare(option), nil
+	case configTypeNameDotCom:
+		return NewNameDotCom(option), nil
 	case configTypeNameSilo:
 		return NewNamesilo(option), nil
 	case configTypeGoDaddy:
@@ -250,7 +253,7 @@ type SSLProviderEab struct {
 }
 
 func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
-	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='sslProvider'")
+	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "nameDotCom='sslProvider'")
 
 	sslProvider := &SSLProviderConfig{
 		Config:   SSLProviderConfigContent{},

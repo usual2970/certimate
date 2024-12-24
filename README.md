@@ -88,6 +88,7 @@ make local.run
 |    AWS     |      √       |              | 可签发在 AWS Route53 托管的域名                                   |
 | CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书      |
 |  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                       |
+|  Name.com  |      √       |              | 可签发在 Name.com 注册的域名                                      |
 |  NameSilo  |      √       |              | 可签发在 NameSilo 注册的域名                                      |
 |  PowerDNS  |      √       |              | 可签发在 PowerDNS 托管的域名                                      |
 | HTTP 请求  |      √       |              | 可签发允许通过 HTTP 请求修改 DNS 的域名                           |
