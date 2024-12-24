@@ -18,7 +18,7 @@ import AccessEditFormGoDaddyConfig from "./AccessEditFormGoDaddyConfig";
 import AccessEditFormHuaweiCloudConfig from "./AccessEditFormHuaweiCloudConfig";
 import AccessEditFormKubernetesConfig from "./AccessEditFormKubernetesConfig";
 import AccessEditFormLocalConfig from "./AccessEditFormLocalConfig";
-import AccessEditFormNameDotComConfig from "./AccessEditFormNameDotComConfig.tsx";
+import AccessEditFormNameDotComConfig from "./AccessEditFormNameDotComConfig";
 import AccessEditFormNameSiloConfig from "./AccessEditFormNameSiloConfig";
 import AccessEditFormPowerDNSConfig from "./AccessEditFormPowerDNSConfig";
 import AccessEditFormQiniuConfig from "./AccessEditFormQiniuConfig";
