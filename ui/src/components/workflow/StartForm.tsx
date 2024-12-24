@@ -5,12 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Radio } from "antd";
 import { parseExpression } from "cron-parser";
 import { z } from "zod";
-import { useShallow } from "zustand/shallow";
 
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
 import { usePanel } from "./PanelProvider";
 import { RadioChangeEvent } from "antd/lib";
@@ -41,11 +41,8 @@ type StartFormProps = {
 
 const i18nPrefix = "workflow.node.start.form";
 
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-});
 const StartForm = ({ data }: StartFormProps) => {
-  const { updateNode } = useWorkflowStore(useShallow(selectState));
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
   const { hidePanel } = usePanel();
 
   const { t } = useTranslation();

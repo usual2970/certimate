@@ -1,5 +1,5 @@
 ﻿import { useTheme } from "ahooks";
 
-export default () => {
+export default function () {
   return useTheme({ localStorageKey: "certimate-ui-theme" });
-};
+}

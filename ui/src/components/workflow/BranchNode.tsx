@@ -4,15 +4,12 @@ import { WorkflowBranchNode, WorkflowNode } from "@/domain/workflow";
 import NodeRender from "./NodeRender";
 import { memo } from "react";
 import { BrandNodeProps } from "./types";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
-const selectState = (state: WorkflowState) => ({
-  addBranch: state.addBranch,
-});
 const BranchNode = memo(({ data }: BrandNodeProps) => {
-  const { addBranch } = useWorkflowStore(useShallow(selectState));
+  const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
 
   const { t } = useTranslation();
 

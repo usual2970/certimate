@@ -5,10 +5,12 @@ import { SETTINGS_NAMES, type EmailsSettingsContent, type SettingsModel } from "
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
 export interface ContactState {
-  initialized: boolean;
   emails: string[];
-  setEmails: (emails: string[]) => void;
+  loading: boolean;
+  loadedAtOnce: boolean;
+
   fetchEmails: () => Promise<void>;
+  setEmails: (emails: string[]) => Promise<void>;
 }
 
 export const useContactStore = create<ContactState>((set) => {
@@ -16,8 +18,9 @@ export const useContactStore = create<ContactState>((set) => {
   let settings: SettingsModel<EmailsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用
 
   return {
-    initialized: false,
     emails: [],
+    loading: false,
+    loadedAtOnce: false,
 
     setEmails: async (emails) => {
       settings ??= await getSettings<EmailsSettingsContent>(SETTINGS_NAMES.EMAILS);
@@ -32,7 +35,7 @@ export const useContactStore = create<ContactState>((set) => {
       set(
         produce((state: ContactState) => {
           state.emails = settings.content.emails;
-          state.initialized = true;
+          state.loadedAtOnce = true;
         })
       );
     },
@@ -41,10 +44,12 @@ export const useContactStore = create<ContactState>((set) => {
       fetcher ??= getSettings<EmailsSettingsContent>(SETTINGS_NAMES.EMAILS);
 
       try {
+        set({ loading: true });
         settings = await fetcher;
-        set({ emails: settings.content.emails?.sort() ?? [], initialized: true });
+        set({ emails: settings.content.emails?.sort() ?? [], loadedAtOnce: true });
       } finally {
         fetcher = null;
+        set({ loading: false });
       }
     },
   };

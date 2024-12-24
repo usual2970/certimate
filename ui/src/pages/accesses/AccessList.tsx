@@ -18,7 +18,7 @@ const AccessList = () => {
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { initialized, accesses, fetchAccesses, deleteAccess } = useAccessStore();
+  const { accesses, loadedAtOnce, fetchAccesses, deleteAccess } = useAccessStore();
 
   const tableColumns: TableProps<AccessModel>["columns"] = [
     {
@@ -181,7 +181,7 @@ const AccessList = () => {
       <Table<AccessModel>
         columns={tableColumns}
         dataSource={tableData}
-        loading={!initialized || loading}
+        loading={!loadedAtOnce || loading}
         locale={{
           emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("access.nodata")} />,
         }}

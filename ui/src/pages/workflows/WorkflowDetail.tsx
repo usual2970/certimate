@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, message, notification, Switch } from "antd";
-import { useShallow } from "zustand/shallow";
 import { ArrowLeft as ArrowLeftIcon } from "lucide-react";
 
 import Show from "@/components/Show";
@@ -12,20 +11,14 @@ import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEd
 import WorkflowLog from "@/components/workflow/WorkflowLog";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { cn } from "@/components/ui/utils";
+import { useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
+import { useWorkflowStore } from "@/stores/workflow";
 import { run as runWorkflow } from "@/api/workflow";
-
-const selectState = (state: WorkflowState) => ({
-  workflow: state.workflow,
-  init: state.init,
-  switchEnable: state.switchEnable,
-  save: state.save,
-});
 
 const WorkflowDetail = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const { id } = useParams();
 
   const { t } = useTranslation();
 
@@ -33,11 +26,10 @@ const WorkflowDetail = () => {
   const [_, NotificationContextHolder] = notification.useNotification();
 
   // 3. 使用正确的选择器和 shallow 比较
-  const { workflow, init, switchEnable, save } = useWorkflowStore(useShallow(selectState));
+  const { workflow, init, switchEnable, save } = useWorkflowStore(useZustandShallowSelector(["workflow", "init", "switchEnable", "save"]));
 
   // 从 url 中获取 workflowId
   const [locId, setLocId] = useState<string>("");
-  const id = searchParams.get("id");
 
   const [tab, setTab] = useState("workflow");
 
@@ -78,7 +70,7 @@ const WorkflowDetail = () => {
     }
     switchEnable();
     if (!locId) {
-      navigate(`/workflows/detail?id=${workflow.id}`);
+      navigate(`/workflows/${workflow.id}`);
     }
   };
 
@@ -89,7 +81,7 @@ const WorkflowDetail = () => {
     }
     save();
     if (!locId) {
-      navigate(`/workflows/detail?id=${workflow.id}`);
+      navigate(`/workflows/${workflow.id}`);
     }
   };
 

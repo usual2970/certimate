@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
@@ -20,12 +20,8 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-const selectState = (state: WorkflowState) => ({
-  setBaseInfo: state.setBaseInfo,
-  workflow: state.workflow,
-});
 const WorkflowNameBaseInfoDialog = ({ trigger }: WorkflowNameEditDialogProps) => {
-  const { setBaseInfo, workflow } = useWorkflowStore(useShallow(selectState));
+  const { setBaseInfo, workflow } = useWorkflowStore(useZustandShallowSelector(["setBaseInfo", "workflow"]));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

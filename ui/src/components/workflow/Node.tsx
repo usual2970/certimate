@@ -1,7 +1,7 @@
 import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import AddNode from "./AddNode";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Ellipsis, Trash2 } from "lucide-react";
 import { usePanel } from "./PanelProvider";
@@ -17,12 +17,8 @@ type NodeProps = {
 
 const i18nPrefix = "workflow.node";
 
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-  removeNode: state.removeNode,
-});
 const Node = ({ data }: NodeProps) => {
-  const { updateNode, removeNode } = useWorkflowStore(useShallow(selectState));
+  const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
   const handleNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     updateNode({ ...data, name: e.target.innerText });
   };

@@ -12,7 +12,7 @@ export type AccessTypeSelectProps = Omit<
 };
 
 const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
-  const { initialized, accesses, fetchAccesses } = useAccessStore();
+  const { accesses, loadedAtOnce, fetchAccesses } = useAccessStore();
   useEffect(() => {
     fetchAccesses();
   }, [fetchAccesses]);
@@ -64,7 +64,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
 
         return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
       }}
-      loading={!initialized}
+      loading={!loadedAtOnce}
       options={options}
       optionFilterProp="label"
       optionLabelProp={undefined}

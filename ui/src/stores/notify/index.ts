@@ -5,11 +5,13 @@ import { SETTINGS_NAMES, type NotifyChannelsSettingsContent, type SettingsModel 
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
 export interface NotifyChannelState {
-  initialized: boolean;
   channels: NotifyChannelsSettingsContent;
-  setChannel: (channel: keyof NotifyChannelsSettingsContent, config: NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent]) => void;
-  setChannels: (channels: NotifyChannelsSettingsContent) => void;
+  loading: boolean;
+  loadedAtOnce: boolean;
+
   fetchChannels: () => Promise<void>;
+  setChannel: (channel: keyof NotifyChannelsSettingsContent, config: NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent]) => Promise<void>;
+  setChannels: (channels: NotifyChannelsSettingsContent) => Promise<void>;
 }
 
 export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
@@ -17,8 +19,9 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
   let settings: SettingsModel<NotifyChannelsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用
 
   return {
-    initialized: false,
     channels: {},
+    loading: false,
+    loadedAtOnce: false,
 
     setChannel: async (channel, config) => {
       settings ??= await getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
@@ -40,7 +43,7 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
       set(
         produce((state: NotifyChannelState) => {
           state.channels = settings.content;
-          state.initialized = true;
+          state.loadedAtOnce = true;
         })
       );
     },
@@ -49,10 +52,12 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
       fetcher ??= getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
 
       try {
+        set({ loading: true });
         settings = await fetcher;
-        set({ channels: settings.content ?? {}, initialized: true });
+        set({ channels: settings.content ?? {}, loadedAtOnce: true });
       } finally {
         fetcher = null;
+        set({ loading: false });
       }
     },
   };

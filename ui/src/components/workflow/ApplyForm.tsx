@@ -13,23 +13,20 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import AccessEditModal from "@/components/access/AccessEditModal";
 import EmailsEdit from "@/components/certimate/EmailsEdit";
 import StringList from "@/components/certimate/StringList";
-
 import { accessProvidersMap } from "@/domain/access";
+import { useZustandShallowSelector } from "@/hooks";
 import { useAccessStore } from "@/stores/access";
 import { useContactStore } from "@/stores/contact";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "./PanelProvider";
 
 type ApplyFormProps = {
   data: WorkflowNode;
 };
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-});
+
 const ApplyForm = ({ data }: ApplyFormProps) => {
-  const { updateNode } = useWorkflowStore(useShallow(selectState));
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
 
   const { accesses } = useAccessStore();
   const { emails, fetchEmails } = useContactStore();

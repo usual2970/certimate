@@ -3,8 +3,8 @@ import { Plus } from "lucide-react";
 import { BrandNodeProps, NodeProps } from "./types";
 
 import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,12 +21,8 @@ import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
 import Show from "../Show";
 import { useTranslation } from "react-i18next";
 
-const selectState = (state: WorkflowState) => ({
-  addNode: state.addNode,
-});
-
 const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
-  const { addNode } = useWorkflowStore(useShallow(selectState));
+  const { addNode } = useWorkflowStore(useZustandShallowSelector(["addNode"]));
   const { t } = useTranslation();
 
   const handleTypeSelected = (type: WorkflowNodeType, provider?: string) => {

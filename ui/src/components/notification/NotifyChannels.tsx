@@ -70,7 +70,7 @@ export type NotifyChannelsProps = {
 const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannelsProps) => {
   const { t, i18n } = useTranslation();
 
-  const { initialized, channels, setChannel, fetchChannels } = useNotifyChannelStore();
+  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelStore();
   useEffect(() => {
     fetchChannels();
   }, [fetchChannels]);
@@ -105,7 +105,7 @@ const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannels
 
   return (
     <div className={className} style={style}>
-      {!initialized ? (
+      {!loadedAtOnce ? (
         <Skeleton active />
       ) : (
         <Collapse className={classNames?.collapse} style={styles?.collapse} accordion={true} bordered={false} items={channelCollapseItems} />

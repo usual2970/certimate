@@ -3,7 +3,7 @@ import { list as logs } from "@/repository/workflowRunLog";
 import { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTable } from "./DataTable";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Check, X } from "lucide-react";
 import WorkflowLogDetail from "./WorkflowLogDetail";
 import { useTranslation } from "react-i18next";
@@ -12,8 +12,7 @@ const WorkflowLog = () => {
   const [data, setData] = useState<WorkflowRunLog[]>([]);
   const [pageCount, setPageCount] = useState<number>(0);
 
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get("id");
+  const { id } = useParams();
 
   const { t } = useTranslation();
 

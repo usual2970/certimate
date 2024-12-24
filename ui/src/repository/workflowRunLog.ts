@@ -1,6 +1,8 @@
 ﻿import { type WorkflowRunLog } from "@/domain/workflow";
 import { getPocketBase } from "./pocketbase";
 
+const COLLECTION_NAME = "workflow_run_log";
+
 export type ListWorkflowLogsRequest = {
   id: string;
   page?: number;
@@ -12,7 +14,7 @@ export const list = async (request: ListWorkflowLogsRequest) => {
   const perPage = request.perPage || 10;
 
   return await getPocketBase()
-    .collection("workflow_run_log")
+    .collection(COLLECTION_NAME)
     .getList<WorkflowRunLog>(page, perPage, {
       filter: getPocketBase().filter("workflow={:workflowId}", { workflowId: request.id }),
       sort: "-created",

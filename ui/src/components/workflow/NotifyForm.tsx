@@ -5,8 +5,8 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "../ui/select";
 import { Input } from "../ui/input";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { usePanel } from "./PanelProvider";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
@@ -21,9 +21,6 @@ type NotifyFormProps = {
   data: WorkflowNode;
 };
 
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-});
 type ChannelName = {
   key: string;
   label: string;
@@ -31,7 +28,7 @@ type ChannelName = {
 
 const i18nPrefix = "workflow.node.notify.form";
 const NotifyForm = ({ data }: NotifyFormProps) => {
-  const { updateNode } = useWorkflowStore(useShallow(selectState));
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
   const { channels: supportedChannels, fetchChannels } = useNotifyChannelStore();

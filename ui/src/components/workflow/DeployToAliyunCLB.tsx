@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DeployFormProps } from "./DeployForm";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { usePanel } from "./PanelProvider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,13 +18,8 @@ import AccessSelect from "./AccessSelect";
 import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-  getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
-});
-
 const DeployToAliyunCLB = ({ data }: DeployFormProps) => {
-  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
+  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
 

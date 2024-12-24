@@ -17,7 +17,11 @@ export const list = async (request: ListWorkflowRequest) => {
   const page = request.page || 1;
   const perPage = request.perPage || 10;
 
-  const options: RecordListOptions = { requestKey: null, sort: "-created" };
+  const options: RecordListOptions = {
+    sort: "-created",
+    requestKey: null,
+  };
+
   if (request.enabled != null) {
     options.filter = pb.filter("enabled={:enabled}", { enabled: request.enabled });
   }

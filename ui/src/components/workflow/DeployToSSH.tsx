@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { Button } from "../ui/button";
 import { DeployFormProps } from "./DeployForm";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { usePanel } from "./PanelProvider";
 import { useEffect, useState } from "react";
 import i18n from "@/i18n";
@@ -17,11 +17,6 @@ import { Textarea } from "../ui/textarea";
 import AccessSelect from "./AccessSelect";
 import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
-
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-  getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
-});
 
 const t = i18n.t;
 
@@ -71,7 +66,7 @@ const formSchema = z
   });
 
 const DeployToSSH = ({ data }: DeployFormProps) => {
-  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
+  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
 

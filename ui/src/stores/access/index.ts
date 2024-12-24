@@ -5,20 +5,23 @@ import { type AccessModel } from "@/domain/access";
 import { list as listAccess, save as saveAccess, remove as removeAccess } from "@/repository/access";
 
 export interface AccessState {
-  initialized: boolean;
   accesses: AccessModel[];
-  createAccess: (access: MaybeModelRecord<AccessModel>) => void;
-  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
-  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => void;
+  loading: boolean;
+  loadedAtOnce: boolean;
+
   fetchAccesses: () => Promise<void>;
+  createAccess: (access: MaybeModelRecord<AccessModel>) => Promise<void>;
+  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<void>;
+  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<void>;
 }
 
 export const useAccessStore = create<AccessState>((set) => {
   let fetcher: Promise<AccessModel[]> | null = null; // 防止多次重复请求
 
   return {
-    initialized: false,
     accesses: [],
+    loading: false,
+    loadedAtOnce: false,
 
     createAccess: async (access) => {
       const record = await saveAccess(access);
@@ -57,10 +60,12 @@ export const useAccessStore = create<AccessState>((set) => {
       fetcher ??= listAccess();
 
       try {
+        set({ loading: true });
         const accesses = await fetcher;
-        set({ accesses: accesses ?? [], initialized: true });
+        set({ accesses: accesses ?? [], loadedAtOnce: true });
       } finally {
         fetcher = null;
+        set({ loading: false });
       }
     },
   };

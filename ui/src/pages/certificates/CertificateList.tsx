@@ -120,7 +120,7 @@ const CertificateList = () => {
               type="secondary"
               ellipsis
               onClick={() => {
-                navigate(`/workflows/detail?id=${workflowId}`);
+                navigate(`/workflows/${workflowId}`);
               }}
             >
               {record.expand?.workflow?.name ?? ""}

@@ -7,8 +7,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { WorkflowNode, WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
-import { useShallow } from "zustand/shallow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { usePanel } from "./PanelProvider";
 import { Button } from "../ui/button";
 
@@ -20,12 +20,8 @@ import AccessSelect from "./AccessSelect";
 import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
 
-const selectState = (state: WorkflowState) => ({
-  updateNode: state.updateNode,
-  getWorkflowOuptutBeforeId: state.getWorkflowOuptutBeforeId,
-});
 const DeployToHuaweiCloudCDN = ({ data }: DeployFormProps) => {
-  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useShallow(selectState));
+  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
   const { hidePanel } = usePanel();
   const { t } = useTranslation();
 

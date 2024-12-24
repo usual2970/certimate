@@ -180,7 +180,7 @@ const WorkflowList = () => {
               type="link"
               icon={<PencilIcon size={16} />}
               onClick={() => {
-                navigate(`/workflows/detail?id=${record.id}`);
+                navigate(`/workflows/${record.id}`);
               }}
             />
           </Tooltip>
@@ -276,7 +276,7 @@ const WorkflowList = () => {
   };
 
   const handleCreateClick = () => {
-    navigate("/workflows/detail");
+    navigate("/workflows/");
   };
 
   return (

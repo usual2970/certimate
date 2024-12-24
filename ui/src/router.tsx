@@ -36,7 +36,7 @@ export const router = createHashRouter([
         element: <WorkflowList />,
       },
       {
-        path: "/workflows/detail",
+        path: "/workflows/:id",
         element: <WorkflowDetail />,
       },
       {

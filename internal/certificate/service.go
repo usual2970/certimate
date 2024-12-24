@@ -41,6 +41,7 @@ func (s *certificateService) InitSchedule(ctx context.Context) error {
 			return
 		}
 		msg := buildMsg(certs)
+		// TODO: 空指针 Bug
 		if err := notify.SendToAllChannels(msg.Subject, msg.Message); err != nil {
 			app.GetApp().Logger().Error("failed to send expire soon certificate", "err", err)
 		}
