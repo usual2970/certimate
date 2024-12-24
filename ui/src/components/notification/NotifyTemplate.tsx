@@ -6,6 +6,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 import { ClientResponseError } from "pocketbase";
 
+import Show from "@/components/Show";
 import { defaultNotifyTemplate, SETTINGS_NAMES, type NotifyTemplatesSettingsContent } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
@@ -88,9 +89,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
       {MessageContextHolder}
       {NotificationContextHolder}
 
-      {loading ? (
-        <Skeleton active />
-      ) : (
+      <Show when={!loading} fallback={<Skeleton active />}>
         <Form form={form} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
           <Form.Item
             name="subject"
@@ -120,7 +119,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
             </Button>
           </Form.Item>
         </Form>
-      )}
+      </Show>
     </div>
   );
 };

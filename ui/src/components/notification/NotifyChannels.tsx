@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDeepCompareMemo } from "@ant-design/pro-components";
 import { Button, Collapse, message, notification, Skeleton, Space, Switch, type CollapseProps } from "antd";
 
+import Show from "@/components/Show";
 import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
 import NotifyTestButton from "./NotifyTestButton";
 import { notifyChannelsMap } from "@/domain/settings";
@@ -105,11 +106,9 @@ const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannels
 
   return (
     <div className={className} style={style}>
-      {!loadedAtOnce ? (
-        <Skeleton active />
-      ) : (
+      <Show when={loadedAtOnce} fallback={<Skeleton active />}>
         <Collapse className={classNames?.collapse} style={styles?.collapse} accordion={true} bordered={false} items={channelCollapseItems} />
-      )}
+      </Show>
     </div>
   );
 };

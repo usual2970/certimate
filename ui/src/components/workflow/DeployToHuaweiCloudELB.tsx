@@ -112,7 +112,7 @@ const DeployToHuaweiCloudELB = ({ data }: DeployFormProps) => {
 
                   <AccessEditModal
                     data={{ configType: "huaweicloud" }}
-                    mode="add"
+                    preset="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />

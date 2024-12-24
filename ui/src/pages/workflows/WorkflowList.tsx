@@ -7,6 +7,7 @@ import {
   Divider,
   Empty,
   Menu,
+  message,
   Modal,
   notification,
   Radio,
@@ -24,7 +25,7 @@ import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { WorkflowModel } from "@/domain/workflow";
+import { allNodesValidated, type WorkflowModel } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -36,6 +37,7 @@ const WorkflowList = () => {
 
   const { token: themeToken } = theme.useToken();
 
+  const [messageApi, MessageContextHolder] = message.useMessage();
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
@@ -146,7 +148,7 @@ const WorkflowList = () => {
     },
     {
       key: "lastExecutedAt",
-      title: "最近执行状态",
+      title: t("workflow.props.latest_execution_status"),
       render: () => {
         // TODO: 最近执行状态
         return <>TODO</>;
@@ -237,6 +239,11 @@ const WorkflowList = () => {
 
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
+      if (!workflow.enabled && !allNodesValidated(workflow.content!)) {
+        messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
+        return;
+      }
+
       const resp = await saveWorkflow({
         id: workflow.id,
         enabled: !tableData.find((item) => item.id === workflow.id)?.enabled,
@@ -276,11 +283,12 @@ const WorkflowList = () => {
   };
 
   const handleCreateClick = () => {
-    navigate("/workflows/");
+    alert("TODO");
   };
 
   return (
     <div className="p-4">
+      {MessageContextHolder}
       {ModelContextHolder}
       {NotificationContextHolder}
 

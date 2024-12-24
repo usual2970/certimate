@@ -161,7 +161,7 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
                 <FormLabel className="flex justify-between w-full">
                   <div>{t("domain.application.form.access.label")}</div>
                   <AccessEditModal
-                    mode="add"
+                    preset="add"
                     trigger={
                       <div className="flex items-center font-normal cursor-pointer text-primary hover:underline">
                         <PlusIcon size={14} />

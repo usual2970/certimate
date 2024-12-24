@@ -85,7 +85,7 @@ const DeployToDogeCloudCDN = ({ data }: DeployFormProps) => {
 
                   <AccessEditModal
                     data={{ configType: "dogecloud" }}
-                    mode="add"
+                    preset="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />

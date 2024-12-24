@@ -86,7 +86,7 @@ const DeployToTencentTEO = ({ data }: DeployFormProps) => {
 
                   <AccessEditModal
                     data={{ configType: "tencentcloud" }}
-                    mode="add"
+                    preset="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />

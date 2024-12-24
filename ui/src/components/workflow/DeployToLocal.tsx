@@ -32,11 +32,11 @@ const formSchema = z
     certPath: z
       .string()
       .min(1, t("domain.deployment.form.file_cert_path.placeholder"))
-      .max(255, t("common.errmsg.string_max", { max: 255 })),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     keyPath: z
       .string()
       .min(0, t("domain.deployment.form.file_key_path.placeholder"))
-      .max(255, t("common.errmsg.string_max", { max: 255 }))
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
       .nullish(),
     pfxPassword: z.string().nullish(),
     jksAlias: z.string().nullish(),
@@ -209,7 +209,7 @@ Remove-Item -Path "$pfxPath" -Force
 
                 <AccessEditModal
                   data={{ configType: "local" }}
-                  mode="add"
+                  preset="add"
                   trigger={
                     <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                       <Plus size={14} />

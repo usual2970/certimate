@@ -27,14 +27,14 @@ import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
 
 type AccessEditFormModelType = Partial<MaybeModelRecord<AccessModel>>;
-type AccessEditFormModes = "add" | "edit";
+type AccessEditFormPresets = "add" | "edit";
 
 export type AccessEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
-  mode: AccessEditFormModes;
   model?: AccessEditFormModelType;
+  preset: AccessEditFormPresets;
   onModelChange?: (model: AccessEditFormModelType) => void;
 };
 
@@ -44,7 +44,7 @@ export type AccessEditFormInstance = {
   validateFields: () => Promise<AccessEditFormModelType>;
 };
 
-const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, mode, model, onModelChange }, ref) => {
+const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, model, preset, onModelChange }, ref) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -160,7 +160,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.type.tooltip") }}></span>}
           >
-            <AccessTypeSelect disabled={mode !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
+            <AccessTypeSelect disabled={preset !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
           </Form.Item>
         </Form>
 

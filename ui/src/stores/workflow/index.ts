@@ -59,8 +59,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   setBaseInfo: async (name: string, description: string) => {
     const data: Record<string, string | boolean | WorkflowNode> = {
       id: (get().workflow.id as string) ?? "",
-      name: name,
-      description: description,
+      name: name || "",
+      description: description || "",
     };
     if (!data.id) {
       data.draft = get().workflow.draft as WorkflowNode;

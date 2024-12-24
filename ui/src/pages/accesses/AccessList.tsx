@@ -73,7 +73,7 @@ const AccessList = () => {
           <Space size={0}>
             <AccessEditModal
               data={record}
-              mode="edit"
+              preset="edit"
               trigger={
                 <Tooltip title={t("access.action.edit")}>
                   <Button type="link" icon={<PencilIcon size={16} />} />
@@ -83,7 +83,7 @@ const AccessList = () => {
 
             <AccessEditModal
               data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-              mode="add"
+              preset="add"
               trigger={
                 <Tooltip title={t("access.action.copy")}>
                   <Button type="link" icon={<CopyIcon size={16} />} />
@@ -168,7 +168,7 @@ const AccessList = () => {
         extra={[
           <AccessEditModal
             key="create"
-            mode="add"
+            preset="add"
             trigger={
               <Button type="primary" icon={<PlusIcon size={16} />}>
                 {t("access.action.add")}

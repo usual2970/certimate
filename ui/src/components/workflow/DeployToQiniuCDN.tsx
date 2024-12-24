@@ -85,7 +85,7 @@ const DeployToQiniuCDN = ({ data }: DeployFormProps) => {
 
                   <AccessEditModal
                     data={{ configType: "qiniu" }}
-                    mode="add"
+                    preset="add"
                     trigger={
                       <div className="font-normal text-primary hover:underline cursor-pointer flex items-center">
                         <Plus size={14} />

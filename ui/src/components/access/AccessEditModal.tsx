@@ -11,13 +11,13 @@ import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps }
 export type AccessEditModalProps = {
   data?: AccessEditFormProps["model"];
   loading?: boolean;
-  mode: AccessEditFormProps["mode"];
   open?: boolean;
+  preset: AccessEditFormProps["preset"];
   trigger?: React.ReactElement;
   onOpenChange?: (open: boolean) => void;
 };
 
-const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditModalProps) => {
+const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEditModalProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -57,13 +57,13 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
     }
 
     try {
-      if (mode === "add") {
+      if (preset === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
 
         await createAccess(formRef.current!.getFieldsValue() as AccessModel);
-      } else if (mode === "edit") {
+      } else if (preset === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
@@ -100,14 +100,15 @@ const AccessEditModal = ({ data, loading, mode, trigger, ...props }: AccessEditM
         confirmLoading={formPending}
         destroyOnClose
         loading={loading}
-        okText={mode === "edit" ? t("common.button.save") : t("common.button.submit")}
+        okText={preset === "edit" ? t("common.button.save") : t("common.button.submit")}
         open={open}
-        title={t(`access.action.${mode}`)}
+        title={t(`access.action.${preset}`)}
+        width={480}
         onOk={handleClickOk}
         onCancel={handleClickCancel}
       >
         <div className="pt-4 pb-2">
-          <AccessEditForm ref={formRef} mode={mode === "add" ? "add" : "edit"} model={data} />
+          <AccessEditForm ref={formRef} preset={preset === "add" ? "add" : "edit"} model={data} />
         </div>
       </Modal>
     </>
