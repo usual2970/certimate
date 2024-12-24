@@ -176,27 +176,30 @@ const WorkflowList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Space size={0}>
+        <Button.Group>
           <Tooltip title={t("workflow.action.edit")}>
             <Button
-              type="link"
+              color="primary"
               icon={<PencilIcon size={16} />}
+              variant="text"
               onClick={() => {
                 navigate(`/workflows/${record.id}`);
               }}
             />
           </Tooltip>
+
           <Tooltip title={t("workflow.action.delete")}>
             <Button
-              type="link"
+              color="danger"
               danger={true}
               icon={<Trash2Icon size={16} />}
+              variant="text"
               onClick={() => {
                 handleDeleteClick(record);
               }}
             />
           </Tooltip>
-        </Space>
+        </Button.Group>
       ),
     },
   ];

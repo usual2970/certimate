@@ -20,26 +20,29 @@
   "workflow.props.created_at": "Created At",
   "workflow.props.updated_at": "Updated At",
 
+  "workflow.detail.orchestration.tab": "Orchestration",
+  "workflow.detail.runs.tab": "Workflow Runs",
+
   "workflow.baseinfo.modal.title": "Workflow Base Information",
   "workflow.baseinfo.form.name.label": "Name",
   "workflow.baseinfo.form.name.placeholder": "Please enter name",
   "workflow.baseinfo.form.description.label": "Description",
   "workflow.baseinfo.form.description.placeholder": "Please enter description",
 
+  "workflow_run.props.id": "ID",
+  "workflow_run.props.status": "Status",
+  "workflow_run.props.status.succeeded": "Succeeded",
+  "workflow_run.props.status.failed": "Failed",
+  "workflow_run.props.started_at": "Started At",
+  "workflow_run.props.completed_at": "Completed At",
+
   "workflow.detail.action.save": "Save updates",
   "workflow.detail.action.save.failed": "Save failed",
-  "workflow.detail.action.save.failed.uncompleted": "Please complete all node settings",
+  "workflow.detail.action.save.failed.uncompleted": "Please complete the orchestration and publish the changes first",
   "workflow.detail.action.run": "Run",
   "workflow.detail.action.run.failed": "Run failed",
   "workflow.detail.action.run.success": "Run success",
   "workflow.detail.action.running": "Running",
-
-  "workflow.history.page.title": "Logs",
-  "workflow.history.props.state": "State",
-  "workflow.history.props.state.success": "Success",
-  "workflow.history.props.state.failed": "Failed",
-  "workflow.history.props.reason": "Reason",
-  "workflow.history.props.time": "Time",
 
   "workflow.common.certificate.label": "Certificate",
   "workflow.common.certificate.placeholder": "Please select certificate source",

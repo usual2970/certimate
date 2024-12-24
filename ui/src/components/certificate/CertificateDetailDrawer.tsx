@@ -2,8 +2,9 @@ import { cloneElement, useMemo } from "react";
 import { useControllableValue } from "ahooks";
 import { Drawer } from "antd";
 
-import { type CertificateModel } from "@/domain/certificate";
+import Show from "@/components/Show";
 import CertificateDetail from "./CertificateDetail";
+import { type CertificateModel } from "@/domain/certificate";
 
 export type CertificateDetailDrawerProps = {
   data?: CertificateModel;
@@ -38,8 +39,10 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
     <>
       {triggerEl}
 
-      <Drawer closable destroyOnClose open={open} loading={loading} placement="right" width={480} onClose={() => setOpen(false)}>
-        {data ? <CertificateDetail data={data} /> : <></>}
+      <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
+        <Show when={!!data}>
+          <CertificateDetail data={data!} />
+        </Show>
       </Drawer>
     </>
   );

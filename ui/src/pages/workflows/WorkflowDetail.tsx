@@ -10,7 +10,7 @@ import { z } from "zod";
 import Show from "@/components/Show";
 import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
-import WorkflowLog from "@/components/workflow/WorkflowLog";
+import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
@@ -32,7 +32,7 @@ const WorkflowDetail = () => {
     init(workflowId);
   }, [workflowId]);
 
-  const [tabValue, setTabValue] = useState<"orchestrate" | "runlog">("orchestrate");
+  const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
   // const [running, setRunning] = useState(false);
 
@@ -123,10 +123,10 @@ const WorkflowDetail = () => {
           <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
           <Tabs
             activeKey={tabValue}
-            defaultActiveKey="orchestrate"
+            defaultActiveKey="orchestration"
             items={[
-              { key: "orchestrate", label: "流程编排" },
-              { key: "runlog", label: "执行历史" },
+              { key: "orchestration", label: t("workflow.detail.orchestration.tab") },
+              { key: "runs", label: t("workflow.detail.runs.tab") },
             ]}
             renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} style={{ margin: 0 }} />}
             tabBarStyle={{ border: "none" }}
@@ -138,12 +138,12 @@ const WorkflowDetail = () => {
       <div className="p-4">
         <Card>
           <WorkflowProvider>
-            <Show when={tabValue === "orchestrate"}>
+            <Show when={tabValue === "orchestration"}>
               <div className="flex flex-col items-center">{elements}</div>
             </Show>
 
-            <Show when={tabValue === "runlog"}>
-              <WorkflowLog />
+            <Show when={tabValue === "runs"}>
+              <WorkflowRuns />
             </Show>
           </WorkflowProvider>
         </Card>

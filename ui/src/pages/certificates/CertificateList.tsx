@@ -153,16 +153,16 @@ const CertificateList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Space size={0}>
+        <Button.Group>
           <CertificateDetailDrawer
             data={record}
             trigger={
               <Tooltip title={t("certificate.action.view")}>
-                <Button type="link" icon={<EyeIcon size={16} />} />
+                <Button color="primary" icon={<EyeIcon size={16} />} variant="text" />
               </Tooltip>
             }
           />
-        </Space>
+        </Button.Group>
       ),
     },
   ];

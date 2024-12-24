@@ -4,6 +4,9 @@ import { nanoid } from "nanoid";
 import i18n from "@/i18n";
 import { deployTargets } from "./domain";
 
+/**
+ * @deprecated
+ */
 export type WorkflowRunLog = {
   id: string;
   workflow: string;
@@ -14,6 +17,9 @@ export type WorkflowRunLog = {
   updated: string;
 };
 
+/**
+ * @deprecated
+ */
 export type WorkflowRunLogItem = {
   nodeName: string;
   error: string;

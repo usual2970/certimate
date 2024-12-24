@@ -69,40 +69,38 @@ const AccessList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <>
-          <Space size={0}>
-            <AccessEditModal
-              data={record}
-              preset="edit"
-              trigger={
-                <Tooltip title={t("access.action.edit")}>
-                  <Button type="link" icon={<PencilIcon size={16} />} />
-                </Tooltip>
-              }
-            />
+        <Button.Group>
+          <AccessEditModal
+            data={record}
+            preset="edit"
+            trigger={
+              <Tooltip title={t("access.action.edit")}>
+                <Button color="primary" icon={<PencilIcon size={16} />} variant="text" />
+              </Tooltip>
+            }
+          />
 
-            <AccessEditModal
-              data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-              preset="add"
-              trigger={
-                <Tooltip title={t("access.action.copy")}>
-                  <Button type="link" icon={<CopyIcon size={16} />} />
-                </Tooltip>
-              }
-            />
+          <AccessEditModal
+            data={{ ...record, id: undefined, name: `${record.name}-copy` }}
+            preset="add"
+            trigger={
+              <Tooltip title={t("access.action.copy")}>
+                <Button color="primary" icon={<CopyIcon size={16} />} variant="text" />
+              </Tooltip>
+            }
+          />
 
-            <Tooltip title={t("access.action.delete")}>
-              <Button
-                type="link"
-                danger={true}
-                icon={<Trash2Icon size={16} />}
-                onClick={() => {
-                  handleDeleteClick(record);
-                }}
-              />
-            </Tooltip>
-          </Space>
-        </>
+          <Tooltip title={t("access.action.delete")}>
+            <Button
+              color="danger"
+              icon={<Trash2Icon size={16} />}
+              variant="text"
+              onClick={() => {
+                handleDeleteClick(record);
+              }}
+            />
+          </Tooltip>
+        </Button.Group>
       ),
     },
   ];

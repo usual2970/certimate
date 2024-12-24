@@ -20,28 +20,29 @@
   "workflow.props.created_at": "创建时间",
   "workflow.props.updated_at": "更新时间",
 
+  "workflow.detail.orchestration.tab": "流程编排",
+  "workflow.detail.runs.tab": "执行历史",
+
   "workflow.baseinfo.modal.title": "编辑基本信息",
   "workflow.baseinfo.form.name.label": "名称",
   "workflow.baseinfo.form.name.placeholder": "请输入工作流名称",
   "workflow.baseinfo.form.description.label": "描述",
   "workflow.baseinfo.form.description.placeholder": "请输入工作流描述",
 
+  "workflow_run.props.id": "ID",
+  "workflow_run.props.status": "状态",
+  "workflow_run.props.status.succeeded": "成功",
+  "workflow_run.props.status.failed": "失败",
+  "workflow_run.props.started_at": "开始时间",
+  "workflow_run.props.completed_at": "完成时间",
+
   "workflow.detail.action.save": "保存变更",
   "workflow.detail.action.save.failed": "保存失败",
-  "workflow.detail.action.save.failed.uncompleted": "请完成所有节点设置",
+  "workflow.detail.action.save.failed.uncompleted": "请先完成流程编排并发布更改",
   "workflow.detail.action.run": "立即执行",
   "workflow.detail.action.run.failed": "执行失败",
   "workflow.detail.action.run.success": "执行成功",
   "workflow.detail.action.running": "正在执行",
-
-  "workflow.baseinfo.title": "基本信息",
-
-  "workflow.history.page.title": "日志",
-  "workflow.history.props.state": "状态",
-  "workflow.history.props.state.success": "通过",
-  "workflow.history.props.state.failed": "失败",
-  "workflow.history.props.reason": "原因",
-  "workflow.history.props.time": "时间",
 
   "workflow.common.certificate.label": "证书",
   "workflow.common.certificate.placeholder": "请选择证书来源",
