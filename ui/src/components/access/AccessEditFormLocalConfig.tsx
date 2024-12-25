@@ -3,28 +3,28 @@ import { Form, type FormInstance } from "antd";
 import { useAntdForm } from "@/hooks";
 import { type LocalAccessConfig } from "@/domain/access";
 
-type AccessEditFormLocalConfigModelValues = Partial<LocalAccessConfig>;
+type AccessEditFormLocalConfigFieldValues = Partial<LocalAccessConfig>;
 
 export type AccessEditFormLocalConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormLocalConfigModelValues;
-  onModelChange?: (model: AccessEditFormLocalConfigModelValues) => void;
+  initialValues?: AccessEditFormLocalConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormLocalConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormLocalConfigModelValues => {
+const initFormModel = (): AccessEditFormLocalConfigFieldValues => {
   return {};
 };
 
-const AccessEditFormLocalConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormLocalConfigProps) => {
+const AccessEditFormLocalConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormLocalConfigProps) => {
   const { form: formInst, formProps } = useAntdForm({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: unknown) => {
-    onModelChange?.(values as AccessEditFormLocalConfigModelValues);
+    onValuesChange?.(values as AccessEditFormLocalConfigFieldValues);
   };
 
   return <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}></Form>;

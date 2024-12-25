@@ -125,7 +125,7 @@ const WorkflowDetail = () => {
           title={workflow.name}
           extra={[
             <Button.Group key="actions">
-              <WorkflowBaseInfoModalForm model={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
+              <WorkflowBaseInfoModalForm initialValues={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
 
               <Button onClick={handleEnableChange}>{workflow.enabled ? t("common.button.disable") : t("common.button.enable")}</Button>
 
@@ -183,11 +183,11 @@ const WorkflowDetail = () => {
 
 const WorkflowBaseInfoModalForm = memo(
   ({
-    model,
+    initialValues,
     trigger,
     onFinish,
   }: {
-    model: Pick<WorkflowModel, "name" | "description">;
+    initialValues: Pick<WorkflowModel, "name" | "description">;
     trigger?: React.ReactElement;
     onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
   }) => {
@@ -229,7 +229,7 @@ const WorkflowBaseInfoModalForm = memo(
       formProps,
       ...formApi
     } = useAntdForm<z.infer<typeof formSchema>>({
-      initialValues: model,
+      initialValues: initialValues,
       onSubmit: async () => {
         const ret = await onFinish?.(formInst.getFieldsValue(true));
         if (ret != null && !ret) return;

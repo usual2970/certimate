@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type BytePlusAccessConfig } from "@/domain/access";
 
-type AccessEditFormBytePlusConfigModelValues = Partial<BytePlusAccessConfig>;
+type AccessEditFormBytePlusConfigFieldValues = Partial<BytePlusAccessConfig>;
 
 export type AccessEditFormBytePlusConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormBytePlusConfigModelValues;
-  onModelChange?: (model: AccessEditFormBytePlusConfigModelValues) => void;
+  initialValues?: AccessEditFormBytePlusConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormBytePlusConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormBytePlusConfigModelValues => {
+const initFormModel = (): AccessEditFormBytePlusConfigFieldValues => {
   return {
     accessKey: "",
     secretKey: "",
   };
 };
 
-const AccessEditFormBytePlusConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormBytePlusConfigProps) => {
+const AccessEditFormBytePlusConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormBytePlusConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormBytePlusConfig = ({ form, formName, disabled, model, onModel
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormBytePlusConfigModelValues);
+    onValuesChange?.(values as AccessEditFormBytePlusConfigFieldValues);
   };
 
   return (

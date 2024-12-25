@@ -9,7 +9,7 @@ export type AccessTypeSelectProps = Omit<
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 >;
 
-const AccessTypeSelect = memo((props: AccessTypeSelectProps) => {
+const AccessTypeSelect = (props: AccessTypeSelectProps) => {
   const { t } = useTranslation();
 
   const options = Array.from(accessProvidersMap.values()).map((item) => ({
@@ -66,6 +66,6 @@ const AccessTypeSelect = memo((props: AccessTypeSelectProps) => {
       optionRender={(option) => renderOption(option.data.value)}
     />
   );
-});
+};
 
-export default AccessTypeSelect;
+export default memo(AccessTypeSelect);

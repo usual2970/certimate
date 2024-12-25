@@ -6,17 +6,17 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type HuaweiCloudAccessConfig } from "@/domain/access";
 
-type AccessEditFormHuaweiCloudConfigModelValues = Partial<HuaweiCloudAccessConfig>;
+type AccessEditFormHuaweiCloudConfigFieldValues = Partial<HuaweiCloudAccessConfig>;
 
 export type AccessEditFormHuaweiCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormHuaweiCloudConfigModelValues;
-  onModelChange?: (model: AccessEditFormHuaweiCloudConfigModelValues) => void;
+  initialValues?: AccessEditFormHuaweiCloudConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormHuaweiCloudConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormHuaweiCloudConfigModelValues => {
+const initFormModel = (): AccessEditFormHuaweiCloudConfigFieldValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
@@ -24,7 +24,7 @@ const initFormModel = (): AccessEditFormHuaweiCloudConfigModelValues => {
   };
 };
 
-const AccessEditFormHuaweiCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormHuaweiCloudConfigProps) => {
+const AccessEditFormHuaweiCloudConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormHuaweiCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -49,11 +49,11 @@ const AccessEditFormHuaweiCloudConfig = ({ form, formName, disabled, model, onMo
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormHuaweiCloudConfigModelValues);
+    onValuesChange?.(values as AccessEditFormHuaweiCloudConfigFieldValues);
   };
 
   return (

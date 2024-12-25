@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type TencentCloudAccessConfig } from "@/domain/access";
 
-type AccessEditFormTencentCloudConfigModelValues = Partial<TencentCloudAccessConfig>;
+type AccessEditFormTencentCloudConfigFieldValues = Partial<TencentCloudAccessConfig>;
 
 export type AccessEditFormTencentCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormTencentCloudConfigModelValues;
-  onModelChange?: (model: AccessEditFormTencentCloudConfigModelValues) => void;
+  initialValues?: AccessEditFormTencentCloudConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormTencentCloudConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormTencentCloudConfigModelValues => {
+const initFormModel = (): AccessEditFormTencentCloudConfigFieldValues => {
   return {
     secretId: "",
     secretKey: "",
   };
 };
 
-const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormTencentCloudConfigProps) => {
+const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormTencentCloudConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, model, onM
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormTencentCloudConfigModelValues);
+    onValuesChange?.(values as AccessEditFormTencentCloudConfigFieldValues);
   };
 
   return (

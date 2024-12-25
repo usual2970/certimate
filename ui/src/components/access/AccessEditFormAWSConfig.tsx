@@ -6,17 +6,17 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type AWSAccessConfig } from "@/domain/access";
 
-type AccessEditFormAWSConfigModelValues = Partial<AWSAccessConfig>;
+type AccessEditFormAWSConfigFieldValues = Partial<AWSAccessConfig>;
 
 export type AccessEditFormAWSConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormAWSConfigModelValues;
-  onModelChange?: (model: AccessEditFormAWSConfigModelValues) => void;
+  initialValues?: AccessEditFormAWSConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormAWSConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormAWSConfigModelValues => {
+const initFormModel = (): AccessEditFormAWSConfigFieldValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
@@ -25,7 +25,7 @@ const initFormModel = (): AccessEditFormAWSConfigModelValues => {
   };
 };
 
-const AccessEditFormAWSConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormAWSConfigProps) => {
+const AccessEditFormAWSConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormAWSConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -57,11 +57,11 @@ const AccessEditFormAWSConfig = ({ form, formName, disabled, model, onModelChang
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormAWSConfigModelValues);
+    onValuesChange?.(values as AccessEditFormAWSConfigFieldValues);
   };
 
   return (

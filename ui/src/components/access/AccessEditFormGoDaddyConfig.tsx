@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type GoDaddyAccessConfig } from "@/domain/access";
 
-type AccessEditFormGoDaddyConfigModelValues = Partial<GoDaddyAccessConfig>;
+type AccessEditFormGoDaddyConfigFieldValues = Partial<GoDaddyAccessConfig>;
 
 export type AccessEditFormGoDaddyConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormGoDaddyConfigModelValues;
-  onModelChange?: (model: AccessEditFormGoDaddyConfigModelValues) => void;
+  initialValues?: AccessEditFormGoDaddyConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormGoDaddyConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormGoDaddyConfigModelValues => {
+const initFormModel = (): AccessEditFormGoDaddyConfigFieldValues => {
   return {
     apiKey: "",
     apiSecret: "",
   };
 };
 
-const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormGoDaddyConfigProps) => {
+const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormGoDaddyConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, model, onModelC
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormGoDaddyConfigModelValues);
+    onValuesChange?.(values as AccessEditFormGoDaddyConfigFieldValues);
   };
 
   return (

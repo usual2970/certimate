@@ -6,23 +6,23 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type CloudflareAccessConfig } from "@/domain/access";
 
-type AccessEditFormCloudflareConfigModelValues = Partial<CloudflareAccessConfig>;
+type AccessEditFormCloudflareConfigFieldValues = Partial<CloudflareAccessConfig>;
 
 export type AccessEditFormCloudflareConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormCloudflareConfigModelValues;
-  onModelChange?: (model: AccessEditFormCloudflareConfigModelValues) => void;
+  initialValues?: AccessEditFormCloudflareConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormCloudflareConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormCloudflareConfigModelValues => {
+const initFormModel = (): AccessEditFormCloudflareConfigFieldValues => {
   return {
     dnsApiToken: "",
   };
 };
 
-const AccessEditFormCloudflareConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormCloudflareConfigProps) => {
+const AccessEditFormCloudflareConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormCloudflareConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -35,11 +35,11 @@ const AccessEditFormCloudflareConfig = ({ form, formName, disabled, model, onMod
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormCloudflareConfigModelValues);
+    onValuesChange?.(values as AccessEditFormCloudflareConfigFieldValues);
   };
 
   return (

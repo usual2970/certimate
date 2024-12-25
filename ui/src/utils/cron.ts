@@ -10,6 +10,8 @@ export const validCronExpression = (expr: string): boolean => {
 };
 
 export const getNextCronExecutions = (expr: string, times = 1): Date[] => {
+  if (!expr) return [];
+
   try {
     const now = new Date();
     const cron = parseExpression(expr, { currentDate: now, iterator: true });

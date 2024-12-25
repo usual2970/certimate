@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "ahooks";
@@ -18,11 +18,11 @@ export type NotifyNodeFormProps = {
   data: WorkflowNode;
 };
 
-const initFormModel = () => {
+const initFormModel = (): WorkflowNodeConfig => {
   return {
     subject: "",
     message: "",
-  } as WorkflowNodeConfig;
+  };
 };
 
 const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
@@ -115,4 +115,4 @@ const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
   );
 };
 
-export default NotifyNodeForm;
+export default memo(NotifyNodeForm);

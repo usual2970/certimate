@@ -11,17 +11,17 @@ import { useAntdForm } from "@/hooks";
 import { type SSHAccessConfig } from "@/domain/access";
 import { readFileContent } from "@/utils/file";
 
-type AccessEditFormSSHConfigModelValues = Partial<SSHAccessConfig>;
+type AccessEditFormSSHConfigFieldValues = Partial<SSHAccessConfig>;
 
 export type AccessEditFormSSHConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormSSHConfigModelValues;
-  onModelChange?: (model: AccessEditFormSSHConfigModelValues) => void;
+  initialValues?: AccessEditFormSSHConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormSSHConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormSSHConfigModelValues => {
+const initFormModel = (): AccessEditFormSSHConfigFieldValues => {
   return {
     host: "127.0.0.1",
     port: 22,
@@ -29,7 +29,7 @@ const initFormModel = (): AccessEditFormSSHConfigModelValues => {
   };
 };
 
-const AccessEditFormSSHConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormSSHConfigProps) => {
+const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormSSHConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -74,16 +74,16 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, model, onModelChang
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const [keyFileList, setKeyFileList] = useState<UploadFile[]>([]);
   useDeepCompareEffect(() => {
-    setKeyFileList(model?.key?.trim() ? [{ uid: "-1", name: "sshkey", status: "done" }] : []);
-  }, [model]);
+    setKeyFileList(initialValues?.key?.trim() ? [{ uid: "-1", name: "sshkey", status: "done" }] : []);
+  }, [initialValues]);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormSSHConfigModelValues);
+    onValuesChange?.(values as AccessEditFormSSHConfigFieldValues);
   };
 
   const handleKeyFileChange: UploadProps["onChange"] = async ({ file }) => {
@@ -95,7 +95,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, model, onModelChang
       setKeyFileList([]);
     }
 
-    flushSync(() => onModelChange?.(formInst.getFieldsValue(true)));
+    flushSync(() => onValuesChange?.(formInst.getFieldsValue(true)));
   };
 
   return (

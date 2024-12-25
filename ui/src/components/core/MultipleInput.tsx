@@ -177,9 +177,9 @@ type MultipleInputItemProps = Omit<
 };
 
 type MultipleInputItemInstance = {
-  focus: () => void;
-  blur: () => void;
-  select: () => void;
+  focus: InputRef["focus"];
+  blur: InputRef["blur"];
+  select: InputRef["select"];
 };
 
 const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputItemProps>(
@@ -236,8 +236,8 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
     };
 
     useImperativeHandle(ref, () => ({
-      focus: () => {
-        inputRef.current?.focus();
+      focus: (options) => {
+        inputRef.current?.focus(options);
       },
       blur: () => {
         inputRef.current?.blur();

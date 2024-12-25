@@ -32,7 +32,7 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
     await channelFormRef.current!.validateFields();
 
     try {
-      setChannel(channel, channelFormRef.current!.getFieldsValue());
+      setChannel(channel, channelFormRef.current!.getFieldsValue(true));
       setChannelFormChanged(false);
 
       messageApi.success(t("common.text.operation_succeeded"));
@@ -46,7 +46,13 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
       {MessageContextHolder}
       {NotificationContextHolder}
 
-      <NotifyChannelEditForm ref={channelFormRef} className="mt-2" channel={channel} model={channelConfig} onModelChange={() => setChannelFormChanged(true)} />
+      <NotifyChannelEditForm
+        ref={channelFormRef}
+        className="mt-2"
+        channel={channel}
+        initialValues={channelConfig}
+        onValuesChange={() => setChannelFormChanged(true)}
+      />
 
       <Space className="mb-2">
         <Button type="primary" disabled={!channelFormChanged} onClick={handleSubmit}>

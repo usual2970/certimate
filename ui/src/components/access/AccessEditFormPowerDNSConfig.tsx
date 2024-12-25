@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type PowerDNSAccessConfig } from "@/domain/access";
 
-type AccessEditFormPowerDNSConfigModelValues = Partial<PowerDNSAccessConfig>;
+type AccessEditFormPowerDNSConfigFieldValues = Partial<PowerDNSAccessConfig>;
 
 export type AccessEditFormPowerDNSConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormPowerDNSConfigModelValues;
-  onModelChange?: (model: AccessEditFormPowerDNSConfigModelValues) => void;
+  initialValues?: AccessEditFormPowerDNSConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormPowerDNSConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormPowerDNSConfigModelValues => {
+const initFormModel = (): AccessEditFormPowerDNSConfigFieldValues => {
   return {
     apiUrl: "",
     apiKey: "",
   };
 };
 
-const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormPowerDNSConfigProps) => {
+const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormPowerDNSConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -37,11 +37,11 @@ const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, model, onModel
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormPowerDNSConfigModelValues);
+    onValuesChange?.(values as AccessEditFormPowerDNSConfigFieldValues);
   };
 
   return (

@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type VolcEngineAccessConfig } from "@/domain/access";
 
-type AccessEditFormVolcEngineConfigModelValues = Partial<VolcEngineAccessConfig>;
+type AccessEditFormVolcEngineConfigFieldValues = Partial<VolcEngineAccessConfig>;
 
 export type AccessEditFormVolcEngineConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormVolcEngineConfigModelValues;
-  onModelChange?: (model: AccessEditFormVolcEngineConfigModelValues) => void;
+  initialValues?: AccessEditFormVolcEngineConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormVolcEngineConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormVolcEngineConfigModelValues => {
+const initFormModel = (): AccessEditFormVolcEngineConfigFieldValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
   };
 };
 
-const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormVolcEngineConfigProps) => {
+const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormVolcEngineConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, model, onMod
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormVolcEngineConfigModelValues);
+    onValuesChange?.(values as AccessEditFormVolcEngineConfigFieldValues);
   };
 
   return (

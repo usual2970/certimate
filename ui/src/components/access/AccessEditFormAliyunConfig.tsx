@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type AliyunAccessConfig } from "@/domain/access";
 
-type AccessEditFormAliyunConfigModelValues = Partial<AliyunAccessConfig>;
+type AccessEditFormAliyunConfigFieldValues = Partial<AliyunAccessConfig>;
 
 export type AccessEditFormAliyunConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormAliyunConfigModelValues;
-  onModelChange?: (model: AccessEditFormAliyunConfigModelValues) => void;
+  initialValues?: AccessEditFormAliyunConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormAliyunConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormAliyunConfigModelValues => {
+const initFormModel = (): AccessEditFormAliyunConfigFieldValues => {
   return {
     accessKeyId: "",
     accessKeySecret: "",
   };
 };
 
-const AccessEditFormAliyunConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormAliyunConfigProps) => {
+const AccessEditFormAliyunConfig = ({ form, formName, disabled, initialValues, onValuesChange: onValuesChange }: AccessEditFormAliyunConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormAliyunConfig = ({ form, formName, disabled, model, onModelCh
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormAliyunConfigModelValues);
+    onValuesChange?.(values as AccessEditFormAliyunConfigFieldValues);
   };
 
   return (

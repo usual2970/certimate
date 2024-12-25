@@ -9,7 +9,7 @@ import { getErrMsg } from "@/utils/error";
 import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps } from "./AccessEditForm";
 
 export type AccessEditModalProps = {
-  data?: AccessEditFormProps["model"];
+  data?: AccessEditFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
   preset: AccessEditFormProps["preset"];
@@ -62,13 +62,13 @@ const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEdi
           throw "Invalid props: `data`";
         }
 
-        await createAccess(formRef.current!.getFieldsValue() as AccessModel);
+        await createAccess(formRef.current!.getFieldsValue(true) as AccessModel);
       } else if (preset === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
 
-        await updateAccess({ ...data, ...formRef.current!.getFieldsValue() } as AccessModel);
+        await updateAccess({ ...data, ...formRef.current!.getFieldsValue(true) } as AccessModel);
       }
 
       setOpen(false);
@@ -106,7 +106,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEdi
         onCancel={handleClickCancel}
       >
         <div className="pt-4 pb-2">
-          <AccessEditForm ref={formRef} preset={preset === "add" ? "add" : "edit"} model={data} />
+          <AccessEditForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />
         </div>
       </Modal>
     </>

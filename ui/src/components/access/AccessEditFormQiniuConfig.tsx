@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type QiniuAccessConfig } from "@/domain/access";
 
-type AccessEditFormQiniuConfigModelValues = Partial<QiniuAccessConfig>;
+type AccessEditFormQiniuConfigFieldValues = Partial<QiniuAccessConfig>;
 
 export type AccessEditFormQiniuConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormQiniuConfigModelValues;
-  onModelChange?: (model: AccessEditFormQiniuConfigModelValues) => void;
+  initialValues?: AccessEditFormQiniuConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormQiniuConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormQiniuConfigModelValues => {
+const initFormModel = (): AccessEditFormQiniuConfigFieldValues => {
   return {
     accessKey: "",
     secretKey: "",
   };
 };
 
-const AccessEditFormQiniuConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormQiniuConfigProps) => {
+const AccessEditFormQiniuConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormQiniuConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,11 +41,11 @@ const AccessEditFormQiniuConfig = ({ form, formName, disabled, model, onModelCha
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormQiniuConfigModelValues);
+    onValuesChange?.(values as AccessEditFormQiniuConfigFieldValues);
   };
 
   return (

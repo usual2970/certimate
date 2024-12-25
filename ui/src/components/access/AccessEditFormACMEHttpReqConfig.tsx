@@ -6,24 +6,24 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type ACMEHttpReqAccessConfig } from "@/domain/access";
 
-type AccessEditFormACMEHttpReqConfigModelValues = Partial<ACMEHttpReqAccessConfig>;
+type AccessEditFormACMEHttpReqConfigFieldValues = Partial<ACMEHttpReqAccessConfig>;
 
 export type AccessEditFormACMEHttpReqConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormACMEHttpReqConfigModelValues;
-  onModelChange?: (model: AccessEditFormACMEHttpReqConfigModelValues) => void;
+  initialValues?: AccessEditFormACMEHttpReqConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormACMEHttpReqConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormACMEHttpReqConfigModelValues => {
+const initFormModel = (): AccessEditFormACMEHttpReqConfigFieldValues => {
   return {
     endpoint: "https://example.com/api/",
     mode: "",
   };
 };
 
-const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormACMEHttpReqConfigProps) => {
+const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormACMEHttpReqConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -45,11 +45,11 @@ const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, model, onMo
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormACMEHttpReqConfigModelValues);
+    onValuesChange?.(values as AccessEditFormACMEHttpReqConfigFieldValues);
   };
 
   return (

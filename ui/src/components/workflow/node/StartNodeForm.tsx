@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "ahooks";
 import { Alert, Button, Form, Input, Radio } from "antd";
@@ -16,11 +16,11 @@ export type StartNodeFormProps = {
   data: WorkflowNode;
 };
 
-const initFormModel = () => {
+const initFormModel = (): WorkflowNodeConfig => {
   return {
     executionMethod: "auto",
     crontab: "0 0 * * *",
-  } as WorkflowNodeConfig;
+  };
 };
 
 const StartNodeForm = ({ data }: StartNodeFormProps) => {
@@ -110,16 +110,20 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.start.form.trigger_cron.tooltip") }}></span>}
         extra={
-          <span>
-            {t("workflow.nodes.start.form.trigger_cron.extra")}
-            <br />
-            {triggerCronLastExecutions.map((d) => (
-              <>
-                {dayjs(d).format("YYYY-MM-DD HH:mm:ss")}
-                <br />
-              </>
-            ))}
-          </span>
+          triggerCronLastExecutions.length > 0 ? (
+            <span>
+              {t("workflow.nodes.start.form.trigger_cron.extra")}
+              <br />
+              {triggerCronLastExecutions.map((d) => (
+                <>
+                  {dayjs(d).format("YYYY-MM-DD HH:mm:ss")}
+                  <br />
+                </>
+              ))}
+            </span>
+          ) : (
+            <></>
+          )
         }
       >
         <Input placeholder={t("workflow.nodes.start.form.trigger_cron.placeholder")} onChange={(e) => handleTriggerCronChange(e.target.value)} />
@@ -138,4 +142,4 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
   );
 };
 
-export default StartNodeForm;
+export default memo(StartNodeForm);

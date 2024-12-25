@@ -6,23 +6,23 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type WebhookAccessConfig } from "@/domain/access";
 
-type AccessEditFormWebhookConfigModelValues = Partial<WebhookAccessConfig>;
+type AccessEditFormWebhookConfigFieldValues = Partial<WebhookAccessConfig>;
 
 export type AccessEditFormWebhookConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormWebhookConfigModelValues;
-  onModelChange?: (model: AccessEditFormWebhookConfigModelValues) => void;
+  initialValues?: AccessEditFormWebhookConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormWebhookConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormWebhookConfigModelValues => {
+const initFormModel = (): AccessEditFormWebhookConfigFieldValues => {
   return {
     url: "",
   };
 };
 
-const AccessEditFormWebhookConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormWebhookConfigProps) => {
+const AccessEditFormWebhookConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormWebhookConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -34,11 +34,11 @@ const AccessEditFormWebhookConfig = ({ form, formName, disabled, model, onModelC
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormWebhookConfigModelValues);
+    onValuesChange?.(values as AccessEditFormWebhookConfigFieldValues);
   };
 
   return (

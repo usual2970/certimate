@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { useCreation } from "ahooks";
-import { Form } from "antd";
+import { Form, type FormInstance } from "antd";
 
 import { useAntdForm } from "@/hooks";
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
@@ -13,27 +13,23 @@ import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegram
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
 
-type NotifyChannelEditFormModelValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
+type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 
 export type NotifyChannelEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   channel: string;
   disabled?: boolean;
-  model?: NotifyChannelEditFormModelValues;
-  onModelChange?: (model: NotifyChannelEditFormModelValues) => void;
+  initialValues?: NotifyChannelEditFormFieldValues;
+  onValuesChange?: (values: NotifyChannelEditFormFieldValues) => void;
 };
 
-export type NotifyChannelEditFormInstance = {
-  getFieldsValue: () => NotifyChannelEditFormModelValues;
-  resetFields: () => void;
-  validateFields: () => Promise<NotifyChannelEditFormModelValues>;
-};
+export type NotifyChannelEditFormInstance = FormInstance;
 
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
-  ({ className, style, channel, disabled, model, onModelChange }, ref) => {
+  ({ className, style, channel, disabled, initialValues, onValuesChange }, ref) => {
     const { form: formInst, formProps } = useAntdForm({
-      initialValues: model,
+      initialValues: initialValues,
     });
     const formName = useCreation(() => `notifyChannelEditForm_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
     const formFieldsComponent = useMemo(() => {
@@ -61,21 +57,35 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
       }
     }, [channel]);
 
-    const handleFormChange = (_: unknown, values: NotifyChannelEditFormModelValues) => {
-      onModelChange?.(values);
+    const handleFormChange = (_: unknown, values: NotifyChannelEditFormFieldValues) => {
+      onValuesChange?.(values);
     };
 
-    useImperativeHandle(ref, () => ({
-      getFieldsValue: () => {
-        return formInst.getFieldsValue(true);
-      },
-      resetFields: () => {
-        return formInst.resetFields();
-      },
-      validateFields: () => {
-        return formInst.validateFields();
-      },
-    }));
+    useImperativeHandle(ref, () => {
+      return {
+        getFieldValue: (name) => formInst.getFieldValue(name),
+        getFieldsValue: (...args) => {
+          if (Array.from(args).length === 0) {
+            return formInst.getFieldsValue(true);
+          }
+
+          return formInst.getFieldsValue(args[0] as any, args[1] as any);
+        },
+        getFieldError: (name) => formInst.getFieldError(name),
+        getFieldsError: (nameList) => formInst.getFieldsError(nameList),
+        getFieldWarning: (name) => formInst.getFieldWarning(name),
+        isFieldsTouched: (nameList, allFieldsTouched) => formInst.isFieldsTouched(nameList, allFieldsTouched),
+        isFieldTouched: (name) => formInst.isFieldTouched(name),
+        isFieldValidating: (name) => formInst.isFieldValidating(name),
+        isFieldsValidating: (nameList) => formInst.isFieldsValidating(nameList),
+        resetFields: (fields) => formInst.resetFields(fields),
+        setFields: (fields) => formInst.setFields(fields),
+        setFieldValue: (name, value) => formInst.setFieldValue(name, value),
+        setFieldsValue: (values) => formInst.setFieldsValue(values),
+        validateFields: (nameList, config) => formInst.validateFields(nameList, config),
+        submit: () => formInst.submit(),
+      } as NotifyChannelEditFormInstance;
+    });
 
     return (
       <Form

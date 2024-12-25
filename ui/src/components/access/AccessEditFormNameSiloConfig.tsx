@@ -6,23 +6,23 @@ import { z } from "zod";
 import { useAntdForm } from "@/hooks";
 import { type NameSiloAccessConfig } from "@/domain/access";
 
-type AccessEditFormNameSiloConfigModelValues = Partial<NameSiloAccessConfig>;
+type AccessEditFormNameSiloConfigFieldValues = Partial<NameSiloAccessConfig>;
 
 export type AccessEditFormNameSiloConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormNameSiloConfigModelValues;
-  onModelChange?: (model: AccessEditFormNameSiloConfigModelValues) => void;
+  initialValues?: AccessEditFormNameSiloConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormNameSiloConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormNameSiloConfigModelValues => {
+const initFormModel = (): AccessEditFormNameSiloConfigFieldValues => {
   return {
     apiKey: "",
   };
 };
 
-const AccessEditFormNameSiloConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormNameSiloConfigProps) => {
+const AccessEditFormNameSiloConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormNameSiloConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -35,11 +35,11 @@ const AccessEditFormNameSiloConfig = ({ form, formName, disabled, model, onModel
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormNameSiloConfigModelValues);
+    onValuesChange?.(values as AccessEditFormNameSiloConfigFieldValues);
   };
 
   return (

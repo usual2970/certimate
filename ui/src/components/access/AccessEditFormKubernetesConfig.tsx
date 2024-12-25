@@ -11,21 +11,21 @@ import { useAntdForm } from "@/hooks";
 import { type KubernetesAccessConfig } from "@/domain/access";
 import { readFileContent } from "@/utils/file";
 
-type AccessEditFormKubernetesConfigModelValues = Partial<KubernetesAccessConfig>;
+type AccessEditFormKubernetesConfigFieldValues = Partial<KubernetesAccessConfig>;
 
 export type AccessEditFormKubernetesConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormKubernetesConfigModelValues;
-  onModelChange?: (model: AccessEditFormKubernetesConfigModelValues) => void;
+  initialValues?: AccessEditFormKubernetesConfigFieldValues;
+  onValuesChange?: (values: AccessEditFormKubernetesConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessEditFormKubernetesConfigModelValues => {
+const initFormModel = (): AccessEditFormKubernetesConfigFieldValues => {
   return {};
 };
 
-const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
+const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValues, onValuesChange }: AccessEditFormKubernetesConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -39,16 +39,16 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
     form: form,
-    initialValues: model ?? initFormModel(),
+    initialValues: initialValues ?? initFormModel(),
   });
 
   const [kubeFileList, setKubeFileList] = useState<UploadFile[]>([]);
   useDeepCompareEffect(() => {
-    setKubeFileList(model?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
-  }, [model]);
+    setKubeFileList(initialValues?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
+  }, [initialValues]);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
-    onModelChange?.(values as AccessEditFormKubernetesConfigModelValues);
+    onValuesChange?.(values as AccessEditFormKubernetesConfigFieldValues);
   };
 
   const handleKubeFileChange: UploadProps["onChange"] = async ({ file }) => {
@@ -60,7 +60,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
       setKubeFileList([]);
     }
 
-    flushSync(() => onModelChange?.(formInst.getFieldsValue(true)));
+    flushSync(() => onValuesChange?.(formInst.getFieldsValue(true)));
   };
 
   return (

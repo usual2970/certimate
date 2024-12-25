@@ -14,7 +14,7 @@ const Panel = ({ open, onOpenChange, children, name }: AddNodePanelProps) => {
   }, [open, onOpenChange]);
 
   return (
-    <Drawer open={open} title={name} width={640} onClose={() => onOpenChange(false)}>
+    <Drawer destroyOnClose={true} open={open} title={name} width={640} onClose={() => onOpenChange(false)}>
       {children}
     </Drawer>
   );
