@@ -1,13 +1,12 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Alert, Button, Form, Input, Radio } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import dayjs from "dayjs";
 import { z } from "zod";
 
 import { usePanel } from "../PanelProvider";
-import { useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { validCronExpression, getNextCronExecutions } from "@/utils/cron";
@@ -48,15 +47,17 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
       }
     });
   const formRule = createSchemaFieldRule(formSchema);
-  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
-  const [formPending, setFormPending] = useState(false);
-
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(
-    (data?.config as Partial<z.infer<typeof formSchema>>) ?? initFormModel()
-  );
-  useDeepCompareEffect(() => {
-    setInitialValues((data?.config as Partial<z.infer<typeof formSchema>>) ?? initFormModel());
-  }, [data?.config]);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: data?.config ?? initFormModel(),
+    onSubmit: async (values) => {
+      await updateNode({ ...data, config: { ...values }, validated: true });
+      hidePanel();
+    },
+  });
 
   const [triggerType, setTriggerType] = useState(data?.config?.executionMethod);
   const [triggerCronLastExecutions, setTriggerCronExecutions] = useState<Date[]>([]);
@@ -77,20 +78,8 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     setTriggerCronExecutions(getNextCronExecutions(value, 5));
   };
 
-  const handleFormFinish = async (values: z.infer<typeof formSchema>) => {
-    setFormPending(true);
-
-    try {
-      await updateNode({ ...data, config: { ...values }, validated: true });
-
-      hidePanel();
-    } finally {
-      setFormPending(false);
-    }
-  };
-
   return (
-    <Form form={formInst} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
+    <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
         name="executionMethod"
         label={t("workflow.nodes.start.form.trigger.label")}
@@ -111,16 +100,16 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.start.form.trigger_cron.tooltip") }}></span>}
         extra={
           triggerCronLastExecutions.length > 0 ? (
-            <span>
+            <div>
               {t("workflow.nodes.start.form.trigger_cron.extra")}
               <br />
-              {triggerCronLastExecutions.map((d) => (
-                <>
-                  {dayjs(d).format("YYYY-MM-DD HH:mm:ss")}
+              {triggerCronLastExecutions.map((date, index) => (
+                <span key={index}>
+                  {dayjs(date).format("YYYY-MM-DD HH:mm:ss")}
                   <br />
-                </>
+                </span>
               ))}
-            </span>
+            </div>
           ) : (
             <></>
           )
