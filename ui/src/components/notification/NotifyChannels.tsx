@@ -32,7 +32,7 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
     await channelFormRef.current!.validateFields();
 
     try {
-      setChannel(channel, channelFormRef.current!.getFieldsValue(true));
+      setChannel(channel, channelFormRef.current!.getFieldsValue());
       setChannelFormChanged(false);
 
       messageApi.success(t("common.text.operation_succeeded"));

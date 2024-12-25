@@ -40,7 +40,11 @@ export type AccessEditFormProps = {
   onValuesChange?: (values: AccessEditFormFieldValues) => void;
 };
 
-export type AccessEditFormInstance = FormInstance<AccessEditFormFieldValues>;
+export type AccessEditFormInstance = {
+  getFieldsValue: () => ReturnType<FormInstance<AccessEditFormFieldValues>["getFieldsValue"]>;
+  resetFields: FormInstance<AccessEditFormFieldValues>["resetFields"];
+  validateFields: FormInstance<AccessEditFormFieldValues>["validateFields"];
+};
 
 const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, initialValues, preset, onValuesChange }, ref) => {
   const { t } = useTranslation();
@@ -131,26 +135,12 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
 
   useImperativeHandle(ref, () => {
     return {
-      getFieldValue: (name) => formInst.getFieldValue(name),
-      getFieldsValue: (...args) => {
-        if (Array.from(args).length === 0) {
-          return formInst.getFieldsValue(true);
-        }
-
-        return formInst.getFieldsValue(args[0] as any, args[1] as any);
+      getFieldsValue: () => {
+        return formInst.getFieldsValue(true);
       },
-      getFieldError: (name) => formInst.getFieldError(name),
-      getFieldsError: (nameList) => formInst.getFieldsError(nameList),
-      getFieldWarning: (name) => formInst.getFieldWarning(name),
-      isFieldsTouched: (nameList, allFieldsTouched) => formInst.isFieldsTouched(nameList, allFieldsTouched),
-      isFieldTouched: (name) => formInst.isFieldTouched(name),
-      isFieldValidating: (name) => formInst.isFieldValidating(name),
-      isFieldsValidating: (nameList) => formInst.isFieldsValidating(nameList),
-      resetFields: (fields) => formInst.resetFields(fields),
-      setFields: (fields) => formInst.setFields(fields),
-      setFieldValue: (name, value) => formInst.setFieldValue(name, value),
-      setFieldsValue: (values) => formInst.setFieldsValue(values),
-      submit: () => formInst.submit(),
+      resetFields: (fields) => {
+        return formInst.resetFields(fields);
+      },
       validateFields: (nameList, config) => {
         const t1 = formInst.validateFields(nameList, config);
         const t2 = configFormInst.validateFields(undefined, config);

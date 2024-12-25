@@ -24,7 +24,11 @@ export type NotifyChannelEditFormProps = {
   onValuesChange?: (values: NotifyChannelEditFormFieldValues) => void;
 };
 
-export type NotifyChannelEditFormInstance = FormInstance;
+export type NotifyChannelEditFormInstance = {
+  getFieldsValue: () => ReturnType<FormInstance<NotifyChannelEditFormFieldValues>["getFieldsValue"]>;
+  resetFields: FormInstance<NotifyChannelEditFormFieldValues>["resetFields"];
+  validateFields: FormInstance<NotifyChannelEditFormFieldValues>["validateFields"];
+};
 
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
   ({ className, style, channel, disabled, initialValues, onValuesChange }, ref) => {
@@ -63,27 +67,15 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
 
     useImperativeHandle(ref, () => {
       return {
-        getFieldValue: (name) => formInst.getFieldValue(name),
-        getFieldsValue: (...args) => {
-          if (Array.from(args).length === 0) {
-            return formInst.getFieldsValue(true);
-          }
-
-          return formInst.getFieldsValue(args[0] as any, args[1] as any);
+        getFieldsValue: () => {
+          return formInst.getFieldsValue(true);
         },
-        getFieldError: (name) => formInst.getFieldError(name),
-        getFieldsError: (nameList) => formInst.getFieldsError(nameList),
-        getFieldWarning: (name) => formInst.getFieldWarning(name),
-        isFieldsTouched: (nameList, allFieldsTouched) => formInst.isFieldsTouched(nameList, allFieldsTouched),
-        isFieldTouched: (name) => formInst.isFieldTouched(name),
-        isFieldValidating: (name) => formInst.isFieldValidating(name),
-        isFieldsValidating: (nameList) => formInst.isFieldsValidating(nameList),
-        resetFields: (fields) => formInst.resetFields(fields),
-        setFields: (fields) => formInst.setFields(fields),
-        setFieldValue: (name, value) => formInst.setFieldValue(name, value),
-        setFieldsValue: (values) => formInst.setFieldsValue(values),
-        validateFields: (nameList, config) => formInst.validateFields(nameList, config),
-        submit: () => formInst.submit(),
+        resetFields: (fields) => {
+          return formInst.resetFields(fields);
+        },
+        validateFields: (nameList, config) => {
+          return formInst.validateFields(nameList, config);
+        },
       } as NotifyChannelEditFormInstance;
     });
 
