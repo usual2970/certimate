@@ -2,7 +2,7 @@ import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import AddNode from "./AddNode";
 import { useWorkflowStore } from "@/stores/workflow";
 import { useZustandShallowSelector } from "@/hooks";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Dropdown } from "antd";
 import { Ellipsis, Trash2 } from "lucide-react";
 import { usePanel } from "./PanelProvider";
 import PanelBody from "./PanelBody";
@@ -84,21 +84,26 @@ const Node = ({ data }: NodeProps) => {
       <div className="rounded-md shadow-md w-[260px] relative">
         {data.type != WorkflowNodeType.Start && (
           <>
-            <DropdownMenu>
-              <DropdownMenuTrigger className="absolute right-2 top-1">
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: "delete",
+                    label: t(`${i18nPrefix}.delete.label`),
+                    icon: <Trash2 size={16} />,
+                    danger: true,
+                    onClick: () => {
+                      removeNode(data.id);
+                    },
+                  },
+                ],
+              }}
+              trigger={["click"]}
+            >
+              <div className="absolute right-2 top-1 cursor-pointer">
                 <Ellipsis className="text-white" size={17} />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem
-                  className="flex space-x-2 text-red-600"
-                  onClick={() => {
-                    removeNode(data.id);
-                  }}
-                >
-                  <Trash2 size={16} /> <div>{t(`${i18nPrefix}.delete.label`)}</div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </div>
+            </Dropdown>
           </>
         )}
 

@@ -2,7 +2,7 @@ import { useWorkflowStore } from "@/stores/workflow";
 import AddNode from "./AddNode";
 import { NodeProps } from "./types";
 import { useZustandShallowSelector } from "@/hooks";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Dropdown } from "antd";
 import { Ellipsis, Trash2 } from "lucide-react";
 
 const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
@@ -13,21 +13,26 @@ const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
   return (
     <>
       <div className="rounded-md shadow-md w-[261px] mt-10 relative z-10">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="absolute right-2 top-1">
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "delete",
+                label: "删除分支",
+                icon: <Trash2 size={16} />,
+                danger: true,
+                onClick: () => {
+                  removeBranch(branchId ?? "", branchIndex ?? 0);
+                },
+              },
+            ],
+          }}
+          trigger={["click"]}
+        >
+          <div className="absolute right-2 top-1 cursor-pointer">
             <Ellipsis size={17} className="text-stone-600" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem
-              className="flex space-x-2 text-red-600"
-              onClick={() => {
-                removeBranch(branchId ?? "", branchIndex ?? 0);
-              }}
-            >
-              <Trash2 size={16} /> <div>删除分支</div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </div>
+        </Dropdown>
 
         <div className="w-[261px]  flex flex-col justify-center text-foreground rounded-md bg-white px-5 py-5">
           <div contentEditable suppressContentEditableWarning onBlur={handleNameBlur} className="text-center outline-slate-200 dark:text-stone-600">

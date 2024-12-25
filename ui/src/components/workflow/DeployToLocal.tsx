@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import i18n from "@/i18n";
 import { WorkflowNode } from "@/domain/workflow";
 import { Textarea } from "../ui/textarea";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Dropdown } from "antd";
 import AccessSelect from "./AccessSelect";
 import AccessEditModal from "../access/AccessEditModal";
 import { Plus } from "lucide-react";
@@ -432,22 +432,30 @@ Remove-Item -Path "$pfxPath" -Force
             <FormItem>
               <FormLabel className="flex justify-between items-center">
                 <div>{t("domain.deployment.form.shell_command.label")}</div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <a className="text-xs text-blue-500 cursor-pointer">{t("domain.deployment.form.shell_preset_scripts.trigger")}</a>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => handleUsePresetScript("reload_nginx")}>
-                      {t("domain.deployment.form.shell_preset_scripts.option.reload_nginx.label")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleUsePresetScript("binding_iis")}>
-                      {t("domain.deployment.form.shell_preset_scripts.option.binding_iis.label")}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleUsePresetScript("binding_netsh")}>
-                      {t("domain.deployment.form.shell_preset_scripts.option.binding_netsh.label")}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: "reload_nginx",
+                        label: t("domain.deployment.form.shell_preset_scripts.option.reload_nginx.label"),
+                        onClick: () => handleUsePresetScript("reload_nginx"),
+                      },
+                      {
+                        key: "binding_iis",
+                        label: t("domain.deployment.form.shell_preset_scripts.option.binding_iis.label"),
+                        onClick: () => handleUsePresetScript("binding_iis"),
+                      },
+                      {
+                        key: "binding_netsh",
+                        label: t("domain.deployment.form.shell_preset_scripts.option.binding_netsh.label"),
+                        onClick: () => handleUsePresetScript("binding_netsh"),
+                      },
+                    ],
+                  }}
+                  trigger={["click"]}
+                >
+                  <a className="text-xs text-blue-500 cursor-pointer">{t("domain.deployment.form.shell_preset_scripts.trigger")}</a>
+                </Dropdown>
               </FormLabel>
               <FormControl>
                 <Textarea placeholder={t("domain.deployment.form.shell_command.placeholder")} {...(field as any)} />

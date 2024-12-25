@@ -13,7 +13,7 @@ const DropdownMenuItemIcon = ({ type, name }: WorkflowNodeDropdwonItemIcon) => {
     if (type === WorkflowNodeDropdwonItemIconType.Icon) {
       return icons.get(name);
     } else {
-      return <img src={name} className="w-4" />;
+      return <img src={name} className="inline-block size-4" />;
     }
   };
 

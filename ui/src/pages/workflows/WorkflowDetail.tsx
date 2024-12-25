@@ -143,6 +143,7 @@ const WorkflowDetail = () => {
                     },
                   ],
                 }}
+                trigger={["click"]}
               >
                 <Button icon={<EllipsisIcon size={14} />} />
               </Dropdown>

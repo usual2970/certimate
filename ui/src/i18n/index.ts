@@ -14,9 +14,6 @@ i18n
     interpolation: {
       escapeValue: false,
     },
-    backend: {
-      loadPath: "/locales/{{lng}}.json",
-    },
     detection: {
       lookupLocalStorage: "certimate-ui-lang",
     },
