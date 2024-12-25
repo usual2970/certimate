@@ -1,31 +1,29 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type NameDotComAccessConfig } from "@/domain/access";
 
-type AccessEditFormNameDotComConfigModelType = Partial<NameDotComAccessConfig>;
+type AccessEditFormNameDotComConfigModelValues = Partial<NameDotComAccessConfig>;
 
 export type AccessEditFormNameDotComConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  loading?: boolean;
-  model?: AccessEditFormNameDotComConfigModelType;
-  onModelChange?: (model: AccessEditFormNameDotComConfigModelType) => void;
+  model?: AccessEditFormNameDotComConfigModelValues;
+  onModelChange?: (model: AccessEditFormNameDotComConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormNameDotComConfigModelValues => {
   return {
     username: "",
     apiToken: "",
-  } as AccessEditFormNameDotComConfigModelType;
+  };
 };
 
-const AccessEditFormNameDotComConfig = ({ form, formName, disabled, loading, model, onModelChange }: AccessEditFormNameDotComConfigProps) => {
+const AccessEditFormNameDotComConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormNameDotComConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -41,18 +39,17 @@ const AccessEditFormNameDotComConfig = ({ form, formName, disabled, loading, mod
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormNameDotComConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormNameDotComConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={loading || disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="username"
         label={t("access.form.namedotcom_username.label")}

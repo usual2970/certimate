@@ -16,7 +16,6 @@ import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { remove as removeWorkflow } from "@/repository/workflow";
-import { run as runWorkflow } from "@/api/workflow";
 import { getErrMsg } from "@/utils/error";
 
 const WorkflowDetail = () => {
@@ -29,9 +28,7 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, init, setBaseInfo, switchEnable, save } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "init", "setBaseInfo", "switchEnable", "save"])
-  );
+  const { workflow, init, setBaseInfo, switchEnable } = useWorkflowStore(useZustandShallowSelector(["workflow", "init", "setBaseInfo", "switchEnable"]));
   useEffect(() => {
     init(workflowId);
   }, [workflowId, init]);
