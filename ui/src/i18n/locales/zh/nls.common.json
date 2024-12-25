@@ -71,6 +71,7 @@
   "common.provider.kubernetes": "Kubernetes",
   "common.provider.kubernetes.secret": "Kubernetes - Secret",
   "common.provider.local": "本地部署",
+  "common.provider.namedotcom": "Name.com",
   "common.provider.namesilo": "NameSilo",
   "common.provider.powerdns": "PowerDNS",
   "common.provider.qiniu": "七牛云",

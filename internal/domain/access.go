@@ -77,6 +77,11 @@ type GodaddyAccess struct {
 	ApiSecret string `json:"apiSecret"`
 }
 
+type NameDotComAccess struct {
+	Username string `json:"username"`
+	ApiToken string `json:"apiToken"`
+}
+
 type PdnsAccess struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`

@@ -13,6 +13,7 @@ export const ACCESS_PROVIDER_TYPE_GODADDY = "godaddy" as const;
 export const ACCESS_PROVIDER_TYPE_HUAWEICLOUD = "huaweicloud" as const;
 export const ACCESS_PROVIDER_TYPE_KUBERNETES = "k8s" as const;
 export const ACCESS_PROVIDER_TYPE_LOCAL = "local" as const;
+export const ACCESS_PROVIDER_TYPE_NAMEDOTCOM = "namedotcom" as const;
 export const ACCESS_PROVIDER_TYPE_NAMESILO = "namesilo" as const;
 export const ACCESS_PROVIDER_TYPE_POWERDNS = "powerdns" as const;
 export const ACCESS_PROVIDER_TYPE_QINIU = "qiniu" as const;
@@ -32,6 +33,7 @@ export const ACCESS_PROVIDER_TYPES = Object.freeze({
   HUAWEICLOUD: ACCESS_PROVIDER_TYPE_HUAWEICLOUD,
   KUBERNETES: ACCESS_PROVIDER_TYPE_KUBERNETES,
   LOCAL: ACCESS_PROVIDER_TYPE_LOCAL,
+  NAMEDOTCOM: ACCESS_PROVIDER_TYPE_NAMEDOTCOM,
   NAMESILO: ACCESS_PROVIDER_TYPE_NAMESILO,
   POWERDNS: ACCESS_PROVIDER_TYPE_POWERDNS,
   QINIU: ACCESS_PROVIDER_TYPE_QINIU,
@@ -75,6 +77,7 @@ export interface AccessModel extends BaseModel {
       | HuaweiCloudAccessConfig
       | KubernetesAccessConfig
       | LocalAccessConfig
+      | NameDotComAccessConfig
       | NameSiloAccessConfig
       | PowerDNSAccessConfig
       | QiniuAccessConfig
@@ -142,6 +145,11 @@ export type KubernetesAccessConfig = {
 
 export type LocalAccessConfig = NonNullable<unknown>;
 
+export type NameDotComAccessConfig = {
+  username: string;
+  apiToken: string;
+};
+
 export type NameSiloAccessConfig = {
   apiKey: string;
 };
@@ -194,6 +202,9 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
    NOTICE: The following order determines the order displayed at the frontend.
   */
   [
+    [ACCESS_PROVIDER_TYPE_LOCAL, "common.provider.local", "/imgs/providers/local.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_SSH, "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
+    [ACCESS_PROVIDER_TYPE_WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_ALIYUN, "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all"],
     [ACCESS_PROVIDER_TYPE_TENCENTCLOUD, "common.provider.tencentcloud", "/imgs/providers/tencentcloud.svg", "all"],
     [ACCESS_PROVIDER_TYPE_HUAWEICLOUD, "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all"],
@@ -204,12 +215,10 @@ export const accessProvidersMap: Map<AccessProvider["type"], AccessProvider> = n
     [ACCESS_PROVIDER_TYPE_BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all"],
     [ACCESS_PROVIDER_TYPE_AWS, "common.provider.aws", "/imgs/providers/aws.svg", "apply"],
     [ACCESS_PROVIDER_TYPE_CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply"],
+    [ACCESS_PROVIDER_TYPE_NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", "apply"],
     [ACCESS_PROVIDER_TYPE_NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply"],
     [ACCESS_PROVIDER_TYPE_GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply"],
     [ACCESS_PROVIDER_TYPE_POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", "apply"],
-    [ACCESS_PROVIDER_TYPE_LOCAL, "common.provider.local", "/imgs/providers/local.svg", "deploy"],
-    [ACCESS_PROVIDER_TYPE_SSH, "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
-    [ACCESS_PROVIDER_TYPE_WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
     [ACCESS_PROVIDER_TYPE_ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
   ].map(([type, name, icon, usage]) => [type, { type, name, icon, usage: usage as AccessProviderUsages }])
