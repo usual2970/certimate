@@ -1,30 +1,33 @@
-import { useState } from "react";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, type FormInstance } from "antd";
 
+import { useAntdForm } from "@/hooks";
 import { type LocalAccessConfig } from "@/domain/access";
 
-type AccessEditFormLocalConfigModelType = Partial<LocalAccessConfig>;
+type AccessEditFormLocalConfigModelValues = Partial<LocalAccessConfig>;
 
 export type AccessEditFormLocalConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormLocalConfigModelType;
-  onModelChange?: (model: AccessEditFormLocalConfigModelType) => void;
+  model?: AccessEditFormLocalConfigModelValues;
+  onModelChange?: (model: AccessEditFormLocalConfigModelValues) => void;
 };
 
-const initModel = () => {
-  return {} as AccessEditFormLocalConfigModelType;
+const initFormModel = (): AccessEditFormLocalConfigModelValues => {
+  return {};
 };
 
-const AccessEditFormLocalConfig = ({ form, formName, disabled, model }: AccessEditFormLocalConfigProps) => {
-  const [initialValues, setInitialValues] = useState(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
+const AccessEditFormLocalConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormLocalConfigProps) => {
+  const { form: formInst, formProps } = useAntdForm({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  return <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName}></Form>;
+  const handleFormChange = (_: unknown, values: unknown) => {
+    onModelChange?.(values as AccessEditFormLocalConfigModelValues);
+  };
+
+  return <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}></Form>;
 };
 
 export default AccessEditFormLocalConfig;

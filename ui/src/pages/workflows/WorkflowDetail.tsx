@@ -57,9 +57,9 @@ const WorkflowDetail = () => {
     return elements;
   }, [workflow]);
 
-  const handleBaseInfoFormFinish = async (fields: Pick<WorkflowModel, "name" | "description">) => {
+  const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
     try {
-      await setBaseInfo(fields.name!, fields.description!);
+      await setBaseInfo(values.name!, values.description!);
     } catch (err) {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
@@ -93,6 +93,7 @@ const WorkflowDetail = () => {
     });
   };
 
+  // TODO: 发布更改 撤销更改 立即执行
   // const handleWorkflowSaveClick = () => {
   //   if (!allNodesValidated(workflow.draft as WorkflowNode)) {
   //     messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
@@ -192,7 +193,7 @@ const WorkflowBaseInfoModalForm = memo(
   }: {
     model: Pick<WorkflowModel, "name" | "description">;
     trigger?: React.ReactElement;
-    onFinish?: (fields: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
+    onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
   }) => {
     const { t } = useTranslation();
 

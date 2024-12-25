@@ -1,29 +1,28 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type AWSAccessConfig } from "@/domain/access";
 
-type AccessEditFormAWSConfigModelType = Partial<AWSAccessConfig>;
+type AccessEditFormAWSConfigModelValues = Partial<AWSAccessConfig>;
 
 export type AccessEditFormAWSConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormAWSConfigModelType;
-  onModelChange?: (model: AccessEditFormAWSConfigModelType) => void;
+  model?: AccessEditFormAWSConfigModelValues;
+  onModelChange?: (model: AccessEditFormAWSConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormAWSConfigModelValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
     region: "us-east-1",
     hostedZoneId: "",
-  } as AccessEditFormAWSConfigModelType;
+  };
 };
 
 const AccessEditFormAWSConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormAWSConfigProps) => {
@@ -56,18 +55,17 @@ const AccessEditFormAWSConfig = ({ form, formName, disabled, model, onModelChang
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormAWSConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormAWSConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.aws_access_key_id.label")}

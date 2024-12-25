@@ -25,10 +25,10 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
   const { channels, setChannel } = useNotifyChannelStore();
 
   const channelConfig = useDeepCompareMemo(() => channels[channel], [channels, channel]);
-  const [channelFormChanged, setChannelFormChanged] = useState(false);
   const channelFormRef = useRef<NotifyChannelEditFormInstance>(null);
+  const [channelFormChanged, setChannelFormChanged] = useState(false);
 
-  const handleClickSubmit = async () => {
+  const handleSubmit = async () => {
     await channelFormRef.current!.validateFields();
 
     try {
@@ -49,7 +49,7 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
       <NotifyChannelEditForm ref={channelFormRef} className="mt-2" channel={channel} model={channelConfig} onModelChange={() => setChannelFormChanged(true)} />
 
       <Space className="mb-2">
-        <Button type="primary" disabled={!channelFormChanged} onClick={handleClickSubmit}>
+        <Button type="primary" disabled={!channelFormChanged} onClick={handleSubmit}>
           {t("common.button.save")}
         </Button>
 

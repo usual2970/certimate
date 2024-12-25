@@ -56,13 +56,13 @@ const NotifyChannelEditFormEmailFields = () => {
         </div>
 
         <div className="w-2/5">
-          <Form.Item name="smtpPort" label={t("settings.notification.channel.form.email_smtp_port.label")} rules={[formRule]} initialValue={465}>
+          <Form.Item name="smtpPort" label={t("settings.notification.channel.form.email_smtp_port.label")} rules={[formRule]}>
             <InputNumber className="w-full" placeholder={t("settings.notification.channel.form.email_smtp_port.placeholder")} min={1} max={65535} />
           </Form.Item>
         </div>
 
         <div className="w-1/5">
-          <Form.Item name="smtpTLS" label={t("settings.notification.channel.form.email_smtp_tls.label")} rules={[formRule]} initialValue={true}>
+          <Form.Item name="smtpTLS" label={t("settings.notification.channel.form.email_smtp_tls.label")} rules={[formRule]}>
             <Switch onChange={handleTLSSwitchChange} />
           </Form.Item>
         </div>

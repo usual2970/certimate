@@ -1,7 +1,8 @@
-import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
-import { useCreation, useDeepCompareEffect } from "ahooks";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { useCreation } from "ahooks";
 import { Form } from "antd";
 
+import { useAntdForm } from "@/hooks";
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
@@ -12,26 +13,28 @@ import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegram
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
 
-type NotifyChannelEditFormModelType = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
+type NotifyChannelEditFormModelValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 
 export type NotifyChannelEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   channel: string;
   disabled?: boolean;
-  model?: NotifyChannelEditFormModelType;
-  onModelChange?: (model: NotifyChannelEditFormModelType) => void;
+  model?: NotifyChannelEditFormModelValues;
+  onModelChange?: (model: NotifyChannelEditFormModelValues) => void;
 };
 
 export type NotifyChannelEditFormInstance = {
-  getFieldsValue: () => NotifyChannelEditFormModelType;
+  getFieldsValue: () => NotifyChannelEditFormModelValues;
   resetFields: () => void;
-  validateFields: () => Promise<NotifyChannelEditFormModelType>;
+  validateFields: () => Promise<NotifyChannelEditFormModelValues>;
 };
 
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
   ({ className, style, channel, disabled, model, onModelChange }, ref) => {
-    const [form] = Form.useForm();
+    const { form: formInst, formProps } = useAntdForm({
+      initialValues: model,
+    });
     const formName = useCreation(() => `notifyChannelEditForm_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
     const formFieldsComponent = useMemo(() => {
       /*
@@ -58,36 +61,31 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
       }
     }, [channel]);
 
-    const [initialValues, setInitialValues] = useState(model);
-    useDeepCompareEffect(() => {
-      setInitialValues(model);
-    }, [model]);
-
-    const handleFormChange = (_: unknown, fields: NotifyChannelEditFormModelType) => {
-      onModelChange?.(fields);
+    const handleFormChange = (_: unknown, values: NotifyChannelEditFormModelValues) => {
+      onModelChange?.(values);
     };
 
     useImperativeHandle(ref, () => ({
       getFieldsValue: () => {
-        return form.getFieldsValue(true);
+        return formInst.getFieldsValue(true);
       },
       resetFields: () => {
-        return form.resetFields();
+        return formInst.resetFields();
       },
       validateFields: () => {
-        return form.validateFields();
+        return formInst.validateFields();
       },
     }));
 
     return (
       <Form
+        {...formProps}
         className={className}
         style={style}
-        form={form}
+        form={formInst}
         disabled={disabled}
-        initialValues={initialValues}
-        layout="vertical"
         name={formName}
+        layout="vertical"
         onValuesChange={handleFormChange}
       >
         {formFieldsComponent}

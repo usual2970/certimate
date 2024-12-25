@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, Select, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type ACMEHttpReqAccessConfig } from "@/domain/access";
 
-type AccessEditFormACMEHttpReqConfigModelType = Partial<ACMEHttpReqAccessConfig>;
+type AccessEditFormACMEHttpReqConfigModelValues = Partial<ACMEHttpReqAccessConfig>;
 
 export type AccessEditFormACMEHttpReqConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormACMEHttpReqConfigModelType;
-  onModelChange?: (model: AccessEditFormACMEHttpReqConfigModelType) => void;
+  model?: AccessEditFormACMEHttpReqConfigModelValues;
+  onModelChange?: (model: AccessEditFormACMEHttpReqConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormACMEHttpReqConfigModelValues => {
   return {
     endpoint: "https://example.com/api/",
     mode: "",
-  } as AccessEditFormACMEHttpReqConfigModelType;
+  };
 };
 
 const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormACMEHttpReqConfigProps) => {
@@ -44,18 +43,17 @@ const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, model, onMo
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormACMEHttpReqConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormACMEHttpReqConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="endpoint"
         label={t("access.form.acmehttpreq_endpoint.label")}

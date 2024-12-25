@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Card, Form, Input, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 import { getErrMsg } from "@/utils/error";
 
@@ -20,21 +20,20 @@ const Login = () => {
     password: z.string().min(10, t("login.password.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
-  const [formPending, setFormPending] = useState(false);
-
-  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
-    setFormPending(true);
-
-    try {
-      await getPocketBase().admins.authWithPassword(fields.username, fields.password);
-      navigage("/");
-    } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-    } finally {
-      setFormPending(false);
-    }
-  };
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    onSubmit: async (values) => {
+      try {
+        await getPocketBase().admins.authWithPassword(values.username, values.password);
+        navigage("/");
+      } catch (err) {
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+      }
+    },
+  });
 
   return (
     <>
@@ -45,7 +44,7 @@ const Login = () => {
           <img src="/logo.svg" className="w-16" />
         </div>
 
-        <Form form={form} disabled={formPending} layout="vertical" onFinish={handleFormFinish}>
+        <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
           <Form.Item name="username" label={t("login.username.label")} rules={[formRule]}>
             <Input placeholder={t("login.username.placeholder")} />
           </Form.Item>

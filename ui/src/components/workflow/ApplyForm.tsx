@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Collapse, Switch, Tooltip } from "antd";
+import { Collapse, Divider, Switch, Tooltip, Typography } from "antd";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown as ChevronsUpDownIcon, Plus as PlusIcon, CircleHelp as CircleHelpIcon } from "lucide-react";
@@ -204,146 +204,145 @@ const ApplyForm = ({ data }: ApplyFormProps) => {
             )}
           />
 
-          <div>
-            <hr />
-            <Collapse
-              bordered={false}
-              ghost={true}
-              items={[
-                {
-                  key: "advanced",
-                  styles: {
-                    header: { paddingLeft: 0, paddingRight: 0 },
-                    body: { paddingLeft: 0, paddingRight: 0 },
-                  },
-                  label: <>{t("domain.application.form.advanced_settings.label")}</>,
-                  children: (
-                    <div className="flex flex-col space-y-8">
-                      {/* 证书算法 */}
-                      <FormField
-                        control={form.control}
-                        name="keyAlgorithm"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("domain.application.form.key_algorithm.label")}</FormLabel>
-                            <Select
+          <Divider />
+
+          <Collapse
+            bordered={false}
+            ghost={true}
+            items={[
+              {
+                key: "advanced",
+                styles: {
+                  header: { paddingLeft: 0, paddingRight: 0 },
+                  body: { paddingLeft: 0, paddingRight: 0 },
+                },
+                label: <Typography.Text type="secondary">{t("domain.application.form.advanced_settings.label")}</Typography.Text>,
+                children: (
+                  <div className="flex flex-col space-y-8">
+                    {/* 证书算法 */}
+                    <FormField
+                      control={form.control}
+                      name="keyAlgorithm"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("domain.application.form.key_algorithm.label")}</FormLabel>
+                          <Select
+                            {...field}
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("keyAlgorithm", value);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("domain.application.form.key_algorithm.placeholder")} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="RSA2048">RSA2048</SelectItem>
+                                <SelectItem value="RSA3072">RSA3072</SelectItem>
+                                <SelectItem value="RSA4096">RSA4096</SelectItem>
+                                <SelectItem value="RSA8192">RSA8192</SelectItem>
+                                <SelectItem value="EC256">EC256</SelectItem>
+                                <SelectItem value="EC384">EC384</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* DNS */}
+                    <FormField
+                      control={form.control}
+                      name="nameservers"
+                      render={({ field }) => (
+                        <FormItem>
+                          <StringList
+                            value={field.value ?? ""}
+                            onValueChange={(val: string) => {
+                              form.setValue("nameservers", val);
+                            }}
+                            valueType="dns"
+                          ></StringList>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* DNS 超时时间 */}
+                    <FormField
+                      control={form.control}
+                      name="timeout"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("domain.application.form.timeout.label")}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder={t("domain.application.form.timeout.placeholder")}
                               {...field}
                               value={field.value}
-                              onValueChange={(value) => {
-                                form.setValue("keyAlgorithm", value);
+                              onChange={(e) => {
+                                form.setValue("timeout", parseInt(e.target.value));
                               }}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("domain.application.form.key_algorithm.placeholder")} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectItem value="RSA2048">RSA2048</SelectItem>
-                                  <SelectItem value="RSA3072">RSA3072</SelectItem>
-                                  <SelectItem value="RSA4096">RSA4096</SelectItem>
-                                  <SelectItem value="RSA8192">RSA8192</SelectItem>
-                                  <SelectItem value="EC256">EC256</SelectItem>
-                                  <SelectItem value="EC384">EC384</SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </FormItem>
-                        )}
-                      />
+                            />
+                          </FormControl>
 
-                      {/* DNS */}
-                      <FormField
-                        control={form.control}
-                        name="nameservers"
-                        render={({ field }) => (
-                          <FormItem>
-                            <StringList
-                              value={field.value ?? ""}
-                              onValueChange={(val: string) => {
-                                form.setValue("nameservers", val);
-                              }}
-                              valueType="dns"
-                            ></StringList>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* DNS 超时时间 */}
-                      <FormField
-                        control={form.control}
-                        name="timeout"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t("domain.application.form.timeout.label")}</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                placeholder={t("domain.application.form.timeout.placeholder")}
-                                {...field}
-                                value={field.value}
-                                onChange={(e) => {
-                                  form.setValue("timeout", parseInt(e.target.value));
+                    {/* 禁用 CNAME 跟随 */}
+                    <FormField
+                      control={form.control}
+                      name="disableFollowCNAME"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            <div className="flex">
+                              <span className="mr-1">{t("domain.application.form.disable_follow_cname.label")} </span>
+                              <Tooltip
+                                title={
+                                  <p>
+                                    {t("domain.application.form.disable_follow_cname.tips")}
+                                    <a
+                                      className="text-primary"
+                                      target="_blank"
+                                      href="https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname"
+                                    >
+                                      {t("domain.application.form.disable_follow_cname.tips_link")}
+                                    </a>
+                                  </p>
+                                }
+                              >
+                                <CircleHelpIcon size={14} />
+                              </Tooltip>
+                            </div>
+                          </FormLabel>
+                          <FormControl>
+                            <div>
+                              <Switch
+                                defaultChecked={field.value}
+                                onChange={(value) => {
+                                  form.setValue(field.name, value);
                                 }}
                               />
-                            </FormControl>
-
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* 禁用 CNAME 跟随 */}
-                      <FormField
-                        control={form.control}
-                        name="disableFollowCNAME"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              <div className="flex">
-                                <span className="mr-1">{t("domain.application.form.disable_follow_cname.label")} </span>
-                                <Tooltip
-                                  title={
-                                    <p>
-                                      {t("domain.application.form.disable_follow_cname.tips")}
-                                      <a
-                                        className="text-primary"
-                                        target="_blank"
-                                        href="https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname"
-                                      >
-                                        {t("domain.application.form.disable_follow_cname.tips_link")}
-                                      </a>
-                                    </p>
-                                  }
-                                >
-                                  <CircleHelpIcon size={14} />
-                                </Tooltip>
-                              </div>
-                            </FormLabel>
-                            <FormControl>
-                              <div>
-                                <Switch
-                                  defaultChecked={field.value}
-                                  onChange={(value) => {
-                                    form.setValue(field.name, value);
-                                  }}
-                                />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  ),
-                  extra: <ChevronsUpDownIcon size={14} />,
-                  forceRender: true,
-                  showArrow: false,
-                },
-              ]}
-            />
-          </div>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                ),
+                extra: <ChevronsUpDownIcon size={14} />,
+                forceRender: true,
+                showArrow: false,
+              },
+            ]}
+          />
 
           <div className="flex justify-end">
             <Button type="submit">{t("common.button.save")}</Button>

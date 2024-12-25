@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type BaiduCloudAccessConfig } from "@/domain/access";
 
-type AccessEditFormBaiduCloudConfigModelType = Partial<BaiduCloudAccessConfig>;
+type AccessEditFormBaiduCloudConfigModelValues = Partial<BaiduCloudAccessConfig>;
 
 export type AccessEditFormBaiduCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormBaiduCloudConfigModelType;
-  onModelChange?: (model: AccessEditFormBaiduCloudConfigModelType) => void;
+  model?: AccessEditFormBaiduCloudConfigModelValues;
+  onModelChange?: (model: AccessEditFormBaiduCloudConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormBaiduCloudConfigModelValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
-  } as AccessEditFormBaiduCloudConfigModelType;
+  };
 };
 
 const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormBaiduCloudConfigProps) => {
@@ -40,18 +39,17 @@ const AccessEditFormBaiduCloudConfig = ({ form, formName, disabled, model, onMod
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormBaiduCloudConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormBaiduCloudConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.baiducloud_access_key_id.label")}

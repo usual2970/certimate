@@ -1,10 +1,11 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCreation, useDeepCompareEffect } from "ahooks";
+import { useCreation } from "ahooks";
 import { Form, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { ACCESS_PROVIDER_TYPES, type AccessModel } from "@/domain/access";
 import AccessTypeSelect from "./AccessTypeSelect";
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
@@ -26,22 +27,22 @@ import AccessEditFormTencentCloudConfig from "./AccessEditFormTencentCloudConfig
 import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
 
-type AccessEditFormModelType = Partial<MaybeModelRecord<AccessModel>>;
+type AccessEditFormModelValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessEditFormPresets = "add" | "edit";
 
 export type AccessEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
-  model?: AccessEditFormModelType;
+  model?: AccessEditFormModelValues;
   preset: AccessEditFormPresets;
-  onModelChange?: (model: AccessEditFormModelType) => void;
+  onModelChange?: (model: AccessEditFormModelValues) => void;
 };
 
 export type AccessEditFormInstance = {
-  getFieldsValue: () => AccessEditFormModelType;
+  getFieldsValue: () => AccessEditFormModelValues;
   resetFields: () => void;
-  validateFields: () => Promise<AccessEditFormModelType>;
+  validateFields: () => Promise<AccessEditFormModelValues>;
 };
 
 const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>(({ className, style, disabled, model, preset, onModelChange }, ref) => {
@@ -57,12 +58,9 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
     config: z.any(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
-
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model as Partial<z.infer<typeof formSchema>>);
-  useDeepCompareEffect(() => {
-    setInitialValues(model as Partial<z.infer<typeof formSchema>>);
-  }, [model]);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: model as Partial<z.infer<typeof formSchema>>,
+  });
 
   const [configType, setConfigType] = useState(model?.configType);
   useEffect(() => {
@@ -115,32 +113,32 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       case ACCESS_PROVIDER_TYPES.WEBHOOK:
         return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
-  }, [model, configType, configFormInst]);
+  }, [disabled, model, configType, configFormInst, configFormName]);
 
   const handleFormProviderChange = (name: string) => {
     if (name === configFormName) {
-      form.setFieldValue("config", configFormInst.getFieldsValue());
-      onModelChange?.(form.getFieldsValue(true));
+      formInst.setFieldValue("config", configFormInst.getFieldsValue());
+      onModelChange?.(formInst.getFieldsValue(true));
     }
   };
 
-  const handleFormChange = (_: unknown, fields: AccessEditFormModelType) => {
-    if (fields.configType !== configType) {
-      setConfigType(fields.configType);
+  const handleFormChange = (_: unknown, values: AccessEditFormModelValues) => {
+    if (values.configType !== configType) {
+      setConfigType(values.configType);
     }
 
-    onModelChange?.(fields);
+    onModelChange?.(values);
   };
 
   useImperativeHandle(ref, () => ({
     getFieldsValue: () => {
-      return form.getFieldsValue(true);
+      return formInst.getFieldsValue(true);
     },
     resetFields: () => {
-      return form.resetFields();
+      return formInst.resetFields();
     },
     validateFields: () => {
-      const t1 = form.validateFields();
+      const t1 = formInst.validateFields();
       const t2 = configFormInst.validateFields();
       return Promise.all([t1, t2]).then(() => t1);
     },
@@ -149,7 +147,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   return (
     <Form.Provider onFormChange={handleFormProviderChange}>
       <div className={className} style={style}>
-        <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" onValuesChange={handleFormChange}>
+        <Form {...formProps} disabled={disabled} layout="vertical" onValuesChange={handleFormChange}>
           <Form.Item name="name" label={t("access.form.name.label")} rules={[formRule]}>
             <Input placeholder={t("access.form.name.placeholder")} />
           </Form.Item>

@@ -5,8 +5,9 @@ import { Button, Form, Input, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { getErrMsg } from "@/utils/error";
+import { useAntdForm } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
+import { getErrMsg } from "@/utils/error";
 
 const SettingsAccount = () => {
   const navigate = useNavigate();
@@ -20,37 +21,35 @@ const SettingsAccount = () => {
     username: z.string({ message: "settings.account.form.email.placeholder" }).email({ message: t("common.errmsg.email_invalid") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
-  const [formPending, setFormPending] = useState(false);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: {
+      username: getPocketBase().authStore.model?.email,
+    },
+    onSubmit: async (values) => {
+      try {
+        await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
+          email: values.username,
+        });
 
-  const [initialValues] = useState<Partial<z.infer<typeof formSchema>>>({
-    username: getPocketBase().authStore.model?.email,
+        messageApi.success(t("common.text.operation_succeeded"));
+
+        setTimeout(() => {
+          getPocketBase().authStore.clear();
+          navigate("/login");
+        }, 500);
+      } catch (err) {
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+      }
+    },
   });
-  const [initialChanged, setInitialChanged] = useState(false);
+  const [formChanged, setFormChanged] = useState(false);
 
   const handleInputChange = () => {
-    setInitialChanged(form.getFieldValue("username") !== initialValues.username);
-  };
-
-  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
-    setFormPending(true);
-
-    try {
-      await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
-        email: fields.username,
-      });
-
-      messageApi.success(t("common.text.operation_succeeded"));
-
-      setTimeout(() => {
-        getPocketBase().authStore.clear();
-        navigate("/login");
-      }, 500);
-    } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-    } finally {
-      setFormPending(false);
-    }
+    setFormChanged(formInst.getFieldValue("username") !== formProps.initialValues?.username);
   };
 
   return (
@@ -59,13 +58,13 @@ const SettingsAccount = () => {
       {NotificationContextHolder}
 
       <div className="md:max-w-[40rem]">
-        <Form form={form} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
+        <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
           <Form.Item name="username" label={t("settings.account.form.email.label")} rules={[formRule]}>
             <Input placeholder={t("settings.account.form.email.placeholder")} onChange={handleInputChange} />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!initialChanged} loading={formPending}>
+            <Button type="primary" htmlType="submit" disabled={!formChanged} loading={formPending}>
               {t("common.button.save")}
             </Button>
           </Form.Item>

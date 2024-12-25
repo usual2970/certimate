@@ -53,7 +53,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEdi
       await formRef.current!.validateFields();
     } catch (err) {
       setFormPending(false);
-      return Promise.reject();
+      return Promise.reject(err);
     }
 
     try {
@@ -74,8 +74,6 @@ const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEdi
       setOpen(false);
     } catch (err) {
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-
-      throw err;
     } finally {
       setFormPending(false);
     }

@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type BytePlusAccessConfig } from "@/domain/access";
 
-type AccessEditFormBytePlusConfigModelType = Partial<BytePlusAccessConfig>;
+type AccessEditFormBytePlusConfigModelValues = Partial<BytePlusAccessConfig>;
 
 export type AccessEditFormBytePlusConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormBytePlusConfigModelType;
-  onModelChange?: (model: AccessEditFormBytePlusConfigModelType) => void;
+  model?: AccessEditFormBytePlusConfigModelValues;
+  onModelChange?: (model: AccessEditFormBytePlusConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormBytePlusConfigModelValues => {
   return {
     accessKey: "",
     secretKey: "",
-  } as AccessEditFormBytePlusConfigModelType;
+  };
 };
 
 const AccessEditFormBytePlusConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormBytePlusConfigProps) => {
@@ -40,18 +39,17 @@ const AccessEditFormBytePlusConfig = ({ form, formName, disabled, model, onModel
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormBytePlusConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormBytePlusConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.byteplus_access_key.label")}

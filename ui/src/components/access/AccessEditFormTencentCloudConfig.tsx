@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type TencentCloudAccessConfig } from "@/domain/access";
 
-type AccessEditFormTencentCloudConfigModelType = Partial<TencentCloudAccessConfig>;
+type AccessEditFormTencentCloudConfigModelValues = Partial<TencentCloudAccessConfig>;
 
 export type AccessEditFormTencentCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormTencentCloudConfigModelType;
-  onModelChange?: (model: AccessEditFormTencentCloudConfigModelType) => void;
+  model?: AccessEditFormTencentCloudConfigModelValues;
+  onModelChange?: (model: AccessEditFormTencentCloudConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormTencentCloudConfigModelValues => {
   return {
     secretId: "",
     secretKey: "",
-  } as AccessEditFormTencentCloudConfigModelType;
+  };
 };
 
 const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormTencentCloudConfigProps) => {
@@ -40,18 +39,17 @@ const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, model, onM
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormTencentCloudConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormTencentCloudConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="secretId"
         label={t("access.form.tencentcloud_secret_id.label")}

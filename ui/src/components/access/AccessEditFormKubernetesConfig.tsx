@@ -7,21 +7,22 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 import { Upload as UploadIcon } from "lucide-react";
 
+import { useAntdForm } from "@/hooks";
 import { type KubernetesAccessConfig } from "@/domain/access";
 import { readFileContent } from "@/utils/file";
 
-type AccessEditFormKubernetesConfigModelType = Partial<KubernetesAccessConfig>;
+type AccessEditFormKubernetesConfigModelValues = Partial<KubernetesAccessConfig>;
 
 export type AccessEditFormKubernetesConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormKubernetesConfigModelType;
-  onModelChange?: (model: AccessEditFormKubernetesConfigModelType) => void;
+  model?: AccessEditFormKubernetesConfigModelValues;
+  onModelChange?: (model: AccessEditFormKubernetesConfigModelValues) => void;
 };
 
-const initModel = () => {
-  return {} as AccessEditFormKubernetesConfigModelType;
+const initFormModel = (): AccessEditFormKubernetesConfigModelValues => {
+  return {};
 };
 
 const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormKubernetesConfigProps) => {
@@ -36,21 +37,21 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const formInst = form as FormInstance<z.infer<typeof formSchema>>;
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
+  const [kubeFileList, setKubeFileList] = useState<UploadFile[]>([]);
   useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
     setKubeFileList(model?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
   }, [model]);
 
-  const [kubeFileList, setKubeFileList] = useState<UploadFile[]>([]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormKubernetesConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormKubernetesConfigModelValues);
   };
 
-  const handleUploadChange: UploadProps["onChange"] = async ({ file }) => {
+  const handleKubeFileChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
       formInst.setFieldValue("kubeConfig", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
       setKubeFileList([file]);
@@ -63,7 +64,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item name="kubeConfig" noStyle rules={[formRule]}>
         <Input.TextArea
           autoComplete="new-password"
@@ -76,7 +77,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
         label={t("access.form.k8s_kubeconfig.label")}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.k8s_kubeconfig.tooltip") }}></span>}
       >
-        <Upload beforeUpload={() => false} fileList={kubeFileList} maxCount={1} onChange={handleUploadChange}>
+        <Upload beforeUpload={() => false} fileList={kubeFileList} maxCount={1} onChange={handleKubeFileChange}>
           <Button icon={<UploadIcon size={16} />}>{t("access.form.k8s_kubeconfig.upload")}</Button>
         </Upload>
       </Form.Item>

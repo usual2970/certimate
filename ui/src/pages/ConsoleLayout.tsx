@@ -15,7 +15,7 @@ import {
   Workflow as WorkflowIcon,
 } from "lucide-react";
 
-import Version from "@/components/ui/Version";
+import Version from "@/components/core/Version";
 import { useBrowserTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 

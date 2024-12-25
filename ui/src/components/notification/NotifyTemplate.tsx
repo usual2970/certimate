@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ClientResponseError } from "pocketbase";
 
 import Show from "@/components/Show";
+import { useAntdForm } from "@/hooks";
 import { defaultNotifyTemplate, SETTINGS_NAMES, type NotifyTemplatesSettingsContent } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
@@ -35,11 +36,29 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
       .max(1000, t("common.errmsg.string_max", { max: 1000 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
-  const [formPending, setFormPending] = useState(false);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: defaultNotifyTemplate,
+    onSubmit: async (values) => {
+      try {
+        const settings = await getSettings<NotifyTemplatesSettingsContent>(SETTINGS_NAMES.NOTIFY_TEMPLATES);
+        await saveSettings<NotifyTemplatesSettingsContent>({
+          ...settings,
+          content: {
+            notifyTemplates: [values],
+          },
+        });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>();
-  const [initialChanged, setInitialChanged] = useState(false);
+        messageApi.success(t("common.text.operation_succeeded"));
+      } catch (err) {
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+      }
+    },
+  });
+  const [formChanged, setFormChanged] = useState(false);
 
   const { loading } = useRequest(
     () => {
@@ -55,33 +74,13 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
       },
       onFinally: (_, resp) => {
         const template = resp?.content?.notifyTemplates?.[0] ?? defaultNotifyTemplate;
-        setInitialValues(template);
+        formInst.setFieldsValue(template);
       },
     }
   );
 
   const handleInputChange = () => {
-    setInitialChanged(true);
-  };
-
-  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
-    setFormPending(true);
-
-    try {
-      const settings = await getSettings<NotifyTemplatesSettingsContent>(SETTINGS_NAMES.NOTIFY_TEMPLATES);
-      await saveSettings<NotifyTemplatesSettingsContent>({
-        ...settings,
-        content: {
-          notifyTemplates: [fields],
-        },
-      });
-
-      messageApi.success(t("common.text.operation_succeeded"));
-    } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-    } finally {
-      setFormPending(false);
-    }
+    setFormChanged(true);
   };
 
   return (
@@ -90,11 +89,11 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
       {NotificationContextHolder}
 
       <Show when={!loading} fallback={<Skeleton active />}>
-        <Form form={form} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
+        <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
           <Form.Item
             name="subject"
             label={t("settings.notification.template.form.subject.label")}
-            extra={t("settings.notification.template.form.subject.tooltip")}
+            extra={t("settings.notification.template.form.subject.extra")}
             rules={[formRule]}
           >
             <Input placeholder={t("settings.notification.template.form.subject.placeholder")} onChange={handleInputChange} />
@@ -103,7 +102,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
           <Form.Item
             name="message"
             label={t("settings.notification.template.form.message.label")}
-            extra={t("settings.notification.template.form.message.tooltip")}
+            extra={t("settings.notification.template.form.message.extra")}
             rules={[formRule]}
           >
             <Input.TextArea
@@ -114,7 +113,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!initialChanged} loading={formPending}>
+            <Button type="primary" htmlType="submit" disabled={!formChanged} loading={formPending}>
               {t("common.button.save")}
             </Button>
           </Form.Item>

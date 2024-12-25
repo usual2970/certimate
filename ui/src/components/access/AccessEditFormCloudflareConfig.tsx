@@ -1,26 +1,25 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type CloudflareAccessConfig } from "@/domain/access";
 
-type AccessEditFormCloudflareConfigModelType = Partial<CloudflareAccessConfig>;
+type AccessEditFormCloudflareConfigModelValues = Partial<CloudflareAccessConfig>;
 
 export type AccessEditFormCloudflareConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormCloudflareConfigModelType;
-  onModelChange?: (model: AccessEditFormCloudflareConfigModelType) => void;
+  model?: AccessEditFormCloudflareConfigModelValues;
+  onModelChange?: (model: AccessEditFormCloudflareConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormCloudflareConfigModelValues => {
   return {
     dnsApiToken: "",
-  } as AccessEditFormCloudflareConfigModelType;
+  };
 };
 
 const AccessEditFormCloudflareConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormCloudflareConfigProps) => {
@@ -34,18 +33,17 @@ const AccessEditFormCloudflareConfig = ({ form, formName, disabled, model, onMod
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormCloudflareConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormCloudflareConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="dnsApiToken"
         label={t("access.form.cloudflare_dns_api_token.label")}

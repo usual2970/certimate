@@ -16,7 +16,7 @@ export type StartNodeFormProps = {
   data: WorkflowNode;
 };
 
-const initModel = () => {
+const initFormModel = () => {
   return {
     executionMethod: "auto",
     crontab: "0 0 * * *",
@@ -51,9 +51,11 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
   const [form] = Form.useForm<z.infer<typeof formSchema>>();
   const [formPending, setFormPending] = useState(false);
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>((data?.config as Partial<z.infer<typeof formSchema>>) ?? initModel());
+  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(
+    (data?.config as Partial<z.infer<typeof formSchema>>) ?? initFormModel()
+  );
   useDeepCompareEffect(() => {
-    setInitialValues((data?.config as Partial<z.infer<typeof formSchema>>) ?? initModel());
+    setInitialValues((data?.config as Partial<z.infer<typeof formSchema>>) ?? initFormModel());
   }, [data?.config]);
 
   const [triggerType, setTriggerType] = useState(data?.config?.executionMethod);
@@ -67,7 +69,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     setTriggerType(value);
 
     if (value === "auto") {
-      form.setFieldValue("crontab", form.getFieldValue("crontab") || initModel().crontab);
+      form.setFieldValue("crontab", form.getFieldValue("crontab") || initFormModel().crontab);
     }
   };
 
@@ -75,11 +77,11 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     setTriggerCronExecutions(getNextCronExecutions(value, 5));
   };
 
-  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
+  const handleFormFinish = async (values: z.infer<typeof formSchema>) => {
     setFormPending(true);
 
     try {
-      await updateNode({ ...data, config: { ...fields }, validated: true });
+      await updateNode({ ...data, config: { ...values }, validated: true });
 
       hidePanel();
     } finally {

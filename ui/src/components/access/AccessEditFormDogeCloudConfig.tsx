@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type DogeCloudAccessConfig } from "@/domain/access";
 
-type AccessEditFormDogeCloudConfigModelType = Partial<DogeCloudAccessConfig>;
+type AccessEditFormDogeCloudConfigModelValues = Partial<DogeCloudAccessConfig>;
 
 export type AccessEditFormDogeCloudConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormDogeCloudConfigModelType;
-  onModelChange?: (model: AccessEditFormDogeCloudConfigModelType) => void;
+  model?: AccessEditFormDogeCloudConfigModelValues;
+  onModelChange?: (model: AccessEditFormDogeCloudConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormDogeCloudConfigModelValues => {
   return {
     accessKey: "",
     secretKey: "",
-  } as AccessEditFormDogeCloudConfigModelType;
+  };
 };
 
 const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormDogeCloudConfigProps) => {
@@ -40,18 +39,17 @@ const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, model, onMode
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormDogeCloudConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormDogeCloudConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.dogecloud_access_key.label")}

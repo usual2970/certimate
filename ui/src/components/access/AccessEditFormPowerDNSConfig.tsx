@@ -1,27 +1,26 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
 import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { useAntdForm } from "@/hooks";
 import { type PowerDNSAccessConfig } from "@/domain/access";
 
-type AccessEditFormPowerDNSConfigModelType = Partial<PowerDNSAccessConfig>;
+type AccessEditFormPowerDNSConfigModelValues = Partial<PowerDNSAccessConfig>;
 
 export type AccessEditFormPowerDNSConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  model?: AccessEditFormPowerDNSConfigModelType;
-  onModelChange?: (model: AccessEditFormPowerDNSConfigModelType) => void;
+  model?: AccessEditFormPowerDNSConfigModelValues;
+  onModelChange?: (model: AccessEditFormPowerDNSConfigModelValues) => void;
 };
 
-const initModel = () => {
+const initFormModel = (): AccessEditFormPowerDNSConfigModelValues => {
   return {
     apiUrl: "",
     apiKey: "",
-  } as AccessEditFormPowerDNSConfigModelType;
+  };
 };
 
 const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, model, onModelChange }: AccessEditFormPowerDNSConfigProps) => {
@@ -36,18 +35,17 @@ const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, model, onModel
       .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    form: form,
+    initialValues: model ?? initFormModel(),
+  });
 
-  const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model ?? initModel());
-  useDeepCompareEffect(() => {
-    setInitialValues(model ?? initModel());
-  }, [model]);
-
-  const handleFormChange = (_: unknown, fields: AccessEditFormPowerDNSConfigModelType) => {
-    onModelChange?.(fields);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onModelChange?.(values as AccessEditFormPowerDNSConfigModelValues);
   };
 
   return (
-    <Form form={form} disabled={disabled} initialValues={initialValues} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="apiUrl"
         label={t("access.form.powerdns_api_url.label")}
