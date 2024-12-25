@@ -40,6 +40,13 @@
   "workflow.nodes.start.form.trigger_cron.tooltip": "时区以服务器设置为准。",
   "workflow.nodes.start.form.trigger_cron.extra": "预计最近 5 次执行时间：",
   "workflow.nodes.start.form.trigger_cron_alert.content": "小贴士：如果你有多个工作流，建议将它们设置为在一天中的多个时间段运行，而非总是在相同的特定时间。<br><br>参考链接：<br>1. <a href=\"https://letsencrypt.org/zh-cn/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt 速率限制</a><br>2. <a href=\"https://letsencrypt.org/zh-cn/docs/faq/#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84-let-s-encrypt-acme-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4%E5%BA%94%E5%BD%93%E9%9A%8F%E6%9C%BA\" target=\"_blank\">为什么我的 Let’s Encrypt (ACME) 客户端启动时间应当随机？</a>",
+  "workflow.nodes.notify.form.subject.label": "通知主题",
+  "workflow.nodes.notify.form.subject.placeholder": "请输入通知主题",
+  "workflow.nodes.notify.form.message.label": "通知内容",
+  "workflow.nodes.notify.form.message.placeholder": "请输入通知内容",
+  "workflow.nodes.notify.form.channel.label": "通知渠道",
+  "workflow.nodes.notify.form.channel.placeholder": "请选择通知渠道",
+  "workflow.nodes.notify.form.channel.button": "去配置",
 
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "状态",
@@ -70,13 +77,5 @@
   "workflow.node.setting.label": "设置节点",
   "workflow.node.delete.label": "删除节点",
   "workflow.node.addBranch.label": "添加分支",
-  "workflow.node.selectNodeType.label": "选择节点类型",
-
-  "workflow.node.notify.form.title.label": "标题",
-  "workflow.node.notify.form.title.placeholder": "请输入标题",
-  "workflow.node.notify.form.content.label": "内容",
-  "workflow.node.notify.form.content.placeholder": "请输入内容",
-  "workflow.node.notify.form.channel.label": "推送渠道",
-  "workflow.node.notify.form.channel.placeholder": "请选择推送渠道",
-  "workflow.node.notify.form.settingChannel.label": "设置推送渠道"
+  "workflow.node.selectNodeType.label": "选择节点类型"
 }

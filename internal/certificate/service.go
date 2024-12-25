@@ -73,8 +73,8 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 		json.Unmarshal([]byte(setting.Content), &templates)
 
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
-			subject = templates.NotifyTemplates[0].Title
-			message = templates.NotifyTemplates[0].Content
+			subject = templates.NotifyTemplates[0].Subject
+			message = templates.NotifyTemplates[0].Message
 		}
 	}
 

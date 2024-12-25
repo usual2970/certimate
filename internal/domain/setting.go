@@ -35,11 +35,11 @@ type NotifyTemplates struct {
 }
 
 type NotifyTemplate struct {
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
 }
 
 type NotifyMessage struct {
-	Subject string
-	Message string
+	Subject string `json:"subject"`
+	Message string `json:"message"`
 }

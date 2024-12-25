@@ -208,7 +208,7 @@ const SettingsSSLProvider = () => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const [form] = Form.useForm<{ provider?: string }>();
+  const [formInst] = Form.useForm<{ provider?: string }>();
   const [formPending, setFormPending] = useState(false);
 
   const [settings, setSettings] = useState<SettingsModel<SSLProviderSettingsContent>>();
@@ -267,7 +267,7 @@ const SettingsSSLProvider = () => {
       {NotificationContextHolder}
 
       <Show when={!loading} fallback={<Skeleton active />}>
-        <Form form={form} disabled={formPending} layout="vertical" initialValues={{ provider: providerType }}>
+        <Form form={formInst} disabled={formPending} layout="vertical" initialValues={{ provider: providerType }}>
           <Form.Item className="mb-2" name="provider" label={t("settings.sslprovider.form.provider.label")}>
             <CheckCard.Group className="w-full" onChange={(value) => setFormProviderType(value as SSLProviders)}>
               <CheckCard

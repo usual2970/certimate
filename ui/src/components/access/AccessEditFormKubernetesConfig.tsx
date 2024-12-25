@@ -53,7 +53,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, model, onMod
 
   const handleKubeFileChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
-      formInst.setFieldValue("kubeConfig", (await readFileContent(file.originFileObj ?? (file as unknown as File))).trim());
+      formInst.setFieldValue("kubeConfig", await readFileContent(file.originFileObj ?? (file as unknown as File)));
       setKubeFileList([file]);
     } else {
       formInst.setFieldValue("kubeConfig", "");

@@ -48,7 +48,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
       }
     });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
+  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
   const [formPending, setFormPending] = useState(false);
 
   const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(
@@ -69,7 +69,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     setTriggerType(value);
 
     if (value === "auto") {
-      form.setFieldValue("crontab", form.getFieldValue("crontab") || initFormModel().crontab);
+      formInst.setFieldValue("crontab", formInst.getFieldValue("crontab") || initFormModel().crontab);
     }
   };
 
@@ -90,7 +90,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
   };
 
   return (
-    <Form form={form} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
+    <Form form={formInst} disabled={formPending} initialValues={initialValues} layout="vertical" onFinish={handleFormFinish}>
       <Form.Item
         name="executionMethod"
         label={t("workflow.nodes.start.form.trigger.label")}

@@ -1,8 +1,7 @@
 import { cloneElement, memo, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useDeepCompareEffect } from "ahooks";
-import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography, type FormInstance } from "antd";
+import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PageHeader } from "@ant-design/pro-components";
 import { z } from "zod";
@@ -13,7 +12,7 @@ import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { remove as removeWorkflow } from "@/repository/workflow";
@@ -227,31 +226,23 @@ const WorkflowBaseInfoModalForm = memo(
         .nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
-    const [form] = Form.useForm<FormInstance<z.infer<typeof formSchema>>>();
-    const [formPending, setFormPending] = useState(false);
-
-    const [initialValues, setInitialValues] = useState<Partial<z.infer<typeof formSchema>>>(model as Partial<z.infer<typeof formSchema>>);
-    useDeepCompareEffect(() => {
-      setInitialValues(model as Partial<z.infer<typeof formSchema>>);
-    }, [model]);
-
-    const handleClickOk = async () => {
-      setFormPending(true);
-      try {
-        await form.validateFields();
-      } catch (err) {
-        setFormPending(false);
-        return Promise.reject();
-      }
-
-      try {
-        const ret = await onFinish?.(form.getFieldsValue(true));
+    const {
+      form: formInst,
+      formPending,
+      formProps,
+      ...formApi
+    } = useAntdForm<z.infer<typeof formSchema>>({
+      initialValues: model,
+      onSubmit: async () => {
+        const ret = await onFinish?.(formInst.getFieldsValue(true));
         if (ret != null && !ret) return;
 
         setOpen(false);
-      } finally {
-        setFormPending(false);
-      }
+      },
+    });
+
+    const handleClickOk = async () => {
+      formApi.submit();
     };
 
     const handleClickCancel = () => {
@@ -278,7 +269,7 @@ const WorkflowBaseInfoModalForm = memo(
           onCancel={handleClickCancel}
         >
           <div className="pt-4 pb-2">
-            <Form form={form} initialValues={initialValues} layout="vertical">
+            <Form {...formProps} form={formInst} layout="vertical">
               <Form.Item name="name" label={t("workflow.baseinfo.form.name.label")} rules={[formRule]}>
                 <Input placeholder={t("workflow.baseinfo.form.name.placeholder")} />
               </Form.Item>

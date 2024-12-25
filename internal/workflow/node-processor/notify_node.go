@@ -41,8 +41,8 @@ func (n *notifyNode) Run(ctx context.Context) error {
 		return err
 	}
 
-	if err := notify.SendToChannel(n.node.GetConfigString("title"),
-		n.node.GetConfigString("content"),
+	if err := notify.SendToChannel(n.node.GetConfigString("subject"),
+		n.node.GetConfigString("message"),
 		n.node.GetConfigString("channel"),
 		channelConfig,
 	); err != nil {
