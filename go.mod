@@ -64,6 +64,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/namedotcom/go v0.0.0-20180403034216-08470befbe04 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect

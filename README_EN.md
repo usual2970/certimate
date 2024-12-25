@@ -87,6 +87,7 @@ password：1234567890
 |      AWS      |      √       |            | Supports domains managed on AWS Route53                                                                     |
 |  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates                   |
 |    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                                      |
+|   Name.com    |      √       |            | Supports domains registered on Name.com                                                                     |
 |   NameSilo    |      √       |            | Supports domains registered on NameSilo                                                                     |
 |   PowerDNS    |      √       |            | Supports domains managed on PowerDNS                                                                        |
 | HTTP Request  |      √       |            | Supports domains which allow managing DNS by HTTP request                                                   |

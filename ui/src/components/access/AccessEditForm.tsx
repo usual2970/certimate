@@ -18,6 +18,7 @@ import AccessEditFormGoDaddyConfig from "./AccessEditFormGoDaddyConfig";
 import AccessEditFormHuaweiCloudConfig from "./AccessEditFormHuaweiCloudConfig";
 import AccessEditFormKubernetesConfig from "./AccessEditFormKubernetesConfig";
 import AccessEditFormLocalConfig from "./AccessEditFormLocalConfig";
+import AccessEditFormNameDotComConfig from "./AccessEditFormNameDotComConfig";
 import AccessEditFormNameSiloConfig from "./AccessEditFormNameSiloConfig";
 import AccessEditFormPowerDNSConfig from "./AccessEditFormPowerDNSConfig";
 import AccessEditFormQiniuConfig from "./AccessEditFormQiniuConfig";
@@ -101,6 +102,8 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
         return <AccessEditFormKubernetesConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.LOCAL:
         return <AccessEditFormLocalConfig {...configFormProps} />;
+      case ACCESS_PROVIDER_TYPES.NAMEDOTCOM:
+        return <AccessEditFormNameDotComConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.NAMESILO:
         return <AccessEditFormNameSiloConfig {...configFormProps} />;
       case ACCESS_PROVIDER_TYPES.POWERDNS:
