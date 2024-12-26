@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PageHeader } from "@ant-design/pro-components";
+import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
 import { z } from "zod";
-import { Ellipsis as EllipsisIcon, Trash2 as Trash2Icon } from "lucide-react";
 
 import Show from "@/components/Show";
 import End from "@/components/workflow/End";
@@ -136,7 +136,7 @@ const WorkflowDetail = () => {
                       key: "delete",
                       label: t("common.button.delete"),
                       danger: true,
-                      icon: <Trash2Icon size={14} />,
+                      icon: <DeleteOutlinedIcon />,
                       onClick: () => {
                         handleDeleteClick();
                       },
@@ -145,7 +145,7 @@ const WorkflowDetail = () => {
                 }}
                 trigger={["click"]}
               >
-                <Button icon={<EllipsisIcon size={14} />} />
+                <Button icon={<EllipsisOutlinedIcon />} />
               </Dropdown>
             </Button.Group>,
           ]}

@@ -3,9 +3,9 @@ import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
+import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
-import { Upload as UploadIcon } from "lucide-react";
 
 import { useAntdForm } from "@/hooks";
 import { type KubernetesAccessConfig } from "@/domain/access";
@@ -78,7 +78,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.k8s_kubeconfig.tooltip") }}></span>}
       >
         <Upload beforeUpload={() => false} fileList={kubeFileList} maxCount={1} onChange={handleKubeFileChange}>
-          <Button icon={<UploadIcon size={16} />}>{t("access.form.k8s_kubeconfig.upload")}</Button>
+          <Button icon={<UploadOutlinedIcon />}>{t("access.form.k8s_kubeconfig.upload")}</Button>
         </Upload>
       </Form.Item>
     </Form>

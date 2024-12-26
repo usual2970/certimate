@@ -3,7 +3,11 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Empty, notification, Space, Table, theme, Tooltip, Typography, type TableProps } from "antd";
-import { CircleCheck as CircleCheckIcon, CircleX as CircleXIcon, Eye as EyeIcon } from "lucide-react";
+import {
+  CheckCircleTwoTone as CheckCircleTwoToneIcon,
+  CloseCircleTwoTone as CloseCircleTwoToneIcon,
+  SelectOutlined as SelectOutlinedIcon,
+} from "@ant-design/icons";
 import { ClientResponseError } from "pocketbase";
 
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
@@ -45,14 +49,14 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
         if (record.succeed) {
           return (
             <Space>
-              <CircleCheckIcon color={themeToken.colorSuccess} size={16} />
+              <CheckCircleTwoToneIcon twoToneColor={themeToken.colorSuccess} />
               <Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>
             </Space>
           );
         } else {
           <Tooltip title={record.error}>
             <Space>
-              <CircleXIcon color={themeToken.colorError} size={16} />
+              <CloseCircleTwoToneIcon twoToneColor={themeToken.colorError} />
               <Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>
             </Space>
           </Tooltip>;
@@ -82,7 +86,7 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
       width: 120,
       render: (_, record) => (
         <Button.Group>
-          <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<EyeIcon size={16} />} variant="text" />} />
+          <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />} />
         </Button.Group>
       ),
     },

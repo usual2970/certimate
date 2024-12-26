@@ -3,9 +3,9 @@ import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, InputNumber, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
+import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
-import { Upload as UploadIcon } from "lucide-react";
 
 import { useAntdForm } from "@/hooks";
 import { type SSHAccessConfig } from "@/domain/access";
@@ -136,7 +136,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
           </Form.Item>
           <Form.Item label={t("access.form.ssh_key.label")} tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}>
             <Upload beforeUpload={() => false} fileList={keyFileList} maxCount={1} onChange={handleKeyFileChange}>
-              <Button icon={<UploadIcon size={16} />}>{t("access.form.ssh_key.upload")}</Button>
+              <Button icon={<UploadOutlinedIcon />}>{t("access.form.ssh_key.upload")}</Button>
             </Upload>
           </Form.Item>
         </div>

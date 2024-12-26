@@ -1,4 +1,4 @@
-import { WorkflowNodeDropdwonItemIcon, WorkflowNodeDropdwonItemIconType } from "@/domain/workflow";
+import { type WorkflowNodeDropdwonItemIcon, WorkflowNodeDropdwonItemIconType } from "@/domain/workflow";
 import { CloudUpload, GitFork, Megaphone, NotebookPen } from "lucide-react";
 
 const icons = new Map([

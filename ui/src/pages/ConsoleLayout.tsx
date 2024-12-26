@@ -3,17 +3,17 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-d
 import { useTranslation } from "react-i18next";
 import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
 import {
-  Languages as LanguagesIcon,
-  LogOut as LogOutIcon,
-  Home as HomeIcon,
-  Menu as MenuIcon,
-  Moon as MoonIcon,
-  Server as ServerIcon,
-  Settings as SettingsIcon,
-  ShieldCheck as ShieldCheckIcon,
-  Sun as SunIcon,
-  Workflow as WorkflowIcon,
-} from "lucide-react";
+  CloudServerOutlined as CloudServerOutlinedIcon,
+  GlobalOutlined as GlobalOutlinedIcon,
+  HomeOutlined as HomeOutlinedIcon,
+  LogoutOutlined as LogoutOutlinedIcon,
+  MenuOutlined as MenuOutlinedIcon,
+  MoonOutlined as MoonOutlinedIcon,
+  NodeIndexOutlined as NodeIndexOutlinedIcon,
+  SafetyOutlined as SafetyOutlinedIcon,
+  SettingOutlined as SettingOutlinedIcon,
+  SunOutlined as SunOutlinedIcon,
+} from "@ant-design/icons";
 
 import Version from "@/components/core/Version";
 import { useBrowserTheme } from "@/hooks";
@@ -67,7 +67,7 @@ const ConsoleLayout = () => {
         <Layout.Header className="sticky top-0 left-0 right-0 p-0 z-[19] shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex items-center justify-between size-full px-4 overflow-hidden">
             <div className="flex items-center gap-4 size-full">
-              <Button className="md:hidden" icon={<MenuIcon />} size="large" onClick={handleSiderOpen} />
+              <Button className="md:hidden" icon={<MenuOutlinedIcon />} size="large" onClick={handleSiderOpen} />
               <Drawer
                 closable={false}
                 destroyOnClose
@@ -90,10 +90,10 @@ const ConsoleLayout = () => {
                 <LocaleToggleButton size="large" />
               </Tooltip>
               <Tooltip title={t("common.menu.settings")} mouseEnterDelay={2}>
-                <Button icon={<SettingsIcon size={18} />} size="large" onClick={handleSettingsClick} />
+                <Button icon={<SettingOutlinedIcon />} size="large" onClick={handleSettingsClick} />
               </Tooltip>
               <Tooltip title={t("common.menu.logout")} mouseEnterDelay={2}>
-                <Button danger icon={<LogOutIcon size={18} />} size="large" onClick={handleLogoutClick} />
+                <Button danger icon={<LogoutOutlinedIcon />} size="large" onClick={handleLogoutClick} />
               </Tooltip>
             </div>
           </div>
@@ -118,10 +118,10 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   const MENU_KEY_CERTIFICATES = "/certificates";
   const MENU_KEY_ACCESSES = "/accesses";
   const menuItems: Required<MenuProps>["items"] = [
-    [MENU_KEY_HOME, <HomeIcon size={16} />, t("dashboard.page.title")],
-    [MENU_KEY_WORKFLOWS, <WorkflowIcon size={16} />, t("workflow.page.title")],
-    [MENU_KEY_CERTIFICATES, <ShieldCheckIcon size={16} />, t("certificate.page.title")],
-    [MENU_KEY_ACCESSES, <ServerIcon size={16} />, t("access.page.title")],
+    [MENU_KEY_HOME, <HomeOutlinedIcon />, t("dashboard.page.title")],
+    [MENU_KEY_WORKFLOWS, <NodeIndexOutlinedIcon />, t("workflow.page.title")],
+    [MENU_KEY_CERTIFICATES, <SafetyOutlinedIcon />, t("certificate.page.title")],
+    [MENU_KEY_ACCESSES, <CloudServerOutlinedIcon />, t("access.page.title")],
   ].map(([key, icon, label]) => {
     return {
       key: key as string,
@@ -201,7 +201,7 @@ const ThemeToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
 
   return (
     <Dropdown menu={{ items }} trigger={["click"]}>
-      <Button icon={theme === "dark" ? <MoonIcon size={18} /> : <SunIcon size={18} />} size={size} />
+      <Button icon={theme === "dark" ? <MoonOutlinedIcon /> : <SunOutlinedIcon />} size={size} />
     </Dropdown>
   );
 });
@@ -219,7 +219,7 @@ const LocaleToggleButton = memo(({ size }: { size?: ButtonProps["size"] }) => {
 
   return (
     <Dropdown menu={{ items }} trigger={["click"]}>
-      <Button icon={<LanguagesIcon size={18} />} size={size} />
+      <Button icon={<GlobalOutlinedIcon />} size={size} />
     </Dropdown>
   );
 });

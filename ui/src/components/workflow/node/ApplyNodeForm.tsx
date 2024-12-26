@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { AutoComplete, Button, Divider, Form, Input, InputNumber, Select, Switch, Typography, type AutoCompleteProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
+import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
 import z from "zod";
-import { Plus as PlusIcon } from "lucide-react";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
@@ -77,11 +77,21 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
 
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
-      <Form.Item name="domain" label={t("workflow.nodes.apply.form.domain.label")} rules={[formRule]}>
+      <Form.Item
+        name="domain"
+        label={t("workflow.nodes.apply.form.domain.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.domain.tooltip") }}></span>}
+      >
         <Input placeholder={t("workflow.nodes.apply.form.domain.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="email" label={t("workflow.nodes.apply.form.email.label")} rules={[formRule]}>
+      <Form.Item
+        name="email"
+        label={t("workflow.nodes.apply.form.email.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.email.tooltip") }}></span>}
+      >
         <ContactEmailSelect placeholder={t("workflow.nodes.apply.form.email.placeholder")} />
       </Form.Item>
 
@@ -94,7 +104,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
                 preset="add"
                 trigger={
                   <Button className="p-0" type="link">
-                    <PlusIcon size={14} />
+                    <PlusOutlinedIcon />
                     {t("workflow.nodes.apply.form.access.button")}
                   </Button>
                 }

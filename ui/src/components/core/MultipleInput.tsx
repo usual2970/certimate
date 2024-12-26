@@ -2,8 +2,13 @@
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { Button, Input, Space, type InputRef, type InputProps } from "antd";
+import {
+  DownOutlined as DownOutlinedIcon,
+  MinusOutlined as MinusOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+  UpOutlined as UpOutlinedIcon,
+} from "@ant-design/icons";
 import { produce } from "immer";
-import { ArrowDown as ArrowDownIcon, ArrowUp as ArrowUpIcon, Minus as MinusIcon, Plus as PlusIcon } from "lucide-react";
 
 export type MultipleInputProps = Omit<InputProps, "count" | "defaultValue" | "showCount" | "value" | "onChange" | "onPressEnter" | "onClear"> & {
   allowClear?: boolean;
@@ -125,7 +130,7 @@ const MultipleInput = ({
     </Button>
   ) : (
     <Space className="w-full" direction="vertical" size="small">
-      {value.map((element, index) => {
+      {Array.from(value).map((element, index) => {
         const allowUp = index > 0;
         const allowDown = index < value.length - 1;
         const allowRemove = minCount == null || value.length > minCount;
@@ -192,6 +197,7 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
       allowUp,
       disabled,
       showSortButton,
+      size,
       onChange,
       onClickAdd,
       onClickDown,
@@ -212,21 +218,17 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
 
     const upBtn = useMemo(() => {
       if (!showSortButton) return null;
-      return <Button icon={<ArrowUpIcon size={14} />} color="default" disabled={disabled || !allowUp} shape="circle" variant="text" onClick={onClickUp} />;
+      return <Button icon={<UpOutlinedIcon />} color="default" disabled={disabled || !allowUp} type="text" onClick={onClickUp} />;
     }, [allowUp, disabled, showSortButton, onClickUp]);
     const downBtn = useMemo(() => {
       if (!showSortButton) return null;
-      return (
-        <Button icon={<ArrowDownIcon size={14} />} color="default" disabled={disabled || !allowDown} shape="circle" variant="text" onClick={onClickDown} />
-      );
+      return <Button icon={<DownOutlinedIcon />} color="default" disabled={disabled || !allowDown} type="text" onClick={onClickDown} />;
     }, [allowDown, disabled, showSortButton, onClickDown]);
     const removeBtn = useMemo(() => {
-      return (
-        <Button icon={<MinusIcon size={14} />} color="default" disabled={disabled || !allowRemove} shape="circle" variant="text" onClick={onClickRemove} />
-      );
+      return <Button icon={<MinusOutlinedIcon />} color="default" disabled={disabled || !allowRemove} type="text" onClick={onClickRemove} />;
     }, [allowRemove, disabled, onClickRemove]);
     const addBtn = useMemo(() => {
-      return <Button icon={<PlusIcon size={14} />} color="default" disabled={disabled || !allowAdd} shape="circle" variant="text" onClick={onClickAdd} />;
+      return <Button icon={<PlusOutlinedIcon />} color="default" disabled={disabled || !allowAdd} type="text" onClick={onClickAdd} />;
     }, [allowAdd, disabled, onClickAdd]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -261,12 +263,12 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
             onChange={handleChange}
           />
         </div>
-        <div>
+        <Button.Group size={size}>
           {removeBtn}
           {upBtn}
           {downBtn}
           {addBtn}
-        </div>
+        </Button.Group>
       </div>
     );
   }

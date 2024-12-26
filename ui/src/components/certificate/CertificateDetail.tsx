@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
+import { CopyOutlined as CopyOutlinedIcon, DownOutlined as DownOutlinedIcon, LikeOutlined as LikeOutlinedIcon } from "@ant-design/icons";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
 import dayjs from "dayjs";
 
 import { type CertificateModel } from "@/domain/certificate";
@@ -53,7 +53,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                   messageApi.success(t("common.text.copied"));
                 }}
               >
-                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+                <Button size="small" type="text" icon={<CopyOutlinedIcon />}></Button>
               </CopyToClipboard>
             </Tooltip>
           </div>
@@ -70,7 +70,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                   messageApi.success(t("common.text.copied"));
                 }}
               >
-                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+                <Button size="small" type="text" icon={<CopyOutlinedIcon />}></Button>
               </CopyToClipboard>
             </Tooltip>
           </div>
@@ -85,7 +85,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               {
                 key: "PEM",
                 label: "PEM",
-                extra: <ThumbsUpIcon size="14" />,
+                extra: <LikeOutlinedIcon />,
                 onClick: () => handleDownloadPEMClick(),
               },
               {
@@ -110,7 +110,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
           <Button type="primary">
             <Space>
               <span>{t("certificate.action.download")}</span>
-              <ChevronDownIcon size={14} />
+              <DownOutlinedIcon />
             </Space>
           </Button>
         </Dropdown>

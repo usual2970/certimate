@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { Eye as EyeIcon, Filter as FilterIcon, Trash2 as Trash2Icon } from "lucide-react";
+import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -88,7 +88,6 @@ const CertificateList = () => {
           </div>
         );
       },
-      filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
         const total = dayjs(record.expireAt).diff(dayjs(record.created), "d") + 1;
         const left = dayjs(record.expireAt).diff(dayjs(), "d");
@@ -158,7 +157,7 @@ const CertificateList = () => {
             data={record}
             trigger={
               <Tooltip title={t("certificate.action.view")}>
-                <Button color="primary" icon={<EyeIcon size={16} />} variant="text" />
+                <Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />
               </Tooltip>
             }
           />
@@ -166,7 +165,7 @@ const CertificateList = () => {
           <Tooltip title={t("certificate.action.delete")}>
             <Button
               color="danger"
-              icon={<Trash2Icon size={16} />}
+              icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {
                 alert("TODO");

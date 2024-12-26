@@ -3,8 +3,8 @@ import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Button, Form, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
+import { RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
 import { z } from "zod";
-import { ChevronRight as ChevronRightIcon } from "lucide-react";
 
 import { usePanel } from "../PanelProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
@@ -75,9 +75,9 @@ const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
             <div className="flex-grow max-w-full truncate">{t("workflow.nodes.notify.form.channel.label")}</div>
             <div className="text-right">
               <Link className="ant-typography" to="/settings/notification" target="_blank">
-                <Button className="p-0" type="link">
+                <Button size="small" type="link">
                   {t("workflow.nodes.notify.form.channel.button")}
-                  <ChevronRightIcon size={14} />
+                  <RightOutlinedIcon className="text-xs" />
                 </Button>
               </Link>
             </div>

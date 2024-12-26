@@ -21,7 +21,7 @@ import {
   type TableProps,
 } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
+import { DeleteOutlined as DeleteOutlinedIcon, EditOutlined as EditOutlinedIcon, PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -133,7 +133,6 @@ const WorkflowList = () => {
           </div>
         );
       },
-      filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
         const enabled = record.enabled;
         return (
@@ -180,7 +179,7 @@ const WorkflowList = () => {
           <Tooltip title={t("workflow.action.edit")}>
             <Button
               color="primary"
-              icon={<PencilIcon size={16} />}
+              icon={<EditOutlinedIcon />}
               variant="text"
               onClick={() => {
                 navigate(`/workflows/${record.id}`);
@@ -192,7 +191,7 @@ const WorkflowList = () => {
             <Button
               color="danger"
               danger={true}
-              icon={<Trash2Icon size={16} />}
+              icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {
                 handleDeleteClick(record);
@@ -301,7 +300,7 @@ const WorkflowList = () => {
           <Button
             key="create"
             type="primary"
-            icon={<PlusIcon size={16} />}
+            icon={<PlusOutlinedIcon />}
             onClick={() => {
               handleCreateClick();
             }}

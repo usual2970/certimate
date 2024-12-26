@@ -3,7 +3,12 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
+import {
+  DeleteOutlined as DeleteOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+  SnippetsOutlined as SnippetsOutlinedIcon,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -75,7 +80,7 @@ const AccessList = () => {
             preset="edit"
             trigger={
               <Tooltip title={t("access.action.edit")}>
-                <Button color="primary" icon={<PencilIcon size={16} />} variant="text" />
+                <Button color="primary" icon={<EditOutlinedIcon />} variant="text" />
               </Tooltip>
             }
           />
@@ -85,7 +90,7 @@ const AccessList = () => {
             preset="add"
             trigger={
               <Tooltip title={t("access.action.copy")}>
-                <Button color="primary" icon={<CopyIcon size={16} />} variant="text" />
+                <Button color="primary" icon={<SnippetsOutlinedIcon />} variant="text" />
               </Tooltip>
             }
           />
@@ -93,7 +98,7 @@ const AccessList = () => {
           <Tooltip title={t("access.action.delete")}>
             <Button
               color="danger"
-              icon={<Trash2Icon size={16} />}
+              icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {
                 handleDeleteClick(record);
@@ -168,7 +173,7 @@ const AccessList = () => {
             key="create"
             preset="add"
             trigger={
-              <Button type="primary" icon={<PlusIcon size={16} />}>
+              <Button type="primary" icon={<PlusOutlinedIcon />}>
                 {t("access.action.add")}
               </Button>
             }
