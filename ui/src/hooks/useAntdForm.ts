@@ -5,7 +5,7 @@ import { useDeepCompareEffect } from "ahooks";
 export interface UseAntdFormOptions<T extends NonNullable<unknown> = any> {
   form?: FormInstance<T>;
   initialValues?: Partial<T> | (() => Partial<T> | Promise<Partial<T>>);
-  onSubmit?: (values: T) => void | Promise<void>;
+  onSubmit?: (values: T) => any;
 }
 
 export interface UseAntdFormReturns<T extends NonNullable<unknown> = any> {

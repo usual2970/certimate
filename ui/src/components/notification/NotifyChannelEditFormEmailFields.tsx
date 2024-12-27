@@ -15,8 +15,7 @@ const NotifyChannelEditFormEmailFields = () => {
       .number({ message: t("settings.notification.channel.form.email_smtp_port.placeholder") })
       .int()
       .gte(1, t("common.errmsg.port_invalid"))
-      .lte(65535, t("common.errmsg.port_invalid"))
-      .transform((v) => +v),
+      .lte(65535, t("common.errmsg.port_invalid")),
     smtpTLS: z.boolean().nullish(),
     username: z
       .string({ message: t("settings.notification.channel.form.email_username.placeholder") })

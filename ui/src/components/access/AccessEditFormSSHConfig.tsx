@@ -40,12 +40,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
       },
       { message: t("common.errmsg.host_invalid") }
     ),
-    port: z
-      .number()
-      .int()
-      .gte(1, t("common.errmsg.port_invalid"))
-      .lte(65535, t("common.errmsg.port_invalid"))
-      .transform((v) => +v),
+    port: z.number().int().gte(1, t("common.errmsg.port_invalid")).lte(65535, t("common.errmsg.port_invalid")),
     username: z
       .string()
       .min(1, "access.form.ssh_username.placeholder")

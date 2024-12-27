@@ -27,7 +27,17 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
     <>
       {triggerDom}
 
-      <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
+      <Drawer
+        afterOpenChange={setOpen}
+        closable
+        destroyOnClose
+        open={open}
+        loading={loading}
+        placement="right"
+        title={data?.id}
+        width={640}
+        onClose={() => setOpen(false)}
+      >
         <Show when={!!data}>
           <CertificateDetail data={data!} />
         </Show>

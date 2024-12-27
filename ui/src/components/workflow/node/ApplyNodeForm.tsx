@@ -1,13 +1,15 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, Button, Divider, Form, Input, Select, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
+import { AutoComplete, Button, Divider, Form, Input, Select, Space, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
+import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import z from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
+import ModalForm from "@/components/core/ModalForm";
+import MultipleInput from "@/components/core/MultipleInput";
 import { usePanel } from "../PanelProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { ACCESS_PROVIDER_USAGES, accessProvidersMap } from "@/domain/access";
@@ -19,6 +21,8 @@ import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/val
 export type ApplyNodeFormProps = {
   data: WorkflowNode;
 };
+
+const MULTIPLE_INPUT_DELIMITER = ";";
 
 const initFormModel = (): WorkflowNodeConfig => {
   return {
@@ -38,10 +42,10 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   const { hidePanel } = usePanel();
 
   const formSchema = z.object({
-    domain: z.string({ message: t("workflow.nodes.apply.form.domain.placeholder") }).refine(
-      (str) => {
-        return String(str)
-          .split(";")
+    domain: z.string({ message: t("workflow.nodes.apply.form.domains.placeholder") }).refine(
+      (v) => {
+        return String(v)
+          .split(MULTIPLE_INPUT_DELIMITER)
           .every((e) => validDomainName(e, true));
       },
       { message: t("common.errmsg.domain_invalid") }
@@ -52,20 +56,20 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     nameservers: z
       .string()
       .refine(
-        (str) => {
-          if (!str) return true;
-          return String(str)
-            .split(";")
-            .every((e) => validDomainName(e) || validIPv4Address(e) || validIPv6Address(e));
+        (v) => {
+          if (!v) return true;
+          return String(v)
+            .split(MULTIPLE_INPUT_DELIMITER)
+            .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         },
         { message: t("common.errmsg.host_invalid") }
       )
       .nullish(),
-    timeout: z
-      .number()
-      .int()
-      .gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder"))
-      .transform((v) => +v)
+    propagationTimeout: z
+      .union([
+        z.number().int().gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder")),
+        z.string().refine((v) => !v || (parseInt(v) === +v && +v > 0), { message: t("workflow.nodes.apply.form.propagation_timeout.placeholder") }),
+      ])
       .nullish(),
     disableFollowCNAME: z.boolean().nullish(),
   });
@@ -83,15 +87,50 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     },
   });
 
+  const [fieldDomains, setFieldDomains] = useState(data?.config?.domain as string);
+  const [fieldNameservers, setFieldNameservers] = useState(data?.config?.nameservers as string);
+
+  const handleFieldDomainsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFieldDomains(value);
+    formInst.setFieldValue("domain", value);
+  };
+
+  const handleFieldNameserversChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFieldNameservers(value);
+    formInst.setFieldValue("nameservers", value);
+  };
+
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
         name="domain"
-        label={t("workflow.nodes.apply.form.domain.label")}
+        label={t("workflow.nodes.apply.form.domains.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.domain.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.domains.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow.nodes.apply.form.domain.placeholder")} />
+        <Space.Compact style={{ width: "100%" }}>
+          <Input
+            disabled={formPending}
+            value={fieldDomains}
+            placeholder={t("workflow.nodes.apply.form.domains.placeholder")}
+            onChange={handleFieldDomainsChange}
+          />
+          <FormFieldDomainsModalForm
+            data={fieldDomains}
+            disabled={formPending}
+            trigger={
+              <Button>
+                <FormOutlinedIcon />
+              </Button>
+            }
+            onFinish={(v) => {
+              setFieldDomains(v);
+              formInst.setFieldValue("domain", v);
+            }}
+          />
+        </Space.Compact>
       </Form.Item>
 
       <Form.Item
@@ -100,12 +139,12 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.email.tooltip") }}></span>}
       >
-        <ContactEmailSelect placeholder={t("workflow.nodes.apply.form.email.placeholder")} />
+        <FormFieldEmailSelect placeholder={t("workflow.nodes.apply.form.email.placeholder")} />
       </Form.Item>
 
       <Form.Item>
         <label className="block mb-1">
-          <div className="flex items-center justify-between gap-4 w-full overflow-hidden">
+          <div className="flex items-center justify-between gap-4 w-full">
             <div className="flex-grow max-w-full truncate">
               <span>{t("workflow.nodes.apply.form.access.label")}</span>
               <Tooltip title={t("workflow.nodes.apply.form.access.tooltip")}>
@@ -166,7 +205,28 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.nameservers.tooltip") }}></span>}
       >
-        <Input allowClear placeholder={t("workflow.nodes.apply.form.nameservers.placeholder")} />
+        <Space.Compact style={{ width: "100%" }}>
+          <Input
+            allowClear
+            disabled={formPending}
+            value={fieldNameservers}
+            placeholder={t("workflow.nodes.apply.form.nameservers.placeholder")}
+            onChange={handleFieldNameserversChange}
+          />
+          <FormFieldNameserversModalForm
+            data={fieldNameservers}
+            disabled={formPending}
+            trigger={
+              <Button>
+                <FormOutlinedIcon />
+              </Button>
+            }
+            onFinish={(v) => {
+              setFieldNameservers(v);
+              formInst.setFieldValue("nameservers", v);
+            }}
+          />
+        </Space.Compact>
       </Form.Item>
 
       <Form.Item
@@ -203,7 +263,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   );
 };
 
-const ContactEmailSelect = ({
+const FormFieldEmailSelect = ({
   className,
   style,
   disabled,
@@ -265,6 +325,128 @@ const ContactEmailSelect = ({
       onChange={handleChange}
       onSearch={handleSearch}
     />
+  );
+};
+
+const FormFieldDomainsModalForm = ({
+  data,
+  disabled,
+  trigger,
+  onFinish,
+}: {
+  data: string;
+  disabled?: boolean;
+  trigger?: React.ReactNode;
+  onFinish?: (data: string) => void;
+}) => {
+  const { t } = useTranslation();
+
+  const formSchema = z.object({
+    domains: z.array(z.string()).refine(
+      (v) => {
+        return v.every((e) => !e?.trim() || validDomainName(e.trim(), true));
+      },
+      { message: t("common.errmsg.domain_invalid") }
+    ),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
+
+  const [model, setModel] = useState<Partial<z.infer<typeof formSchema>>>({ domains: data?.split(MULTIPLE_INPUT_DELIMITER) });
+  useEffect(() => {
+    setModel({ domains: data?.split(MULTIPLE_INPUT_DELIMITER) });
+  }, [data]);
+
+  const handleFinish = useCallback(
+    (values: z.infer<typeof formSchema>) => {
+      onFinish?.(
+        values.domains
+          .map((e) => e.trim())
+          .filter((e) => !!e)
+          .join(MULTIPLE_INPUT_DELIMITER)
+      );
+    },
+    [onFinish]
+  );
+
+  return (
+    <ModalForm
+      disabled={disabled}
+      layout="vertical"
+      form={formInst}
+      initialValues={model}
+      modalProps={{ destroyOnClose: true }}
+      title={t("workflow.nodes.apply.form.domains.multiple_input_modal.title")}
+      trigger={trigger}
+      validateTrigger="onSubmit"
+      width={480}
+      onFinish={handleFinish}
+    >
+      <Form.Item name="domains" rules={[formRule]}>
+        <MultipleInput placeholder={t("workflow.nodes.apply.form.domains.multiple_input_modal.placeholder")} />
+      </Form.Item>
+    </ModalForm>
+  );
+};
+
+const FormFieldNameserversModalForm = ({
+  data,
+  disabled,
+  trigger,
+  onFinish,
+}: {
+  data: string;
+  disabled?: boolean;
+  trigger?: React.ReactNode;
+  onFinish?: (data: string) => void;
+}) => {
+  const { t } = useTranslation();
+
+  const formSchema = z.object({
+    nameservers: z.array(z.string()).refine(
+      (v) => {
+        return v.every((e) => !e?.trim() || validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
+      },
+      { message: t("common.errmsg.domain_invalid") }
+    ),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
+
+  const [model, setModel] = useState<Partial<z.infer<typeof formSchema>>>({ nameservers: data?.split(MULTIPLE_INPUT_DELIMITER) });
+  useEffect(() => {
+    setModel({ nameservers: data?.split(MULTIPLE_INPUT_DELIMITER) });
+  }, [data]);
+
+  const handleFinish = useCallback(
+    (values: z.infer<typeof formSchema>) => {
+      onFinish?.(
+        values.nameservers
+          .map((e) => e.trim())
+          .filter((e) => !!e)
+          .join(MULTIPLE_INPUT_DELIMITER)
+      );
+    },
+    [onFinish]
+  );
+
+  return (
+    <ModalForm
+      disabled={disabled}
+      layout="vertical"
+      form={formInst}
+      initialValues={model}
+      modalProps={{ destroyOnClose: true }}
+      title={t("workflow.nodes.apply.form.nameservers.multiple_input_modal.title")}
+      trigger={trigger}
+      validateTrigger="onSubmit"
+      width={480}
+      onFinish={handleFinish}
+    >
+      <Form.Item name="nameservers" rules={[formRule]}>
+        <MultipleInput placeholder={t("workflow.nodes.apply.form.nameservers.multiple_input_modal.placeholder")} />
+      </Form.Item>
+    </ModalForm>
   );
 };
 
