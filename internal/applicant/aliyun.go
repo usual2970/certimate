@@ -26,8 +26,8 @@ func (a *aliyunApplicant) Apply() (*Certificate, error) {
 	config := alidns.NewDefaultConfig()
 	config.APIKey = access.AccessKeyId
 	config.SecretKey = access.AccessKeySecret
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := alidns.NewDNSProviderConfig(config)

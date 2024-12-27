@@ -67,8 +67,6 @@ var sslProviderUrls = map[string]string{
 
 const defaultEmail = "536464346@qq.com"
 
-const defaultTimeout = 60
-
 type Certificate struct {
 	CertUrl           string `json:"certUrl"`
 	CertStableUrl     string `json:"certStableUrl"`
@@ -84,7 +82,7 @@ type ApplyOption struct {
 	Access             string `json:"access"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
-	Timeout            int64  `json:"timeout"`
+	PropagationTimeout int64  `json:"propagationTimeout"`
 	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
@@ -164,17 +162,13 @@ func Get(record *models.Record) (Applicant, error) {
 		applyConfig.Email = defaultEmail
 	}
 
-	if applyConfig.Timeout == 0 {
-		applyConfig.Timeout = defaultTimeout
-	}
-
 	option := &ApplyOption{
 		Email:              applyConfig.Email,
 		Domain:             record.GetString("domain"),
 		Access:             access.GetString("config"),
 		KeyAlgorithm:       applyConfig.KeyAlgorithm,
 		Nameservers:        applyConfig.Nameservers,
-		Timeout:            applyConfig.Timeout,
+		PropagationTimeout: applyConfig.PropagationTimeout,
 		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
 	}
 
@@ -190,18 +184,13 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
 
-	timeout := node.GetConfigInt64("timeout")
-	if timeout == 0 {
-		timeout = defaultTimeout
-	}
-
 	applyConfig := &ApplyOption{
 		Email:              node.GetConfigString("email"),
 		Domain:             node.GetConfigString("domain"),
 		Access:             access.Config,
 		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
 		Nameservers:        node.GetConfigString("nameservers"),
-		Timeout:            timeout,
+		PropagationTimeout: node.GetConfigInt64("propagationTimeout"),
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 

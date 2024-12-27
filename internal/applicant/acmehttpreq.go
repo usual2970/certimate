@@ -30,8 +30,8 @@ func (a *acmeHttpReqApplicant) Apply() (*Certificate, error) {
 	config.Mode = access.Mode
 	config.Username = access.Username
 	config.Password = access.Password
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := httpreq.NewDNSProviderConfig(config)

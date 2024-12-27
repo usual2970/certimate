@@ -25,8 +25,8 @@ func (a *namesiloApplicant) Apply() (*Certificate, error) {
 
 	config := namesilo.NewDefaultConfig()
 	config.APIKey = access.ApiKey
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := namesilo.NewDNSProviderConfig(config)

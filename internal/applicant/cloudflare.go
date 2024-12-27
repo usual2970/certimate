@@ -25,8 +25,8 @@ func (a *cloudflareApplicant) Apply() (*Certificate, error) {
 
 	config := cloudflare.NewDefaultConfig()
 	config.AuthToken = access.DnsApiToken
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := cloudflare.NewDNSProviderConfig(config)

@@ -15,9 +15,10 @@ export type AccessEditModalProps = {
   preset: AccessEditFormProps["preset"];
   trigger?: React.ReactElement;
   onOpenChange?: (open: boolean) => void;
+  onSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEditModalProps) => {
+const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }: AccessEditModalProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -57,20 +58,24 @@ const AccessEditModal = ({ data, loading, trigger, preset, ...props }: AccessEdi
     }
 
     try {
+      let res: AccessModel;
       if (preset === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
 
-        await createAccess(formRef.current!.getFieldsValue() as AccessModel);
+        res = await createAccess(formRef.current!.getFieldsValue() as AccessModel);
       } else if (preset === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
 
-        await updateAccess({ ...data, ...formRef.current!.getFieldsValue() } as AccessModel);
+        res = await updateAccess({ ...data, ...formRef.current!.getFieldsValue() } as AccessModel);
+      } else {
+        throw "Invalid props: `preset`";
       }
 
+      onSubmit?.(res);
       setOpen(false);
     } catch (err) {
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });

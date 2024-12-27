@@ -25,8 +25,8 @@ func (a *nameDotComApplicant) Apply() (*Certificate, error) {
 	config := namedotcom.NewDefaultConfig()
 	config.Username = access.Username
 	config.APIToken = access.ApiToken
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := namedotcom.NewDNSProviderConfig(config)

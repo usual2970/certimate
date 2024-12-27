@@ -10,9 +10,9 @@ export interface AccessState {
   loadedAtOnce: boolean;
 
   fetchAccesses: () => Promise<void>;
-  createAccess: (access: MaybeModelRecord<AccessModel>) => Promise<void>;
-  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<void>;
-  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<void>;
+  createAccess: (access: MaybeModelRecord<AccessModel>) => Promise<AccessModel>;
+  updateAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<AccessModel>;
+  deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<AccessModel>;
 }
 
 export const useAccessStore = create<AccessState>((set) => {
@@ -25,17 +25,17 @@ export const useAccessStore = create<AccessState>((set) => {
 
     createAccess: async (access) => {
       const record = await saveAccess(access);
-
       set(
         produce((state: AccessState) => {
           state.accesses.unshift(record);
         })
       );
+
+      return record as AccessModel;
     },
 
     updateAccess: async (access) => {
       const record = await saveAccess(access);
-
       set(
         produce((state: AccessState) => {
           const index = state.accesses.findIndex((e) => e.id === record.id);
@@ -44,16 +44,19 @@ export const useAccessStore = create<AccessState>((set) => {
           }
         })
       );
+
+      return record as AccessModel;
     },
 
     deleteAccess: async (access) => {
       await removeAccess(access);
-
       set(
         produce((state: AccessState) => {
           state.accesses = state.accesses.filter((a) => a.id !== access.id);
         })
       );
+
+      return access as AccessModel;
     },
 
     fetchAccesses: async () => {

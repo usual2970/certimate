@@ -26,8 +26,8 @@ func (a *godaddyApplicant) Apply() (*Certificate, error) {
 	config := godaddy.NewDefaultConfig()
 	config.APIKey = access.ApiKey
 	config.APISecret = access.ApiSecret
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := godaddy.NewDNSProviderConfig(config)

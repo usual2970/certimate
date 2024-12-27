@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, Button, Divider, Form, Input, InputNumber, Select, Switch, Typography, type AutoCompleteProps } from "antd";
+import { AutoComplete, Button, Divider, Form, Input, InputNumber, Select, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
+import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import z from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
@@ -24,7 +24,8 @@ const initFormModel = (): WorkflowNodeConfig => {
   return {
     domain: "",
     keyAlgorithm: "RSA2048",
-    timeout: 60,
+    nameservers: "",
+    propagationTimeout: 60,
     disableFollowCNAME: true,
   };
 };
@@ -32,6 +33,7 @@ const initFormModel = (): WorkflowNodeConfig => {
 const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   const { t } = useTranslation();
 
+  const { addEmail } = useContactStore();
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
   const { hidePanel } = usePanel();
 
@@ -59,7 +61,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         { message: t("common.errmsg.host_invalid") }
       )
       .nullish(),
-    timeout: z.number().gte(1, t("workflow.nodes.apply.form.timeout.placeholder")).nullish(),
+    timeout: z.number().gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder")).nullish(),
     disableFollowCNAME: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -71,6 +73,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     initialValues: data?.config ?? initFormModel(),
     onSubmit: async (values) => {
       await updateNode({ ...data, config: { ...values }, validated: true });
+      await addEmail(values.email);
       hidePanel();
     },
   });
@@ -96,18 +99,31 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
       </Form.Item>
 
       <Form.Item>
-        <label className="block mb-[2px]">
+        <label className="block mb-1">
           <div className="flex items-center justify-between gap-4 w-full overflow-hidden">
-            <div className="flex-grow max-w-full truncate">{t("workflow.nodes.apply.form.access.label")}</div>
+            <div className="flex-grow max-w-full truncate">
+              <span>{t("workflow.nodes.apply.form.access.label")}</span>
+              <Tooltip title={t("workflow.nodes.apply.form.access.tooltip")}>
+                <Typography.Text className="ms-1" type="secondary">
+                  <QuestionCircleOutlinedIcon />
+                </Typography.Text>
+              </Tooltip>
+            </div>
             <div className="text-right">
               <AccessEditModal
                 preset="add"
                 trigger={
-                  <Button className="p-0" type="link">
+                  <Button size="small" type="link">
                     <PlusOutlinedIcon />
                     {t("workflow.nodes.apply.form.access.button")}
                   </Button>
                 }
+                onSubmit={(record) => {
+                  const provider = accessProvidersMap.get(record.configType);
+                  if (ACCESS_PROVIDER_USAGES.ALL === provider?.usage || ACCESS_PROVIDER_USAGES.APPLY === provider?.usage) {
+                    formInst.setFieldValue("access", record.id);
+                  }
+                }}
               />
             </div>
           </div>
@@ -149,17 +165,17 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
       </Form.Item>
 
       <Form.Item
-        name="timeout"
-        label={t("workflow.nodes.apply.form.timeout.label")}
+        name="propagationTimeout"
+        label={t("workflow.nodes.apply.form.propagation_timeout.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.timeout.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.propagation_timeout.tooltip") }}></span>}
       >
         <InputNumber
           className="w-full"
           min={0}
           max={3600}
-          placeholder={t("workflow.nodes.apply.form.timeout.placeholder")}
-          addonAfter={t("workflow.nodes.apply.form.timeout.suffix")}
+          placeholder={t("workflow.nodes.apply.form.propagation_timeout.placeholder")}
+          addonAfter={t("workflow.nodes.apply.form.propagation_timeout.suffix")}
         />
       </Form.Item>
 

@@ -11,9 +11,11 @@ export interface ContactState {
 
   fetchEmails: () => Promise<void>;
   setEmails: (emails: string[]) => Promise<void>;
+  addEmail: (email: string) => Promise<void>;
+  removeEmail: (email: string) => Promise<void>;
 }
 
-export const useContactStore = create<ContactState>((set) => {
+export const useContactStore = create<ContactState>((set, get) => {
   let fetcher: Promise<SettingsModel<EmailsSettingsContent>> | null = null; // 防止多次重复请求
   let settings: SettingsModel<EmailsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用
 
@@ -34,10 +36,27 @@ export const useContactStore = create<ContactState>((set) => {
 
       set(
         produce((state: ContactState) => {
-          state.emails = settings.content.emails;
+          state.emails = settings.content.emails?.sort() ?? [];
           state.loadedAtOnce = true;
         })
       );
+    },
+
+    addEmail: async (email) => {
+      const emails = produce(get().emails, (draft) => {
+        if (draft.includes(email)) return;
+        draft.push(email);
+        draft.sort();
+      });
+      get().setEmails(emails);
+    },
+
+    removeEmail: async (email) => {
+      const emails = produce(get().emails, (draft) => {
+        draft = draft.filter((e) => e !== email);
+        draft.sort();
+      });
+      get().setEmails(emails);
     },
 
     fetchEmails: async () => {

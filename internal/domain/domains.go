@@ -12,7 +12,7 @@ type ApplyConfig struct {
 	Access             string `json:"access"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
-	Timeout            int64  `json:"timeout"`
+	PropagationTimeout int64  `json:"propagationTimeout"`
 	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 

@@ -28,8 +28,8 @@ func (a *powerdnsApplicant) Apply() (*Certificate, error) {
 	host, _ := url.Parse(access.ApiUrl)
 	config.Host = host
 	config.APIKey = access.ApiKey
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := pdns.NewDNSProviderConfig(config)

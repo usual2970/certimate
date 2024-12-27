@@ -70,7 +70,7 @@ const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
       </Form.Item>
 
       <Form.Item>
-        <label className="block mb-[2px]">
+        <label className="block mb-1">
           <div className="flex items-center justify-between gap-4 w-full overflow-hidden">
             <div className="flex-grow max-w-full truncate">{t("workflow.nodes.notify.form.channel.label")}</div>
             <div className="text-right">

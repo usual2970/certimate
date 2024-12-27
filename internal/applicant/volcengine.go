@@ -25,8 +25,8 @@ func (a *volcengineApplicant) Apply() (*Certificate, error) {
 	config := volcengine.NewDefaultConfig()
 	config.AccessKey = access.AccessKeyId
 	config.SecretKey = access.SecretAccessKey
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := volcengine.NewDNSProviderConfig(config)

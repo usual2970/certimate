@@ -28,8 +28,8 @@ func (a *awsApplicant) Apply() (*Certificate, error) {
 	config.SecretAccessKey = access.SecretAccessKey
 	config.Region = access.Region
 	config.HostedZoneID = access.HostedZoneId
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := route53.NewDNSProviderConfig(config)

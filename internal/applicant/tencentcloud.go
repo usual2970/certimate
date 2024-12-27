@@ -26,8 +26,8 @@ func (a *tencentcloudApplicant) Apply() (*Certificate, error) {
 	config := tencentcloud.NewDefaultConfig()
 	config.SecretID = access.SecretId
 	config.SecretKey = access.SecretKey
-	if a.option.Timeout != 0 {
-		config.PropagationTimeout = time.Duration(a.option.Timeout) * time.Second
+	if a.option.PropagationTimeout != 0 {
+		config.PropagationTimeout = time.Duration(a.option.PropagationTimeout) * time.Second
 	}
 
 	provider, err := tencentcloud.NewDNSProviderConfig(config)

@@ -1,11 +1,12 @@
-import { Plus } from "lucide-react";
-import { BrandNodeProps, NodeProps } from "./types";
-import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
-import { useZustandShallowSelector } from "@/hooks";
-import { useWorkflowStore } from "@/stores/workflow";
-import { Dropdown } from "antd";
-import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
 import { useTranslation } from "react-i18next";
+import { Dropdown } from "antd";
+import { Plus as PlusIcon } from "lucide-react";
+
+import { useZustandShallowSelector } from "@/hooks";
+import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { type BrandNodeProps, type NodeProps } from "./types";
+import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
 
 const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
   const { t } = useTranslation();
@@ -56,7 +57,7 @@ const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
         trigger={["click"]}
       >
         <div className="bg-stone-400 hover:bg-stone-500 rounded-full z-10 relative outline-none">
-          <Plus size={18} className="text-white" />
+          <PlusIcon className="text-white" size={18} />
         </div>
       </Dropdown>
     </div>

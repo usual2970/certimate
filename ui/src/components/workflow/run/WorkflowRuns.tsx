@@ -64,6 +64,14 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
       },
     },
     {
+      key: "trigger",
+      title: t("workflow_run.props.trigger"),
+      ellipsis: true,
+      render: () => {
+        return "TODO";
+      },
+    },
+    {
       key: "startedAt",
       title: t("workflow_run.props.started_at"),
       ellipsis: true,
