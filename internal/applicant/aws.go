@@ -20,8 +20,8 @@ func NewAWSApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *awsApplicant) Apply() (*Certificate, error) {
-	access := &domain.AwsAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.AWSAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := route53.NewDefaultConfig()
 	config.AccessKeyID = access.AccessKeyId

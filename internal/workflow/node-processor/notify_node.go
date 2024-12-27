@@ -9,7 +9,7 @@ import (
 )
 
 type SettingRepository interface {
-	GetByName(ctx context.Context, name string) (*domain.Setting, error)
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 type notifyNode struct {
 	node        *domain.WorkflowNode

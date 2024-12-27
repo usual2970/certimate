@@ -14,6 +14,7 @@ import (
 
 /*
 提供商部署目标常量值。
+短横线前的部分始终等于提供商类型。
 
 	注意：如果追加新的常量值，请保持以 ASCII 排序。
 	NOTICE: If you add new constant, please keep ASCII order.
@@ -140,7 +141,7 @@ type proxyDeployer struct {
 }
 
 func (d *proxyDeployer) GetID() string {
-	return fmt.Sprintf("%s-%s", d.option.AccessRecord.GetString("name"), d.option.AccessRecord.Id)
+	return fmt.Sprintf("%s-%s", d.option.AccessRecord.Name, d.option.AccessRecord.Id)
 }
 
 func (d *proxyDeployer) GetInfos() []string {

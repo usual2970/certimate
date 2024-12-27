@@ -26,26 +26,6 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
-/*
-提供商类型常量值。
-
-	注意：如果追加新的常量值，请保持以 ASCII 排序。
-	NOTICE: If you add new constant, please keep ASCII order.
-*/
-const (
-	configTypeACMEHttpReq  = "acmehttpreq"
-	configTypeAliyun       = "aliyun"
-	configTypeAWS          = "aws"
-	configTypeCloudflare   = "cloudflare"
-	configTypeGoDaddy      = "godaddy"
-	configTypeHuaweiCloud  = "huaweicloud"
-	configTypeNameDotCom   = "namedotcom"
-	configTypeNameSilo     = "namesilo"
-	configTypePowerDNS     = "powerdns"
-	configTypeTencentCloud = "tencentcloud"
-	configTypeVolcEngine   = "volcengine"
-)
-
 const defaultSSLProvider = "letsencrypt"
 const (
 	sslProviderLetsencrypt = "letsencrypt"
@@ -78,8 +58,8 @@ type Certificate struct {
 
 type ApplyOption struct {
 	Email              string `json:"email"`
-	Domain             string `json:"domain"`
-	Access             string `json:"access"`
+	Domain             string `json:"subjectAltNames"`
+	AccessConfig       string `json:"accessConfig"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
 	PropagationTimeout int64  `json:"propagationTimeout"`
@@ -165,14 +145,14 @@ func Get(record *models.Record) (Applicant, error) {
 	option := &ApplyOption{
 		Email:              applyConfig.Email,
 		Domain:             record.GetString("domain"),
-		Access:             access.GetString("config"),
+		AccessConfig:       access.GetString("config"),
 		KeyAlgorithm:       applyConfig.KeyAlgorithm,
 		Nameservers:        applyConfig.Nameservers,
 		PropagationTimeout: applyConfig.PropagationTimeout,
 		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
 	}
 
-	return GetWithTypeOption(access.GetString("configType"), option)
+	return GetWithTypeOption(domain.AccessProviderType(access.GetString("configType")), option)
 }
 
 func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -187,46 +167,46 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	applyConfig := &ApplyOption{
 		Email:              node.GetConfigString("email"),
 		Domain:             node.GetConfigString("domain"),
-		Access:             access.Config,
+		AccessConfig:       access.Config,
 		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
 		Nameservers:        node.GetConfigString("nameservers"),
 		PropagationTimeout: node.GetConfigInt64("propagationTimeout"),
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 
-	return GetWithTypeOption(access.ConfigType, applyConfig)
+	return GetWithTypeOption(domain.AccessProviderType(access.ConfigType), applyConfig)
 }
 
-func GetWithTypeOption(t string, option *ApplyOption) (Applicant, error) {
+func GetWithTypeOption(providerType domain.AccessProviderType, option *ApplyOption) (Applicant, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
-	switch t {
-	case configTypeACMEHttpReq:
+	switch providerType {
+	case domain.ACCESS_PROVIDER_ACMEHTTPREQ:
 		return NewACMEHttpReqApplicant(option), nil
-	case configTypeAliyun:
+	case domain.ACCESS_PROVIDER_ALIYUN:
 		return NewAliyunApplicant(option), nil
-	case configTypeAWS:
+	case domain.ACCESS_PROVIDER_AWS:
 		return NewAWSApplicant(option), nil
-	case configTypeCloudflare:
+	case domain.ACCESS_PROVIDER_CLOUDFLARE:
 		return NewCloudflareApplicant(option), nil
-	case configTypeGoDaddy:
+	case domain.ACCESS_PROVIDER_GODADDY:
 		return NewGoDaddyApplicant(option), nil
-	case configTypeHuaweiCloud:
+	case domain.ACCESS_PROVIDER_HUAWEICLOUD:
 		return NewHuaweiCloudApplicant(option), nil
-	case configTypeNameDotCom:
+	case domain.ACCESS_PROVIDER_NAMEDOTCOM:
 		return NewNameDotComApplicant(option), nil
-	case configTypeNameSilo:
+	case domain.ACCESS_PROVIDER_NAMESILO:
 		return NewNamesiloApplicant(option), nil
-	case configTypePowerDNS:
+	case domain.ACCESS_PROVIDER_POWERDNS:
 		return NewPowerDNSApplicant(option), nil
-	case configTypeTencentCloud:
+	case domain.ACCESS_PROVIDER_TENCENTCLOUD:
 		return NewTencentCloudApplicant(option), nil
-	case configTypeVolcEngine:
+	case domain.ACCESS_PROVIDER_VOLCENGINE:
 		return NewVolcEngineApplicant(option), nil
 	default:
-		return nil, fmt.Errorf("unsupported applicant type: %s", t)
+		return nil, fmt.Errorf("unsupported applicant provider type: %s", providerType)
 	}
 }
 

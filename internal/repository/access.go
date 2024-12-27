@@ -26,9 +26,9 @@ func (a *AccessRepository) GetById(ctx context.Context, id string) (*domain.Acce
 
 	rs := &domain.Access{
 		Meta: domain.Meta{
-			Id:      record.GetId(),
-			Created: record.GetTime("created"),
-			Updated: record.GetTime("updated"),
+			Id:        record.GetId(),
+			CreatedAt: record.GetTime("created"),
+			UpdatedAt: record.GetTime("updated"),
 		},
 		Name:       record.GetString("name"),
 		Config:     record.GetString("config"),

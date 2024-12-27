@@ -19,8 +19,8 @@ func NewVolcEngineApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *volcengineApplicant) Apply() (*Certificate, error) {
-	access := &domain.VolcEngineAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.VolcEngineAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := volcengine.NewDefaultConfig()
 	config.AccessKey = access.AccessKeyId

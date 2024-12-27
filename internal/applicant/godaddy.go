@@ -20,8 +20,8 @@ func NewGoDaddyApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *godaddyApplicant) Apply() (*Certificate, error) {
-	access := &domain.GodaddyAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.GoDaddyAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := godaddy.NewDefaultConfig()
 	config.APIKey = access.ApiKey

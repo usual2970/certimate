@@ -13,7 +13,7 @@ const (
 )
 
 type SettingRepository interface {
-	GetByName(ctx context.Context, name string) (*domain.Setting, error)
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 type NotifyService struct {

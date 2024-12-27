@@ -20,8 +20,8 @@ func NewCloudflareApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *cloudflareApplicant) Apply() (*Certificate, error) {
-	access := &domain.CloudflareAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.CloudflareAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := cloudflare.NewDefaultConfig()
 	config.AuthToken = access.DnsApiToken

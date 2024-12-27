@@ -2,7 +2,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, Space, Tag, Typography, type SelectProps } from "antd";
 
-import { ACCESS_PROVIDER_USAGES, accessProvidersMap } from "@/domain/access";
+import { ACCESS_USAGES, accessProvidersMap } from "@/domain/access";
 
 export type AccessTypeSelectProps = Omit<
   SelectProps,
@@ -29,17 +29,17 @@ const AccessTypeSelect = (props: AccessTypeSelectProps) => {
           </Typography.Text>
         </Space>
         <div>
-          {provider?.usage === ACCESS_PROVIDER_USAGES.APPLY && (
+          {provider?.usage === ACCESS_USAGES.APPLY && (
             <>
               <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
             </>
           )}
-          {provider?.usage === ACCESS_PROVIDER_USAGES.DEPLOY && (
+          {provider?.usage === ACCESS_USAGES.DEPLOY && (
             <>
               <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
             </>
           )}
-          {provider?.usage === ACCESS_PROVIDER_USAGES.ALL && (
+          {provider?.usage === ACCESS_USAGES.ALL && (
             <>
               <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
               <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>

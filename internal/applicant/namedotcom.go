@@ -19,8 +19,8 @@ func NewNameDotComApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *nameDotComApplicant) Apply() (*Certificate, error) {
-	access := &domain.NameDotComAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.NameDotComAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := namedotcom.NewDefaultConfig()
 	config.Username = access.Username

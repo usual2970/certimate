@@ -6,7 +6,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { useAntdForm } from "@/hooks";
-import { ACCESS_PROVIDER_TYPES, type AccessModel } from "@/domain/access";
+import { ACCESS_PROVIDERS, type AccessModel } from "@/domain/access";
 import AccessTypeSelect from "./AccessTypeSelect";
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
 import AccessEditFormAliyunConfig from "./AccessEditFormAliyunConfig";
@@ -55,7 +55,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       .trim()
       .min(1, t("access.form.name.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    configType: z.nativeEnum(ACCESS_PROVIDER_TYPES, { message: t("access.form.type.placeholder") }),
+    configType: z.nativeEnum(ACCESS_PROVIDERS, { message: t("access.form.type.placeholder") }),
     config: z.any(),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -77,43 +77,43 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
      */
     const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, initialValues: initialValues?.config };
     switch (configType) {
-      case ACCESS_PROVIDER_TYPES.ACMEHTTPREQ:
+      case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.ALIYUN:
+      case ACCESS_PROVIDERS.ALIYUN:
         return <AccessEditFormAliyunConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.AWS:
+      case ACCESS_PROVIDERS.AWS:
         return <AccessEditFormAWSConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.BAIDUCLOUD:
+      case ACCESS_PROVIDERS.BAIDUCLOUD:
         return <AccessEditFormBaiduCloudConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.BYTEPLUS:
+      case ACCESS_PROVIDERS.BYTEPLUS:
         return <AccessEditFormBytePlusConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.CLOUDFLARE:
+      case ACCESS_PROVIDERS.CLOUDFLARE:
         return <AccessEditFormCloudflareConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.DOGECLOUD:
+      case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessEditFormDogeCloudConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.GODADDY:
+      case ACCESS_PROVIDERS.GODADDY:
         return <AccessEditFormGoDaddyConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.HUAWEICLOUD:
+      case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessEditFormHuaweiCloudConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.KUBERNETES:
+      case ACCESS_PROVIDERS.KUBERNETES:
         return <AccessEditFormKubernetesConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.LOCAL:
+      case ACCESS_PROVIDERS.LOCAL:
         return <AccessEditFormLocalConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.NAMEDOTCOM:
+      case ACCESS_PROVIDERS.NAMEDOTCOM:
         return <AccessEditFormNameDotComConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.NAMESILO:
+      case ACCESS_PROVIDERS.NAMESILO:
         return <AccessEditFormNameSiloConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.POWERDNS:
+      case ACCESS_PROVIDERS.POWERDNS:
         return <AccessEditFormPowerDNSConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.QINIU:
+      case ACCESS_PROVIDERS.QINIU:
         return <AccessEditFormQiniuConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.SSH:
+      case ACCESS_PROVIDERS.SSH:
         return <AccessEditFormSSHConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.TENCENTCLOUD:
+      case ACCESS_PROVIDERS.TENCENTCLOUD:
         return <AccessEditFormTencentCloudConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.VOLCENGINE:
+      case ACCESS_PROVIDERS.VOLCENGINE:
         return <AccessEditFormVolcEngineConfig {...configFormProps} />;
-      case ACCESS_PROVIDER_TYPES.WEBHOOK:
+      case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
   }, [disabled, initialValues, configType, configFormInst, configFormName]);

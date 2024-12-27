@@ -67,9 +67,9 @@ const Node = ({ data }: NodeProps) => {
       case WorkflowNodeType.Notify: {
         const channelLabel = notifyChannelsMap.get(data.config?.channel as string);
         return (
-          <div className="flex space-x-2 items-baseline">
-            <div className="text-stone-700 w-12 truncate">{t(channelLabel?.name ?? "")}</div>
-            <div className="text-muted-foreground truncate">{(data.config?.title as string) ?? ""}</div>
+          <div className="flex space-x-2 items-center justify-between">
+            <div className="text-stone-700 truncate">{t(channelLabel?.name ?? "")}</div>
+            <div className="text-muted-foreground truncate">{(data.config?.subject as string) ?? ""}</div>
           </div>
         );
       }

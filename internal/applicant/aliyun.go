@@ -20,8 +20,8 @@ func NewAliyunApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *aliyunApplicant) Apply() (*Certificate, error) {
-	access := &domain.AliyunAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.AliyunAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := alidns.NewDefaultConfig()
 	config.APIKey = access.AccessKeyId

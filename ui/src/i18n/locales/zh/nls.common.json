@@ -11,13 +11,6 @@
   "common.button.save": "保存",
   "common.button.submit": "提交",
 
-  "common.text.domain": "域名",
-  "common.text.domain.empty": "无域名",
-  "common.text.ip": "IP 地址",
-  "common.text.ip.empty": "无 IP 地址",
-  "common.text.dns": "DNS（域名服务器）",
-  "common.text.dns.empty": "无 DNS 地址",
-  "common.text.ca": "CA（证书颁发机构）",
   "common.text.copied": "已复制",
   "common.text.nodata": "暂无数据",
   "common.text.operation_succeeded": "操作成功",
@@ -30,18 +23,12 @@
   "common.menu.logout": "退出登录",
   "common.menu.document": "文档",
 
-  "common.pagination.next": "下一页",
-  "common.pagination.prev": "上一页",
-  "common.pagination.more": "更多",
-
   "common.theme.light": "浅色",
   "common.theme.dark": "暗黑",
   "common.theme.system": "跟随系统",
 
   "common.errmsg.string_max": "请输入不超过 {{max}} 个字符",
-  "common.errmsg.email_empty": "请输入邮箱",
   "common.errmsg.email_invalid": "请输入正确的邮箱",
-  "common.errmsg.email_duplicate": "邮箱已存在",
   "common.errmsg.domain_invalid": "请输入正确的域名",
   "common.errmsg.host_invalid": "请输入正确的域名或 IP 地址",
   "common.errmsg.port_invalid": "请输入正确的端口号",

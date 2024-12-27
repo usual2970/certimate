@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/pocketbase/dbx"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -13,18 +14,20 @@ func NewSettingRepository() *SettingRepository {
 	return &SettingRepository{}
 }
 
-func (s *SettingRepository) GetByName(ctx context.Context, name string) (*domain.Setting, error) {
-	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='"+name+"'")
+func (s *SettingRepository) GetByName(ctx context.Context, name string) (*domain.Settings, error) {
+	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name={:name}", dbx.Params{"name": name})
 	if err != nil {
 		return nil, err
 	}
 
-	rs := &domain.Setting{
-		ID:      resp.GetString("id"),
+	rs := &domain.Settings{
+		Meta: domain.Meta{
+			Id:        resp.GetString("id"),
+			CreatedAt: resp.GetTime("created"),
+			UpdatedAt: resp.GetTime("updated"),
+		},
 		Name:    resp.GetString("name"),
 		Content: resp.GetString("content"),
-		Created: resp.GetTime("created"),
-		Updated: resp.GetTime("updated"),
 	}
 
 	return rs, nil

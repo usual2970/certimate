@@ -12,13 +12,13 @@ type Certificate struct {
 	IssuerCertificate string    `json:"issuerCertificate" db:"issuerCertificate"`
 	CertUrl           string    `json:"certUrl" db:"certUrl"`
 	CertStableUrl     string    `json:"certStableUrl" db:"certStableUrl"`
-	Output            string    `json:"output" db:"output"`
-	Workflow          string    `json:"workflow" db:"workflow"`
-	ExpireAt          time.Time `json:"ExpireAt" db:"expireAt"`
-	NodeId            string    `json:"nodeId" db:"nodeId"`
+	WorkflowId        string    `json:"workflow" db:"workflow"`
+	WorkflowNodeId    string    `json:"nodeId" db:"nodeId"`
+	WorkflowOutputId  string    `json:"output" db:"output"`
+	ExpireAt          time.Time `json:"expireAt" db:"expireAt"`
 }
 
-type MetaData struct {
+type CertificateMeta struct {
 	Version            string              `json:"version"`
 	SerialNumber       string              `json:"serialNumber"`
 	Validity           CertificateValidity `json:"validity"`

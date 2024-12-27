@@ -77,9 +77,9 @@ func record2Workflow(record *models.Record) (*domain.Workflow, error) {
 
 	workflow := &domain.Workflow{
 		Meta: domain.Meta{
-			Id:      record.GetId(),
-			Created: record.GetTime("created"),
-			Updated: record.GetTime("updated"),
+			Id:        record.GetId(),
+			CreatedAt: record.GetTime("created"),
+			UpdatedAt: record.GetTime("updated"),
 		},
 		Name:        record.GetString("name"),
 		Description: record.GetString("description"),

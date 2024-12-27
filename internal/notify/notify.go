@@ -7,6 +7,7 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/usual2970/certimate/internal/app"
+	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
@@ -37,7 +38,7 @@ func SendToAllChannels(subject, message string) error {
 }
 
 func SendToChannel(subject, message string, channel string, channelConfig map[string]any) error {
-	notifier, err := createNotifier(channel, channelConfig)
+	notifier, err := createNotifier(domain.NotifyChannelType(channel), channelConfig)
 	if err != nil {
 		return err
 	}
@@ -63,7 +64,7 @@ func getEnabledNotifiers() ([]notifier.Notifier, error) {
 			continue
 		}
 
-		notifier, err := createNotifier(k, v)
+		notifier, err := createNotifier(domain.NotifyChannelType(k), v)
 		if err != nil {
 			continue
 		}

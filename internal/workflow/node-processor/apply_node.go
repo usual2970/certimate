@@ -103,13 +103,13 @@ func (a *applyNode) Run(ctx context.Context) error {
 		CertUrl:           certificate.CertUrl,
 		CertStableUrl:     certificate.CertStableUrl,
 		ExpireAt:          cert.NotAfter,
-		Workflow:          GetWorkflowId(ctx),
-		NodeId:            a.node.Id,
+		WorkflowId:        GetWorkflowId(ctx),
+		WorkflowNodeId:    a.node.Id,
 	}
 
 	if err := a.outputRepo.Save(ctx, output, certificateRecord, func(id string) error {
 		if certificateRecord != nil {
-			certificateRecord.Output = id
+			certificateRecord.WorkflowOutputId = id
 		}
 
 		return nil

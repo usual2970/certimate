@@ -12,7 +12,7 @@ import ModalForm from "@/components/core/ModalForm";
 import MultipleInput from "@/components/core/MultipleInput";
 import { usePanel } from "../PanelProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { ACCESS_PROVIDER_USAGES, accessProvidersMap } from "@/domain/access";
+import { ACCESS_USAGES, accessProvidersMap } from "@/domain/access";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useContactStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -163,7 +163,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
                 }
                 onSubmit={(record) => {
                   const provider = accessProvidersMap.get(record.configType);
-                  if (ACCESS_PROVIDER_USAGES.ALL === provider?.usage || ACCESS_PROVIDER_USAGES.APPLY === provider?.usage) {
+                  if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
                     formInst.setFieldValue("access", record.id);
                   }
                 }}
@@ -176,7 +176,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
             placeholder={t("workflow.nodes.apply.form.access.placeholder")}
             filter={(record) => {
               const provider = accessProvidersMap.get(record.configType);
-              return ACCESS_PROVIDER_USAGES.ALL === provider?.usage || ACCESS_PROVIDER_USAGES.APPLY === provider?.usage;
+              return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
             }}
           />
         </Form.Item>

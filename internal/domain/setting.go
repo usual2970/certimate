@@ -3,21 +3,18 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 )
 
-type Setting struct {
-	ID      string    `json:"id"`
-	Name    string    `json:"name"`
-	Content string    `json:"content"`
-	Created time.Time `json:"created"`
-	Updated time.Time `json:"updated"`
+type Settings struct {
+	Meta
+	Name    string `json:"name" db:"name"`
+	Content string `json:"content" db:"content"`
 }
 
-type ChannelsConfig map[string]map[string]any
+type NotifyChannelsConfig map[string]map[string]any
 
-func (s *Setting) GetChannelContent(channel string) (map[string]any, error) {
-	conf := &ChannelsConfig{}
+func (s *Settings) GetChannelContent(channel string) (map[string]any, error) {
+	conf := &NotifyChannelsConfig{}
 	if err := json.Unmarshal([]byte(s.Content), conf); err != nil {
 		return nil, err
 	}

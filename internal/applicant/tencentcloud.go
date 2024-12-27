@@ -20,8 +20,8 @@ func NewTencentCloudApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *tencentcloudApplicant) Apply() (*Certificate, error) {
-	access := &domain.TencentAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.TencentCloudAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := tencentcloud.NewDefaultConfig()
 	config.SecretID = access.SecretId

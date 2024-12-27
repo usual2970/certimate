@@ -21,8 +21,8 @@ func NewPowerDNSApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *powerdnsApplicant) Apply() (*Certificate, error) {
-	access := &domain.PdnsAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.PowerDNSAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := pdns.NewDefaultConfig()
 	host, _ := url.Parse(access.ApiUrl)

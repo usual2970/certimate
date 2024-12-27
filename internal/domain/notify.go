@@ -1,5 +1,7 @@
 package domain
 
+type NotifyChannelType string
+
 /*
 消息通知渠道常量值。
 
@@ -7,14 +9,14 @@ package domain
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	NotifyChannelBark       = "bark"
-	NotifyChannelDingtalk   = "dingtalk"
-	NotifyChannelEmail      = "email"
-	NotifyChannelLark       = "lark"
-	NotifyChannelServerChan = "serverchan"
-	NotifyChannelTelegram   = "telegram"
-	NotifyChannelWebhook    = "webhook"
-	NotifyChannelWeCom      = "wecom"
+	NOTIFY_CHANNEL_BARK       = NotifyChannelType("bark")
+	NOTIFY_CHANNEL_DINGTALK   = NotifyChannelType("dingtalk")
+	NOTIFY_CHANNEL_EMAIL      = NotifyChannelType("email")
+	NOTIFY_CHANNEL_LARK       = NotifyChannelType("lark")
+	NOTIFY_CHANNEL_SERVERCHAN = NotifyChannelType("serverchan")
+	NOTIFY_CHANNEL_TELEGRAM   = NotifyChannelType("telegram")
+	NOTIFY_CHANNEL_WEBHOOK    = NotifyChannelType("webhook")
+	NOTIFY_CHANNEL_WECOM      = NotifyChannelType("wecom")
 )
 
 type NotifyTestPushReq struct {

@@ -20,8 +20,8 @@ func NewNamesiloApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *namesiloApplicant) Apply() (*Certificate, error) {
-	access := &domain.NameSiloAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.NameSiloAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := namesilo.NewDefaultConfig()
 	config.APIKey = access.ApiKey

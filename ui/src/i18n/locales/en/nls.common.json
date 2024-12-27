@@ -11,13 +11,6 @@
   "common.button.save": "Save",
   "common.button.submit": "Submit",
 
-  "common.text.domain": "Domain",
-  "common.text.domain.empty": "No Domain",
-  "common.text.ip": "IP Address",
-  "common.text.ip.empty": "No IP address",
-  "common.text.dns": "Domain Name Server",
-  "common.text.dns.empty": "No DNS",
-  "common.text.ca": "Certificate Authority",
   "common.text.copied": "Copied",
   "common.text.nodata": "No data available",
   "common.text.operation_succeeded": "Operation succeeded",
@@ -30,18 +23,12 @@
   "common.menu.logout": "Logout",
   "common.menu.document": "Document",
 
-  "common.pagination.next": "Next",
-  "common.pagination.prev": "Previous",
-  "common.pagination.more": "More pages",
-
   "common.theme.light": "Light",
   "common.theme.dark": "Dark",
   "common.theme.system": "System",
 
   "common.errmsg.string_max": "Please enter no more than {{max}} characters",
-  "common.errmsg.email_empty": "Please enter email",
   "common.errmsg.email_invalid": "Please enter a valid email address",
-  "common.errmsg.email_duplicate": "Email already exists",
   "common.errmsg.domain_invalid": "Please enter domain",
   "common.errmsg.host_invalid": "Please enter a valid domain name or IP",
   "common.errmsg.port_invalid": "Please enter a valid port",

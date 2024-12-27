@@ -53,7 +53,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 	// 部署过但是证书更新了，重新部署
 	// 部署过且证书未更新，直接返回
 
-	if d.deployed(output) && cert.Created.Before(output.Updated) {
+	if d.deployed(output) && cert.CreatedAt.Before(output.UpdatedAt) {
 		d.AddOutput(ctx, d.node.Name, "已部署过且证书未更新")
 		return nil
 	}

@@ -20,8 +20,8 @@ func NewHuaweiCloudApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *huaweicloudApplicant) Apply() (*Certificate, error) {
-	access := &domain.HuaweiCloudAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.HuaweiCloudAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	region := access.Region
 	if region == "" {

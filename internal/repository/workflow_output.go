@@ -42,9 +42,9 @@ func (w *WorkflowOutputRepository) Get(ctx context.Context, nodeId string) (*dom
 
 	rs := &domain.WorkflowOutput{
 		Meta: domain.Meta{
-			Id:      record.GetId(),
-			Created: record.GetCreated().Time(),
-			Updated: record.GetUpdated().Time(),
+			Id:        record.GetId(),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
 		},
 		Workflow: record.GetString("workflow"),
 		NodeId:   record.GetString("nodeId"),
@@ -72,20 +72,20 @@ func (w *WorkflowOutputRepository) GetCertificate(ctx context.Context, nodeId st
 
 	rs := &domain.Certificate{
 		Meta: domain.Meta{
-			Id:      record.GetId(),
-			Created: record.GetDateTime("created").Time(),
-			Updated: record.GetDateTime("updated").Time(),
+			Id:        record.GetId(),
+			CreatedAt: record.GetDateTime("created").Time(),
+			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		Certificate:       record.GetString("certificate"),
 		PrivateKey:        record.GetString("privateKey"),
 		IssuerCertificate: record.GetString("issuerCertificate"),
 		SAN:               record.GetString("san"),
-		Output:            record.GetString("output"),
+		WorkflowOutputId:  record.GetString("output"),
 		ExpireAt:          record.GetDateTime("expireAt").Time(),
 		CertUrl:           record.GetString("certUrl"),
 		CertStableUrl:     record.GetString("certStableUrl"),
-		Workflow:          record.GetString("workflow"),
-		NodeId:            record.GetString("nodeId"),
+		WorkflowId:        record.GetString("workflow"),
+		WorkflowNodeId:    record.GetString("nodeId"),
 	}
 	return rs, nil
 }
@@ -132,12 +132,12 @@ func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 		certRecord.Set("privateKey", certificate.PrivateKey)
 		certRecord.Set("issuerCertificate", certificate.IssuerCertificate)
 		certRecord.Set("san", certificate.SAN)
-		certRecord.Set("output", certificate.Output)
+		certRecord.Set("output", certificate.WorkflowOutputId)
 		certRecord.Set("expireAt", certificate.ExpireAt)
 		certRecord.Set("certUrl", certificate.CertUrl)
 		certRecord.Set("certStableUrl", certificate.CertStableUrl)
-		certRecord.Set("workflow", certificate.Workflow)
-		certRecord.Set("nodeId", certificate.NodeId)
+		certRecord.Set("workflow", certificate.WorkflowId)
+		certRecord.Set("nodeId", certificate.WorkflowNodeId)
 
 		if err := app.GetApp().Dao().SaveRecord(certRecord); err != nil {
 			return err

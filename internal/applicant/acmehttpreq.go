@@ -21,8 +21,8 @@ func NewACMEHttpReqApplicant(option *ApplyOption) Applicant {
 }
 
 func (a *acmeHttpReqApplicant) Apply() (*Certificate, error) {
-	access := &domain.HttpreqAccess{}
-	json.Unmarshal([]byte(a.option.Access), access)
+	access := &domain.ACMEHttpReqAccessConfig{}
+	json.Unmarshal([]byte(a.option.AccessConfig), access)
 
 	config := httpreq.NewDefaultConfig()
 	endpoint, _ := url.Parse(access.Endpoint)
