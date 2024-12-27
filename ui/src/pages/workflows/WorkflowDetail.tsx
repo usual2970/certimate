@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
@@ -8,11 +8,12 @@ import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutli
 import { z } from "zod";
 
 import Show from "@/components/Show";
+import ModalForm from "@/components/core/ModalForm";
 import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { useAntdForm, useTriggerElement, useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { remove as removeWorkflow } from "@/repository/workflow";
@@ -125,7 +126,7 @@ const WorkflowDetail = () => {
           title={workflow.name}
           extra={[
             <Button.Group key="actions">
-              <WorkflowBaseInfoModalForm initialValues={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
+              <WorkflowBaseInfoModalForm data={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
 
               <Button onClick={handleEnableChange}>{workflow.enabled ? t("common.button.disable") : t("common.button.enable")}</Button>
 
@@ -182,93 +183,70 @@ const WorkflowDetail = () => {
   );
 };
 
-const WorkflowBaseInfoModalForm = memo(
-  ({
-    initialValues,
-    trigger,
-    onFinish,
-  }: {
-    initialValues: Pick<WorkflowModel, "name" | "description">;
-    trigger?: React.ReactNode;
-    onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
-  }) => {
-    const { t } = useTranslation();
+const WorkflowBaseInfoModalForm = ({
+  data,
+  trigger,
+  onFinish,
+}: {
+  data: Pick<WorkflowModel, "name" | "description">;
+  trigger?: React.ReactNode;
+  onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
+}) => {
+  const { t } = useTranslation();
 
-    const [open, setOpen] = useState(false);
+  const formSchema = z.object({
+    name: z
+      .string({ message: t("workflow.baseinfo.form.name.placeholder") })
+      .trim()
+      .min(1, t("workflow.baseinfo.form.name.placeholder"))
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    description: z
+      .string({ message: t("workflow.baseinfo.form.description.placeholder") })
+      .trim()
+      .min(0, t("workflow.baseinfo.form.description.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .nullish(),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+    ...formApi
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: data,
+    onSubmit: async () => {
+      const ret = await onFinish?.(formInst.getFieldsValue(true));
+      if (ret != null && !ret) return false;
+      return true;
+    },
+  });
 
-    const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const handleFinish = async () => {
+    return formApi.submit();
+  };
 
-    const formSchema = z.object({
-      name: z
-        .string({ message: t("workflow.baseinfo.form.name.placeholder") })
-        .trim()
-        .min(1, t("workflow.baseinfo.form.name.placeholder"))
-        .max(64, t("common.errmsg.string_max", { max: 64 })),
-      description: z
-        .string({ message: t("workflow.baseinfo.form.description.placeholder") })
-        .trim()
-        .min(0, t("workflow.baseinfo.form.description.placeholder"))
-        .max(256, t("common.errmsg.string_max", { max: 256 }))
-        .nullish(),
-    });
-    const formRule = createSchemaFieldRule(formSchema);
-    const {
-      form: formInst,
-      formPending,
-      formProps,
-      ...formApi
-    } = useAntdForm<z.infer<typeof formSchema>>({
-      initialValues: initialValues,
-      onSubmit: async () => {
-        const ret = await onFinish?.(formInst.getFieldsValue(true));
-        if (ret != null && !ret) return;
+  return (
+    <ModalForm
+      disabled={formPending}
+      layout="vertical"
+      form={formInst}
+      modalProps={{ destroyOnClose: true }}
+      okText={t("common.button.save")}
+      title={t(`workflow.baseinfo.modal.title`)}
+      trigger={trigger}
+      width={480}
+      {...formProps}
+      onFinish={handleFinish}
+    >
+      <Form.Item name="name" label={t("workflow.baseinfo.form.name.label")} rules={[formRule]}>
+        <Input placeholder={t("workflow.baseinfo.form.name.placeholder")} />
+      </Form.Item>
 
-        setOpen(false);
-      },
-    });
-
-    const handleClickOk = async () => {
-      formApi.submit();
-    };
-
-    const handleClickCancel = () => {
-      if (formPending) return Promise.reject();
-
-      setOpen(false);
-    };
-
-    return (
-      <>
-        {triggerDom}
-
-        <Modal
-          afterClose={() => setOpen(false)}
-          cancelButtonProps={{ disabled: formPending }}
-          closable
-          confirmLoading={formPending}
-          destroyOnClose
-          okText={t("common.button.save")}
-          open={open}
-          title={t(`workflow.baseinfo.modal.title`)}
-          width={480}
-          onOk={handleClickOk}
-          onCancel={handleClickCancel}
-        >
-          <div className="pt-4 pb-2">
-            <Form {...formProps} form={formInst} layout="vertical">
-              <Form.Item name="name" label={t("workflow.baseinfo.form.name.label")} rules={[formRule]}>
-                <Input placeholder={t("workflow.baseinfo.form.name.placeholder")} />
-              </Form.Item>
-
-              <Form.Item name="description" label={t("workflow.baseinfo.form.description.label")} rules={[formRule]}>
-                <Input placeholder={t("workflow.baseinfo.form.description.placeholder")} />
-              </Form.Item>
-            </Form>
-          </div>
-        </Modal>
-      </>
-    );
-  }
-);
-
+      <Form.Item name="description" label={t("workflow.baseinfo.form.description.label")} rules={[formRule]}>
+        <Input placeholder={t("workflow.baseinfo.form.description.placeholder")} />
+      </Form.Item>
+    </ModalForm>
+  );
+};
 export default WorkflowDetail;

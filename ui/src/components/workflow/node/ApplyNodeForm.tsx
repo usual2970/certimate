@@ -119,9 +119,8 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
           />
           <FormFieldDomainsModalForm
             data={fieldDomains}
-            disabled={formPending}
             trigger={
-              <Button>
+              <Button disabled={formPending}>
                 <FormOutlinedIcon />
               </Button>
             }
@@ -215,9 +214,8 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
           />
           <FormFieldNameserversModalForm
             data={fieldNameservers}
-            disabled={formPending}
             trigger={
-              <Button>
+              <Button disabled={formPending}>
                 <FormOutlinedIcon />
               </Button>
             }
@@ -330,7 +328,6 @@ const FormFieldEmailSelect = ({
 
 const FormFieldDomainsModalForm = ({
   data,
-  disabled,
   trigger,
   onFinish,
 }: {
@@ -371,7 +368,6 @@ const FormFieldDomainsModalForm = ({
 
   return (
     <ModalForm
-      disabled={disabled}
       layout="vertical"
       form={formInst}
       initialValues={model}
@@ -389,17 +385,7 @@ const FormFieldDomainsModalForm = ({
   );
 };
 
-const FormFieldNameserversModalForm = ({
-  data,
-  disabled,
-  trigger,
-  onFinish,
-}: {
-  data: string;
-  disabled?: boolean;
-  trigger?: React.ReactNode;
-  onFinish?: (data: string) => void;
-}) => {
+const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: string; trigger?: React.ReactNode; onFinish?: (data: string) => void }) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -432,7 +418,6 @@ const FormFieldNameserversModalForm = ({
 
   return (
     <ModalForm
-      disabled={disabled}
       layout="vertical"
       form={formInst}
       initialValues={model}

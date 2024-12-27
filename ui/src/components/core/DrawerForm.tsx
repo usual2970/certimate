@@ -1,4 +1,5 @@
-﻿import { useControllableValue } from "ahooks";
+﻿import { useTranslation } from "react-i18next";
+import { useControllableValue } from "ahooks";
 import { Button, Drawer, Form, Space, type DrawerProps, type FormProps, type ModalProps } from "antd";
 
 import { useAntdForm, useTriggerElement } from "@/hooks";
@@ -25,14 +26,20 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
   className,
   style,
   children,
+  cancelText,
+  cancelButtonProps,
   form,
   drawerProps,
+  okText,
+  okButtonProps,
   title,
   trigger,
   width,
   onFinish,
   ...props
 }: DrawerFormProps<T>) => {
+  const { t } = useTranslation();
+
   const [open, setOpen] = useControllableValue<boolean>(props, {
     valuePropName: "open",
     defaultValuePropName: "defaultOpen",
@@ -76,9 +83,11 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
       <Drawer
         footer={
           <Space>
-            <Button onClick={handleCancelClick}>1</Button>
-            <Button type="primary" loading={formPending} onClick={handleOkClick}>
-              2
+            <Button {...cancelButtonProps} onClick={handleCancelClick}>
+              {cancelText || t("common.button.cancel")}
+            </Button>
+            <Button type="primary" loading={formPending} {...okButtonProps} onClick={handleOkClick}>
+              {okText || t("common.button.ok")}
             </Button>
           </Space>
         }
