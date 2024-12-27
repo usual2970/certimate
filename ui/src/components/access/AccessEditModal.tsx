@@ -1,8 +1,9 @@
-import { cloneElement, useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { Modal, notification } from "antd";
 
+import { useTriggerElement } from "@/hooks";
 import { type AccessModel } from "@/domain/access";
 import { useAccessStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
@@ -13,7 +14,7 @@ export type AccessEditModalProps = {
   loading?: boolean;
   open?: boolean;
   preset: AccessEditFormProps["preset"];
-  trigger?: React.ReactElement;
+  trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
   onSubmit?: (record: AccessModel) => void;
 };
@@ -31,19 +32,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
     trigger: "onOpenChange",
   });
 
-  const triggerEl = useMemo(() => {
-    if (!trigger) {
-      return null;
-    }
-
-    return cloneElement(trigger, {
-      ...trigger.props,
-      onClick: () => {
-        setOpen(true);
-        trigger.props?.onClick?.();
-      },
-    });
-  }, [trigger, setOpen]);
+  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   const formRef = useRef<AccessEditFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
@@ -94,7 +83,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
     <>
       {NotificationContextHolder}
 
-      {triggerEl}
+      {triggerDom}
 
       <Modal
         afterClose={() => setOpen(false)}

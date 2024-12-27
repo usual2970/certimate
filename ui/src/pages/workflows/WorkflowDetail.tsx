@@ -1,4 +1,4 @@
-import { cloneElement, memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
@@ -12,7 +12,7 @@ import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useTriggerElement, useZustandShallowSelector } from "@/hooks";
 import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { remove as removeWorkflow } from "@/repository/workflow";
@@ -189,26 +189,14 @@ const WorkflowBaseInfoModalForm = memo(
     onFinish,
   }: {
     initialValues: Pick<WorkflowModel, "name" | "description">;
-    trigger?: React.ReactElement;
+    trigger?: React.ReactNode;
     onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
   }) => {
     const { t } = useTranslation();
 
     const [open, setOpen] = useState(false);
 
-    const triggerEl = useMemo(() => {
-      if (!trigger) {
-        return null;
-      }
-
-      return cloneElement(trigger, {
-        ...trigger.props,
-        onClick: () => {
-          setOpen(true);
-          trigger.props?.onClick?.();
-        },
-      });
-    }, [trigger, setOpen]);
+    const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
     const formSchema = z.object({
       name: z
@@ -251,7 +239,7 @@ const WorkflowBaseInfoModalForm = memo(
 
     return (
       <>
-        {triggerEl}
+        {triggerDom}
 
         <Modal
           afterClose={() => setOpen(false)}

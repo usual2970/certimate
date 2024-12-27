@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, Button, Divider, Form, Input, InputNumber, Select, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
+import { AutoComplete, Button, Divider, Form, Input, Select, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import z from "zod";
@@ -61,7 +61,12 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         { message: t("common.errmsg.host_invalid") }
       )
       .nullish(),
-    timeout: z.number().gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder")).nullish(),
+    timeout: z
+      .number()
+      .int()
+      .gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder"))
+      .transform((v) => +v)
+      .nullish(),
     disableFollowCNAME: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -161,7 +166,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.nameservers.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow.nodes.apply.form.nameservers.placeholder")} />
+        <Input allowClear placeholder={t("workflow.nodes.apply.form.nameservers.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -170,8 +175,9 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.propagation_timeout.tooltip") }}></span>}
       >
-        <InputNumber
-          className="w-full"
+        <Input
+          type="number"
+          allowClear
           min={0}
           max={3600}
           placeholder={t("workflow.nodes.apply.form.propagation_timeout.placeholder")}

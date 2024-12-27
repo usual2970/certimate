@@ -4,13 +4,14 @@ import { useControllableValue } from "ahooks";
 import { Alert, Drawer } from "antd";
 
 import Show from "@/components/Show";
+import { useTriggerElement } from "@/hooks";
 import { type WorkflowRunModel } from "@/domain/workflowRun";
 
 export type WorkflowRunDetailDrawerProps = {
   data?: WorkflowRunModel;
   loading?: boolean;
   open?: boolean;
-  trigger?: React.ReactElement;
+  trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -23,23 +24,11 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
     trigger: "onOpenChange",
   });
 
-  const triggerEl = useMemo(() => {
-    if (!trigger) {
-      return null;
-    }
-
-    return cloneElement(trigger, {
-      ...trigger.props,
-      onClick: () => {
-        setOpen(true);
-        trigger.props?.onClick?.();
-      },
-    });
-  }, [trigger, setOpen]);
+  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   return (
     <>
-      {triggerEl}
+      {triggerDom}
 
       <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>

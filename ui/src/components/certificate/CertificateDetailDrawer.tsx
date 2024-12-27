@@ -1,16 +1,16 @@
-import { cloneElement, useMemo } from "react";
 import { useControllableValue } from "ahooks";
 import { Drawer } from "antd";
 
 import Show from "@/components/Show";
 import CertificateDetail from "./CertificateDetail";
+import { useTriggerElement } from "@/hooks";
 import { type CertificateModel } from "@/domain/certificate";
 
 export type CertificateDetailDrawerProps = {
   data?: CertificateModel;
   loading?: boolean;
   open?: boolean;
-  trigger?: React.ReactElement;
+  trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
 };
 
@@ -21,23 +21,11 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
     trigger: "onOpenChange",
   });
 
-  const triggerEl = useMemo(() => {
-    if (!trigger) {
-      return null;
-    }
-
-    return cloneElement(trigger, {
-      ...trigger.props,
-      onClick: () => {
-        setOpen(true);
-        trigger.props?.onClick?.();
-      },
-    });
-  }, [trigger, setOpen]);
+  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   return (
     <>
-      {triggerEl}
+      {triggerDom}
 
       <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
