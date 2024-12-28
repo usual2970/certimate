@@ -11,6 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerScm "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
@@ -30,7 +31,7 @@ type HuaweiCloudCDNDeployerConfig struct {
 
 type HuaweiCloudCDNDeployer struct {
 	config      *HuaweiCloudCDNDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *huaweicloudsdk.Client
 	sslUploader uploader.Uploader
 }
@@ -38,10 +39,10 @@ type HuaweiCloudCDNDeployer struct {
 var _ deployer.Deployer = (*HuaweiCloudCDNDeployer)(nil)
 
 func New(config *HuaweiCloudCDNDeployerConfig) (*HuaweiCloudCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger deployer.Logger) (*HuaweiCloudCDNDeployer, error) {
+func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger logger.Logger) (*HuaweiCloudCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

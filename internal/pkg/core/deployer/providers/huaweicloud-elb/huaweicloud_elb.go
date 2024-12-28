@@ -17,6 +17,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerElb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
@@ -44,7 +45,7 @@ type HuaweiCloudELBDeployerConfig struct {
 
 type HuaweiCloudELBDeployer struct {
 	config      *HuaweiCloudELBDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *hcElb.ElbClient
 	sslUploader uploader.Uploader
 }
@@ -52,10 +53,10 @@ type HuaweiCloudELBDeployer struct {
 var _ deployer.Deployer = (*HuaweiCloudELBDeployer)(nil)
 
 func New(config *HuaweiCloudELBDeployerConfig) (*HuaweiCloudELBDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger deployer.Logger) (*HuaweiCloudELBDeployer, error) {
+func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger logger.Logger) (*HuaweiCloudELBDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

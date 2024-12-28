@@ -13,6 +13,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -25,17 +26,17 @@ type WebhookDeployerConfig struct {
 
 type WebhookDeployer struct {
 	config     *WebhookDeployerConfig
-	logger     deployer.Logger
+	logger     logger.Logger
 	httpClient *httpclient.Client
 }
 
 var _ deployer.Deployer = (*WebhookDeployer)(nil)
 
 func New(config *WebhookDeployerConfig) (*WebhookDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *WebhookDeployerConfig, logger deployer.Logger) (*WebhookDeployer, error) {
+func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*WebhookDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -86,7 +87,7 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 	d.logger.Logt("Webhook Response", string(respBody))
 
 	return &deployer.DeployResult{
-		DeploymentData: map[string]any{
+		ExtendedData: map[string]any{
 			"responseText": string(respBody),
 		},
 	}, nil

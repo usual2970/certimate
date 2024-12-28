@@ -30,11 +30,12 @@ import (
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	providerVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-func createDeployer(target string, accessConfig string, deployConfig map[string]any) (deployer.Deployer, deployer.Logger, error) {
-	logger := deployer.NewDefaultLogger()
+func createDeployer(target string, accessConfig string, deployConfig map[string]any) (deployer.Deployer, logger.Logger, error) {
+	logger := logger.NewDefaultLogger()
 
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。

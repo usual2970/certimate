@@ -12,6 +12,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type AliyunCDNDeployerConfig struct {
@@ -25,17 +26,17 @@ type AliyunCDNDeployerConfig struct {
 
 type AliyunCDNDeployer struct {
 	config    *AliyunCDNDeployerConfig
-	logger    deployer.Logger
+	logger    logger.Logger
 	sdkClient *aliyunCdn.Client
 }
 
 var _ deployer.Deployer = (*AliyunCDNDeployer)(nil)
 
 func New(config *AliyunCDNDeployerConfig) (*AliyunCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *AliyunCDNDeployerConfig, logger deployer.Logger) (*AliyunCDNDeployer, error) {
+func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*AliyunCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

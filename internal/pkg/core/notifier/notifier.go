@@ -19,5 +19,5 @@ type Notifier interface {
 
 // 表示通知发送结果的数据结构。
 type NotifyResult struct {
-	NotificationData map[string]any `json:"notificationData,omitempty"`
+	ExtendedData map[string]any `json:"extendedData,omitempty"`
 }

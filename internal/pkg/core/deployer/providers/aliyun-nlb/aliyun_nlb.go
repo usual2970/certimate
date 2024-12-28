@@ -12,6 +12,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerCas "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
@@ -35,7 +36,7 @@ type AliyunNLBDeployerConfig struct {
 
 type AliyunNLBDeployer struct {
 	config      *AliyunNLBDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *aliyunNlb.Client
 	sslUploader uploader.Uploader
 }
@@ -43,10 +44,10 @@ type AliyunNLBDeployer struct {
 var _ deployer.Deployer = (*AliyunNLBDeployer)(nil)
 
 func New(config *AliyunNLBDeployerConfig) (*AliyunNLBDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *AliyunNLBDeployerConfig, logger deployer.Logger) (*AliyunNLBDeployer, error) {
+func NewWithLogger(config *AliyunNLBDeployerConfig, logger logger.Logger) (*AliyunNLBDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

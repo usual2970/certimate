@@ -13,6 +13,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -28,7 +29,7 @@ type TencentCloudCDNDeployerConfig struct {
 
 type TencentCloudCDNDeployer struct {
 	config      *TencentCloudCDNDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClients  *tencentCloudCDNDeployerSdkClients
 	sslUploader uploader.Uploader
 }
@@ -41,10 +42,10 @@ type tencentCloudCDNDeployerSdkClients struct {
 }
 
 func New(config *TencentCloudCDNDeployerConfig) (*TencentCloudCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *TencentCloudCDNDeployerConfig, logger deployer.Logger) (*TencentCloudCDNDeployer, error) {
+func NewWithLogger(config *TencentCloudCDNDeployerConfig, logger logger.Logger) (*TencentCloudCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

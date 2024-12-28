@@ -1,9 +1,9 @@
-﻿package deployer_test
+﻿package logger_test
 
 import (
 	"testing"
 
-	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 /*
@@ -13,7 +13,7 @@ Shell command to run this test:
 */
 func TestLogger(t *testing.T) {
 	t.Run("Logger_Appendt", func(t *testing.T) {
-		logger := deployer.NewDefaultLogger()
+		logger := logger.NewDefaultLogger()
 
 		logger.Logt("test")
 		logger.Logt("test_nil", nil)
@@ -34,7 +34,7 @@ func TestLogger(t *testing.T) {
 	})
 
 	t.Run("Logger_Appendf", func(t *testing.T) {
-		logger := deployer.NewDefaultLogger()
+		logger := logger.NewDefaultLogger()
 
 		logger.Logf("test")
 		logger.Logf("test_nil: %v", nil)

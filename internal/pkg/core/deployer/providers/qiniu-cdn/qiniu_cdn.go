@@ -9,6 +9,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerQiniu "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 	qiniusdk "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
@@ -25,7 +26,7 @@ type QiniuCDNDeployerConfig struct {
 
 type QiniuCDNDeployer struct {
 	config      *QiniuCDNDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *qiniusdk.Client
 	sslUploader uploader.Uploader
 }
@@ -33,10 +34,10 @@ type QiniuCDNDeployer struct {
 var _ deployer.Deployer = (*QiniuCDNDeployer)(nil)
 
 func New(config *QiniuCDNDeployerConfig) (*QiniuCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *QiniuCDNDeployerConfig, logger deployer.Logger) (*QiniuCDNDeployer, error) {
+func NewWithLogger(config *QiniuCDNDeployerConfig, logger logger.Logger) (*QiniuCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -57,16 +58,16 @@ type SshDeployerConfig struct {
 
 type SshDeployer struct {
 	config *SshDeployerConfig
-	logger deployer.Logger
+	logger logger.Logger
 }
 
 var _ deployer.Deployer = (*SshDeployer)(nil)
 
 func New(config *SshDeployerConfig) (*SshDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *SshDeployerConfig, logger deployer.Logger) (*SshDeployer, error) {
+func NewWithLogger(config *SshDeployerConfig, logger logger.Logger) (*SshDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

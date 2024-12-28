@@ -11,6 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/fs"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
@@ -45,16 +46,16 @@ type LocalDeployerConfig struct {
 
 type LocalDeployer struct {
 	config *LocalDeployerConfig
-	logger deployer.Logger
+	logger logger.Logger
 }
 
 var _ deployer.Deployer = (*LocalDeployer)(nil)
 
 func New(config *LocalDeployerConfig) (*LocalDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *LocalDeployerConfig, logger deployer.Logger) (*LocalDeployer, error) {
+func NewWithLogger(config *LocalDeployerConfig, logger logger.Logger) (*LocalDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

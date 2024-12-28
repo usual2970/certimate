@@ -13,6 +13,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -31,16 +32,16 @@ type K8sSecretDeployerConfig struct {
 
 type K8sSecretDeployer struct {
 	config *K8sSecretDeployerConfig
-	logger deployer.Logger
+	logger logger.Logger
 }
 
 var _ deployer.Deployer = (*K8sSecretDeployer)(nil)
 
 func New(config *K8sSecretDeployerConfig) (*K8sSecretDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *K8sSecretDeployerConfig, logger deployer.Logger) (*K8sSecretDeployer, error) {
+func NewWithLogger(config *K8sSecretDeployerConfig, logger logger.Logger) (*K8sSecretDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

@@ -10,6 +10,7 @@ import (
 	veCdn "github.com/volcengine/volc-sdk-golang/service/cdn"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerCdn "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
 )
@@ -25,7 +26,7 @@ type VolcEngineCDNDeployerConfig struct {
 
 type VolcEngineCDNDeployer struct {
 	config      *VolcEngineCDNDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *veCdn.CDN
 	sslUploader uploader.Uploader
 }
@@ -33,10 +34,10 @@ type VolcEngineCDNDeployer struct {
 var _ deployer.Deployer = (*VolcEngineCDNDeployer)(nil)
 
 func New(config *VolcEngineCDNDeployerConfig) (*VolcEngineCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger deployer.Logger) (*VolcEngineCDNDeployer, error) {
+func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*VolcEngineCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

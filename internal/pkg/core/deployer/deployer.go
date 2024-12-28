@@ -20,5 +20,5 @@ type Deployer interface {
 
 // 表示证书部署结果的数据结构。
 type DeployResult struct {
-	DeploymentData map[string]any `json:"deploymentData,omitempty"`
+	ExtendedData map[string]any `json:"extendedData,omitempty"`
 }

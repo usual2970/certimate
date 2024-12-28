@@ -9,6 +9,7 @@ import (
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -136,7 +137,7 @@ func newWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, 
 // TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
 type proxyDeployer struct {
 	option   *DeployerOption
-	logger   deployer.Logger
+	logger   logger.Logger
 	deployer deployer.Deployer
 }
 
