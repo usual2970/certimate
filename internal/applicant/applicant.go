@@ -58,7 +58,7 @@ type Certificate struct {
 
 type ApplyOption struct {
 	Email              string `json:"email"`
-	Domain             string `json:"subjectAltNames"`
+	SubjectAltNames    string `json:"subjectAltNames"`
 	AccessConfig       string `json:"accessConfig"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
@@ -144,7 +144,7 @@ func Get(record *models.Record) (Applicant, error) {
 
 	option := &ApplyOption{
 		Email:              applyConfig.Email,
-		Domain:             record.GetString("domain"),
+		SubjectAltNames:    record.GetString("domain"),
 		AccessConfig:       access.GetString("config"),
 		KeyAlgorithm:       applyConfig.KeyAlgorithm,
 		Nameservers:        applyConfig.Nameservers,
@@ -166,7 +166,7 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 
 	applyConfig := &ApplyOption{
 		Email:              node.GetConfigString("email"),
-		Domain:             node.GetConfigString("domain"),
+		SubjectAltNames:    node.GetConfigString("domain"),
 		AccessConfig:       access.Config,
 		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
 		Nameservers:        node.GetConfigString("nameservers"),
@@ -276,7 +276,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		myUser.Registration = reg
 	}
 
-	domains := strings.Split(option.Domain, ";")
+	domains := strings.Split(option.SubjectAltNames, ";")
 	request := certificate.ObtainRequest{
 		Domains: domains,
 		Bundle:  true,

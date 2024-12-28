@@ -8,13 +8,13 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type SettingRepository struct{}
+type SettingsRepository struct{}
 
-func NewSettingRepository() *SettingRepository {
-	return &SettingRepository{}
+func NewSettingsRepository() *SettingsRepository {
+	return &SettingsRepository{}
 }
 
-func (s *SettingRepository) GetByName(ctx context.Context, name string) (*domain.Settings, error) {
+func (s *SettingsRepository) GetByName(ctx context.Context, name string) (*domain.Settings, error) {
 	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name={:name}", dbx.Params{"name": name})
 	if err != nil {
 		return nil, err

@@ -31,8 +31,8 @@ func (a *AccessRepository) GetById(ctx context.Context, id string) (*domain.Acce
 			UpdatedAt: record.GetTime("updated"),
 		},
 		Name:       record.GetString("name"),
-		Config:     record.GetString("config"),
 		ConfigType: record.GetString("configType"),
+		Config:     record.GetString("config"),
 		Usage:      record.GetString("usage"),
 	}
 	return rs, nil

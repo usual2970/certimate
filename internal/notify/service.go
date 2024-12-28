@@ -12,15 +12,15 @@ const (
 	notifyTestBody  = "欢迎使用 Certimate ，这是一条测试通知。"
 )
 
-type SettingRepository interface {
+type SettingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 type NotifyService struct {
-	settingRepo SettingRepository
+	settingRepo SettingsRepository
 }
 
-func NewNotifyService(settingRepo SettingRepository) *NotifyService {
+func NewNotifyService(settingRepo SettingsRepository) *NotifyService {
 	return &NotifyService{
 		settingRepo: settingRepo,
 	}
@@ -32,7 +32,7 @@ func (n *NotifyService) Test(ctx context.Context, req *domain.NotifyTestPushReq)
 		return fmt.Errorf("failed to get notify channels settings: %w", err)
 	}
 
-	channelConfig, err := setting.GetChannelContent(req.Channel)
+	channelConfig, err := setting.GetNotifyChannelConfig(req.Channel)
 	if err != nil {
 		return fmt.Errorf("failed to get notify channel \"%s\" config: %w", req.Channel, err)
 	}

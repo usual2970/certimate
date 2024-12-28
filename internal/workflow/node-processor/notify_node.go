@@ -21,7 +21,7 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	return &notifyNode{
 		node:        node,
 		Logger:      NewLogger(node),
-		settingRepo: repository.NewSettingRepository(),
+		settingRepo: repository.NewSettingsRepository(),
 	}
 }
 
@@ -35,7 +35,7 @@ func (n *notifyNode) Run(ctx context.Context) error {
 		return err
 	}
 
-	channelConfig, err := setting.GetChannelContent(n.node.GetConfigString("channel"))
+	channelConfig, err := setting.GetNotifyChannelConfig(n.node.GetConfigString("channel"))
 	if err != nil {
 		n.AddOutput(ctx, n.node.Name, "获取通知渠道配置失败", err.Error())
 		return err

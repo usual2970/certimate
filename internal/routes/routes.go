@@ -14,7 +14,7 @@ import (
 func Register(e *echo.Echo) {
 	group := e.Group("/api", apis.RequireAdminAuth())
 
-	notifyRepo := repository.NewSettingRepository()
+	notifyRepo := repository.NewSettingsRepository()
 	notifySvc := notify.NewNotifyService(notifyRepo)
 
 	workflowRepo := repository.NewWorkflowRepository()

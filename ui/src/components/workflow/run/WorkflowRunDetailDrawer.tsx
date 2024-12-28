@@ -30,7 +30,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
     <>
       {triggerDom}
 
-      <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={data?.id} width={640} onClose={() => setOpen(false)}>
+      <Drawer closable destroyOnClose open={open} loading={loading} placement="right" title={`runlog-${data?.id}`} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
           <Show when={data!.succeed}>
             <Alert showIcon type="success" message={t("workflow_run.props.status.succeeded")} />

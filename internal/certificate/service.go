@@ -18,7 +18,7 @@ const (
 )
 
 type CertificateRepository interface {
-	GetExpireSoon(ctx context.Context) ([]domain.Certificate, error)
+	ListExpireSoon(ctx context.Context) ([]domain.Certificate, error)
 }
 
 type certificateService struct {
@@ -35,7 +35,7 @@ func (s *certificateService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
 
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
-		certs, err := s.repo.GetExpireSoon(context.Background())
+		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetApp().Logger().Error("failed to get expire soon certificate", "err", err)
 			return
@@ -61,14 +61,14 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 	}
 
 	// 查询模板信息
-	settingRepo := repository.NewSettingRepository()
+	settingRepo := repository.NewSettingsRepository()
 	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
 
 	subject := defaultExpireSubject
 	message := defaultExpireMessage
 
 	if err == nil {
-		var templates *domain.NotifyTemplates
+		var templates *domain.NotifyTemplatesSettingsContent
 
 		json.Unmarshal([]byte(setting.Content), &templates)
 
