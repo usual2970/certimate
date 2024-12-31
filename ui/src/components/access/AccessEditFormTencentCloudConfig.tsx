@@ -29,14 +29,14 @@ const AccessEditFormTencentCloudConfig = ({ form, formName, disabled, initialVal
   const formSchema = z.object({
     secretId: z
       .string()
-      .trim()
       .min(1, t("access.form.tencentcloud_secret_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     secretKey: z
       .string()
-      .trim()
       .min(1, t("access.form.tencentcloud_secret_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

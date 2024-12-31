@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/button";
-import AddNode from "./AddNode";
-import { WorkflowBranchNode, WorkflowNode } from "@/domain/workflow";
-import NodeRender from "./NodeRender";
 import { memo } from "react";
-import { BrandNodeProps } from "./types";
-import { useWorkflowStore } from "@/stores/workflow";
-import { useZustandShallowSelector } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { Button } from "antd";
+
+import AddNode from "./AddNode";
+import NodeRender from "./NodeRender";
+import { useZustandShallowSelector } from "@/hooks";
+import { type WorkflowBranchNode, type WorkflowNode } from "@/domain/workflow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { type BrandNodeProps } from "./types";
 
 const BranchNode = memo(({ data }: BrandNodeProps) => {
   const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
@@ -27,12 +28,12 @@ const BranchNode = memo(({ data }: BrandNodeProps) => {
     <>
       <div className="border-t-[2px] border-b-[2px] relative flex gap-x-16 border-stone-200 bg-background">
         <Button
+          size="small"
+          variant="outlined"
           onClick={() => {
             addBranch(data.id);
           }}
-          size={"sm"}
-          variant={"outline"}
-          className="text-xs px-2 h-6 rounded-full absolute  -top-3 left-[50%] -translate-x-1/2 z-[1] dark:text-stone-200"
+          className="text-xs px-2 h-6 rounded-full absolute -top-3 left-[50%] -translate-x-1/2 z-[1] dark:text-stone-200"
         >
           {t("workflow.node.addBranch.label")}
         </Button>

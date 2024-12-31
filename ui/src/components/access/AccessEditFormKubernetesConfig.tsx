@@ -32,7 +32,6 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
     kubeConfig: z
       .string()
       .trim()
-      .min(0, t("access.form.k8s_kubeconfig.placeholder"))
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish(),
   });

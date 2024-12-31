@@ -26,10 +26,7 @@ const AccessEditFormWebhookConfig = ({ form, formName, disabled, initialValues, 
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    url: z
-      .string()
-      .min(1, { message: t("access.form.webhook_url.placeholder") })
-      .url({ message: t("common.errmsg.url_invalid") }),
+    url: z.string({ message: t("access.form.webhook_url.placeholder") }).url(t("common.errmsg.url_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

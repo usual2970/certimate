@@ -30,20 +30,19 @@ const AccessEditFormHuaweiCloudConfig = ({ form, formName, disabled, initialValu
   const formSchema = z.object({
     accessKeyId: z
       .string()
-      .trim()
       .min(1, t("access.form.huaweicloud_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     secretAccessKey: z
       .string()
-      .trim()
       .min(1, t("access.form.huaweicloud_secret_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     // TODO: 该字段仅用于申请证书，后续迁移到工作流表单中
     region: z
       .string()
-      .trim()
-      .min(0, t("access.form.huaweicloud_region.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

@@ -28,9 +28,9 @@ const AccessEditFormNameSiloConfig = ({ form, formName, disabled, initialValues,
   const formSchema = z.object({
     apiKey: z
       .string()
-      .trim()
       .min(1, t("access.form.namesilo_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

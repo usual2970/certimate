@@ -7,10 +7,7 @@ const NotifyChannelEditFormServerChanFields = () => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    url: z
-      .string({ message: t("settings.notification.channel.form.serverchan_url.placeholder") })
-      .min(1, t("settings.notification.channel.form.serverchan_url.placeholder"))
-      .url({ message: t("common.errmsg.url_invalid") }),
+    url: z.string({ message: t("settings.notification.channel.form.serverchan_url.placeholder") }).url(t("common.errmsg.url_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

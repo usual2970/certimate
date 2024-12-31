@@ -29,14 +29,14 @@ const AccessEditFormNameDotComConfig = ({ form, formName, disabled, initialValue
   const formSchema = z.object({
     username: z
       .string()
-      .trim()
       .min(1, t("access.form.namedotcom_username.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     apiToken: z
       .string()
-      .trim()
       .min(1, t("access.form.namedotcom_api_token.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

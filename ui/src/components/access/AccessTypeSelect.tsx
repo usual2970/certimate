@@ -2,7 +2,8 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, Space, Tag, Typography, type SelectProps } from "antd";
 
-import { ACCESS_USAGES, accessProvidersMap } from "@/domain/access";
+import { ACCESS_USAGES } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
 
 export type AccessTypeSelectProps = Omit<
   SelectProps,

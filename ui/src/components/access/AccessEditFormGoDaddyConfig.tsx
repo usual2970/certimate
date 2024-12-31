@@ -29,14 +29,14 @@ const AccessEditFormGoDaddyConfig = ({ form, formName, disabled, initialValues, 
   const formSchema = z.object({
     apiKey: z
       .string()
-      .trim()
       .min(1, t("access.form.godaddy_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     apiSecret: z
       .string()
-      .trim()
       .min(1, t("access.form.godaddy_api_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

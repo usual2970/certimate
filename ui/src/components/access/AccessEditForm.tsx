@@ -52,9 +52,9 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   const formSchema = z.object({
     name: z
       .string({ message: t("access.form.name.placeholder") })
-      .trim()
       .min(1, t("access.form.name.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     configType: z.nativeEnum(ACCESS_PROVIDERS, { message: t("access.form.type.placeholder") }),
     config: z.any(),
   });

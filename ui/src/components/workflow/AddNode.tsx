@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { Dropdown } from "antd";
 import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
 
@@ -9,8 +8,6 @@ import { type BrandNodeProps, type NodeProps } from "./types";
 import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
 
 const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
-  const { t } = useTranslation();
-
   const { addNode } = useWorkflowStore(useZustandShallowSelector(["addNode"]));
 
   const handleTypeSelected = (type: WorkflowNodeType, provider?: string) => {

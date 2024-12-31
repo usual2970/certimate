@@ -28,9 +28,9 @@ const AccessEditFormCloudflareConfig = ({ form, formName, disabled, initialValue
   const formSchema = z.object({
     dnsApiToken: z
       .string()
-      .trim()
       .min(1, t("access.form.cloudflare_dns_api_token.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

@@ -29,14 +29,14 @@ const AccessEditFormQiniuConfig = ({ form, formName, disabled, initialValues, on
   const formSchema = z.object({
     accessKey: z
       .string()
-      .trim()
       .min(1, t("access.form.qiniu_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     secretKey: z
       .string()
-      .trim()
       .min(1, t("access.form.qiniu_secret_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

@@ -34,9 +34,9 @@ const AccessEditFormVolcEngineConfig = ({ form, formName, disabled, initialValue
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
-      .trim()
       .min(1, t("access.form.volcengine_secret_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

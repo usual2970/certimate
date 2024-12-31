@@ -30,9 +30,9 @@ const AccessEditFormPowerDNSConfig = ({ form, formName, disabled, initialValues,
     apiUrl: z.string().url(t("common.errmsg.url_invalid")),
     apiKey: z
       .string()
-      .trim()
       .min(1, t("access.form.powerdns_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

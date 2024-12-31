@@ -25,23 +25,17 @@ const NotifyChannelEditFormEmailFields = () => {
       .string({ message: t("settings.notification.channel.form.email_password.placeholder") })
       .min(1, t("settings.notification.channel.form.email_password.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 })),
-    senderAddress: z
-      .string({ message: t("settings.notification.channel.form.email_sender_address.placeholder") })
-      .min(1, t("settings.notification.channel.form.email_sender_address.placeholder"))
-      .email({ message: t("common.errmsg.email_invalid") }),
-    receiverAddress: z
-      .string({ message: t("settings.notification.channel.form.email_receiver_address.placeholder") })
-      .min(1, t("settings.notification.channel.form.email_receiver_address.placeholder"))
-      .email({ message: t("common.errmsg.email_invalid") }),
+    senderAddress: z.string({ message: t("settings.notification.channel.form.email_sender_address.placeholder") }).email(t("common.errmsg.email_invalid")),
+    receiverAddress: z.string({ message: t("settings.notification.channel.form.email_receiver_address.placeholder") }).email(t("common.errmsg.email_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const form = Form.useFormInstance<z.infer<typeof formSchema>>();
+  const formInst = Form.useFormInstance<z.infer<typeof formSchema>>();
 
   const handleTLSSwitchChange = (checked: boolean) => {
-    const oldPort = form.getFieldValue("smtpPort");
+    const oldPort = formInst.getFieldValue("smtpPort");
     const newPort = checked && (oldPort == null || oldPort === 25) ? 465 : !checked && (oldPort == null || oldPort === 465) ? 25 : oldPort;
     if (newPort !== oldPort) {
-      form.setFieldValue("smtpPort", newPort);
+      formInst.setFieldValue("smtpPort", newPort);
     }
   };
 

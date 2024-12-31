@@ -29,14 +29,14 @@ const AccessEditFormAliyunConfig = ({ form, formName, disabled, initialValues, o
   const formSchema = z.object({
     accessKeyId: z
       .string()
-      .trim()
       .min(1, t("access.form.aliyun_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     accessKeySecret: z
       .string()
-      .trim()
       .min(1, t("access.form.aliyun_access_key_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

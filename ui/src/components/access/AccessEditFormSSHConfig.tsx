@@ -34,12 +34,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    host: z.string().refine(
-      (str) => {
-        return validDomainName(str) || validIPv4Address(str) || validIPv6Address(str);
-      },
-      { message: t("common.errmsg.host_invalid") }
-    ),
+    host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
     port: z.number().int().gte(1, t("common.errmsg.port_invalid")).lte(65535, t("common.errmsg.port_invalid")),
     username: z
       .string()
@@ -47,20 +42,17 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     password: z
       .string()
-      .min(0, "access.form.ssh_password.placeholder")
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .nullish(),
     key: z
       .string()
-      .min(0, "access.form.ssh_key.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish(),
     keyPassphrase: z
       .string()
-      .min(0, "access.form.ssh_key_passphrase.placeholder")
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish()
-      .and(z.string().refine((v) => !v || form.getFieldValue("key"), { message: t("access.form.ssh_key.placeholder") })),
+      .refine((v) => !v || form.getFieldValue("key"), t("access.form.ssh_key.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

@@ -7,10 +7,7 @@ const NotifyChannelEditFormLarkFields = () => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    webhookUrl: z
-      .string({ message: t("settings.notification.channel.form.lark_webhook_url.placeholder") })
-      .min(1, t("settings.notification.channel.form.lark_webhook_url.placeholder"))
-      .url({ message: t("common.errmsg.url_invalid") }),
+    webhookUrl: z.string({ message: t("settings.notification.channel.form.lark_webhook_url.placeholder") }).url(t("common.errmsg.url_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

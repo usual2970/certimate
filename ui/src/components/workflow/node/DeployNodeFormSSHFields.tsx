@@ -15,7 +15,7 @@ const DeployNodeFormSSHFields = () => {
 
   const formSchema = z.object({
     format: z.union([z.literal(FORMAT_PEM), z.literal(FORMAT_PFX), z.literal(FORMAT_JKS)], {
-      message: t("domain.deployment.form.ssh_format.placeholder"),
+      message: t("workflow_node.deploy.form.ssh_format.placeholder"),
     }),
     certPath: z
       .string()

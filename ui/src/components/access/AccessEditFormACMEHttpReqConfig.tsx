@@ -28,18 +28,16 @@ const AccessEditFormACMEHttpReqConfig = ({ form, formName, disabled, initialValu
 
   const formSchema = z.object({
     endpoint: z.string().url(t("common.errmsg.url_invalid")),
-    mode: z.string().min(0, t("access.form.acmehttpreq_mode.placeholder")).nullish(),
+    mode: z.string().nullish(),
     username: z
       .string()
-      .trim()
-      .min(0, t("access.form.acmehttpreq_username.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
       .nullish(),
     password: z
       .string()
-      .trim()
-      .min(0, t("access.form.acmehttpreq_password.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

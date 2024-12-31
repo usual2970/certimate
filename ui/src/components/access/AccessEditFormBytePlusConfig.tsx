@@ -34,9 +34,9 @@ const AccessEditFormBytePlusConfig = ({ form, formName, disabled, initialValues,
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretKey: z
       .string()
-      .trim()
       .min(1, t("access.form.byteplus_secret_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({

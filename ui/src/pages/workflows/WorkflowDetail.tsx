@@ -197,14 +197,13 @@ const WorkflowBaseInfoModalForm = ({
   const formSchema = z.object({
     name: z
       .string({ message: t("workflow.baseinfo.form.name.placeholder") })
-      .trim()
       .min(1, t("workflow.baseinfo.form.name.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     description: z
       .string({ message: t("workflow.baseinfo.form.description.placeholder") })
-      .trim()
-      .min(0, t("workflow.baseinfo.form.description.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

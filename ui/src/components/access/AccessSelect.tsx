@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Avatar, Select, Space, Typography, type SelectProps } from "antd";
 
-import { accessProvidersMap, type AccessModel } from "@/domain/access";
+import { type AccessModel } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
 import { useAccessStore } from "@/stores/access";
 
 export type AccessTypeSelectProps = Omit<
