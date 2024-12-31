@@ -1,0 +1,9 @@
+{
+  "workflow_run.props.id": "ID",
+  "workflow_run.props.status": "状态",
+  "workflow_run.props.status.succeeded": "成功",
+  "workflow_run.props.status.failed": "失败",
+  "workflow_run.props.trigger": "触发方式",
+  "workflow_run.props.started_at": "开始时间",
+  "workflow_run.props.completed_at": "完成时间"
+}

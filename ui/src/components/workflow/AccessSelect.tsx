@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
-import { accessProvidersMap } from "@/domain/access";
+import { accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { useTranslation } from "react-i18next";
 import { useAccessStore } from "@/stores/access";
-import { deployTargetsMap } from "@/domain/domain";
 
 type AccessSelectProps = {
   providerType: string;
@@ -24,8 +23,7 @@ const AccessSelect = ({ value, onValueChange, providerType }: AccessSelectProps)
   }, [value]);
 
   const targetAccesses = accesses.filter((item) => {
-    console.log(item, providerType);
-    return item.configType === deployTargetsMap.get(providerType)?.provider;
+    return item.configType === deployProvidersMap.get(providerType)?.provider;
   });
 
   return (

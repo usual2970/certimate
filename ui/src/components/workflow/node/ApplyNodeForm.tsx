@@ -4,6 +4,7 @@ import { useControllableValue } from "ahooks";
 import { AutoComplete, Button, Divider, Form, Input, Select, Space, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
+import { produce } from "immer";
 import z from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
@@ -12,7 +13,8 @@ import ModalForm from "@/components/core/ModalForm";
 import MultipleInput from "@/components/core/MultipleInput";
 import { usePanel } from "../PanelProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { ACCESS_USAGES, accessProvidersMap } from "@/domain/access";
+import { ACCESS_USAGES } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useContactStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -42,33 +44,27 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   const { hidePanel } = usePanel();
 
   const formSchema = z.object({
-    domain: z.string({ message: t("workflow.nodes.apply.form.domains.placeholder") }).refine(
-      (v) => {
-        return String(v)
-          .split(MULTIPLE_INPUT_DELIMITER)
-          .every((e) => validDomainName(e, true));
-      },
-      { message: t("common.errmsg.domain_invalid") }
-    ),
-    email: z.string({ message: t("workflow.nodes.apply.form.email.placeholder") }).email("common.errmsg.email_invalid"),
-    access: z.string({ message: t("workflow.nodes.apply.form.access.placeholder") }).min(1, t("workflow.nodes.apply.form.access.placeholder")),
+    domain: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
+      return String(v)
+        .split(MULTIPLE_INPUT_DELIMITER)
+        .every((e) => validDomainName(e, true));
+    }, t("common.errmsg.domain_invalid")),
+    email: z.string({ message: t("workflow_node.apply.form.email.placeholder") }).email("common.errmsg.email_invalid"),
+    access: z.string({ message: t("workflow_node.apply.form.access.placeholder") }).min(1, t("workflow_node.apply.form.access.placeholder")),
     keyAlgorithm: z.string().nullish(),
     nameservers: z
       .string()
-      .refine(
-        (v) => {
-          if (!v) return true;
-          return String(v)
-            .split(MULTIPLE_INPUT_DELIMITER)
-            .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
-        },
-        { message: t("common.errmsg.host_invalid") }
-      )
-      .nullish(),
+      .nullish()
+      .refine((v) => {
+        if (!v) return true;
+        return String(v)
+          .split(MULTIPLE_INPUT_DELIMITER)
+          .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
+      }, t("common.errmsg.host_invalid")),
     propagationTimeout: z
       .union([
-        z.number().int().gte(1, t("workflow.nodes.apply.form.propagation_timeout.placeholder")),
-        z.string().refine((v) => !v || (parseInt(v) === +v && +v > 0), { message: t("workflow.nodes.apply.form.propagation_timeout.placeholder") }),
+        z.number().int().gte(1, t("workflow_node.apply.form.propagation_timeout.placeholder")),
+        z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.propagation_timeout.placeholder")),
       ])
       .nullish(),
     disableFollowCNAME: z.boolean().nullish(),
@@ -81,8 +77,14 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   } = useAntdForm<z.infer<typeof formSchema>>({
     initialValues: data?.config ?? initFormModel(),
     onSubmit: async (values) => {
-      await updateNode({ ...data, config: { ...values }, validated: true });
+      await formInst.validateFields();
       await addEmail(values.email);
+      await updateNode(
+        produce(data, (draft) => {
+          draft.config = { ...values };
+          draft.validated = true;
+        })
+      );
       hidePanel();
     },
   });
@@ -106,15 +108,15 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
         name="domain"
-        label={t("workflow.nodes.apply.form.domains.label")}
+        label={t("workflow_node.apply.form.domains.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.domains.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.domains.tooltip") }}></span>}
       >
         <Space.Compact style={{ width: "100%" }}>
           <Input
             disabled={formPending}
             value={fieldDomains}
-            placeholder={t("workflow.nodes.apply.form.domains.placeholder")}
+            placeholder={t("workflow_node.apply.form.domains.placeholder")}
             onChange={handleFieldDomainsChange}
           />
           <FormFieldDomainsModalForm
@@ -134,19 +136,19 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
 
       <Form.Item
         name="email"
-        label={t("workflow.nodes.apply.form.email.label")}
+        label={t("workflow_node.apply.form.email.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.email.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.email.tooltip") }}></span>}
       >
-        <FormFieldEmailSelect placeholder={t("workflow.nodes.apply.form.email.placeholder")} />
+        <FormFieldEmailSelect placeholder={t("workflow_node.apply.form.email.placeholder")} />
       </Form.Item>
 
-      <Form.Item>
+      <Form.Item className="mb-0">
         <label className="block mb-1">
           <div className="flex items-center justify-between gap-4 w-full">
             <div className="flex-grow max-w-full truncate">
-              <span>{t("workflow.nodes.apply.form.access.label")}</span>
-              <Tooltip title={t("workflow.nodes.apply.form.access.tooltip")}>
+              <span>{t("workflow_node.apply.form.access.label")}</span>
+              <Tooltip title={t("workflow_node.apply.form.access.tooltip")}>
                 <Typography.Text className="ms-1" type="secondary">
                   <QuestionCircleOutlinedIcon />
                 </Typography.Text>
@@ -158,7 +160,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
                 trigger={
                   <Button size="small" type="link">
                     <PlusOutlinedIcon />
-                    {t("workflow.nodes.apply.form.access.button")}
+                    {t("workflow_node.apply.form.access.button")}
                   </Button>
                 }
                 onSubmit={(record) => {
@@ -173,7 +175,7 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
         </label>
         <Form.Item name="access" rules={[formRule]}>
           <AccessSelect
-            placeholder={t("workflow.nodes.apply.form.access.placeholder")}
+            placeholder={t("workflow_node.apply.form.access.placeholder")}
             filter={(record) => {
               const provider = accessProvidersMap.get(record.configType);
               return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
@@ -183,33 +185,33 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
       </Form.Item>
 
       <Divider className="my-1">
-        <Typography.Text className="text-xs" type="secondary">
-          {t("workflow.nodes.apply.form.advanced_settings.label")}
+        <Typography.Text className="font-normal text-xs" type="secondary">
+          {t("workflow_node.apply.form.advanced_config.label")}
         </Typography.Text>
       </Divider>
 
-      <Form.Item name="keyAlgorithm" label={t("workflow.nodes.apply.form.key_algorithm.label")} rules={[formRule]}>
+      <Form.Item name="keyAlgorithm" label={t("workflow_node.apply.form.key_algorithm.label")} rules={[formRule]}>
         <Select
           options={["RSA2048", "RSA3072", "RSA4096", "RSA8192", "EC256", "EC384"].map((e) => ({
             label: e,
             value: e,
           }))}
-          placeholder={t("workflow.nodes.apply.form.key_algorithm.placeholder")}
+          placeholder={t("workflow_node.apply.form.key_algorithm.placeholder")}
         />
       </Form.Item>
 
       <Form.Item
         name="nameservers"
-        label={t("workflow.nodes.apply.form.nameservers.label")}
+        label={t("workflow_node.apply.form.nameservers.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.nameservers.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.nameservers.tooltip") }}></span>}
       >
         <Space.Compact style={{ width: "100%" }}>
           <Input
             allowClear
             disabled={formPending}
             value={fieldNameservers}
-            placeholder={t("workflow.nodes.apply.form.nameservers.placeholder")}
+            placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
             onChange={handleFieldNameserversChange}
           />
           <FormFieldNameserversModalForm
@@ -229,25 +231,25 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
 
       <Form.Item
         name="propagationTimeout"
-        label={t("workflow.nodes.apply.form.propagation_timeout.label")}
+        label={t("workflow_node.apply.form.propagation_timeout.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.propagation_timeout.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.propagation_timeout.tooltip") }}></span>}
       >
         <Input
           type="number"
           allowClear
           min={0}
           max={3600}
-          placeholder={t("workflow.nodes.apply.form.propagation_timeout.placeholder")}
-          addonAfter={t("workflow.nodes.apply.form.propagation_timeout.suffix")}
+          placeholder={t("workflow_node.apply.form.propagation_timeout.placeholder")}
+          addonAfter={t("workflow_node.apply.form.propagation_timeout.suffix")}
         />
       </Form.Item>
 
       <Form.Item
         name="disableFollowCNAME"
-        label={t("workflow.nodes.apply.form.disable_follow_cname.label")}
+        label={t("workflow_node.apply.form.disable_follow_cname.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.apply.form.disable_follow_cname.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_follow_cname.tooltip") }}></span>}
       >
         <Switch />
       </Form.Item>
@@ -339,12 +341,9 @@ const FormFieldDomainsModalForm = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    domains: z.array(z.string()).refine(
-      (v) => {
-        return v.every((e) => !e?.trim() || validDomainName(e.trim(), true));
-      },
-      { message: t("common.errmsg.domain_invalid") }
-    ),
+    domains: z.array(z.string()).refine((v) => {
+      return v.every((e) => !e?.trim() || validDomainName(e.trim(), true));
+    }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
@@ -372,14 +371,14 @@ const FormFieldDomainsModalForm = ({
       form={formInst}
       initialValues={model}
       modalProps={{ destroyOnClose: true }}
-      title={t("workflow.nodes.apply.form.domains.multiple_input_modal.title")}
+      title={t("workflow_node.apply.form.domains.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"
       width={480}
       onFinish={handleFinish}
     >
       <Form.Item name="domains" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow.nodes.apply.form.domains.multiple_input_modal.placeholder")} />
+        <MultipleInput placeholder={t("workflow_node.apply.form.domains.multiple_input_modal.placeholder")} />
       </Form.Item>
     </ModalForm>
   );
@@ -389,12 +388,9 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    nameservers: z.array(z.string()).refine(
-      (v) => {
-        return v.every((e) => !e?.trim() || validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
-      },
-      { message: t("common.errmsg.domain_invalid") }
-    ),
+    nameservers: z.array(z.string()).refine((v) => {
+      return v.every((e) => !e?.trim() || validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
+    }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
@@ -422,14 +418,14 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
       form={formInst}
       initialValues={model}
       modalProps={{ destroyOnClose: true }}
-      title={t("workflow.nodes.apply.form.nameservers.multiple_input_modal.title")}
+      title={t("workflow_node.apply.form.nameservers.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"
       width={480}
       onFinish={handleFinish}
     >
       <Form.Item name="nameservers" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow.nodes.apply.form.nameservers.multiple_input_modal.placeholder")} />
+        <MultipleInput placeholder={t("workflow_node.apply.form.nameservers.multiple_input_modal.placeholder")} />
       </Form.Item>
     </ModalForm>
   );

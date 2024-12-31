@@ -5,7 +5,7 @@
 
   "access.action.add": "新建授权",
   "access.action.edit": "编辑授权",
-  "access.action.copy": "复制授权",
+  "access.action.duplicate": "复制授权",
   "access.action.delete": "删除授权",
   "access.action.delete.confirm": "确定要删除此授权吗？",
 
@@ -84,7 +84,7 @@
   "access.form.huaweicloud_secret_access_key.label": "华为云 Secret Access Key",
   "access.form.huaweicloud_secret_access_key.placeholder": "请输入华为云 Secret Access Key",
   "access.form.huaweicloud_secret_access_key.tooltip": "这是什么？请参阅 <a href=\"https://support.huaweicloud.com/usermanual-ca/ca_01_0003.html\" target=\"_blank\">https://support.huaweicloud.com/usermanual-ca/ca_01_0003.html</a>",
-  "access.form.huaweicloud_region.label": "华为云 DNS 产品区域",
+  "access.form.huaweicloud_region.label": "华为云区域",
   "access.form.huaweicloud_region.placeholder": "请输入华为云区域（例如：cn-north-1）",
   "access.form.huaweicloud_region.tooltip": "这是什么？请参阅 <a href=\"https://console.huaweicloud.com/apiexplorer/#/endpoint\" target=\"_blank\">https://console.huaweicloud.com/apiexplorer/#/endpoint</a>",
   "access.form.k8s_kubeconfig.label": "KubeConfig",

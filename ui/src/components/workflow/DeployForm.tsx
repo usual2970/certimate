@@ -1,31 +1,33 @@
-import { WorkflowNode } from "@/domain/workflow";
 import { memo } from "react";
-import DeployToAliyunOSS from "./DeployToAliyunOss";
+
+import { type WorkflowNode } from "@/domain/workflow";
 import DeployToAliyunALB from "./DeployToAliyunALB";
 import DeployToAliyunCDN from "./DeployToAliyunCDN";
 import DeployToAliyunCLB from "./DeployToAliyunCLB";
 import DeployToAliyunNLB from "./DeployToAliyunNLB";
+import DeployToAliyunOSS from "./DeployToAliyunOss";
 import DeployToBaiduCloudCDN from "./DeployToBaiduCloudCDN";
+import DeployToBytePlusCDN from "./DeployToByteplusCDN";
 import DeployToDogeCloudCDN from "./DeployToDogeCloudCDN";
 import DeployToHuaweiCloudCDN from "./DeployToHuaweiCloudCDN";
 import DeployToHuaweiCloudELB from "./DeployToHuaweiCloudELB";
 import DeployToKubernetesSecret from "./DeployToKubernetesSecret";
+import DeployToLocal from "./DeployToLocal";
 import DeployToQiniuCDN from "./DeployToQiniuCDN";
-import DeployToWebhook from "./DeployToWebhook";
+import DeployToSSH from "./DeployToSSH";
 import DeployToTencentCDN from "./DeployToTencentCDN";
 import DeployToTencentCLB from "./DeployToTencentCLB";
 import DeployToTencentCOS from "./DeployToTencentCOS";
-import DeployToTencentTEO from "./DeployToTencentTEO";
-import DeployToSSH from "./DeployToSSH";
-import DeployToLocal from "./DeployToLocal";
-import DeployToByteplusCDN from "./DeployToByteplusCDN";
-import DeployToVolcengineCDN from "./DeployToVolcengineCDN";
-import DeployToVolcengineLive from "./DeployToVolcengineLive";
+import DeployToTencentEO from "./DeployToTencentTEO";
+import DeployToVolcEngineCDN from "./DeployToVolcengineCDN";
+import DeployToVolcEngineLive from "./DeployToVolcengineLive";
+import DeployToWebhook from "./DeployToWebhook";
 
 export type DeployFormProps = {
   data: WorkflowNode;
   defaultProivder?: string;
 };
+
 const DeployForm = ({ data, defaultProivder }: DeployFormProps) => {
   return <div className="dark:text-stone-200">{getForm(data, defaultProivder)}</div>;
 };
@@ -68,17 +70,17 @@ const getForm = (data: WorkflowNode, defaultProivder?: string) => {
     case "tencentcloud-cos":
       return <DeployToTencentCOS data={data} />;
     case "tencentcloud-eo":
-      return <DeployToTencentTEO data={data} />;
+      return <DeployToTencentEO data={data} />;
     case "ssh":
       return <DeployToSSH data={data} />;
     case "local":
       return <DeployToLocal data={data} />;
     case "byteplus-cdn":
-      return <DeployToByteplusCDN data={data} />;
+      return <DeployToBytePlusCDN data={data} />;
     case "volcengine-cdn":
-      return <DeployToVolcengineCDN data={data} />;
+      return <DeployToVolcEngineCDN data={data} />;
     case "volcengine-live":
-      return <DeployToVolcengineLive data={data} />;
+      return <DeployToVolcEngineLive data={data} />;
     default:
       return <></>;
   }

@@ -5,6 +5,8 @@ import nlsSettings from "./nls.settings.json";
 import nlsDomain from "./nls.domain.json";
 import nlsAccess from "./nls.access.json";
 import nlsWorkflow from "./nls.workflow.json";
+import nlsWorkflowNodes from "./nls.workflow.nodes.json";
+import nlsWorkflowRuns from "./nls.workflow.runs.json";
 import nlsCertificate from "./nls.certificate.json";
 
 export default Object.freeze({
@@ -15,5 +17,7 @@ export default Object.freeze({
   ...nlsDomain,
   ...nlsAccess,
   ...nlsWorkflow,
+  ...nlsWorkflowNodes,
+  ...nlsWorkflowRuns,
   ...nlsCertificate,
 });

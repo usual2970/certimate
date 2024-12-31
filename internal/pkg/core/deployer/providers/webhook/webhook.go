@@ -67,6 +67,7 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 		return nil, xerrors.Wrap(err, "failed to parse x509")
 	}
 
+	// TODO: 自定义回调数据
 	reqBody, _ := json.Marshal(&webhookData{
 		SubjectAltNames: strings.Join(certX509.DNSNames, ","),
 		Certificate:     certPem,

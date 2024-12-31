@@ -1,13 +1,15 @@
-import { WorkflowNode } from "@/domain/workflow";
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Show from "../Show";
-import DeployForm from "./DeployForm";
-import { DeployTarget, deployTargets } from "@/domain/domain";
+
+import Show from "@/components/Show";
+import DeployNodeForm from "./node/DeployNodeForm";
+import { deployProvidersMap } from "@/domain/provider";
+import { type WorkflowNode } from "@/domain/workflow";
 
 type DeployPanelBodyProps = {
   data: WorkflowNode;
 };
+
 const DeployPanelBody = ({ data }: DeployPanelBodyProps) => {
   const { t } = useTranslation();
 
@@ -21,33 +23,22 @@ const DeployPanelBody = ({ data }: DeployPanelBodyProps) => {
   return (
     <>
       {/* 默认展示服务商列表 */}
-      <Show when={!providerType} fallback={<DeployForm data={data} defaultProivder={providerType} />}>
+      <Show when={!providerType} fallback={<DeployNodeForm data={data} defaultProivderType={providerType} />}>
         <div className="text-lg font-semibold text-gray-700">选择服务商</div>
-        {deployTargets
-          .reduce((acc: DeployTarget[][], provider, index) => {
-            if (index % 2 === 0) {
-              acc.push([provider]);
-            } else {
-              acc[acc.length - 1].push(provider);
-            }
-            return acc;
-          }, [])
-          .map((providerRow, rowIndex) => (
-            <div key={rowIndex} className="flex space-x-5">
-              {providerRow.map((provider, index) => (
-                <div
-                  key={index}
-                  className="flex space-x-2 w-[47%] items-center cursor-pointer hover:bg-slate-100 p-2 rounded-sm"
-                  onClick={() => {
-                    setProviderType(provider.type);
-                  }}
-                >
-                  <img src={provider.icon} alt={provider.type} className="w-8 h-8" />
-                  <div className="text-muted-foreground text-sm">{t(provider.name)}</div>
-                </div>
-              ))}
+        {Array.from(deployProvidersMap.values()).map((provider, index) => {
+          return (
+            <div
+              key={index}
+              className="flex space-x-2 w-[47%] items-center cursor-pointer hover:bg-slate-100 p-2 rounded-sm"
+              onClick={() => {
+                setProviderType(provider.type);
+              }}
+            >
+              <img src={provider.icon} alt={provider.type} className="w-8 h-8" />
+              <div className="text-muted-foreground text-sm">{t(provider.name)}</div>
             </div>
-          ))}
+          );
+        })}
       </Show>
     </>
   );

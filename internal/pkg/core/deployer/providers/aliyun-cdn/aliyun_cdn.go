@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	aliyunCdn "github.com/alibabacloud-go/cdn-20180510/v5/client"
@@ -20,7 +21,7 @@ type AliyunCDNDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 加速域名（不支持泛域名）。
+	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
@@ -58,10 +59,13 @@ func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*Aliy
 }
 
 func (d *AliyunCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+	// "*.example.com" → ".example.com"，适配阿里云 CDN 要求的泛域名格式
+	domain := strings.TrimPrefix(d.config.Domain, "*")
+
 	// 设置 CDN 域名域名证书
 	// REF: https://help.aliyun.com/zh/cdn/developer-reference/api-cdn-2018-05-10-setcdndomainsslcertificate
 	setCdnDomainSSLCertificateReq := &aliyunCdn.SetCdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(d.config.Domain),
+		DomainName:  tea.String(domain),
 		CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),

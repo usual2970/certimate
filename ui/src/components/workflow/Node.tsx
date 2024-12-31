@@ -1,15 +1,16 @@
-import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
-import AddNode from "./AddNode";
-import { useWorkflowStore } from "@/stores/workflow";
-import { useZustandShallowSelector } from "@/hooks";
+import { useTranslation } from "react-i18next";
 import { Dropdown } from "antd";
-import { Ellipsis, Trash2 } from "lucide-react";
+import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+
+import Show from "@/components/Show";
+import AddNode from "./AddNode";
 import { usePanel } from "./PanelProvider";
 import PanelBody from "./PanelBody";
-import { useTranslation } from "react-i18next";
-import Show from "../Show";
-import { deployTargetsMap } from "@/domain/domain";
+import { useZustandShallowSelector } from "@/hooks";
+import { deployProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
+import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import { useWorkflowStore } from "@/stores/workflow";
 
 type NodeProps = {
   data: WorkflowNode;
@@ -56,7 +57,7 @@ const Node = ({ data }: NodeProps) => {
       case WorkflowNodeType.Apply:
         return <div className="text-muted-foreground truncate">{data.config?.domain as string}</div>;
       case WorkflowNodeType.Deploy: {
-        const provider = deployTargetsMap.get(data.config?.providerType as string);
+        const provider = deployProvidersMap.get(data.config?.providerType as string);
         return (
           <div className="flex space-x-2 items-center text-muted-foreground">
             <img src={provider?.icon} className="w-6 h-6" />
@@ -90,7 +91,7 @@ const Node = ({ data }: NodeProps) => {
                   {
                     key: "delete",
                     label: t(`${i18nPrefix}.delete.label`),
-                    icon: <Trash2 size={16} />,
+                    icon: <DeleteOutlinedIcon />,
                     danger: true,
                     onClick: () => {
                       removeNode(data.id);
@@ -101,7 +102,7 @@ const Node = ({ data }: NodeProps) => {
               trigger={["click"]}
             >
               <div className="absolute right-2 top-1 cursor-pointer">
-                <Ellipsis className="text-white" size={17} />
+                <EllipsisOutlinedIcon className="text-white" size={17} />
               </div>
             </Dropdown>
           </>

@@ -2,7 +2,7 @@ import { produce } from "immer";
 import { nanoid } from "nanoid";
 
 import i18n from "@/i18n";
-import { deployTargets } from "./domain";
+import { deployProvidersMap } from "./provider";
 
 /**
  * @deprecated
@@ -346,7 +346,6 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNod
 
     if (isWorkflowBranchNode(current)) {
       const currentLength = output.length;
-      console.log(currentLength);
       for (const branch of current.branches) {
         if (traverse(branch, output)) {
           return true;
@@ -424,7 +423,7 @@ export type WorkflowNodeDropdwonItemIcon = {
   name: string;
 };
 
-const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = deployTargets.map((item) => {
+const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = Array.from(deployProvidersMap.values()).map((item) => {
   return {
     type: WorkflowNodeType.Apply,
     providerType: item.type,

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Dropdown } from "antd";
-import { Plus as PlusIcon } from "lucide-react";
+import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
 
 import { useZustandShallowSelector } from "@/hooks";
 import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
@@ -22,7 +22,7 @@ const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
   };
 
   return (
-    <div className="before:content-['']  before:w-[2px] before:bg-stone-200 before:absolute before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0 pt-6 pb-9 relative flex flex-col items-center">
+    <div className="before:content-[''] before:w-[2px] before:bg-stone-200 before:absolute before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0 py-6 relative">
       <Dropdown
         menu={{
           items: workflowNodeDropdownList.map((item) => {
@@ -56,8 +56,8 @@ const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
         }}
         trigger={["click"]}
       >
-        <div className="bg-stone-400 hover:bg-stone-500 rounded-full z-10 relative outline-none">
-          <PlusIcon className="text-white" size={18} />
+        <div className="bg-stone-400 hover:bg-stone-500 rounded-full size-5 z-[1] relative flex items-center justify-center cursor-pointer">
+          <PlusOutlinedIcon className="text-white" />
         </div>
       </Dropdown>
     </div>

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, Button, Form, Input, Radio } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import dayjs from "dayjs";
+import { produce } from "immer";
 import { z } from "zod";
 
 import { usePanel } from "../PanelProvider";
@@ -30,7 +31,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
 
   const formSchema = z
     .object({
-      executionMethod: z.string({ message: t("workflow.nodes.start.form.trigger.placeholder") }).min(1, t("workflow.nodes.start.form.trigger.placeholder")),
+      executionMethod: z.string({ message: t("workflow_node.start.form.trigger.placeholder") }).min(1, t("workflow_node.start.form.trigger.placeholder")),
       crontab: z.string().nullish(),
     })
     .superRefine((data, ctx) => {
@@ -41,7 +42,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
       if (!validCronExpression(data.crontab!)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t("workflow.nodes.start.form.trigger_cron.errmsg.invalid"),
+          message: t("workflow_node.start.form.trigger_cron.errmsg.invalid"),
           path: ["crontab"],
         });
       }
@@ -54,7 +55,13 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
   } = useAntdForm<z.infer<typeof formSchema>>({
     initialValues: data?.config ?? initFormModel(),
     onSubmit: async (values) => {
-      await updateNode({ ...data, config: { ...values }, validated: true });
+      await formInst.validateFields();
+      await updateNode(
+        produce(data, (draft) => {
+          draft.config = { ...values };
+          draft.validated = true;
+        })
+      );
       hidePanel();
     },
   });
@@ -82,26 +89,26 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
         name="executionMethod"
-        label={t("workflow.nodes.start.form.trigger.label")}
+        label={t("workflow_node.start.form.trigger.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.start.form.trigger.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger.tooltip") }}></span>}
       >
         <Radio.Group value={triggerType} onChange={(e) => handleTriggerTypeChange(e.target.value)}>
-          <Radio value="auto">{t("workflow.nodes.start.form.trigger.option.auto.label")}</Radio>
-          <Radio value="manual">{t("workflow.nodes.start.form.trigger.option.manual.label")}</Radio>
+          <Radio value="auto">{t("workflow_node.start.form.trigger.option.auto.label")}</Radio>
+          <Radio value="manual">{t("workflow_node.start.form.trigger.option.manual.label")}</Radio>
         </Radio.Group>
       </Form.Item>
 
       <Form.Item
         name="crontab"
-        label={t("workflow.nodes.start.form.trigger_cron.label")}
+        label={t("workflow_node.start.form.trigger_cron.label")}
         hidden={triggerType !== "auto"}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.start.form.trigger_cron.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron.tooltip") }}></span>}
         extra={
           triggerCronLastExecutions.length > 0 ? (
             <div>
-              {t("workflow.nodes.start.form.trigger_cron.extra")}
+              {t("workflow_node.start.form.trigger_cron.extra")}
               <br />
               {triggerCronLastExecutions.map((date, index) => (
                 <span key={index}>
@@ -115,11 +122,11 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
           )
         }
       >
-        <Input placeholder={t("workflow.nodes.start.form.trigger_cron.placeholder")} onChange={(e) => handleTriggerCronChange(e.target.value)} />
+        <Input placeholder={t("workflow_node.start.form.trigger_cron.placeholder")} onChange={(e) => handleTriggerCronChange(e.target.value)} />
       </Form.Item>
 
       <Form.Item hidden={triggerType !== "auto"}>
-        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow.nodes.start.form.trigger_cron_alert.content") }}></span>} />
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron_alert.content") }}></span>} />
       </Form.Item>
 
       <Form.Item>

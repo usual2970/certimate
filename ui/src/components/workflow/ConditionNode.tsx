@@ -1,9 +1,10 @@
-import { useWorkflowStore } from "@/stores/workflow";
-import AddNode from "./AddNode";
-import { NodeProps } from "./types";
-import { useZustandShallowSelector } from "@/hooks";
 import { Dropdown } from "antd";
-import { Ellipsis, Trash2 } from "lucide-react";
+import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+
+import AddNode from "./AddNode";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
+import { type NodeProps } from "./types";
 
 const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
   const { updateNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeBranch"]));
@@ -12,14 +13,14 @@ const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
   };
   return (
     <>
-      <div className="rounded-md shadow-md w-[261px] mt-10 relative z-10">
+      <div className="rounded-md shadow-md w-[261px] mt-10 relative z-[1]">
         <Dropdown
           menu={{
             items: [
               {
                 key: "delete",
                 label: "删除分支",
-                icon: <Trash2 size={16} />,
+                icon: <DeleteOutlinedIcon />,
                 danger: true,
                 onClick: () => {
                   removeBranch(branchId ?? "", branchIndex ?? 0);
@@ -30,7 +31,7 @@ const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {
           trigger={["click"]}
         >
           <div className="absolute right-2 top-1 cursor-pointer">
-            <Ellipsis size={17} className="text-stone-600" />
+            <EllipsisOutlinedIcon size={17} className="text-stone-600" />
           </div>
         </Dropdown>
 

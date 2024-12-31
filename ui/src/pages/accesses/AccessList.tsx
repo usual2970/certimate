@@ -13,7 +13,8 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
-import { accessProvidersMap, type AccessModel } from "@/domain/access";
+import { type AccessModel } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
 import { useAccessStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
@@ -89,7 +90,7 @@ const AccessList = () => {
             data={{ ...record, id: undefined, name: `${record.name}-copy` }}
             preset="add"
             trigger={
-              <Tooltip title={t("access.action.copy")}>
+              <Tooltip title={t("access.action.duplicate")}>
                 <Button color="primary" icon={<SnippetsOutlinedIcon />} variant="text" />
               </Tooltip>
             }

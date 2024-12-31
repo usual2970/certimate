@@ -19,7 +19,7 @@ type BaiduCloudCDNDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 百度智能云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
-	// 加速域名（不支持泛域名）。
+	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 

@@ -34,3 +34,7 @@ export const validHttpOrHttpsUrl = (value: string) => {
     return false;
   }
 };
+
+export const validPortNumber = (value: string | number) => {
+  return parseInt(value + "") === +value && +value >= 1 && +value <= 65535;
+};

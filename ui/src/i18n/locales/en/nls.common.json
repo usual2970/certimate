@@ -29,10 +29,10 @@
 
   "common.errmsg.string_max": "Please enter no more than {{max}} characters",
   "common.errmsg.email_invalid": "Please enter a valid email address",
-  "common.errmsg.domain_invalid": "Please enter domain",
-  "common.errmsg.host_invalid": "Please enter a valid domain name or IP",
+  "common.errmsg.domain_invalid": "Please enter a valid domain name",
+  "common.errmsg.host_invalid": "Please enter a valid domain name or IP address",
   "common.errmsg.port_invalid": "Please enter a valid port",
-  "common.errmsg.ip_invalid": "Please enter a valid IP",
+  "common.errmsg.ip_invalid": "Please enter a valid IP address",
   "common.errmsg.url_invalid": "Please enter a valid URL",
 
   "common.provider.acmehttpreq": "Http Request (ACME Proxy)",
