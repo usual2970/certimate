@@ -125,7 +125,7 @@ const AccessList = () => {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     });
-  }, [fetchAccesses]);
+  }, []);
 
   const { loading } = useRequest(
     () => {

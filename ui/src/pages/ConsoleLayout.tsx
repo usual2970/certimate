@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -135,12 +135,12 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   });
   const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
-  const getActiveMenuItem = useCallback(() => {
+  const getActiveMenuItem = () => {
     const item =
       menuItems.find((item) => item!.key === location.pathname) ??
       menuItems.find((item) => item!.key !== MENU_KEY_HOME && location.pathname.startsWith(item!.key as string));
     return item;
-  }, [location.pathname, menuItems]);
+  };
 
   useEffect(() => {
     const item = getActiveMenuItem();
@@ -149,13 +149,13 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
     } else {
       setMenuSelectedKey(undefined);
     }
-  }, [location.pathname, getActiveMenuItem]);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (menuSelectedKey && menuSelectedKey !== getActiveMenuItem()?.key) {
       navigate(menuSelectedKey);
     }
-  }, [menuSelectedKey, navigate, getActiveMenuItem]);
+  }, [menuSelectedKey]);
 
   return (
     <>

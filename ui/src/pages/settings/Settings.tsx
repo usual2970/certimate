@@ -25,7 +25,7 @@ const Settings = () => {
     }
 
     setTabValue(path);
-  }, [location, navigate]);
+  }, [location.pathname]);
 
   return (
     <div className="p-4">
