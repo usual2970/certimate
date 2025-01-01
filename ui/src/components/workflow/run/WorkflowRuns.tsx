@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Empty, notification, Space, Table, theme, Tooltip, Typography, type TableProps } from "antd";
 import {
-  CheckCircleTwoTone as CheckCircleTwoToneIcon,
-  CloseCircleTwoTone as CloseCircleTwoToneIcon,
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
 } from "@ant-design/icons";
 import { ClientResponseError } from "pocketbase";
@@ -49,14 +49,14 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
         if (record.succeed) {
           return (
             <Space>
-              <CheckCircleTwoToneIcon twoToneColor={themeToken.colorSuccess} />
+              <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />
               <Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>
             </Space>
           );
         } else {
           <Tooltip title={record.error}>
             <Space>
-              <CloseCircleTwoToneIcon twoToneColor={themeToken.colorError} />
+              <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
               <Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>
             </Space>
           </Tooltip>;

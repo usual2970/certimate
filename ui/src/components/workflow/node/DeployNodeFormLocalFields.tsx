@@ -220,21 +220,41 @@ Remove-Item -Path "$pfxPath" -Force
       </Show>
 
       <Show when={fieldFormat === FORMAT_PFX}>
-        <Form.Item name="pfxPassword" label={t("workflow_node.deploy.form.local_pfx_password.label")} rules={[formRule]}>
+        <Form.Item
+          name="pfxPassword"
+          label={t("workflow_node.deploy.form.local_pfx_password.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_pfx_password.tooltip") }}></span>}
+        >
           <Input placeholder={t("workflow_node.deploy.form.local_pfx_password.placeholder")} />
         </Form.Item>
       </Show>
 
       <Show when={fieldFormat === FORMAT_JKS}>
-        <Form.Item name="jksAlias" label={t("workflow_node.deploy.form.local_jks_alias.label")} rules={[formRule]}>
+        <Form.Item
+          name="jksAlias"
+          label={t("workflow_node.deploy.form.local_jks_alias.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_jks_alias.tooltip") }}></span>}
+        >
           <Input placeholder={t("workflow_node.deploy.form.local_jks_alias.placeholder")} />
         </Form.Item>
 
-        <Form.Item name="jksKeypass" label={t("workflow_node.deploy.form.local_jks_keypass.label")} rules={[formRule]}>
+        <Form.Item
+          name="jksKeypass"
+          label={t("workflow_node.deploy.form.local_jks_keypass.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_jks_keypass.tooltip") }}></span>}
+        >
           <Input placeholder={t("workflow_node.deploy.form.local_jks_keypass.placeholder")} />
         </Form.Item>
 
-        <Form.Item name="jksStorepass" label={t("workflow_node.deploy.form.local_jks_storepass.label")} rules={[formRule]}>
+        <Form.Item
+          name="jksStorepass"
+          label={t("workflow_node.deploy.form.local_jks_storepass.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_jks_storepass.tooltip") }}></span>}
+        >
           <Input placeholder={t("workflow_node.deploy.form.local_jks_storepass.placeholder")} />
         </Form.Item>
       </Show>
