@@ -1,5 +1,5 @@
 {
-  "workflow_node.start.title": "开始",
+  "workflow_node.start.label": "开始",
   "workflow_node.start.form.trigger.label": "触发方式",
   "workflow_node.start.form.trigger.placeholder": "请选择触发方式",
   "workflow_node.start.form.trigger.tooltip": "自动触发：基于 Cron 表达式定时触发。<br>手动触发：手动点击执行触发。",
@@ -12,7 +12,7 @@
   "workflow_node.start.form.trigger_cron.extra": "预计最近 5 次执行时间：",
   "workflow_node.start.form.trigger_cron_alert.content": "小贴士：如果你有多个工作流，建议将它们设置为在一天中的多个时间段运行，而非总是在相同的特定时间。<br><br>参考链接：<br>1. <a href=\"https://letsencrypt.org/zh-cn/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt 速率限制</a><br>2. <a href=\"https://letsencrypt.org/zh-cn/docs/faq/#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84-let-s-encrypt-acme-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4%E5%BA%94%E5%BD%93%E9%9A%8F%E6%9C%BA\" target=\"_blank\">为什么我的 Let’s Encrypt (ACME) 客户端启动时间应当随机？</a>",
 
-  "workflow_node.apply.title": "申请",
+  "workflow_node.apply.label": "申请",
   "workflow_node.apply.form.domains.label": "域名",
   "workflow_node.apply.form.domains.placeholder": "请输入域名（多个值请用半角分号隔开）",
   "workflow_node.apply.form.domains.tooltip": "泛域名表示形式为：*.example.com",
@@ -40,7 +40,7 @@
   "workflow_node.apply.form.disable_follow_cname.label": "禁止 CNAME 跟随",
   "workflow_node.apply.form.disable_follow_cname.tooltip": "在 ACME DNS-01 认证时是否禁止 CNAME 跟随。如果你不了解该选项的用途，保持默认即可。<br><a href=\"https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname\" target=\"_blank\">点此了解更多</a>。",
 
-  "workflow_node.deploy.title": "部署",
+  "workflow_node.deploy.label": "部署",
   "workflow_node.deploy.form.provider_type.label": "部署目标",
   "workflow_node.deploy.form.provider_type.placeholder": "请选择部署目标",
   "workflow_node.deploy.form.provider_access.label": "主机提供商授权",
@@ -143,6 +143,9 @@
   "workflow_node.deploy.form.k8s_secret_name.label": "Kubernetes Secret 名称",
   "workflow_node.deploy.form.k8s_secret_name.placeholder": "请输入 Kubernetes Secret 名称",
   "workflow_node.deploy.form.k8s_secret_name.tooltip": "这是什么？请参阅 <a href=\"https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/</a>",
+  "workflow_node.deploy.form.k8s_secret_type.label": "Kubernetes Secret 类型",
+  "workflow_node.deploy.form.k8s_secret_type.placeholder": "请输入 Kubernetes Secret 类型",
+  "workflow_node.deploy.form.k8s_secret_type.tooltip": "这是什么？请参阅 <a href=\"https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/</a>",
   "workflow_node.deploy.form.k8s_secret_data_key_for_crt.label": "Kubernetes Secret 数据键（用于存放证书的字段）",
   "workflow_node.deploy.form.k8s_secret_data_key_for_crt.placeholder": "请输入 Kubernetes Secret 中用于存放证书的数据键",
   "workflow_node.deploy.form.k8s_secret_data_key_for_crt.tooltip": "这是什么？请参阅 <a href=\"https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/zh-cn/docs/concepts/configuration/secret/</a>",
@@ -270,7 +273,7 @@
   "workflow_node.deploy.form.webhook_data.label": "Webhook 回调数据（JSON 格式）",
   "workflow_node.deploy.form.webhook_data.placeholder": "请输入 Webhook 回调数据",
 
-  "workflow_node.notify.title": "通知",
+  "workflow_node.notify.label": "通知",
   "workflow_node.notify.form.subject.label": "通知主题",
   "workflow_node.notify.form.subject.placeholder": "请输入通知主题",
   "workflow_node.notify.form.message.label": "通知内容",
@@ -279,8 +282,9 @@
   "workflow_node.notify.form.channel.placeholder": "请选择通知渠道",
   "workflow_node.notify.form.channel.button": "去配置",
 
-  "workflow_node.end.title": "结束",
+  "workflow_node.end.label": "结束",
 
-  "workflow_node.branch.title": "分支",
-  "workflow_node.condition.title": "条件"
+  "workflow_node.branch.label": "分支",
+
+  "workflow_node.condition.label": "条件"
 }

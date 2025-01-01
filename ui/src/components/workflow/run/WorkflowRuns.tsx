@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
-import { Button, Empty, notification, Space, Table, theme, Tooltip, Typography, type TableProps } from "antd";
+import { Button, Empty, notification, Space, Table, theme, Typography, type TableProps } from "antd";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,

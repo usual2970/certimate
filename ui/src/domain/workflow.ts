@@ -4,28 +4,6 @@ import { nanoid } from "nanoid";
 import i18n from "@/i18n";
 import { deployProvidersMap } from "./provider";
 
-/**
- * @deprecated
- */
-export type WorkflowRunLog = {
-  id: string;
-  workflow: string;
-  log: WorkflowRunLogItem[];
-  error: string;
-  succeed: boolean;
-  created: string;
-  updated: string;
-};
-
-/**
- * @deprecated
- */
-export type WorkflowRunLogItem = {
-  nodeName: string;
-  error: string;
-  outputs: WorkflowOutput[];
-};
-
 export type WorkflowOutput = {
   time: string;
   title: string;
@@ -56,13 +34,13 @@ export enum WorkflowNodeType {
 }
 
 export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Map([
-  [WorkflowNodeType.Start, i18n.t("workflow_node.start.title")],
-  [WorkflowNodeType.End, i18n.t("workflow_node.end.title")],
-  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.title")],
-  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.title")],
-  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.title")],
-  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.title")],
-  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.title")],
+  [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
+  [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
+  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
+  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.label")],
+  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
+  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
+  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
   [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
 ]);
 

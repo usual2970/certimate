@@ -221,6 +221,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				KubeConfig:          access.KubeConfig,
 				Namespace:           maps.GetValueOrDefaultAsString(deployConfig, "namespace", "default"),
 				SecretName:          maps.GetValueAsString(deployConfig, "secretName"),
+				SecretType:          maps.GetValueOrDefaultAsString(deployConfig, "secretType", "kubernetes.io/tls"),
 				SecretDataKeyForCrt: maps.GetValueOrDefaultAsString(deployConfig, "secretDataKeyForCrt", "tls.crt"),
 				SecretDataKeyForKey: maps.GetValueOrDefaultAsString(deployConfig, "secretDataKeyForKey", "tls.key"),
 			}, logger)

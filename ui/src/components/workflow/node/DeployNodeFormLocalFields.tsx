@@ -71,6 +71,13 @@ const DeployNodeFormLocalFields = () => {
   const formRule = createSchemaFieldRule(formSchema);
   const formInst = Form.useFormInstance();
 
+  const initialValues: Partial<z.infer<typeof formSchema>> = {
+    format: FORMAT_PEM,
+    certPath: "/etc/ssl/certs/cert.crt",
+    keyPath: "/etc/ssl/certs/cert.key",
+    shellEnv: SHELLENV_SH,
+  };
+
   const fieldFormat = Form.useWatch("format", formInst);
   const fieldCertPath = Form.useWatch("certPath", formInst);
 
@@ -183,7 +190,7 @@ Remove-Item -Path "$pfxPath" -Force
 
   return (
     <>
-      <Form.Item name="format" label={t("workflow_node.deploy.form.local_format.label")} rules={[formRule]} initialValue={FORMAT_PEM}>
+      <Form.Item name="format" label={t("workflow_node.deploy.form.local_format.label")} rules={[formRule]} initialValue={initialValues.format}>
         <Select placeholder={t("workflow_node.deploy.form.local_format.placeholder")} onSelect={handleFormatSelect}>
           <Select.Option key={FORMAT_PEM} value={FORMAT_PEM}>
             {t("workflow_node.deploy.form.local_format.option.pem.label")}
@@ -202,7 +209,7 @@ Remove-Item -Path "$pfxPath" -Force
         label={t("workflow_node.deploy.form.local_cert_path.label")}
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_cert_path.tooltip") }}></span>}
-        initialValue="/etc/ssl/certs/cert.crt"
+        initialValue={initialValues.certPath}
       >
         <Input placeholder={t("workflow_node.deploy.form.local_cert_path.placeholder")} />
       </Form.Item>
@@ -213,7 +220,7 @@ Remove-Item -Path "$pfxPath" -Force
           label={t("workflow_node.deploy.form.local_key_path.label")}
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_key_path.tooltip") }}></span>}
-          initialValue="/etc/ssl/certs/cert.key"
+          initialValue={initialValues.keyPath}
         >
           <Input placeholder={t("workflow_node.deploy.form.local_key_path.placeholder")} />
         </Form.Item>
@@ -259,7 +266,7 @@ Remove-Item -Path "$pfxPath" -Force
         </Form.Item>
       </Show>
 
-      <Form.Item name="shellEnv" label={t("workflow_node.deploy.form.local_shell_env.label")} rules={[formRule]} initialValue={SHELLENV_SH}>
+      <Form.Item name="shellEnv" label={t("workflow_node.deploy.form.local_shell_env.label")} rules={[formRule]} initialValue={initialValues.shellEnv}>
         <Select placeholder={t("workflow_node.deploy.form.local_shell_env.placeholder")}>
           <Select.Option key={SHELLENV_SH} value={SHELLENV_SH}>
             {t("workflow_node.deploy.form.local_shell_env.option.sh.label")}

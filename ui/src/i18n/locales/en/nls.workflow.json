@@ -40,6 +40,5 @@
   "workflow.common.certificate.label": "Certificate",
   "workflow.node.setting.label": "Setting Node",
   "workflow.node.delete.label": "Delete Node",
-  "workflow.node.addBranch.label": "Add Branch",
-  "workflow.node.selectNodeType.label": "Select Node Type"
+  "workflow.node.addBranch.label": "Add Branch"
 }

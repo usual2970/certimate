@@ -40,6 +40,5 @@
   "workflow.common.certificate.label": "证书",
   "workflow.node.setting.label": "设置节点",
   "workflow.node.delete.label": "删除节点",
-  "workflow.node.addBranch.label": "添加分支",
-  "workflow.node.selectNodeType.label": "选择节点类型"
+  "workflow.node.addBranch.label": "添加分支"
 }

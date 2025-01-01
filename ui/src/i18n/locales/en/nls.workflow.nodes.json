@@ -1,5 +1,5 @@
 {
-  "workflow_node.start.title": "Start",
+  "workflow_node.start.label": "Start",
   "workflow_node.start.form.trigger.label": "Trigger",
   "workflow_node.start.form.trigger.placeholder": "Please select trigger",
   "workflow_node.start.form.trigger.tooltip": "Auto: Time triggered based on cron expression.<br>Manual: Manually triggered.",
@@ -12,7 +12,7 @@
   "workflow_node.start.form.trigger_cron.extra": "Expected execution time for the last 5 times:",
   "workflow_node.start.form.trigger_cron_alert.content": "Tips: If you have multiple workflows, it is recommended to set them to run at multiple times of the day instead of always running at specific times.<br><br>Reference links:<br>1. <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt rate limits</a><br>2. <a href=\"https://letsencrypt.org/docs/faq/#why-should-my-let-s-encrypt-acme-client-run-at-a-random-time\" target=\"_blank\">Why should my Let’s Encrypt (ACME) client run at a random time?</a>",
 
-  "workflow_node.apply.title": "Application",
+  "workflow_node.apply.label": "Application",
   "workflow_node.apply.form.domains.label": "Domains",
   "workflow_node.apply.form.domains.placeholder": "Please enter domains (separated by semicolons)",
   "workflow_node.apply.form.domains.tooltip": "Wildcard domain: *.example.com",
@@ -40,7 +40,7 @@
   "workflow_node.apply.form.disable_follow_cname.label": "Disable CNAME following",
   "workflow_node.apply.form.disable_follow_cname.tooltip": "It determines whether to disable CNAME following during ACME DNS-01 authentication. If you don't understand this option, just keep it by default.<br><a href=\"https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname\" target=\"_blank\">Learn more</a>.",
 
-  "workflow_node.deploy.title": "Deployment",
+  "workflow_node.deploy.label": "Deployment",
   "workflow_node.deploy.form.provider_type.label": "Deploy target",
   "workflow_node.deploy.form.provider_type.placeholder": "Please select deploy target",
   "workflow_node.deploy.form.provider_access.label": "Host provider authorization",
@@ -138,16 +138,19 @@
   "workflow_node.deploy.form.huaweicloud_elb_listener_id.placeholder": "Please enter Huawei Cloud ELB listener ID",
   "workflow_node.deploy.form.huaweicloud_elb_listener_id.tooltip": "For more information, see <a href=\"https://console-intl.huaweicloud.com/vpc/#/elb/list/grid\" target=\"_blank\">https://console-intl.huaweicloud.com/vpc/#/elb/list/grid</a>",
   "workflow_node.deploy.form.k8s_namespace.label": "Kubernetes Namespace",
-  "workflow_node.deploy.form.k8s_namespace.placeholder": "Please enter Kubernetes namespace",
+  "workflow_node.deploy.form.k8s_namespace.placeholder": "Please enter Kubernetes Namespace",
   "workflow_node.deploy.form.k8s_namespace.tooltip": "For more information, see <a href=\"https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\" target=\"_blank\">https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/</a>",
-  "workflow_node.deploy.form.k8s_secret_name.label": "Kubernetes secret name",
-  "workflow_node.deploy.form.k8s_secret_name.placeholder": "Please enter Kubernetes secret name",
+  "workflow_node.deploy.form.k8s_secret_name.label": "Kubernetes Secret name",
+  "workflow_node.deploy.form.k8s_secret_name.placeholder": "Please enter Kubernetes Secret name",
   "workflow_node.deploy.form.k8s_secret_name.tooltip": "For more information, see <a href=\"https://kubernetes.io/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/docs/concepts/configuration/secret/</a>",
-  "workflow_node.deploy.form.k8s_secret_data_key_for_crt.label": "Kubernetes secret data key for certificate",
-  "workflow_node.deploy.form.k8s_secret_data_key_for_crt.placeholder": "Please enter secret data key for certificate",
+  "workflow_node.deploy.form.k8s_secret_type.label": "Kubernetes Secret type",
+  "workflow_node.deploy.form.k8s_secret_type.placeholder": "Please enter Kubernetes Secret type",
+  "workflow_node.deploy.form.k8s_secret_type.tooltip": "For more information, see <a href=\"https://kubernetes.io/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/docs/concepts/configuration/secret/</a>",
+  "workflow_node.deploy.form.k8s_secret_data_key_for_crt.label": "Kubernetes Secret data key for certificate",
+  "workflow_node.deploy.form.k8s_secret_data_key_for_crt.placeholder": "Please enter Kubernetes Secret data key for certificate",
   "workflow_node.deploy.form.k8s_secret_data_key_for_crt.tooltip": "For more information, see <a href=\"https://kubernetes.io/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/docs/concepts/configuration/secret/</a>",
-  "workflow_node.deploy.form.k8s_secret_data_key_for_key.label": "Kubernetes secret data key for private key",
-  "workflow_node.deploy.form.k8s_secret_data_key_for_key.placeholder": "Please enter secret data key for private key",
+  "workflow_node.deploy.form.k8s_secret_data_key_for_key.label": "Kubernetes Secret data key for private key",
+  "workflow_node.deploy.form.k8s_secret_data_key_for_key.placeholder": "Please enter Kubernetes Secret data key for private key",
   "workflow_node.deploy.form.k8s_secret_data_key_for_key.tooltip": "For more information, see <a href=\"https://kubernetes.io/docs/concepts/configuration/secret/\" target=\"_blank\">https://kubernetes.io/docs/concepts/configuration/secret/</a>",
   "workflow_node.deploy.form.local_format.label": "File format",
   "workflow_node.deploy.form.local_format.placeholder": "Please select file format",
@@ -270,7 +273,7 @@
   "workflow_node.deploy.form.webhook_data.label": "Webhook data (JSON format)",
   "workflow_node.deploy.form.webhook_data.placeholder": "Please enter Webhook data",
 
-  "workflow_node.notify.title": "Notification",
+  "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",
   "workflow_node.notify.form.subject.placeholder": "Please enter subject",
   "workflow_node.notify.form.message.label": "Message",
@@ -279,9 +282,9 @@
   "workflow_node.notify.form.channel.placeholder": "Please select channel",
   "workflow_node.notify.form.channel.button": "Configure",
 
-  "workflow_node.end.title": "End",
+  "workflow_node.end.label": "End",
 
-  "workflow_node.branch.title": "Branch",
+  "workflow_node.branch.label": "Branch",
 
-  "workflow_node.condition.title": "Condition"
+  "workflow_node.condition.label": "Condition"
 }

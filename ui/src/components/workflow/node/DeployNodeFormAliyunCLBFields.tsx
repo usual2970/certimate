@@ -45,6 +45,10 @@ const DeployNodeFormAliyunCLBFields = () => {
   const formRule = createSchemaFieldRule(formSchema);
   const formInst = Form.useFormInstance();
 
+  const initialValues: Partial<z.infer<typeof formSchema>> = {
+    listenerPort: 443,
+  };
+
   const fieldResourceType = Form.useWatch("resourceType", formInst);
 
   return (
@@ -84,7 +88,7 @@ const DeployNodeFormAliyunCLBFields = () => {
           label={t("workflow_node.deploy.form.aliyun_clb_listener_port.label")}
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_clb_listener_port.tooltip") }}></span>}
-          initialValue={443}
+          initialValue={initialValues.listenerPort}
         >
           <Input type="number" min={1} max={65535} placeholder={t("workflow_node.deploy.form.aliyun_clb_listener_port.placeholder")} />
         </Form.Item>

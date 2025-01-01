@@ -64,6 +64,12 @@ const DeployNodeFormSSHFields = () => {
   const formRule = createSchemaFieldRule(formSchema);
   const formInst = Form.useFormInstance();
 
+  const initialValues: Partial<z.infer<typeof formSchema>> = {
+    format: FORMAT_PEM,
+    certPath: "/etc/ssl/certs/cert.crt",
+    keyPath: "/etc/ssl/certs/cert.key",
+  };
+
   const fieldFormat = Form.useWatch("format", formInst);
   const fieldCertPath = Form.useWatch("certPath", formInst);
 
@@ -109,7 +115,7 @@ const DeployNodeFormSSHFields = () => {
 
   return (
     <>
-      <Form.Item name="format" label={t("workflow_node.deploy.form.ssh_format.label")} rules={[formRule]} initialValue={FORMAT_PEM}>
+      <Form.Item name="format" label={t("workflow_node.deploy.form.ssh_format.label")} rules={[formRule]} initialValue={initialValues.format}>
         <Select placeholder={t("workflow_node.deploy.form.ssh_format.placeholder")} onSelect={handleFormatSelect}>
           <Select.Option key={FORMAT_PEM} value={FORMAT_PEM}>
             {t("workflow_node.deploy.form.ssh_format.option.pem.label")}
@@ -128,7 +134,7 @@ const DeployNodeFormSSHFields = () => {
         label={t("workflow_node.deploy.form.ssh_cert_path.label")}
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_cert_path.tooltip") }}></span>}
-        initialValue="/etc/ssl/certs/cert.crt"
+        initialValue={initialValues.certPath}
       >
         <Input placeholder={t("workflow_node.deploy.form.ssh_cert_path.placeholder")} />
       </Form.Item>
@@ -139,7 +145,7 @@ const DeployNodeFormSSHFields = () => {
           label={t("workflow_node.deploy.form.ssh_key_path.label")}
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_key_path.tooltip") }}></span>}
-          initialValue="/etc/ssl/certs/cert.key"
+          initialValue={initialValues.keyPath}
         >
           <Input placeholder={t("workflow_node.deploy.form.ssh_key_path.placeholder")} />
         </Form.Item>
