@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { Alert, Drawer, Typography } from "antd";
+import dayjs from "dayjs";
 
 import Show from "@/components/Show";
 import { type WorkflowRunModel } from "@/domain/workflowRun";
@@ -49,7 +50,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
                       {item.outputs.map((output, j) => {
                         return (
                           <div key={j} className="flex text-sm space-x-2">
-                            <div>[{output.time}]</div>
+                            <div>[{dayjs(output.time).format("YYYY-MM-DD HH:mm:ss")}]</div>
                             {output.error ? <div className="text-red-500">{output.error}</div> : <div>{output.content}</div>}
                           </div>
                         );
