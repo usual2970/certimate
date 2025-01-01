@@ -57,7 +57,7 @@ const DeployNodeFormLocalFields = () => {
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.local_jks_storepass.tooltip") }),
     shellEnv: z.union([z.literal(SHELLENV_SH), z.literal(SHELLENV_CMD), z.literal(SHELLENV_POWERSHELL)], {
-      message: t("domain.deployment.form.shell.placeholder"),
+      message: t("workflow_node.deploy.form.local_shell_env.placeholder"),
     }),
     preCommand: z
       .string()

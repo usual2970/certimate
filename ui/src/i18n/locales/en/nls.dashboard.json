@@ -1,12 +1,12 @@
 ﻿{
   "dashboard.page.title": "Dashboard",
 
-  "dashboard.statistics.all_certificates": "All Certificates",
-  "dashboard.statistics.expire_soon_certificates": "Expire Soon Certificates",
-  "dashboard.statistics.expired_certificates": "Expired Certificates",
-  "dashboard.statistics.all_workflows": "All Workflows",
-  "dashboard.statistics.enabled_workflows": "Enabled Workflows",
+  "dashboard.statistics.all_certificates": "All certificates",
+  "dashboard.statistics.expire_soon_certificates": "Expire soon certificates",
+  "dashboard.statistics.expired_certificates": "Expired certificates",
+  "dashboard.statistics.all_workflows": "All workflows",
+  "dashboard.statistics.enabled_workflows": "Enabled workflows",
   "dashboard.statistics.unit": "",
 
-  "dashboard.latest_workflow_run": "Latest Workflow Run"
+  "dashboard.latest_workflow_run": "Latest workflow run"
 }

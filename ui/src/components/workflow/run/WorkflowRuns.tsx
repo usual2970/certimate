@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Empty, notification, Space, Table, theme, Tooltip, Typography, type TableProps } from "antd";
@@ -18,9 +17,10 @@ import { getErrMsg } from "@/utils/error";
 export type WorkflowRunsProps = {
   className?: string;
   style?: React.CSSProperties;
+  workflowId: string;
 };
 
-const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
+const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const { t } = useTranslation();
 
   const { token: themeToken } = theme.useToken();
@@ -105,11 +105,10 @@ const WorkflowRuns = ({ className, style }: WorkflowRunsProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const { id: workflowId } = useParams(); // TODO: 外部传参
   const { loading } = useRequest(
     () => {
       return listWorkflowRuns({
-        workflowId: workflowId!,
+        workflowId: workflowId,
         page: page,
         perPage: pageSize,
       });

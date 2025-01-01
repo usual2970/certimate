@@ -55,17 +55,15 @@ export enum WorkflowNodeType {
   Custom = "custom",
 }
 
-const i18nPrefix = "workflow.node";
-
 export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Map([
-  [WorkflowNodeType.Start, i18n.t(`${i18nPrefix}.start.title`)],
-  [WorkflowNodeType.End, i18n.t(`${i18nPrefix}.end.title`)],
-  [WorkflowNodeType.Branch, i18n.t(`${i18nPrefix}.branch.title`)],
-  [WorkflowNodeType.Condition, i18n.t(`${i18nPrefix}.condition.title`)],
-  [WorkflowNodeType.Apply, i18n.t(`${i18nPrefix}.apply.title`)],
-  [WorkflowNodeType.Deploy, i18n.t(`${i18nPrefix}.deploy.title`)],
-  [WorkflowNodeType.Notify, i18n.t(`${i18nPrefix}.notify.title`)],
-  [WorkflowNodeType.Custom, i18n.t(`${i18nPrefix}.custom.title`)],
+  [WorkflowNodeType.Start, i18n.t("workflow_node.start.title")],
+  [WorkflowNodeType.End, i18n.t("workflow_node.end.title")],
+  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.title")],
+  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.title")],
+  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.title")],
+  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.title")],
+  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.title")],
+  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
 ]);
 
 export type WorkflowNodeIo = {
@@ -89,7 +87,7 @@ export const workflowNodeTypeDefaultInput: Map<WorkflowNodeType, WorkflowNodeIo[
     [
       {
         name: "certificate",
-        type: " certificate",
+        type: "certificate",
         required: true,
         label: i18n.t("workflow.common.certificate.label"),
       },

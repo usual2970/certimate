@@ -4,7 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PageHeader } from "@ant-design/pro-components";
-import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+import {
+  CaretRightOutlined as CaretRightOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
+  EllipsisOutlined as EllipsisOutlinedIcon,
+} from "@ant-design/icons";
 import { z } from "zod";
 
 import Show from "@/components/Show";
@@ -168,15 +172,27 @@ const WorkflowDetail = () => {
 
       <div className="p-4">
         <Card>
-          <WorkflowProvider>
-            <Show when={tabValue === "orchestration"}>
-              <div className="flex flex-col items-center">{elements}</div>
-            </Show>
+          <Show when={tabValue === "orchestration"}>
+            <div className="relative">
+              <div className="flex flex-col items-center py-12 pr-48">
+                <WorkflowProvider>{elements}</WorkflowProvider>
+              </div>
+              <div className="absolute top-0 right-0 z-[1]">
+                <Button.Group>
+                  <Button onClick={() => alert("TODO")}>{t("workflow.action.discard")}</Button>
+                  <Button onClick={() => alert("TODO")}>{t("workflow.action.release")}</Button>
+                  <Button type="primary" onClick={() => alert("TODO")}>
+                    <CaretRightOutlinedIcon />
+                    {t("workflow.action.execute")}
+                  </Button>
+                </Button.Group>
+              </div>
+            </div>
+          </Show>
 
-            <Show when={tabValue === "runs"}>
-              <WorkflowRuns />
-            </Show>
-          </WorkflowProvider>
+          <Show when={tabValue === "runs"}>
+            <WorkflowRuns workflowId={workflowId!} />
+          </Show>
         </Card>
       </div>
     </div>
@@ -196,12 +212,12 @@ const WorkflowBaseInfoModalForm = ({
 
   const formSchema = z.object({
     name: z
-      .string({ message: t("workflow.baseinfo.form.name.placeholder") })
-      .min(1, t("workflow.baseinfo.form.name.placeholder"))
+      .string({ message: t("workflow.detail.baseinfo.form.name.placeholder") })
+      .min(1, t("workflow.detail.baseinfo.form.name.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
     description: z
-      .string({ message: t("workflow.baseinfo.form.description.placeholder") })
+      .string({ message: t("workflow.detail.baseinfo.form.description.placeholder") })
       .max(256, t("common.errmsg.string_max", { max: 256 }))
       .trim()
       .nullish(),
@@ -232,18 +248,18 @@ const WorkflowBaseInfoModalForm = ({
       form={formInst}
       modalProps={{ destroyOnClose: true }}
       okText={t("common.button.save")}
-      title={t(`workflow.baseinfo.modal.title`)}
+      title={t(`workflow.detail.baseinfo.modal.title`)}
       trigger={trigger}
       width={480}
       {...formProps}
       onFinish={handleFinish}
     >
-      <Form.Item name="name" label={t("workflow.baseinfo.form.name.label")} rules={[formRule]}>
-        <Input placeholder={t("workflow.baseinfo.form.name.placeholder")} />
+      <Form.Item name="name" label={t("workflow.detail.baseinfo.form.name.label")} rules={[formRule]}>
+        <Input placeholder={t("workflow.detail.baseinfo.form.name.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="description" label={t("workflow.baseinfo.form.description.label")} rules={[formRule]}>
-        <Input placeholder={t("workflow.baseinfo.form.description.placeholder")} />
+      <Form.Item name="description" label={t("workflow.detail.baseinfo.form.description.label")} rules={[formRule]}>
+        <Input placeholder={t("workflow.detail.baseinfo.form.description.placeholder")} />
       </Form.Item>
     </ModalForm>
   );

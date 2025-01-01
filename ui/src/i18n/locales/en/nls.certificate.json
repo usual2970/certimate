@@ -3,22 +3,22 @@
 
   "certificate.nodata": "No certificates. Please create a workflow to generate certificates! 😀",
 
-  "certificate.action.view": "View Certificate",
-  "certificate.action.delete": "Delete Certificate",
-  "certificate.action.download": "Download Certificate",
+  "certificate.action.view": "View certificate",
+  "certificate.action.delete": "Delete certificate",
+  "certificate.action.download": "Download certificate",
 
   "certificate.props.san": "Name",
   "certificate.props.expiry": "Expiry",
   "certificate.props.expiry.left_days": "{{left}} / {{total}} days left",
   "certificate.props.expiry.expired": "Expired",
   "certificate.props.expiry.expiration": "Expire on {{date}}",
-  "certificate.props.expiry.filter.expire_soon": "Expire Soon",
+  "certificate.props.expiry.filter.expire_soon": "Expire soon",
   "certificate.props.expiry.filter.expired": "Expired",
   "certificate.props.workflow": "Workflow",
   "certificate.props.source": "Source",
   "certificate.props.source.workflow": "Workflow",
-  "certificate.props.certificate_chain": "Certificate Chain",
-  "certificate.props.private_key": "Private Key",
-  "certificate.props.created_at": "Created At",
-  "certificate.props.updated_at": "Updated At"
+  "certificate.props.certificate_chain": "Certificate chain",
+  "certificate.props.private_key": "Private key",
+  "certificate.props.created_at": "Created at",
+  "certificate.props.updated_at": "Updated at"
 }

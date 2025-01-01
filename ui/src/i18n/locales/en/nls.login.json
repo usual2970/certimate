@@ -5,5 +5,5 @@
   "login.password.label": "Password",
   "login.password.placeholder": "Password",
   "login.password.errmsg.invalid": "Password should be at least 10 characters",
-  "login.submit": "Log In"
+  "login.submit": "Log-in"
 }

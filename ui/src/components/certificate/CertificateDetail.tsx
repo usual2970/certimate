@@ -39,13 +39,17 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
       {MessageContextHolder}
 
       <Form layout="vertical">
-        <Form.Item label={t("certificate.props.san")}>{data.san}</Form.Item>
+        <Form.Item label={t("certificate.props.san")}>
+          <Input value={data.san} placeholder="" />
+        </Form.Item>
 
-        <Form.Item label={t("certificate.props.expiry")}>{dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}</Form.Item>
+        <Form.Item label={t("certificate.props.expiry")}>
+          <Input value={dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")} placeholder="" />
+        </Form.Item>
 
         <Form.Item>
           <div className="flex items-center justify-between w-full mb-2">
-            <label className="font-medium">{t("certificate.props.certificate_chain")}</label>
+            <label>{t("certificate.props.certificate_chain")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.certificate}
@@ -62,7 +66,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
 
         <Form.Item>
           <div className="flex items-center justify-between w-full mb-2">
-            <label className="font-medium">{t("certificate.props.private_key")}</label>
+            <label>{t("certificate.props.private_key")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.privateKey}

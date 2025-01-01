@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { produce } from "immer";
 import { z } from "zod";
 
+import Show from "@/components/Show";
 import { usePanel } from "../PanelProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
@@ -106,7 +107,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron.tooltip") }}></span>}
         extra={
-          triggerCronLastExecutions.length > 0 ? (
+          <Show when={triggerCronLastExecutions.length > 0}>
             <div>
               {t("workflow_node.start.form.trigger_cron.extra")}
               <br />
@@ -117,9 +118,7 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
                 </span>
               ))}
             </div>
-          ) : (
-            <></>
-          )
+          </Show>
         }
       >
         <Input placeholder={t("workflow_node.start.form.trigger_cron.placeholder")} onChange={(e) => handleTriggerCronChange(e.target.value)} />

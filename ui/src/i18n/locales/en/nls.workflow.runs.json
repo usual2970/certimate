@@ -4,6 +4,6 @@
   "workflow_run.props.status.succeeded": "Succeeded",
   "workflow_run.props.status.failed": "Failed",
   "workflow_run.props.trigger": "Trigger",
-  "workflow_run.props.started_at": "Started At",
-  "workflow_run.props.completed_at": "Completed At"
+  "workflow_run.props.started_at": "Started at",
+  "workflow_run.props.completed_at": "Completed at"
 }
