@@ -1,8 +1,9 @@
 import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
-import StartNodeForm from "./node/StartNodeForm";
+
 import DeployPanelBody from "./DeployPanelBody";
 import ApplyNodeForm from "./node/ApplyNodeForm";
 import NotifyNodeForm from "./node/NotifyNodeForm";
+import StartNodeForm from "./node/StartNodeForm";
 
 type PanelBodyProps = {
   data: WorkflowNode;

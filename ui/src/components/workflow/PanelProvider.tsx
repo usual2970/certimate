@@ -1,5 +1,5 @@
-// contexts/DialogContext.tsx
 import { createContext, useContext, useState } from "react";
+
 import Panel from "./Panel";
 
 type PanelContentProps = { name: string; children: React.ReactNode };

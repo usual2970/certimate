@@ -2,9 +2,10 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import Show from "@/components/Show";
-import DeployNodeForm from "./node/DeployNodeForm";
 import { deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode } from "@/domain/workflow";
+
+import DeployNodeForm from "./node/DeployNodeForm";
 
 type DeployPanelBodyProps = {
   data: WorkflowNode;

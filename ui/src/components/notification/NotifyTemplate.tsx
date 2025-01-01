@@ -7,8 +7,8 @@ import { ClientResponseError } from "pocketbase";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { useAntdForm } from "@/hooks";
 import { defaultNotifyTemplate, SETTINGS_NAMES, type NotifyTemplatesSettingsContent } from "@/domain/settings";
+import { useAntdForm } from "@/hooks";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
 

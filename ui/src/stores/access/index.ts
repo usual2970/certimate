@@ -1,5 +1,5 @@
-﻿import { create } from "zustand";
-import { produce } from "immer";
+﻿import { produce } from "immer";
+import { create } from "zustand";
 
 import { type AccessModel } from "@/domain/access";
 import { list as listAccess, save as saveAccess, remove as removeAccess } from "@/repository/access";

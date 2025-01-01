@@ -4,11 +4,12 @@ import { useDeepCompareMemo } from "@ant-design/pro-components";
 import { Button, Collapse, message, notification, Skeleton, Space, Switch, type CollapseProps } from "antd";
 
 import Show from "@/components/Show";
-import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
-import NotifyTestButton from "./NotifyTestButton";
 import { notifyChannelsMap } from "@/domain/settings";
 import { useNotifyChannelStore } from "@/stores/notify";
 import { getErrMsg } from "@/utils/error";
+
+import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
+import NotifyTestButton from "./NotifyTestButton";
 
 type NotifyChannelProps = {
   className?: string;

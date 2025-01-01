@@ -1,6 +1,6 @@
 ﻿import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { RouterProvider } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { RouterProvider } from "react-router-dom";
 import { App, ConfigProvider, theme, type ThemeConfig } from "antd";
 import { type Locale } from "antd/es/locale";
 import AntdLocaleEnUs from "antd/locale/en_US";
@@ -8,9 +8,9 @@ import AntdLocaleZhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 
-import { localeNames } from "./i18n";
-import { useBrowserTheme } from "./hooks";
-import { router } from "./router.tsx";
+import { useBrowserTheme } from "@/hooks";
+import { localeNames } from "@/i18n";
+import { router } from "@/router.tsx";
 
 const RootApp = () => {
   const { i18n } = useTranslation();

@@ -1,11 +1,12 @@
-import { Dropdown } from "antd";
 import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
+import { Dropdown } from "antd";
 
-import { useZustandShallowSelector } from "@/hooks";
 import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
-import { type BrandNodeProps, type NodeProps } from "./types";
+
 import DropdownMenuItemIcon from "./DropdownMenuItemIcon";
+import { type BrandNodeProps, type NodeProps } from "./types";
 
 const AddNode = ({ data }: NodeProps | BrandNodeProps) => {
   const { addNode } = useWorkflowStore(useZustandShallowSelector(["addNode"]));

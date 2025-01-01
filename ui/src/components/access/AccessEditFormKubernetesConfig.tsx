@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
+import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
-import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { useAntdForm } from "@/hooks";
 import { type KubernetesAccessConfig } from "@/domain/access";
+import { useAntdForm } from "@/hooks";
 import { readFileContent } from "@/utils/file";
 
 type AccessEditFormKubernetesConfigFieldValues = Partial<KubernetesAccessConfig>;

@@ -1,5 +1,5 @@
-import { type WorkflowNodeDropdwonItemIcon, WorkflowNodeDropdwonItemIconType } from "@/domain/workflow";
 import { CloudUpload, GitFork, Megaphone, NotebookPen } from "lucide-react";
+import { type WorkflowNodeDropdwonItemIcon, WorkflowNodeDropdwonItemIconType } from "@/domain/workflow";
 
 const icons = new Map([
   ["NotebookPen", <NotebookPen size={16} />],

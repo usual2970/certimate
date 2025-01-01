@@ -1,9 +1,10 @@
-import { Dropdown } from "antd";
 import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+import { Dropdown } from "antd";
 
-import AddNode from "./AddNode";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
+
+import AddNode from "./AddNode";
 import { type NodeProps } from "./types";
 
 const ConditionNode = ({ data, branchId, branchIndex }: NodeProps) => {

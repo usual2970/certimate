@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
 import { Modal, notification } from "antd";
 
-import { useTriggerElement } from "@/hooks";
 import { type AccessModel } from "@/domain/access";
+import { useTriggerElement } from "@/hooks";
 import { useAccessStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
+
 import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps } from "./AccessEditForm";
 
 export type AccessEditModalProps = {

@@ -1,9 +1,11 @@
 import { memo } from "react";
+
 import { WorkflowBranchNode, WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
-import Node from "./Node";
-import End from "./End";
+
 import BranchNode from "./BranchNode";
 import ConditionNode from "./ConditionNode";
+import End from "./End";
+import Node from "./Node";
 import { NodeProps } from "./types";
 
 const NodeRender = memo(({ data, branchId, branchIndex }: NodeProps) => {

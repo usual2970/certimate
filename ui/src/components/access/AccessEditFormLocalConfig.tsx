@@ -1,7 +1,7 @@
 import { Form, type FormInstance } from "antd";
 
-import { useAntdForm } from "@/hooks";
 import { type LocalAccessConfig } from "@/domain/access";
+import { useAntdForm } from "@/hooks";
 
 type AccessEditFormLocalConfigFieldValues = Partial<LocalAccessConfig>;
 

@@ -1,7 +1,6 @@
-import { memo, useEffect, useState } from "react";
-import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
+import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   CloudServerOutlined as CloudServerOutlinedIcon,
   GlobalOutlined as GlobalOutlinedIcon,
@@ -14,6 +13,7 @@ import {
   SettingOutlined as SettingOutlinedIcon,
   SunOutlined as SunOutlinedIcon,
 } from "@ant-design/icons";
+import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
 
 import Version from "@/components/core/Version";
 import { useBrowserTheme } from "@/hooks";
@@ -135,12 +135,12 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   });
   const [menuSelectedKey, setMenuSelectedKey] = useState<string>();
 
-  const getActiveMenuItem = () => {
+  const getActiveMenuItem = useCallback(() => {
     const item =
       menuItems.find((item) => item!.key === location.pathname) ??
       menuItems.find((item) => item!.key !== MENU_KEY_HOME && location.pathname.startsWith(item!.key as string));
     return item;
-  };
+  }, [location.pathname, menuItems]);
 
   useEffect(() => {
     const item = getActiveMenuItem();
@@ -149,13 +149,13 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
     } else {
       setMenuSelectedKey(undefined);
     }
-  }, [location.pathname]);
+  }, [location.pathname, getActiveMenuItem]);
 
   useEffect(() => {
     if (menuSelectedKey && menuSelectedKey !== getActiveMenuItem()?.key) {
       navigate(menuSelectedKey);
     }
-  }, [menuSelectedKey]);
+  }, [menuSelectedKey, navigate, getActiveMenuItem]);
 
   return (
     <>

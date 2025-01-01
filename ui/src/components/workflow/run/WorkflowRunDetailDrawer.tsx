@@ -3,8 +3,8 @@ import { useControllableValue } from "ahooks";
 import { Alert, Drawer, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { useTriggerElement } from "@/hooks";
 import { type WorkflowRunModel } from "@/domain/workflowRun";
+import { useTriggerElement } from "@/hooks";
 
 export type WorkflowRunDetailDrawerProps = {
   data?: WorkflowRunModel;

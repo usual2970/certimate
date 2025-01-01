@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
+import { DownOutlined as DownOutlinedIcon } from "@ant-design/icons";
 import { Button, Dropdown, Form, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { DownOutlined as DownOutlinedIcon } from "@ant-design/icons";
 import { z } from "zod";
 
 import Show from "@/components/Show";

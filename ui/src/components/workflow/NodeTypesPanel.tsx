@@ -1,5 +1,6 @@
-import { WorkflowNodeType } from "@/domain/workflow";
 import { CloudUpload, GitFork, Megaphone, NotebookPen } from "lucide-react";
+
+import { WorkflowNodeType } from "@/domain/workflow";
 
 type NodeTypesPanelProps = {
   onTypeSelected: (type: WorkflowNodeType) => void;

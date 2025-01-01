@@ -2,11 +2,12 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "antd";
 
+import { type WorkflowBranchNode, type WorkflowNode } from "@/domain/workflow";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
+
 import AddNode from "./AddNode";
 import NodeRender from "./NodeRender";
-import { useZustandShallowSelector } from "@/hooks";
-import { type WorkflowBranchNode, type WorkflowNode } from "@/domain/workflow";
-import { useWorkflowStore } from "@/stores/workflow";
 import { type BrandNodeProps } from "./types";
 
 const BranchNode = memo(({ data }: BrandNodeProps) => {

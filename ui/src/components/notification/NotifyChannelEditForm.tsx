@@ -2,16 +2,17 @@ import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { useCreation } from "ahooks";
 import { Form, type FormInstance } from "antd";
 
-import { useAntdForm } from "@/hooks";
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
+import { useAntdForm } from "@/hooks";
+
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
 import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields";
 import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
-import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
+import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 
 type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 

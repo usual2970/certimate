@@ -1,7 +1,8 @@
 import path from "node:path";
-import fs from "fs-extra";
+
 import legacyPlugin from "@vitejs/plugin-legacy";
 import reactPlugin from "@vitejs/plugin-react";
+import fs from "fs-extra";
 import { defineConfig, type Plugin } from "vite";
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {

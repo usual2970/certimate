@@ -1,4 +1,4 @@
-import { WorkflowBranchNode, WorkflowNode } from "@/domain/workflow";
+import { type WorkflowBranchNode, type WorkflowNode } from "@/domain/workflow";
 
 export type NodeProps = {
   data: WorkflowNode | WorkflowBranchNode;

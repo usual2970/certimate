@@ -1,16 +1,17 @@
 import { useTranslation } from "react-i18next";
-import { Dropdown } from "antd";
 import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+import { Dropdown } from "antd";
 
 import Show from "@/components/Show";
-import AddNode from "./AddNode";
-import { usePanel } from "./PanelProvider";
-import PanelBody from "./PanelBody";
-import { useZustandShallowSelector } from "@/hooks";
 import { deployProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
+
+import AddNode from "./AddNode";
+import PanelBody from "./PanelBody";
+import { usePanel } from "./PanelProvider";
 
 type NodeProps = {
   data: WorkflowNode;

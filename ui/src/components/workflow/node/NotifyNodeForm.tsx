@@ -1,18 +1,18 @@
 import { memo, useEffect } from "react";
-import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import { RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
 import { Button, Form, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
 import { produce } from "immer";
 import { z } from "zod";
 
-import { usePanel } from "../PanelProvider";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useNotifyChannelStore } from "@/stores/notify";
 import { useWorkflowStore } from "@/stores/workflow";
+import { usePanel } from "../PanelProvider";
 
 export type NotifyNodeFormProps = {
   data: WorkflowNode;

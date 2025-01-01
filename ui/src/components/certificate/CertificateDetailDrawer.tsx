@@ -2,9 +2,9 @@ import { useControllableValue } from "ahooks";
 import { Drawer } from "antd";
 
 import Show from "@/components/Show";
-import CertificateDetail from "./CertificateDetail";
-import { useTriggerElement } from "@/hooks";
 import { type CertificateModel } from "@/domain/certificate";
+import { useTriggerElement } from "@/hooks";
+import CertificateDetail from "./CertificateDetail";
 
 export type CertificateDetailDrawerProps = {
   data?: CertificateModel;

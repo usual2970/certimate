@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRequest } from "ahooks";
-import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
-import { PageHeader } from "@ant-design/pro-components";
 import {
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SnippetsOutlined as SnippetsOutlinedIcon,
 } from "@ant-design/icons";
+import { PageHeader } from "@ant-design/pro-components";
+import { useRequest } from "ahooks";
+import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -125,7 +125,7 @@ const AccessList = () => {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     });
-  }, []);
+  }, [fetchAccesses]);
 
   const { loading } = useRequest(
     () => {

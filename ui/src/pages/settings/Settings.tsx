@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, Space } from "antd";
-import { PageHeader } from "@ant-design/pro-components";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   ApiOutlined as ApiOutlinedIcon,
   LockOutlined as LockOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   UserOutlined as UserOutlinedIcon,
 } from "@ant-design/icons";
+import { PageHeader } from "@ant-design/pro-components";
+import { Card, Space } from "antd";
 
 const Settings = () => {
   const location = useLocation();
@@ -25,7 +25,7 @@ const Settings = () => {
     }
 
     setTabValue(path);
-  }, [location]);
+  }, [location, navigate]);
 
   return (
     <div className="p-4">

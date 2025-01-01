@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Divider, Space, Typography } from "antd";
 import { BookOutlined as BookOutlinedIcon } from "@ant-design/icons";
+import { Divider, Space, Typography } from "antd";
 
 import { version } from "@/domain/version";
 

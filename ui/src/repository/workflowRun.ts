@@ -1,4 +1,5 @@
 ﻿import { type WorkflowRunModel } from "@/domain/workflowRun";
+
 import { getPocketBase } from "./pocketbase";
 
 const COLLECTION_NAME = "workflow_run_log";

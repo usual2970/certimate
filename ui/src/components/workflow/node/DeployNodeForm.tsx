@@ -1,17 +1,22 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { Avatar, Button, Divider, Form, Select, Space, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { produce } from "immer";
-import z from "zod";
+import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
+import { ACCESS_USAGES } from "@/domain/access";
+import { accessProvidersMap, deployProvidersMap } from "@/domain/provider";
+import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
 import DeployNodeFormAliyunALBFields from "./DeployNodeFormAliyunALBFields";
-import DeployNodeFormAliyunCLBFields from "./DeployNodeFormAliyunCLBFields";
 import DeployNodeFormAliyunCDNFields from "./DeployNodeFormAliyunCDNFields";
+import DeployNodeFormAliyunCLBFields from "./DeployNodeFormAliyunCLBFields";
 import DeployNodeFormAliyunDCDNFields from "./DeployNodeFormAliyunDCDNFields";
 import DeployNodeFormAliyunNLBFields from "./DeployNodeFormAliyunNLBFields";
 import DeployNodeFormAliyunOSSFields from "./DeployNodeFormAliyunOSSFields";
@@ -32,11 +37,6 @@ import DeployNodeFormTencentCloudEOFields from "./DeployNodeFormTencentCloudEOFi
 import DeployNodeFormVolcEngineCDNFields from "./DeployNodeFormVolcEngineCDNFields";
 import DeployNodeFormVolcEngineLiveFields from "./DeployNodeFormVolcEngineLiveFields";
 import DeployNodeFormWebhookFields from "./DeployNodeFormWebhookFields";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { ACCESS_USAGES } from "@/domain/access";
-import { accessProvidersMap, deployProvidersMap } from "@/domain/provider";
-import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
-import { useWorkflowStore } from "@/stores/workflow";
 
 export type DeployFormProps = {
   data: WorkflowNode;
