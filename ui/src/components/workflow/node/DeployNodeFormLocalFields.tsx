@@ -6,9 +6,9 @@ import { z } from "zod";
 
 import Show from "@/components/Show";
 
-const FORMAT_PEM = "pem" as const;
-const FORMAT_PFX = "pfx" as const;
-const FORMAT_JKS = "jks" as const;
+const FORMAT_PEM = "PEM" as const;
+const FORMAT_PFX = "PFX" as const;
+const FORMAT_JKS = "JKS" as const;
 
 const SHELLENV_SH = "sh" as const;
 const SHELLENV_CMD = "cmd" as const;

@@ -54,12 +54,12 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
             </Space>
           );
         } else {
-          <Tooltip title={record.error}>
+          return (
             <Space>
               <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
               <Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>
             </Space>
-          </Tooltip>;
+          );
         }
       },
     },

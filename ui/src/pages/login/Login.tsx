@@ -28,7 +28,7 @@ const Login = () => {
     onSubmit: async (values) => {
       try {
         await getPocketBase().admins.authWithPassword(values.username, values.password);
-        navigage("/");
+        await navigage("/");
       } catch (err) {
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
       }

@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Tabs, Typography } from "antd";
+import { useDeepCompareEffect } from "ahooks";
+import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Space, Tabs, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { PageHeader } from "@ant-design/pro-components";
 import {
   CaretRightOutlined as CaretRightOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
+  UndoOutlined as UndoOutlinedIcon,
 } from "@ant-design/icons";
+import { ClientResponseError } from "pocketbase";
+import { isEqual } from "radash";
 import { z } from "zod";
 
 import Show from "@/components/Show";
@@ -18,9 +22,10 @@ import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { allNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
+import { isAllNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
 import { remove as removeWorkflow } from "@/repository/workflow";
+import { run as runWorkflow } from "@/api/workflow";
 import { getErrMsg } from "@/utils/error";
 
 const WorkflowDetail = () => {
@@ -33,16 +38,17 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, init, setBaseInfo, switchEnable } = useWorkflowStore(useZustandShallowSelector(["workflow", "init", "setBaseInfo", "switchEnable"]));
+  const { workflow, init, save, setBaseInfo, switchEnable } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "init", "save", "setBaseInfo", "switchEnable"])
+  );
   useEffect(() => {
+    // TODO: loading
     init(workflowId);
   }, [workflowId, init]);
 
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
-  // const [running, setRunning] = useState(false);
-
-  const elements = useMemo(() => {
+  const workflowNodes = useMemo(() => {
     let current = workflow.draft as WorkflowNode;
 
     const elements: JSX.Element[] = [];
@@ -58,6 +64,16 @@ const WorkflowDetail = () => {
     return elements;
   }, [workflow]);
 
+  const [workflowRunning, setWorkflowRunning] = useState(false);
+
+  const [allowDiscard, setAllowDiscard] = useState(false);
+  const [allowRelease, setAllowRelease] = useState(false);
+  useDeepCompareEffect(() => {
+    const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
+    setAllowDiscard(hasChanges && !workflowRunning);
+    setAllowRelease(hasChanges && !workflowRunning);
+  }, [workflow, workflowRunning]);
+
   const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
     try {
       await setBaseInfo(values.name!, values.description!);
@@ -69,10 +85,11 @@ const WorkflowDetail = () => {
   };
 
   const handleEnableChange = () => {
-    if (!workflow.enabled && !allNodesValidated(workflow.content!)) {
-      messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
+    if (!workflow.enabled && !isAllNodesValidated(workflow.content!)) {
+      messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
       return;
     }
+
     switchEnable();
   };
 
@@ -84,7 +101,7 @@ const WorkflowDetail = () => {
         try {
           const resp: boolean = await removeWorkflow(workflow);
           if (resp) {
-            navigate("/workflows");
+            navigate("/workflows", { replace: true });
           }
         } catch (err) {
           console.error(err);
@@ -94,29 +111,59 @@ const WorkflowDetail = () => {
     });
   };
 
-  // TODO: 发布更改 撤销更改 立即执行
-  // const handleWorkflowSaveClick = () => {
-  //   if (!allNodesValidated(workflow.draft as WorkflowNode)) {
-  //     messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
-  //     return;
-  //   }
-  //   save();
-  // };
+  const handleDiscardClick = () => {
+    alert("TODO");
+  };
 
-  // const handleRunClick = async () => {
-  //   if (running) return;
+  const handleReleaseClick = () => {
+    if (!isAllNodesValidated(workflow.draft!)) {
+      messageApi.warning(t("workflow.action.release.failed.uncompleted"));
+      return;
+    }
 
-  //   setRunning(true);
-  //   try {
-  //     await runWorkflow(workflow.id as string);
-  //     messageApi.success(t("workflow.detail.action.run.success"));
-  //   } catch (err) {
-  //     console.error(err);
-  //     messageApi.warning(t("workflow.detail.action.run.failed"));
-  //   } finally {
-  //     setRunning(false);
-  //   }
-  // };
+    save();
+
+    messageApi.success(t("common.text.operation_succeeded"));
+  };
+
+  const handleRunClick = () => {
+    if (!workflow.enabled) {
+      alert("TODO: 暂时只支持执行已启用的工作流");
+      return;
+    }
+
+    const { promise, resolve, reject } = Promise.withResolvers();
+    if (workflow.hasDraft) {
+      modalApi.confirm({
+        title: t("workflow.action.run"),
+        content: t("workflow.action.run.confirm"),
+        onOk: () => resolve(void 0),
+        onCancel: () => reject(),
+      });
+    } else {
+      resolve(void 0);
+    }
+
+    // TODO: 异步执行
+    promise.then(async () => {
+      setWorkflowRunning(true);
+
+      try {
+        await runWorkflow(workflowId!);
+
+        messageApi.warning(t("common.text.operation_succeeded"));
+      } catch (err) {
+        if (err instanceof ClientResponseError && err.isAbort) {
+          return;
+        }
+
+        console.error(err);
+        messageApi.warning(t("common.text.operation_failed"));
+      } finally {
+        setWorkflowRunning(false);
+      }
+    });
+  };
 
   return (
     <div>
@@ -175,17 +222,37 @@ const WorkflowDetail = () => {
           <Show when={tabValue === "orchestration"}>
             <div className="relative">
               <div className="flex flex-col items-center py-12 pr-48">
-                <WorkflowProvider>{elements}</WorkflowProvider>
+                <WorkflowProvider>{workflowNodes}</WorkflowProvider>
               </div>
               <div className="absolute top-0 right-0 z-[1]">
-                <Button.Group>
-                  <Button onClick={() => alert("TODO")}>{t("workflow.action.discard")}</Button>
-                  <Button onClick={() => alert("TODO")}>{t("workflow.action.release")}</Button>
-                  <Button type="primary" onClick={() => alert("TODO")}>
-                    <CaretRightOutlinedIcon />
-                    {t("workflow.action.execute")}
+                <Space>
+                  <Button icon={<CaretRightOutlinedIcon />} loading={workflowRunning} type="primary" onClick={handleRunClick}>
+                    {t("workflow.action.run")}
                   </Button>
-                </Button.Group>
+
+                  <Button.Group>
+                    <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
+                      {t("workflow.action.release")}
+                    </Button>
+
+                    <Dropdown
+                      menu={{
+                        items: [
+                          {
+                            key: "discard",
+                            disabled: !allowDiscard,
+                            label: t("workflow.action.discard"),
+                            icon: <UndoOutlinedIcon />,
+                            onClick: handleDiscardClick,
+                          },
+                        ],
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button color="primary" icon={<EllipsisOutlinedIcon />} variant="outlined" />
+                    </Dropdown>
+                  </Button.Group>
+                </Space>
               </div>
             </div>
           </Show>
@@ -237,7 +304,7 @@ const WorkflowBaseInfoModalForm = ({
     },
   });
 
-  const handleFinish = async () => {
+  const handleFormFinish = async () => {
     return formApi.submit();
   };
 
@@ -252,7 +319,7 @@ const WorkflowBaseInfoModalForm = ({
       trigger={trigger}
       width={480}
       {...formProps}
-      onFinish={handleFinish}
+      onFinish={handleFormFinish}
     >
       <Form.Item name="name" label={t("workflow.detail.baseinfo.form.name.label")} rules={[formRule]}>
         <Input placeholder={t("workflow.detail.baseinfo.form.name.placeholder")} />
@@ -264,4 +331,5 @@ const WorkflowBaseInfoModalForm = ({
     </ModalForm>
   );
 };
+
 export default WorkflowDetail;

@@ -23,6 +23,19 @@ export const useAccessStore = create<AccessState>((set) => {
     loading: false,
     loadedAtOnce: false,
 
+    fetchAccesses: async () => {
+      fetcher ??= listAccess();
+
+      try {
+        set({ loading: true });
+        const accesses = await fetcher;
+        set({ accesses: accesses ?? [], loadedAtOnce: true });
+      } finally {
+        fetcher = null;
+        set({ loading: false });
+      }
+    },
+
     createAccess: async (access) => {
       const record = await saveAccess(access);
       set(
@@ -57,19 +70,6 @@ export const useAccessStore = create<AccessState>((set) => {
       );
 
       return access as AccessModel;
-    },
-
-    fetchAccesses: async () => {
-      fetcher ??= listAccess();
-
-      try {
-        set({ loading: true });
-        const accesses = await fetcher;
-        set({ accesses: accesses ?? [], loadedAtOnce: true });
-      } finally {
-        fetcher = null;
-        set({ loading: false });
-      }
     },
   };
 });

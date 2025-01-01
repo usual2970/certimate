@@ -23,6 +23,19 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
     loading: false,
     loadedAtOnce: false,
 
+    fetchChannels: async () => {
+      fetcher ??= getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
+
+      try {
+        set({ loading: true });
+        settings = await fetcher;
+        set({ channels: settings.content ?? {}, loadedAtOnce: true });
+      } finally {
+        fetcher = null;
+        set({ loading: false });
+      }
+    },
+
     setChannel: async (channel, config) => {
       settings ??= await getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
       return get().setChannels(
@@ -46,19 +59,6 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
           state.loadedAtOnce = true;
         })
       );
-    },
-
-    fetchChannels: async () => {
-      fetcher ??= getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
-
-      try {
-        set({ loading: true });
-        settings = await fetcher;
-        set({ channels: settings.content ?? {}, loadedAtOnce: true });
-      } finally {
-        fetcher = null;
-        set({ loading: false });
-      }
     },
   };
 });

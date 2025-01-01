@@ -353,17 +353,14 @@ const FormFieldDomainsModalForm = ({
     setModel({ domains: data?.split(MULTIPLE_INPUT_DELIMITER) });
   }, [data]);
 
-  const handleFinish = useCallback(
-    (values: z.infer<typeof formSchema>) => {
-      onFinish?.(
-        values.domains
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-    [onFinish]
-  );
+  const handleFormFinish = (values: z.infer<typeof formSchema>) => {
+    onFinish?.(
+      values.domains
+        .map((e) => e.trim())
+        .filter((e) => !!e)
+        .join(MULTIPLE_INPUT_DELIMITER)
+    );
+  };
 
   return (
     <ModalForm
@@ -375,7 +372,7 @@ const FormFieldDomainsModalForm = ({
       trigger={trigger}
       validateTrigger="onSubmit"
       width={480}
-      onFinish={handleFinish}
+      onFinish={handleFormFinish}
     >
       <Form.Item name="domains" rules={[formRule]}>
         <MultipleInput placeholder={t("workflow_node.apply.form.domains.multiple_input_modal.placeholder")} />
@@ -400,17 +397,14 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
     setModel({ nameservers: data?.split(MULTIPLE_INPUT_DELIMITER) });
   }, [data]);
 
-  const handleFinish = useCallback(
-    (values: z.infer<typeof formSchema>) => {
-      onFinish?.(
-        values.nameservers
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-    [onFinish]
-  );
+  const handleFormFinish = (values: z.infer<typeof formSchema>) => {
+    onFinish?.(
+      values.nameservers
+        .map((e) => e.trim())
+        .filter((e) => !!e)
+        .join(MULTIPLE_INPUT_DELIMITER)
+    );
+  };
 
   return (
     <ModalForm
@@ -422,7 +416,7 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
       trigger={trigger}
       validateTrigger="onSubmit"
       width={480}
-      onFinish={handleFinish}
+      onFinish={handleFormFinish}
     >
       <Form.Item name="nameservers" rules={[formRule]}>
         <MultipleInput placeholder={t("workflow_node.apply.form.nameservers.multiple_input_modal.placeholder")} />

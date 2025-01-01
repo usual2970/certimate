@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
 import { Button, Form, Input, message, notification, Skeleton } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { z } from "zod";
 import { ClientResponseError } from "pocketbase";
+import { z } from "zod";
 
 import Show from "@/components/Show";
 import { useAntdForm } from "@/hooks";

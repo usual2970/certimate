@@ -362,20 +362,20 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNod
   return output;
 };
 
-export const allNodesValidated = (node: WorkflowNode | WorkflowBranchNode): boolean => {
-  let current = node;
+export const isAllNodesValidated = (node: WorkflowNode | WorkflowBranchNode): boolean => {
+  let current = node as typeof node | undefined;
   while (current) {
     if (!isWorkflowBranchNode(current) && !current.validated) {
       return false;
     }
     if (isWorkflowBranchNode(current)) {
       for (const branch of current.branches) {
-        if (!allNodesValidated(branch)) {
+        if (!isAllNodesValidated(branch)) {
           return false;
         }
       }
     }
-    current = current.next as WorkflowNode;
+    current = current.next;
   }
   return true;
 };

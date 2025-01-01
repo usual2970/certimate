@@ -25,7 +25,7 @@ import { DeleteOutlined as DeleteOutlinedIcon, EditOutlined as EditOutlinedIcon,
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { allNodesValidated, type WorkflowModel } from "@/domain/workflow";
+import { isAllNodesValidated, type WorkflowModel } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -241,8 +241,8 @@ const WorkflowList = () => {
 
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
-      if (!workflow.enabled && !allNodesValidated(workflow.content!)) {
-        messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
+      if (!workflow.enabled && !isAllNodesValidated(workflow.content!)) {
+        messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
         return;
       }
 

@@ -24,6 +24,19 @@ export const useContactStore = create<ContactState>((set, get) => {
     loading: false,
     loadedAtOnce: false,
 
+    fetchEmails: async () => {
+      fetcher ??= getSettings<EmailsSettingsContent>(SETTINGS_NAMES.EMAILS);
+
+      try {
+        set({ loading: true });
+        settings = await fetcher;
+        set({ emails: settings.content.emails?.sort() ?? [], loadedAtOnce: true });
+      } finally {
+        fetcher = null;
+        set({ loading: false });
+      }
+    },
+
     setEmails: async (emails) => {
       settings ??= await getSettings<EmailsSettingsContent>(SETTINGS_NAMES.EMAILS);
       settings = await saveSettings<EmailsSettingsContent>({
@@ -57,19 +70,6 @@ export const useContactStore = create<ContactState>((set, get) => {
         draft.sort();
       });
       get().setEmails(emails);
-    },
-
-    fetchEmails: async () => {
-      fetcher ??= getSettings<EmailsSettingsContent>(SETTINGS_NAMES.EMAILS);
-
-      try {
-        set({ loading: true });
-        settings = await fetcher;
-        set({ emails: settings.content.emails?.sort() ?? [], loadedAtOnce: true });
-      } finally {
-        fetcher = null;
-        set({ loading: false });
-      }
     },
   };
 });
