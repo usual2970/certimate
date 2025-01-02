@@ -2,15 +2,14 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, Space, Tag, Typography, type SelectProps } from "antd";
 
-import { ACCESS_USAGES } from "@/domain/access";
-import { accessProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 
-export type AccessTypeSelectProps = Omit<
+export type AccessProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 >;
 
-const AccessTypeSelect = (props: AccessTypeSelectProps) => {
+const AccessProviderSelect = (props: AccessProviderSelectProps) => {
   const { t } = useTranslation();
 
   const options = Array.from(accessProvidersMap.values()).map((item) => ({
@@ -69,4 +68,4 @@ const AccessTypeSelect = (props: AccessTypeSelectProps) => {
   );
 };
 
-export default memo(AccessTypeSelect);
+export default memo(AccessProviderSelect);

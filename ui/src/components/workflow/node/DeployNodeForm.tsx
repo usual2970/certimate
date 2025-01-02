@@ -8,8 +8,7 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import { ACCESS_USAGES } from "@/domain/access";
-import { accessProvidersMap, deployProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, accessProvidersMap, DEPLOY_PROVIDERS, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -96,51 +95,51 @@ const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
       NOTICE: If you add new child component, please keep ASCII order.
      */
     switch (fieldProviderType) {
-      case "aliyun-alb":
+      case DEPLOY_PROVIDERS.ALIYUN_ALB:
         return <DeployNodeFormAliyunALBFields />;
-      case "aliyun-clb":
+      case DEPLOY_PROVIDERS.ALIYUN_CLB:
         return <DeployNodeFormAliyunCLBFields />;
-      case "aliyun-cdn":
+      case DEPLOY_PROVIDERS.ALIYUN_CDN:
         return <DeployNodeFormAliyunCDNFields />;
-      case "aliyun-dcdn":
+      case DEPLOY_PROVIDERS.ALIYUN_DCDN:
         return <DeployNodeFormAliyunDCDNFields />;
-      case "aliyun-nlb":
+      case DEPLOY_PROVIDERS.ALIYUN_NLB:
         return <DeployNodeFormAliyunNLBFields />;
-      case "aliyun-oss":
+      case DEPLOY_PROVIDERS.ALIYUN_OSS:
         return <DeployNodeFormAliyunOSSFields />;
-      case "baiducloud-cdn":
+      case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
         return <DeployNodeFormBaiduCloudCDNFields />;
-      case "byteplus-cdn":
+      case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
         return <DeployNodeFormBytePlusCDNFields />;
-      case "dogecloud-cdn":
+      case DEPLOY_PROVIDERS.DOGECLOUD_CDN:
         return <DeployNodeFormDogeCloudCDNFields />;
-      case "huaweicloud-cdn":
+      case DEPLOY_PROVIDERS.HUAWEICLOUD_CDN:
         return <DeployNodeFormHuaweiCloudCDNFields />;
-      case "huaweicloud-elb":
+      case DEPLOY_PROVIDERS.HUAWEICLOUD_ELB:
         return <DeployNodeFormHuaweiCloudELBFields />;
-      case "k8s-secret":
+      case DEPLOY_PROVIDERS.KUBERNETES_SECRET:
         return <DeployNodeFormKubernetesSecretFields />;
-      case "local":
+      case DEPLOY_PROVIDERS.LOCAL:
         return <DeployNodeFormLocalFields />;
-      case "qiniu-cdn":
+      case DEPLOY_PROVIDERS.QINIU_CDN:
         return <DeployNodeFormQiniuCDNFields />;
-      case "ssh":
+      case DEPLOY_PROVIDERS.SSH:
         return <DeployNodeFormSSHFields />;
-      case "tencentcloud-cdn":
+      case DEPLOY_PROVIDERS.TENCENTCLOUD_CDN:
         return <DeployNodeFormTencentCloudCDNFields />;
-      case "tencentcloud-clb":
+      case DEPLOY_PROVIDERS.TENCENTCLOUD_CLB:
         return <DeployNodeFormTencentCloudCLBFields />;
-      case "tencentcloud-cos":
+      case DEPLOY_PROVIDERS.TENCENTCLOUD_COS:
         return <DeployNodeFormTencentCloudCOSFields />;
-      case "tencentcloud-ecdn":
+      case DEPLOY_PROVIDERS.TENCENTCLOUD_ECDN:
         return <DeployNodeFormTencentCloudECDNFields />;
-      case "tencentcloud-eo":
+      case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
         return <DeployNodeFormTencentCloudEOFields />;
-      case "volcengine-cdn":
+      case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
         return <DeployNodeFormVolcEngineCDNFields />;
-      case "volcengine-live":
+      case DEPLOY_PROVIDERS.VOLCENGINE_LIVE:
         return <DeployNodeFormVolcEngineLiveFields />;
-      case "webhook":
+      case DEPLOY_PROVIDERS.WEBHOOK:
         return <DeployNodeFormWebhookFields />;
     }
   }, [fieldProviderType]);

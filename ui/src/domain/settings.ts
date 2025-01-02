@@ -39,23 +39,15 @@ export const defaultNotifyTemplate: NotifyTemplate = {
 // #endregion
 
 // #region Settings: NotifyChannels
-export const NOTIFY_CHANNEL_BARK = "bark" as const;
-export const NOTIFY_CHANNEL_DINGTALK = "dingtalk" as const;
-export const NOTIFY_CHANNEL_EMAIL = "email" as const;
-export const NOTIFY_CHANNEL_LARK = "lark" as const;
-export const NOTIFY_CHANNEL_SERVERCHAN = "serverchan" as const;
-export const NOTIFY_CHANNEL_TELEGRAM = "telegram" as const;
-export const NOTIFY_CHANNEL_WEBHOOK = "webhook" as const;
-export const NOTIFY_CHANNEL_WECOM = "wecom" as const;
 export const NOTIFY_CHANNELS = Object.freeze({
-  BARK: NOTIFY_CHANNEL_BARK,
-  DINGTALK: NOTIFY_CHANNEL_DINGTALK,
-  EMAIL: NOTIFY_CHANNEL_EMAIL,
-  LARK: NOTIFY_CHANNEL_LARK,
-  SERVERCHAN: NOTIFY_CHANNEL_SERVERCHAN,
-  TELEGRAM: NOTIFY_CHANNEL_TELEGRAM,
-  WEBHOOK: NOTIFY_CHANNEL_WEBHOOK,
-  WECOM: NOTIFY_CHANNEL_WECOM,
+  BARK: "bark",
+  DINGTALK: "dingtalk",
+  EMAIL: "email",
+  LARK: "lark",
+  SERVERCHAN: "serverchan",
+  TELEGRAM: "telegram",
+  WEBHOOK: "webhook",
+  WECOM: "wecom",
 } as const);
 
 export type NotifyChannels = (typeof NOTIFY_CHANNELS)[keyof typeof NOTIFY_CHANNELS];
@@ -66,14 +58,14 @@ export type NotifyChannelsSettingsContent = {
     NOTICE: If you add new type, please keep ASCII order.
   */
   [key: string]: ({ enabled?: boolean } & Record<string, unknown>) | undefined;
-  [NOTIFY_CHANNEL_BARK]?: BarkNotifyChannelConfig;
-  [NOTIFY_CHANNEL_DINGTALK]?: DingTalkNotifyChannelConfig;
-  [NOTIFY_CHANNEL_EMAIL]?: EmailNotifyChannelConfig;
-  [NOTIFY_CHANNEL_LARK]?: LarkNotifyChannelConfig;
-  [NOTIFY_CHANNEL_SERVERCHAN]?: ServerChanNotifyChannelConfig;
-  [NOTIFY_CHANNEL_TELEGRAM]?: TelegramNotifyChannelConfig;
-  [NOTIFY_CHANNEL_WEBHOOK]?: WebhookNotifyChannelConfig;
-  [NOTIFY_CHANNEL_WECOM]?: WeComNotifyChannelConfig;
+  [NOTIFY_CHANNELS.BARK]?: BarkNotifyChannelConfig;
+  [NOTIFY_CHANNELS.DINGTALK]?: DingTalkNotifyChannelConfig;
+  [NOTIFY_CHANNELS.EMAIL]?: EmailNotifyChannelConfig;
+  [NOTIFY_CHANNELS.LARK]?: LarkNotifyChannelConfig;
+  [NOTIFY_CHANNELS.SERVERCHAN]?: ServerChanNotifyChannelConfig;
+  [NOTIFY_CHANNELS.TELEGRAM]?: TelegramNotifyChannelConfig;
+  [NOTIFY_CHANNELS.WEBHOOK]?: WebhookNotifyChannelConfig;
+  [NOTIFY_CHANNELS.WECOM]?: WeComNotifyChannelConfig;
 };
 
 export type BarkNotifyChannelConfig = {
@@ -132,14 +124,14 @@ export type NotifyChannel = {
 
 export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new Map(
   [
-    ["email", "common.notifier.email"],
-    ["dingtalk", "common.notifier.dingtalk"],
-    ["lark", "common.notifier.lark"],
-    ["wecom", "common.notifier.wecom"],
-    ["telegram", "common.notifier.telegram"],
-    ["serverchan", "common.notifier.serverchan"],
-    ["bark", "common.notifier.bark"],
-    ["webhook", "common.notifier.webhook"],
+    [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],
+    [NOTIFY_CHANNELS.DINGTALK, "common.notifier.dingtalk"],
+    [NOTIFY_CHANNELS.LARK, "common.notifier.lark"],
+    [NOTIFY_CHANNELS.WECOM, "common.notifier.wecom"],
+    [NOTIFY_CHANNELS.TELEGRAM, "common.notifier.telegram"],
+    [NOTIFY_CHANNELS.SERVERCHAN, "common.notifier.serverchan"],
+    [NOTIFY_CHANNELS.BARK, "common.notifier.bark"],
+    [NOTIFY_CHANNELS.WEBHOOK, "common.notifier.webhook"],
   ].map(([type, name]) => [type, { type, name }])
 );
 // #endregion

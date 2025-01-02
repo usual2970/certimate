@@ -39,7 +39,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       key: "id",
       title: t("workflow_run.props.id"),
       ellipsis: true,
-      render: (_, record) => record.id,
+      render: (_, record) => <span className="font-mono">{record.id}</span>,
     },
     {
       key: "status",

@@ -5,7 +5,8 @@ import { Form, Input, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { ACCESS_PROVIDERS, type AccessModel } from "@/domain/access";
+import { type AccessModel } from "@/domain/access";
+import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm } from "@/hooks";
 
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
@@ -27,7 +28,7 @@ import AccessEditFormSSHConfig from "./AccessEditFormSSHConfig";
 import AccessEditFormTencentCloudConfig from "./AccessEditFormTencentCloudConfig";
 import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
-import AccessTypeSelect from "./AccessTypeSelect";
+import AccessProviderSelect from "./AccessProviderSelect";
 
 type AccessEditFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessEditFormPresets = "add" | "edit";
@@ -164,7 +165,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
             rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.type.tooltip") }}></span>}
           >
-            <AccessTypeSelect disabled={preset !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
+            <AccessProviderSelect disabled={preset !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
           </Form.Item>
         </Form>
 

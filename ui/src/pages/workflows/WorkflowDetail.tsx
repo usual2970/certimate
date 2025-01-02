@@ -249,7 +249,7 @@ const WorkflowDetail = () => {
                       }}
                       trigger={["click"]}
                     >
-                      <Button color="primary" icon={<EllipsisOutlinedIcon />} variant="outlined" />
+                      <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
                     </Dropdown>
                   </Button.Group>
                 </Space>

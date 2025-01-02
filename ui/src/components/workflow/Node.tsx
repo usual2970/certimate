@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { DeleteOutlined as DeleteOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
-import { Dropdown } from "antd";
+import { Button, Dropdown } from "antd";
+import { produce } from "immer";
 
 import Show from "@/components/Show";
 import { deployProvidersMap } from "@/domain/provider";
@@ -20,14 +21,24 @@ type NodeProps = {
 const i18nPrefix = "workflow.node";
 
 const Node = ({ data }: NodeProps) => {
-  const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
-  const handleNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    updateNode({ ...data, name: e.target.innerText });
-  };
+  const { t } = useTranslation();
 
+  const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
   const { showPanel } = usePanel();
 
-  const { t } = useTranslation();
+  const handleNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    const oldName = data.name;
+    const newName = e.target.innerText.trim();
+    if (oldName === newName) {
+      return;
+    }
+
+    updateNode(
+      produce(data, (draft) => {
+        draft.name = e.target.innerText;
+      })
+    );
+  };
 
   const handleNodeSettingClick = () => {
     showPanel({
@@ -83,48 +94,48 @@ const Node = ({ data }: NodeProps) => {
 
   return (
     <>
-      <div className="rounded-md shadow-md w-[260px] relative">
-        {data.type != WorkflowNodeType.Start && (
-          <>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: "delete",
-                    label: t(`${i18nPrefix}.delete.label`),
-                    icon: <DeleteOutlinedIcon />,
-                    danger: true,
-                    onClick: () => {
-                      removeNode(data.id);
-                    },
+      <div className="relative w-[256px] rounded-md shadow-md overflow-hidden">
+        <Show when={data.type != WorkflowNodeType.Start}>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "delete",
+                  label: t(`${i18nPrefix}.delete.label`),
+                  icon: <DeleteOutlinedIcon />,
+                  danger: true,
+                  onClick: () => {
+                    removeNode(data.id);
                   },
-                ],
-              }}
-              trigger={["click"]}
-            >
-              <div className="absolute right-2 top-1 cursor-pointer">
-                <EllipsisOutlinedIcon className="text-white" size={17} />
-              </div>
-            </Dropdown>
-          </>
-        )}
+                },
+              ],
+            }}
+            trigger={["click"]}
+          >
+            <div className="absolute right-2 top-1">
+              <Button icon={<EllipsisOutlinedIcon style={{ color: "white" }} />} size="small" type="text" />
+            </div>
+          </Dropdown>
+        </Show>
 
-        <div className="w-[260px] h-[60px] flex flex-col justify-center items-center bg-primary text-white rounded-t-md px-5">
+        <div className="w-[256px] h-[48px] flex flex-col justify-center items-center bg-primary text-white rounded-t-md px-4 line-clamp-2">
           <div
+            className="w-full text-center outline-none focus:bg-white focus:text-stone-600 focus:rounded-sm"
             contentEditable
             suppressContentEditableWarning
             onBlur={handleNameBlur}
-            className="w-full text-center outline-none focus:bg-white focus:text-stone-600 focus:rounded-sm"
           >
             {data.name}
           </div>
         </div>
+
         <div className="p-2 text-sm text-primary flex flex-col justify-center bg-white">
           <div className="leading-7 text-primary cursor-pointer" onClick={handleNodeSettingClick}>
             {getSetting()}
           </div>
         </div>
       </div>
+
       <AddNode data={data} />
     </>
   );
