@@ -3,7 +3,8 @@ import { Avatar, Select, Space, Typography, type SelectProps } from "antd";
 
 import { type AccessModel } from "@/domain/access";
 import { accessProvidersMap } from "@/domain/provider";
-import { useAccessStore } from "@/stores/access";
+import { useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 
 export type AccessTypeSelectProps = Omit<
   SelectProps,
@@ -13,7 +14,7 @@ export type AccessTypeSelectProps = Omit<
 };
 
 const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
-  const { accesses, loadedAtOnce, fetchAccesses } = useAccessStore();
+  const { accesses, loadedAtOnce, fetchAccesses } = useAccessesStore(useZustandShallowSelector(["accesses", "loadedAtOnce", "fetchAccesses"]));
   useEffect(() => {
     fetchAccesses();
   }, [fetchAccesses]);

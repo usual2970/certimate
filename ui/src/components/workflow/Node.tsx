@@ -35,7 +35,7 @@ const Node = ({ data }: NodeProps) => {
 
     updateNode(
       produce(data, (draft) => {
-        draft.name = e.target.innerText;
+        draft.name = newName;
       })
     );
   };
@@ -66,8 +66,10 @@ const Node = ({ data }: NodeProps) => {
             </Show>
           </div>
         );
+
       case WorkflowNodeType.Apply:
         return <div className="text-muted-foreground truncate">{data.config?.domain as string}</div>;
+
       case WorkflowNodeType.Deploy: {
         const provider = deployProvidersMap.get(data.config?.providerType as string);
         return (
@@ -77,6 +79,7 @@ const Node = ({ data }: NodeProps) => {
           </div>
         );
       }
+
       case WorkflowNodeType.Notify: {
         const channelLabel = notifyChannelsMap.get(data.config?.channel as string);
         return (

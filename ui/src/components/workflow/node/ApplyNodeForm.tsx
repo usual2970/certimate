@@ -14,7 +14,7 @@ import MultipleInput from "@/components/core/MultipleInput";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { useContactStore } from "@/stores/contact";
+import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
 import { usePanel } from "../PanelProvider";
@@ -38,7 +38,7 @@ const initFormModel = (): WorkflowNodeConfig => {
 const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
   const { t } = useTranslation();
 
-  const { addEmail } = useContactStore();
+  const { addEmail } = useContactEmailsStore(useZustandShallowSelector("addEmail"));
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
   const { hidePanel } = usePanel();
 
@@ -277,7 +277,7 @@ const FormFieldEmailSelect = ({
   value?: string;
   onChange?: (value: string) => void;
 }) => {
-  const { emails, fetchEmails } = useContactStore();
+  const { emails, fetchEmails } = useContactEmailsStore();
   const emailsToOptions = useCallback(() => emails.map((email) => ({ label: email, value: email })), [emails]);
   useEffect(() => {
     fetchEmails();

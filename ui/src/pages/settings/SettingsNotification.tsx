@@ -3,12 +3,13 @@ import { Card, Divider } from "antd";
 
 import NotifyChannels from "@/components/notification/NotifyChannels";
 import NotifyTemplate from "@/components/notification/NotifyTemplate";
-import { useNotifyChannelStore } from "@/stores/notify";
+import { useZustandShallowSelector } from "@/hooks";
+import { useNotifyChannelsStore } from "@/stores/notify";
 
 const SettingsNotification = () => {
   const { t } = useTranslation();
 
-  const { loadedAtOnce } = useNotifyChannelStore();
+  const { loadedAtOnce } = useNotifyChannelsStore(useZustandShallowSelector(["loadedAtOnce"]));
 
   return (
     <div>

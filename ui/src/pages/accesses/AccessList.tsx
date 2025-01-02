@@ -15,7 +15,8 @@ import { ClientResponseError } from "pocketbase";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import { type AccessModel } from "@/domain/access";
 import { accessProvidersMap } from "@/domain/provider";
-import { useAccessStore } from "@/stores/access";
+import { useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
 const AccessList = () => {
@@ -24,7 +25,9 @@ const AccessList = () => {
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { accesses, loadedAtOnce, fetchAccesses, deleteAccess } = useAccessStore();
+  const { accesses, loadedAtOnce, fetchAccesses, deleteAccess } = useAccessesStore(
+    useZustandShallowSelector(["accesses", "loadedAtOnce", "fetchAccesses", "deleteAccess"])
+  );
 
   const tableColumns: TableProps<AccessModel>["columns"] = [
     {

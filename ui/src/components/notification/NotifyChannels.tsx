@@ -5,7 +5,8 @@ import { Button, Collapse, message, notification, Skeleton, Space, Switch, type 
 
 import Show from "@/components/Show";
 import { notifyChannelsMap } from "@/domain/settings";
-import { useNotifyChannelStore } from "@/stores/notify";
+import { useZustandShallowSelector } from "@/hooks";
+import { useNotifyChannelsStore } from "@/stores/notify";
 import { getErrMsg } from "@/utils/error";
 
 import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
@@ -23,7 +24,7 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { channels, setChannel } = useNotifyChannelStore();
+  const { channels, setChannel } = useNotifyChannelsStore(useZustandShallowSelector(["channels", "setChannel"]));
 
   const channelConfig = useDeepCompareMemo(() => channels[channel], [channels, channel]);
   const channelFormRef = useRef<NotifyChannelEditFormInstance>(null);
@@ -78,7 +79,7 @@ export type NotifyChannelsProps = {
 const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannelsProps) => {
   const { t, i18n } = useTranslation();
 
-  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelStore();
+  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelsStore();
   useEffect(() => {
     fetchChannels();
   }, [fetchChannels]);

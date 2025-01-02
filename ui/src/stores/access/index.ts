@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { type AccessModel } from "@/domain/access";
 import { list as listAccess, save as saveAccess, remove as removeAccess } from "@/repository/access";
 
-export interface AccessState {
+export interface AccessesState {
   accesses: AccessModel[];
   loading: boolean;
   loadedAtOnce: boolean;
@@ -15,7 +15,7 @@ export interface AccessState {
   deleteAccess: (access: MaybeModelRecordWithId<AccessModel>) => Promise<AccessModel>;
 }
 
-export const useAccessStore = create<AccessState>((set) => {
+export const useAccessesStore = create<AccessesState>((set) => {
   let fetcher: Promise<AccessModel[]> | null = null; // 防止多次重复请求
 
   return {
@@ -39,7 +39,7 @@ export const useAccessStore = create<AccessState>((set) => {
     createAccess: async (access) => {
       const record = await saveAccess(access);
       set(
-        produce((state: AccessState) => {
+        produce((state: AccessesState) => {
           state.accesses.unshift(record);
         })
       );
@@ -50,7 +50,7 @@ export const useAccessStore = create<AccessState>((set) => {
     updateAccess: async (access) => {
       const record = await saveAccess(access);
       set(
-        produce((state: AccessState) => {
+        produce((state: AccessesState) => {
           const index = state.accesses.findIndex((e) => e.id === record.id);
           if (index !== -1) {
             state.accesses[index] = record;
@@ -64,7 +64,7 @@ export const useAccessStore = create<AccessState>((set) => {
     deleteAccess: async (access) => {
       await removeAccess(access);
       set(
-        produce((state: AccessState) => {
+        produce((state: AccessesState) => {
           state.accesses = state.accesses.filter((a) => a.id !== access.id);
         })
       );

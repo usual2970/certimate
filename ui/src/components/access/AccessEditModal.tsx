@@ -4,8 +4,8 @@ import { useControllableValue } from "ahooks";
 import { Modal, notification } from "antd";
 
 import { type AccessModel } from "@/domain/access";
-import { useTriggerElement } from "@/hooks";
-import { useAccessStore } from "@/stores/access";
+import { useTriggerElement, useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
 import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps } from "./AccessEditForm";
@@ -25,7 +25,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { createAccess, updateAccess } = useAccessStore();
+  const { createAccess, updateAccess } = useAccessesStore(useZustandShallowSelector(["createAccess", "updateAccess"]));
 
   const [open, setOpen] = useControllableValue<boolean>(props, {
     valuePropName: "open",

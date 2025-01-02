@@ -4,7 +4,7 @@ import { create } from "zustand";
 import { SETTINGS_NAMES, type EmailsSettingsContent, type SettingsModel } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
-export interface ContactState {
+export interface ContactEmailsState {
   emails: string[];
   loading: boolean;
   loadedAtOnce: boolean;
@@ -15,7 +15,7 @@ export interface ContactState {
   removeEmail: (email: string) => Promise<void>;
 }
 
-export const useContactStore = create<ContactState>((set, get) => {
+export const useContactEmailsStore = create<ContactEmailsState>((set, get) => {
   let fetcher: Promise<SettingsModel<EmailsSettingsContent>> | null = null; // 防止多次重复请求
   let settings: SettingsModel<EmailsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用
 
@@ -48,7 +48,7 @@ export const useContactStore = create<ContactState>((set, get) => {
       });
 
       set(
-        produce((state: ContactState) => {
+        produce((state: ContactEmailsState) => {
           state.emails = settings.content.emails?.sort() ?? [];
           state.loadedAtOnce = true;
         })

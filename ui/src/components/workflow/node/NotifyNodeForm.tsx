@@ -10,7 +10,7 @@ import { z } from "zod";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { useNotifyChannelStore } from "@/stores/notify";
+import { useNotifyChannelsStore } from "@/stores/notify";
 import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
 
@@ -28,13 +28,17 @@ const initFormModel = (): WorkflowNodeConfig => {
 const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
   const { t } = useTranslation();
 
-  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
-  const { hidePanel } = usePanel();
-
-  const { channels, loadedAtOnce: channelsLoadedAtOnce, fetchChannels } = useNotifyChannelStore();
+  const {
+    channels,
+    loadedAtOnce: channelsLoadedAtOnce,
+    fetchChannels,
+  } = useNotifyChannelsStore(useZustandShallowSelector(["channels", "loadedAtOnce", "fetchChannels"]));
   useEffect(() => {
     fetchChannels();
   }, [fetchChannels]);
+
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
+  const { hidePanel } = usePanel();
 
   const formSchema = z.object({
     subject: z
