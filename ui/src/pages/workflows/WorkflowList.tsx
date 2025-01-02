@@ -9,23 +9,23 @@ import {
   Divider,
   Empty,
   Menu,
-  message,
+  type MenuProps,
   Modal,
-  notification,
   Radio,
   Space,
   Switch,
   Table,
-  theme,
+  type TableProps,
   Tooltip,
   Typography,
-  type MenuProps,
-  type TableProps,
+  message,
+  notification,
+  theme,
 } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { isAllNodesValidated, type WorkflowModel } from "@/domain/workflow";
+import { type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -239,6 +239,10 @@ const WorkflowList = () => {
     }
   );
 
+  const handleCreateClick = () => {
+    navigate("/workflows/new");
+  };
+
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
       if (!workflow.enabled && !isAllNodesValidated(workflow.content!)) {
@@ -282,10 +286,6 @@ const WorkflowList = () => {
         }
       },
     });
-  };
-
-  const handleCreateClick = () => {
-    alert("TODO");
   };
 
   return (

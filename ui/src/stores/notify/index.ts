@@ -1,7 +1,7 @@
 ﻿import { produce } from "immer";
 import { create } from "zustand";
 
-import { SETTINGS_NAMES, type NotifyChannelsSettingsContent, type SettingsModel } from "@/domain/settings";
+import { type NotifyChannelsSettingsContent, SETTINGS_NAMES, type SettingsModel } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
 export interface NotifyChannelsState {

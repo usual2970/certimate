@@ -3,7 +3,7 @@ import path from "node:path";
 import legacyPlugin from "@vitejs/plugin-legacy";
 import reactPlugin from "@vitejs/plugin-react";
 import fs from "fs-extra";
-import { defineConfig, type Plugin } from "vite";
+import { type Plugin, defineConfig } from "vite";
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   return {

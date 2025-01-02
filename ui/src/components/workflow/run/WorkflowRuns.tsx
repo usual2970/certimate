@@ -6,7 +6,7 @@ import {
   SelectOutlined as SelectOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Empty, notification, Space, Table, theme, Typography, type TableProps } from "antd";
+import { Button, Empty, Space, Table, type TableProps, Typography, notification, theme } from "antd";
 import { ClientResponseError } from "pocketbase";
 
 import { type WorkflowRunModel } from "@/domain/workflowRun";

@@ -8,7 +8,7 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import { notifyChannelsMap } from "@/domain/settings";
-import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useNotifyChannelsStore } from "@/stores/notify";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -18,7 +18,7 @@ export type NotifyNodeFormProps = {
   data: WorkflowNode;
 };
 
-const initFormModel = (): WorkflowNodeConfig => {
+const initFormModel = () => {
   return {
     subject: "Completed!",
     message: "Your workflow has been completed on Certimate.",

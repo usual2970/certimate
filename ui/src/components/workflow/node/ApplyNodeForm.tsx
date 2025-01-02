@@ -2,7 +2,7 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, Button, Divider, Form, Input, Select, Space, Switch, Tooltip, Typography, type AutoCompleteProps } from "antd";
+import { AutoComplete, type AutoCompleteProps, Button, Divider, Form, Input, Select, Space, Switch, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
 import { z } from "zod";
@@ -12,7 +12,7 @@ import AccessSelect from "@/components/access/AccessSelect";
 import ModalForm from "@/components/core/ModalForm";
 import MultipleInput from "@/components/core/MultipleInput";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
-import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -25,7 +25,7 @@ export type ApplyNodeFormProps = {
 
 const MULTIPLE_INPUT_DELIMITER = ";";
 
-const initFormModel = (): WorkflowNodeConfig => {
+const initFormModel = () => {
   return {
     domain: "",
     keyAlgorithm: "RSA2048",

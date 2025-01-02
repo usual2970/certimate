@@ -13,6 +13,7 @@ import SettingsPassword from "./pages/settings/SettingsPassword";
 import SettingsSSLProvider from "./pages/settings/SettingsSSLProvider";
 import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import WorkflowList from "./pages/workflows/WorkflowList";
+import WorkflowNew from "./pages/workflows/WorkflowNew";
 
 export const router = createHashRouter([
   {
@@ -34,6 +35,10 @@ export const router = createHashRouter([
       {
         path: "/workflows",
         element: <WorkflowList />,
+      },
+      {
+        path: "/workflows/new",
+        element: <WorkflowNew />,
       },
       {
         path: "/workflows/:id",

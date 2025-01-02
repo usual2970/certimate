@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { useDeepCompareEffect } from "ahooks";
-import { Button, Form, Input, InputNumber, Upload, type FormInstance, type UploadFile, type UploadProps } from "antd";
+import { Button, Form, type FormInstance, Input, InputNumber, Upload, type UploadFile, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 

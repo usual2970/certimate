@@ -1,7 +1,7 @@
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslation } from "react-i18next";
 import { CopyOutlined as CopyOutlinedIcon, DownOutlined as DownOutlinedIcon, LikeOutlined as LikeOutlinedIcon } from "@ant-design/icons";
-import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
+import { Button, Dropdown, Form, Input, Space, Tooltip, message } from "antd";
 import dayjs from "dayjs";
 
 import { type CertificateModel } from "@/domain/certificate";

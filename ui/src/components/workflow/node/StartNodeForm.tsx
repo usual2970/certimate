@@ -7,17 +7,17 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
-import { validCronExpression, getNextCronExecutions } from "@/utils/cron";
+import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
 import { usePanel } from "../PanelProvider";
 
 export type StartNodeFormProps = {
   data: WorkflowNode;
 };
 
-const initFormModel = (): WorkflowNodeConfig => {
+const initFormModel = () => {
   return {
     executionMethod: "auto",
     crontab: "0 0 * * *",

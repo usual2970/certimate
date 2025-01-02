@@ -2,7 +2,7 @@
 import { create } from "zustand";
 
 import { type AccessModel } from "@/domain/access";
-import { list as listAccess, save as saveAccess, remove as removeAccess } from "@/repository/access";
+import { list as listAccess, remove as removeAccess, save as saveAccess } from "@/repository/access";
 
 export interface AccessesState {
   accesses: AccessModel[];

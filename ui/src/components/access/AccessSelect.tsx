@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, Select, Space, Typography, type SelectProps } from "antd";
+import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
 import { type AccessModel } from "@/domain/access";
 import { accessProvidersMap } from "@/domain/provider";

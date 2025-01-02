@@ -8,8 +8,8 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import { ACCESS_USAGES, accessProvidersMap, DEPLOY_PROVIDERS, deployProvidersMap } from "@/domain/provider";
-import { type WorkflowNode, type WorkflowNodeConfig } from "@/domain/workflow";
+import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
+import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
@@ -42,7 +42,7 @@ export type DeployFormProps = {
   defaultProivderType?: string;
 };
 
-const initFormModel = (): WorkflowNodeConfig => {
+const initFormModel = () => {
   return {};
 };
 

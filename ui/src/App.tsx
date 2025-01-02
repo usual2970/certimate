@@ -1,7 +1,7 @@
 ﻿import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RouterProvider } from "react-router-dom";
-import { App, ConfigProvider, theme, type ThemeConfig } from "antd";
+import { App, ConfigProvider, type ThemeConfig, theme } from "antd";
 import { type Locale } from "antd/es/locale";
 import AntdLocaleEnUs from "antd/locale/en_US";
 import AntdLocaleZhCN from "antd/locale/zh_CN";

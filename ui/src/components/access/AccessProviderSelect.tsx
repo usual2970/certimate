@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Select, Space, Tag, Typography, type SelectProps } from "antd";
+import { Avatar, Select, type SelectProps, Space, Tag, Typography } from "antd";
 
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 

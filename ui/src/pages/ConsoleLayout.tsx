@@ -13,7 +13,7 @@ import {
   SettingOutlined as SettingOutlinedIcon,
   SunOutlined as SunOutlinedIcon,
 } from "@ant-design/icons";
-import { Button, Drawer, Dropdown, Layout, Menu, Tooltip, theme, type ButtonProps, type MenuProps } from "antd";
+import { Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProps, Tooltip, theme } from "antd";
 
 import Version from "@/components/core/Version";
 import { useBrowserTheme } from "@/hooks";

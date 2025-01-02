@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareMemo } from "@ant-design/pro-components";
-import { Button, Collapse, message, notification, Skeleton, Space, Switch, type CollapseProps } from "antd";
+import { Button, Collapse, type CollapseProps, Skeleton, Space, Switch, message, notification } from "antd";
 
 import Show from "@/components/Show";
 import { notifyChannelsMap } from "@/domain/settings";

@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useDeepCompareEffect } from "ahooks";
-import { Button, Card, Dropdown, Form, Input, message, Modal, notification, Space, Tabs, Typography } from "antd";
+import { Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { ClientResponseError } from "pocketbase";
 import { isEqual } from "radash";
@@ -24,7 +24,7 @@ import End from "@/components/workflow/End";
 import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
-import { isAllNodesValidated, type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowModel, type WorkflowNode, isAllNodesValidated } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow } from "@/repository/workflow";
 import { useWorkflowStore } from "@/stores/workflow";

@@ -1,4 +1,4 @@
-﻿import { cloneElement, createElement, Fragment, isValidElement, useMemo } from "react";
+﻿import { Fragment, cloneElement, createElement, isValidElement, useMemo } from "react";
 
 export type UseTriggerElementOptions = {
   onClick?: (e: MouseEvent) => void;

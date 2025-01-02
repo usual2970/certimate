@@ -86,6 +86,12 @@ module.exports = {
         allowConstantExport: true,
       },
     ],
+    "sort-imports": [
+      "error",
+      {
+        ignoreDeclarationSort: true,
+      },
+    ],
   },
   settings: {
     "import/resolver": {

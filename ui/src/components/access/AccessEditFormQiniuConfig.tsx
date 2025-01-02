@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, Input, type FormInstance } from "antd";
+import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 

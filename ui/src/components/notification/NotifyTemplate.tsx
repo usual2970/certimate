@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRequest } from "ahooks";
-import { Button, Form, Input, message, notification, Skeleton } from "antd";
+import { Button, Form, Input, Skeleton, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { ClientResponseError } from "pocketbase";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { defaultNotifyTemplate, SETTINGS_NAMES, type NotifyTemplatesSettingsContent } from "@/domain/settings";
+import { type NotifyTemplatesSettingsContent, SETTINGS_NAMES, defaultNotifyTemplate } from "@/domain/settings";
 import { useAntdForm } from "@/hooks";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";

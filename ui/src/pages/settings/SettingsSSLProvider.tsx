@@ -2,13 +2,13 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckCard } from "@ant-design/pro-components";
 import { useDeepCompareEffect } from "ahooks";
-import { Button, Form, Input, message, notification, Skeleton } from "antd";
+import { Button, Form, Input, Skeleton, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { SETTINGS_NAMES, SSLPROVIDERS, type SettingsModel, type SSLProviderSettingsContent, type SSLProviders } from "@/domain/settings";
+import { SETTINGS_NAMES, SSLPROVIDERS, type SSLProviderSettingsContent, type SSLProviders, type SettingsModel } from "@/domain/settings";
 import { useAntdForm } from "@/hooks";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
