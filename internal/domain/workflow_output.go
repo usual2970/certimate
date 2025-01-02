@@ -7,6 +7,6 @@ type WorkflowOutput struct {
 	Workflow string           `json:"workflow"`
 	NodeId   string           `json:"nodeId"`
 	Node     *WorkflowNode    `json:"node"`
-	Output   []WorkflowNodeIo `json:"output"`
+	Output   []WorkflowNodeIO `json:"output"`
 	Succeed  bool             `json:"succeed"`
 }

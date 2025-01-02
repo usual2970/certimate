@@ -1,15 +1,9 @@
+import dayjs from "dayjs";
 import { produce } from "immer";
 import { nanoid } from "nanoid";
 
 import i18n from "@/i18n";
 import { deployProvidersMap } from "./provider";
-
-export type WorkflowOutput = {
-  time: string;
-  title: string;
-  content: string;
-  error: string;
-};
 
 export interface WorkflowModel extends BaseModel {
   name: string;
@@ -22,6 +16,7 @@ export interface WorkflowModel extends BaseModel {
   hasDraft?: boolean;
 }
 
+// #region Node
 export enum WorkflowNodeType {
   Start = "start",
   End = "end",
@@ -33,7 +28,7 @@ export enum WorkflowNodeType {
   Custom = "custom",
 }
 
-export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Map([
+const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
   [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
@@ -44,21 +39,7 @@ export const workflowNodeTypeDefaultName: Map<WorkflowNodeType, string> = new Ma
   [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
 ]);
 
-export type WorkflowNodeIo = {
-  name: string;
-  type: string;
-  required: boolean;
-  label: string;
-  value?: string;
-  valueSelector?: WorkflowNodeIoValueSelector;
-};
-
-export type WorkflowNodeIoValueSelector = {
-  id: string;
-  name: string;
-};
-
-export const workflowNodeTypeDefaultInput: Map<WorkflowNodeType, WorkflowNodeIo[]> = new Map([
+const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [WorkflowNodeType.Apply, []],
   [
     WorkflowNodeType.Deploy,
@@ -74,7 +55,7 @@ export const workflowNodeTypeDefaultInput: Map<WorkflowNodeType, WorkflowNodeIo[
   [WorkflowNodeType.Notify, []],
 ]);
 
-export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo[]> = new Map([
+const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [
     WorkflowNodeType.Apply,
     [
@@ -90,88 +71,122 @@ export const workflowNodeTypeDefaultOutput: Map<WorkflowNodeType, WorkflowNodeIo
   [WorkflowNodeType.Notify, []],
 ]);
 
-export type WorkflowNodeConfig = Record<string, unknown>;
-
 export type WorkflowNode = {
   id: string;
   name: string;
   type: WorkflowNodeType;
-  validated?: boolean;
 
-  input?: WorkflowNodeIo[];
-  config?: WorkflowNodeConfig;
-  output?: WorkflowNodeIo[];
+  config?: Record<string, unknown>;
+  input?: WorkflowNodeIO[];
+  output?: WorkflowNodeIO[];
+
+  next?: WorkflowNode | WorkflowBranchNode;
+  branches?: WorkflowNode[];
+
+  validated?: boolean;
+};
+
+/**
+ * @deprecated
+ */
+export type WorkflowBranchNode = {
+  id: string;
+  name: string;
+  type: WorkflowNodeType.Branch;
+
+  branches: WorkflowNode[];
 
   next?: WorkflowNode | WorkflowBranchNode;
 };
 
-type NewWorkflowNodeOptions = {
+export type WorkflowNodeIO = {
+  name: string;
+  type: string;
+  required: boolean;
+  label: string;
+  value?: string;
+  valueSelector?: WorkflowNodeIOValueSelector;
+};
+
+export type WorkflowNodeIOValueSelector = {
+  id: string;
+  name: string;
+};
+// #endregion
+
+type InitWorkflowOptions = {
+  template?: "standard";
+};
+
+export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel => {
+  const root = newNode(WorkflowNodeType.Start, {}) as WorkflowNode;
+  root.config = { executionMethod: "manual" };
+
+  if (options.template === "standard") {
+    let temp = root;
+    temp.next = newNode(WorkflowNodeType.Apply, {});
+
+    temp = temp.next;
+    temp.next = newNode(WorkflowNodeType.Deploy, {});
+
+    temp = temp.next;
+    temp.next = newNode(WorkflowNodeType.Notify, {});
+  }
+
+  return {
+    id: null!,
+    name: `MyWorkflow-${dayjs().format("YYYYMMDDHHmmss")}`,
+    type: root.config!.executionMethod as string,
+    crontab: root.config!.crontab as string,
+    enabled: false,
+    draft: root,
+    hasDraft: true,
+    created: new Date().toISOString(),
+    updated: new Date().toISOString(),
+  };
+};
+
+type NewNodeOptions = {
   branchIndex?: number;
   providerType?: string;
 };
 
-export const initWorkflow = (): WorkflowModel => {
-  // 开始节点
-  const rs = newWorkflowNode(WorkflowNodeType.Start, {});
-  let root = rs;
+export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions): WorkflowNode | WorkflowBranchNode => {
+  const nodeTypeName = workflowNodeTypeDefaultNames.get(nodeType) || "";
+  const nodeName = options.branchIndex != null ? `${nodeTypeName} ${options.branchIndex + 1}` : nodeTypeName;
 
-  // 申请节点
-  root.next = newWorkflowNode(WorkflowNodeType.Apply, {});
-  root = root.next;
-
-  // 部署节点
-  root.next = newWorkflowNode(WorkflowNodeType.Deploy, {});
-  root = root.next;
-
-  // 通知节点
-  root.next = newWorkflowNode(WorkflowNodeType.Notify, {});
-
-  return {
-    id: "",
-    name: i18n.t("workflow.props.name.default"),
-    type: "auto",
-    crontab: "0 0 * * *",
-    enabled: false,
-    draft: rs,
-    created: new Date().toUTCString(),
-    updated: new Date().toUTCString(),
-  };
-};
-
-export const newWorkflowNode = (type: WorkflowNodeType, options: NewWorkflowNodeOptions): WorkflowNode | WorkflowBranchNode => {
-  const id = nanoid();
-  const typeName = workflowNodeTypeDefaultName.get(type) || "";
-  const name = options.branchIndex !== undefined ? `${typeName} ${options.branchIndex + 1}` : typeName;
-
-  let rs: WorkflowNode | WorkflowBranchNode = {
-    id,
-    name,
-    type,
+  const node: WorkflowNode | WorkflowBranchNode = {
+    id: nanoid(),
+    name: nodeName,
+    type: nodeType,
   };
 
-  if (type === WorkflowNodeType.Apply || type === WorkflowNodeType.Deploy) {
-    rs = {
-      ...rs,
-      config: {
-        providerType: options.providerType,
-      },
-      input: workflowNodeTypeDefaultInput.get(type),
-      output: workflowNodeTypeDefaultOutput.get(type),
-    };
+  switch (nodeType) {
+    case WorkflowNodeType.Apply:
+    case WorkflowNodeType.Deploy:
+      {
+        node.config = {
+          providerType: options.providerType,
+        };
+        node.input = workflowNodeTypeDefaultInputs.get(nodeType);
+        node.output = workflowNodeTypeDefaultOutputs.get(nodeType);
+      }
+      break;
+
+    case WorkflowNodeType.Condition:
+      {
+        node.validated = true;
+      }
+      break;
+
+    case WorkflowNodeType.Branch:
+      {
+        node.branches = [newNode(WorkflowNodeType.Condition, { branchIndex: 0 }), newNode(WorkflowNodeType.Condition, { branchIndex: 1 })];
+      }
+      break;
   }
 
-  if (type == WorkflowNodeType.Condition) {
-    rs.validated = true;
-  }
-
-  if (type === WorkflowNodeType.Branch) {
-    rs = {
-      ...rs,
-      branches: [newWorkflowNode(WorkflowNodeType.Condition, { branchIndex: 0 }), newWorkflowNode(WorkflowNodeType.Condition, { branchIndex: 1 })],
-    };
-  }
-
-  return rs;
+  return node;
 };
 
 export const isWorkflowBranchNode = (node: WorkflowNode | WorkflowBranchNode): node is WorkflowBranchNode => {
@@ -226,7 +241,7 @@ export const addBranch = (node: WorkflowNode | WorkflowBranchNode, branchNodeId:
           return draft;
         }
         current.branches.push(
-          newWorkflowNode(WorkflowNodeType.Condition, {
+          newNode(WorkflowNodeType.Condition, {
             branchIndex: current.branches.length,
           })
         );
@@ -340,21 +355,24 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNod
   return output;
 };
 
-export const isAllNodesValidated = (node: WorkflowNode | WorkflowBranchNode): boolean => {
+export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   let current = node as typeof node | undefined;
   while (current) {
-    if (!isWorkflowBranchNode(current) && !current.validated) {
-      return false;
-    }
-    if (isWorkflowBranchNode(current)) {
-      for (const branch of current.branches) {
+    if (current.type === WorkflowNodeType.Branch) {
+      for (const branch of current.branches!) {
         if (!isAllNodesValidated(branch)) {
           return false;
         }
       }
+    } else {
+      if (!current.validated) {
+        return false;
+      }
     }
+
     current = current.next;
   }
+
   return true;
 };
 
@@ -372,14 +390,9 @@ export const getExecuteMethod = (node: WorkflowNode): { type: string; crontab: s
   }
 };
 
-export type WorkflowBranchNode = {
-  id: string;
-  name: string;
-  type: WorkflowNodeType;
-  branches: WorkflowNode[];
-  next?: WorkflowNode | WorkflowBranchNode;
-};
-
+/**
+ * @deprecated
+ */
 type WorkflowNodeDropdwonItem = {
   type: WorkflowNodeType;
   providerType?: string;
@@ -389,16 +402,25 @@ type WorkflowNodeDropdwonItem = {
   children?: WorkflowNodeDropdwonItem[];
 };
 
+/**
+ * @deprecated
+ */
 export enum WorkflowNodeDropdwonItemIconType {
   Icon,
   Provider,
 }
 
+/**
+ * @deprecated
+ */
 export type WorkflowNodeDropdwonItemIcon = {
   type: WorkflowNodeDropdwonItemIconType;
   name: string;
 };
 
+/**
+ * @deprecated
+ */
 const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = Array.from(deployProvidersMap.values()).map((item) => {
   return {
     type: WorkflowNodeType.Apply,
@@ -412,41 +434,44 @@ const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = Array.from(de
   };
 });
 
+/**
+ * @deprecated
+ */
 export const workflowNodeDropdownList: WorkflowNodeDropdwonItem[] = [
   {
     type: WorkflowNodeType.Apply,
-    name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Apply) ?? "",
+    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Apply) ?? "",
     icon: {
       type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "NotebookPen",
+      name: "ApplyNodeIcon",
     },
     leaf: true,
   },
   {
     type: WorkflowNodeType.Deploy,
-    name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Deploy) ?? "",
+    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Deploy) ?? "",
     icon: {
       type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "CloudUpload",
+      name: "DeployNodeIcon",
     },
     children: workflowNodeDropdownDeployList,
   },
   {
     type: WorkflowNodeType.Branch,
-    name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Branch) ?? "",
+    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Branch) ?? "",
     leaf: true,
     icon: {
       type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "GitFork",
+      name: "BranchNodeIcon",
     },
   },
   {
     type: WorkflowNodeType.Notify,
-    name: workflowNodeTypeDefaultName.get(WorkflowNodeType.Notify) ?? "",
+    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Notify) ?? "",
     leaf: true,
     icon: {
       type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "Megaphone",
+      name: "NotifyNodeIcon",
     },
   },
 ];

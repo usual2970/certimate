@@ -35,7 +35,7 @@ func (w *WorkflowOutputRepository) Get(ctx context.Context, nodeId string) (*dom
 		return nil, errors.New("failed to unmarshal node")
 	}
 
-	output := make([]domain.WorkflowNodeIo, 0)
+	output := make([]domain.WorkflowNodeIO, 0)
 	if err := record.UnmarshalJSONField("output", &output); err != nil {
 		return nil, errors.New("failed to unmarshal output")
 	}

@@ -3,7 +3,7 @@ import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import resources, { LOCALE_ZH_NAME, LOCALE_EN_NAME } from "./locales";
+import resources, { LOCALE_EN_NAME, LOCALE_ZH_NAME } from "./locales";
 
 i18n
   .use(LanguageDetector)

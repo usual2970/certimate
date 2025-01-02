@@ -1,5 +1,3 @@
-import { type WorkflowOutput } from "./workflow";
-
 export interface WorkflowRunModel extends BaseModel {
   workflow: string;
   log: WorkflowRunLog[];
@@ -10,5 +8,12 @@ export interface WorkflowRunModel extends BaseModel {
 export type WorkflowRunLog = {
   nodeName: string;
   error: string;
-  outputs: WorkflowOutput[];
+  outputs: WorkflowRunLogOutput[];
+};
+
+export type WorkflowRunLogOutput = {
+  time: ISO8601String;
+  title: string;
+  content: string;
+  error: string;
 };

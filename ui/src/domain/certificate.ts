@@ -8,7 +8,7 @@ export interface CertificateModel extends BaseModel {
   certUrl: string;
   certStableUrl: string;
   output: string;
-  expireAt: string;
+  expireAt: ISO8601String;
   workflow: string;
   nodeId: string;
   expand: {

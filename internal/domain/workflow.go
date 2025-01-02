@@ -37,8 +37,8 @@ type WorkflowNode struct {
 	Name   string           `json:"name"`
 	Next   *WorkflowNode    `json:"next"`
 	Config map[string]any   `json:"config"`
-	Input  []WorkflowNodeIo `json:"input"`
-	Output []WorkflowNodeIo `json:"output"`
+	Input  []WorkflowNodeIO `json:"input"`
+	Output []WorkflowNodeIO `json:"output"`
 
 	Validated bool   `json:"validated"`
 	Type      string `json:"type"`
@@ -76,16 +76,16 @@ func (n *WorkflowNode) GetConfigInt64(key string) int64 {
 	return 0
 }
 
-type WorkflowNodeIo struct {
+type WorkflowNodeIO struct {
 	Label         string                      `json:"label"`
 	Name          string                      `json:"name"`
 	Type          string                      `json:"type"`
 	Required      bool                        `json:"required"`
 	Value         any                         `json:"value"`
-	ValueSelector WorkflowNodeIoValueSelector `json:"valueSelector"`
+	ValueSelector WorkflowNodeIOValueSelector `json:"valueSelector"`
 }
 
-type WorkflowNodeIoValueSelector struct {
+type WorkflowNodeIOValueSelector struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }

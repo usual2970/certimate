@@ -5,6 +5,7 @@ import {
   ApartmentOutlined as ApartmentOutlinedIcon,
   CaretRightOutlined as CaretRightOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
+  DownOutlined as DownOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
   HistoryOutlined as HistoryOutlinedIcon,
   UndoOutlined as UndoOutlinedIcon,
@@ -45,8 +46,8 @@ const WorkflowDetail = () => {
   );
   useEffect(() => {
     // TODO: loading
-    init(workflowId);
-  }, [workflowId, init]);
+    init(workflowId!);
+  }, [workflowId]);
 
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
@@ -70,10 +71,13 @@ const WorkflowDetail = () => {
 
   const [allowDiscard, setAllowDiscard] = useState(false);
   const [allowRelease, setAllowRelease] = useState(false);
+  const [allowRun, setAllowRun] = useState(false);
   useDeepCompareEffect(() => {
+    const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
-    setAllowDiscard(hasChanges && !workflowRunning);
-    setAllowRelease(hasChanges && !workflowRunning);
+    setAllowDiscard(!workflowRunning && hasReleased && hasChanges);
+    setAllowRelease(!workflowRunning && hasChanges);
+    setAllowRun(hasReleased);
   }, [workflow, workflowRunning]);
 
   const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
@@ -86,13 +90,18 @@ const WorkflowDetail = () => {
     }
   };
 
-  const handleEnableChange = () => {
-    if (!workflow.enabled && !isAllNodesValidated(workflow.content!)) {
+  const handleEnableChange = async () => {
+    if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
       messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
       return;
     }
 
-    switchEnable();
+    try {
+      await switchEnable();
+    } catch (err) {
+      console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+    }
   };
 
   const handleDeleteClick = () => {
@@ -114,18 +123,24 @@ const WorkflowDetail = () => {
   };
 
   const handleDiscardClick = () => {
-    alert("TODO");
+    modalApi.confirm({
+      title: t("workflow.detail.orchestration.action.discard"),
+      content: t("workflow.detail.orchestration.action.discard.confirm"),
+      onOk: () => {
+        alert("TODO");
+      },
+    });
   };
 
   const handleReleaseClick = () => {
     if (!isAllNodesValidated(workflow.draft!)) {
-      messageApi.warning(t("workflow.action.release.failed.uncompleted"));
+      messageApi.warning(t("workflow.detail.orchestration.action.release.failed.uncompleted"));
       return;
     }
 
     modalApi.confirm({
-      title: t("workflow.action.release"),
-      content: t("workflow.action.release.confirm"),
+      title: t("workflow.detail.orchestration.action.release"),
+      content: t("workflow.detail.orchestration.action.release.confirm"),
       onOk: async () => {
         try {
           await save();
@@ -148,8 +163,8 @@ const WorkflowDetail = () => {
     const { promise, resolve, reject } = Promise.withResolvers();
     if (workflow.hasDraft) {
       modalApi.confirm({
-        title: t("workflow.action.run"),
-        content: t("workflow.action.run.confirm"),
+        title: t("workflow.detail.orchestration.action.run"),
+        content: t("workflow.detail.orchestration.action.run.confirm"),
         onOk: () => resolve(void 0),
         onCancel: () => reject(),
       });
@@ -164,7 +179,7 @@ const WorkflowDetail = () => {
       try {
         await runWorkflow(workflowId!);
 
-        messageApi.warning(t("common.text.operation_succeeded"));
+        messageApi.success(t("common.text.operation_succeeded"));
       } catch (err) {
         if (err instanceof ClientResponseError && err.isAbort) {
           return;
@@ -189,30 +204,33 @@ const WorkflowDetail = () => {
           style={{ paddingBottom: 0 }}
           title={workflow.name}
           extra={[
-            <Button.Group key="actions">
-              <WorkflowBaseInfoModalForm data={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />
+            <WorkflowBaseInfoModalForm key="edit" data={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />,
 
-              <Button onClick={handleEnableChange}>{workflow.enabled ? t("common.button.disable") : t("common.button.enable")}</Button>
+            <Button key="enable" onClick={handleEnableChange}>
+              {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
+            </Button>,
 
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: "delete",
-                      label: t("common.button.delete"),
-                      danger: true,
-                      icon: <DeleteOutlinedIcon />,
-                      onClick: () => {
-                        handleDeleteClick();
-                      },
+            <Dropdown
+              key="more"
+              menu={{
+                items: [
+                  {
+                    key: "delete",
+                    label: t("workflow.action.delete"),
+                    danger: true,
+                    icon: <DeleteOutlinedIcon />,
+                    onClick: () => {
+                      handleDeleteClick();
                     },
-                  ],
-                }}
-                trigger={["click"]}
-              >
-                <Button icon={<EllipsisOutlinedIcon />} />
-              </Dropdown>
-            </Button.Group>,
+                  },
+                ],
+              }}
+              trigger={["click"]}
+            >
+              <Button icon={<DownOutlinedIcon />} iconPosition="end">
+                {t("common.button.more")}
+              </Button>
+            </Dropdown>,
           ]}
         >
           <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
@@ -239,13 +257,13 @@ const WorkflowDetail = () => {
               </div>
               <div className="absolute top-0 right-0 z-[1]">
                 <Space>
-                  <Button icon={<CaretRightOutlinedIcon />} loading={workflowRunning} type="primary" onClick={handleRunClick}>
-                    {t("workflow.action.run")}
+                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={workflowRunning} type="primary" onClick={handleRunClick}>
+                    {t("workflow.detail.orchestration.action.run")}
                   </Button>
 
                   <Button.Group>
                     <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
-                      {t("workflow.action.release")}
+                      {t("workflow.detail.orchestration.action.release")}
                     </Button>
 
                     <Dropdown
@@ -254,7 +272,7 @@ const WorkflowDetail = () => {
                           {
                             key: "discard",
                             disabled: !allowDiscard,
-                            label: t("workflow.action.discard"),
+                            label: t("workflow.detail.orchestration.action.discard"),
                             icon: <UndoOutlinedIcon />,
                             onClick: handleDiscardClick,
                           },

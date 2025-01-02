@@ -245,7 +245,7 @@ const WorkflowList = () => {
 
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
-      if (!workflow.enabled && !isAllNodesValidated(workflow.content!)) {
+      if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
         messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
         return;
       }
