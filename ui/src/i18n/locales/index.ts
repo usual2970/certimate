@@ -1,4 +1,4 @@
-import { Resource } from "i18next";
+import { type Resource } from "i18next";
 
 import en from "./en";
 import zh from "./zh";

@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
-import { CertificateModel } from "@/domain/certificate";
+import { type CertificateModel } from "@/domain/certificate";
 import { list as listCertificate, type ListCertificateRequest } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 

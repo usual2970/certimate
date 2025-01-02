@@ -9,9 +9,9 @@ import {
   removeBranch,
   removeNode,
   updateNode,
-  WorkflowBranchNode,
-  WorkflowModel,
-  WorkflowNode,
+  type WorkflowBranchNode,
+  type WorkflowModel,
+  type WorkflowNode,
   WorkflowNodeType,
 } from "@/domain/workflow";
 import { get as getWorkflow, save as saveWorkflow } from "@/repository/workflow";

@@ -1,5 +1,3 @@
-import React from "react";
-
 export type ShowProps = {
   when: boolean;
   children: React.ReactNode;

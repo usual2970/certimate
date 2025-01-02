@@ -1,7 +1,7 @@
 import { PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
-import { newWorkflowNode, workflowNodeDropdownList, WorkflowNodeType } from "@/domain/workflow";
+import { newWorkflowNode, workflowNodeDropdownList, type WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 

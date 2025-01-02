@@ -4,7 +4,7 @@ import { Button, Drawer, Form, Space, type DrawerProps, type FormProps, type Mod
 
 import { useAntdForm, useTriggerElement } from "@/hooks";
 
-export interface DrawerFormProps<T extends NonNullable<unknown> = any> extends Omit<FormProps<T>, "title" | "onFinish"> {
+export interface DrawerFormProps<T extends NonNullable<unknown> = NonNullable<unknown>> extends Omit<FormProps<T>, "title" | "onFinish"> {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
@@ -22,7 +22,7 @@ export interface DrawerFormProps<T extends NonNullable<unknown> = any> extends O
   onFinish?: (values: T) => void | Promise<unknown>;
 }
 
-const DrawerForm = <T extends NonNullable<unknown> = any>({
+const DrawerForm = <T extends NonNullable<unknown> = NonNullable<unknown>>({
   className,
   style,
   children,

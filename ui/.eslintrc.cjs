@@ -20,6 +20,7 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
   rules: {
+    "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-explicit-any": [
       "warn",
       {

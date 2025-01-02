@@ -1,4 +1,4 @@
-import { WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 
 import DeployPanelBody from "./DeployPanelBody";
 import ApplyNodeForm from "./node/ApplyNodeForm";

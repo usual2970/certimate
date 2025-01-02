@@ -3,7 +3,7 @@ import { Form, Modal, type FormProps, type ModalProps } from "antd";
 
 import { useAntdForm, useTriggerElement } from "@/hooks";
 
-export interface ModalFormProps<T extends NonNullable<unknown> = any> extends Omit<FormProps<T>, "title" | "onFinish"> {
+export interface ModalFormProps<T extends NonNullable<unknown> = NonNullable<unknown>> extends Omit<FormProps<T>, "title" | "onFinish"> {
   className?: string;
   style?: React.CSSProperties;
   children?: React.ReactNode;
@@ -35,7 +35,7 @@ export interface ModalFormProps<T extends NonNullable<unknown> = any> extends Om
   onFinish?: (values: T) => void | Promise<unknown>;
 }
 
-const ModalForm = <T extends NonNullable<unknown> = any>({
+const ModalForm = <T extends NonNullable<unknown> = NonNullable<unknown>>({
   className,
   style,
   children,

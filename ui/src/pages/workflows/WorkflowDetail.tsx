@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  ApartmentOutlined as ApartmentOutlinedIcon,
   CaretRightOutlined as CaretRightOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
+  HistoryOutlined as HistoryOutlinedIcon,
   UndoOutlined as UndoOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
@@ -121,9 +123,20 @@ const WorkflowDetail = () => {
       return;
     }
 
-    save();
+    modalApi.confirm({
+      title: t("workflow.action.release"),
+      content: t("workflow.action.release.confirm"),
+      onOk: async () => {
+        try {
+          await save();
 
-    messageApi.success(t("common.text.operation_succeeded"));
+          messageApi.success(t("common.text.operation_succeeded"));
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
   };
 
   const handleRunClick = () => {
@@ -207,8 +220,8 @@ const WorkflowDetail = () => {
             activeKey={tabValue}
             defaultActiveKey="orchestration"
             items={[
-              { key: "orchestration", label: t("workflow.detail.orchestration.tab") },
-              { key: "runs", label: t("workflow.detail.runs.tab") },
+              { key: "orchestration", label: t("workflow.detail.orchestration.tab"), icon: <ApartmentOutlinedIcon /> },
+              { key: "runs", label: t("workflow.detail.runs.tab"), icon: <HistoryOutlinedIcon /> },
             ]}
             renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} style={{ margin: 0 }} />}
             tabBarStyle={{ border: "none" }}
