@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
 import {
-  type WorkflowBranchNode,
   type WorkflowModel,
   type WorkflowNode,
   addBranch,
@@ -112,7 +111,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  updateNode: async (node: WorkflowNode | WorkflowBranchNode) => {
+  updateNode: async (node: WorkflowNode) => {
     const newRoot = updateNode(get().workflow.draft as WorkflowNode, node);
     const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",
@@ -132,7 +131,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  addNode: async (node: WorkflowNode | WorkflowBranchNode, preId: string) => {
+  addNode: async (node: WorkflowNode, preId: string) => {
     const newRoot = addNode(get().workflow.draft as WorkflowNode, preId, node);
     const resp = await saveWorkflow({
       id: (get().workflow.id as string) ?? "",

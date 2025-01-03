@@ -6,8 +6,8 @@ import { type WorkflowNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
-import NodeRender from "../NodeRender";
 import AddNode from "./AddNode";
+import NodeRender from "./NodeRender";
 
 export type BrandNodeProps = {
   node: WorkflowNode;

@@ -1,8 +1,8 @@
 ﻿import { useMemo } from "react";
 
-import NodeRender from "@/components/workflow/NodeRender";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import EndNode from "@/components/workflow/node/EndNode";
+import NodeRender from "@/components/workflow/node/NodeRender";
 import { type WorkflowNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";

@@ -4,13 +4,13 @@ import Panel from "./Panel";
 
 type PanelContentProps = { name: string; children: React.ReactNode };
 
-type PanelContextType = {
+type PanelContextProps = {
   open: boolean;
   showPanel: ({ name, children }: PanelContentProps) => void;
   hidePanel: () => void;
 };
 
-const PanelContext = createContext<PanelContextType | undefined>(undefined);
+const PanelContext = createContext<PanelContextProps | undefined>(undefined);
 
 export const PanelProvider = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -20,6 +20,7 @@ export const PanelProvider = ({ children }: { children: React.ReactNode }) => {
     setOpen(true);
     setPanelContent(panelContent);
   };
+
   const hidePanel = () => {
     setOpen(false);
     setPanelContent(null);
@@ -36,7 +37,7 @@ export const PanelProvider = ({ children }: { children: React.ReactNode }) => {
 export const usePanel = () => {
   const context = useContext(PanelContext);
   if (!context) {
-    throw new Error("useDialog must be used within DialogProvider");
+    throw new Error("`usePanel` must be used within PanelProvider");
   }
   return context;
 };

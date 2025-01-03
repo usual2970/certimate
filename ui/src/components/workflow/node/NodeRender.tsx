@@ -2,13 +2,18 @@ import { memo } from "react";
 
 import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 
-import WorkflowElement from "./WorkflowElement";
-import BranchNode from "./node/BranchNode";
-import ConditionNode from "./node/ConditionNode";
-import EndNode from "./node/EndNode";
-import { type NodeProps } from "./types";
+import WorkflowElement from "../WorkflowElement";
+import BranchNode from "./BranchNode";
+import ConditionNode from "./ConditionNode";
+import EndNode from "./EndNode";
 
-const NodeRender = ({ node: data, branchId, branchIndex }: NodeProps) => {
+export type NodeRenderProps = {
+  node: WorkflowNode;
+  branchId?: string;
+  branchIndex?: number;
+};
+
+const NodeRender = ({ node: data, branchId, branchIndex }: NodeRenderProps) => {
   const render = () => {
     switch (data.type) {
       case WorkflowNodeType.Start:

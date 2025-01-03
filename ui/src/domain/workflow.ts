@@ -3,7 +3,6 @@ import { produce } from "immer";
 import { nanoid } from "nanoid";
 
 import i18n from "@/i18n";
-import { deployProvidersMap } from "./provider";
 
 export interface WorkflowModel extends BaseModel {
   name: string;
@@ -28,7 +27,7 @@ export enum WorkflowNodeType {
   Custom = "custom",
 }
 
-export const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
+const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
   [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
@@ -39,7 +38,7 @@ export const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new M
   [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
 ]);
 
-export const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
+const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [WorkflowNodeType.Apply, []],
   [
     WorkflowNodeType.Deploy,
@@ -55,7 +54,7 @@ export const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO
   [WorkflowNodeType.Notify, []],
 ]);
 
-export const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
+const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [
     WorkflowNodeType.Apply,
     [
@@ -80,23 +79,10 @@ export type WorkflowNode = {
   input?: WorkflowNodeIO[];
   output?: WorkflowNodeIO[];
 
-  next?: WorkflowNode | WorkflowBranchNode;
+  next?: WorkflowNode;
   branches?: WorkflowNode[];
 
   validated?: boolean;
-};
-
-/**
- * @deprecated
- */
-export type WorkflowBranchNode = {
-  id: string;
-  name: string;
-  type: WorkflowNodeType.Branch;
-
-  branches: WorkflowNode[];
-
-  next?: WorkflowNode | WorkflowBranchNode;
 };
 
 export type WorkflowNodeIO = {
@@ -150,11 +136,11 @@ type NewNodeOptions = {
   branchIndex?: number;
 };
 
-export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}): WorkflowNode | WorkflowBranchNode => {
+export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}): WorkflowNode => {
   const nodeTypeName = workflowNodeTypeDefaultNames.get(nodeType) || "";
   const nodeName = options.branchIndex != null ? `${nodeTypeName} ${options.branchIndex + 1}` : nodeTypeName;
 
-  const node: WorkflowNode | WorkflowBranchNode = {
+  const node: WorkflowNode = {
     id: nanoid(),
     name: nodeName,
     type: nodeType,
@@ -186,11 +172,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
   return node;
 };
 
-export const isWorkflowBranchNode = (node: WorkflowNode | WorkflowBranchNode): node is WorkflowBranchNode => {
-  return node.type === WorkflowNodeType.Branch;
-};
-
-export const updateNode = (node: WorkflowNode | WorkflowBranchNode, targetNode: WorkflowNode | WorkflowBranchNode) => {
+export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
   return produce(node, (draft) => {
     let current = draft;
     while (current) {
@@ -198,8 +180,8 @@ export const updateNode = (node: WorkflowNode | WorkflowBranchNode, targetNode: 
         Object.assign(current, targetNode);
         break;
       }
-      if (isWorkflowBranchNode(current)) {
-        current.branches = current.branches.map((branch) => updateNode(branch, targetNode));
+      if (current.type === WorkflowNodeType.Branch) {
+        current.branches = current.branches!.map((branch) => updateNode(branch, targetNode));
       }
       current = current.next as WorkflowNode;
     }
@@ -207,21 +189,21 @@ export const updateNode = (node: WorkflowNode | WorkflowBranchNode, targetNode: 
   });
 };
 
-export const addNode = (node: WorkflowNode | WorkflowBranchNode, preId: string, targetNode: WorkflowNode | WorkflowBranchNode) => {
+export const addNode = (node: WorkflowNode, preId: string, targetNode: WorkflowNode) => {
   return produce(node, (draft) => {
     let current = draft;
     while (current) {
-      if (current.id === preId && !isWorkflowBranchNode(targetNode)) {
+      if (current.id === preId && targetNode.type !== WorkflowNodeType.Branch) {
         targetNode.next = current.next;
         current.next = targetNode;
         break;
-      } else if (current.id === preId && isWorkflowBranchNode(targetNode)) {
-        targetNode.branches[0].next = current.next;
+      } else if (current.id === preId && targetNode.type === WorkflowNodeType.Branch) {
+        targetNode.branches![0].next = current.next;
         current.next = targetNode;
         break;
       }
-      if (isWorkflowBranchNode(current)) {
-        current.branches = current.branches.map((branch) => addNode(branch, preId, targetNode));
+      if (current.type === WorkflowNodeType.Branch) {
+        current.branches = current.branches!.map((branch) => addNode(branch, preId, targetNode));
       }
       current = current.next as WorkflowNode;
     }
@@ -229,23 +211,23 @@ export const addNode = (node: WorkflowNode | WorkflowBranchNode, preId: string, 
   });
 };
 
-export const addBranch = (node: WorkflowNode | WorkflowBranchNode, branchNodeId: string) => {
+export const addBranch = (node: WorkflowNode, branchNodeId: string) => {
   return produce(node, (draft) => {
     let current = draft;
     while (current) {
       if (current.id === branchNodeId) {
-        if (!isWorkflowBranchNode(current)) {
+        if (current.type !== WorkflowNodeType.Branch) {
           return draft;
         }
-        current.branches.push(
+        current.branches!.push(
           newNode(WorkflowNodeType.Condition, {
-            branchIndex: current.branches.length,
+            branchIndex: current.branches!.length,
           })
         );
         break;
       }
-      if (isWorkflowBranchNode(current)) {
-        current.branches = current.branches.map((branch) => addBranch(branch, branchNodeId));
+      if (current.type === WorkflowNodeType.Branch) {
+        current.branches = current.branches!.map((branch) => addBranch(branch, branchNodeId));
       }
       current = current.next as WorkflowNode;
     }
@@ -253,7 +235,7 @@ export const addBranch = (node: WorkflowNode | WorkflowBranchNode, branchNodeId:
   });
 };
 
-export const removeNode = (node: WorkflowNode | WorkflowBranchNode, targetNodeId: string) => {
+export const removeNode = (node: WorkflowNode, targetNodeId: string) => {
   return produce(node, (draft) => {
     let current = draft;
     while (current) {
@@ -261,8 +243,8 @@ export const removeNode = (node: WorkflowNode | WorkflowBranchNode, targetNodeId
         current.next = current.next.next;
         break;
       }
-      if (isWorkflowBranchNode(current)) {
-        current.branches = current.branches.map((branch) => removeNode(branch, targetNodeId));
+      if (current.type === WorkflowNodeType.Branch) {
+        current.branches = current.branches!.map((branch) => removeNode(branch, targetNodeId));
       }
       current = current.next as WorkflowNode;
     }
@@ -270,10 +252,10 @@ export const removeNode = (node: WorkflowNode | WorkflowBranchNode, targetNodeId
   });
 };
 
-export const removeBranch = (node: WorkflowNode | WorkflowBranchNode, branchNodeId: string, branchIndex: number) => {
+export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchIndex: number) => {
   return produce(node, (draft) => {
     let current = draft;
-    let last: WorkflowNode | WorkflowBranchNode | undefined = {
+    let last: WorkflowNode | undefined = {
       id: "",
       name: "",
       type: WorkflowNodeType.Start,
@@ -281,17 +263,17 @@ export const removeBranch = (node: WorkflowNode | WorkflowBranchNode, branchNode
     };
     while (current && last) {
       if (current.id === branchNodeId) {
-        if (!isWorkflowBranchNode(current)) {
+        if (current.type !== WorkflowNodeType.Branch) {
           return draft;
         }
-        current.branches.splice(branchIndex, 1);
+        current.branches!.splice(branchIndex, 1);
 
         // 如果仅剩一个分支，删除分支节点，将分支节点的下一个节点挂载到当前节点
-        if (current.branches.length === 1) {
-          const branch = current.branches[0];
+        if (current.branches!.length === 1) {
+          const branch = current.branches![0];
           if (branch.next) {
             last.next = branch.next;
-            let lastNode: WorkflowNode | WorkflowBranchNode | undefined = branch.next;
+            let lastNode: WorkflowNode | undefined = branch.next;
             while (lastNode?.next) {
               lastNode = lastNode.next;
             }
@@ -303,8 +285,8 @@ export const removeBranch = (node: WorkflowNode | WorkflowBranchNode, branchNode
 
         break;
       }
-      if (isWorkflowBranchNode(current)) {
-        current.branches = current.branches.map((branch) => removeBranch(branch, branchNodeId, branchIndex));
+      if (current.type === WorkflowNodeType.Branch) {
+        current.branches = current.branches!.map((branch) => removeBranch(branch, branchNodeId, branchIndex));
       }
       current = current.next as WorkflowNode;
       last = last.next;
@@ -314,10 +296,10 @@ export const removeBranch = (node: WorkflowNode | WorkflowBranchNode, branchNode
 };
 
 // 1 个分支的节点，不应该能获取到相邻分支上节点的输出
-export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNode, id: string, type: string): WorkflowNode[] => {
+export const getWorkflowOutputBeforeId = (node: WorkflowNode, id: string, type: string): WorkflowNode[] => {
   const output: WorkflowNode[] = [];
 
-  const traverse = (current: WorkflowNode | WorkflowBranchNode, output: WorkflowNode[]) => {
+  const traverse = (current: WorkflowNode, output: WorkflowNode[]) => {
     if (!current) {
       return false;
     }
@@ -325,16 +307,16 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode | WorkflowBranchNod
       return true;
     }
 
-    if (!isWorkflowBranchNode(current) && current.output && current.output.some((io) => io.type === type)) {
+    if (current.type !== WorkflowNodeType.Branch && current.output && current.output.some((io) => io.type === type)) {
       output.push({
         ...current,
         output: current.output.filter((io) => io.type === type),
       });
     }
 
-    if (isWorkflowBranchNode(current)) {
+    if (current.type === WorkflowNodeType.Branch) {
       const currentLength = output.length;
-      for (const branch of current.branches) {
+      for (const branch of current.branches!) {
         if (traverse(branch, output)) {
           return true;
         }

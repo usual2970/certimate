@@ -93,6 +93,7 @@ module.exports = {
         ignoreDeclarationSort: true,
       },
     ],
+    "tailwindcss/no-custom-classname": "off",
   },
   settings: {
     "import/resolver": {

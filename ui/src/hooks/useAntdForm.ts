@@ -2,13 +2,13 @@
 import { useDeepCompareEffect } from "ahooks";
 import { Form, type FormInstance, type FormProps } from "antd";
 
-export interface UseAntdFormOptions<T extends NonNullable<unknown> = NonNullable<unknown>> {
+export interface UseAntdFormOptions<T extends NonNullable<unknown> = any> {
   form?: FormInstance<T>;
   initialValues?: Partial<T> | (() => Partial<T> | Promise<Partial<T>>);
   onSubmit?: (values: T) => unknown;
 }
 
-export interface UseAntdFormReturns<T extends NonNullable<unknown> = NonNullable<unknown>> {
+export interface UseAntdFormReturns<T extends NonNullable<unknown> = any> {
   form: FormInstance<T>;
   formProps: Omit<FormProps<T>, "children">;
   formPending: boolean;
@@ -20,11 +20,7 @@ export interface UseAntdFormReturns<T extends NonNullable<unknown> = NonNullable
  * @param {UseAntdFormOptions} options
  * @returns {UseAntdFormReturns}
  */
-const useAntdForm = <T extends NonNullable<unknown> = NonNullable<unknown>>({
-  initialValues,
-  form,
-  onSubmit,
-}: UseAntdFormOptions<T>): UseAntdFormReturns<T> => {
+const useAntdForm = <T extends NonNullable<unknown> = any>({ initialValues, form, onSubmit }: UseAntdFormOptions<T>): UseAntdFormReturns<T> => {
   const formInst = form ?? Form["useForm"]()[0];
   const [formInitialValues, setFormInitialValues] = useState<Partial<T>>();
   const [formPending, setFormPending] = useState(false);

@@ -7,7 +7,7 @@ export const SETTINGS_NAMES = Object.freeze({
 
 export type SettingsNames = (typeof SETTINGS_NAMES)[keyof typeof SETTINGS_NAMES];
 
-export interface SettingsModel<T extends NonNullable<unknown> = NonNullable<unknown>> extends BaseModel {
+export interface SettingsModel<T extends NonNullable<unknown> = any> extends BaseModel {
   name: string;
   content: T;
 }
