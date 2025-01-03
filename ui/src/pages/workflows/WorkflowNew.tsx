@@ -2,10 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@ant-design/pro-components";
-import { Card, Col, Row, Spin, Typography, notification } from "antd";
-import { sleep } from "radash";
+import { Card, Col, Form, Input, Row, Spin, Typography, notification } from "antd";
+import { createSchemaFieldRule } from "antd-zod";
+import { z } from "zod";
 
+import ModalForm from "@/components/ModalForm";
 import { type WorkflowModel, initWorkflow } from "@/domain/workflow";
+import { useAntdForm } from "@/hooks";
 import { save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -29,37 +32,72 @@ const WorkflowNew = () => {
   };
   const [templateSelectKey, setTemplateSelectKey] = useState<TemplateKeys>();
 
-  const handleTemplateSelect = async (key: TemplateKeys) => {
-    if (templateSelectKey) return;
+  const formSchema = z.object({
+    name: z
+      .string({ message: t("workflow.new.modal.form.name.placeholder") })
+      .min(1, t("workflow.new.modal.form.name.placeholder"))
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
+    description: z
+      .string({ message: t("workflow.new.modal.form.description.placeholder") })
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+    ...formApi
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    onSubmit: async (values) => {
+      try {
+        let workflow: WorkflowModel;
 
-    setTemplateSelectKey(key);
+        switch (templateSelectKey) {
+          case TEMPLATE_KEY_BLANK:
+            workflow = initWorkflow();
+            break;
 
-    try {
-      let workflow: WorkflowModel;
+          case TEMPLATE_KEY_STANDARD:
+            workflow = initWorkflow({ template: "standard" });
+            break;
 
-      switch (key) {
-        case TEMPLATE_KEY_BLANK:
-          workflow = initWorkflow();
-          break;
+          default:
+            throw "Invalid state: `templateSelectKey`";
+        }
 
-        case TEMPLATE_KEY_STANDARD:
-          workflow = initWorkflow({ template: "standard" });
-          break;
+        workflow.name = values.name?.trim() ?? workflow.name;
+        workflow.description = values.description?.trim() ?? workflow.description;
+        workflow = await saveWorkflow(workflow);
+        navigate(`/workflows/${workflow.id}`, { replace: true });
+      } catch (err) {
+        console.error(err);
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
 
-        default:
-          throw "Invalid args: `key`";
+        return false;
       }
+    },
+  });
+  const [formModalOpen, setFormModalOpen] = useState(false);
 
-      workflow = await saveWorkflow(workflow);
-      await sleep(500);
+  const handleTemplateClick = (key: TemplateKeys) => {
+    setTemplateSelectKey(key);
+    setFormModalOpen(true);
+  };
 
-      await navigate(`/workflows/${workflow.id}`, { replace: true });
-    } catch (err) {
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+  const handleModalOpenChange = (open: boolean) => {
+    setFormModalOpen(open);
 
+    if (!open) {
       setTemplateSelectKey(undefined);
+      formInst.resetFields();
     }
+  };
+
+  const handleModalFormFinish = () => {
+    return formApi.submit();
   };
 
   return (
@@ -84,7 +122,7 @@ const WorkflowNew = () => {
                 className="size-full"
                 cover={<img className="min-h-[120px] object-contain" src="/imgs/workflow/tpl-standard.png" />}
                 hoverable
-                onClick={() => handleTemplateSelect(TEMPLATE_KEY_STANDARD)}
+                onClick={() => handleTemplateClick(TEMPLATE_KEY_STANDARD)}
               >
                 <div className="flex w-full items-center gap-4">
                   <Card.Meta
@@ -101,7 +139,7 @@ const WorkflowNew = () => {
                 className="size-full"
                 cover={<img className="min-h-[120px] object-contain" src="/imgs/workflow/tpl-blank.png" />}
                 hoverable
-                onClick={() => handleTemplateSelect(TEMPLATE_KEY_BLANK)}
+                onClick={() => handleTemplateClick(TEMPLATE_KEY_BLANK)}
               >
                 <div className="flex w-full items-center gap-4">
                   <Card.Meta
@@ -115,6 +153,28 @@ const WorkflowNew = () => {
             </Col>
           </Row>
         </div>
+
+        <ModalForm
+          disabled={formPending}
+          layout="vertical"
+          form={formInst}
+          modalProps={{ destroyOnClose: true }}
+          okText={t("common.button.submit")}
+          open={formModalOpen}
+          title={t(`workflow.new.modal.title`)}
+          width={480}
+          onFinish={handleModalFormFinish}
+          onOpenChange={handleModalOpenChange}
+          {...formProps}
+        >
+          <Form.Item name="name" label={t("workflow.new.modal.form.name.label")} rules={[formRule]}>
+            <Input ref={(ref) => setTimeout(() => ref?.focus({ cursor: "end" }), 0)} placeholder={t("workflow.new.modal.form.name.placeholder")} />
+          </Form.Item>
+
+          <Form.Item name="description" label={t("workflow.new.modal.form.description.label")} rules={[formRule]}>
+            <Input placeholder={t("workflow.new.modal.form.description.placeholder")} />
+          </Form.Item>
+        </ModalForm>
       </div>
     </div>
   );

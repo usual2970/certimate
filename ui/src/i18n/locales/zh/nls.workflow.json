@@ -30,6 +30,11 @@
   "workflow.new.templates.template.standard.description": "一个包含申请 + 部署 + 通知步骤的标准工作流程。",
   "workflow.new.templates.template.blank.title": "空白模板",
   "workflow.new.templates.template.blank.description": "从零开始自定义工作流的任务内容。",
+  "workflow.new.modal.title": "新建工作流",
+  "workflow.new.modal.form.name.label": "名称",
+  "workflow.new.modal.form.name.placeholder": "请输入工作流名称",
+  "workflow.new.modal.form.description.label": "描述",
+  "workflow.new.modal.form.description.placeholder": "请输入工作流描述",
 
   "workflow.detail.baseinfo.modal.title": "编辑基本信息",
   "workflow.detail.baseinfo.form.name.label": "名称",

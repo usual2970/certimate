@@ -56,12 +56,20 @@ const DrawerForm = <T extends NonNullable<unknown> = NonNullable<unknown>>({
   } = useAntdForm({
     form,
     onSubmit: async (values) => {
-      const ret = await onFinish?.(values);
-      if (ret != null && !ret) return false;
-      return true;
+      try {
+        const ret = await onFinish?.(values);
+        if (ret != null && !ret) return false;
+        return true;
+      } catch {
+        return false;
+      }
     },
   });
-  const mergedFormProps = { ...formProps, ...props };
+  const mergedFormProps = {
+    preserve: drawerProps?.destroyOnClose ? false : undefined,
+    ...formProps,
+    ...props,
+  };
 
   const handleOkClick = async () => {
     const ret = await submit();
