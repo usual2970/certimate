@@ -100,7 +100,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
         onOk={handleClickOk}
         onCancel={handleClickCancel}
       >
-        <div className="pt-4 pb-2">
+        <div className="pb-2 pt-4">
           <AccessEditForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />
         </div>
       </Modal>

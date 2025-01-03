@@ -50,7 +50,7 @@ const DeployProviderPicker = ({ className, style, onSelect }: DeployProviderPick
               return (
                 <Col key={index} span={12}>
                   <Card
-                    className="w-full h-16 shadow-sm overflow-hidden"
+                    className="h-16 w-full overflow-hidden shadow-sm"
                     styles={{ body: { height: "100%", padding: "0.5rem 1rem" } }}
                     hoverable
                     onClick={() => {

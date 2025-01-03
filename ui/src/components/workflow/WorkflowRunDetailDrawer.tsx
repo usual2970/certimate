@@ -40,7 +40,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
             <Alert showIcon type="error" message={<Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>} />
           </Show>
 
-          <div className="mt-4 p-4 bg-black text-stone-200 rounded-md">
+          <div className="mt-4 rounded-md bg-black p-4 text-stone-200">
             <div className="flex flex-col space-y-3">
               {data!.log.map((item, i) => {
                 return (
@@ -49,7 +49,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
                     <div className="flex flex-col space-y-1">
                       {item.outputs.map((output, j) => {
                         return (
-                          <div key={j} className="flex text-sm space-x-2">
+                          <div key={j} className="flex space-x-2 text-sm">
                             <div>[{dayjs(output.time).format("YYYY-MM-DD HH:mm:ss")}]</div>
                             {output.error ? <div className="text-red-500">{output.error}</div> : <div>{output.content}</div>}
                           </div>

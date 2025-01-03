@@ -32,7 +32,7 @@ const WorkflowElement = ({ node }: NodeProps) => {
     switch (node.type) {
       case WorkflowNodeType.Start: {
         return (
-          <div className="flex space-x-2 items-center justify-between">
+          <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">
               {node.config?.executionMethod === "auto"
                 ? t("workflow.props.trigger.auto")
@@ -64,7 +64,7 @@ const WorkflowElement = ({ node }: NodeProps) => {
       case WorkflowNodeType.Notify: {
         const channel = notifyChannelsMap.get(node.config?.channel as string);
         return (
-          <div className="flex space-x-2 items-center justify-between">
+          <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">{t(channel?.name ?? "")}</Typography.Text>
             <Typography.Text className="truncate" type="secondary">
               {(node.config?.subject as string) ?? ""}
@@ -130,10 +130,10 @@ const WorkflowElement = ({ node }: NodeProps) => {
         overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
-        <Card className="relative w-[256px] shadow-md overflow-hidden" styles={{ body: { padding: 0 } }} hoverable>
-          <div className="h-[48px] px-4 py-2 flex flex-col justify-center items-center bg-primary text-white truncate">
+        <Card className="relative w-[256px] overflow-hidden shadow-md" styles={{ body: { padding: 0 } }} hoverable>
+          <div className="bg-primary flex h-[48px] flex-col items-center justify-center truncate px-4 py-2 text-white">
             <div
-              className="w-full text-center outline-none overflow-hidden focus:bg-background focus:text-foreground focus:rounded-sm"
+              className="focus:bg-background focus:text-foreground w-full overflow-hidden text-center outline-none focus:rounded-sm"
               contentEditable
               suppressContentEditableWarning
               onBlur={handleNodeNameBlur}
@@ -142,8 +142,8 @@ const WorkflowElement = ({ node }: NodeProps) => {
             </div>
           </div>
 
-          <div className="px-4 py-2 flex flex-col justify-center">
-            <div className="text-sm cursor-pointer" onClick={handleNodeClick}>
+          <div className="flex flex-col justify-center px-4 py-2">
+            <div className="cursor-pointer text-sm" onClick={handleNodeClick}>
               {renderNodeContent()}
             </div>
           </div>

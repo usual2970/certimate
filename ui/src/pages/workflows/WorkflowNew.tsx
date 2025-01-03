@@ -73,9 +73,9 @@ const WorkflowNew = () => {
       </Card>
 
       <div className="p-4">
-        <div className="max-w-[960px] mx-auto px-2">
+        <div className="mx-auto max-w-[960px] px-2">
           <Typography.Text type="secondary">
-            <div className="mt-4 mb-8 text-xl">{t("workflow.new.templates.title")}</div>
+            <div className="mb-8 mt-4 text-xl">{t("workflow.new.templates.title")}</div>
           </Typography.Text>
 
           <Row className="justify-stretch" gutter={[16, 16]}>
@@ -86,9 +86,9 @@ const WorkflowNew = () => {
                 hoverable
                 onClick={() => handleTemplateSelect(TEMPLATE_KEY_STANDARD)}
               >
-                <div className="flex items-center gap-4 w-full">
+                <div className="flex w-full items-center gap-4">
                   <Card.Meta
-                    className="flex-grow"
+                    className="grow"
                     title={t("workflow.new.templates.template.standard.title")}
                     description={t("workflow.new.templates.template.standard.description")}
                   />
@@ -103,9 +103,9 @@ const WorkflowNew = () => {
                 hoverable
                 onClick={() => handleTemplateSelect(TEMPLATE_KEY_BLANK)}
               >
-                <div className="flex items-center gap-4 w-full">
+                <div className="flex w-full items-center gap-4">
                   <Card.Meta
-                    className="flex-grow"
+                    className="grow"
                     title={t("workflow.new.templates.template.blank.title")}
                     description={t("workflow.new.templates.template.blank.description")}
                   />

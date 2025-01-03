@@ -81,9 +81,9 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
       </Form.Item>
 
       <Form.Item className="mb-0">
-        <label className="block mb-1">
-          <div className="flex items-center justify-between gap-4 w-full">
-            <div className="flex-grow max-w-full truncate">{t("workflow_node.notify.form.channel.label")}</div>
+        <label className="mb-1 block">
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="max-w-full grow truncate">{t("workflow_node.notify.form.channel.label")}</div>
             <div className="text-right">
               <Link className="ant-typography" to="/settings/notification" target="_blank">
                 <Button size="small" type="link">

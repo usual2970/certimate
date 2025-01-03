@@ -189,9 +189,9 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
         </Form.Item>
 
         <Form.Item className="mb-0">
-          <label className="block mb-1">
-            <div className="flex items-center justify-between gap-4 w-full">
-              <div className="flex-grow max-w-full truncate">
+          <label className="mb-1 block">
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="max-w-full grow truncate">
                 <span>{t("workflow_node.deploy.form.provider_access.label")}</span>
                 <Tooltip title={t("workflow_node.deploy.form.provider_access.tooltip")}>
                   <Typography.Text className="ms-1" type="secondary">
@@ -257,7 +257,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
         </Form.Item>
 
         <Divider className="my-1">
-          <Typography.Text className="font-normal text-xs" type="secondary">
+          <Typography.Text className="text-xs font-normal" type="secondary">
             {t("workflow_node.deploy.form.params_config.label")}
           </Typography.Text>
         </Divider>

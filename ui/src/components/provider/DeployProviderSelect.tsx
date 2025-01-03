@@ -21,7 +21,7 @@ const DeployProviderSelect = (props: DeployProviderSelectProps) => {
   const renderOption = (key: string) => {
     const provider = deployProvidersMap.get(key);
     return (
-      <Space className="flex-grow max-w-full truncate overflow-hidden" size={4}>
+      <Space className="max-w-full grow overflow-hidden truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {t(provider?.name ?? "")}

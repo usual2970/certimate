@@ -36,7 +36,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
     const access = accesses.find((e) => e.id === key);
     if (!access) {
       return (
-        <Space className="flex-grow max-w-full truncate" size={4}>
+        <Space className="max-w-full grow truncate" size={4}>
           <Avatar size="small" />
           <Typography.Text className="leading-loose" ellipsis>
             {key}
@@ -47,7 +47,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
 
     const provider = accessProvidersMap.get(access.configType);
     return (
-      <Space className="flex-grow max-w-full truncate" size={4}>
+      <Space className="max-w-full grow truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {access.name}

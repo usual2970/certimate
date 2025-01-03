@@ -77,7 +77,7 @@ const CertificateList = () => {
           <div style={{ padding: 0 }}>
             <Menu items={items} selectable={false} />
             <Divider style={{ margin: 0 }} />
-            <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
+            <Space className="w-full justify-end" style={{ padding: themeToken.paddingSM }}>
               <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
                 {t("common.button.reset")}
               </Button>

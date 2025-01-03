@@ -247,7 +247,7 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
 
     return (
       <div className="flex flex-nowrap items-center space-x-2">
-        <div className="flex-grow">
+        <div className="grow">
           <Input
             {...props}
             ref={inputRef}

@@ -56,10 +56,10 @@ const ConditionNode = ({ node, branchId, branchIndex }: NodeProps) => {
         overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
-        <Card className="relative w-[256px] shadow-md mt-10 z-[1]" styles={{ body: { padding: 0 } }} hoverable>
-          <div className="h-[48px] px-4 py-2 flex flex-col justify-center items-center truncate">
+        <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable>
+          <div className="flex h-[48px] flex-col items-center justify-center truncate px-4 py-2">
             <div
-              className="w-full text-center outline-slate-200 overflow-hidden focus:bg-background focus:text-foreground focus:rounded-sm"
+              className="focus:bg-background focus:text-foreground w-full overflow-hidden text-center outline-slate-200 focus:rounded-sm"
               contentEditable
               suppressContentEditableWarning
               onBlur={handleNodeNameBlur}

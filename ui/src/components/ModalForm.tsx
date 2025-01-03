@@ -106,7 +106,7 @@ const ModalForm = <T extends NonNullable<unknown> = NonNullable<unknown>>({
         onOk={handleOkClick}
         onCancel={handleCancelClick}
       >
-        <div className="pt-4 pb-2">
+        <div className="pb-2 pt-4">
           <Form className={className} style={style} form={formInst} {...mergedFormProps}>
             {children}
           </Form>

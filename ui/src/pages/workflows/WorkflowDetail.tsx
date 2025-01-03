@@ -250,7 +250,7 @@ const WorkflowDetail = () => {
               <div className="py-12 lg:pr-36 xl:pr-48">
                 <WorkflowElements />
               </div>
-              <div className="absolute top-0 right-0 z-[1]">
+              <div className="absolute right-0 top-0 z-[1]">
                 <Space>
                   <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
                     {t("workflow.detail.orchestration.action.run")}

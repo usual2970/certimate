@@ -45,7 +45,7 @@ const AddNode = ({ node: supnode }: NodeProps | BrandNodeProps) => {
   };
 
   return (
-    <div className="relative py-6 before:content-[''] before:absolute before:w-[2px] before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0 before:bg-stone-200">
+    <div className="relative py-6 before:absolute before:left-[50%] before:top-0 before:h-full before:w-[2px] before:-translate-x-[50%] before:bg-stone-200 before:content-['']">
       <Dropdown
         menu={{
           items: dropdownMenus.map((item) => {
@@ -61,7 +61,7 @@ const AddNode = ({ node: supnode }: NodeProps | BrandNodeProps) => {
         }}
         trigger={["click"]}
       >
-        <div className="bg-stone-400 hover:bg-stone-500 rounded-full size-5 z-[1] relative flex items-center justify-center cursor-pointer">
+        <div className="relative z-[1] flex size-5 cursor-pointer items-center justify-center rounded-full bg-stone-400 hover:bg-stone-500">
           <PlusOutlinedIcon className="text-white" />
         </div>
       </Dropdown>

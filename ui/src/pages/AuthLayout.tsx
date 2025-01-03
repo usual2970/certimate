@@ -13,7 +13,7 @@ const AuthLayout = () => {
     <div className="container">
       <Outlet />
 
-      <Version className="fixed right-8 bottom-4" />
+      <Version className="fixed bottom-4 right-8" />
     </div>
   );
 };

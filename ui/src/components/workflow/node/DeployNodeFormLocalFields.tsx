@@ -285,9 +285,9 @@ Remove-Item -Path "$pfxPath" -Force
       </Form.Item>
 
       <Form.Item className="mb-0">
-        <label className="block mb-1">
-          <div className="flex items-center justify-between gap-4 w-full">
-            <div className="flex-grow max-w-full truncate">
+        <label className="mb-1 block">
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="max-w-full grow truncate">
               <span>{t("workflow_node.deploy.form.local_post_command.label")}</span>
             </div>
             <div className="text-right">

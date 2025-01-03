@@ -32,9 +32,9 @@ const BranchNode = ({ node }: BrandNodeProps) => {
 
   return (
     <>
-      <div className="relative flex gap-x-16 before:content-[''] before:absolute before:h-[2px] before:left-[128px] before:right-[128px] before:top-0 before:bg-stone-200">
+      <div className="relative flex gap-x-16 before:absolute before:inset-x-[128px] before:top-0 before:h-[2px] before:bg-stone-200 before:content-['']">
         <Button
-          className="text-xs absolute left-[50%] -translate-x-1/2 -translate-y-1/2 z-[1]"
+          className="absolute left-[50%] z-[1] -translate-x-1/2 -translate-y-1/2 text-xs"
           size="small"
           shape="round"
           variant="outlined"
@@ -48,7 +48,7 @@ const BranchNode = ({ node }: BrandNodeProps) => {
         {node.branches!.map((branch, index) => (
           <div
             key={branch.id}
-            className="relative flex flex-col items-center before:content-['']  before:w-[2px] before:bg-stone-200 before:absolute before:h-full before:left-[50%] before:-translate-x-[50%] before:top-0"
+            className="relative flex flex-col items-center before:absolute  before:left-[50%] before:top-0 before:h-full before:w-[2px] before:-translate-x-[50%] before:bg-stone-200 before:content-['']"
           >
             <div className="relative flex flex-col items-center">{renderNodes(branch, node.id, index)}</div>
           </div>

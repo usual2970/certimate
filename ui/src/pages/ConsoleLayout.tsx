@@ -52,8 +52,8 @@ const ConsoleLayout = () => {
 
   return (
     <Layout className="min-h-screen" hasSider>
-      <Layout.Sider className="max-md:hidden max-md:static fixed top-0 left-0 h-full z-[20]" width="256px" theme="light">
-        <div className="flex flex-col items-center justify-between w-full h-full overflow-hidden">
+      <Layout.Sider className="fixed left-0 top-0 z-20 h-full max-md:static max-md:hidden" width="256px" theme="light">
+        <div className="flex size-full flex-col items-center justify-between overflow-hidden">
           <div className="w-full">
             <SiderMenu />
           </div>
@@ -64,8 +64,8 @@ const ConsoleLayout = () => {
       </Layout.Sider>
 
       <Layout className="pl-[256px] max-md:pl-0">
-        <Layout.Header className="sticky top-0 left-0 right-0 p-0 z-[19] shadow-sm" style={{ background: themeToken.colorBgContainer }}>
-          <div className="flex items-center justify-between size-full px-4 overflow-hidden">
+        <Layout.Header className="sticky inset-x-0 top-0 z-[19] p-0 shadow-sm" style={{ background: themeToken.colorBgContainer }}>
+          <div className="flex size-full items-center justify-between overflow-hidden px-4">
             <div className="flex items-center gap-4">
               <Button className="md:hidden" icon={<MenuOutlinedIcon />} size="large" onClick={handleSiderOpen} />
               <Drawer
@@ -82,7 +82,7 @@ const ConsoleLayout = () => {
                 <SiderMenu onSelect={() => handleSiderClose()} />
               </Drawer>
             </div>
-            <div className="flex-grow flex items-center justify-end gap-4 size-full overflow-hidden">
+            <div className="flex size-full grow items-center justify-end gap-4 overflow-hidden">
               <Tooltip title={t("common.menu.theme")} mouseEnterDelay={2}>
                 <ThemeToggleButton size="large" />
               </Tooltip>
@@ -159,11 +159,11 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
 
   return (
     <>
-      <Link to="/" className="flex items-center gap-2 w-full px-4 font-semibold overflow-hidden">
-        <img src="/logo.svg" className="w-[36px] h-[36px]" />
-        <span className="w-[74px] h-[64px] leading-[64px] dark:text-white truncate">Certimate</span>
+      <Link to="/" className="flex w-full items-center gap-2 overflow-hidden px-4 font-semibold">
+        <img src="/logo.svg" className="size-[36px]" />
+        <span className="h-[64px] w-[74px] truncate leading-[64px] dark:text-white">Certimate</span>
       </Link>
-      <div className="flex-grow w-full overflow-x-hidden overflow-y-auto">
+      <div className="w-full grow overflow-y-auto overflow-x-hidden">
         <Menu
           items={menuItems}
           mode="vertical"

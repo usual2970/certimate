@@ -48,7 +48,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
         </Form.Item>
 
         <Form.Item>
-          <div className="flex items-center justify-between w-full mb-2">
+          <div className="mb-2 flex w-full items-center justify-between">
             <label>{t("certificate.props.certificate_chain")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
@@ -65,7 +65,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
         </Form.Item>
 
         <Form.Item>
-          <div className="flex items-center justify-between w-full mb-2">
+          <div className="mb-2 flex w-full items-center justify-between">
             <label>{t("certificate.props.private_key")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard

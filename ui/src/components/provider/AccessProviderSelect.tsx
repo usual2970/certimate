@@ -21,8 +21,8 @@ const AccessProviderSelect = (props: AccessProviderSelectProps) => {
   const renderOption = (key: string) => {
     const provider = accessProvidersMap.get(key);
     return (
-      <div className="flex items-center justify-between gap-4 max-w-full overflow-hidden">
-        <Space className="flex-grow max-w-full truncate" size={4}>
+      <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
+        <Space className="max-w-full grow truncate" size={4}>
           <Avatar src={provider?.icon} size="small" />
           <Typography.Text className="leading-loose" ellipsis>
             {t(provider?.name ?? "")}

@@ -39,8 +39,8 @@ const Login = () => {
     <>
       {NotificationContextHolder}
 
-      <Card className="mx-auto mt-32 p-10 max-w-[35em] border dark:border-stone-500 rounded-md shadow-md">
-        <div className="flex items-center justify-center mb-10">
+      <Card className="mx-auto mt-32 max-w-[35em] rounded-md border p-10 shadow-md dark:border-stone-500">
+        <div className="mb-10 flex items-center justify-center">
           <img src="/logo.svg" className="w-16" />
         </div>
 
