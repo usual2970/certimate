@@ -1,11 +1,17 @@
 import { type WorkflowBranchNode, type WorkflowNode } from "@/domain/workflow";
 
+/**
+ * @deprecated
+ */
 export type NodeProps = {
-  data: WorkflowNode | WorkflowBranchNode;
+  node: WorkflowNode | WorkflowBranchNode;
   branchId?: string;
   branchIndex?: number;
 };
 
+/**
+ * @deprecated
+ */
 export type BrandNodeProps = {
-  data: WorkflowBranchNode;
+  node: WorkflowBranchNode;
 };

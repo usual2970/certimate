@@ -14,7 +14,7 @@ import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
 import { usePanel } from "../PanelProvider";
 
 export type StartNodeFormProps = {
-  data: WorkflowNode;
+  node: WorkflowNode;
 };
 
 const initFormModel = () => {
@@ -24,7 +24,7 @@ const initFormModel = () => {
   };
 };
 
-const StartNodeForm = ({ data }: StartNodeFormProps) => {
+const StartNodeForm = ({ node }: StartNodeFormProps) => {
   const { t } = useTranslation();
 
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
@@ -54,11 +54,11 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: data?.config ?? initFormModel(),
+    initialValues: node?.config ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(
-        produce(data, (draft) => {
+        produce(node, (draft) => {
           draft.config = { ...values };
           draft.validated = true;
         })
@@ -67,12 +67,12 @@ const StartNodeForm = ({ data }: StartNodeFormProps) => {
     },
   });
 
-  const [triggerType, setTriggerType] = useState(data?.config?.executionMethod);
+  const [triggerType, setTriggerType] = useState(node?.config?.executionMethod);
   const [triggerCronLastExecutions, setTriggerCronExecutions] = useState<Date[]>([]);
   useEffect(() => {
-    setTriggerType(data?.config?.executionMethod);
-    setTriggerCronExecutions(getNextCronExecutions(data?.config?.crontab as string, 5));
-  }, [data?.config?.executionMethod, data?.config?.crontab]);
+    setTriggerType(node?.config?.executionMethod);
+    setTriggerCronExecutions(getNextCronExecutions(node?.config?.crontab as string, 5));
+  }, [node?.config?.executionMethod, node?.config?.crontab]);
 
   const handleTriggerTypeChange = (value: string) => {
     setTriggerType(value);

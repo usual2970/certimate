@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-import Version from "@/components/core/Version";
+import Version from "@/components/Version";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const AuthLayout = () => {

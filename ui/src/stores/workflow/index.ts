@@ -25,8 +25,9 @@ export type WorkflowState = {
   getWorkflowOuptutBeforeId: (id: string, type: string) => WorkflowNode[];
   switchEnable(): void;
   save(): void;
-  init(id: string): void;
   setBaseInfo: (name: string, description: string) => void;
+  init(id: string): void;
+  destroy(): void;
 };
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -213,5 +214,12 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
   getWorkflowOuptutBeforeId: (id: string, type: string) => {
     return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, id, type);
+  },
+
+  destroy: () => {
+    set({
+      workflow: {} as WorkflowModel,
+      initialized: false,
+    });
   },
 }));

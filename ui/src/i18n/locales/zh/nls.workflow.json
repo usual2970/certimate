@@ -41,13 +41,8 @@
   "workflow.detail.orchestration.action.discard.confirm": "确定要撤销更改并回退到最近一次发布的版本吗？",
   "workflow.detail.orchestration.action.release": "发布更改",
   "workflow.detail.orchestration.action.release.confirm": "确定要发布更改吗？",
-  "workflow.detail.orchestration.action.release.failed.uncompleted": "流程编排未完成，请检查是否有节点未设置",
+  "workflow.detail.orchestration.action.release.failed.uncompleted": "流程编排未完成，请检查是否有节点未配置",
   "workflow.detail.orchestration.action.run": "执行",
   "workflow.detail.orchestration.action.run.confirm": "此工作流存在未发布的更改，将以最近一次发布的版本为准，确定要继续执行吗？",
-  "workflow.detail.runs.tab": "执行历史",
-
-  "workflow.common.certificate.label": "证书",
-  "workflow.node.setting.label": "设置节点",
-  "workflow.node.delete.label": "删除节点",
-  "workflow.node.addBranch.label": "添加分支"
+  "workflow.detail.runs.tab": "执行历史"
 }

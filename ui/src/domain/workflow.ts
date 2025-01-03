@@ -28,7 +28,7 @@ export enum WorkflowNodeType {
   Custom = "custom",
 }
 
-const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
+export const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
   [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
@@ -39,7 +39,7 @@ const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
 ]);
 
-const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
+export const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [WorkflowNodeType.Apply, []],
   [
     WorkflowNodeType.Deploy,
@@ -48,14 +48,14 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.common.certificate.label"),
+        label: "证书",
       },
     ],
   ],
   [WorkflowNodeType.Notify, []],
 ]);
 
-const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
+export const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [
     WorkflowNodeType.Apply,
     [
@@ -63,7 +63,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.common.certificate.label"),
+        label: "证书",
       },
     ],
   ],
@@ -148,10 +148,9 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
 
 type NewNodeOptions = {
   branchIndex?: number;
-  providerType?: string;
 };
 
-export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions): WorkflowNode | WorkflowBranchNode => {
+export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}): WorkflowNode | WorkflowBranchNode => {
   const nodeTypeName = workflowNodeTypeDefaultNames.get(nodeType) || "";
   const nodeName = options.branchIndex != null ? `${nodeTypeName} ${options.branchIndex + 1}` : nodeTypeName;
 
@@ -165,9 +164,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions): Wo
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Deploy:
       {
-        node.config = {
-          providerType: options.providerType,
-        };
+        node.config = {};
         node.input = workflowNodeTypeDefaultInputs.get(nodeType);
         node.output = workflowNodeTypeDefaultOutputs.get(nodeType);
       }
@@ -389,89 +386,3 @@ export const getExecuteMethod = (node: WorkflowNode): { type: string; crontab: s
     };
   }
 };
-
-/**
- * @deprecated
- */
-type WorkflowNodeDropdwonItem = {
-  type: WorkflowNodeType;
-  providerType?: string;
-  name: string;
-  icon: WorkflowNodeDropdwonItemIcon;
-  leaf?: boolean;
-  children?: WorkflowNodeDropdwonItem[];
-};
-
-/**
- * @deprecated
- */
-export enum WorkflowNodeDropdwonItemIconType {
-  Icon,
-  Provider,
-}
-
-/**
- * @deprecated
- */
-export type WorkflowNodeDropdwonItemIcon = {
-  type: WorkflowNodeDropdwonItemIconType;
-  name: string;
-};
-
-/**
- * @deprecated
- */
-const workflowNodeDropdownDeployList: WorkflowNodeDropdwonItem[] = Array.from(deployProvidersMap.values()).map((item) => {
-  return {
-    type: WorkflowNodeType.Apply,
-    providerType: item.type,
-    name: i18n.t(item.name),
-    leaf: true,
-    icon: {
-      type: WorkflowNodeDropdwonItemIconType.Provider,
-      name: item.icon,
-    },
-  };
-});
-
-/**
- * @deprecated
- */
-export const workflowNodeDropdownList: WorkflowNodeDropdwonItem[] = [
-  {
-    type: WorkflowNodeType.Apply,
-    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Apply) ?? "",
-    icon: {
-      type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "ApplyNodeIcon",
-    },
-    leaf: true,
-  },
-  {
-    type: WorkflowNodeType.Deploy,
-    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Deploy) ?? "",
-    icon: {
-      type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "DeployNodeIcon",
-    },
-    children: workflowNodeDropdownDeployList,
-  },
-  {
-    type: WorkflowNodeType.Branch,
-    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Branch) ?? "",
-    leaf: true,
-    icon: {
-      type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "BranchNodeIcon",
-    },
-  },
-  {
-    type: WorkflowNodeType.Notify,
-    name: workflowNodeTypeDefaultNames.get(WorkflowNodeType.Notify) ?? "",
-    leaf: true,
-    icon: {
-      type: WorkflowNodeDropdwonItemIconType.Icon,
-      name: "NotifyNodeIcon",
-    },
-  },
-];

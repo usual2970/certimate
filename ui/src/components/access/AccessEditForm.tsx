@@ -5,6 +5,7 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
 import { type AccessModel } from "@/domain/access";
 import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm } from "@/hooks";
@@ -28,7 +29,6 @@ import AccessEditFormSSHConfig from "./AccessEditFormSSHConfig";
 import AccessEditFormTencentCloudConfig from "./AccessEditFormTencentCloudConfig";
 import AccessEditFormVolcEngineConfig from "./AccessEditFormVolcEngineConfig";
 import AccessEditFormWebhookConfig from "./AccessEditFormWebhookConfig";
-import AccessProviderSelect from "./AccessProviderSelect";
 
 type AccessEditFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessEditFormPresets = "add" | "edit";

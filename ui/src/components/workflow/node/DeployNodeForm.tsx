@@ -1,13 +1,16 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
-import { Avatar, Button, Divider, Form, Select, Space, Tooltip, Typography } from "antd";
+import { Button, Divider, Form, Select, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
 import { z } from "zod";
 
+import Show from "@/components/Show";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
+import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
+import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
@@ -38,15 +41,14 @@ import DeployNodeFormVolcEngineLiveFields from "./DeployNodeFormVolcEngineLiveFi
 import DeployNodeFormWebhookFields from "./DeployNodeFormWebhookFields";
 
 export type DeployFormProps = {
-  data: WorkflowNode;
-  defaultProivderType?: string;
+  node: WorkflowNode;
 };
 
 const initFormModel = () => {
   return {};
 };
 
-const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
+const DeployNodeForm = ({ node }: DeployFormProps) => {
   const { t } = useTranslation();
 
   const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
@@ -67,11 +69,11 @@ const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: data?.config ?? initFormModel(),
+    initialValues: node?.config ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(
-        produce(data, (draft) => {
+        produce(node, (draft) => {
           draft.config = { ...values };
           draft.validated = true;
         })
@@ -82,12 +84,11 @@ const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
 
   const [previousOutput, setPreviousOutput] = useState<WorkflowNode[]>([]);
   useEffect(() => {
-    const rs = getWorkflowOuptutBeforeId(data.id, "certificate");
+    const rs = getWorkflowOuptutBeforeId(node.id, "certificate");
     setPreviousOutput(rs);
-  }, [data, getWorkflowOuptutBeforeId]);
+  }, [node, getWorkflowOuptutBeforeId]);
 
-  const fieldProviderType = Form.useWatch("providerType", formInst);
-  // const fieldAccess = Form.useWatch("access", formInst);
+  const fieldProviderType = Form.useWatch("providerType", { form: formInst, preserve: true });
 
   const formFieldsComponent = useMemo(() => {
     /*
@@ -144,11 +145,18 @@ const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
     }
   }, [fieldProviderType]);
 
+  const handleProviderTypePick = useCallback(
+    (value: string) => {
+      formInst.setFieldValue("providerType", value);
+    },
+    [formInst]
+  );
+
   const handleProviderTypeSelect = (value: string) => {
     if (fieldProviderType === value) return;
 
     // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
-    if (data.config?.providerType === value) {
+    if (node.config?.providerType === value) {
       formInst.resetFields();
     } else {
       const oldValues = formInst.getFieldsValue();
@@ -161,119 +169,107 @@ const DeployNodeForm = ({ data, defaultProivderType }: DeployFormProps) => {
         }
       }
       formInst.setFieldsValue(newValues);
+
+      if (deployProvidersMap.get(fieldProviderType)?.provider !== deployProvidersMap.get(value)?.provider) {
+        formInst.setFieldValue("access", undefined);
+      }
     }
   };
 
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
-      <Form.Item name="providerType" label={t("workflow_node.deploy.form.provider_type.label")} rules={[formRule]} initialValue={defaultProivderType}>
-        <Select
-          showSearch
-          placeholder={t("workflow_node.deploy.form.provider_type.placeholder")}
-          filterOption={(searchValue, option) => {
-            const type = String(option?.value ?? "");
-            const target = deployProvidersMap.get(type);
-            const filter = (v?: string) => v?.toLowerCase()?.includes(searchValue.toLowerCase()) ?? false;
-            return filter(type) || filter(t(target?.name ?? ""));
-          }}
-          onSelect={handleProviderTypeSelect}
-        >
-          {Array.from(deployProvidersMap.values()).map((item) => {
-            return (
-              <Select.Option key={item.type} label={t(item.name)} value={item.type} title={t(item.name)}>
-                <Space className="flex-grow max-w-full truncate" size={4}>
-                  <Avatar src={item.icon} size="small" />
-                  <Typography.Text className="leading-loose" ellipsis>
-                    {t(item.name)}
-                  </Typography.Text>
-                </Space>
-              </Select.Option>
-            );
-          })}
-        </Select>
-      </Form.Item>
-
-      <Form.Item className="mb-0">
-        <label className="block mb-1">
-          <div className="flex items-center justify-between gap-4 w-full">
-            <div className="flex-grow max-w-full truncate">
-              <span>{t("workflow_node.deploy.form.provider_access.label")}</span>
-              <Tooltip title={t("workflow_node.deploy.form.provider_access.tooltip")}>
-                <Typography.Text className="ms-1" type="secondary">
-                  <QuestionCircleOutlinedIcon />
-                </Typography.Text>
-              </Tooltip>
-            </div>
-            <div className="text-right">
-              <AccessEditModal
-                data={{ configType: deployProvidersMap.get(defaultProivderType!)?.provider }}
-                preset="add"
-                trigger={
-                  <Button size="small" type="link">
-                    <PlusOutlinedIcon />
-                    {t("workflow_node.deploy.form.provider_access.button")}
-                  </Button>
-                }
-                onSubmit={(record) => {
-                  const provider = accessProvidersMap.get(record.configType);
-                  if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
-                    formInst.setFieldValue("access", record.id);
-                  }
-                }}
-              />
-            </div>
-          </div>
-        </label>
-        <Form.Item name="access" rules={[formRule]}>
-          <AccessSelect
-            placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
-            filter={(record) => {
-              if (defaultProivderType) {
-                return deployProvidersMap.get(defaultProivderType)?.provider === record.configType;
-              }
-
-              const provider = accessProvidersMap.get(record.configType);
-              return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
-            }}
+      <Show when={!!fieldProviderType} fallback={<DeployProviderPicker onSelect={handleProviderTypePick} />}>
+        <Form.Item name="providerType" label={t("workflow_node.deploy.form.provider_type.label")} rules={[formRule]}>
+          <DeployProviderSelect
+            allowClear
+            placeholder={t("workflow_node.deploy.form.provider_type.placeholder")}
+            showSearch
+            onSelect={handleProviderTypeSelect}
           />
         </Form.Item>
-      </Form.Item>
 
-      <Form.Item
-        name="certificate"
-        label={t("workflow_node.deploy.form.certificate.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.certificate.tooltip") }}></span>}
-      >
-        <Select
-          options={previousOutput.map((item) => {
-            return {
-              label: item.name,
-              options: item.output?.map((output) => {
-                return {
-                  label: `${item.name} - ${output.label}`,
-                  value: `${item.id}#${output.name}`,
-                };
-              }),
-            };
-          })}
-          placeholder={t("workflow_node.deploy.form.certificate.placeholder")}
-        />
-      </Form.Item>
+        <Form.Item className="mb-0">
+          <label className="block mb-1">
+            <div className="flex items-center justify-between gap-4 w-full">
+              <div className="flex-grow max-w-full truncate">
+                <span>{t("workflow_node.deploy.form.provider_access.label")}</span>
+                <Tooltip title={t("workflow_node.deploy.form.provider_access.tooltip")}>
+                  <Typography.Text className="ms-1" type="secondary">
+                    <QuestionCircleOutlinedIcon />
+                  </Typography.Text>
+                </Tooltip>
+              </div>
+              <div className="text-right">
+                <AccessEditModal
+                  data={{ configType: deployProvidersMap.get(fieldProviderType!)?.provider }}
+                  preset="add"
+                  trigger={
+                    <Button size="small" type="link">
+                      <PlusOutlinedIcon />
+                      {t("workflow_node.deploy.form.provider_access.button")}
+                    </Button>
+                  }
+                  onSubmit={(record) => {
+                    const provider = accessProvidersMap.get(record.configType);
+                    if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
+                      formInst.setFieldValue("access", record.id);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </label>
+          <Form.Item name="access" rules={[formRule]}>
+            <AccessSelect
+              placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
+              filter={(record) => {
+                if (fieldProviderType) {
+                  return deployProvidersMap.get(fieldProviderType)?.provider === record.configType;
+                }
 
-      <Divider className="my-1">
-        <Typography.Text className="font-normal text-xs" type="secondary">
-          {t("workflow_node.deploy.form.params_config.label")}
-        </Typography.Text>
-      </Divider>
+                const provider = accessProvidersMap.get(record.configType);
+                return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
+              }}
+            />
+          </Form.Item>
+        </Form.Item>
 
-      {formFieldsComponent}
+        <Form.Item
+          name="certificate"
+          label={t("workflow_node.deploy.form.certificate.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.certificate.tooltip") }}></span>}
+        >
+          <Select
+            options={previousOutput.map((item) => {
+              return {
+                label: item.name,
+                options: item.output?.map((output) => {
+                  return {
+                    label: `${item.name} - ${output.label}`,
+                    value: `${item.id}#${output.name}`,
+                  };
+                }),
+              };
+            })}
+            placeholder={t("workflow_node.deploy.form.certificate.placeholder")}
+          />
+        </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={formPending}>
-          {t("common.button.save")}
-        </Button>
-      </Form.Item>
+        <Divider className="my-1">
+          <Typography.Text className="font-normal text-xs" type="secondary">
+            {t("workflow_node.deploy.form.params_config.label")}
+          </Typography.Text>
+        </Divider>
+
+        {formFieldsComponent}
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={formPending}>
+            {t("common.button.save")}
+          </Button>
+        </Form.Item>
+      </Show>
     </Form>
   );
 };

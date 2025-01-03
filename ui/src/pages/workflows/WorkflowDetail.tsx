@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -19,13 +19,11 @@ import { isEqual } from "radash";
 import { z } from "zod";
 
 import { run as runWorkflow } from "@/api/workflow";
+import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
-import ModalForm from "@/components/core/ModalForm";
-import End from "@/components/workflow/End";
-import NodeRender from "@/components/workflow/NodeRender";
-import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import WorkflowRuns from "@/components/workflow/run/WorkflowRuns";
-import { type WorkflowModel, type WorkflowNode, isAllNodesValidated } from "@/domain/workflow";
+import WorkflowElements from "@/components/workflow/WorkflowElements";
+import WorkflowRuns from "@/components/workflow/WorkflowRuns";
+import { type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow } from "@/repository/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -41,33 +39,21 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, init, save, setBaseInfo, switchEnable } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "init", "save", "setBaseInfo", "switchEnable"])
+  const { workflow, initialized, init, save, destroy, setBaseInfo, switchEnable } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "save", "setBaseInfo", "switchEnable"])
   );
   useEffect(() => {
     // TODO: loading
     init(workflowId!);
+
+    return () => {
+      destroy();
+    };
   }, [workflowId]);
 
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
-  const workflowNodes = useMemo(() => {
-    let current = workflow.draft as WorkflowNode;
-
-    const elements: JSX.Element[] = [];
-
-    while (current) {
-      // 处理普通节点
-      elements.push(<NodeRender data={current} key={current.id} />);
-      current = current.next as WorkflowNode;
-    }
-
-    elements.push(<End key="workflow-end" />);
-
-    return elements;
-  }, [workflow]);
-
-  const [workflowRunning, setWorkflowRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
   const [allowDiscard, setAllowDiscard] = useState(false);
   const [allowRelease, setAllowRelease] = useState(false);
@@ -75,10 +61,10 @@ const WorkflowDetail = () => {
   useDeepCompareEffect(() => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
-    setAllowDiscard(!workflowRunning && hasReleased && hasChanges);
-    setAllowRelease(!workflowRunning && hasChanges);
+    setAllowDiscard(!isRunning && hasReleased && hasChanges);
+    setAllowRelease(!isRunning && hasChanges);
     setAllowRun(hasReleased);
-  }, [workflow, workflowRunning]);
+  }, [workflow, isRunning]);
 
   const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
     try {
@@ -174,7 +160,7 @@ const WorkflowDetail = () => {
 
     // TODO: 异步执行
     promise.then(async () => {
-      setWorkflowRunning(true);
+      setIsRunning(true);
 
       try {
         await runWorkflow(workflowId!);
@@ -188,7 +174,7 @@ const WorkflowDetail = () => {
         console.error(err);
         messageApi.warning(t("common.text.operation_failed"));
       } finally {
-        setWorkflowRunning(false);
+        setIsRunning(false);
       }
     });
   };
@@ -203,35 +189,44 @@ const WorkflowDetail = () => {
         <PageHeader
           style={{ paddingBottom: 0 }}
           title={workflow.name}
-          extra={[
-            <WorkflowBaseInfoModalForm key="edit" data={workflow} trigger={<Button>{t("common.button.edit")}</Button>} onFinish={handleBaseInfoFormFinish} />,
+          extra={
+            initialized
+              ? [
+                  <WorkflowBaseInfoModalForm
+                    key="edit"
+                    data={workflow}
+                    trigger={<Button>{t("common.button.edit")}</Button>}
+                    onFinish={handleBaseInfoFormFinish}
+                  />,
 
-            <Button key="enable" onClick={handleEnableChange}>
-              {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
-            </Button>,
+                  <Button key="enable" onClick={handleEnableChange}>
+                    {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
+                  </Button>,
 
-            <Dropdown
-              key="more"
-              menu={{
-                items: [
-                  {
-                    key: "delete",
-                    label: t("workflow.action.delete"),
-                    danger: true,
-                    icon: <DeleteOutlinedIcon />,
-                    onClick: () => {
-                      handleDeleteClick();
-                    },
-                  },
-                ],
-              }}
-              trigger={["click"]}
-            >
-              <Button icon={<DownOutlinedIcon />} iconPosition="end">
-                {t("common.button.more")}
-              </Button>
-            </Dropdown>,
-          ]}
+                  <Dropdown
+                    key="more"
+                    menu={{
+                      items: [
+                        {
+                          key: "delete",
+                          label: t("workflow.action.delete"),
+                          danger: true,
+                          icon: <DeleteOutlinedIcon />,
+                          onClick: () => {
+                            handleDeleteClick();
+                          },
+                        },
+                      ],
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Button icon={<DownOutlinedIcon />} iconPosition="end">
+                      {t("common.button.more")}
+                    </Button>
+                  </Dropdown>,
+                ]
+              : []
+          }
         >
           <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
           <Tabs
@@ -249,15 +244,15 @@ const WorkflowDetail = () => {
       </Card>
 
       <div className="p-4">
-        <Card>
+        <Card loading={!initialized}>
           <Show when={tabValue === "orchestration"}>
             <div className="relative">
-              <div className="flex flex-col items-center py-12 pr-48">
-                <WorkflowProvider>{workflowNodes}</WorkflowProvider>
+              <div className="py-12 lg:pr-36 xl:pr-48">
+                <WorkflowElements />
               </div>
               <div className="absolute top-0 right-0 z-[1]">
                 <Space>
-                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={workflowRunning} type="primary" onClick={handleRunClick}>
+                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
                     {t("workflow.detail.orchestration.action.run")}
                   </Button>
 

@@ -1,4 +1,10 @@
 {
+  "workflow_node.action.configure_node": "配置节点",
+  "workflow_node.branch.add_node": "添加节点",
+  "workflow_node.action.delete_node": "删除节点",
+  "workflow_node.action.add_branch": "添加分支",
+  "workflow_node.action.delete_branch": "删除分支",
+
   "workflow_node.start.label": "开始",
   "workflow_node.start.form.trigger.label": "触发方式",
   "workflow_node.start.form.trigger.placeholder": "请选择触发方式",
@@ -41,6 +47,7 @@
   "workflow_node.apply.form.disable_follow_cname.tooltip": "在 ACME DNS-01 认证时是否禁止 CNAME 跟随。如果你不了解该选项的用途，保持默认即可。<br><a href=\"https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname\" target=\"_blank\">点此了解更多</a>。",
 
   "workflow_node.deploy.label": "部署",
+  "workflow_node.deploy.search.provider_type.placeholder": "搜索部署目标……",
   "workflow_node.deploy.form.provider_type.label": "部署目标",
   "workflow_node.deploy.form.provider_type.placeholder": "请选择部署目标",
   "workflow_node.deploy.form.provider_access.label": "主机提供商授权",

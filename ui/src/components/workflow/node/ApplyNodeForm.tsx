@@ -7,10 +7,10 @@ import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
 import { z } from "zod";
 
+import ModalForm from "@/components/ModalForm";
+import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import ModalForm from "@/components/core/ModalForm";
-import MultipleInput from "@/components/core/MultipleInput";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 import { type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
@@ -20,7 +20,7 @@ import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/val
 import { usePanel } from "../PanelProvider";
 
 export type ApplyNodeFormProps = {
-  data: WorkflowNode;
+  node: WorkflowNode;
 };
 
 const MULTIPLE_INPUT_DELIMITER = ";";
@@ -35,7 +35,7 @@ const initFormModel = () => {
   };
 };
 
-const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
+const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
   const { t } = useTranslation();
 
   const { addEmail } = useContactEmailsStore(useZustandShallowSelector("addEmail"));
@@ -74,12 +74,12 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: data?.config ?? initFormModel(),
+    initialValues: node?.config ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await addEmail(values.email);
       await updateNode(
-        produce(data, (draft) => {
+        produce(node, (draft) => {
           draft.config = { ...values };
           draft.validated = true;
         })
@@ -88,8 +88,8 @@ const ApplyNodeForm = ({ data }: ApplyNodeFormProps) => {
     },
   });
 
-  const [fieldDomains, setFieldDomains] = useState(data?.config?.domain as string);
-  const [fieldNameservers, setFieldNameservers] = useState(data?.config?.nameservers as string);
+  const [fieldDomains, setFieldDomains] = useState(node?.config?.domain as string);
+  const [fieldNameservers, setFieldNameservers] = useState(node?.config?.nameservers as string);
 
   const handleFieldDomainsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

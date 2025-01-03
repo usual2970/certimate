@@ -15,7 +15,7 @@ import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
 
 export type NotifyNodeFormProps = {
-  data: WorkflowNode;
+  node: WorkflowNode;
 };
 
 const initFormModel = () => {
@@ -25,7 +25,7 @@ const initFormModel = () => {
   };
 };
 
-const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
+const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
   const { t } = useTranslation();
 
   const {
@@ -57,11 +57,11 @@ const NotifyNodeForm = ({ data }: NotifyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: data?.config ?? initFormModel(),
+    initialValues: node?.config ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(
-        produce(data, (draft) => {
+        produce(node, (draft) => {
           draft.config = { ...values };
           draft.validated = true;
         })

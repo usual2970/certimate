@@ -1,12 +1,8 @@
-export const SETTINGS_NAME_EMAILS = "emails" as const;
-export const SETTINGS_NAME_NOTIFYTEMPLATES = "notifyTemplates" as const;
-export const SETTINGS_NAME_NOTIFYCHANNELS = "notifyChannels" as const;
-export const SETTINGS_NAME_SSLPROVIDER = "sslProvider" as const;
 export const SETTINGS_NAMES = Object.freeze({
-  EMAILS: SETTINGS_NAME_EMAILS,
-  NOTIFY_TEMPLATES: SETTINGS_NAME_NOTIFYTEMPLATES,
-  NOTIFY_CHANNELS: SETTINGS_NAME_NOTIFYCHANNELS,
-  SSL_PROVIDER: SETTINGS_NAME_SSLPROVIDER,
+  EMAILS: "emails",
+  NOTIFY_TEMPLATES: "notifyTemplates",
+  NOTIFY_CHANNELS: "notifyChannels",
+  SSL_PROVIDER: "sslProvider",
 } as const);
 
 export type SettingsNames = (typeof SETTINGS_NAMES)[keyof typeof SETTINGS_NAMES];

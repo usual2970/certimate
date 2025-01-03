@@ -15,7 +15,7 @@ import {
 } from "@ant-design/icons";
 import { Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProps, Tooltip, theme } from "antd";
 
-import Version from "@/components/core/Version";
+import Version from "@/components/Version";
 import { useBrowserTheme } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 
@@ -66,7 +66,7 @@ const ConsoleLayout = () => {
       <Layout className="pl-[256px] max-md:pl-0">
         <Layout.Header className="sticky top-0 left-0 right-0 p-0 z-[19] shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex items-center justify-between size-full px-4 overflow-hidden">
-            <div className="flex items-center gap-4 size-full">
+            <div className="flex items-center gap-4">
               <Button className="md:hidden" icon={<MenuOutlinedIcon />} size="large" onClick={handleSiderOpen} />
               <Drawer
                 closable={false}
