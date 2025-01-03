@@ -45,7 +45,7 @@ const AddNode = ({ node: supnode }: NodeProps | BrandNodeProps) => {
   };
 
   return (
-    <div className="relative py-6 before:absolute before:left-[50%] before:top-0 before:h-full before:w-[2px] before:-translate-x-[50%] before:bg-stone-200 before:content-['']">
+    <div className="relative py-6 before:absolute before:left-1/2 before:top-0 before:h-full before:w-[2px] before:-translate-x-1/2 before:bg-stone-200 before:content-['']">
       <Dropdown
         menu={{
           items: dropdownMenus.map((item) => {
