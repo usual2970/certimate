@@ -18,9 +18,9 @@
 
   "access.form.name.label": "名称",
   "access.form.name.placeholder": "请输入授权名称",
-  "access.form.type.label": "提供商",
-  "access.form.type.placeholder": "请选择提供商",
-  "access.form.type.tooltip": "提供商分为两种类型：<br>【DNS 提供商】您的 DNS 托管方，通常等同于域名注册商，用于在申请证书时管理您的域名解析记录。<br>【主机提供商】您的服务器或云服务的托管方，用于部署签发的证书。<br><br>该字段保存后不可修改。",
+  "access.form.provider.label": "提供商",
+  "access.form.provider.placeholder": "请选择提供商",
+  "access.form.provider.tooltip": "提供商分为两种类型：<br>【DNS 提供商】您的 DNS 托管方，通常等同于域名注册商，用于在申请证书时管理您的域名解析记录。<br>【主机提供商】您的服务器或云服务的托管方，用于部署签发的证书。<br><br>该字段保存后不可修改。",
   "access.form.acmehttpreq_endpoint.label": "服务端点",
   "access.form.acmehttpreq_endpoint.placeholder": "请输入服务端点",
   "access.form.acmehttpreq_endpoint.tooltip": "这是什么？请参阅 <a href=\"https://go-acme.github.io/lego/dns/httpreq/\" target=\"_blank\">https://go-acme.github.io/lego/dns/httpreq/</a>",

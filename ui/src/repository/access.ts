@@ -25,9 +25,9 @@ export const remove = async (record: MaybeModelRecordWithId<AccessModel>) => {
   record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
 
   // TODO: 仅为兼容旧版本，后续迭代时删除
-  if ("configType" in record && record.configType === "httpreq") record.configType = "acmehttpreq";
-  if ("configType" in record && record.configType === "tencent") record.configType = "tencentcloud";
-  if ("configType" in record && record.configType === "pdns") record.configType = "powerdns";
+  if ("provider" in record && record.provider === "httpreq") record.provider = "acmehttpreq";
+  if ("provider" in record && record.provider === "tencent") record.provider = "tencentcloud";
+  if ("provider" in record && record.provider === "pdns") record.provider = "powerdns";
 
   await getPocketBase().collection(COLLECTION_NAME).update<AccessModel>(record.id!, record);
 };

@@ -45,7 +45,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
       );
     }
 
-    const provider = accessProvidersMap.get(access.configType);
+    const provider = accessProvidersMap.get(access.provider);
     return (
       <Space className="max-w-full grow truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />

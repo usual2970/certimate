@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
 import { type AccessModel } from "@/domain/access";
-import { ACCESS_PROVIDERS } from "@/domain/provider";
+import { ACCESS_PROVIDERS, accessProvidersMap } from "@/domain/provider";
 import { useAntdForm } from "@/hooks";
 
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
@@ -57,7 +57,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       .min(1, t("access.form.name.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
-    configType: z.nativeEnum(ACCESS_PROVIDERS, { message: t("access.form.type.placeholder") }),
+    provider: z.nativeEnum(ACCESS_PROVIDERS, { message: t("access.form.provider.placeholder") }),
     config: z.any(),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -65,10 +65,10 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
     initialValues: initialValues,
   });
 
-  const [configType, setConfigType] = useState(initialValues?.configType);
+  const [fieldProvider, setFieldProvider] = useState(initialValues?.provider);
   useEffect(() => {
-    setConfigType(initialValues?.configType);
-  }, [initialValues?.configType]);
+    setFieldProvider(initialValues?.provider);
+  }, [initialValues?.provider]);
 
   const [configFormInst] = Form.useForm();
   const configFormName = useCreation(() => `accessEditForm_config${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
@@ -78,7 +78,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       NOTICE: If you add new child component, please keep ASCII order.
      */
     const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, initialValues: initialValues?.config };
-    switch (configType) {
+    switch (fieldProvider) {
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:
@@ -118,7 +118,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
-  }, [disabled, initialValues, configType, configFormInst, configFormName]);
+  }, [disabled, initialValues, fieldProvider, configFormInst, configFormName]);
 
   const handleFormProviderChange = (name: string) => {
     if (name === configFormName) {
@@ -128,8 +128,8 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   };
 
   const handleFormChange = (_: unknown, values: AccessEditFormFieldValues) => {
-    if (values.configType !== configType) {
-      setConfigType(values.configType);
+    if (values.provider !== fieldProvider) {
+      setFieldProvider(values.provider);
     }
 
     onValuesChange?.(values);
@@ -160,12 +160,12 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
           </Form.Item>
 
           <Form.Item
-            name="configType"
-            label={t("access.form.type.label")}
+            name="provider"
+            label={t("access.form.provider.label")}
             rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.type.tooltip") }}></span>}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.provider.tooltip") }}></span>}
           >
-            <AccessProviderSelect disabled={preset !== "add"} placeholder={t("access.form.type.placeholder")} showSearch={!disabled} />
+            <AccessProviderSelect disabled={preset !== "add"} placeholder={t("access.form.provider.placeholder")} showSearch={!disabled} />
           </Form.Item>
         </Form>
 

@@ -152,7 +152,7 @@ func Get(record *models.Record) (Applicant, error) {
 		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
 	}
 
-	return GetWithTypeOption(domain.AccessProviderType(access.GetString("configType")), option)
+	return GetWithTypeOption(domain.AccessProviderType(access.GetString("provider")), option)
 }
 
 func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -174,15 +174,15 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 
-	return GetWithTypeOption(domain.AccessProviderType(access.ConfigType), applyConfig)
+	return GetWithTypeOption(domain.AccessProviderType(access.Provider), applyConfig)
 }
 
-func GetWithTypeOption(providerType domain.AccessProviderType, option *ApplyOption) (Applicant, error) {
+func GetWithTypeOption(provider domain.AccessProviderType, option *ApplyOption) (Applicant, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
-	switch providerType {
+	switch provider {
 	case domain.ACCESS_PROVIDER_ACMEHTTPREQ:
 		return NewACMEHttpReqApplicant(option), nil
 	case domain.ACCESS_PROVIDER_ALIYUN:
@@ -206,7 +206,7 @@ func GetWithTypeOption(providerType domain.AccessProviderType, option *ApplyOpti
 	case domain.ACCESS_PROVIDER_VOLCENGINE:
 		return NewVolcEngineApplicant(option), nil
 	default:
-		return nil, fmt.Errorf("unsupported applicant provider type: %s", providerType)
+		return nil, fmt.Errorf("unsupported applicant provider type: %s", provider)
 	}
 }
 

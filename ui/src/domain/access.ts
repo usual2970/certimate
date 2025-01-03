@@ -3,8 +3,7 @@ import { type AccessUsageType } from "./provider";
 // #region AccessModel
 export interface AccessModel extends BaseModel {
   name: string;
-  configType: string;
-  usage: AccessUsageType;
+  provider: string;
   config: /*
     注意：如果追加新的类型，请保持以 ASCII 排序。
     NOTICE: If you add new type, please keep ASCII order.
@@ -30,6 +29,7 @@ export interface AccessModel extends BaseModel {
       | VolcEngineAccessConfig
       | WebhookAccessConfig
     );
+  usage: AccessUsageType;
 }
 // #endregion
 

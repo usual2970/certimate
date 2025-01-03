@@ -18,9 +18,9 @@
 
   "access.form.name.label": "Name",
   "access.form.name.placeholder": "Please enter authorization name",
-  "access.form.type.label": "Provider",
-  "access.form.type.placeholder": "Please select a provider",
-  "access.form.type.tooltip": "DNS provider: The provider that hosts your domain names and manages your DNS records.<br>Host provider: The provider that hosts your servers or cloud services for deploying certificates.<br><br><i>Cannot be edited after saving.</i>",
+  "access.form.provider.label": "Provider",
+  "access.form.provider.placeholder": "Please select a provider",
+  "access.form.provider.tooltip": "DNS provider: The provider that hosts your domain names and manages your DNS records.<br>Host provider: The provider that hosts your servers or cloud services for deploying certificates.<br><br><i>Cannot be edited after saving.</i>",
   "access.form.acmehttpreq_endpoint.label": "Endpoint",
   "access.form.acmehttpreq_endpoint.placeholder": "Please enter endpoint",
   "access.form.acmehttpreq_endpoint.tooltip": "For more information, see <a href=\"https://go-acme.github.io/lego/dns/httpreq/\" target=\"_blank\">https://go-acme.github.io/lego/dns/httpreq/</a>",

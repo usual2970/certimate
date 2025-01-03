@@ -163,7 +163,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
                   </Button>
                 }
                 onSubmit={(record) => {
-                  const provider = accessProvidersMap.get(record.configType);
+                  const provider = accessProvidersMap.get(record.provider);
                   if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
                     formInst.setFieldValue("access", record.id);
                   }
@@ -176,7 +176,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
           <AccessSelect
             placeholder={t("workflow_node.apply.form.access.placeholder")}
             filter={(record) => {
-              const provider = accessProvidersMap.get(record.configType);
+              const provider = accessProvidersMap.get(record.provider);
               return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
             }}
           />

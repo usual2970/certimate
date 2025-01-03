@@ -79,12 +79,12 @@ func (d *deployNode) Run(ctx context.Context) error {
 		DeployConfig: domain.DeployConfig{
 			Id:     d.node.Id,
 			Access: access.Id,
-			Type:   d.node.GetConfigString("providerType"),
+			Type:   d.node.GetConfigString("provider"),
 			Config: d.node.Config,
 		},
 	}
 
-	deploy, err := deployer.GetWithTypeAndOption(d.node.GetConfigString("providerType"), option)
+	deploy, err := deployer.GetWithTypeAndOption(d.node.GetConfigString("provider"), option)
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取部署对象失败", err.Error())
 		return err

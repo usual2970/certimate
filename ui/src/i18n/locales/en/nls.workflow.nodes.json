@@ -47,9 +47,9 @@
   "workflow_node.apply.form.disable_follow_cname.tooltip": "It determines whether to disable CNAME following during ACME DNS-01 authentication. If you don't understand this option, just keep it by default.<br><a href=\"https://letsencrypt.org/2019/10/09/onboarding-your-customers-with-lets-encrypt-and-acme/#the-advantages-of-a-cname\" target=\"_blank\">Learn more</a>.",
 
   "workflow_node.deploy.label": "Deployment",
-  "workflow_node.deploy.search.provider_type.placeholder": "Search deploy target ...",
-  "workflow_node.deploy.form.provider_type.label": "Deploy target",
-  "workflow_node.deploy.form.provider_type.placeholder": "Please select deploy target",
+  "workflow_node.deploy.search.provider.placeholder": "Search deploy target ...",
+  "workflow_node.deploy.form.provider.label": "Deploy target",
+  "workflow_node.deploy.form.provider.placeholder": "Please select deploy target",
   "workflow_node.deploy.form.provider_access.label": "Host provider authorization",
   "workflow_node.deploy.form.provider_access.placeholder": "Please select an authorization of host provider",
   "workflow_node.deploy.form.provider_access.tooltip": "Used to deploy certificates.",

@@ -4,6 +4,7 @@ import { useControllableValue } from "ahooks";
 import { Modal, notification } from "antd";
 
 import { type AccessModel } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
 import { useTriggerElement, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
@@ -48,24 +49,25 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
     }
 
     try {
-      let res: AccessModel;
+      let temp: AccessModel = formRef.current!.getFieldsValue();
+      temp.usage = accessProvidersMap.get(temp.provider)!.usage;
       if (preset === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
 
-        res = await createAccess(formRef.current!.getFieldsValue() as AccessModel);
+        temp = await createAccess(temp);
       } else if (preset === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
 
-        res = await updateAccess({ ...data, ...formRef.current!.getFieldsValue() } as AccessModel);
+        temp = await updateAccess({ ...data, ...temp });
       } else {
         throw "Invalid props: `preset`";
       }
 
-      onSubmit?.(res);
+      onSubmit?.(temp);
       setOpen(false);
     } catch (err) {
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });

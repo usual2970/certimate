@@ -41,7 +41,7 @@ const DeployProviderPicker = ({ className, style, onSelect }: DeployProviderPick
 
   return (
     <div className={className} style={style}>
-      <Input.Search placeholder={t("workflow_node.deploy.search.provider_type.placeholder")} onChange={(e) => setKeyword(e.target.value.trim())} />
+      <Input.Search placeholder={t("workflow_node.deploy.search.provider.placeholder")} onChange={(e) => setKeyword(e.target.value.trim())} />
 
       <div className="mt-4">
         <Show when={providers.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>

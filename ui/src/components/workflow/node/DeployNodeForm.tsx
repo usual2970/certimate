@@ -55,9 +55,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
   const { hidePanel } = usePanel();
 
   const formSchema = z.object({
-    providerType: z
-      .string({ message: t("workflow_node.deploy.form.provider_type.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.provider_type.placeholder")),
+    provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
     access: z
       .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
       .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
@@ -88,14 +86,14 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     setPreviousOutput(rs);
   }, [node, getWorkflowOuptutBeforeId]);
 
-  const fieldProviderType = Form.useWatch("providerType", { form: formInst, preserve: true });
+  const fieldProvider = Form.useWatch("provider", { form: formInst, preserve: true });
 
   const formFieldsComponent = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
      */
-    switch (fieldProviderType) {
+    switch (fieldProvider) {
       case DEPLOY_PROVIDERS.ALIYUN_ALB:
         return <DeployNodeFormAliyunALBFields />;
       case DEPLOY_PROVIDERS.ALIYUN_CLB:
@@ -143,26 +141,26 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
       case DEPLOY_PROVIDERS.WEBHOOK:
         return <DeployNodeFormWebhookFields />;
     }
-  }, [fieldProviderType]);
+  }, [fieldProvider]);
 
-  const handleProviderTypePick = useCallback(
+  const handleProviderPick = useCallback(
     (value: string) => {
-      formInst.setFieldValue("providerType", value);
+      formInst.setFieldValue("provider", value);
     },
     [formInst]
   );
 
-  const handleProviderTypeSelect = (value: string) => {
-    if (fieldProviderType === value) return;
+  const handleProviderSelect = (value: string) => {
+    if (fieldProvider === value) return;
 
     // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
-    if (node.config?.providerType === value) {
+    if (node.config?.provider === value) {
       formInst.resetFields();
     } else {
       const oldValues = formInst.getFieldsValue();
       const newValues: Record<string, unknown> = {};
       for (const key in oldValues) {
-        if (key === "providerType" || key === "access" || key === "certificate") {
+        if (key === "provider" || key === "access" || key === "certificate") {
           newValues[key] = oldValues[key];
         } else {
           newValues[key] = undefined;
@@ -170,7 +168,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
       }
       formInst.setFieldsValue(newValues);
 
-      if (deployProvidersMap.get(fieldProviderType)?.provider !== deployProvidersMap.get(value)?.provider) {
+      if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
         formInst.setFieldValue("access", undefined);
       }
     }
@@ -178,14 +176,9 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
 
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
-      <Show when={!!fieldProviderType} fallback={<DeployProviderPicker onSelect={handleProviderTypePick} />}>
-        <Form.Item name="providerType" label={t("workflow_node.deploy.form.provider_type.label")} rules={[formRule]}>
-          <DeployProviderSelect
-            allowClear
-            placeholder={t("workflow_node.deploy.form.provider_type.placeholder")}
-            showSearch
-            onSelect={handleProviderTypeSelect}
-          />
+      <Show when={!!fieldProvider} fallback={<DeployProviderPicker onSelect={handleProviderPick} />}>
+        <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
+          <DeployProviderSelect allowClear placeholder={t("workflow_node.deploy.form.provider.placeholder")} showSearch onSelect={handleProviderSelect} />
         </Form.Item>
 
         <Form.Item className="mb-0">
@@ -201,7 +194,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
               </div>
               <div className="text-right">
                 <AccessEditModal
-                  data={{ configType: deployProvidersMap.get(fieldProviderType!)?.provider }}
+                  data={{ provider: deployProvidersMap.get(fieldProvider!)?.provider }}
                   preset="add"
                   trigger={
                     <Button size="small" type="link">
@@ -210,7 +203,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
                     </Button>
                   }
                   onSubmit={(record) => {
-                    const provider = accessProvidersMap.get(record.configType);
+                    const provider = accessProvidersMap.get(record.provider);
                     if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
                       formInst.setFieldValue("access", record.id);
                     }
@@ -223,11 +216,11 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
             <AccessSelect
               placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
               filter={(record) => {
-                if (fieldProviderType) {
-                  return deployProvidersMap.get(fieldProviderType)?.provider === record.configType;
+                if (fieldProvider) {
+                  return deployProvidersMap.get(fieldProvider)?.provider === record.provider;
                 }
 
-                const provider = accessProvidersMap.get(record.configType);
+                const provider = accessProvidersMap.get(record.provider);
                 return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
               }}
             />

@@ -219,7 +219,7 @@ const SettingsSSLProvider = () => {
 
       const settings = await getSettings<SSLProviderSettingsContent>(SETTINGS_NAMES.SSL_PROVIDER);
       setSettings(settings);
-      setFormProviderType(settings.content?.provider);
+      setProviderType(settings.content?.provider);
 
       setLoading(false);
     };
@@ -227,7 +227,7 @@ const SettingsSSLProvider = () => {
     fetchData();
   }, []);
 
-  const [providerType, setFormProviderType] = useState<SSLProviders>(SSLPROVIDERS.LETS_ENCRYPT);
+  const [providerType, setProviderType] = useState<SSLProviders>(SSLPROVIDERS.LETS_ENCRYPT);
   const providerFormComponent = useMemo(() => {
     switch (providerType) {
       case SSLPROVIDERS.LETS_ENCRYPT:
@@ -245,7 +245,7 @@ const SettingsSSLProvider = () => {
     try {
       const resp = await saveSettings(settings);
       setSettings(resp);
-      setFormProviderType(resp.content?.provider);
+      setProviderType(resp.content?.provider);
 
       messageApi.success(t("common.text.operation_succeeded"));
     } catch (err) {
@@ -269,7 +269,7 @@ const SettingsSSLProvider = () => {
       <Show when={!loading} fallback={<Skeleton active />}>
         <Form form={formInst} disabled={formPending} layout="vertical" initialValues={{ provider: providerType }}>
           <Form.Item className="mb-2" name="provider" label={t("settings.sslprovider.form.provider.label")}>
-            <CheckCard.Group className="w-full" onChange={(value) => setFormProviderType(value as SSLProviders)}>
+            <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as SSLProviders)}>
               <CheckCard
                 avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
                 size="small"

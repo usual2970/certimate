@@ -52,7 +52,7 @@ const WorkflowElement = ({ node }: NodeProps) => {
       }
 
       case WorkflowNodeType.Deploy: {
-        const provider = deployProvidersMap.get(node.config?.providerType as string);
+        const provider = deployProvidersMap.get(node.config?.provider as string);
         return (
           <Space>
             <Avatar src={provider?.icon} size="small" />

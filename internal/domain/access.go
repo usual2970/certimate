@@ -4,11 +4,11 @@ import "time"
 
 type Access struct {
 	Meta
-	Name       string    `json:"name" db:"name"`
-	ConfigType string    `json:"configType" db:"configType"`
-	Config     string    `json:"config" db:"config"`
-	Usage      string    `json:"usage" db:"usage"`
-	DeletedAt  time.Time `json:"deleted" db:"deleted"`
+	Name      string    `json:"name" db:"name"`
+	Provider  string    `json:"provider" db:"provider"`
+	Config    string    `json:"config" db:"config"`
+	Usage     string    `json:"usage" db:"usage"`
+	DeletedAt time.Time `json:"deleted" db:"deleted"`
 }
 
 type AccessProviderType string
