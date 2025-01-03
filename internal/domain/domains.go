@@ -17,9 +17,3 @@ type DeployConfig struct {
 	Type   string         `json:"type"`
 	Config map[string]any `json:"config"`
 }
-
-// Deprecated: TODO: 即将废弃
-type KV struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-}

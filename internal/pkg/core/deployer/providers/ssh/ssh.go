@@ -209,8 +209,8 @@ func execSshCommand(sshCli *ssh.Client, command string) (string, string, error) 
 	if err != nil {
 		return "", "", err
 	}
-
 	defer session.Close()
+
 	var stdoutBuf bytes.Buffer
 	session.Stdout = &stdoutBuf
 	var stderrBuf bytes.Buffer

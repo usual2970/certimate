@@ -19,9 +19,9 @@ import (
 
 type WebhookDeployerConfig struct {
 	// Webhook URL。
-	Url string `json:"url"`
-	// Webhook 变量字典。
-	Variables map[string]string `json:"variables,omitempty"`
+	WebhookUrl string `json:"webhookUrl"`
+	// Webhook 回调数据（JSON 格式）。
+	WebhookData string `json:"webhookData,omitempty"`
 }
 
 type WebhookDeployer struct {
@@ -67,19 +67,25 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 		return nil, xerrors.Wrap(err, "failed to parse x509")
 	}
 
-	// TODO: 自定义回调数据
-	reqBody, _ := json.Marshal(&webhookData{
-		SubjectAltNames: strings.Join(certX509.DNSNames, ","),
-		Certificate:     certPem,
-		PrivateKey:      privkeyPem,
-		Variables:       d.config.Variables,
-	})
-	resp, err := d.httpClient.Post(d.config.Url, bytes.NewReader(reqBody), map[string][]string{"Content-Type": {"application/json"}})
+	var webhookData interface{}
+	err = json.Unmarshal([]byte(d.config.WebhookData), &webhookData)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to unmarshall webhook data")
+	}
+
+	replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
+	replaceJsonValueRecursively(webhookData, "${DOMAINS}", strings.Join(certX509.DNSNames, ";"))
+	replaceJsonValueRecursively(webhookData, "${SUBJECT_ALT_NAMES}", strings.Join(certX509.DNSNames, ";"))
+	replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPem)
+	replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPem)
+
+	reqBody, _ := json.Marshal(&webhookData)
+	resp, err := d.httpClient.Post(d.config.WebhookUrl, bytes.NewReader(reqBody), map[string][]string{"Content-Type": {"application/json"}})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to send webhook request")
 	}
-
 	defer resp.Body.Close()
+
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to read response body")
@@ -92,4 +98,20 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 			"responseText": string(respBody),
 		},
 	}, nil
+}
+
+func replaceJsonValueRecursively(data interface{}, oldStr, newStr string) interface{} {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		for k, val := range v {
+			v[k] = replaceJsonValueRecursively(val, oldStr, newStr)
+		}
+	case []interface{}:
+		for i, val := range v {
+			v[i] = replaceJsonValueRecursively(val, oldStr, newStr)
+		}
+	case string:
+		return strings.ReplaceAll(v, oldStr, newStr)
+	}
+	return data
 }

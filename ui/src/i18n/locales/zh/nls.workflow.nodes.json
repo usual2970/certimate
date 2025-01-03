@@ -279,6 +279,9 @@
   "workflow_node.deploy.form.volcengine_live_domain.tooltip": "这是什么？请参阅 <a href=\"https://console.volcengine.com/live\" target=\"_blank\">https://console.volcengine.com/live</a>",
   "workflow_node.deploy.form.webhook_data.label": "Webhook 回调数据（JSON 格式）",
   "workflow_node.deploy.form.webhook_data.placeholder": "请输入 Webhook 回调数据",
+  "workflow_node.deploy.form.webhook_data.guide": "小贴士：回调数据是一个 JSON 格式的键值对。其中值支持模板变量，将在被发送到指定的 Webhook URL 时被替换为实际值；其他内容将保持原样。<br><br>支持的变量：<br><strong>${DOMAIN}</strong>：证书的主域名（即 <i>CommonName</i>）<br><strong>${DOMAINS}</strong>：证书的多域名列表（即 <i>SubjectAltNames</i>）<br><strong>${CERTIFICATE}</strong>：证书文件 PEM 格式内容<br><strong>${PRIVATE_KEY}</strong>：私钥文件 PEM 格式内容",
+  "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "请输入有效的 JSON 格式字符串",
+  "workflow_node.deploy.form.webhook_data_preset.button": "使用预设模板",
 
   "workflow_node.notify.label": "通知",
   "workflow_node.notify.form.subject.label": "通知主题",

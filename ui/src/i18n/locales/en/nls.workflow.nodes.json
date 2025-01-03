@@ -279,6 +279,9 @@
   "workflow_node.deploy.form.volcengine_live_domain.tooltip": "For more information, see <a href=\"https://console.volcengine.com/live\" target=\"_blank\">https://console.volcengine.com/live</a>",
   "workflow_node.deploy.form.webhook_data.label": "Webhook data (JSON format)",
   "workflow_node.deploy.form.webhook_data.placeholder": "Please enter Webhook data",
+  "workflow_node.deploy.form.webhook_data.guide": "Tips: The Webhook data should be a key-value pair in JSON format. The values in JSON support template variables, which will be replaced by actual values when sent to the Webhook URL. <br><br>Supported variables: <br><strong>${DOMAIN}</strong>: The primary domain of the certificate (<i>CommonName</i>).<br><strong>${DOMAINS}</strong>: The domain list of the certificate (<i>SubjectAltNames</i>).<br><strong>${CERTIFICATE}</strong>: The PEM format content of the certificate file.<br><strong>${PRIVATE_KEY}</strong>: The PEM format content of the private key file.",
+  "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
+  "workflow_node.deploy.form.webhook_data_preset.button": "Use preset template",
 
   "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",
