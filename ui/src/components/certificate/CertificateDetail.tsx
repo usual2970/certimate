@@ -19,14 +19,14 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
   const [messageApi, MessageContextHolder] = message.useMessage();
 
   const handleDownloadPEMClick = async () => {
-    const zipName = `${data.id}-${data.san}.zip`;
+    const zipName = `${data.id}-${data.subjectAltNames}.zip`;
     const files = [
       {
-        name: `${data.san}.pem`,
+        name: `${data.subjectAltNames}.pem`,
         content: data.certificate ?? "",
       },
       {
-        name: `${data.san}.key`,
+        name: `${data.subjectAltNames}.key`,
         content: data.privateKey ?? "",
       },
     ];
@@ -39,17 +39,17 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
       {MessageContextHolder}
 
       <Form layout="vertical">
-        <Form.Item label={t("certificate.props.san")}>
-          <Input value={data.san} placeholder="" />
+        <Form.Item label={t("certificate.props.subject_alt_names")}>
+          <Input value={data.subjectAltNames} placeholder="" />
         </Form.Item>
 
-        <Form.Item label={t("certificate.props.expiry")}>
-          <Input value={dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")} placeholder="" />
+        <Form.Item label={t("certificate.props.validity")}>
+          <Input value={`${dayjs(data.effectAt).format("YYYY-MM-DD HH:mm:ss")} ~ ${dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}`} placeholder="" />
         </Form.Item>
 
         <Form.Item>
           <div className="mb-2 flex w-full items-center justify-between">
-            <label>{t("certificate.props.certificate_chain")}</label>
+            <label>{t("certificate.props.certificate")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.certificate}

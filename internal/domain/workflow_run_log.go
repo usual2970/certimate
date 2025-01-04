@@ -1,5 +1,13 @@
 package domain
 
+type WorkflowRunLog struct {
+	Meta
+	WorkflowId string   `json:"workflowId" db:"workflowId"`
+	Logs       []RunLog `json:"logs" db:"logs"`
+	Succeeded  bool     `json:"succeeded" db:"succeeded"`
+	Error      string   `json:"error" db:"error"`
+}
+
 type RunLogOutput struct {
 	Time    string `json:"time"`
 	Title   string `json:"title"`
@@ -8,17 +16,10 @@ type RunLogOutput struct {
 }
 
 type RunLog struct {
+	NodeId   string         `json:"nodeId"`
 	NodeName string         `json:"nodeName"`
 	Error    string         `json:"error"`
 	Outputs  []RunLogOutput `json:"outputs"`
-}
-
-type WorkflowRunLog struct {
-	Meta
-	Workflow string   `json:"workflow"`
-	Log      []RunLog `json:"log"`
-	Succeed  bool     `json:"succeed"`
-	Error    string   `json:"error"`
 }
 
 type RunLogs []RunLog

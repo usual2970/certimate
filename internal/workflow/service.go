@@ -69,10 +69,10 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 	processor := nodeprocessor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
 		log := &domain.WorkflowRunLog{
-			Workflow: workflow.Id,
-			Log:      processor.Log(ctx),
-			Succeed:  false,
-			Error:    err.Error(),
+			WorkflowId: workflow.Id,
+			Logs:       processor.Log(ctx),
+			Succeeded:  false,
+			Error:      err.Error(),
 		}
 		if err := s.repo.SaveRunLog(ctx, log); err != nil {
 			app.GetApp().Logger().Error("failed to save run log", "err", err)
@@ -89,10 +89,10 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 		succeed = false
 	}
 	log := &domain.WorkflowRunLog{
-		Workflow: workflow.Id,
-		Log:      processor.Log(ctx),
-		Error:    runErr,
-		Succeed:  succeed,
+		WorkflowId: workflow.Id,
+		Logs:       processor.Log(ctx),
+		Error:      runErr,
+		Succeeded:  succeed,
 	}
 	if err := s.repo.SaveRunLog(ctx, log); err != nil {
 		app.GetApp().Logger().Error("failed to save run log", "err", err)

@@ -1,14 +1,15 @@
 export interface WorkflowRunModel extends BaseModel {
-  workflow: string;
-  log: WorkflowRunLog[];
+  workflowId: string;
+  logs: WorkflowRunLog[];
   error: string;
-  succeed: boolean;
+  succeeded: boolean;
 }
 
 export type WorkflowRunLog = {
+  nodeId: string;
   nodeName: string;
-  error: string;
   outputs: WorkflowRunLogOutput[];
+  error: string;
 };
 
 export type WorkflowRunLogOutput = {

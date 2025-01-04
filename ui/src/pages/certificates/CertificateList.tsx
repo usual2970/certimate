@@ -9,7 +9,7 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
-import { type CertificateModel } from "@/domain/certificate";
+import { CERTIFICATE_SOURCES, type CertificateModel } from "@/domain/certificate";
 import { type ListCertificateRequest, list as listCertificate } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 
@@ -33,18 +33,18 @@ const CertificateList = () => {
     },
     {
       key: "name",
-      title: t("certificate.props.san"),
-      render: (_, record) => <Typography.Text>{record.san}</Typography.Text>,
+      title: t("certificate.props.subject_alt_names"),
+      render: (_, record) => <Typography.Text>{record.subjectAltNames}</Typography.Text>,
     },
     {
       key: "expiry",
-      title: t("certificate.props.expiry"),
+      title: t("certificate.props.validity"),
       ellipsis: true,
       defaultFilteredValue: searchParams.has("state") ? [searchParams.get("state") as string] : undefined,
       filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
         const items: Required<MenuProps>["items"] = [
-          ["expireSoon", "certificate.props.expiry.filter.expire_soon"],
-          ["expired", "certificate.props.expiry.filter.expired"],
+          ["expireSoon", "certificate.props.validity.filter.expire_soon"],
+          ["expired", "certificate.props.validity.filter.expired"],
         ].map(([key, label]) => {
           return {
             key,
@@ -94,13 +94,13 @@ const CertificateList = () => {
         return (
           <Space className="max-w-full" direction="vertical" size={4}>
             {left > 0 ? (
-              <Typography.Text type="success">{t("certificate.props.expiry.left_days", { left, total })}</Typography.Text>
+              <Typography.Text type="success">{t("certificate.props.validity.left_days", { left, total })}</Typography.Text>
             ) : (
-              <Typography.Text type="danger">{t("certificate.props.expiry.expired")}</Typography.Text>
+              <Typography.Text type="danger">{t("certificate.props.validity.expired")}</Typography.Text>
             )}
 
             <Typography.Text type="secondary">
-              {t("certificate.props.expiry.expiration", { date: dayjs(record.expireAt).format("YYYY-MM-DD") })}
+              {t("certificate.props.validity.expiration", { date: dayjs(record.expireAt).format("YYYY-MM-DD") })}
             </Typography.Text>
           </Space>
         );
@@ -111,23 +111,29 @@ const CertificateList = () => {
       title: t("certificate.props.source"),
       ellipsis: true,
       render: (_, record) => {
-        const workflowId = record.workflow;
-        return workflowId ? (
-          <Space className="max-w-full" direction="vertical" size={4}>
-            <Typography.Text>{t("certificate.props.source.workflow")}</Typography.Text>
-            <Typography.Link
-              type="secondary"
-              ellipsis
-              onClick={() => {
-                navigate(`/workflows/${workflowId}`);
-              }}
-            >
-              {record.expand?.workflow?.name ?? ""}
-            </Typography.Link>
-          </Space>
-        ) : (
-          <>TODO: 支持手动上传</>
-        );
+        if (record.source === CERTIFICATE_SOURCES.WORKFLOW) {
+          const workflowId = record.workflowId;
+          return (
+            <Space className="max-w-full" direction="vertical" size={4}>
+              <Typography.Text>{t("certificate.props.source.workflow")}</Typography.Text>
+              <Typography.Link
+                type="secondary"
+                ellipsis
+                onClick={() => {
+                  if (workflowId) {
+                    navigate(`/workflows/${workflowId}`);
+                  }
+                }}
+              >
+                {record.expand?.workflowId?.name ?? `#${workflowId}`}
+              </Typography.Link>
+            </Space>
+          );
+        } else if (record.source === CERTIFICATE_SOURCES.UPLOAD) {
+          return <Typography.Text>{t("certificate.props.source.upload")}</Typography.Text>;
+        }
+
+        return <></>;
       },
     },
     {

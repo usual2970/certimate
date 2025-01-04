@@ -46,7 +46,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       title: t("workflow_run.props.status"),
       ellipsis: true,
       render: (_, record) => {
-        if (record.succeed) {
+        if (record.succeeded) {
           return (
             <Space>
               <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />

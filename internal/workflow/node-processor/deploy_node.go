@@ -71,8 +71,8 @@ func (d *deployNode) Run(ctx context.Context) error {
 		AccessConfig: access.Config,
 		AccessRecord: access,
 		Certificate: applicant.Certificate{
-			CertUrl:           cert.CertUrl,
-			CertStableUrl:     cert.CertStableUrl,
+			CertUrl:           cert.AcmeCertUrl,
+			CertStableUrl:     cert.AcmeCertStableUrl,
 			PrivateKey:        cert.PrivateKey,
 			Certificate:       cert.Certificate,
 			IssuerCertificate: cert.IssuerCertificate,
@@ -105,11 +105,11 @@ func (d *deployNode) Run(ctx context.Context) error {
 		outputId = output.Id
 	}
 	output = &domain.WorkflowOutput{
-		Workflow: GetWorkflowId(ctx),
-		NodeId:   d.node.Id,
-		Node:     d.node,
-		Succeed:  true,
-		Meta:     domain.Meta{Id: outputId},
+		Meta:       domain.Meta{Id: outputId},
+		WorkflowId: GetWorkflowId(ctx),
+		NodeId:     d.node.Id,
+		Node:       d.node,
+		Succeeded:  true,
 	}
 
 	if err := d.outputRepo.Save(ctx, output, nil, nil); err != nil {
@@ -123,5 +123,5 @@ func (d *deployNode) Run(ctx context.Context) error {
 }
 
 func (d *deployNode) deployed(output *domain.WorkflowOutput) bool {
-	return output != nil && output.Succeed
+	return output != nil && output.Succeeded
 }

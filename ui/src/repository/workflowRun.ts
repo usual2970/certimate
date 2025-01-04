@@ -17,7 +17,7 @@ export const list = async (request: ListWorkflowRunsRequest) => {
   return await getPocketBase()
     .collection(COLLECTION_NAME)
     .getList<WorkflowRunModel>(page, perPage, {
-      filter: getPocketBase().filter("workflow={:workflowId}", { workflowId: request.workflowId }),
+      filter: getPocketBase().filter("workflowId={:workflowId}", { workflowId: request.workflowId }),
       sort: "-created",
       requestKey: null,
     });

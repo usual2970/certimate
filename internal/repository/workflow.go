@@ -44,9 +44,9 @@ func (w *WorkflowRepository) SaveRunLog(ctx context.Context, log *domain.Workflo
 	}
 	record := models.NewRecord(collection)
 
-	record.Set("workflow", log.Workflow)
-	record.Set("log", log.Log)
-	record.Set("succeed", log.Succeed)
+	record.Set("workflowId", log.WorkflowId)
+	record.Set("logs", log.Logs)
+	record.Set("succeeded", log.Succeeded)
 	record.Set("error", log.Error)
 
 	return app.GetApp().Dao().SaveRecord(record)

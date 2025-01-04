@@ -20,7 +20,7 @@ export const list = async (request: ListCertificateRequest) => {
 
   const options: RecordListOptions = {
     sort: "-created",
-    expand: "workflow",
+    expand: "workflowId",
     requestKey: null,
   };
 

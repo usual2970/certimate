@@ -400,9 +400,10 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
  */
 export const getExecuteMethod = (node: WorkflowNode): { trigger: string; triggerCron: string } => {
   if (node.type === WorkflowNodeType.Start) {
+    const config = node.config as WorkflowNodeConfigAsStart;
     return {
-      trigger: (node.config?.trigger as string) ?? "",
-      triggerCron: (node.config?.triggerCron as string) ?? "",
+      trigger: config.trigger ?? "",
+      triggerCron: config.triggerCron ?? "",
     };
   } else {
     return {

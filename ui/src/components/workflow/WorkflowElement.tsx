@@ -68,7 +68,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
         return (
           <Space>
             <Avatar src={provider?.icon} size="small" />
-            <Typography.Text className="truncate">{t(provider?.name ?? "　")}</Typography.Text>
+            <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
           </Space>
         );
       }
@@ -80,7 +80,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
           <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">{t(channel?.name ?? "　")}</Typography.Text>
             <Typography.Text className="truncate" type="secondary">
-              {(node.config?.subject as string) ?? ""}
+              {config.subject ?? ""}
             </Typography.Text>
           </div>
         );

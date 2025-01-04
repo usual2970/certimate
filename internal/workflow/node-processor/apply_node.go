@@ -17,6 +17,8 @@ type applyNode struct {
 	*Logger
 }
 
+var validityDuration = time.Hour * 24 * 10
+
 func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:       node,
@@ -46,14 +48,14 @@ func (a *applyNode) Run(ctx context.Context) error {
 		return err
 	}
 
-	if output != nil && output.Succeed {
+	if output != nil && output.Succeeded {
 		cert, err := a.outputRepo.GetCertificate(ctx, a.node.Id)
 		if err != nil {
 			a.AddOutput(ctx, a.node.Name, "获取证书失败", err.Error())
 			return err
 		}
 
-		if time.Until(cert.ExpireAt) > domain.ValidityDuration {
+		if time.Until(cert.ExpireAt) > validityDuration {
 			a.AddOutput(ctx, a.node.Name, "已申请过证书，且证书在有效期内")
 			return nil
 		}
@@ -81,28 +83,30 @@ func (a *applyNode) Run(ctx context.Context) error {
 		outputId = output.Id
 	}
 	output = &domain.WorkflowOutput{
-		Workflow: GetWorkflowId(ctx),
-		NodeId:   a.node.Id,
-		Node:     a.node,
-		Succeed:  true,
-		Output:   a.node.Output,
-		Meta:     domain.Meta{Id: outputId},
+		Meta:       domain.Meta{Id: outputId},
+		WorkflowId: GetWorkflowId(ctx),
+		NodeId:     a.node.Id,
+		Node:       a.node,
+		Succeeded:  true,
+		Outputs:    a.node.Output,
 	}
 
-	cert, err := x509.ParseCertificateFromPEM(certificate.Certificate)
+	certX509, err := x509.ParseCertificateFromPEM(certificate.Certificate)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "解析证书失败", err.Error())
 		return err
 	}
 
 	certificateRecord := &domain.Certificate{
-		SubjectAltNames:   strings.Join(cert.DNSNames, ";"),
+		Source:            string(domain.CERTIFICATE_SOURCE_WORKFLOW),
+		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
 		Certificate:       certificate.Certificate,
 		PrivateKey:        certificate.PrivateKey,
 		IssuerCertificate: certificate.IssuerCertificate,
-		CertUrl:           certificate.CertUrl,
-		CertStableUrl:     certificate.CertStableUrl,
-		ExpireAt:          cert.NotAfter,
+		AcmeCertUrl:       certificate.CertUrl,
+		AcmeCertStableUrl: certificate.CertStableUrl,
+		EffectAt:          certX509.NotBefore,
+		ExpireAt:          certX509.NotAfter,
 		WorkflowId:        GetWorkflowId(ctx),
 		WorkflowNodeId:    a.node.Id,
 	}

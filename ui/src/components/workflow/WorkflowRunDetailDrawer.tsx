@@ -32,7 +32,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
 
       <Drawer destroyOnClose open={open} loading={loading} placement="right" title={`runlog-${data?.id}`} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
-          <Show when={data!.succeed}>
+          <Show when={data!.succeeded}>
             <Alert showIcon type="success" message={<Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>} />
           </Show>
 
@@ -42,7 +42,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
 
           <div className="mt-4 rounded-md bg-black p-4 text-stone-200">
             <div className="flex flex-col space-y-3">
-              {data!.log.map((item, i) => {
+              {data!.logs.map((item, i) => {
                 return (
                   <div key={i} className="flex flex-col space-y-2">
                     <div>{item.nodeName}</div>

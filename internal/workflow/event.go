@@ -64,7 +64,7 @@ func update(ctx context.Context, record *models.Record) error {
 		app.GetApp().Logger().Error("add cron job failed", "err", err)
 		return fmt.Errorf("add cron job failed: %w", err)
 	}
-	app.GetApp().Logger().Error("add cron job failed", "san", record.GetString("san"))
+	app.GetApp().Logger().Error("add cron job failed", "subjectAltNames", record.GetString("subjectAltNames"))
 
 	scheduler.Start()
 	return nil

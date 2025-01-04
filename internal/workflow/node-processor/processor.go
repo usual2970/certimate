@@ -21,6 +21,7 @@ type Logger struct {
 func NewLogger(node *domain.WorkflowNode) *Logger {
 	return &Logger{
 		log: &domain.RunLog{
+			NodeId:   node.Id,
 			NodeName: node.Name,
 			Outputs:  make([]domain.RunLogOutput, 0),
 		},
