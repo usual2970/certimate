@@ -54,8 +54,8 @@ type Certificate struct {
 }
 
 type ApplyOption struct {
+	ContactEmail       string `json:"contactEmail"`
 	SubjectAltNames    string `json:"subjectAltNames"`
-	Email              string `json:"email"`
 	AccessConfig       string `json:"accessConfig"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
@@ -132,8 +132,8 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	applyConfig := &ApplyOption{
-		Email:              node.GetConfigString("email"),
-		SubjectAltNames:    node.GetConfigString("domain"),
+		ContactEmail:       node.GetConfigString("contactEmail"),
+		SubjectAltNames:    node.GetConfigString("subjectAltNames"),
 		AccessConfig:       access.Config,
 		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
 		Nameservers:        node.GetConfigString("nameservers"),
@@ -209,7 +209,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 	// link: https://github.com/go-acme/lego/issues/1867
 	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(option.DisableFollowCNAME))
 
-	myUser, err := newApplyUser(sslProvider.Provider, option.Email)
+	myUser, err := newApplyUser(sslProvider.Provider, option.ContactEmail)
 	if err != nil {
 		return nil, err
 	}

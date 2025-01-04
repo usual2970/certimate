@@ -29,7 +29,7 @@ const MULTIPLE_INPUT_DELIMITER = ";";
 const initFormModel = (): Partial<WorkflowApplyNodeConfig> => {
   return {
     keyAlgorithm: "RSA2048",
-    propagationTimeout: 120,
+    propagationTimeout: 60,
     disableFollowCNAME: true,
   };
 };
@@ -48,7 +48,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         .split(MULTIPLE_INPUT_DELIMITER)
         .every((e) => validDomainName(e, true));
     }, t("common.errmsg.domain_invalid")),
-    email: z.string({ message: t("workflow_node.apply.form.email.placeholder") }).email("common.errmsg.email_invalid"),
+    email: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email("common.errmsg.email_invalid"),
     providerAccessId: z
       .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
       .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
@@ -139,12 +139,12 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
       </Form.Item>
 
       <Form.Item
-        name="email"
-        label={t("workflow_node.apply.form.email.label")}
+        name="contactEmail"
+        label={t("workflow_node.apply.form.contact_email.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.email.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.contact_email.tooltip") }}></span>}
       >
-        <FormFieldEmailSelect placeholder={t("workflow_node.apply.form.email.placeholder")} />
+        <FormFieldEmailSelect placeholder={t("workflow_node.apply.form.contact_email.placeholder")} />
       </Form.Item>
 
       <Form.Item className="mb-0">

@@ -2,7 +2,7 @@ package domain
 
 // Deprecated: TODO: 即将废弃
 type ApplyConfig struct {
-	Email              string `json:"email"`
+	ContactEmail       string `json:"contactEmail"`
 	ProviderAccessId   string `json:"providerAccessId"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
