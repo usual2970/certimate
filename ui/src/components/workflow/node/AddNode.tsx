@@ -15,9 +15,10 @@ import { useWorkflowStore } from "@/stores/workflow";
 
 export type AddNodeProps = {
   node: WorkflowNode;
+  disabled?: boolean;
 };
 
-const AddNode = ({ node }: AddNodeProps) => {
+const AddNode = ({ node, disabled }: AddNodeProps) => {
   const { t } = useTranslation();
 
   const { addNode } = useWorkflowStore(useZustandShallowSelector(["addNode"]));
@@ -31,19 +32,18 @@ const AddNode = ({ node }: AddNodeProps) => {
     ].map(([type, label, icon]) => {
       return {
         key: type as string,
+        disabled: true,
         label: t(label as string),
         icon: icon,
         onClick: () => {
-          handleNodeTypeSelect(type as WorkflowNodeType);
+          if (disabled) return;
+
+          const nextNode = newNode(type as WorkflowNodeType);
+          addNode(nextNode, node.id);
         },
       };
     });
   }, []);
-
-  const handleNodeTypeSelect = (type: WorkflowNodeType) => {
-    const nextNode = newNode(type);
-    addNode(nextNode, node.id);
-  };
 
   return (
     <div className="relative py-6 before:absolute before:left-1/2 before:top-0 before:h-full before:w-[2px] before:-translate-x-1/2 before:bg-stone-200 before:content-['']">

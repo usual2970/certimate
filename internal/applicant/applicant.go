@@ -44,8 +44,6 @@ var sslProviderUrls = map[string]string{
 	sslProviderGts:         gtsUrl,
 }
 
-const defaultEmail = "536464346@qq.com"
-
 type Certificate struct {
 	CertUrl           string `json:"certUrl"`
 	CertStableUrl     string `json:"certStableUrl"`

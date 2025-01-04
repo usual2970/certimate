@@ -11,11 +11,12 @@ import AddNode from "./AddNode";
 
 export type ConditionNodeProps = {
   node: WorkflowNode;
-  branchId?: string;
-  branchIndex?: number;
+  branchId: string;
+  branchIndex: number;
+  disabled?: boolean;
 };
 
-const ConditionNode = ({ node, branchId, branchIndex }: ConditionNodeProps) => {
+const ConditionNode = ({ node, branchId, branchIndex, disabled }: ConditionNodeProps) => {
   const { t } = useTranslation();
 
   const { updateNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeBranch"]));
@@ -44,11 +45,14 @@ const ConditionNode = ({ node, branchId, branchIndex }: ConditionNodeProps) => {
               items: [
                 {
                   key: "delete",
+                  disabled: disabled,
                   label: t("workflow_node.action.delete_branch"),
                   icon: <CloseCircleOutlinedIcon />,
                   danger: true,
                   onClick: () => {
-                    removeBranch(branchId ?? "", branchIndex ?? 0);
+                    if (disabled) return;
+
+                    removeBranch(branchId!, branchIndex!);
                   },
                 },
               ],
@@ -76,7 +80,7 @@ const ConditionNode = ({ node, branchId, branchIndex }: ConditionNodeProps) => {
         </Card>
       </Popover>
 
-      <AddNode node={node} />
+      <AddNode node={node} disabled={disabled} />
     </>
   );
 };

@@ -16,9 +16,10 @@ import AddNode from "./node/AddNode";
 
 export type NodeProps = {
   node: WorkflowNode;
+  disabled?: boolean;
 };
 
-const WorkflowElement = ({ node }: NodeProps) => {
+const WorkflowElement = ({ node, disabled }: NodeProps) => {
   const { t } = useTranslation();
 
   const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
@@ -94,6 +95,8 @@ const WorkflowElement = ({ node }: NodeProps) => {
   };
 
   const handleNodeClick = () => {
+    if (disabled) return;
+
     showPanel({
       name: node.name,
       children: <PanelBody data={node} />,
@@ -111,10 +114,13 @@ const WorkflowElement = ({ node }: NodeProps) => {
                 items: [
                   {
                     key: "delete",
+                    disabled: disabled,
                     label: t("workflow_node.action.delete_node"),
                     icon: <CloseCircleOutlinedIcon />,
                     danger: true,
                     onClick: () => {
+                      if (disabled) return;
+
                       removeNode(node.id);
                     },
                   },
@@ -150,7 +156,7 @@ const WorkflowElement = ({ node }: NodeProps) => {
         </Card>
       </Popover>
 
-      <AddNode node={node} />
+      <AddNode node={node} disabled={disabled} />
     </>
   );
 };

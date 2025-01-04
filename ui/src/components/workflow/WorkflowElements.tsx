@@ -10,9 +10,10 @@ import { useWorkflowStore } from "@/stores/workflow";
 export type WorkflowElementsProps = {
   className?: string;
   style?: React.CSSProperties;
+  disabled?: boolean;
 };
 
-const WorkflowElements = ({ className, style }: WorkflowElementsProps) => {
+const WorkflowElements = ({ className, style, disabled }: WorkflowElementsProps) => {
   const { workflow } = useWorkflowStore(useZustandShallowSelector(["workflow"]));
 
   const elements = useMemo(() => {
@@ -20,7 +21,7 @@ const WorkflowElements = ({ className, style }: WorkflowElementsProps) => {
 
     let current = workflow.draft as WorkflowNode;
     while (current) {
-      nodes.push(<NodeRender node={current} key={current.id} />);
+      nodes.push(<NodeRender key={current.id} node={current} disabled={disabled} />);
       current = current.next as WorkflowNode;
     }
 

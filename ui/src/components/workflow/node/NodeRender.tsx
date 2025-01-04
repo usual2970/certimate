@@ -11,22 +11,23 @@ export type NodeRenderProps = {
   node: WorkflowNode;
   branchId?: string;
   branchIndex?: number;
+  disabled?: boolean;
 };
 
-const NodeRender = ({ node: data, branchId, branchIndex }: NodeRenderProps) => {
+const NodeRender = ({ node: data, branchId, branchIndex, disabled }: NodeRenderProps) => {
   const render = () => {
     switch (data.type) {
       case WorkflowNodeType.Start:
       case WorkflowNodeType.Apply:
       case WorkflowNodeType.Deploy:
       case WorkflowNodeType.Notify:
-        return <WorkflowElement node={data} />;
+        return <WorkflowElement node={data} disabled={disabled} />;
       case WorkflowNodeType.End:
         return <EndNode />;
       case WorkflowNodeType.Branch:
-        return <BranchNode node={data} />;
+        return <BranchNode node={data} disabled={disabled} />;
       case WorkflowNodeType.Condition:
-        return <ConditionNode node={data as WorkflowNode} branchId={branchId} branchIndex={branchIndex} />;
+        return <ConditionNode node={data as WorkflowNode} branchId={branchId!} branchIndex={branchIndex!} disabled={disabled} />;
     }
   };
 

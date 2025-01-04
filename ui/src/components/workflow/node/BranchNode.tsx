@@ -11,9 +11,10 @@ import NodeRender from "./NodeRender";
 
 export type BrandNodeProps = {
   node: WorkflowNode;
+  disabled?: boolean;
 };
 
-const BranchNode = ({ node }: BrandNodeProps) => {
+const BranchNode = ({ node, disabled }: BrandNodeProps) => {
   const { t } = useTranslation();
 
   const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
@@ -23,7 +24,7 @@ const BranchNode = ({ node }: BrandNodeProps) => {
 
     let current = node as WorkflowNode | undefined;
     while (current) {
-      elements.push(<NodeRender key={current.id} node={current} branchId={branchNodeId} branchIndex={branchIndex} />);
+      elements.push(<NodeRender key={current.id} node={current} branchId={branchNodeId} branchIndex={branchIndex} disabled={disabled} />);
       current = current.next;
     }
 
@@ -35,6 +36,7 @@ const BranchNode = ({ node }: BrandNodeProps) => {
       <div className="relative flex gap-x-16 before:absolute before:inset-x-[128px] before:top-0 before:h-[2px] before:bg-stone-200 before:content-[''] after:absolute after:inset-x-[128px] after:bottom-0 after:h-[2px] after:bg-stone-200 after:content-['']">
         <Button
           className="absolute left-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 text-xs"
+          disabled={disabled}
           size="small"
           shape="round"
           variant="outlined"
@@ -55,7 +57,7 @@ const BranchNode = ({ node }: BrandNodeProps) => {
         ))}
       </div>
 
-      <AddNode node={node} />
+      <AddNode node={node} disabled={disabled} />
     </>
   );
 };
