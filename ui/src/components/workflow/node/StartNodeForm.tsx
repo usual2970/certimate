@@ -7,7 +7,7 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowNode, type WorkflowStartNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
@@ -17,7 +17,7 @@ export type StartNodeFormProps = {
   node: WorkflowNode;
 };
 
-const initFormModel = () => {
+const initFormModel = (): WorkflowStartNodeConfig => {
   return {
     executionMethod: "auto",
     crontab: "0 0 * * *",
@@ -54,7 +54,7 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: node?.config ?? initFormModel(),
+    initialValues: (node?.config as WorkflowStartNodeConfig) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(

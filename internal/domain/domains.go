@@ -3,17 +3,17 @@ package domain
 // Deprecated: TODO: 即将废弃
 type ApplyConfig struct {
 	Email              string `json:"email"`
-	Access             string `json:"access"`
+	ProviderAccessId   string `json:"providerAccessId"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
-	PropagationTimeout int64  `json:"propagationTimeout"`
+	PropagationTimeout int32  `json:"propagationTimeout"`
 	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
 // Deprecated: TODO: 即将废弃
 type DeployConfig struct {
-	Id     string         `json:"id"`
-	Access string         `json:"access"`
-	Type   string         `json:"type"`
-	Config map[string]any `json:"config"`
+	NodeId           string         `json:"nodeId"`
+	NodeConfig       map[string]any `json:"nodeConfig"`
+	Provider         string         `json:"provider"`
+	ProviderAccessId string         `json:"providerAccessId"`
 }

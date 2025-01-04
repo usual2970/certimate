@@ -85,6 +85,39 @@ export type WorkflowNode = {
   validated?: boolean;
 };
 
+export type WorkflowStartNodeConfig = {
+  executionMethod: string;
+  crontab?: string;
+};
+
+export type WorkflowApplyNodeConfig = {
+  domain: string;
+  email: string;
+  provider: string;
+  providerAccessId: string;
+  keyAlgorithm: string;
+  nameservers?: string;
+  propagationTimeout?: number;
+  disableFollowCNAME?: boolean;
+};
+
+export type WorkflowDeployNodeConfig = {
+  provider: string;
+  providerAccessId: string;
+  certificate: string;
+  [key: string]: unknown;
+};
+
+export type WorkflowNotifyNodeConfig = {
+  channel: string;
+  subject: string;
+  message: string;
+};
+
+export type WorkflowBranchNodeConfig = never;
+
+export type WorkflowEndNodeConfig = never;
+
 export type WorkflowNodeIO = {
   name: string;
   type: string;
@@ -150,7 +183,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Deploy:
       {
-        node.config = {};
+        node.config = {} as Record<string, unknown>;
         node.input = workflowNodeTypeDefaultInputs.get(nodeType);
         node.output = workflowNodeTypeDefaultOutputs.get(nodeType);
       }

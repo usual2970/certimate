@@ -12,8 +12,9 @@ import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
-import { type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowApplyNodeConfig, type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
@@ -25,12 +26,10 @@ export type ApplyNodeFormProps = {
 
 const MULTIPLE_INPUT_DELIMITER = ";";
 
-const initFormModel = () => {
+const initFormModel = (): Partial<WorkflowApplyNodeConfig> => {
   return {
-    domain: "",
     keyAlgorithm: "RSA2048",
-    nameservers: "",
-    propagationTimeout: 60,
+    propagationTimeout: 120,
     disableFollowCNAME: true,
   };
 };
@@ -38,6 +37,7 @@ const initFormModel = () => {
 const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
   const { t } = useTranslation();
 
+  const { accesses } = useAccessesStore(useZustandShallowSelector("accesses"));
   const { addEmail } = useContactEmailsStore(useZustandShallowSelector("addEmail"));
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
   const { hidePanel } = usePanel();
@@ -49,7 +49,9 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         .every((e) => validDomainName(e, true));
     }, t("common.errmsg.domain_invalid")),
     email: z.string({ message: t("workflow_node.apply.form.email.placeholder") }).email("common.errmsg.email_invalid"),
-    access: z.string({ message: t("workflow_node.apply.form.access.placeholder") }).min(1, t("workflow_node.apply.form.access.placeholder")),
+    providerAccessId: z
+      .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
+      .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
     keyAlgorithm: z.string().nullish(),
     nameservers: z
       .string()
@@ -74,13 +76,16 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: node?.config ?? initFormModel(),
+    initialValues: (node?.config as WorkflowApplyNodeConfig) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await addEmail(values.email);
       await updateNode(
         produce(node, (draft) => {
-          draft.config = { ...values };
+          draft.config = {
+            provider: accesses.find((e) => e.id === values.providerAccessId)?.provider,
+            ...values,
+          } as WorkflowApplyNodeConfig;
           draft.validated = true;
         })
       );
@@ -146,8 +151,8 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         <label className="mb-1 block">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="max-w-full grow truncate">
-              <span>{t("workflow_node.apply.form.access.label")}</span>
-              <Tooltip title={t("workflow_node.apply.form.access.tooltip")}>
+              <span>{t("workflow_node.apply.form.provider_access.label")}</span>
+              <Tooltip title={t("workflow_node.apply.form.provider_access.tooltip")}>
                 <Typography.Text className="ms-1" type="secondary">
                   <QuestionCircleOutlinedIcon />
                 </Typography.Text>
@@ -159,22 +164,22 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
                 trigger={
                   <Button size="small" type="link">
                     <PlusOutlinedIcon />
-                    {t("workflow_node.apply.form.access.button")}
+                    {t("workflow_node.apply.form.provider_access.button")}
                   </Button>
                 }
                 onSubmit={(record) => {
                   const provider = accessProvidersMap.get(record.provider);
                   if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
-                    formInst.setFieldValue("access", record.id);
+                    formInst.setFieldValue("providerAccessId", record.id);
                   }
                 }}
               />
             </div>
           </div>
         </label>
-        <Form.Item name="access" rules={[formRule]}>
+        <Form.Item name="providerAccessId" rules={[formRule]}>
           <AccessSelect
-            placeholder={t("workflow_node.apply.form.access.placeholder")}
+            placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
             filter={(record) => {
               const provider = accessProvidersMap.get(record.provider);
               return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;

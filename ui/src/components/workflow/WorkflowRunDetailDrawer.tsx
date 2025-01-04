@@ -50,7 +50,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
                       {item.outputs.map((output, j) => {
                         return (
                           <div key={j} className="flex space-x-2 text-sm">
-                            <div>[{dayjs(output.time).format("YYYY-MM-DD HH:mm:ss")}]</div>
+                            <div className="whitespace-nowrap">[{dayjs(output.time).format("YYYY-MM-DD HH:mm:ss")}]</div>
                             {output.error ? <div className="text-red-500">{output.error}</div> : <div>{output.content}</div>}
                           </div>
                         );

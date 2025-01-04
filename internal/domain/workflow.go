@@ -1,8 +1,7 @@
 package domain
 
 import (
-	"fmt"
-	"strconv"
+	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 const (
@@ -47,33 +46,19 @@ type WorkflowNode struct {
 }
 
 func (n *WorkflowNode) GetConfigString(key string) string {
-	if v, ok := n.Config[key]; ok {
-		if s, ok := v.(string); ok {
-			return s
-		}
-	}
-	return ""
+	return maps.GetValueAsString(n.Config, key)
 }
 
 func (n *WorkflowNode) GetConfigBool(key string) bool {
-	if v, ok := n.Config[key]; ok {
-		if b, ok := v.(bool); ok {
-			return b
-		}
-	}
-	return false
+	return maps.GetValueAsBool(n.Config, key)
+}
+
+func (n *WorkflowNode) GetConfigInt32(key string) int32 {
+	return maps.GetValueAsInt32(n.Config, key)
 }
 
 func (n *WorkflowNode) GetConfigInt64(key string) int64 {
-	// 先转成字符串，再转成 int64
-	if v, ok := n.Config[key]; ok {
-		temp := fmt.Sprintf("%v", v)
-		if i, err := strconv.ParseInt(temp, 10, 64); err == nil {
-			return i
-		}
-	}
-
-	return 0
+	return maps.GetValueAsInt64(n.Config, key)
 }
 
 type WorkflowNodeIO struct {

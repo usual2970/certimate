@@ -54,13 +54,6 @@ func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*Webhoo
 	}, nil
 }
 
-type webhookData struct {
-	SubjectAltNames string            `json:"subjectAltNames"`
-	Certificate     string            `json:"certificate"`
-	PrivateKey      string            `json:"privateKey"`
-	Variables       map[string]string `json:"variables"`
-}
-
 func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	certX509, err := x509.ParseCertificateFromPEM(certPem)
 	if err != nil {

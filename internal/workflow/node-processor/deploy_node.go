@@ -59,15 +59,16 @@ func (d *deployNode) Run(ctx context.Context) error {
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), d.node.GetConfigString("access"))
+	access, err := accessRepo.GetById(context.Background(), d.node.GetConfigString("providerAccessId"))
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取授权配置失败", err.Error())
 		return err
 	}
+
 	option := &deployer.DeployerOption{
 		DomainId:     d.node.Id,
 		Domain:       cert.SAN,
-		Access:       access.Config,
+		AccessConfig: access.Config,
 		AccessRecord: access,
 		Certificate: applicant.Certificate{
 			CertUrl:           cert.CertUrl,
@@ -77,10 +78,10 @@ func (d *deployNode) Run(ctx context.Context) error {
 			IssuerCertificate: cert.IssuerCertificate,
 		},
 		DeployConfig: domain.DeployConfig{
-			Id:     d.node.Id,
-			Access: access.Id,
-			Type:   d.node.GetConfigString("provider"),
-			Config: d.node.Config,
+			NodeId:           d.node.Id,
+			NodeConfig:       d.node.Config,
+			Provider:         d.node.GetConfigString("provider"),
+			ProviderAccessId: access.Id,
 		},
 	}
 

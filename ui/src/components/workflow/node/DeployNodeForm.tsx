@@ -12,7 +12,7 @@ import AccessSelect from "@/components/access/AccessSelect";
 import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
 import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
-import { type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowDeployNodeConfig, type WorkflowNode } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
@@ -44,7 +44,7 @@ export type DeployFormProps = {
   node: WorkflowNode;
 };
 
-const initFormModel = () => {
+const initFormModel = (): Partial<WorkflowDeployNodeConfig> => {
   return {};
 };
 
@@ -56,7 +56,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
 
   const formSchema = z.object({
     provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
-    access: z
+    providerAccessId: z
       .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
       .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
     certificate: z.string({ message: t("workflow_node.deploy.form.certificate.placeholder") }).nonempty(t("workflow_node.deploy.form.certificate.placeholder")),
@@ -67,7 +67,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: node?.config ?? initFormModel(),
+    initialValues: (node?.config as WorkflowDeployNodeConfig) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(
@@ -160,7 +160,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
       const oldValues = formInst.getFieldsValue();
       const newValues: Record<string, unknown> = {};
       for (const key in oldValues) {
-        if (key === "provider" || key === "access" || key === "certificate") {
+        if (key === "provider" || key === "providerAccessId" || key === "certificate") {
           newValues[key] = oldValues[key];
         } else {
           newValues[key] = undefined;
@@ -169,7 +169,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
       formInst.setFieldsValue(newValues);
 
       if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
-        formInst.setFieldValue("access", undefined);
+        formInst.setFieldValue("providerAccessId", undefined);
       }
     }
   };
@@ -205,14 +205,14 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
                   onSubmit={(record) => {
                     const provider = accessProvidersMap.get(record.provider);
                     if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
-                      formInst.setFieldValue("access", record.id);
+                      formInst.setFieldValue("providerAccessId", record.id);
                     }
                   }}
                 />
               </div>
             </div>
           </label>
-          <Form.Item name="access" rules={[formRule]}>
+          <Form.Item name="providerAccessId" rules={[formRule]}>
             <AccessSelect
               placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
               filter={(record) => {

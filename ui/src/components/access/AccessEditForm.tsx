@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
 import { type AccessModel } from "@/domain/access";
-import { ACCESS_PROVIDERS, accessProvidersMap } from "@/domain/provider";
+import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm } from "@/hooks";
 
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";

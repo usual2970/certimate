@@ -18,7 +18,6 @@ import (
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
-	"github.com/pocketbase/pocketbase/models"
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
@@ -57,12 +56,12 @@ type Certificate struct {
 }
 
 type ApplyOption struct {
-	Email              string `json:"email"`
 	SubjectAltNames    string `json:"subjectAltNames"`
+	Email              string `json:"email"`
 	AccessConfig       string `json:"accessConfig"`
 	KeyAlgorithm       string `json:"keyAlgorithm"`
 	Nameservers        string `json:"nameservers"`
-	PropagationTimeout int64  `json:"propagationTimeout"`
+	PropagationTimeout int32  `json:"propagationTimeout"`
 	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
@@ -125,41 +124,11 @@ type Applicant interface {
 	Apply() (*Certificate, error)
 }
 
-func Get(record *models.Record) (Applicant, error) {
-	if record.GetString("applyConfig") == "" {
-		return nil, errors.New("applyConfig is empty")
-	}
-
-	applyConfig := &domain.ApplyConfig{}
-	record.UnmarshalJSONField("applyConfig", applyConfig)
-
-	access, err := app.GetApp().Dao().FindRecordById("access", applyConfig.Access)
-	if err != nil {
-		return nil, fmt.Errorf("access record not found: %w", err)
-	}
-
-	if applyConfig.Email == "" {
-		applyConfig.Email = defaultEmail
-	}
-
-	option := &ApplyOption{
-		Email:              applyConfig.Email,
-		SubjectAltNames:    record.GetString("domain"),
-		AccessConfig:       access.GetString("config"),
-		KeyAlgorithm:       applyConfig.KeyAlgorithm,
-		Nameservers:        applyConfig.Nameservers,
-		PropagationTimeout: applyConfig.PropagationTimeout,
-		DisableFollowCNAME: applyConfig.DisableFollowCNAME,
-	}
-
-	return GetWithTypeOption(domain.AccessProviderType(access.GetString("provider")), option)
-}
-
 func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	// 获取授权配置
 	accessRepo := repository.NewAccessRepository()
 
-	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("access"))
+	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("providerAccessId"))
 	if err != nil {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
@@ -170,7 +139,7 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		AccessConfig:       access.Config,
 		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
 		Nameservers:        node.GetConfigString("nameservers"),
-		PropagationTimeout: node.GetConfigInt64("propagationTimeout"),
+		PropagationTimeout: node.GetConfigInt32("propagationTimeout"),
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 

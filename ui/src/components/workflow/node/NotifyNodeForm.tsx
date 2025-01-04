@@ -8,7 +8,7 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import { notifyChannelsMap } from "@/domain/settings";
-import { type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowNode, type WorkflowNotifyNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useNotifyChannelsStore } from "@/stores/notify";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -18,7 +18,7 @@ export type NotifyNodeFormProps = {
   node: WorkflowNode;
 };
 
-const initFormModel = () => {
+const initFormModel = (): Partial<WorkflowNotifyNodeConfig> => {
   return {
     subject: "Completed!",
     message: "Your workflow has been completed on Certimate.",
@@ -57,7 +57,7 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: node?.config ?? initFormModel(),
+    initialValues: (node?.config as WorkflowNotifyNodeConfig) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(

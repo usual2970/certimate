@@ -49,7 +49,7 @@ const (
 type DeployerOption struct {
 	DomainId     string                `json:"domainId"`
 	Domain       string                `json:"domain"`
-	Access       string                `json:"access"`
+	AccessConfig string                `json:"accessConfig"`
 	AccessRecord *domain.Access        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
 	Certificate  applicant.Certificate `json:"certificate"`
@@ -97,7 +97,7 @@ func GetWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, 
 
 func newWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
 	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), deployConfig.Access)
+	access, err := accessRepo.GetById(context.Background(), deployConfig.ProviderAccessId)
 	if err != nil {
 		return nil, fmt.Errorf("获取access失败:%w", err)
 	}
@@ -105,7 +105,7 @@ func newWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 	option := &DeployerOption{
 		DomainId:     record.Id,
 		Domain:       record.GetString("domain"),
-		Access:       access.Config,
+		AccessConfig: access.Config,
 		AccessRecord: access,
 		DeployConfig: deployConfig,
 	}
@@ -118,11 +118,11 @@ func newWithDeployConfig(record *models.Record, cert *applicant.Certificate, dep
 		}
 	}
 
-	return newWithTypeAndOption(deployConfig.Type, option)
+	return newWithTypeAndOption(deployConfig.Provider, option)
 }
 
 func newWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
-	deployer, logger, err := createDeployer(deployType, option.AccessRecord.Config, option.DeployConfig.Config)
+	deployer, logger, err := createDeployer(deployType, option.AccessRecord.Config, option.DeployConfig.NodeConfig)
 	if err != nil {
 		return nil, err
 	}
