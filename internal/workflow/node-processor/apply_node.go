@@ -60,7 +60,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	// 获取Applicant
-	applicant, err := applicant.GetWithApplyNode(a.node)
+	applicant, err := applicant.NewWithApplyNode(a.node)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "获取申请对象失败", err.Error())
 		return err
@@ -101,8 +101,8 @@ func (a *applyNode) Run(ctx context.Context) error {
 		Certificate:       applyResult.Certificate,
 		PrivateKey:        applyResult.PrivateKey,
 		IssuerCertificate: applyResult.IssuerCertificate,
-		ACMECertUrl:       applyResult.CertUrl,
-		ACMECertStableUrl: applyResult.CertStableUrl,
+		ACMECertUrl:       applyResult.ACMECertUrl,
+		ACMECertStableUrl: applyResult.ACMECertStableUrl,
 		EffectAt:          certX509.NotBefore,
 		ExpireAt:          certX509.NotAfter,
 		WorkflowId:        GetWorkflowId(ctx),

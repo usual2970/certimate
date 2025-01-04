@@ -70,9 +70,9 @@ func (d *deployNode) Run(ctx context.Context) error {
 		Domains:      cert.SubjectAltNames,
 		AccessConfig: access.Config,
 		AccessRecord: access,
-		Certificate: applicant.Certificate{
-			CertUrl:           cert.ACMECertUrl,
-			CertStableUrl:     cert.ACMECertStableUrl,
+		Certificate: applicant.ApplyResult{
+			ACMECertUrl:       cert.ACMECertUrl,
+			ACMECertStableUrl: cert.ACMECertStableUrl,
 			PrivateKey:        cert.PrivateKey,
 			Certificate:       cert.Certificate,
 			IssuerCertificate: cert.IssuerCertificate,
@@ -85,7 +85,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 		},
 	}
 
-	deploy, err := deployer.GetWithProviderAndOption(d.node.GetConfigString("provider"), option)
+	deploy, err := deployer.NewWithProviderAndOption(d.node.GetConfigString("provider"), option)
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取部署对象失败", err.Error())
 		return err

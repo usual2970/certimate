@@ -15,14 +15,14 @@ type DeployerOption struct {
 	AccessConfig string                `json:"accessConfig"`
 	AccessRecord *domain.Access        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
-	Certificate  applicant.Certificate `json:"certificate"`
+	Certificate  applicant.ApplyResult `json:"certificate"`
 }
 
 type Deployer interface {
 	Deploy(ctx context.Context) error
 }
 
-func GetWithProviderAndOption(provider string, option *DeployerOption) (Deployer, error) {
+func NewWithProviderAndOption(provider string, option *DeployerOption) (Deployer, error) {
 	deployer, logger, err := createDeployer(domain.DeployProviderType(provider), option.AccessRecord.Config, option.DeployConfig.NodeConfig)
 	if err != nil {
 		return nil, err

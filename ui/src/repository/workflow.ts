@@ -1,6 +1,6 @@
 import { type RecordListOptions } from "pocketbase";
 
-import { type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowModel } from "@/domain/workflow";
 import { getPocketBase } from "./pocketbase";
 
 const COLLECTION_NAME = "workflow";

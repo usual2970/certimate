@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { Form, type FormInstance } from "antd";
 
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
-import { useAntdForm, useAntdFormName } from "@/hooks";
+import { useAntdForm } from "@/hooks";
 
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
