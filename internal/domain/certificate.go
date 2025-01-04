@@ -6,7 +6,7 @@ var ValidityDuration = time.Hour * 24 * 10
 
 type Certificate struct {
 	Meta
-	SAN               string    `json:"san" db:"san"`
+	SubjectAltNames   string    `json:"san" db:"san"`
 	Certificate       string    `json:"certificate" db:"certificate"`
 	PrivateKey        string    `json:"privateKey" db:"privateKey"`
 	IssuerCertificate string    `json:"issuerCertificate" db:"issuerCertificate"`

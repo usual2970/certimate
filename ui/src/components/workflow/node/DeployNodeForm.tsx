@@ -12,7 +12,7 @@ import AccessSelect from "@/components/access/AccessSelect";
 import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
 import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
-import { type WorkflowDeployNodeConfig, type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowNode, type WorkflowNodeConfigAsDeploy } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 import { usePanel } from "../PanelProvider";
@@ -44,7 +44,7 @@ export type DeployFormProps = {
   node: WorkflowNode;
 };
 
-const initFormModel = (): Partial<WorkflowDeployNodeConfig> => {
+const initFormModel = (): Partial<WorkflowNodeConfigAsDeploy> => {
   return {};
 };
 
@@ -67,7 +67,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: (node?.config as WorkflowDeployNodeConfig) ?? initFormModel(),
+    initialValues: (node?.config as WorkflowNodeConfigAsDeploy) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await updateNode(

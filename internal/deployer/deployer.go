@@ -4,13 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/pocketbase/pocketbase/models"
-
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/repository"
 )
 
 /*
@@ -47,8 +44,8 @@ const (
 )
 
 type DeployerOption struct {
-	DomainId     string                `json:"domainId"`
-	Domain       string                `json:"domain"`
+	NodeId       string                `json:"nodeId"`
+	Domains      string                `json:"domains"`
 	AccessConfig string                `json:"accessConfig"`
 	AccessRecord *domain.Access        `json:"-"`
 	DeployConfig domain.DeployConfig   `json:"deployConfig"`
@@ -62,66 +59,7 @@ type Deployer interface {
 	GetID() string
 }
 
-func Gets(record *models.Record, cert *applicant.Certificate) ([]Deployer, error) {
-	rs := make([]Deployer, 0)
-	if record.GetString("deployConfig") == "" {
-		return rs, nil
-	}
-
-	deployConfigs := make([]domain.DeployConfig, 0)
-
-	err := record.UnmarshalJSONField("deployConfig", &deployConfigs)
-	if err != nil {
-		return nil, fmt.Errorf("解析部署配置失败: %w", err)
-	}
-
-	if len(deployConfigs) == 0 {
-		return rs, nil
-	}
-
-	for _, deployConfig := range deployConfigs {
-		deployer, err := newWithDeployConfig(record, cert, deployConfig)
-		if err != nil {
-			return nil, err
-		}
-
-		rs = append(rs, deployer)
-	}
-
-	return rs, nil
-}
-
 func GetWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
-	return newWithTypeAndOption(deployType, option)
-}
-
-func newWithDeployConfig(record *models.Record, cert *applicant.Certificate, deployConfig domain.DeployConfig) (Deployer, error) {
-	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), deployConfig.ProviderAccessId)
-	if err != nil {
-		return nil, fmt.Errorf("获取access失败:%w", err)
-	}
-
-	option := &DeployerOption{
-		DomainId:     record.Id,
-		Domain:       record.GetString("domain"),
-		AccessConfig: access.Config,
-		AccessRecord: access,
-		DeployConfig: deployConfig,
-	}
-	if cert != nil {
-		option.Certificate = *cert
-	} else {
-		option.Certificate = applicant.Certificate{
-			Certificate: record.GetString("certificate"),
-			PrivateKey:  record.GetString("privateKey"),
-		}
-	}
-
-	return newWithTypeAndOption(deployConfig.Provider, option)
-}
-
-func newWithTypeAndOption(deployType string, option *DeployerOption) (Deployer, error) {
 	deployer, logger, err := createDeployer(deployType, option.AccessRecord.Config, option.DeployConfig.NodeConfig)
 	if err != nil {
 		return nil, err

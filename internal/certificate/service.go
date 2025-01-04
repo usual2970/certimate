@@ -83,7 +83,7 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 	domains := make([]string, count)
 
 	for i, record := range records {
-		domains[i] = record.SAN
+		domains[i] = record.SubjectAltNames
 	}
 
 	countStr := strconv.Itoa(count)

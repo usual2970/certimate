@@ -12,7 +12,7 @@ import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
-import { type WorkflowApplyNodeConfig, type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowNode, type WorkflowNodeConfigAsApply } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
@@ -26,7 +26,7 @@ export type ApplyNodeFormProps = {
 
 const MULTIPLE_INPUT_DELIMITER = ";";
 
-const initFormModel = (): Partial<WorkflowApplyNodeConfig> => {
+const initFormModel = (): Partial<WorkflowNodeConfigAsApply> => {
   return {
     keyAlgorithm: "RSA2048",
     propagationTimeout: 60,
@@ -43,12 +43,12 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
   const { hidePanel } = usePanel();
 
   const formSchema = z.object({
-    domain: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
+    domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
       return String(v)
         .split(MULTIPLE_INPUT_DELIMITER)
         .every((e) => validDomainName(e, true));
     }, t("common.errmsg.domain_invalid")),
-    email: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email("common.errmsg.email_invalid"),
+    contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email("common.errmsg.email_invalid"),
     providerAccessId: z
       .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
       .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
@@ -76,16 +76,16 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: (node?.config as WorkflowApplyNodeConfig) ?? initFormModel(),
+    initialValues: (node?.config as WorkflowNodeConfigAsApply) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
-      await addEmail(values.email);
+      await addEmail(values.contactEmail);
       await updateNode(
         produce(node, (draft) => {
           draft.config = {
             provider: accesses.find((e) => e.id === values.providerAccessId)?.provider,
             ...values,
-          } as WorkflowApplyNodeConfig;
+          } as WorkflowNodeConfigAsApply;
           draft.validated = true;
         })
       );
@@ -93,13 +93,13 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     },
   });
 
-  const [fieldDomains, setFieldDomains] = useState(node?.config?.domain as string);
+  const [fieldDomains, setFieldDomains] = useState(node?.config?.domains as string);
   const [fieldNameservers, setFieldNameservers] = useState(node?.config?.nameservers as string);
 
   const handleFieldDomainsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setFieldDomains(value);
-    formInst.setFieldValue("domain", value);
+    formInst.setFieldValue("domains", value);
   };
 
   const handleFieldNameserversChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,7 +111,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
-        name="domain"
+        name="domains"
         label={t("workflow_node.apply.form.domains.label")}
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.domains.tooltip") }}></span>}
@@ -132,7 +132,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
             }
             onFinish={(v) => {
               setFieldDomains(v);
-              formInst.setFieldValue("domain", v);
+              formInst.setFieldValue("domains", v);
             }}
           />
         </Space.Compact>

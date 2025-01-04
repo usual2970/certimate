@@ -79,7 +79,7 @@ func (w *WorkflowOutputRepository) GetCertificate(ctx context.Context, nodeId st
 		Certificate:       record.GetString("certificate"),
 		PrivateKey:        record.GetString("privateKey"),
 		IssuerCertificate: record.GetString("issuerCertificate"),
-		SAN:               record.GetString("san"),
+		SubjectAltNames:   record.GetString("san"),
 		WorkflowOutputId:  record.GetString("output"),
 		ExpireAt:          record.GetDateTime("expireAt").Time(),
 		CertUrl:           record.GetString("certUrl"),
@@ -131,7 +131,7 @@ func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 		certRecord.Set("certificate", certificate.Certificate)
 		certRecord.Set("privateKey", certificate.PrivateKey)
 		certRecord.Set("issuerCertificate", certificate.IssuerCertificate)
-		certRecord.Set("san", certificate.SAN)
+		certRecord.Set("san", certificate.SubjectAltNames)
 		certRecord.Set("output", certificate.WorkflowOutputId)
 		certRecord.Set("expireAt", certificate.ExpireAt)
 		certRecord.Set("certUrl", certificate.CertUrl)

@@ -6,7 +6,15 @@ import { produce } from "immer";
 import Show from "@/components/Show";
 import { deployProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
-import { WORKFLOW_TRIGGERS, type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import {
+  WORKFLOW_TRIGGERS,
+  type WorkflowNode,
+  type WorkflowNodeConfigAsApply,
+  type WorkflowNodeConfigAsDeploy,
+  type WorkflowNodeConfigAsNotify,
+  type WorkflowNodeConfigAsStart,
+  WorkflowNodeType,
+} from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -32,28 +40,31 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
 
     switch (node.type) {
       case WorkflowNodeType.Start: {
+        const config = (node.config as WorkflowNodeConfigAsStart) ?? {};
         return (
           <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">
-              {node.config?.trigger === WORKFLOW_TRIGGERS.AUTO
+              {config.trigger === WORKFLOW_TRIGGERS.AUTO
                 ? t("workflow.props.trigger.auto")
-                : node.config?.trigger === WORKFLOW_TRIGGERS.MANUAL
+                : config.trigger === WORKFLOW_TRIGGERS.MANUAL
                   ? t("workflow.props.trigger.manual")
                   : "　"}
             </Typography.Text>
             <Typography.Text className="truncate" type="secondary">
-              {node.config?.trigger === WORKFLOW_TRIGGERS.AUTO ? (node.config?.triggerCron as string) : ""}
+              {config.trigger === WORKFLOW_TRIGGERS.AUTO ? config.triggerCron : ""}
             </Typography.Text>
           </div>
         );
       }
 
       case WorkflowNodeType.Apply: {
-        return <Typography.Text className="truncate">{(node.config?.domain as string) || "　"}</Typography.Text>;
+        const config = (node.config as WorkflowNodeConfigAsApply) ?? {};
+        return <Typography.Text className="truncate">{config.domains || "　"}</Typography.Text>;
       }
 
       case WorkflowNodeType.Deploy: {
-        const provider = deployProvidersMap.get(node.config?.provider as string);
+        const config = (node.config as WorkflowNodeConfigAsDeploy) ?? {};
+        const provider = deployProvidersMap.get(config.provider);
         return (
           <Space>
             <Avatar src={provider?.icon} size="small" />
@@ -63,7 +74,8 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
       }
 
       case WorkflowNodeType.Notify: {
-        const channel = notifyChannelsMap.get(node.config?.channel as string);
+        const config = (node.config as WorkflowNodeConfigAsNotify) ?? {};
+        const channel = notifyChannelsMap.get(config.channel as string);
         return (
           <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">{t(channel?.name ?? "　")}</Typography.Text>

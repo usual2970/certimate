@@ -66,8 +66,8 @@ func (d *deployNode) Run(ctx context.Context) error {
 	}
 
 	option := &deployer.DeployerOption{
-		DomainId:     d.node.Id,
-		Domain:       cert.SAN,
+		NodeId:       d.node.Id,
+		Domains:      cert.SubjectAltNames,
 		AccessConfig: access.Config,
 		AccessRecord: access,
 		Certificate: applicant.Certificate{

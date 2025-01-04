@@ -92,14 +92,14 @@ export type WorkflowNode = {
   validated?: boolean;
 };
 
-export type WorkflowStartNodeConfig = {
+export type WorkflowNodeConfigAsStart = {
   trigger: string;
   triggerCron?: string;
 };
 
-export type WorkflowApplyNodeConfig = {
-  domain: string;
-  email: string;
+export type WorkflowNodeConfigAsApply = {
+  domains: string;
+  contactEmail: string;
   provider: string;
   providerAccessId: string;
   keyAlgorithm: string;
@@ -108,22 +108,22 @@ export type WorkflowApplyNodeConfig = {
   disableFollowCNAME?: boolean;
 };
 
-export type WorkflowDeployNodeConfig = {
+export type WorkflowNodeConfigAsDeploy = {
   provider: string;
   providerAccessId: string;
   certificate: string;
   [key: string]: unknown;
 };
 
-export type WorkflowNotifyNodeConfig = {
+export type WorkflowNodeConfigAsNotify = {
   channel: string;
   subject: string;
   message: string;
 };
 
-export type WorkflowBranchNodeConfig = never;
+export type WorkflowNodeConfigAsBranch = never;
 
-export type WorkflowEndNodeConfig = never;
+export type WorkflowNodeConfigAsEnd = never;
 
 export type WorkflowNodeIO = {
   name: string;

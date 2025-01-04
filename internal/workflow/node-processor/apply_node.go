@@ -96,7 +96,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	certificateRecord := &domain.Certificate{
-		SAN:               strings.Join(cert.DNSNames, ";"),
+		SubjectAltNames:   strings.Join(cert.DNSNames, ";"),
 		Certificate:       certificate.Certificate,
 		PrivateKey:        certificate.PrivateKey,
 		IssuerCertificate: certificate.IssuerCertificate,
