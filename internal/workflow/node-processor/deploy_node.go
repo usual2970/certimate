@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/deployer"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
@@ -58,34 +57,10 @@ func (d *deployNode) Run(ctx context.Context) error {
 		return nil
 	}
 
-	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), d.node.GetConfigString("providerAccessId"))
-	if err != nil {
-		d.AddOutput(ctx, d.node.Name, "获取授权配置失败", err.Error())
-		return err
-	}
-
-	option := &deployer.DeployerOption{
-		NodeId:       d.node.Id,
-		Domains:      cert.SubjectAltNames,
-		AccessConfig: access.Config,
-		AccessRecord: access,
-		Certificate: applicant.ApplyResult{
-			ACMECertUrl:       cert.ACMECertUrl,
-			ACMECertStableUrl: cert.ACMECertStableUrl,
-			PrivateKey:        cert.PrivateKey,
-			Certificate:       cert.Certificate,
-			IssuerCertificate: cert.IssuerCertificate,
-		},
-		DeployConfig: domain.DeployConfig{
-			NodeId:           d.node.Id,
-			NodeConfig:       d.node.Config,
-			Provider:         d.node.GetConfigString("provider"),
-			ProviderAccessId: access.Id,
-		},
-	}
-
-	deploy, err := deployer.NewWithProviderAndOption(d.node.GetConfigString("provider"), option)
+	deploy, err := deployer.NewWithDeployNode(d.node, struct {
+		Certificate string
+		PrivateKey  string
+	}{Certificate: cert.Certificate, PrivateKey: cert.PrivateKey})
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取部署对象失败", err.Error())
 		return err

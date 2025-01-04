@@ -154,6 +154,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
   const handleProviderSelect = (value: string) => {
     if (fieldProvider === value) return;
 
+    // TODO: 暂时不支持切换部署目标，需后端调整，否则之前若存在部署结果输出就不会再部署
     // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
     if (node.config?.provider === value) {
       formInst.resetFields();
@@ -179,7 +180,13 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Show when={!!fieldProvider} fallback={<DeployProviderPicker onSelect={handleProviderPick} />}>
         <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-          <DeployProviderSelect allowClear placeholder={t("workflow_node.deploy.form.provider.placeholder")} showSearch onSelect={handleProviderSelect} />
+          <DeployProviderSelect
+            allowClear
+            disabled
+            placeholder={t("workflow_node.deploy.form.provider.placeholder")}
+            showSearch
+            onSelect={handleProviderSelect}
+          />
         </Form.Item>
 
         <Form.Item className="mb-0">

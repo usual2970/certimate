@@ -28,9 +28,9 @@ type applyConfig struct {
 	DisableFollowCNAME bool
 }
 
-type ApplyResult struct {
-	PrivateKey        string
+type ApplyCertResult struct {
 	Certificate       string
+	PrivateKey        string
 	IssuerCertificate string
 	ACMECertUrl       string
 	ACMECertStableUrl string
@@ -38,13 +38,15 @@ type ApplyResult struct {
 }
 
 type applicant interface {
-	Apply() (*ApplyResult, error)
+	Apply() (*ApplyCertResult, error)
 }
 
 func NewWithApplyNode(node *domain.WorkflowNode) (applicant, error) {
-	// 获取授权配置
-	accessRepo := repository.NewAccessRepository()
+	if node.Type != domain.WorkflowNodeTypeApply {
+		return nil, fmt.Errorf("node type is not apply")
+	}
 
+	accessRepo := repository.NewAccessRepository()
 	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("providerAccessId"))
 	if err != nil {
 		return nil, fmt.Errorf("access record not found: %w", err)
@@ -71,7 +73,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (applicant, error) {
 	}, nil
 }
 
-func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*ApplyResult, error) {
+func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*ApplyCertResult, error) {
 	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='sslProvider'")
 
 	sslProvider := &acmeSSLProviderConfig{
@@ -131,7 +133,7 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 		return nil, err
 	}
 
-	return &ApplyResult{
+	return &ApplyCertResult{
 		PrivateKey:        string(certificates.PrivateKey),
 		Certificate:       string(certificates.Certificate),
 		IssuerCertificate: string(certificates.IssuerCertificate),
@@ -166,6 +168,6 @@ type proxyApplicant struct {
 	applyConfig *applyConfig
 }
 
-func (d *proxyApplicant) Apply() (*ApplyResult, error) {
+func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
 	return apply(d.applicant, d.applyConfig)
 }
