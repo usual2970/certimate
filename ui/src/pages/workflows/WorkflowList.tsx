@@ -161,9 +161,9 @@ const WorkflowList = () => {
         if (record.lastRunId) {
           if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
             return (
-              <Space className="max-w-full" direction="vertical" size={4}>
+              <Space>
                 <Badge status="success" count={<CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />} />
-                <Typography.Text type="secondary">{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
               </Space>
             );
           } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {

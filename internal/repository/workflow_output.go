@@ -130,7 +130,7 @@ func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 		}
 
 		certRecord := models.NewRecord(certCollection)
-		certRecord.Set("source", certificate.Source)
+		certRecord.Set("source", string(certificate.Source))
 		certRecord.Set("subjectAltNames", certificate.SubjectAltNames)
 		certRecord.Set("certificate", certificate.Certificate)
 		certRecord.Set("privateKey", certificate.PrivateKey)

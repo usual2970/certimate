@@ -216,9 +216,9 @@ func apply(option *applyConfig, provider challenge.Provider) (*Certificate, erro
 	}
 
 	challengeOptions := make([]dns01.ChallengeOption, 0)
-	nameservers := parseNameservers(option.Nameservers)
-	if len(nameservers) > 0 {
-		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(nameservers))
+	if len(option.Nameservers) > 0 {
+		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(dns01.ParseNameservers(strings.Split(option.Nameservers, ";"))))
+		challengeOptions = append(challengeOptions, dns01.DisableAuthoritativeNssPropagationRequirement())
 	}
 
 	client.Challenge.SetDNS01Provider(provider, challengeOptions...)
@@ -304,23 +304,6 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *applyUser
 	}
 
 	return reg, nil
-}
-
-func parseNameservers(ns string) []string {
-	nameservers := make([]string, 0)
-
-	lines := strings.Split(ns, ";")
-
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-
-		nameservers = append(nameservers, line)
-	}
-
-	return nameservers
 }
 
 func parseKeyAlgorithm(algo string) certcrypto.KeyType {
