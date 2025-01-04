@@ -11,7 +11,7 @@ import (
 
 type WorkflowRepository interface {
 	Get(ctx context.Context, id string) (*domain.Workflow, error)
-	SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error
+	SaveRunLog(ctx context.Context, log *domain.WorkflowRun) error
 	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
 }
 
@@ -68,7 +68,7 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 
 	processor := nodeprocessor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
-		log := &domain.WorkflowRunLog{
+		log := &domain.WorkflowRun{
 			WorkflowId: workflow.Id,
 			Logs:       processor.Log(ctx),
 			Succeeded:  false,
@@ -82,13 +82,13 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 
 	// 保存执行日志
 	logs := processor.Log(ctx)
-	runLogs := domain.RunLogs(logs)
-	runErr := runLogs.Error()
+	runLogs := domain.WorkflowRunLogs(logs)
+	runErr := runLogs.FirstError()
 	succeed := true
 	if runErr != "" {
 		succeed = false
 	}
-	log := &domain.WorkflowRunLog{
+	log := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Logs:       processor.Log(ctx),
 		Error:      runErr,

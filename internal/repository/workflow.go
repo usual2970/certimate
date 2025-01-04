@@ -37,14 +37,17 @@ func (w *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]domain.Work
 	return rs, nil
 }
 
-func (w *WorkflowRepository) SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error {
-	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run_log")
+func (w *WorkflowRepository) SaveRunLog(ctx context.Context, log *domain.WorkflowRun) error {
+	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run")
 	if err != nil {
 		return err
 	}
 	record := models.NewRecord(collection)
 
 	record.Set("workflowId", log.WorkflowId)
+	record.Set("trigger", log.Trigger)
+	record.Set("startedAt", log.StartedAt)
+	record.Set("completedAt", log.CompletedAt)
 	record.Set("logs", log.Logs)
 	record.Set("succeeded", log.Succeeded)
 	record.Set("error", log.Error)

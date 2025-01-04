@@ -10,30 +10,30 @@ import (
 
 type NodeProcessor interface {
 	Run(ctx context.Context) error
-	Log(ctx context.Context) *domain.RunLog
+	Log(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
 }
 
 type Logger struct {
-	log *domain.RunLog
+	log *domain.WorkflowRunLog
 }
 
 func NewLogger(node *domain.WorkflowNode) *Logger {
 	return &Logger{
-		log: &domain.RunLog{
+		log: &domain.WorkflowRunLog{
 			NodeId:   node.Id,
 			NodeName: node.Name,
-			Outputs:  make([]domain.RunLogOutput, 0),
+			Outputs:  make([]domain.WorkflowRunLogOutput, 0),
 		},
 	}
 }
 
-func (l *Logger) Log(ctx context.Context) *domain.RunLog {
+func (l *Logger) Log(ctx context.Context) *domain.WorkflowRunLog {
 	return l.log
 }
 
 func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...string) {
-	output := domain.RunLogOutput{
+	output := domain.WorkflowRunLogOutput{
 		Time:    time.Now().UTC().Format(time.RFC3339),
 		Title:   title,
 		Content: content,

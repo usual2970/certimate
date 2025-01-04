@@ -2,7 +2,7 @@
 
 import { getPocketBase } from "./pocketbase";
 
-const COLLECTION_NAME = "workflow_run_log";
+const COLLECTION_NAME = "workflow_run";
 
 export type ListWorkflowRunsRequest = {
   workflowId: string;
