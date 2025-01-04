@@ -121,7 +121,7 @@ func record2Workflow(record *models.Record) (*domain.Workflow, error) {
 		HasDraft:      record.GetBool("hasDraft"),
 		LastRunId:     record.GetString("lastRunId"),
 		LastRunStatus: domain.WorkflowRunStatusType(record.GetString("lastRunStatus")),
-		LastRunTime:   record.GetTime("lastRunTime"),
+		LastRunTime:   record.GetDateTime("lastRunTime").Time(),
 	}
 	return workflow, nil
 }

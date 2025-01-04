@@ -41,7 +41,8 @@ type WorkflowOutputRepository interface {
 // 申请节点根据申请类型执行不同的操作
 func (a *applyNode) Run(ctx context.Context) error {
 	a.AddOutput(ctx, a.node.Name, "开始执行")
-	// 查询是否申请过，已申请过则直接返回（先保持和 v0.2 一致）
+	// 查询是否申请过，已申请过则直接返回
+	// TODO: 先保持和 v0.2 一致，后续增加是否强制申请的参数
 	output, err := a.outputRepo.GetByNodeId(ctx, a.node.Id)
 	if err != nil && !domain.IsRecordNotFound(err) {
 		a.AddOutput(ctx, a.node.Name, "查询申请记录失败", err.Error())
