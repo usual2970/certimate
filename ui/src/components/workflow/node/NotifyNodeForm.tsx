@@ -57,6 +57,7 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
+    name: "workflowNotifyNodeForm",
     initialValues: (node?.config as WorkflowNodeConfigForNotify) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();

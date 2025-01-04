@@ -193,7 +193,6 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Deploy:
       {
-        node.config = {} as Record<string, unknown>;
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
         node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);
       }

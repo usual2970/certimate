@@ -1,6 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useCreation } from "ahooks";
 import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -8,7 +7,7 @@ import { z } from "zod";
 import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
 import { type AccessModel } from "@/domain/access";
 import { ACCESS_PROVIDERS } from "@/domain/provider";
-import { useAntdForm } from "@/hooks";
+import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessEditFormACMEHttpReqConfig from "./AccessEditFormACMEHttpReqConfig";
 import AccessEditFormAWSConfig from "./AccessEditFormAWSConfig";
@@ -71,7 +70,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   }, [initialValues?.provider]);
 
   const [configFormInst] = Form.useForm();
-  const configFormName = useCreation(() => `accessEditForm_config${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
+  const configFormName = useAntdFormName({ form: configFormInst, name: "accessEditConfigForm" });
   const configFormComponent = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。

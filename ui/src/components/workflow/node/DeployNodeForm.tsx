@@ -67,6 +67,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
+    name: "workflowDeployNodeForm",
     initialValues: (node?.config as WorkflowNodeConfigForDeploy) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();

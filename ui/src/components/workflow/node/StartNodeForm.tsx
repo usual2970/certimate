@@ -54,6 +54,7 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
+    name: "workflowStartNodeForm",
     initialValues: (node?.config as WorkflowNodeConfigForStart) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();

@@ -52,7 +52,9 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     providerAccessId: z
       .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
       .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
-    keyAlgorithm: z.string().nullish(),
+    keyAlgorithm: z
+      .string({ message: t("workflow_node.apply.form.key_algorithm.placeholder") })
+      .nonempty(t("workflow_node.apply.form.key_algorithm.placeholder")),
     nameservers: z
       .string()
       .nullish()
@@ -76,6 +78,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
+    name: "workflowApplyNodeForm",
     initialValues: (node?.config as WorkflowNodeConfigForApply) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
@@ -305,7 +308,7 @@ const FormFieldEmailSelect = ({
 
   const handleSearch = (text: string) => {
     const temp = emailsToOptions();
-    if (text) {
+    if (text?.trim()) {
       if (temp.every((option) => option.label !== text)) {
         temp.unshift({ label: text, value: text });
       }

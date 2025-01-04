@@ -1,9 +1,8 @@
 import { forwardRef, useImperativeHandle, useMemo } from "react";
-import { useCreation } from "ahooks";
 import { Form, type FormInstance } from "antd";
 
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
-import { useAntdForm } from "@/hooks";
+import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
@@ -35,8 +34,8 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
   ({ className, style, channel, disabled, initialValues, onValuesChange }, ref) => {
     const { form: formInst, formProps } = useAntdForm({
       initialValues: initialValues,
+      name: "notifyChannelEditForm",
     });
-    const formName = useCreation(() => `notifyChannelEditForm_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
     const formFieldsComponent = useMemo(() => {
       /*
         注意：如果追加新的子组件，请保持以 ASCII 排序。
@@ -81,16 +80,7 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
     });
 
     return (
-      <Form
-        {...formProps}
-        className={className}
-        style={style}
-        form={formInst}
-        disabled={disabled}
-        name={formName}
-        layout="vertical"
-        onValuesChange={handleFormChange}
-      >
+      <Form {...formProps} className={className} style={style} form={formInst} disabled={disabled} layout="vertical" onValuesChange={handleFormChange}>
         {formFieldsComponent}
       </Form>
     );

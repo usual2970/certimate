@@ -30,7 +30,7 @@ export const useContactEmailsStore = create<ContactEmailsState>((set, get) => {
       try {
         set({ loading: true });
         settings = await fetcher;
-        set({ emails: settings.content.emails?.sort() ?? [], loadedAtOnce: true });
+        set({ emails: settings.content.emails?.filter((s) => !!s)?.sort() ?? [], loadedAtOnce: true });
       } finally {
         fetcher = null;
         set({ loading: false });

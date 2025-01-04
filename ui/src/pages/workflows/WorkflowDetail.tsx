@@ -43,7 +43,7 @@ const WorkflowDetail = () => {
     useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "save", "setBaseInfo", "switchEnable"])
   );
   useEffect(() => {
-    // TODO: loading
+    // TODO: loading & error
     init(workflowId!);
 
     return () => {
@@ -64,7 +64,7 @@ const WorkflowDetail = () => {
     setAllowDiscard(!isRunning && hasReleased && hasChanges);
     setAllowRelease(!isRunning && hasChanges);
     setAllowRun(hasReleased);
-  }, [workflow, isRunning]);
+  }, [workflow.content, workflow.draft, workflow.hasDraft, isRunning]);
 
   const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
     try {
@@ -141,11 +141,6 @@ const WorkflowDetail = () => {
   };
 
   const handleRunClick = () => {
-    if (!workflow.enabled) {
-      alert("TODO: 暂时只支持执行已启用的工作流");
-      return;
-    }
-
     const { promise, resolve, reject } = Promise.withResolvers();
     if (workflow.hasDraft) {
       modalApi.confirm({
