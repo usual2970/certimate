@@ -2,15 +2,24 @@ package domain
 
 import "time"
 
+type WorkflowRunStatusType string
+
+const (
+	WorkflowRunStatusTypePending   WorkflowRunStatusType = "pending"
+	WorkflowRunStatusTypeRunning   WorkflowRunStatusType = "running"
+	WorkflowRunStatusTypeSucceeded WorkflowRunStatusType = "succeeded"
+	WorkflowRunStatusTypeFailed    WorkflowRunStatusType = "failed"
+)
+
 type WorkflowRun struct {
 	Meta
-	WorkflowId  string           `json:"workflowId" db:"workflowId"`
-	Trigger     string           `json:"trigger" db:"trigger"`
-	StartedAt   time.Time        `json:"startedAt" db:"startedAt"`
-	CompletedAt time.Time        `json:"completedAt" db:"completedAt"`
-	Logs        []WorkflowRunLog `json:"logs" db:"logs"`
-	Succeeded   bool             `json:"succeeded" db:"succeeded"`
-	Error       string           `json:"error" db:"error"`
+	WorkflowId string                `json:"workflowId" db:"workflowId"`
+	Status     WorkflowRunStatusType `json:"status" db:"status"`
+	Trigger    WorkflowTriggerType   `json:"trigger" db:"trigger"`
+	StartedAt  time.Time             `json:"startedAt" db:"startedAt"`
+	EndedAt    time.Time             `json:"endedAt" db:"endedAt"`
+	Logs       []WorkflowRunLog      `json:"logs" db:"logs"`
+	Error      string                `json:"error" db:"error"`
 }
 
 type WorkflowRunLog struct {

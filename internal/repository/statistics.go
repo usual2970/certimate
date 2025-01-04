@@ -19,7 +19,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 	certTotal := struct {
 		Total int `db:"total"`
 	}{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from certificate").One(&certTotal); err != nil {
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM certificate").One(&certTotal); err != nil {
 		return nil, err
 	}
 	rs.CertificateTotal = certTotal.Total
@@ -29,7 +29,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 		Total int `db:"total"`
 	}{}
 	if err := app.GetApp().Dao().DB().
-		NewQuery("select count(*) as total from certificate where expireAt > datetime('now') and expireAt < datetime('now', '+20 days')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt > DATETIME('now') and expireAt < DATETIME('now', '+20 days')").
 		One(&certExpireSoonTotal); err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 		Total int `db:"total"`
 	}{}
 	if err := app.GetApp().Dao().DB().
-		NewQuery("select count(*) as total from certificate where expireAt < datetime('now')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt < DATETIME('now')").
 		One(&certExpiredTotal); err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 	workflowTotal := struct {
 		Total int `db:"total"`
 	}{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from workflow").One(&workflowTotal); err != nil {
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM workflow").One(&workflowTotal); err != nil {
 		return nil, err
 	}
 	rs.WorkflowTotal = workflowTotal.Total
@@ -59,7 +59,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 	workflowEnabledTotal := struct {
 		Total int `db:"total"`
 	}{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from workflow where enabled is TRUE").One(&workflowEnabledTotal); err != nil {
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM workflow WHERE enabled IS TRUE").One(&workflowEnabledTotal); err != nil {
 		return nil, err
 	}
 	rs.WorkflowEnabled = workflowEnabledTotal.Total

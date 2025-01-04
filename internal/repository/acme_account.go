@@ -48,9 +48,9 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 
 	return &domain.AcmeAccount{
 		Meta: domain.Meta{
-			Id:        record.GetString("id"),
-			CreatedAt: record.GetTime("created"),
-			UpdatedAt: record.GetTime("updated"),
+			Id:        record.GetId(),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
 		},
 		CA:       record.GetString("ca"),
 		Email:    record.GetString("email"),

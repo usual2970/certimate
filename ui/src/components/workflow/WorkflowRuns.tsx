@@ -2,14 +2,18 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
+  ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
+  SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Empty, Space, Table, type TableProps, Typography, notification, theme } from "antd";
+import { Button, Empty, Table, type TableProps, Tag, notification } from "antd";
+import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { type WorkflowRunModel } from "@/domain/workflowRun";
+import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
+import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
 import { list as listWorkflowRuns } from "@/repository/workflowRun";
 import { getErrMsg } from "@/utils/error";
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
@@ -22,8 +26,6 @@ export type WorkflowRunsProps = {
 
 const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const { t } = useTranslation();
-
-  const { token: themeToken } = theme.useToken();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
@@ -46,45 +48,67 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       title: t("workflow_run.props.status"),
       ellipsis: true,
       render: (_, record) => {
-        if (record.succeeded) {
+        if (record.status === WORKFLOW_RUN_STATUSES.PENDING) {
+          return <Tag icon={<ClockCircleOutlinedIcon />}>{t("workflow_run.props.status.pending")}</Tag>;
+        } else if (record.status === WORKFLOW_RUN_STATUSES.RUNNING) {
           return (
-            <Space>
-              <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />
-              <Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>
-            </Space>
+            <Tag icon={<SyncOutlinedIcon spin />} color="processing">
+              {t("workflow_run.props.status.running")}
+            </Tag>
           );
-        } else {
+        } else if (record.status === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
           return (
-            <Space>
-              <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
-              <Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>
-            </Space>
+            <Tag icon={<CheckCircleOutlinedIcon />} color="success">
+              {t("workflow_run.props.status.succeeded")}
+            </Tag>
+          );
+        } else if (record.status === WORKFLOW_RUN_STATUSES.FAILED) {
+          return (
+            <Tag icon={<CloseCircleOutlinedIcon />} color="error">
+              {t("workflow_run.props.status.failed")}
+            </Tag>
           );
         }
+
+        return <></>;
       },
     },
     {
       key: "trigger",
       title: t("workflow_run.props.trigger"),
       ellipsis: true,
-      render: () => {
-        return "TODO";
+      render: (_, record) => {
+        if (record.trigger === WORKFLOW_TRIGGERS.AUTO) {
+          return t("workflow_run.props.trigger.auto");
+        } else if (record.trigger === WORKFLOW_TRIGGERS.MANUAL) {
+          return t("workflow_run.props.trigger.manual");
+        }
+
+        return <></>;
       },
     },
     {
       key: "startedAt",
       title: t("workflow_run.props.started_at"),
       ellipsis: true,
-      render: () => {
-        return "TODO";
+      render: (_, record) => {
+        if (record.startedAt) {
+          return dayjs(record.startedAt).format("YYYY-MM-DD HH:mm:ss");
+        }
+
+        return <></>;
       },
     },
     {
-      key: "completedAt",
-      title: t("workflow_run.props.completed_at"),
+      key: "endedAt",
+      title: t("workflow_run.props.ended_at"),
       ellipsis: true,
-      render: () => {
-        return "TODO";
+      render: (_, record) => {
+        if (record.endedAt) {
+          return dayjs(record.endedAt).format("YYYY-MM-DD HH:mm:ss");
+        }
+
+        return <></>;
       },
     },
     {

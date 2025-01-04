@@ -4,7 +4,7 @@ import { Alert, Drawer, Typography } from "antd";
 import dayjs from "dayjs";
 
 import Show from "@/components/Show";
-import { type WorkflowRunModel } from "@/domain/workflowRun";
+import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
 import { useTriggerElement } from "@/hooks";
 
 export type WorkflowRunDetailDrawerProps = {
@@ -32,11 +32,11 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
 
       <Drawer destroyOnClose open={open} loading={loading} placement="right" title={`runlog-${data?.id}`} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
-          <Show when={data!.succeeded}>
+          <Show when={data!.status === WORKFLOW_RUN_STATUSES.SUCCEEDED}>
             <Alert showIcon type="success" message={<Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>} />
           </Show>
 
-          <Show when={!!data!.error}>
+          <Show when={data!.status === WORKFLOW_RUN_STATUSES.FAILED}>
             <Alert showIcon type="error" message={<Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>} />
           </Show>
 

@@ -44,27 +44,28 @@ func update(ctx context.Context, record *models.Record) error {
 	// 是不是自动
 	// 是不是 enabled
 
-	id := record.Id
+	workflowId := record.Id
 	enabled := record.GetBool("enabled")
 	trigger := record.GetString("trigger")
 
 	scheduler := app.GetScheduler()
-	if !enabled || trigger == domain.WorkflowTriggerManual {
-		scheduler.Remove(id)
+	if !enabled || trigger == string(domain.WorkflowTriggerTypeManual) {
+		scheduler.Remove(workflowId)
 		scheduler.Start()
 		return nil
 	}
 
-	err := scheduler.Add(id, record.GetString("triggerCron"), func() {
+	err := scheduler.Add(workflowId, record.GetString("triggerCron"), func() {
 		NewWorkflowService(repository.NewWorkflowRepository()).Run(ctx, &domain.WorkflowRunReq{
-			Id: id,
+			WorkflowId: workflowId,
+			Trigger:    domain.WorkflowTriggerTypeAuto,
 		})
 	})
 	if err != nil {
-		app.GetApp().Logger().Error("add cron job failed", "err", err)
+		app.GetLogger().Error("add cron job failed", "err", err)
 		return fmt.Errorf("add cron job failed: %w", err)
 	}
-	app.GetApp().Logger().Error("add cron job failed", "subjectAltNames", record.GetString("subjectAltNames"))
+	app.GetLogger().Error("add cron job failed", "subjectAltNames", record.GetString("subjectAltNames"))
 
 	scheduler.Start()
 	return nil

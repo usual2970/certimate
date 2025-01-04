@@ -15,19 +15,19 @@ func NewSettingsRepository() *SettingsRepository {
 }
 
 func (s *SettingsRepository) GetByName(ctx context.Context, name string) (*domain.Settings, error) {
-	resp, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name={:name}", dbx.Params{"name": name})
+	record, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name={:name}", dbx.Params{"name": name})
 	if err != nil {
 		return nil, err
 	}
 
 	rs := &domain.Settings{
 		Meta: domain.Meta{
-			Id:        resp.GetString("id"),
-			CreatedAt: resp.GetTime("created"),
-			UpdatedAt: resp.GetTime("updated"),
+			Id:        record.GetId(),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
 		},
-		Name:    resp.GetString("name"),
-		Content: resp.GetString("content"),
+		Name:    record.GetString("name"),
+		Content: record.GetString("content"),
 	}
 
 	return rs, nil

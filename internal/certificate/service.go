@@ -37,21 +37,21 @@ func (s *certificateService) InitSchedule(ctx context.Context) error {
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
-			app.GetApp().Logger().Error("failed to get expire soon certificate", "err", err)
+			app.GetLogger().Error("failed to get expire soon certificate", "err", err)
 			return
 		}
 		msg := buildMsg(certs)
 		// TODO: 空指针 Bug
 		if err := notify.SendToAllChannels(msg.Subject, msg.Message); err != nil {
-			app.GetApp().Logger().Error("failed to send expire soon certificate", "err", err)
+			app.GetLogger().Error("failed to send expire soon certificate", "err", err)
 		}
 	})
 	if err != nil {
-		app.GetApp().Logger().Error("failed to add schedule", "err", err)
+		app.GetLogger().Error("failed to add schedule", "err", err)
 		return err
 	}
 	scheduler.Start()
-	app.GetApp().Logger().Info("certificate schedule started")
+	app.GetLogger().Info("certificate schedule started")
 	return nil
 }
 

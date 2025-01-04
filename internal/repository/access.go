@@ -24,16 +24,16 @@ func (a *AccessRepository) GetById(ctx context.Context, id string) (*domain.Acce
 		return nil, err
 	}
 
-	rs := &domain.Access{
+	access := &domain.Access{
 		Meta: domain.Meta{
 			Id:        record.GetId(),
-			CreatedAt: record.GetTime("created"),
-			UpdatedAt: record.GetTime("updated"),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
 		},
 		Name:     record.GetString("name"),
 		Provider: record.GetString("provider"),
 		Config:   record.GetString("config"),
 		Usage:    record.GetString("usage"),
 	}
-	return rs, nil
+	return access, nil
 }

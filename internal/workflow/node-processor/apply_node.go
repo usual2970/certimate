@@ -98,7 +98,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	certificateRecord := &domain.Certificate{
-		Source:            string(domain.CERTIFICATE_SOURCE_WORKFLOW),
+		Source:            domain.CertificateSourceTypeWorkflow,
 		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
 		Certificate:       certificate.Certificate,
 		PrivateKey:        certificate.PrivateKey,

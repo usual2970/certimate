@@ -16,7 +16,7 @@
   "workflow.props.trigger": "触发方式",
   "workflow.props.trigger.auto": "自动",
   "workflow.props.trigger.manual": "手动",
-  "workflow.props.latest_execution_status": "最近执行状态",
+  "workflow.props.last_run_at": "最近执行时间",
   "workflow.props.state": "启用状态",
   "workflow.props.state.filter.enabled": "启用",
   "workflow.props.state.filter.disabled": "未启用",

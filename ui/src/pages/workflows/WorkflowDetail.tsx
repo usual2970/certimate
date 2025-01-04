@@ -248,7 +248,7 @@ const WorkflowDetail = () => {
           <Show when={tabValue === "orchestration"}>
             <div className="relative">
               <div className="py-12 lg:pr-36 xl:pr-48">
-                <WorkflowElements disabled={isRunning} />
+                <WorkflowElements />
               </div>
               <div className="absolute right-0 top-0 z-[1]">
                 <Space>

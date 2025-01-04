@@ -13,6 +13,9 @@ export interface WorkflowModel extends BaseModel {
   content?: WorkflowNode;
   draft?: WorkflowNode;
   hasDraft?: boolean;
+  lastRunId?: string;
+  lastRunStatus?: string;
+  lastRunTime?: string;
 }
 
 export const WORKFLOW_TRIGGERS = Object.freeze({

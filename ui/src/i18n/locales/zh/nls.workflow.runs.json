@@ -1,9 +1,13 @@
 {
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "状态",
+  "workflow_run.props.status.pending": "等待执行",
+  "workflow_run.props.status.running": "执行中",
   "workflow_run.props.status.succeeded": "成功",
   "workflow_run.props.status.failed": "失败",
-  "workflow_run.props.trigger": "触发方式",
+  "workflow_run.props.trigger": "执行方式",
+  "workflow_run.props.trigger.auto": "定时执行",
+  "workflow_run.props.trigger.manual": "手动执行",
   "workflow_run.props.started_at": "开始时间",
-  "workflow_run.props.completed_at": "完成时间"
+  "workflow_run.props.ended_at": "完成时间"
 }

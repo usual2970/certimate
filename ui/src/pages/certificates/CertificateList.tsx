@@ -125,7 +125,7 @@ const CertificateList = () => {
                   }
                 }}
               >
-                {record.expand?.workflowId?.name ?? `#${workflowId}`}
+                {record.expand?.workflowId?.name ?? <span className="font-mono">{t(`#${workflowId}`)}</span>}
               </Typography.Link>
             </Space>
           );
@@ -174,7 +174,7 @@ const CertificateList = () => {
               icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {
-                alert("TODO");
+                alert("TODO: 暂时不支持删除证书");
               }}
             />
           </Tooltip>

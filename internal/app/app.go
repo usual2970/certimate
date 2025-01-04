@@ -1,6 +1,7 @@
 package app
 
 import (
+	"log/slog"
 	"sync"
 
 	"github.com/pocketbase/pocketbase"
@@ -18,4 +19,8 @@ func GetApp() *pocketbase.PocketBase {
 	})
 
 	return instance
+}
+
+func GetLogger() *slog.Logger {
+	return GetApp().Logger()
 }

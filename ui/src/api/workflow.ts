@@ -1,5 +1,6 @@
 import { ClientResponseError } from "pocketbase";
 
+import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
 import { getPocketBase } from "@/repository/pocketbase";
 
 export const run = async (id: string) => {
@@ -11,7 +12,8 @@ export const run = async (id: string) => {
       "Content-Type": "application/json",
     },
     body: {
-      id,
+      workflowId: id,
+      trigger: WORKFLOW_TRIGGERS.MANUAL,
     },
   });
 

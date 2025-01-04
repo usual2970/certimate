@@ -1,10 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DeleteOutlined as DeleteOutlinedIcon, EditOutlined as EditOutlinedIcon, PlusOutlined as PlusOutlinedIcon } from "@ant-design/icons";
+import {
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+} from "@ant-design/icons";
+
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import {
+  Badge,
   Button,
   Divider,
   Empty,
@@ -26,6 +34,7 @@ import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import { WORKFLOW_TRIGGERS, type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
+import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -146,11 +155,28 @@ const WorkflowList = () => {
       },
     },
     {
-      key: "lastExecutedAt",
-      title: t("workflow.props.latest_execution_status"),
-      render: () => {
-        // TODO: 最近执行状态
-        return <>TODO</>;
+      key: "lastRun",
+      title: t("workflow.props.last_run_at"),
+      render: (_, record) => {
+        if (record.lastRunId) {
+          if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
+            return (
+              <Space className="max-w-full" direction="vertical" size={4}>
+                <Badge status="success" count={<CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />} />
+                <Typography.Text type="secondary">{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+              </Space>
+            );
+          } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
+            return (
+              <Space>
+                <Badge status="error" count={<CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />} />
+                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+              </Space>
+            );
+          }
+        }
+
+        return <></>;
       },
     },
     {
