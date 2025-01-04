@@ -35,7 +35,7 @@ export const get = async (id: string) => {
   });
 };
 
-export const save = async (record: Record<string, string | boolean | WorkflowNode>) => {
+export const save = async (record: MaybeModelRecord<WorkflowModel>) => {
   if (record.id) {
     return await getPocketBase()
       .collection(COLLECTION_NAME)

@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useDeepCompareEffect } from "ahooks";
-import { Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
+import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { ClientResponseError } from "pocketbase";
 import { isEqual } from "radash";
@@ -39,15 +39,15 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, initialized, init, save, destroy, setBaseInfo, switchEnable } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "save", "setBaseInfo", "switchEnable"])
+  const { workflow, initialized, ...workflowState } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setBaseInfo", "setEnabled", "release", "discard"])
   );
   useEffect(() => {
     // TODO: loading & error
-    init(workflowId!);
+    workflowState.init(workflowId!);
 
     return () => {
-      destroy();
+      workflowState.destroy();
     };
   }, [workflowId]);
 
@@ -68,7 +68,7 @@ const WorkflowDetail = () => {
 
   const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
     try {
-      await setBaseInfo(values.name!, values.description!);
+      await workflowState.setBaseInfo(values.name!, values.description!);
     } catch (err) {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
@@ -83,7 +83,7 @@ const WorkflowDetail = () => {
     }
 
     try {
-      await switchEnable();
+      await workflowState.setEnabled(!workflow.enabled);
     } catch (err) {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
@@ -112,8 +112,15 @@ const WorkflowDetail = () => {
     modalApi.confirm({
       title: t("workflow.detail.orchestration.action.discard"),
       content: t("workflow.detail.orchestration.action.discard.confirm"),
-      onOk: () => {
-        alert("TODO");
+      onOk: async () => {
+        try {
+          await workflowState.discard();
+
+          messageApi.success(t("common.text.operation_succeeded"));
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
       },
     });
   };
@@ -129,7 +136,7 @@ const WorkflowDetail = () => {
       content: t("workflow.detail.orchestration.action.release.confirm"),
       onOk: async () => {
         try {
-          await save();
+          await workflowState.release();
 
           messageApi.success(t("common.text.operation_succeeded"));
         } catch (err) {
@@ -242,38 +249,45 @@ const WorkflowDetail = () => {
         <Card loading={!initialized}>
           <Show when={tabValue === "orchestration"}>
             <div className="relative">
-              <div className="py-12 lg:pr-36 xl:pr-48">
-                <WorkflowElements />
-              </div>
-              <div className="absolute right-0 top-0 z-[1]">
-                <Space>
-                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
-                    {t("workflow.detail.orchestration.action.run")}
-                  </Button>
-
-                  <Button.Group>
-                    <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
-                      {t("workflow.detail.orchestration.action.release")}
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 overflow-hidden">
+                  <Show when={workflow.hasDraft!}>
+                    <Alert banner message={<div className="truncate">{t("workflow.detail.orchestration.draft.alert")}</div>} type="warning" />
+                  </Show>
+                </div>
+                <div className="flex justify-end">
+                  <Space>
+                    <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
+                      {t("workflow.detail.orchestration.action.run")}
                     </Button>
 
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: "discard",
-                            disabled: !allowDiscard,
-                            label: t("workflow.detail.orchestration.action.discard"),
-                            icon: <UndoOutlinedIcon />,
-                            onClick: handleDiscardClick,
-                          },
-                        ],
-                      }}
-                      trigger={["click"]}
-                    >
-                      <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
-                    </Dropdown>
-                  </Button.Group>
-                </Space>
+                    <Button.Group>
+                      <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
+                        {t("workflow.detail.orchestration.action.release")}
+                      </Button>
+
+                      <Dropdown
+                        menu={{
+                          items: [
+                            {
+                              key: "discard",
+                              disabled: !allowDiscard,
+                              label: t("workflow.detail.orchestration.action.discard"),
+                              icon: <UndoOutlinedIcon />,
+                              onClick: handleDiscardClick,
+                            },
+                          ],
+                        }}
+                        trigger={["click"]}
+                      >
+                        <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
+                      </Dropdown>
+                    </Button.Group>
+                  </Space>
+                </div>
+              </div>
+              <div className="px-12 py-8">
+                <WorkflowElements />
               </div>
             </div>
           </Show>

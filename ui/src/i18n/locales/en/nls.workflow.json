@@ -42,6 +42,7 @@
   "workflow.detail.baseinfo.form.description.label": "Description",
   "workflow.detail.baseinfo.form.description.placeholder": "Please enter workflow description",
   "workflow.detail.orchestration.tab": "Orchestration",
+  "workflow.detail.orchestration.draft.alert": "The orchestration is not released yet.",
   "workflow.detail.orchestration.action.discard": "Discard changes",
   "workflow.detail.orchestration.action.discard.confirm": "Are you sure to discard your changes?",
   "workflow.detail.orchestration.action.release": "Release",

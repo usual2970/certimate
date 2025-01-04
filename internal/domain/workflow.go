@@ -45,7 +45,7 @@ type WorkflowNode struct {
 	Type WorkflowNodeType `json:"type"`
 	Name string           `json:"name"`
 
-	Config  map[string]any   `json:"config"`
+	Config  map[string]any   `json:"data"`
 	Inputs  []WorkflowNodeIO `json:"inputs"`
 	Outputs []WorkflowNodeIO `json:"outputs"`
 

@@ -42,6 +42,7 @@
   "workflow.detail.baseinfo.form.description.label": "描述",
   "workflow.detail.baseinfo.form.description.placeholder": "请输入工作流描述",
   "workflow.detail.orchestration.tab": "流程编排",
+  "workflow.detail.orchestration.draft.alert": "当前编排有未发布的更改。",
   "workflow.detail.orchestration.action.discard": "撤销更改",
   "workflow.detail.orchestration.action.discard.confirm": "确定要撤销更改并回退到最近一次发布的版本吗？",
   "workflow.detail.orchestration.action.release": "发布更改",
