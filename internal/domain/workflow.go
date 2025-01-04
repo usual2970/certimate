@@ -32,12 +32,12 @@ type Workflow struct {
 }
 
 type WorkflowNode struct {
-	Id     string           `json:"id"`
-	Name   string           `json:"name"`
-	Next   *WorkflowNode    `json:"next"`
-	Config map[string]any   `json:"config"`
-	Input  []WorkflowNodeIO `json:"input"`
-	Output []WorkflowNodeIO `json:"output"`
+	Id      string           `json:"id"`
+	Name    string           `json:"name"`
+	Next    *WorkflowNode    `json:"next"`
+	Config  map[string]any   `json:"config"`
+	Inputs  []WorkflowNodeIO `json:"inputs"`
+	Outputs []WorkflowNodeIO `json:"outputs"`
 
 	Validated bool   `json:"validated"`
 	Type      string `json:"type"`

@@ -237,7 +237,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
             options={previousOutput.map((item) => {
               return {
                 label: item.name,
-                options: item.output?.map((output) => {
+                options: item.outputs?.map((output) => {
                   return {
                     label: `${item.name} - ${output.label}`,
                     value: `${item.id}#${output.name}`,

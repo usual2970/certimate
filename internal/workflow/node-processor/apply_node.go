@@ -88,7 +88,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 		NodeId:     a.node.Id,
 		Node:       a.node,
 		Succeeded:  true,
-		Outputs:    a.node.Output,
+		Outputs:    a.node.Outputs,
 	}
 
 	certX509, err := x509.ParseCertificateFromPEM(certificate.Certificate)

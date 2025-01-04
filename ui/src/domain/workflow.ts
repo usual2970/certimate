@@ -83,8 +83,8 @@ export type WorkflowNode = {
   type: WorkflowNodeType;
 
   config?: Record<string, unknown>;
-  input?: WorkflowNodeIO[];
-  output?: WorkflowNodeIO[];
+  inputs?: WorkflowNodeIO[];
+  outputs?: WorkflowNodeIO[];
 
   next?: WorkflowNode;
   branches?: WorkflowNode[];
@@ -191,8 +191,8 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Deploy:
       {
         node.config = {} as Record<string, unknown>;
-        node.input = workflowNodeTypeDefaultInputs.get(nodeType);
-        node.output = workflowNodeTypeDefaultOutputs.get(nodeType);
+        node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
+        node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);
       }
       break;
 
@@ -347,10 +347,10 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode, id: string, type: 
       return true;
     }
 
-    if (current.type !== WorkflowNodeType.Branch && current.output && current.output.some((io) => io.type === type)) {
+    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => io.type === type)) {
       output.push({
         ...current,
-        output: current.output.filter((io) => io.type === type),
+        outputs: current.outputs.filter((io) => io.type === type),
       });
     }
 
