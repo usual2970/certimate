@@ -50,15 +50,12 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	if output != nil && output.Succeeded {
-		cert, err := a.outputRepo.GetCertificateByNodeId(ctx, a.node.Id)
-		if err != nil {
-			a.AddOutput(ctx, a.node.Name, "获取证书失败", err.Error())
-			return err
-		}
-
-		if time.Until(cert.ExpireAt) > validityDuration {
-			a.AddOutput(ctx, a.node.Name, "已申请过证书，且证书在有效期内")
-			return nil
+		lastCertificate, _ := a.outputRepo.GetCertificateByNodeId(ctx, a.node.Id)
+		if lastCertificate != nil {
+			if time.Until(lastCertificate.ExpireAt) > validityDuration {
+				a.AddOutput(ctx, a.node.Name, "已申请过证书，且证书在有效期内")
+				return nil
+			}
 		}
 	}
 
@@ -70,7 +67,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	// 申请
-	certificate, err := applicant.Apply()
+	applyResult, err := applicant.Apply()
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "申请失败", err.Error())
 		return err
@@ -92,29 +89,29 @@ func (a *applyNode) Run(ctx context.Context) error {
 		Outputs:    a.node.Outputs,
 	}
 
-	certX509, err := x509.ParseCertificateFromPEM(certificate.Certificate)
+	certX509, err := x509.ParseCertificateFromPEM(applyResult.Certificate)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "解析证书失败", err.Error())
 		return err
 	}
 
-	certificateRecord := &domain.Certificate{
+	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
 		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
-		Certificate:       certificate.Certificate,
-		PrivateKey:        certificate.PrivateKey,
-		IssuerCertificate: certificate.IssuerCertificate,
-		ACMECertUrl:       certificate.CertUrl,
-		ACMECertStableUrl: certificate.CertStableUrl,
+		Certificate:       applyResult.Certificate,
+		PrivateKey:        applyResult.PrivateKey,
+		IssuerCertificate: applyResult.IssuerCertificate,
+		ACMECertUrl:       applyResult.CertUrl,
+		ACMECertStableUrl: applyResult.CertStableUrl,
 		EffectAt:          certX509.NotBefore,
 		ExpireAt:          certX509.NotAfter,
 		WorkflowId:        GetWorkflowId(ctx),
 		WorkflowNodeId:    a.node.Id,
 	}
 
-	if err := a.outputRepo.Save(ctx, output, certificateRecord, func(id string) error {
-		if certificateRecord != nil {
-			certificateRecord.WorkflowOutputId = id
+	if err := a.outputRepo.Save(ctx, output, certificate, func(id string) error {
+		if certificate != nil {
+			certificate.WorkflowOutputId = id
 		}
 
 		return nil
