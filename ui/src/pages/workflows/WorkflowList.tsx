@@ -25,7 +25,7 @@ import {
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -67,16 +67,16 @@ const WorkflowList = () => {
       title: t("workflow.props.trigger"),
       ellipsis: true,
       render: (_, record) => {
-        const trigger = record.type;
+        const trigger = record.trigger;
         if (!trigger) {
           return "-";
-        } else if (trigger === "manual") {
+        } else if (trigger === WORKFLOW_TRIGGERS.MANUAL) {
           return <Typography.Text>{t("workflow.props.trigger.manual")}</Typography.Text>;
-        } else if (trigger === "auto") {
+        } else if (trigger === WORKFLOW_TRIGGERS.AUTO) {
           return (
             <Space className="max-w-full" direction="vertical" size={4}>
               <Typography.Text>{t("workflow.props.trigger.auto")}</Typography.Text>
-              <Typography.Text type="secondary">{record.crontab ?? ""}</Typography.Text>
+              <Typography.Text type="secondary">{record.triggerCron ?? ""}</Typography.Text>
             </Space>
           );
         }

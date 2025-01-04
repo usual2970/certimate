@@ -7,13 +7,20 @@ import i18n from "@/i18n";
 export interface WorkflowModel extends BaseModel {
   name: string;
   description?: string;
-  type: string;
-  crontab?: string;
+  trigger: string;
+  triggerCron?: string;
+  enabled?: boolean;
   content?: WorkflowNode;
   draft?: WorkflowNode;
-  enabled?: boolean;
   hasDraft?: boolean;
 }
+
+export const WORKFLOW_TRIGGERS = Object.freeze({
+  AUTO: "auto",
+  MANUAL: "manual",
+} as const);
+
+export type WorkflowTriggerType = (typeof WORKFLOW_TRIGGERS)[keyof typeof WORKFLOW_TRIGGERS];
 
 // #region Node
 export enum WorkflowNodeType {
@@ -86,8 +93,8 @@ export type WorkflowNode = {
 };
 
 export type WorkflowStartNodeConfig = {
-  executionMethod: string;
-  crontab?: string;
+  trigger: string;
+  triggerCron?: string;
 };
 
 export type WorkflowApplyNodeConfig = {
@@ -139,7 +146,7 @@ type InitWorkflowOptions = {
 
 export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel => {
   const root = newNode(WorkflowNodeType.Start, {}) as WorkflowNode;
-  root.config = { executionMethod: "manual" };
+  root.config = { trigger: WORKFLOW_TRIGGERS.MANUAL };
 
   if (options.template === "standard") {
     let temp = root;
@@ -155,8 +162,8 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
   return {
     id: null!,
     name: `MyWorkflow-${dayjs().format("YYYYMMDDHHmmss")}`,
-    type: root.config!.executionMethod as string,
-    crontab: root.config!.crontab as string,
+    trigger: root.config!.trigger as string,
+    triggerCron: root.config!.triggerCron as string,
     enabled: false,
     draft: root,
     hasDraft: true,
@@ -388,16 +395,19 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   return true;
 };
 
-export const getExecuteMethod = (node: WorkflowNode): { type: string; crontab: string } => {
+/**
+ * @deprecated
+ */
+export const getExecuteMethod = (node: WorkflowNode): { trigger: string; triggerCron: string } => {
   if (node.type === WorkflowNodeType.Start) {
     return {
-      type: (node.config?.executionMethod as string) ?? "",
-      crontab: (node.config?.crontab as string) ?? "",
+      trigger: (node.config?.trigger as string) ?? "",
+      triggerCron: (node.config?.triggerCron as string) ?? "",
     };
   } else {
     return {
-      type: "",
-      crontab: "",
+      trigger: "",
+      triggerCron: "",
     };
   }
 };

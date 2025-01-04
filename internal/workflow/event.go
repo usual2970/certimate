@@ -46,16 +46,16 @@ func update(ctx context.Context, record *models.Record) error {
 
 	id := record.Id
 	enabled := record.GetBool("enabled")
-	executeMethod := record.GetString("type")
+	trigger := record.GetString("trigger")
 
 	scheduler := app.GetScheduler()
-	if !enabled || executeMethod == domain.WorkflowTypeManual {
+	if !enabled || trigger == domain.WorkflowTriggerManual {
 		scheduler.Remove(id)
 		scheduler.Start()
 		return nil
 	}
 
-	err := scheduler.Add(id, record.GetString("crontab"), func() {
+	err := scheduler.Add(id, record.GetString("triggerCron"), func() {
 		NewWorkflowService(repository.NewWorkflowRepository()).Run(ctx, &domain.WorkflowRunReq{
 			Id: id,
 		})

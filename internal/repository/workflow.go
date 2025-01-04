@@ -20,8 +20,8 @@ func NewWorkflowRepository() *WorkflowRepository {
 func (w *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error) {
 	records, err := app.GetApp().Dao().FindRecordsByFilter(
 		"workflow",
-		"enabled={:enabled} && type={:type}",
-		"-created", 1000, 0, dbx.Params{"enabled": true, "type": domain.WorkflowTypeAuto},
+		"enabled={:enabled} && trigger={:trigger}",
+		"-created", 1000, 0, dbx.Params{"enabled": true, "trigger": domain.WorkflowTriggerAuto},
 	)
 	if err != nil {
 		return nil, err
@@ -83,13 +83,12 @@ func record2Workflow(record *models.Record) (*domain.Workflow, error) {
 		},
 		Name:        record.GetString("name"),
 		Description: record.GetString("description"),
-		Type:        record.GetString("type"),
-		Crontab:     record.GetString("crontab"),
+		Trigger:     record.GetString("trigger"),
+		TriggerCron: record.GetString("triggerCron"),
 		Enabled:     record.GetBool("enabled"),
+		Content:     content,
+		Draft:       draft,
 		HasDraft:    record.GetBool("hasDraft"),
-
-		Content: content,
-		Draft:   draft,
 	}
 
 	return workflow, nil

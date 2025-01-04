@@ -15,19 +15,19 @@ const (
 )
 
 const (
-	WorkflowTypeAuto   = "auto"
-	WorkflowTypeManual = "manual"
+	WorkflowTriggerAuto   = "auto"
+	WorkflowTriggerManual = "manual"
 )
 
 type Workflow struct {
 	Meta
 	Name        string        `json:"name"`
 	Description string        `json:"description"`
-	Type        string        `json:"type"`
-	Crontab     string        `json:"crontab"`
+	Trigger     string        `json:"trigger"`
+	TriggerCron string        `json:"triggerCron"`
+	Enabled     bool          `json:"enabled"`
 	Content     *WorkflowNode `json:"content"`
 	Draft       *WorkflowNode `json:"draft"`
-	Enabled     bool          `json:"enabled"`
 	HasDraft    bool          `json:"hasDraft"`
 }
 

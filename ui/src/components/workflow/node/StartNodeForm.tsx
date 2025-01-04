@@ -7,7 +7,7 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { type WorkflowNode, type WorkflowStartNodeConfig } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowNode, type WorkflowStartNodeConfig } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
@@ -19,8 +19,8 @@ export type StartNodeFormProps = {
 
 const initFormModel = (): WorkflowStartNodeConfig => {
   return {
-    executionMethod: "auto",
-    crontab: "0 0 * * *",
+    trigger: WORKFLOW_TRIGGERS.AUTO,
+    triggerCron: "0 0 * * *",
   };
 };
 
@@ -32,19 +32,19 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
 
   const formSchema = z
     .object({
-      executionMethod: z.string({ message: t("workflow_node.start.form.trigger.placeholder") }).min(1, t("workflow_node.start.form.trigger.placeholder")),
-      crontab: z.string().nullish(),
+      trigger: z.string({ message: t("workflow_node.start.form.trigger.placeholder") }).min(1, t("workflow_node.start.form.trigger.placeholder")),
+      triggerCron: z.string().nullish(),
     })
     .superRefine((data, ctx) => {
-      if (data.executionMethod !== "auto") {
+      if (data.trigger !== WORKFLOW_TRIGGERS.AUTO) {
         return;
       }
 
-      if (!validCronExpression(data.crontab!)) {
+      if (!validCronExpression(data.triggerCron!)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t("workflow_node.start.form.trigger_cron.errmsg.invalid"),
-          path: ["crontab"],
+          path: ["triggerCron"],
         });
       }
     });
@@ -67,51 +67,45 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
     },
   });
 
-  const [triggerType, setTriggerType] = useState(node?.config?.executionMethod);
-  const [triggerCronLastExecutions, setTriggerCronExecutions] = useState<Date[]>([]);
+  const fieldTrigger = Form.useWatch<string>("trigger", formInst);
+  const fieldTriggerCron = Form.useWatch<string>("triggerCron", formInst);
+  const [fieldTriggerCronExpectedExecutions, setFieldTriggerCronExpectedExecutions] = useState<Date[]>([]);
   useEffect(() => {
-    setTriggerType(node?.config?.executionMethod);
-    setTriggerCronExecutions(getNextCronExecutions(node?.config?.crontab as string, 5));
-  }, [node?.config?.executionMethod, node?.config?.crontab]);
+    setFieldTriggerCronExpectedExecutions(getNextCronExecutions(fieldTriggerCron, 5));
+  }, [fieldTriggerCron]);
 
-  const handleTriggerTypeChange = (value: string) => {
-    setTriggerType(value);
-
-    if (value === "auto") {
-      formInst.setFieldValue("crontab", formInst.getFieldValue("crontab") || initFormModel().crontab);
+  const handleTriggerChange = (value: string) => {
+    if (value === WORKFLOW_TRIGGERS.AUTO) {
+      formInst.setFieldValue("triggerCron", formInst.getFieldValue("triggerCron") || initFormModel().triggerCron);
     }
-  };
-
-  const handleTriggerCronChange = (value: string) => {
-    setTriggerCronExecutions(getNextCronExecutions(value, 5));
   };
 
   return (
     <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
       <Form.Item
-        name="executionMethod"
+        name="trigger"
         label={t("workflow_node.start.form.trigger.label")}
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger.tooltip") }}></span>}
       >
-        <Radio.Group value={triggerType} onChange={(e) => handleTriggerTypeChange(e.target.value)}>
-          <Radio value="auto">{t("workflow_node.start.form.trigger.option.auto.label")}</Radio>
-          <Radio value="manual">{t("workflow_node.start.form.trigger.option.manual.label")}</Radio>
+        <Radio.Group onChange={(e) => handleTriggerChange(e.target.value)}>
+          <Radio value={WORKFLOW_TRIGGERS.AUTO}>{t("workflow_node.start.form.trigger.option.auto.label")}</Radio>
+          <Radio value={WORKFLOW_TRIGGERS.MANUAL}>{t("workflow_node.start.form.trigger.option.manual.label")}</Radio>
         </Radio.Group>
       </Form.Item>
 
       <Form.Item
-        name="crontab"
+        name="triggerCron"
         label={t("workflow_node.start.form.trigger_cron.label")}
-        hidden={triggerType !== "auto"}
+        hidden={fieldTrigger !== WORKFLOW_TRIGGERS.AUTO}
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron.tooltip") }}></span>}
         extra={
-          <Show when={triggerCronLastExecutions.length > 0}>
+          <Show when={fieldTriggerCronExpectedExecutions.length > 0}>
             <div>
               {t("workflow_node.start.form.trigger_cron.extra")}
               <br />
-              {triggerCronLastExecutions.map((date, index) => (
+              {fieldTriggerCronExpectedExecutions.map((date, index) => (
                 <span key={index}>
                   {dayjs(date).format("YYYY-MM-DD HH:mm:ss")}
                   <br />
@@ -121,12 +115,14 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
           </Show>
         }
       >
-        <Input placeholder={t("workflow_node.start.form.trigger_cron.placeholder")} onChange={(e) => handleTriggerCronChange(e.target.value)} />
+        <Input placeholder={t("workflow_node.start.form.trigger_cron.placeholder")} />
       </Form.Item>
 
-      <Form.Item hidden={triggerType !== "auto"}>
-        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron_alert.content") }}></span>} />
-      </Form.Item>
+      <Show when={fieldTrigger === WORKFLOW_TRIGGERS.AUTO}>
+        <Form.Item>
+          <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron_alert.content") }}></span>} />
+        </Form.Item>
+      </Show>
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={formPending}>

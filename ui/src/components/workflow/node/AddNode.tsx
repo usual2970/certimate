@@ -32,7 +32,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
     ].map(([type, label, icon]) => {
       return {
         key: type as string,
-        disabled: true,
+        disabled: disabled,
         label: t(label as string),
         icon: icon,
         onClick: () => {

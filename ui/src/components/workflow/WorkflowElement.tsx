@@ -6,7 +6,7 @@ import { produce } from "immer";
 import Show from "@/components/Show";
 import { deployProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
-import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -35,21 +35,21 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
         return (
           <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">
-              {node.config?.executionMethod === "auto"
+              {node.config?.trigger === WORKFLOW_TRIGGERS.AUTO
                 ? t("workflow.props.trigger.auto")
-                : node.config?.executionMethod === "manual"
+                : node.config?.trigger === WORKFLOW_TRIGGERS.MANUAL
                   ? t("workflow.props.trigger.manual")
-                  : ""}
+                  : "　"}
             </Typography.Text>
             <Typography.Text className="truncate" type="secondary">
-              {node.config?.executionMethod === "auto" ? (node.config?.crontab as string) : ""}
+              {node.config?.trigger === WORKFLOW_TRIGGERS.AUTO ? (node.config?.triggerCron as string) : ""}
             </Typography.Text>
           </div>
         );
       }
 
       case WorkflowNodeType.Apply: {
-        return <Typography.Text className="truncate">{node.config?.domain as string}</Typography.Text>;
+        return <Typography.Text className="truncate">{(node.config?.domain as string) || "　"}</Typography.Text>;
       }
 
       case WorkflowNodeType.Deploy: {
@@ -57,7 +57,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
         return (
           <Space>
             <Avatar src={provider?.icon} size="small" />
-            <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
+            <Typography.Text className="truncate">{t(provider?.name ?? "　")}</Typography.Text>
           </Space>
         );
       }
@@ -66,7 +66,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
         const channel = notifyChannelsMap.get(node.config?.channel as string);
         return (
           <div className="flex items-center justify-between space-x-2">
-            <Typography.Text className="truncate">{t(channel?.name ?? "")}</Typography.Text>
+            <Typography.Text className="truncate">{t(channel?.name ?? "　")}</Typography.Text>
             <Typography.Text className="truncate" type="secondary">
               {(node.config?.subject as string) ?? ""}
             </Typography.Text>

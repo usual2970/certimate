@@ -68,8 +68,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       id: (get().workflow.id as string) ?? "",
       content: root,
       enabled: !get().workflow.enabled,
-      type: executeMethod.type,
-      crontab: executeMethod.crontab,
+      trigger: executeMethod.trigger,
+      triggerCron: executeMethod.triggerCron,
     });
 
     set((state: WorkflowState) => {
@@ -79,8 +79,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
           id: resp.id,
           content: resp.content,
           enabled: resp.enabled,
-          type: resp.type,
-          crontab: resp.crontab,
+          trigger: resp.trigger,
+          triggerCron: resp.triggerCron,
         },
       };
     });
@@ -93,8 +93,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
       id: (get().workflow.id as string) ?? "",
       content: root,
       hasDraft: false,
-      type: executeMethod.type,
-      crontab: executeMethod.crontab,
+      trigger: executeMethod.trigger,
+      triggerCron: executeMethod.triggerCron,
     });
 
     set((state: WorkflowState) => {
@@ -104,8 +104,8 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
           id: resp.id,
           content: resp.content,
           hasDraft: false,
-          type: resp.type,
-          crontab: resp.crontab,
+          trigger: resp.trigger,
+          triggerCron: resp.triggerCron,
         },
       };
     });

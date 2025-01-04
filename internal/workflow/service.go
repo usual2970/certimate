@@ -33,7 +33,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	}
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
-		err := scheduler.Add(workflow.Id, workflow.Crontab, func() {
+		err := scheduler.Add(workflow.Id, workflow.TriggerCron, func() {
 			s.Run(ctx, &domain.WorkflowRunReq{
 				Id: workflow.Id,
 			})
