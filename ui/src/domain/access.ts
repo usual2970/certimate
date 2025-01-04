@@ -1,6 +1,5 @@
 import { type AccessUsageType } from "./provider";
 
-// #region AccessModel
 export interface AccessModel extends BaseModel {
   name: string;
   provider: string;
@@ -9,106 +8,105 @@ export interface AccessModel extends BaseModel {
     NOTICE: If you add new type, please keep ASCII order.
   */ Record<string, unknown> &
     (
-      | ACMEHttpReqAccessConfig
-      | AliyunAccessConfig
-      | AWSAccessConfig
-      | BaiduCloudAccessConfig
-      | BytePlusAccessConfig
-      | CloudflareAccessConfig
-      | DogeCloudAccessConfig
-      | GoDaddyAccessConfig
-      | HuaweiCloudAccessConfig
-      | KubernetesAccessConfig
-      | LocalAccessConfig
-      | NameDotComAccessConfig
-      | NameSiloAccessConfig
-      | PowerDNSAccessConfig
-      | QiniuAccessConfig
-      | SSHAccessConfig
-      | TencentCloudAccessConfig
-      | VolcEngineAccessConfig
-      | WebhookAccessConfig
+      | AccessConfigForACMEHttpReq
+      | AccessConfigForAliyun
+      | AccessConfigForAWS
+      | AccessConfigForBaiduCloud
+      | AccessConfigForBytePlus
+      | AccessConfigForCloudflare
+      | AccessConfigForDogeCloud
+      | AccessConfigForGoDaddy
+      | AccessConfigForHuaweiCloud
+      | AccessConfigForKubernetes
+      | AccessConfigForLocal
+      | AccessConfigForNameDotCom
+      | AccessConfigForNameSilo
+      | AccessConfigForPowerDNS
+      | AccessConfigForQiniu
+      | AccessConfigForSSH
+      | AccessConfigForTencentCloud
+      | AccessConfigForVolcEngine
+      | AccessConfigForWebhook
     );
   usage: AccessUsageType;
 }
-// #endregion
 
 // #region AccessConfig
-export type ACMEHttpReqAccessConfig = {
+export type AccessConfigForACMEHttpReq = {
   endpoint: string;
   mode?: string;
   username?: string;
   password?: string;
 };
 
-export type AliyunAccessConfig = {
+export type AccessConfigForAliyun = {
   accessKeyId: string;
   accessKeySecret: string;
 };
 
-export type AWSAccessConfig = {
+export type AccessConfigForAWS = {
   accessKeyId: string;
   secretAccessKey: string;
   region?: string;
   hostedZoneId?: string;
 };
 
-export type BaiduCloudAccessConfig = {
+export type AccessConfigForBaiduCloud = {
   accessKeyId: string;
   secretAccessKey: string;
 };
 
-export type BytePlusAccessConfig = {
+export type AccessConfigForBytePlus = {
   accessKey: string;
   secretKey: string;
 };
 
-export type CloudflareAccessConfig = {
+export type AccessConfigForCloudflare = {
   dnsApiToken: string;
 };
 
-export type DogeCloudAccessConfig = {
+export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
 };
 
-export type GoDaddyAccessConfig = {
+export type AccessConfigForGoDaddy = {
   apiKey: string;
   apiSecret: string;
 };
 
-export type HuaweiCloudAccessConfig = {
+export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
   region?: string;
 };
 
-export type KubernetesAccessConfig = {
+export type AccessConfigForKubernetes = {
   kubeConfig?: string;
 };
 
-export type LocalAccessConfig = NonNullable<unknown>;
+export type AccessConfigForLocal = NonNullable<unknown>;
 
-export type NameDotComAccessConfig = {
+export type AccessConfigForNameDotCom = {
   username: string;
   apiToken: string;
 };
 
-export type NameSiloAccessConfig = {
+export type AccessConfigForNameSilo = {
   apiKey: string;
 };
 
-export type PowerDNSAccessConfig = {
+export type AccessConfigForPowerDNS = {
   apiUrl: string;
   apiKey: string;
 };
 
-export type QiniuAccessConfig = {
+export type AccessConfigForQiniu = {
   accessKey: string;
   secretKey: string;
 };
 
-export type SSHAccessConfig = {
+export type AccessConfigForSSH = {
   host: string;
   port: number;
   username: string;
@@ -117,17 +115,17 @@ export type SSHAccessConfig = {
   keyPassphrase?: string;
 };
 
-export type TencentCloudAccessConfig = {
+export type AccessConfigForTencentCloud = {
   secretId: string;
   secretKey: string;
 };
 
-export type VolcEngineAccessConfig = {
+export type AccessConfigForVolcEngine = {
   accessKeyId: string;
   secretAccessKey: string;
 };
 
-export type WebhookAccessConfig = {
+export type AccessConfigForWebhook = {
   url: string;
 };
 // #endregion

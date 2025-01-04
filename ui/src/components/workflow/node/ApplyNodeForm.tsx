@@ -12,7 +12,7 @@ import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
-import { type WorkflowNode, type WorkflowNodeConfigAsApply } from "@/domain/workflow";
+import { type WorkflowNode, type WorkflowNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
@@ -26,7 +26,7 @@ export type ApplyNodeFormProps = {
 
 const MULTIPLE_INPUT_DELIMITER = ";";
 
-const initFormModel = (): Partial<WorkflowNodeConfigAsApply> => {
+const initFormModel = (): Partial<WorkflowNodeConfigForApply> => {
   return {
     keyAlgorithm: "RSA2048",
     propagationTimeout: 60,
@@ -76,7 +76,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     formPending,
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: (node?.config as WorkflowNodeConfigAsApply) ?? initFormModel(),
+    initialValues: (node?.config as WorkflowNodeConfigForApply) ?? initFormModel(),
     onSubmit: async (values) => {
       await formInst.validateFields();
       await addEmail(values.contactEmail);
@@ -85,7 +85,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
           draft.config = {
             provider: accesses.find((e) => e.id === values.providerAccessId)?.provider,
             ...values,
-          } as WorkflowNodeConfigAsApply;
+          } as WorkflowNodeConfigForApply;
           draft.validated = true;
         })
       );

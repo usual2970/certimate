@@ -11,7 +11,7 @@ import (
 )
 
 type WorkflowRepository interface {
-	Get(ctx context.Context, id string) (*domain.Workflow, error)
+	GetById(ctx context.Context, id string) (*domain.Workflow, error)
 	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
 	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
 }
@@ -27,7 +27,6 @@ func NewWorkflowService(repo WorkflowRepository) *WorkflowService {
 }
 
 func (s *WorkflowService) InitSchedule(ctx context.Context) error {
-	// 查询所有的 enabled auto workflow
 	workflows, err := s.repo.ListEnabledAuto(ctx)
 	if err != nil {
 		return err
@@ -35,7 +34,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
-		err := scheduler.Add(workflow.Id, workflow.TriggerCron, func() {
+		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
 			s.Run(ctx, &domain.WorkflowRunReq{
 				WorkflowId: workflow.Id,
 				Trigger:    domain.WorkflowTriggerTypeAuto,
@@ -55,19 +54,10 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 
 func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunReq) error {
 	// 查询
-	if options.WorkflowId == "" {
-		return domain.ErrInvalidParams
-	}
-
-	workflow, err := s.repo.Get(ctx, options.WorkflowId)
+	workflow, err := s.repo.GetById(ctx, options.WorkflowId)
 	if err != nil {
 		app.GetLogger().Error("failed to get workflow", "id", options.WorkflowId, "err", err)
 		return err
-	}
-
-	if !workflow.Enabled {
-		app.GetLogger().Error("workflow is disabled", "id", options.WorkflowId)
-		return fmt.Errorf("workflow is disabled")
 	}
 
 	// 执行
@@ -78,7 +68,6 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 		StartedAt:  time.Now(),
 		EndedAt:    time.Now(),
 	}
-
 	processor := nodeprocessor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed
@@ -93,7 +82,7 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 		return fmt.Errorf("failed to run workflow: %w", err)
 	}
 
-	// 保存执行日志
+	// 保存日志
 	logs := processor.Log(ctx)
 	runStatus := domain.WorkflowRunStatusTypeSucceeded
 	runError := domain.WorkflowRunLogs(logs).FirstError()

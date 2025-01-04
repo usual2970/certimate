@@ -39,7 +39,7 @@ func main() {
 		Automigrate: isGoRun,
 	})
 
-	workflow.AddEvent()
+	workflow.RegisterEvents()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		routes.Register(e.Router)

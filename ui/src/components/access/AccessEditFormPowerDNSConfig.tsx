@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type PowerDNSAccessConfig } from "@/domain/access";
+import { type AccessConfigForPowerDNS } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormPowerDNSConfigFieldValues = Partial<PowerDNSAccessConfig>;
+type AccessEditFormPowerDNSConfigFieldValues = Partial<AccessConfigForPowerDNS>;
 
 export type AccessEditFormPowerDNSConfigProps = {
   form: FormInstance;

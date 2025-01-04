@@ -50,10 +50,10 @@ type Certificate struct {
 	PrivateKey        string `json:"privateKey"`
 	Certificate       string `json:"certificate"`
 	IssuerCertificate string `json:"issuerCertificate"`
-	Csr               string `json:"csr"`
+	CSR               string `json:"csr"`
 }
 
-type ApplyOption struct {
+type applyConfig struct {
 	Domains            string `json:"domains"`
 	ContactEmail       string `json:"contactEmail"`
 	AccessConfig       string `json:"accessConfig"`
@@ -63,63 +63,77 @@ type ApplyOption struct {
 	DisableFollowCNAME bool   `json:"disableFollowCNAME"`
 }
 
-type ApplyUser struct {
-	Ca           string
+type applyUser struct {
+	CA           string
 	Email        string
 	Registration *registration.Resource
-	key          string
+
+	privkey string
 }
 
-func newApplyUser(ca, email string) (*ApplyUser, error) {
+func newApplyUser(ca, email string) (*applyUser, error) {
 	repo := getAcmeAccountRepository()
-	rs := &ApplyUser{
-		Ca:    ca,
+
+	applyUser := &applyUser{
+		CA:    ca,
 		Email: email,
 	}
-	resp, err := repo.GetByCAAndEmail(ca, email)
-	if err != nil {
-		privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-		if err != nil {
-			return nil, err
-		}
-		keyStr, err := x509.ConvertECPrivateKeyToPEM(privateKey)
-		if err != nil {
-			return nil, err
-		}
-		rs.key = keyStr
 
-		return rs, nil
+	acmeAccount, err := repo.GetByCAAndEmail(ca, email)
+	if err != nil {
+		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+		if err != nil {
+			return nil, err
+		}
+
+		keyStr, err := x509.ConvertECPrivateKeyToPEM(key)
+		if err != nil {
+			return nil, err
+		}
+
+		applyUser.privkey = keyStr
+		return applyUser, nil
 	}
 
-	rs.Registration = resp.Resource
-	rs.key = resp.Key
+	applyUser.Registration = acmeAccount.Resource
+	applyUser.privkey = acmeAccount.Key
 
-	return rs, nil
+	return applyUser, nil
 }
 
-func (u *ApplyUser) GetEmail() string {
+func (u *applyUser) GetEmail() string {
 	return u.Email
 }
 
-func (u ApplyUser) GetRegistration() *registration.Resource {
+func (u applyUser) GetRegistration() *registration.Resource {
 	return u.Registration
 }
 
-func (u *ApplyUser) GetPrivateKey() crypto.PrivateKey {
-	rs, _ := x509.ParseECPrivateKeyFromPEM(u.key)
+func (u *applyUser) GetPrivateKey() crypto.PrivateKey {
+	rs, _ := x509.ParseECPrivateKeyFromPEM(u.privkey)
 	return rs
 }
 
-func (u *ApplyUser) hasRegistration() bool {
+func (u *applyUser) hasRegistration() bool {
 	return u.Registration != nil
 }
 
-func (u *ApplyUser) getPrivateKeyString() string {
-	return u.key
+func (u *applyUser) getPrivateKeyString() string {
+	return u.privkey
 }
 
 type Applicant interface {
 	Apply() (*Certificate, error)
+}
+
+// TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
+type proxyApplicant struct {
+	applyConfig *applyConfig
+	applicant   challenge.Provider
+}
+
+func (d *proxyApplicant) Apply() (*Certificate, error) {
+	return apply(d.applyConfig, d.applicant)
 }
 
 func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -131,7 +145,7 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		return nil, fmt.Errorf("access record not found: %w", err)
 	}
 
-	applyConfig := &ApplyOption{
+	applyConfig := &applyConfig{
 		Domains:            node.GetConfigString("domains"),
 		ContactEmail:       node.GetConfigString("contactEmail"),
 		AccessConfig:       access.Config,
@@ -141,40 +155,15 @@ func GetWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 
-	return GetWithTypeOption(domain.AccessProviderType(access.Provider), applyConfig)
-}
-
-func GetWithTypeOption(provider domain.AccessProviderType, option *ApplyOption) (Applicant, error) {
-	/*
-	  注意：如果追加新的常量值，请保持以 ASCII 排序。
-	  NOTICE: If you add new constant, please keep ASCII order.
-	*/
-	switch provider {
-	case domain.ACCESS_PROVIDER_ACMEHTTPREQ:
-		return NewACMEHttpReqApplicant(option), nil
-	case domain.ACCESS_PROVIDER_ALIYUN:
-		return NewAliyunApplicant(option), nil
-	case domain.ACCESS_PROVIDER_AWS:
-		return NewAWSApplicant(option), nil
-	case domain.ACCESS_PROVIDER_CLOUDFLARE:
-		return NewCloudflareApplicant(option), nil
-	case domain.ACCESS_PROVIDER_GODADDY:
-		return NewGoDaddyApplicant(option), nil
-	case domain.ACCESS_PROVIDER_HUAWEICLOUD:
-		return NewHuaweiCloudApplicant(option), nil
-	case domain.ACCESS_PROVIDER_NAMEDOTCOM:
-		return NewNameDotComApplicant(option), nil
-	case domain.ACCESS_PROVIDER_NAMESILO:
-		return NewNamesiloApplicant(option), nil
-	case domain.ACCESS_PROVIDER_POWERDNS:
-		return NewPowerDNSApplicant(option), nil
-	case domain.ACCESS_PROVIDER_TENCENTCLOUD:
-		return NewTencentCloudApplicant(option), nil
-	case domain.ACCESS_PROVIDER_VOLCENGINE:
-		return NewVolcEngineApplicant(option), nil
-	default:
-		return nil, fmt.Errorf("unsupported applicant provider type: %s", provider)
+	challengeProvider, err := createChallengeProvider(domain.AccessProviderType(access.Provider), access.Config, applyConfig)
+	if err != nil {
+		return nil, err
 	}
+
+	return &proxyApplicant{
+		applyConfig: applyConfig,
+		applicant:   challengeProvider,
+	}, nil
 }
 
 type SSLProviderConfig struct {
@@ -192,7 +181,7 @@ type SSLProviderEab struct {
 	EabKid     string `json:"eabKid"`
 }
 
-func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, error) {
+func apply(option *applyConfig, provider challenge.Provider) (*Certificate, error) {
 	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='sslProvider'")
 
 	sslProvider := &SSLProviderConfig{
@@ -259,7 +248,7 @@ func apply(option *ApplyOption, provider challenge.Provider) (*Certificate, erro
 		PrivateKey:        string(certificates.PrivateKey),
 		Certificate:       string(certificates.Certificate),
 		IssuerCertificate: string(certificates.IssuerCertificate),
-		Csr:               string(certificates.CSR),
+		CSR:               string(certificates.CSR),
 	}, nil
 }
 
@@ -272,7 +261,9 @@ func getAcmeAccountRepository() AcmeAccountRepository {
 	return repository.NewAcmeAccountRepository()
 }
 
-func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *ApplyUser) (*registration.Resource, error) {
+func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *applyUser) (*registration.Resource, error) {
+	// TODO: fix 潜在的并发问题
+
 	var reg *registration.Resource
 	var err error
 	switch sslProvider.Provider {
@@ -304,7 +295,7 @@ func getReg(client *lego.Client, sslProvider *SSLProviderConfig, user *ApplyUser
 
 	resp, err := repo.GetByCAAndEmail(sslProvider.Provider, user.GetEmail())
 	if err == nil {
-		user.key = resp.Key
+		user.privkey = resp.Key
 		return resp.Resource, nil
 	}
 

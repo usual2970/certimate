@@ -29,10 +29,10 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 
 type WorkflowOutputRepository interface {
 	// 查询节点输出
-	Get(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
+	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
 
 	// 查询申请节点的证书
-	GetCertificate(ctx context.Context, nodeId string) (*domain.Certificate, error)
+	GetCertificateByNodeId(ctx context.Context, nodeId string) (*domain.Certificate, error)
 
 	// 保存节点输出
 	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
@@ -42,14 +42,14 @@ type WorkflowOutputRepository interface {
 func (a *applyNode) Run(ctx context.Context) error {
 	a.AddOutput(ctx, a.node.Name, "开始执行")
 	// 查询是否申请过，已申请过则直接返回（先保持和 v0.2 一致）
-	output, err := a.outputRepo.Get(ctx, a.node.Id)
+	output, err := a.outputRepo.GetByNodeId(ctx, a.node.Id)
 	if err != nil && !domain.IsRecordNotFound(err) {
 		a.AddOutput(ctx, a.node.Name, "查询申请记录失败", err.Error())
 		return err
 	}
 
 	if output != nil && output.Succeeded {
-		cert, err := a.outputRepo.GetCertificate(ctx, a.node.Id)
+		cert, err := a.outputRepo.GetCertificateByNodeId(ctx, a.node.Id)
 		if err != nil {
 			a.AddOutput(ctx, a.node.Name, "获取证书失败", err.Error())
 			return err
@@ -62,14 +62,14 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 
 	// 获取Applicant
-	apply, err := applicant.GetWithApplyNode(a.node)
+	applicant, err := applicant.GetWithApplyNode(a.node)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "获取申请对象失败", err.Error())
 		return err
 	}
 
 	// 申请
-	certificate, err := apply.Apply()
+	certificate, err := applicant.Apply()
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "申请失败", err.Error())
 		return err
@@ -103,8 +103,8 @@ func (a *applyNode) Run(ctx context.Context) error {
 		Certificate:       certificate.Certificate,
 		PrivateKey:        certificate.PrivateKey,
 		IssuerCertificate: certificate.IssuerCertificate,
-		AcmeCertUrl:       certificate.CertUrl,
-		AcmeCertStableUrl: certificate.CertStableUrl,
+		ACMECertUrl:       certificate.CertUrl,
+		ACMECertStableUrl: certificate.CertStableUrl,
 		EffectAt:          certX509.NotBefore,
 		ExpireAt:          certX509.NotAfter,
 		WorkflowId:        GetWorkflowId(ctx),

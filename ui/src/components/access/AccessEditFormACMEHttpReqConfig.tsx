@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type ACMEHttpReqAccessConfig } from "@/domain/access";
+import { type AccessConfigForACMEHttpReq } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormACMEHttpReqConfigFieldValues = Partial<ACMEHttpReqAccessConfig>;
+type AccessEditFormACMEHttpReqConfigFieldValues = Partial<AccessConfigForACMEHttpReq>;
 
 export type AccessEditFormACMEHttpReqConfigProps = {
   form: FormInstance;

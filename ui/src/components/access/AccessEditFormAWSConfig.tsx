@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type AWSAccessConfig } from "@/domain/access";
+import { type AccessConfigForAWS } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormAWSConfigFieldValues = Partial<AWSAccessConfig>;
+type AccessEditFormAWSConfigFieldValues = Partial<AccessConfigForAWS>;
 
 export type AccessEditFormAWSConfigProps = {
   form: FormInstance;

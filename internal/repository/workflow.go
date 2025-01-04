@@ -82,7 +82,7 @@ func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRu
 	return nil
 }
 
-func (w *WorkflowRepository) Get(ctx context.Context, id string) (*domain.Workflow, error) {
+func (w *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Workflow, error) {
 	record, err := app.GetApp().Dao().FindRecordById("workflow", id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

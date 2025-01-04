@@ -11,111 +11,81 @@ type Access struct {
 	DeletedAt time.Time `json:"deleted" db:"deleted"`
 }
 
-type AccessProviderType string
-
-/*
-提供商类型常量值。
-
-	注意：如果追加新的常量值，请保持以 ASCII 排序。
-	NOTICE: If you add new constant, please keep ASCII order.
-*/
-const (
-	ACCESS_PROVIDER_ACMEHTTPREQ  = AccessProviderType("acmehttpreq")
-	ACCESS_PROVIDER_ALIYUN       = AccessProviderType("aliyun")
-	ACCESS_PROVIDER_AWS          = AccessProviderType("aws")
-	ACCESS_PROVIDER_BAIDUCLOUD   = AccessProviderType("baiducloud")
-	ACCESS_PROVIDER_BYTEPLUS     = AccessProviderType("byteplus")
-	ACCESS_PROVIDER_CLOUDFLARE   = AccessProviderType("cloudflare")
-	ACCESS_PROVIDER_DOGECLOUD    = AccessProviderType("dogecloud")
-	ACCESS_PROVIDER_GODADDY      = AccessProviderType("godaddy")
-	ACCESS_PROVIDER_HUAWEICLOUD  = AccessProviderType("huaweicloud")
-	ACCESS_PROVIDER_KUBERNETES   = AccessProviderType("k8s")
-	ACCESS_PROVIDER_LOCAL        = AccessProviderType("local")
-	ACCESS_PROVIDER_NAMEDOTCOM   = AccessProviderType("namedotcom")
-	ACCESS_PROVIDER_NAMESILO     = AccessProviderType("namesilo")
-	ACCESS_PROVIDER_POWERDNS     = AccessProviderType("powerdns")
-	ACCESS_PROVIDER_QINIU        = AccessProviderType("qiniu")
-	ACCESS_PROVIDER_SSH          = AccessProviderType("ssh")
-	ACCESS_PROVIDER_TENCENTCLOUD = AccessProviderType("tencentcloud")
-	ACCESS_PROVIDER_VOLCENGINE   = AccessProviderType("volcengine")
-	ACCESS_PROVIDER_WEBHOOK      = AccessProviderType("webhook")
-)
-
-type ACMEHttpReqAccessConfig struct {
+type AccessConfigForACMEHttpReq struct {
 	Endpoint string `json:"endpoint"`
 	Mode     string `json:"mode"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type AliyunAccessConfig struct {
+type AccessConfigForAliyun struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
-type AWSAccessConfig struct {
+type AccessConfigForAWS struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
 	Region          string `json:"region"`
 	HostedZoneId    string `json:"hostedZoneId"`
 }
 
-type BaiduCloudAccessConfig struct {
+type AccessConfigForBaiduCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
-type BytePlusAccessConfig struct {
+type AccessConfigForBytePlus struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
 }
 
-type CloudflareAccessConfig struct {
+type AccessConfigForCloudflare struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }
 
-type DogeCloudAccessConfig struct {
+type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
 }
 
-type GoDaddyAccessConfig struct {
+type AccessConfigForGoDaddy struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
 }
 
-type HuaweiCloudAccessConfig struct {
+type AccessConfigForHuaweiCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
 	Region          string `json:"region"`
 }
 
-type LocalAccessConfig struct{}
+type AccessConfigForLocal struct{}
 
-type KubernetesAccessConfig struct {
+type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig"`
 }
 
-type NameDotComAccessConfig struct {
+type AccessConfigForNameDotCom struct {
 	Username string `json:"username"`
 	ApiToken string `json:"apiToken"`
 }
 
-type NameSiloAccessConfig struct {
+type AccessConfigForNameSilo struct {
 	ApiKey string `json:"apiKey"`
 }
 
-type PowerDNSAccessConfig struct {
+type AccessConfigForPowerDNS struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`
 }
 
-type QiniuAccessConfig struct {
+type AccessConfigForQiniu struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
 }
 
-type SSHAccessConfig struct {
+type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          string `json:"port"`
 	Username      string `json:"username"`
@@ -124,16 +94,16 @@ type SSHAccessConfig struct {
 	KeyPassphrase string `json:"keyPassphrase"`
 }
 
-type TencentCloudAccessConfig struct {
+type AccessConfigForTencentCloud struct {
 	SecretId  string `json:"secretId"`
 	SecretKey string `json:"secretKey"`
 }
 
-type VolcEngineAccessConfig struct {
+type AccessConfigForVolcEngine struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
-type WebhookAccessConfig struct {
+type AccessConfigForWebhook struct {
 	Url string `json:"url"`
 }

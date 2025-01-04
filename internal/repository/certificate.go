@@ -14,11 +14,13 @@ func NewCertificateRepository() *CertificateRepository {
 }
 
 func (c *CertificateRepository) ListExpireSoon(ctx context.Context) ([]domain.Certificate, error) {
-	rs := []domain.Certificate{}
-	if err := app.GetApp().Dao().DB().
+	certificates := []domain.Certificate{}
+	err := app.GetApp().Dao().DB().
 		NewQuery("SELECT * FROM certificate WHERE expireAt > DATETIME('now') AND expireAt < DATETIME('now', '+20 days')").
-		All(&rs); err != nil {
+		All(&certificates)
+	if err != nil {
 		return nil, err
 	}
-	return rs, nil
+
+	return certificates, nil
 }

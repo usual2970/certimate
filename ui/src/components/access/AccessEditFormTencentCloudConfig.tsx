@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type TencentCloudAccessConfig } from "@/domain/access";
+import { type AccessConfigForTencentCloud } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormTencentCloudConfigFieldValues = Partial<TencentCloudAccessConfig>;
+type AccessEditFormTencentCloudConfigFieldValues = Partial<AccessConfigForTencentCloud>;
 
 export type AccessEditFormTencentCloudConfigProps = {
   form: FormInstance;

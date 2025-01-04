@@ -96,16 +96,14 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                 key: "PFX",
                 label: "PFX",
                 onClick: () => {
-                  // TODO: 下载 PFX 格式证书
-                  alert("TODO");
+                  alert("TODO: 暂时不支持下载 PFX 证书");
                 },
               },
               {
                 key: "JKS",
                 label: "JKS",
                 onClick: () => {
-                  // TODO: 下载 JKS 格式证书
-                  alert("TODO");
+                  alert("TODO: 暂时不支持下载 JKS 证书");
                 },
               },
             ],

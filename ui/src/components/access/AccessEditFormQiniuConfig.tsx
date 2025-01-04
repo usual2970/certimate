@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type QiniuAccessConfig } from "@/domain/access";
+import { type AccessConfigForQiniu } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormQiniuConfigFieldValues = Partial<QiniuAccessConfig>;
+type AccessEditFormQiniuConfigFieldValues = Partial<AccessConfigForQiniu>;
 
 export type AccessEditFormQiniuConfigProps = {
   form: FormInstance;

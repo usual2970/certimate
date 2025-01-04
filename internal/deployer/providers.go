@@ -34,23 +34,23 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-func createDeployer(target string, accessConfig string, deployConfig map[string]any) (deployer.Deployer, logger.Logger, error) {
+func createDeployer(provider domain.DeployProviderType, accessConfig string, deployConfig map[string]any) (deployer.Deployer, logger.Logger, error) {
 	logger := logger.NewDefaultLogger()
 
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
-	switch target {
-	case targetAliyunALB, targetAliyunCDN, targetAliyunCLB, targetAliyunDCDN, targetAliyunNLB, targetAliyunOSS:
+	switch provider {
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS:
 		{
-			access := &domain.AliyunAccessConfig{}
+			access := &domain.AccessConfigForAliyun{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			switch target {
-			case targetAliyunALB:
+			switch provider {
+			case domain.DeployProviderTypeAliyunALB:
 				deployer, err := providerAliyunALB.NewWithLogger(&providerAliyunALB.AliyunALBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -61,7 +61,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetAliyunCDN:
+			case domain.DeployProviderTypeAliyunCDN:
 				deployer, err := providerAliyunCDN.NewWithLogger(&providerAliyunCDN.AliyunCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -69,7 +69,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetAliyunCLB:
+			case domain.DeployProviderTypeAliyunCLB:
 				deployer, err := providerAliyunCLB.NewWithLogger(&providerAliyunCLB.AliyunCLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -80,7 +80,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetAliyunDCDN:
+			case domain.DeployProviderTypeAliyunDCDN:
 				deployer, err := providerAliyunDCDN.NewWithLogger(&providerAliyunDCDN.AliyunDCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -88,7 +88,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetAliyunNLB:
+			case domain.DeployProviderTypeAliyunNLB:
 				deployer, err := providerAliyunNLB.NewWithLogger(&providerAliyunNLB.AliyunNLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -99,7 +99,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetAliyunOSS:
+			case domain.DeployProviderTypeAliyunOSS:
 				deployer, err := providerAliyunOSS.NewWithLogger(&providerAliyunOSS.AliyunOSSDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -114,9 +114,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			}
 		}
 
-	case targetBaiduCloudCDN:
+	case domain.DeployProviderTypeBaiduCloudCDN:
 		{
-			access := &domain.BaiduCloudAccessConfig{}
+			access := &domain.AccessConfigForBaiduCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -129,9 +129,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetBytePlusCDN:
+	case domain.DeployProviderTypeBytePlusCDN:
 		{
-			access := &domain.BytePlusAccessConfig{}
+			access := &domain.AccessConfigForBytePlus{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -144,9 +144,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetDogeCloudCDN:
+	case domain.DeployProviderTypeDogeCloudCDN:
 		{
-			access := &domain.DogeCloudAccessConfig{}
+			access := &domain.AccessConfigForDogeCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -159,15 +159,15 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetHuaweiCloudCDN, targetHuaweiCloudELB:
+	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB:
 		{
-			access := &domain.HuaweiCloudAccessConfig{}
+			access := &domain.AccessConfigForHuaweiCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			switch target {
-			case targetHuaweiCloudCDN:
+			switch provider {
+			case domain.DeployProviderTypeHuaweiCloudCDN:
 				deployer, err := providerHuaweiCloudCDN.NewWithLogger(&providerHuaweiCloudCDN.HuaweiCloudCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -176,7 +176,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetHuaweiCloudELB:
+			case domain.DeployProviderTypeHuaweiCloudELB:
 				deployer, err := providerHuaweiCloudELB.NewWithLogger(&providerHuaweiCloudELB.HuaweiCloudELBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -193,7 +193,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			}
 		}
 
-	case targetLocal:
+	case domain.DeployProviderTypeLocal:
 		{
 			deployer, err := providerLocal.NewWithLogger(&providerLocal.LocalDeployerConfig{
 				ShellEnv:       providerLocal.ShellEnvType(maps.GetValueAsString(deployConfig, "shellEnv")),
@@ -210,9 +210,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetK8sSecret:
+	case domain.DeployProviderTypeK8sSecret:
 		{
-			access := &domain.KubernetesAccessConfig{}
+			access := &domain.AccessConfigForKubernetes{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -228,9 +228,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetQiniuCDN:
+	case domain.DeployProviderTypeQiniuCDN:
 		{
-			access := &domain.QiniuAccessConfig{}
+			access := &domain.AccessConfigForQiniu{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -243,9 +243,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetSSH:
+	case domain.DeployProviderTypeSSH:
 		{
-			access := &domain.SSHAccessConfig{}
+			access := &domain.AccessConfigForSSH{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -271,15 +271,15 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			return deployer, logger, err
 		}
 
-	case targetTencentCloudCDN, targetTencentCloudCLB, targetTencentCloudCOS, targetTencentCloudECDN, targetTencentCloudEO:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
 		{
-			access := &domain.TencentCloudAccessConfig{}
+			access := &domain.AccessConfigForTencentCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			switch target {
-			case targetTencentCloudCDN:
+			switch provider {
+			case domain.DeployProviderTypeTencentCloudCDN:
 				deployer, err := providerTencentCloudCDN.NewWithLogger(&providerTencentCloudCDN.TencentCloudCDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -287,7 +287,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCloudCLB:
+			case domain.DeployProviderTypeTencentCloudCLB:
 				deployer, err := providerTencentCloudCLB.NewWithLogger(&providerTencentCloudCLB.TencentCloudCLBDeployerConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
@@ -299,7 +299,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCloudCOS:
+			case domain.DeployProviderTypeTencentCloudCOS:
 				deployer, err := providerTencentCloudCOD.NewWithLogger(&providerTencentCloudCOD.TencentCloudCOSDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -309,7 +309,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCloudECDN:
+			case domain.DeployProviderTypeTencentCloudECDN:
 				deployer, err := providerTencentCloudECDN.NewWithLogger(&providerTencentCloudECDN.TencentCloudECDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -317,7 +317,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetTencentCloudEO:
+			case domain.DeployProviderTypeTencentCloudEO:
 				deployer, err := providerTencentCloudEO.NewWithLogger(&providerTencentCloudEO.TencentCloudEODeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -331,15 +331,15 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			}
 		}
 
-	case targetVolcEngineCDN, targetVolcEngineLive:
+	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineLive:
 		{
-			access := &domain.VolcEngineAccessConfig{}
+			access := &domain.AccessConfigForVolcEngine{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
 
-			switch target {
-			case targetVolcEngineCDN:
+			switch provider {
+			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
 					AccessKey: access.AccessKeyId,
 					SecretKey: access.SecretAccessKey,
@@ -347,7 +347,7 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 				}, logger)
 				return deployer, logger, err
 
-			case targetVolcEngineLive:
+			case domain.DeployProviderTypeVolcEngineLive:
 				deployer, err := providerVolcEngineLive.NewWithLogger(&providerVolcEngineLive.VolcEngineLiveDeployerConfig{
 					AccessKey: access.AccessKeyId,
 					SecretKey: access.SecretAccessKey,
@@ -360,9 +360,9 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 			}
 		}
 
-	case targetWebhook:
+	case domain.DeployProviderTypeWebhook:
 		{
-			access := &domain.WebhookAccessConfig{}
+			access := &domain.AccessConfigForWebhook{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
 				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 			}
@@ -375,5 +375,5 @@ func createDeployer(target string, accessConfig string, deployConfig map[string]
 		}
 	}
 
-	return nil, nil, fmt.Errorf("unsupported deployer target: %s", target)
+	return nil, nil, fmt.Errorf("unsupported deployer provider: %s", provider)
 }

@@ -18,8 +18,8 @@ type Certificate struct {
 	IssuerCertificate string                `json:"issuerCertificate" db:"issuerCertificate"`
 	EffectAt          time.Time             `json:"effectAt" db:"effectAt"`
 	ExpireAt          time.Time             `json:"expireAt" db:"expireAt"`
-	AcmeCertUrl       string                `json:"acmeCertUrl" db:"acmeCertUrl"`
-	AcmeCertStableUrl string                `json:"acmeCertStableUrl" db:"acmeCertStableUrl"`
+	ACMECertUrl       string                `json:"acmeCertUrl" db:"acmeCertUrl"`
+	ACMECertStableUrl string                `json:"acmeCertStableUrl" db:"acmeCertStableUrl"`
 	WorkflowId        string                `json:"workflowId" db:"workflowId"`
 	WorkflowNodeId    string                `json:"workflowNodeId" db:"workflowNodeId"`
 	WorkflowOutputId  string                `json:"workflowOutputId" db:"workflowOutputId"`

@@ -28,7 +28,7 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 func (d *deployNode) Run(ctx context.Context) error {
 	d.AddOutput(ctx, d.node.Name, "开始执行")
 	// 检查是否部署过（部署过则直接返回，和 v0.2 暂时保持一致）
-	output, err := d.outputRepo.Get(ctx, d.node.Id)
+	output, err := d.outputRepo.GetByNodeId(ctx, d.node.Id)
 	if err != nil && !domain.IsRecordNotFound(err) {
 		d.AddOutput(ctx, d.node.Name, "查询部署记录失败", err.Error())
 		return err
@@ -43,7 +43,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 		return fmt.Errorf("证书来源配置错误: %s", certSource)
 	}
 
-	cert, err := d.outputRepo.GetCertificate(ctx, certSourceSlice[0])
+	cert, err := d.outputRepo.GetCertificateByNodeId(ctx, certSourceSlice[0])
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取证书失败", err.Error())
 		return err
@@ -71,8 +71,8 @@ func (d *deployNode) Run(ctx context.Context) error {
 		AccessConfig: access.Config,
 		AccessRecord: access,
 		Certificate: applicant.Certificate{
-			CertUrl:           cert.AcmeCertUrl,
-			CertStableUrl:     cert.AcmeCertStableUrl,
+			CertUrl:           cert.ACMECertUrl,
+			CertStableUrl:     cert.ACMECertStableUrl,
 			PrivateKey:        cert.PrivateKey,
 			Certificate:       cert.Certificate,
 			IssuerCertificate: cert.IssuerCertificate,
@@ -85,7 +85,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 		},
 	}
 
-	deploy, err := deployer.GetWithTypeAndOption(d.node.GetConfigString("provider"), option)
+	deploy, err := deployer.GetWithProviderAndOption(d.node.GetConfigString("provider"), option)
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取部署对象失败", err.Error())
 		return err

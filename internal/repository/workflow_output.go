@@ -17,7 +17,7 @@ func NewWorkflowOutputRepository() *WorkflowOutputRepository {
 	return &WorkflowOutputRepository{}
 }
 
-func (w *WorkflowOutputRepository) Get(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
+func (w *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
 	records, err := app.GetApp().Dao().FindRecordsByFilter("workflow_output", "nodeId={:nodeId}", "-created", 1, 0, dbx.Params{"nodeId": nodeId})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -56,7 +56,7 @@ func (w *WorkflowOutputRepository) Get(ctx context.Context, nodeId string) (*dom
 	return rs, nil
 }
 
-func (w *WorkflowOutputRepository) GetCertificate(ctx context.Context, nodeId string) (*domain.Certificate, error) {
+func (w *WorkflowOutputRepository) GetCertificateByNodeId(ctx context.Context, nodeId string) (*domain.Certificate, error) {
 	records, err := app.GetApp().Dao().FindRecordsByFilter("certificate", "workflowNodeId={:workflowNodeId}", "-created", 1, 0, dbx.Params{"workflowNodeId": nodeId})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -83,8 +83,8 @@ func (w *WorkflowOutputRepository) GetCertificate(ctx context.Context, nodeId st
 		IssuerCertificate: record.GetString("issuerCertificate"),
 		EffectAt:          record.GetTime("effectAt"),
 		ExpireAt:          record.GetTime("expireAt"),
-		AcmeCertUrl:       record.GetString("acmeCertUrl"),
-		AcmeCertStableUrl: record.GetString("acmeCertStableUrl"),
+		ACMECertUrl:       record.GetString("acmeCertUrl"),
+		ACMECertStableUrl: record.GetString("acmeCertStableUrl"),
 		WorkflowId:        record.GetString("workflowId"),
 		WorkflowNodeId:    record.GetString("workflowNodeId"),
 		WorkflowOutputId:  record.GetString("workflowOutputId"),
@@ -137,8 +137,8 @@ func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 		certRecord.Set("issuerCertificate", certificate.IssuerCertificate)
 		certRecord.Set("effectAt", certificate.EffectAt)
 		certRecord.Set("expireAt", certificate.ExpireAt)
-		certRecord.Set("acmeCertUrl", certificate.AcmeCertUrl)
-		certRecord.Set("acmeCertStableUrl", certificate.AcmeCertStableUrl)
+		certRecord.Set("acmeCertUrl", certificate.ACMECertUrl)
+		certRecord.Set("acmeCertStableUrl", certificate.ACMECertStableUrl)
 		certRecord.Set("workflowId", certificate.WorkflowId)
 		certRecord.Set("workflowNodeId", certificate.WorkflowNodeId)
 		certRecord.Set("workflowOutputId", certificate.WorkflowOutputId)
@@ -149,7 +149,7 @@ func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 
 		// 更新 certificate
 		for i, item := range output.Outputs {
-			if item.Name == "certificate" {
+			if item.Name == domain.WORKFLOW_OUTPUT_CERTIFICATE {
 				output.Outputs[i].Value = certRecord.GetId()
 				break
 			}

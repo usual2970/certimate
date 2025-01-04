@@ -9,10 +9,10 @@ import { notifyChannelsMap } from "@/domain/settings";
 import {
   WORKFLOW_TRIGGERS,
   type WorkflowNode,
-  type WorkflowNodeConfigAsApply,
-  type WorkflowNodeConfigAsDeploy,
-  type WorkflowNodeConfigAsNotify,
-  type WorkflowNodeConfigAsStart,
+  type WorkflowNodeConfigForApply,
+  type WorkflowNodeConfigForDeploy,
+  type WorkflowNodeConfigForNotify,
+  type WorkflowNodeConfigForStart,
   WorkflowNodeType,
 } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
@@ -40,7 +40,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
 
     switch (node.type) {
       case WorkflowNodeType.Start: {
-        const config = (node.config as WorkflowNodeConfigAsStart) ?? {};
+        const config = (node.config as WorkflowNodeConfigForStart) ?? {};
         return (
           <div className="flex items-center justify-between space-x-2">
             <Typography.Text className="truncate">
@@ -58,12 +58,12 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
       }
 
       case WorkflowNodeType.Apply: {
-        const config = (node.config as WorkflowNodeConfigAsApply) ?? {};
+        const config = (node.config as WorkflowNodeConfigForApply) ?? {};
         return <Typography.Text className="truncate">{config.domains || "　"}</Typography.Text>;
       }
 
       case WorkflowNodeType.Deploy: {
-        const config = (node.config as WorkflowNodeConfigAsDeploy) ?? {};
+        const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
         const provider = deployProvidersMap.get(config.provider);
         return (
           <Space>
@@ -74,7 +74,7 @@ const WorkflowElement = ({ node, disabled }: NodeProps) => {
       }
 
       case WorkflowNodeType.Notify: {
-        const config = (node.config as WorkflowNodeConfigAsNotify) ?? {};
+        const config = (node.config as WorkflowNodeConfigForNotify) ?? {};
         const channel = notifyChannelsMap.get(config.channel as string);
         return (
           <div className="flex items-center justify-between space-x-2">

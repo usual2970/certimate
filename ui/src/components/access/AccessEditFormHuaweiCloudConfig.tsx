@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type HuaweiCloudAccessConfig } from "@/domain/access";
+import { type AccessConfigForHuaweiCloud } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormHuaweiCloudConfigFieldValues = Partial<HuaweiCloudAccessConfig>;
+type AccessEditFormHuaweiCloudConfigFieldValues = Partial<AccessConfigForHuaweiCloud>;
 
 export type AccessEditFormHuaweiCloudConfigProps = {
   form: FormInstance;

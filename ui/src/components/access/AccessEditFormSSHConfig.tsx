@@ -7,12 +7,12 @@ import { Button, Form, type FormInstance, Input, InputNumber, Upload, type Uploa
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type SSHAccessConfig } from "@/domain/access";
+import { type AccessConfigForSSH } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 import { readFileContent } from "@/utils/file";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
 
-type AccessEditFormSSHConfigFieldValues = Partial<SSHAccessConfig>;
+type AccessEditFormSSHConfigFieldValues = Partial<AccessConfigForSSH>;
 
 export type AccessEditFormSSHConfigProps = {
   form: FormInstance;

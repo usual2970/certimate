@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type NameDotComAccessConfig } from "@/domain/access";
+import { type AccessConfigForNameDotCom } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormNameDotComConfigFieldValues = Partial<NameDotComAccessConfig>;
+type AccessEditFormNameDotComConfigFieldValues = Partial<AccessConfigForNameDotCom>;
 
 export type AccessEditFormNameDotComConfigProps = {
   form: FormInstance;

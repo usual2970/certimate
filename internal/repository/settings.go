@@ -20,7 +20,7 @@ func (s *SettingsRepository) GetByName(ctx context.Context, name string) (*domai
 		return nil, err
 	}
 
-	rs := &domain.Settings{
+	settings := &domain.Settings{
 		Meta: domain.Meta{
 			Id:        record.GetId(),
 			CreatedAt: record.GetCreated().Time(),
@@ -29,6 +29,5 @@ func (s *SettingsRepository) GetByName(ctx context.Context, name string) (*domai
 		Name:    record.GetString("name"),
 		Content: record.GetString("content"),
 	}
-
-	return rs, nil
+	return settings, nil
 }

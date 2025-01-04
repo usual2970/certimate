@@ -14,7 +14,7 @@ import (
 
 const tableName = "workflow"
 
-func AddEvent() error {
+func RegisterEvents() error {
 	app := app.GetApp()
 
 	app.OnRecordAfterCreateRequest(tableName).Add(func(e *core.RecordCreateEvent) error {
@@ -32,30 +32,23 @@ func AddEvent() error {
 	return nil
 }
 
-func delete(_ context.Context, record *models.Record) error {
-	id := record.Id
-	scheduler := app.GetScheduler()
-	scheduler.Remove(id)
-	scheduler.Start()
-	return nil
-}
-
 func update(ctx context.Context, record *models.Record) error {
-	// 是不是自动
-	// 是不是 enabled
+	scheduler := app.GetScheduler()
 
-	workflowId := record.Id
+	// 向数据库插入/更新时，同时更新定时任务
+	workflowId := record.GetId()
 	enabled := record.GetBool("enabled")
 	trigger := record.GetString("trigger")
 
-	scheduler := app.GetScheduler()
+	// 如果是手动触发或未启用，移除定时任务
 	if !enabled || trigger == string(domain.WorkflowTriggerTypeManual) {
-		scheduler.Remove(workflowId)
+		scheduler.Remove(fmt.Sprintf("workflow#%s", workflowId))
 		scheduler.Start()
 		return nil
 	}
 
-	err := scheduler.Add(workflowId, record.GetString("triggerCron"), func() {
+	// 反之，重新添加定时任务
+	err := scheduler.Add(fmt.Sprintf("workflow#%s", workflowId), record.GetString("triggerCron"), func() {
 		NewWorkflowService(repository.NewWorkflowRepository()).Run(ctx, &domain.WorkflowRunReq{
 			WorkflowId: workflowId,
 			Trigger:    domain.WorkflowTriggerTypeAuto,
@@ -65,8 +58,19 @@ func update(ctx context.Context, record *models.Record) error {
 		app.GetLogger().Error("add cron job failed", "err", err)
 		return fmt.Errorf("add cron job failed: %w", err)
 	}
-	app.GetLogger().Error("add cron job failed", "subjectAltNames", record.GetString("subjectAltNames"))
 
 	scheduler.Start()
+
+	return nil
+}
+
+func delete(_ context.Context, record *models.Record) error {
+	scheduler := app.GetScheduler()
+
+	// 从数据库删除时，同时移除定时任务
+	workflowId := record.GetId()
+	scheduler.Remove(fmt.Sprintf("workflow#%s", workflowId))
+	scheduler.Start()
+
 	return nil
 }

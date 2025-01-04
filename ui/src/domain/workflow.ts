@@ -95,12 +95,12 @@ export type WorkflowNode = {
   validated?: boolean;
 };
 
-export type WorkflowNodeConfigAsStart = {
+export type WorkflowNodeConfigForStart = {
   trigger: string;
   triggerCron?: string;
 };
 
-export type WorkflowNodeConfigAsApply = {
+export type WorkflowNodeConfigForApply = {
   domains: string;
   contactEmail: string;
   provider: string;
@@ -111,22 +111,22 @@ export type WorkflowNodeConfigAsApply = {
   disableFollowCNAME?: boolean;
 };
 
-export type WorkflowNodeConfigAsDeploy = {
+export type WorkflowNodeConfigForDeploy = {
   provider: string;
   providerAccessId: string;
   certificate: string;
   [key: string]: unknown;
 };
 
-export type WorkflowNodeConfigAsNotify = {
+export type WorkflowNodeConfigForNotify = {
   channel: string;
   subject: string;
   message: string;
 };
 
-export type WorkflowNodeConfigAsBranch = never;
+export type WorkflowNodeConfigForBranch = never;
 
-export type WorkflowNodeConfigAsEnd = never;
+export type WorkflowNodeConfigForEnd = never;
 
 export type WorkflowNodeIO = {
   name: string;
@@ -403,7 +403,7 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
  */
 export const getExecuteMethod = (node: WorkflowNode): { trigger: string; triggerCron: string } => {
   if (node.type === WorkflowNodeType.Start) {
-    const config = node.config as WorkflowNodeConfigAsStart;
+    const config = node.config as WorkflowNodeConfigForStart;
     return {
       trigger: config.trigger ?? "",
       triggerCron: config.triggerCron ?? "",

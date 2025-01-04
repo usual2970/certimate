@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type AliyunAccessConfig } from "@/domain/access";
+import { type AccessConfigForAliyun } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormAliyunConfigFieldValues = Partial<AliyunAccessConfig>;
+type AccessEditFormAliyunConfigFieldValues = Partial<AccessConfigForAliyun>;
 
 export type AccessEditFormAliyunConfigProps = {
   form: FormInstance;

@@ -15,6 +15,7 @@ func NewStatisticsRepository() *StatisticsRepository {
 
 func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, error) {
 	rs := &domain.Statistics{}
+
 	// 所有证书
 	certTotal := struct {
 		Total int `db:"total"`

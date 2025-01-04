@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type CloudflareAccessConfig } from "@/domain/access";
+import { type AccessConfigForCloudflare } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormCloudflareConfigFieldValues = Partial<CloudflareAccessConfig>;
+type AccessEditFormCloudflareConfigFieldValues = Partial<AccessConfigForCloudflare>;
 
 export type AccessEditFormCloudflareConfigProps = {
   form: FormInstance;

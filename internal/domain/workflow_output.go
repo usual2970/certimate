@@ -1,7 +1,5 @@
 package domain
 
-const WorkflowOutputCertificate = "certificate"
-
 type WorkflowOutput struct {
 	Meta
 	WorkflowId string           `json:"workflowId" db:"workflow"`
@@ -10,3 +8,5 @@ type WorkflowOutput struct {
 	Outputs    []WorkflowNodeIO `json:"outputs" db:"outputs"`
 	Succeeded  bool             `json:"succeeded" db:"succeeded"`
 }
+
+const WORKFLOW_OUTPUT_CERTIFICATE = "certificate"

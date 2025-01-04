@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type BytePlusAccessConfig } from "@/domain/access";
+import { type AccessConfigForBytePlus } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormBytePlusConfigFieldValues = Partial<BytePlusAccessConfig>;
+type AccessEditFormBytePlusConfigFieldValues = Partial<AccessConfigForBytePlus>;
 
 export type AccessEditFormBytePlusConfigProps = {
   form: FormInstance;

@@ -3,10 +3,10 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type WebhookAccessConfig } from "@/domain/access";
+import { type AccessConfigForWebhook } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 
-type AccessEditFormWebhookConfigFieldValues = Partial<WebhookAccessConfig>;
+type AccessEditFormWebhookConfigFieldValues = Partial<AccessConfigForWebhook>;
 
 export type AccessEditFormWebhookConfigProps = {
   form: FormInstance;

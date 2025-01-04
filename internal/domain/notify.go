@@ -9,14 +9,14 @@ type NotifyChannelType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	NOTIFY_CHANNEL_BARK       = NotifyChannelType("bark")
-	NOTIFY_CHANNEL_DINGTALK   = NotifyChannelType("dingtalk")
-	NOTIFY_CHANNEL_EMAIL      = NotifyChannelType("email")
-	NOTIFY_CHANNEL_LARK       = NotifyChannelType("lark")
-	NOTIFY_CHANNEL_SERVERCHAN = NotifyChannelType("serverchan")
-	NOTIFY_CHANNEL_TELEGRAM   = NotifyChannelType("telegram")
-	NOTIFY_CHANNEL_WEBHOOK    = NotifyChannelType("webhook")
-	NOTIFY_CHANNEL_WECOM      = NotifyChannelType("wecom")
+	NotifyChannelTypeBark       = NotifyChannelType("bark")
+	NotifyChannelTypeDingTalk   = NotifyChannelType("dingtalk")
+	NotifyChannelTypeEmail      = NotifyChannelType("email")
+	NotifyChannelTypeLark       = NotifyChannelType("lark")
+	NotifyChannelTypeServerChan = NotifyChannelType("serverchan")
+	NotifyChannelTypeTelegram   = NotifyChannelType("telegram")
+	NotifyChannelTypeWebhook    = NotifyChannelType("webhook")
+	NotifyChannelTypeWeCom      = NotifyChannelType("wecom")
 )
 
 type NotifyTestPushReq struct {

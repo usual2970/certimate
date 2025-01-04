@@ -7,11 +7,11 @@ import { Button, Form, type FormInstance, Input, Upload, type UploadFile, type U
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type KubernetesAccessConfig } from "@/domain/access";
+import { type AccessConfigForKubernetes } from "@/domain/access";
 import { useAntdForm } from "@/hooks";
 import { readFileContent } from "@/utils/file";
 
-type AccessEditFormKubernetesConfigFieldValues = Partial<KubernetesAccessConfig>;
+type AccessEditFormKubernetesConfigFieldValues = Partial<AccessConfigForKubernetes>;
 
 export type AccessEditFormKubernetesConfigProps = {
   form: FormInstance;
