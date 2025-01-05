@@ -19,7 +19,8 @@ export interface UseAntdFormReturns<T extends NonNullable<unknown> = any> {
 }
 
 /**
- *
+ * 生成并获取一个 antd 表单的实例、属性等。
+ * 通常为配合 Form 组件使用，以减少样板代码。
  * @param {UseAntdFormOptions} options
  * @returns {UseAntdFormReturns}
  */
@@ -74,9 +75,9 @@ const useAntdForm = <T extends NonNullable<unknown> = any>({ form, initialValues
         .then(() => {
           resolve(
             Promise.resolve(onSubmit?.(values))
-              .then((data) => {
+              .then((ret) => {
                 setFormPending(false);
-                return data;
+                return ret;
               })
               .catch((err) => {
                 setFormPending(false);

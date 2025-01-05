@@ -24,13 +24,13 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
     trigger: "onOpenChange",
   });
 
-  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   return (
     <>
-      {triggerDom}
+      {triggerEl}
 
-      <Drawer destroyOnClose open={open} loading={loading} placement="right" title={`runlog-${data?.id}`} width={640} onClose={() => setOpen(false)}>
+      <Drawer destroyOnClose open={open} loading={loading} placement="right" title={`WorkflowRun #${data?.id}`} width={640} onClose={() => setOpen(false)}>
         <Show when={!!data}>
           <Show when={data!.status === WORKFLOW_RUN_STATUSES.SUCCEEDED}>
             <Alert showIcon type="success" message={<Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>} />

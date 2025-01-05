@@ -34,7 +34,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
     trigger: "onOpenChange",
   });
 
-  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   const formRef = useRef<AccessEditFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
@@ -86,7 +86,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
     <>
       {NotificationContextHolder}
 
-      {triggerDom}
+      {triggerEl}
 
       <Modal
         afterClose={() => setOpen(false)}

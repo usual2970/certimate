@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { useDeepCompareEffect } from "ahooks";
@@ -55,7 +54,7 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
       setFieldKubeFileList([]);
     }
 
-    flushSync(() => onValuesChange?.(form.getFieldsValue(true)));
+    onValuesChange?.(form.getFieldsValue(true));
   };
 
   return (

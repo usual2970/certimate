@@ -21,11 +21,11 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
     trigger: "onOpenChange",
   });
 
-  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   return (
     <>
-      {triggerDom}
+      {triggerEl}
 
       <Drawer
         afterOpenChange={setOpen}
@@ -34,7 +34,7 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
         open={open}
         loading={loading}
         placement="right"
-        title={`certimate-${data?.id}`}
+        title={`Certificate #${data?.id}`}
         width={640}
         onClose={() => setOpen(false)}
       >

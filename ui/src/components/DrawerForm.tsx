@@ -46,7 +46,7 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
     trigger: "onOpenChange",
   });
 
-  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   const {
     form: formInst,
@@ -66,7 +66,7 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
     },
   });
   const mergedFormProps = {
-    preserve: drawerProps?.destroyOnClose ? false : undefined,
+    clearOnDestroy: drawerProps?.destroyOnClose ? true : undefined,
     ...formProps,
     ...props,
   };
@@ -86,11 +86,18 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
 
   return (
     <>
-      {triggerDom}
+      {triggerEl}
 
       <Drawer
+        afterOpenChange={(open) => {
+          if (!open && !mergedFormProps.preserve) {
+            formInst.resetFields();
+          }
+
+          drawerProps?.afterOpenChange?.(open);
+        }}
         footer={
-          <Space>
+          <Space className="w-full justify-end">
             <Button {...cancelButtonProps} onClick={handleCancelClick}>
               {cancelText || t("common.button.cancel")}
             </Button>

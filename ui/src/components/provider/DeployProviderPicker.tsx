@@ -1,6 +1,5 @@
 ﻿import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDebounceEffect } from "ahooks";
 import { Avatar, Card, Col, Empty, Flex, Input, Row, Typography } from "antd";
 
 import Show from "@/components/Show";
@@ -15,25 +14,17 @@ export type DeployProviderPickerProps = {
 const DeployProviderPicker = ({ className, style, onSelect }: DeployProviderPickerProps) => {
   const { t } = useTranslation();
 
-  const allProviders = Array.from(deployProvidersMap.values());
-  const [providers, setProviders] = useState(allProviders);
   const [keyword, setKeyword] = useState<string>();
-  useDebounceEffect(
-    () => {
-      if (keyword) {
-        setProviders(
-          allProviders.filter((provider) => {
-            const value = keyword.toLowerCase();
-            return provider.type.toLowerCase().includes(value) || provider.name.toLowerCase().includes(value);
-          })
-        );
-      } else {
-        setProviders(allProviders);
-      }
-    },
-    [keyword],
-    { wait: 300 }
-  );
+
+  const providers = Array.from(deployProvidersMap.values());
+  const filteredProviders = providers.filter((provider) => {
+    if (keyword) {
+      const value = keyword.toLowerCase();
+      return provider.type.toLowerCase().includes(value) || provider.name.toLowerCase().includes(value);
+    }
+
+    return true;
+  });
 
   const handleProviderTypeSelect = (value: string) => {
     onSelect?.(value);
@@ -44,9 +35,9 @@ const DeployProviderPicker = ({ className, style, onSelect }: DeployProviderPick
       <Input.Search placeholder={t("workflow_node.deploy.search.provider.placeholder")} onChange={(e) => setKeyword(e.target.value.trim())} />
 
       <div className="mt-4">
-        <Show when={providers.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
+        <Show when={filteredProviders.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
           <Row gutter={[16, 16]}>
-            {providers.map((provider, index) => {
+            {filteredProviders.map((provider, index) => {
               return (
                 <Col key={index} span={12}>
                   <Card

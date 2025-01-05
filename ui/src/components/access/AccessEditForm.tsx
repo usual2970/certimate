@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
@@ -64,11 +64,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
     initialValues: initialValues,
   });
 
-  const [fieldProvider, setFieldProvider] = useState(initialValues?.provider);
-  useEffect(() => {
-    setFieldProvider(initialValues?.provider);
-  }, [initialValues?.provider]);
-
+  const configProvider = Form.useWatch("provider", formInst);
   const [configFormInst] = Form.useForm();
   const configFormName = useAntdFormName({ form: configFormInst, name: "accessEditConfigForm" });
   const configFormComponent = useMemo(() => {
@@ -77,7 +73,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       NOTICE: If you add new child component, please keep ASCII order.
      */
     const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, initialValues: initialValues?.config };
-    switch (fieldProvider) {
+    switch (configProvider) {
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:
@@ -117,7 +113,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
-  }, [disabled, initialValues, fieldProvider, configFormInst, configFormName]);
+  }, [disabled, initialValues, configProvider, configFormInst, configFormName]);
 
   const handleFormProviderChange = (name: string) => {
     if (name === configFormName) {
@@ -127,8 +123,8 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   };
 
   const handleFormChange = (_: unknown, values: AccessEditFormFieldValues) => {
-    if (values.provider !== fieldProvider) {
-      setFieldProvider(values.provider);
+    if (values.provider !== configProvider) {
+      formInst.setFieldValue("provider", values.provider);
     }
 
     onValuesChange?.(values);
@@ -153,7 +149,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   return (
     <Form.Provider onFormChange={handleFormProviderChange}>
       <div className={className} style={style}>
-        <Form {...formProps} disabled={disabled} layout="vertical" onValuesChange={handleFormChange}>
+        <Form {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Form.Item name="name" label={t("access.form.name.label")} rules={[formRule]}>
             <Input placeholder={t("access.form.name.placeholder")} />
           </Form.Item>

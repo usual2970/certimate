@@ -152,14 +152,14 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
   root.config = { trigger: WORKFLOW_TRIGGERS.MANUAL };
 
   if (options.template === "standard") {
-    let temp = root;
-    temp.next = newNode(WorkflowNodeType.Apply, {});
+    let current = root;
+    current.next = newNode(WorkflowNodeType.Apply, {});
 
-    temp = temp.next;
-    temp.next = newNode(WorkflowNodeType.Deploy, {});
+    current = current.next;
+    current.next = newNode(WorkflowNodeType.Deploy, {});
 
-    temp = temp.next;
-    temp.next = newNode(WorkflowNodeType.Notify, {});
+    current = current.next;
+    current.next = newNode(WorkflowNodeType.Notify, {});
   }
 
   return {

@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   CloudServerOutlined as CloudServerOutlinedIcon,
   GlobalOutlined as GlobalOutlinedIcon,
@@ -16,7 +16,7 @@ import {
 import { Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProps, Tooltip, theme } from "antd";
 
 import Version from "@/components/Version";
-import { useBrowserTheme } from "@/hooks";
+import { useBrowserTheme, useTriggerElement } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
 
 const ConsoleLayout = () => {
@@ -25,16 +25,6 @@ const ConsoleLayout = () => {
   const { t } = useTranslation();
 
   const { token: themeToken } = theme.useToken();
-
-  const [siderOpen, setSiderOpen] = useState(false);
-
-  const handleSiderOpen = () => {
-    setSiderOpen(true);
-  };
-
-  const handleSiderClose = () => {
-    setSiderOpen(false);
-  };
 
   const handleLogoutClick = () => {
     auth.clear();
@@ -67,20 +57,7 @@ const ConsoleLayout = () => {
         <Layout.Header className="sticky inset-x-0 top-0 z-[19] p-0 shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex size-full items-center justify-between overflow-hidden px-4">
             <div className="flex items-center gap-4">
-              <Button className="md:hidden" icon={<MenuOutlinedIcon />} size="large" onClick={handleSiderOpen} />
-              <Drawer
-                closable={false}
-                destroyOnClose
-                open={siderOpen}
-                placement="left"
-                styles={{
-                  content: { paddingTop: themeToken.paddingSM, paddingBottom: themeToken.paddingSM },
-                  body: { padding: 0 },
-                }}
-                onClose={handleSiderClose}
-              >
-                <SiderMenu onSelect={() => handleSiderClose()} />
-              </Drawer>
+              <SiderMenuDrawer trigger={<Button className="md:hidden" icon={<MenuOutlinedIcon />} size="large" />} />
             </div>
             <div className="flex size-full grow items-center justify-end gap-4 overflow-hidden">
               <Tooltip title={t("common.menu.theme")} mouseEnterDelay={2}>
@@ -159,10 +136,10 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
 
   return (
     <>
-      <Link to="/" className="flex w-full items-center gap-2 overflow-hidden px-4 font-semibold">
+      <div className="flex w-full items-center gap-2 overflow-hidden px-4 font-semibold">
         <img src="/logo.svg" className="size-[36px]" />
         <span className="h-[64px] w-[74px] truncate leading-[64px] dark:text-white">Certimate</span>
-      </Link>
+      </div>
       <div className="w-full grow overflow-y-auto overflow-x-hidden">
         <Menu
           items={menuItems}
@@ -173,6 +150,34 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
           }}
         />
       </div>
+    </>
+  );
+});
+
+const SiderMenuDrawer = memo(({ trigger }: { trigger: React.ReactNode }) => {
+  const { token: themeToken } = theme.useToken();
+
+  const [siderOpen, setSiderOpen] = useState(false);
+
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setSiderOpen(true) });
+
+  return (
+    <>
+      {triggerEl}
+
+      <Drawer
+        closable={false}
+        destroyOnClose
+        open={siderOpen}
+        placement="left"
+        styles={{
+          content: { paddingTop: themeToken.paddingSM, paddingBottom: themeToken.paddingSM },
+          body: { padding: 0 },
+        }}
+        onClose={() => setSiderOpen(false)}
+      >
+        <SiderMenu onSelect={() => setSiderOpen(false)} />
+      </Drawer>
     </>
   );
 });

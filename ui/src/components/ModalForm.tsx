@@ -57,7 +57,7 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
     trigger: "onOpenChange",
   });
 
-  const triggerDom = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
   const {
     form: formInst,
@@ -77,7 +77,7 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
     },
   });
   const mergedFormProps = {
-    preserve: modalProps?.destroyOnClose ? false : undefined,
+    clearOnDestroy: modalProps?.destroyOnClose ? true : undefined,
     ...formProps,
     ...props,
   };
@@ -97,9 +97,16 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
 
   return (
     <>
-      {triggerDom}
+      {triggerEl}
 
       <Modal
+        afterClose={() => {
+          if (!mergedFormProps.preserve) {
+            formInst.resetFields();
+          }
+
+          modalProps?.afterClose?.();
+        }}
         cancelButtonProps={cancelButtonProps}
         cancelText={cancelText}
         confirmLoading={formPending}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { flushSync } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { useDeepCompareEffect } from "ahooks";
@@ -33,8 +32,14 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
-    port: z.number().int().gte(1, t("common.errmsg.port_invalid")).lte(65535, t("common.errmsg.port_invalid")),
+    host: z
+      .string({ message: t("access.form.ssh_host.placeholder") })
+      .refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
+    port: z
+      .number({ message: t("access.form.ssh_port.placeholder") })
+      .int()
+      .gte(1, t("common.errmsg.port_invalid"))
+      .lte(65535, t("common.errmsg.port_invalid")),
     username: z
       .string()
       .min(1, "access.form.ssh_username.placeholder")
@@ -74,7 +79,7 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
       setFieldKeyFileList([]);
     }
 
-    flushSync(() => onValuesChange?.(form.getFieldsValue(true)));
+    onValuesChange?.(form.getFieldsValue(true));
   };
 
   return (

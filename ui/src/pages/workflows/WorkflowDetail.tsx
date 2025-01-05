@@ -23,7 +23,7 @@ import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElements from "@/components/workflow/WorkflowElements";
 import WorkflowRuns from "@/components/workflow/WorkflowRuns";
-import { type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
+import { isAllNodesValidated } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow } from "@/repository/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -40,7 +40,7 @@ const WorkflowDetail = () => {
 
   const { id: workflowId } = useParams();
   const { workflow, initialized, ...workflowState } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setBaseInfo", "setEnabled", "release", "discard"])
+    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
   );
   useEffect(() => {
     // TODO: loading & error
@@ -65,16 +65,6 @@ const WorkflowDetail = () => {
     setAllowRelease(!isRunning && hasChanges);
     setAllowRun(hasReleased);
   }, [workflow.content, workflow.draft, workflow.hasDraft, isRunning]);
-
-  const handleBaseInfoFormFinish = async (values: Pick<WorkflowModel, "name" | "description">) => {
-    try {
-      await workflowState.setBaseInfo(values.name!, values.description!);
-    } catch (err) {
-      console.error(err);
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-      return false;
-    }
-  };
 
   const handleEnableChange = async () => {
     if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
@@ -194,12 +184,7 @@ const WorkflowDetail = () => {
           extra={
             initialized
               ? [
-                  <WorkflowBaseInfoModalForm
-                    key="edit"
-                    data={workflow}
-                    trigger={<Button>{t("common.button.edit")}</Button>}
-                    onFinish={handleBaseInfoFormFinish}
-                  />,
+                  <WorkflowBaseInfoModal key="edit" trigger={<Button>{t("common.button.edit")}</Button>} />,
 
                   <Button key="enable" onClick={handleEnableChange}>
                     {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
@@ -301,16 +286,12 @@ const WorkflowDetail = () => {
   );
 };
 
-const WorkflowBaseInfoModalForm = ({
-  data,
-  trigger,
-  onFinish,
-}: {
-  data: Pick<WorkflowModel, "name" | "description">;
-  trigger?: React.ReactNode;
-  onFinish?: (values: Pick<WorkflowModel, "name" | "description">) => Promise<void | boolean>;
-}) => {
+const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
   const { t } = useTranslation();
+
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
+
+  const { workflow, ...workflowState } = useWorkflowStore(useZustandShallowSelector(["workflow", "setBaseInfo"]));
 
   const formSchema = z.object({
     name: z
@@ -331,11 +312,15 @@ const WorkflowBaseInfoModalForm = ({
     formProps,
     ...formApi
   } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: data,
-    onSubmit: async () => {
-      const ret = await onFinish?.(formInst.getFieldsValue(true));
-      if (ret != null && !ret) return false;
-      return true;
+    initialValues: { name: workflow.name, description: workflow.description },
+    onSubmit: async (values) => {
+      try {
+        await workflowState.setBaseInfo(values.name!, values.description!);
+      } catch (err) {
+        console.error(err);
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        return false;
+      }
     },
   });
 
@@ -344,26 +329,30 @@ const WorkflowBaseInfoModalForm = ({
   };
 
   return (
-    <ModalForm
-      disabled={formPending}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnClose: true }}
-      okText={t("common.button.save")}
-      title={t(`workflow.detail.baseinfo.modal.title`)}
-      trigger={trigger}
-      width={480}
-      {...formProps}
-      onFinish={handleFormFinish}
-    >
-      <Form.Item name="name" label={t("workflow.detail.baseinfo.form.name.label")} rules={[formRule]}>
-        <Input placeholder={t("workflow.detail.baseinfo.form.name.placeholder")} />
-      </Form.Item>
+    <>
+      {NotificationContextHolder}
 
-      <Form.Item name="description" label={t("workflow.detail.baseinfo.form.description.label")} rules={[formRule]}>
-        <Input placeholder={t("workflow.detail.baseinfo.form.description.placeholder")} />
-      </Form.Item>
-    </ModalForm>
+      <ModalForm
+        disabled={formPending}
+        layout="vertical"
+        form={formInst}
+        modalProps={{ destroyOnClose: true }}
+        okText={t("common.button.save")}
+        title={t(`workflow.detail.baseinfo.modal.title`)}
+        trigger={trigger}
+        width={480}
+        {...formProps}
+        onFinish={handleFormFinish}
+      >
+        <Form.Item name="name" label={t("workflow.detail.baseinfo.form.name.label")} rules={[formRule]}>
+          <Input placeholder={t("workflow.detail.baseinfo.form.name.placeholder")} />
+        </Form.Item>
+
+        <Form.Item name="description" label={t("workflow.detail.baseinfo.form.description.label")} rules={[formRule]}>
+          <Input placeholder={t("workflow.detail.baseinfo.form.description.placeholder")} />
+        </Form.Item>
+      </ModalForm>
+    </>
   );
 };
 

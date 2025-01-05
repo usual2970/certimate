@@ -30,7 +30,13 @@ const RootApp = () => {
     dayjs.locale(i18n.language);
   };
   i18n.on("languageChanged", handleLanguageChanged);
-  useLayoutEffect(handleLanguageChanged, [antdLocalesMap, i18n]);
+  useLayoutEffect(() => {
+    handleLanguageChanged();
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChanged);
+    };
+  }, [antdLocalesMap, i18n]);
 
   const antdThemesMap: Record<string, ThemeConfig> = useMemo(
     () => ({

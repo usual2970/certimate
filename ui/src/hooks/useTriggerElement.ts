@@ -5,7 +5,8 @@ export type UseTriggerElementOptions = {
 };
 
 /**
- * 获取一个触发器元素。通常为配合 Drawer、Modal 等组件使用。
+ * 获取一个触发器元素。
+ * 通常为配合 Drawer、Modal 等组件使用。
  * @param {React.ReactNode} trigger
  * @param {UseTriggerElementOptions} [options]
  * @returns {React.ReactElement}

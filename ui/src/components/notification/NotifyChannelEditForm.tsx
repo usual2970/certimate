@@ -80,7 +80,16 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
     });
 
     return (
-      <Form {...formProps} className={className} style={style} form={formInst} disabled={disabled} layout="vertical" onValuesChange={handleFormChange}>
+      <Form
+        {...formProps}
+        className={className}
+        style={style}
+        form={formInst}
+        disabled={disabled}
+        layout="vertical"
+        scrollToFirstError
+        onValuesChange={handleFormChange}
+      >
         {formFieldsComponent}
       </Form>
     );
