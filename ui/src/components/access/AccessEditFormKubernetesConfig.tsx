@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
-import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, type FormInstance, Input, Upload, type UploadFile, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -37,9 +36,9 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
 
   const fieldKubeConfig = Form.useWatch("kubeConfig", form);
   const [fieldKubeFileList, setFieldKubeFileList] = useState<UploadFile[]>([]);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     setFieldKubeFileList(initialValues?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
-  }, [initialValues]);
+  }, [initialValues?.kubeConfig]);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values as AccessEditFormKubernetesConfigFieldValues);

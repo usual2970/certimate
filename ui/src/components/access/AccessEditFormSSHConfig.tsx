@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
-import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, type FormInstance, Input, InputNumber, Upload, type UploadFile, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -62,9 +61,9 @@ const AccessEditFormSSHConfig = ({ form, formName, disabled, initialValues, onVa
 
   const fieldKey = Form.useWatch("key", form);
   const [fieldKeyFileList, setFieldKeyFileList] = useState<UploadFile[]>([]);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     setFieldKeyFileList(initialValues?.key?.trim() ? [{ uid: "-1", name: "sshkey", status: "done" }] : []);
-  }, [initialValues]);
+  }, [initialValues?.key]);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values as AccessEditFormSSHConfigFieldValues);

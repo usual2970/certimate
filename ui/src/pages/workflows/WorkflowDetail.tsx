@@ -11,7 +11,6 @@ import {
   UndoOutlined as UndoOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
-import { useDeepCompareEffect } from "ahooks";
 import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { ClientResponseError } from "pocketbase";
@@ -58,7 +57,7 @@ const WorkflowDetail = () => {
   const [allowDiscard, setAllowDiscard] = useState(false);
   const [allowRelease, setAllowRelease] = useState(false);
   const [allowRun, setAllowRun] = useState(false);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
     setAllowDiscard(!isRunning && hasReleased && hasChanges);

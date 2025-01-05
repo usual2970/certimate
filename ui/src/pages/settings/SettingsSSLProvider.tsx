@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckCard } from "@ant-design/pro-components";
-import { useDeepCompareEffect } from "ahooks";
 import { Button, Form, Input, Skeleton, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
@@ -43,9 +42,9 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
   });
 
   const [formChanged, setFormChanged] = useState(false);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     setFormChanged(settings?.content?.provider !== SSLPROVIDERS.LETS_ENCRYPT);
-  }, [settings]);
+  }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
     setFormChanged(true);
@@ -95,9 +94,9 @@ const SSLProviderEditFormZeroSSLConfig = () => {
   });
 
   const [formChanged, setFormChanged] = useState(false);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     setFormChanged(settings?.content?.provider !== SSLPROVIDERS.ZERO_SSL);
-  }, [settings]);
+  }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
     setFormChanged(true);
@@ -165,9 +164,9 @@ const SSLProviderEditFormGoogleTrustServicesConfig = () => {
   });
 
   const [formChanged, setFormChanged] = useState(false);
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     setFormChanged(settings?.content?.provider !== SSLPROVIDERS.GOOGLE_TRUST_SERVICES);
-  }, [settings]);
+  }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
     setFormChanged(true);
