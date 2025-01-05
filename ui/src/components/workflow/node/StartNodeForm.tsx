@@ -64,6 +64,8 @@ const StartNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange 
     } else {
       form.setFieldValue("triggerCron", undefined);
     }
+
+    onValuesChange?.(form.getFieldsValue(true));
   };
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {

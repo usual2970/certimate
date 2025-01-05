@@ -227,7 +227,7 @@ const SettingsSSLProvider = () => {
   }, []);
 
   const [providerType, setProviderType] = useState<SSLProviders>(SSLPROVIDERS.LETS_ENCRYPT);
-  const providerFormComponent = useMemo(() => {
+  const providerFormEl = useMemo(() => {
     switch (providerType) {
       case SSLPROVIDERS.LETS_ENCRYPT:
         return <SSLProviderEditFormLetsEncryptConfig />;
@@ -286,7 +286,7 @@ const SettingsSSLProvider = () => {
           </Form.Item>
         </Form>
 
-        <div className="md:max-w-[40rem]">{providerFormComponent}</div>
+        <div className="md:max-w-[40rem]">{providerFormEl}</div>
       </Show>
     </SSLProviderContext.Provider>
   );

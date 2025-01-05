@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { Button, Divider, Form, type FormInstance, Select, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { init } from "i18next";
 import { z } from "zod";
 
 import Show from "@/components/Show";
@@ -78,7 +77,7 @@ const DeployNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange
 
   const fieldProvider = Form.useWatch("provider", { form: form, preserve: true });
 
-  const formFieldsComponent = useMemo(() => {
+  const formFieldsEl = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
@@ -265,7 +264,7 @@ const DeployNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange
           </Typography.Text>
         </Divider>
 
-        {formFieldsComponent}
+        {formFieldsEl}
       </Show>
     </Form>
   );

@@ -15,7 +15,7 @@ export type WorkflowElementProps = {
 };
 
 const WorkflowElement = ({ node, disabled, ...props }: WorkflowElementProps) => {
-  const nodeComponent = useMemo(() => {
+  const workflowNodeEl = useMemo(() => {
     switch (node.type) {
       case WorkflowNodeType.Start:
       case WorkflowNodeType.Apply:
@@ -38,7 +38,7 @@ const WorkflowElement = ({ node, disabled, ...props }: WorkflowElementProps) => 
     }
   }, [node, disabled, props]);
 
-  return <>{nodeComponent}</>;
+  return <>{workflowNodeEl}</>;
 };
 
 export default memo(WorkflowElement);

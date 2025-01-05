@@ -36,7 +36,7 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
       initialValues: initialValues,
       name: "notifyChannelEditForm",
     });
-    const formFieldsComponent = useMemo(() => {
+    const formFieldsEl = useMemo(() => {
       /*
         注意：如果追加新的子组件，请保持以 ASCII 排序。
         NOTICE: If you add new child component, please keep ASCII order.
@@ -90,7 +90,7 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
         scrollToFirstError
         onValuesChange={handleFormChange}
       >
-        {formFieldsComponent}
+        {formFieldsEl}
       </Form>
     );
   }

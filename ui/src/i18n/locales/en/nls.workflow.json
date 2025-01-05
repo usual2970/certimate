@@ -49,6 +49,6 @@
   "workflow.detail.orchestration.action.release.confirm": "Are you sure to release your changes?",
   "workflow.detail.orchestration.action.release.failed.uncompleted": "Please complete the orchestration first",
   "workflow.detail.orchestration.action.run": "Run",
-  "workflow.detail.orchestration.action.run.confirm": "There are unreleased changes, are you sure to run this workflow based on the latest released version?",
+  "workflow.detail.orchestration.action.run.confirm": "You have unreleased changes. Do you really want to run this workflow based on the latest released version?",
   "workflow.detail.runs.tab": "History runs"
 }

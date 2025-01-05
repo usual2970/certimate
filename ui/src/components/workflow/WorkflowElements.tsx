@@ -1,7 +1,6 @@
 ﻿import { useMemo } from "react";
 
 import WorkflowElement from "@/components/workflow/WorkflowElement";
-import WorkflowProvider from "@/components/workflow/WorkflowProvider";
 import { type WorkflowNode, WorkflowNodeType, newNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -31,9 +30,7 @@ const WorkflowElements = ({ className, style, disabled }: WorkflowElementsProps)
 
   return (
     <div className={className} style={style}>
-      <div className="flex flex-col items-center overflow-auto">
-        <WorkflowProvider>{elements}</WorkflowProvider>
-      </div>
+      <div className="flex flex-col items-center overflow-auto">{elements}</div>
     </div>
   );
 };

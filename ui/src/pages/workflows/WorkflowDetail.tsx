@@ -309,7 +309,7 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
     form: formInst,
     formPending,
     formProps,
-    ...formApi
+    submit: submitForm,
   } = useAntdForm<z.infer<typeof formSchema>>({
     initialValues: { name: workflow.name, description: workflow.description },
     onSubmit: async (values) => {
@@ -324,7 +324,7 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
   });
 
   const handleFormFinish = async () => {
-    return formApi.submit();
+    return submitForm();
   };
 
   return (

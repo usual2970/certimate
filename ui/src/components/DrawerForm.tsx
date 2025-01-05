@@ -71,6 +71,12 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
     ...props,
   };
 
+  const handleClose = () => {
+    if (formPending) return;
+
+    setOpen(false);
+  };
+
   const handleOkClick = async () => {
     const ret = await submit();
     if (ret != null && !ret) return;
@@ -99,10 +105,10 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
         footer={
           <Space className="w-full justify-end">
             <Button {...cancelButtonProps} onClick={handleCancelClick}>
-              {cancelText || t("common.button.cancel")}
+              {cancelText ?? t("common.button.cancel")}
             </Button>
             <Button type="primary" loading={formPending} {...okButtonProps} onClick={handleOkClick}>
-              {okText || t("common.button.ok")}
+              {okText ?? t("common.button.ok")}
             </Button>
           </Space>
         }
@@ -110,7 +116,7 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
         title={title}
         width={width}
         {...drawerProps}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
       >
         <Form className={className} style={style} form={formInst} {...mergedFormProps}>
           {children}

@@ -67,7 +67,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
   const configProvider = Form.useWatch("provider", formInst);
   const [configFormInst] = Form.useForm();
   const configFormName = useAntdFormName({ form: configFormInst, name: "accessEditConfigForm" });
-  const configFormComponent = useMemo(() => {
+  const configFormEl = useMemo(() => {
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
@@ -164,7 +164,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
           </Form.Item>
         </Form>
 
-        {configFormComponent}
+        {configFormEl}
       </div>
     </Form.Provider>
   );

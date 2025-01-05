@@ -12,6 +12,7 @@
 
   "common.text.copied": "Copied",
   "common.text.nodata": "No data available",
+  "common.text.operation_confirm": "Operation confirm",
   "common.text.operation_succeeded": "Operation succeeded",
   "common.text.operation_failed": "Operation failed",
   "common.text.request_error": "Request error",

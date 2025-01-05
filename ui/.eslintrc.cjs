@@ -22,6 +22,12 @@ module.exports = {
   plugins: ["react-refresh"],
   rules: {
     "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/no-empty-object-type": [
+      "error",
+      {
+        allowInterfaces: "with-single-extends",
+      },
+    ],
     "@typescript-eslint/no-explicit-any": [
       "warn",
       {

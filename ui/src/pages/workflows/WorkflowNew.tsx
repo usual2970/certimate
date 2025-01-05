@@ -49,7 +49,7 @@ const WorkflowNew = () => {
     form: formInst,
     formPending,
     formProps,
-    ...formApi
+    submit: submitForm,
   } = useAntdForm<z.infer<typeof formSchema>>({
     onSubmit: async (values) => {
       try {
@@ -97,7 +97,7 @@ const WorkflowNew = () => {
   };
 
   const handleModalFormFinish = () => {
-    return formApi.submit();
+    return submitForm();
   };
 
   return (

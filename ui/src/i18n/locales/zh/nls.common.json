@@ -12,6 +12,7 @@
 
   "common.text.copied": "已复制",
   "common.text.nodata": "暂无数据",
+  "common.text.operation_confirm": "操作确认",
   "common.text.operation_succeeded": "操作成功",
   "common.text.operation_failed": "操作失败",
   "common.text.request_error": "请求错误",
