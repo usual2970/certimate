@@ -1,176 +1,44 @@
-import { useTranslation } from "react-i18next";
-import { CloseCircleOutlined as CloseCircleOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
-import { Avatar, Button, Card, Dropdown, Popover, Space, Typography } from "antd";
-import { produce } from "immer";
+import { memo, useMemo } from "react";
 
-import Show from "@/components/Show";
-import { deployProvidersMap } from "@/domain/provider";
-import { notifyChannelsMap } from "@/domain/settings";
-import {
-  WORKFLOW_TRIGGERS,
-  type WorkflowNode,
-  type WorkflowNodeConfigForApply,
-  type WorkflowNodeConfigForDeploy,
-  type WorkflowNodeConfigForNotify,
-  type WorkflowNodeConfigForStart,
-  WorkflowNodeType,
-} from "@/domain/workflow";
-import { useZustandShallowSelector } from "@/hooks";
-import { useWorkflowStore } from "@/stores/workflow";
+import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 
-import PanelBody from "./PanelBody";
-import { usePanel } from "./PanelProvider";
-import AddNode from "./node/AddNode";
+import BranchNode from "./node/BranchNode";
+import CommonNode from "./node/CommonNode";
+import ConditionNode from "./node/ConditionNode";
+import EndNode from "./node/EndNode";
 
-export type NodeProps = {
+export type WorkflowElementProps = {
   node: WorkflowNode;
   disabled?: boolean;
+  branchId?: string;
+  branchIndex?: number;
 };
 
-const WorkflowElement = ({ node, disabled }: NodeProps) => {
-  const { t } = useTranslation();
-
-  const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
-  const { showPanel } = usePanel();
-
-  const renderNodeContent = () => {
-    if (!node.validated) {
-      return <Typography.Link>{t("workflow_node.action.configure_node")}</Typography.Link>;
-    }
-
+const WorkflowElement = ({ node, disabled, ...props }: WorkflowElementProps) => {
+  const nodeComponent = useMemo(() => {
     switch (node.type) {
-      case WorkflowNodeType.Start: {
-        const config = (node.config as WorkflowNodeConfigForStart) ?? {};
-        return (
-          <div className="flex items-center justify-between space-x-2">
-            <Typography.Text className="truncate">
-              {config.trigger === WORKFLOW_TRIGGERS.AUTO
-                ? t("workflow.props.trigger.auto")
-                : config.trigger === WORKFLOW_TRIGGERS.MANUAL
-                  ? t("workflow.props.trigger.manual")
-                  : "　"}
-            </Typography.Text>
-            <Typography.Text className="truncate" type="secondary">
-              {config.trigger === WORKFLOW_TRIGGERS.AUTO ? config.triggerCron : ""}
-            </Typography.Text>
-          </div>
-        );
-      }
+      case WorkflowNodeType.Start:
+      case WorkflowNodeType.Apply:
+      case WorkflowNodeType.Deploy:
+      case WorkflowNodeType.Notify:
+        return <CommonNode node={node} disabled={disabled} />;
 
-      case WorkflowNodeType.Apply: {
-        const config = (node.config as WorkflowNodeConfigForApply) ?? {};
-        return <Typography.Text className="truncate">{config.domains || "　"}</Typography.Text>;
-      }
+      case WorkflowNodeType.Branch:
+        return <BranchNode node={node} disabled={disabled} />;
 
-      case WorkflowNodeType.Deploy: {
-        const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
-        const provider = deployProvidersMap.get(config.provider);
-        return (
-          <Space>
-            <Avatar src={provider?.icon} size="small" />
-            <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
-          </Space>
-        );
-      }
+      case WorkflowNodeType.Condition:
+        return <ConditionNode node={node} disabled={disabled} branchId={props.branchId!} branchIndex={props.branchIndex!} />;
 
-      case WorkflowNodeType.Notify: {
-        const config = (node.config as WorkflowNodeConfigForNotify) ?? {};
-        const channel = notifyChannelsMap.get(config.channel as string);
-        return (
-          <div className="flex items-center justify-between space-x-2">
-            <Typography.Text className="truncate">{t(channel?.name ?? "　")}</Typography.Text>
-            <Typography.Text className="truncate" type="secondary">
-              {config.subject ?? ""}
-            </Typography.Text>
-          </div>
-        );
-      }
+      case WorkflowNodeType.End:
+        return <EndNode />;
 
-      default: {
+      default:
+        console.warn(`[certimate] unsupported workflow node type: ${node.type}`);
         return <></>;
-      }
     }
-  };
+  }, [node, disabled, props]);
 
-  const handleNodeNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
-    const oldName = node.name;
-    const newName = e.target.innerText.trim();
-    if (oldName === newName) {
-      return;
-    }
-
-    updateNode(
-      produce(node, (draft) => {
-        draft.name = newName;
-      })
-    );
-  };
-
-  const handleNodeClick = () => {
-    if (disabled) return;
-
-    showPanel({
-      name: node.name,
-      children: <PanelBody data={node} />,
-    });
-  };
-
-  return (
-    <>
-      <Popover
-        arrow={false}
-        content={
-          <Show when={node.type !== WorkflowNodeType.Start}>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: "delete",
-                    disabled: disabled,
-                    label: t("workflow_node.action.delete_node"),
-                    icon: <CloseCircleOutlinedIcon />,
-                    danger: true,
-                    onClick: () => {
-                      if (disabled) return;
-
-                      removeNode(node.id);
-                    },
-                  },
-                ],
-              }}
-              trigger={["click"]}
-            >
-              <Button color="primary" icon={<EllipsisOutlinedIcon />} variant="text" />
-            </Dropdown>
-          </Show>
-        }
-        overlayClassName="shadow-md"
-        overlayInnerStyle={{ padding: 0 }}
-        placement="rightTop"
-      >
-        <Card className="relative w-[256px] overflow-hidden shadow-md" styles={{ body: { padding: 0 } }} hoverable>
-          <div className="bg-primary flex h-[48px] flex-col items-center justify-center truncate px-4 py-2 text-white">
-            <div
-              className="focus:bg-background focus:text-foreground w-full overflow-hidden text-center outline-none focus:rounded-sm"
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={handleNodeNameBlur}
-            >
-              {node.name}
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center px-4 py-2">
-            <div className="cursor-pointer text-sm" onClick={handleNodeClick}>
-              {renderNodeContent()}
-            </div>
-          </div>
-        </Card>
-      </Popover>
-
-      <AddNode node={node} disabled={disabled} />
-    </>
-  );
+  return <>{nodeComponent}</>;
 };
 
-export default WorkflowElement;
+export default memo(WorkflowElement);

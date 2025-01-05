@@ -1,9 +1,8 @@
 ﻿import { useMemo } from "react";
 
+import WorkflowElement from "@/components/workflow/WorkflowElement";
 import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import EndNode from "@/components/workflow/node/EndNode";
-import NodeRender from "@/components/workflow/node/NodeRender";
-import { type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowNode, WorkflowNodeType, newNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -19,16 +18,16 @@ const WorkflowElements = ({ className, style, disabled }: WorkflowElementsProps)
   const elements = useMemo(() => {
     const nodes: JSX.Element[] = [];
 
-    let current = workflow.draft as WorkflowNode;
+    let current = workflow.draft as WorkflowNode | undefined;
     while (current) {
-      nodes.push(<NodeRender key={current.id} node={current} disabled={disabled} />);
-      current = current.next as WorkflowNode;
+      nodes.push(<WorkflowElement key={current.id} node={current} disabled={disabled} />);
+      current = current.next;
     }
 
-    nodes.push(<EndNode key="workflow-end" />);
+    nodes.push(<WorkflowElement key="end" node={newNode(WorkflowNodeType.End)} />);
 
     return nodes;
-  }, [workflow]);
+  }, [workflow, disabled]);
 
   return (
     <div className={className} style={style}>

@@ -2,30 +2,33 @@ import { memo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { produce } from "immer";
 import { z } from "zod";
 
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNode, type WorkflowNodeConfigForNotify } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useZustandShallowSelector } from "@/hooks";
 import { useNotifyChannelsStore } from "@/stores/notify";
-import { useWorkflowStore } from "@/stores/workflow";
-import { usePanel } from "../PanelProvider";
+
+type NotifyNodeFormFieldValues = Partial<WorkflowNodeConfigForNotify>;
 
 export type NotifyNodeFormProps = {
-  node: WorkflowNode;
+  form: FormInstance;
+  formName?: string;
+  disabled?: boolean;
+  workflowNode: WorkflowNode;
+  onValuesChange?: (values: NotifyNodeFormFieldValues) => void;
 };
 
-const initFormModel = (): Partial<WorkflowNodeConfigForNotify> => {
+const initFormModel = (): NotifyNodeFormFieldValues => {
   return {
     subject: "Completed!",
     message: "Your workflow has been completed on Certimate.",
   };
 };
 
-const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
+const NotifyNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange }: NotifyNodeFormProps) => {
   const { t } = useTranslation();
 
   const {
@@ -36,9 +39,6 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
   useEffect(() => {
     fetchChannels();
   }, [fetchChannels]);
-
-  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
-  const { hidePanel } = usePanel();
 
   const formSchema = z.object({
     subject: z
@@ -52,27 +52,24 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
     channel: z.string({ message: t("workflow_node.notify.form.channel.placeholder") }).min(1, t("workflow_node.notify.form.channel.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const {
-    form: formInst,
-    formPending,
-    formProps,
-  } = useAntdForm<z.infer<typeof formSchema>>({
-    name: "workflowNotifyNodeForm",
-    initialValues: (node?.config as WorkflowNodeConfigForNotify) ?? initFormModel(),
-    onSubmit: async (values) => {
-      await formInst.validateFields();
-      await updateNode(
-        produce(node, (draft) => {
-          draft.config = { ...values };
-          draft.validated = true;
-        })
-      );
-      hidePanel();
-    },
-  });
+
+  const initialValues: NotifyNodeFormFieldValues = (workflowNode.config as WorkflowNodeConfigForNotify) ?? initFormModel();
+
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onValuesChange?.(values as NotifyNodeFormFieldValues);
+  };
 
   return (
-    <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
+    <Form
+      form={form}
+      disabled={disabled}
+      initialValues={initialValues}
+      layout="vertical"
+      name={formName}
+      preserve={false}
+      scrollToFirstError
+      onValuesChange={handleFormChange}
+    >
       <Form.Item name="subject" label={t("workflow_node.notify.form.subject.label")} rules={[formRule]}>
         <Input placeholder={t("workflow_node.notify.form.subject.placeholder")} />
       </Form.Item>
@@ -107,12 +104,6 @@ const NotifyNodeForm = ({ node }: NotifyNodeFormProps) => {
             placeholder={t("workflow_node.notify.form.channel.placeholder")}
           />
         </Form.Item>
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={formPending}>
-          {t("common.button.save")}
-        </Button>
       </Form.Item>
     </Form>
   );

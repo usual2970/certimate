@@ -1,34 +1,33 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Form, Input, Radio } from "antd";
+import { Alert, Form, type FormInstance, Input, Radio } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import dayjs from "dayjs";
-import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { WORKFLOW_TRIGGERS, type WorkflowNode, type WorkflowNodeConfigForStart } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { useWorkflowStore } from "@/stores/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowNode, type WorkflowNodeConfigForStart, type WorkflowTriggerType } from "@/domain/workflow";
 import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
-import { usePanel } from "../PanelProvider";
+
+type StartNodeFormFieldValues = Partial<WorkflowNodeConfigForStart>;
 
 export type StartNodeFormProps = {
-  node: WorkflowNode;
+  form: FormInstance;
+  formName?: string;
+  disabled?: boolean;
+  workflowNode: WorkflowNode;
+  onValuesChange?: (values: StartNodeFormFieldValues) => void;
 };
 
-const initFormModel = (): WorkflowNodeConfigForStart => {
+const initFormModel = (): StartNodeFormFieldValues => {
   return {
     trigger: WORKFLOW_TRIGGERS.AUTO,
     triggerCron: "0 0 * * *",
   };
 };
 
-const StartNodeForm = ({ node }: StartNodeFormProps) => {
+const StartNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange }: StartNodeFormProps) => {
   const { t } = useTranslation();
-
-  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
-  const { hidePanel } = usePanel();
 
   const formSchema = z
     .object({
@@ -49,27 +48,11 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
       }
     });
   const formRule = createSchemaFieldRule(formSchema);
-  const {
-    form: formInst,
-    formPending,
-    formProps,
-  } = useAntdForm<z.infer<typeof formSchema>>({
-    name: "workflowStartNodeForm",
-    initialValues: (node?.config as WorkflowNodeConfigForStart) ?? initFormModel(),
-    onSubmit: async (values) => {
-      await formInst.validateFields();
-      await updateNode(
-        produce(node, (draft) => {
-          draft.config = { ...values };
-          draft.validated = true;
-        })
-      );
-      hidePanel();
-    },
-  });
 
-  const fieldTrigger = Form.useWatch<string>("trigger", formInst);
-  const fieldTriggerCron = Form.useWatch<string>("triggerCron", formInst);
+  const initialValues: StartNodeFormFieldValues = (workflowNode.config as WorkflowNodeConfigForStart) ?? initFormModel();
+
+  const fieldTrigger = Form.useWatch<WorkflowTriggerType>("trigger", form);
+  const fieldTriggerCron = Form.useWatch<string>("triggerCron", form);
   const [fieldTriggerCronExpectedExecutions, setFieldTriggerCronExpectedExecutions] = useState<Date[]>([]);
   useEffect(() => {
     setFieldTriggerCronExpectedExecutions(getNextCronExecutions(fieldTriggerCron, 5));
@@ -77,12 +60,27 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
 
   const handleTriggerChange = (value: string) => {
     if (value === WORKFLOW_TRIGGERS.AUTO) {
-      formInst.setFieldValue("triggerCron", formInst.getFieldValue("triggerCron") || initFormModel().triggerCron);
+      form.setFieldValue("triggerCron", initialValues.triggerCron || initFormModel().triggerCron);
+    } else {
+      form.setFieldValue("triggerCron", undefined);
     }
   };
 
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onValuesChange?.(values as StartNodeFormFieldValues);
+  };
+
   return (
-    <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
+    <Form
+      form={form}
+      disabled={disabled}
+      initialValues={initialValues}
+      layout="vertical"
+      name={formName}
+      preserve={false}
+      scrollToFirstError
+      onValuesChange={handleFormChange}
+    >
       <Form.Item
         name="trigger"
         label={t("workflow_node.start.form.trigger.label")}
@@ -124,12 +122,6 @@ const StartNodeForm = ({ node }: StartNodeFormProps) => {
           <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron_alert.content") }}></span>} />
         </Form.Item>
       </Show>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={formPending}>
-          {t("common.button.save")}
-        </Button>
-      </Form.Item>
     </Form>
   );
 };

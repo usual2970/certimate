@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseCircleOutlined as CloseCircleOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
 import { Button, Card, Dropdown, Popover } from "antd";
@@ -85,4 +86,4 @@ const ConditionNode = ({ node, branchId, branchIndex, disabled }: ConditionNodeP
   );
 };
 
-export default ConditionNode;
+export default memo(ConditionNode);

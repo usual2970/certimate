@@ -2,9 +2,8 @@ import { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, type AutoCompleteProps, Button, Divider, Form, Input, Select, Space, Switch, Tooltip, Typography } from "antd";
+import { AutoComplete, type AutoCompleteProps, Button, Divider, Form, type FormInstance, Input, Select, Space, Switch, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { produce } from "immer";
 import { z } from "zod";
 
 import ModalForm from "@/components/ModalForm";
@@ -13,20 +12,22 @@ import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForApply } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
-import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
-import { useWorkflowStore } from "@/stores/workflow";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
-import { usePanel } from "../PanelProvider";
+
+type ApplyNodeFormFieldValues = Partial<WorkflowNodeConfigForApply>;
 
 export type ApplyNodeFormProps = {
-  node: WorkflowNode;
+  form: FormInstance;
+  formName?: string;
+  disabled?: boolean;
+  workflowNode: WorkflowNode;
+  onValuesChange?: (values: ApplyNodeFormFieldValues) => void;
 };
 
 const MULTIPLE_INPUT_DELIMITER = ";";
 
-const initFormModel = (): Partial<WorkflowNodeConfigForApply> => {
+const initFormModel = (): ApplyNodeFormFieldValues => {
   return {
     keyAlgorithm: "RSA2048",
     propagationTimeout: 60,
@@ -34,13 +35,8 @@ const initFormModel = (): Partial<WorkflowNodeConfigForApply> => {
   };
 };
 
-const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
+const ApplyNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange }: ApplyNodeFormProps) => {
   const { t } = useTranslation();
-
-  const { accesses } = useAccessesStore(useZustandShallowSelector("accesses"));
-  const { addEmail } = useContactEmailsStore(useZustandShallowSelector("addEmail"));
-  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
-  const { hidePanel } = usePanel();
 
   const formSchema = z.object({
     domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
@@ -48,7 +44,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         .split(MULTIPLE_INPUT_DELIMITER)
         .every((e) => validDomainName(e, true));
     }, t("common.errmsg.domain_invalid")),
-    contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email("common.errmsg.email_invalid"),
+    contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email(t("common.errmsg.email_invalid")),
     providerAccessId: z
       .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
       .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
@@ -73,46 +69,27 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
     disableFollowCNAME: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const {
-    form: formInst,
-    formPending,
-    formProps,
-  } = useAntdForm<z.infer<typeof formSchema>>({
-    name: "workflowApplyNodeForm",
-    initialValues: (node?.config as WorkflowNodeConfigForApply) ?? initFormModel(),
-    onSubmit: async (values) => {
-      await formInst.validateFields();
-      await addEmail(values.contactEmail);
-      await updateNode(
-        produce(node, (draft) => {
-          draft.config = {
-            provider: accesses.find((e) => e.id === values.providerAccessId)?.provider,
-            ...values,
-          } as WorkflowNodeConfigForApply;
-          draft.validated = true;
-        })
-      );
-      hidePanel();
-    },
-  });
 
-  const [fieldDomains, setFieldDomains] = useState(node?.config?.domains as string);
-  const [fieldNameservers, setFieldNameservers] = useState(node?.config?.nameservers as string);
+  const initialValues: ApplyNodeFormFieldValues = (workflowNode.config as WorkflowNodeConfigForApply) ?? initFormModel();
 
-  const handleFieldDomainsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFieldDomains(value);
-    formInst.setFieldValue("domains", value);
-  };
+  const fieldDomains = Form.useWatch<string>("domains", form);
+  const fieldNameservers = Form.useWatch<string>("nameservers", form);
 
-  const handleFieldNameserversChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFieldNameservers(value);
-    formInst.setFieldValue("nameservers", value);
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onValuesChange?.(values as ApplyNodeFormFieldValues);
   };
 
   return (
-    <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
+    <Form
+      form={form}
+      disabled={disabled}
+      initialValues={initialValues}
+      layout="vertical"
+      name={formName}
+      preserve={false}
+      scrollToFirstError
+      onValuesChange={handleFormChange}
+    >
       <Form.Item
         name="domains"
         label={t("workflow_node.apply.form.domains.label")}
@@ -121,21 +98,22 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
       >
         <Space.Compact style={{ width: "100%" }}>
           <Input
-            disabled={formPending}
+            disabled={disabled}
             value={fieldDomains}
             placeholder={t("workflow_node.apply.form.domains.placeholder")}
-            onChange={handleFieldDomainsChange}
+            onChange={(e) => {
+              form.setFieldValue("domains", e.target.value);
+            }}
           />
           <FormFieldDomainsModalForm
             data={fieldDomains}
             trigger={
-              <Button disabled={formPending}>
+              <Button disabled={disabled}>
                 <FormOutlinedIcon />
               </Button>
             }
             onFinish={(v) => {
-              setFieldDomains(v);
-              formInst.setFieldValue("domains", v);
+              form.setFieldValue("domains", v);
             }}
           />
         </Space.Compact>
@@ -173,7 +151,7 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
                 onSubmit={(record) => {
                   const provider = accessProvidersMap.get(record.provider);
                   if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
-                    formInst.setFieldValue("providerAccessId", record.id);
+                    form.setFieldValue("providerAccessId", record.id);
                   }
                 }}
               />
@@ -216,21 +194,22 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         <Space.Compact style={{ width: "100%" }}>
           <Input
             allowClear
-            disabled={formPending}
+            disabled={disabled}
             value={fieldNameservers}
             placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
-            onChange={handleFieldNameserversChange}
+            onChange={(e) => {
+              form.setFieldValue("nameservers", e.target.value);
+            }}
           />
           <FormFieldNameserversModalForm
             data={fieldNameservers}
             trigger={
-              <Button disabled={formPending}>
+              <Button disabled={disabled}>
                 <FormOutlinedIcon />
               </Button>
             }
             onFinish={(v) => {
-              setFieldNameservers(v);
-              formInst.setFieldValue("nameservers", v);
+              form.setFieldValue("nameservers", v);
             }}
           />
         </Space.Compact>
@@ -259,12 +238,6 @@ const ApplyNodeForm = ({ node }: ApplyNodeFormProps) => {
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_follow_cname.tooltip") }}></span>}
       >
         <Switch />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={formPending}>
-          {t("common.button.save")}
-        </Button>
       </Form.Item>
     </Form>
   );
@@ -340,7 +313,7 @@ const FormFieldDomainsModalForm = ({
   trigger,
   onFinish,
 }: {
-  data: string;
+  data?: string;
   disabled?: boolean;
   trigger?: React.ReactNode;
   onFinish?: (data: string) => void;
@@ -353,7 +326,7 @@ const FormFieldDomainsModalForm = ({
     }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
+  const [form] = Form.useForm<z.infer<typeof formSchema>>();
 
   const [model, setModel] = useState<Partial<z.infer<typeof formSchema>>>({ domains: data?.split(MULTIPLE_INPUT_DELIMITER) });
   useEffect(() => {
@@ -372,7 +345,7 @@ const FormFieldDomainsModalForm = ({
   return (
     <ModalForm
       layout="vertical"
-      form={formInst}
+      form={form}
       initialValues={model}
       modalProps={{ destroyOnClose: true }}
       title={t("workflow_node.apply.form.domains.multiple_input_modal.title")}
@@ -388,7 +361,7 @@ const FormFieldDomainsModalForm = ({
   );
 };
 
-const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: string; trigger?: React.ReactNode; onFinish?: (data: string) => void }) => {
+const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data?: string; trigger?: React.ReactNode; onFinish?: (data: string) => void }) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -397,7 +370,7 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
     }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const [formInst] = Form.useForm<z.infer<typeof formSchema>>();
+  const [form] = Form.useForm<z.infer<typeof formSchema>>();
 
   const [model, setModel] = useState<Partial<z.infer<typeof formSchema>>>({ nameservers: data?.split(MULTIPLE_INPUT_DELIMITER) });
   useEffect(() => {
@@ -416,7 +389,7 @@ const FormFieldNameserversModalForm = ({ data, trigger, onFinish }: { data: stri
   return (
     <ModalForm
       layout="vertical"
-      form={formInst}
+      form={form}
       initialValues={model}
       modalProps={{ destroyOnClose: true }}
       title={t("workflow_node.apply.form.nameservers.multiple_input_modal.title")}

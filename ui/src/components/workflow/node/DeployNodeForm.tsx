@@ -1,9 +1,9 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
-import { Button, Divider, Form, Select, Tooltip, Typography } from "antd";
+import { Button, Divider, Form, type FormInstance, Select, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { produce } from "immer";
+import { init } from "i18next";
 import { z } from "zod";
 
 import Show from "@/components/Show";
@@ -13,9 +13,9 @@ import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
 import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
-import { usePanel } from "../PanelProvider";
+
 import DeployNodeFormAliyunALBFields from "./DeployNodeFormAliyunALBFields";
 import DeployNodeFormAliyunCDNFields from "./DeployNodeFormAliyunCDNFields";
 import DeployNodeFormAliyunCLBFields from "./DeployNodeFormAliyunCLBFields";
@@ -40,19 +40,30 @@ import DeployNodeFormVolcEngineCDNFields from "./DeployNodeFormVolcEngineCDNFiel
 import DeployNodeFormVolcEngineLiveFields from "./DeployNodeFormVolcEngineLiveFields";
 import DeployNodeFormWebhookFields from "./DeployNodeFormWebhookFields";
 
+type DeployNodeFormFieldValues = Partial<WorkflowNodeConfigForDeploy>;
+
 export type DeployFormProps = {
-  node: WorkflowNode;
+  form: FormInstance;
+  formName?: string;
+  disabled?: boolean;
+  workflowNode: WorkflowNode;
+  onValuesChange?: (values: DeployNodeFormFieldValues) => void;
 };
 
-const initFormModel = (): Partial<WorkflowNodeConfigForDeploy> => {
+const initFormModel = (): DeployNodeFormFieldValues => {
   return {};
 };
 
-const DeployNodeForm = ({ node }: DeployFormProps) => {
+const DeployNodeForm = ({ form, formName, disabled, workflowNode, onValuesChange }: DeployFormProps) => {
   const { t } = useTranslation();
 
-  const { updateNode, getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
-  const { hidePanel } = usePanel();
+  const { getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
+
+  const [previousOutput, setPreviousOutput] = useState<WorkflowNode[]>([]);
+  useEffect(() => {
+    const rs = getWorkflowOuptutBeforeId(workflowNode.id, "certificate");
+    setPreviousOutput(rs);
+  }, [workflowNode.id, getWorkflowOuptutBeforeId]);
 
   const formSchema = z.object({
     provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
@@ -62,32 +73,10 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
     certificate: z.string({ message: t("workflow_node.deploy.form.certificate.placeholder") }).nonempty(t("workflow_node.deploy.form.certificate.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const {
-    form: formInst,
-    formPending,
-    formProps,
-  } = useAntdForm<z.infer<typeof formSchema>>({
-    name: "workflowDeployNodeForm",
-    initialValues: (node?.config as WorkflowNodeConfigForDeploy) ?? initFormModel(),
-    onSubmit: async (values) => {
-      await formInst.validateFields();
-      await updateNode(
-        produce(node, (draft) => {
-          draft.config = { ...values };
-          draft.validated = true;
-        })
-      );
-      hidePanel();
-    },
-  });
 
-  const [previousOutput, setPreviousOutput] = useState<WorkflowNode[]>([]);
-  useEffect(() => {
-    const rs = getWorkflowOuptutBeforeId(node.id, "certificate");
-    setPreviousOutput(rs);
-  }, [node, getWorkflowOuptutBeforeId]);
+  const initialValues: DeployNodeFormFieldValues = (workflowNode.config as WorkflowNodeConfigForDeploy) ?? initFormModel();
 
-  const fieldProvider = Form.useWatch("provider", { form: formInst, preserve: true });
+  const fieldProvider = Form.useWatch("provider", { form: form, preserve: true });
 
   const formFieldsComponent = useMemo(() => {
     /*
@@ -146,9 +135,9 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
 
   const handleProviderPick = useCallback(
     (value: string) => {
-      formInst.setFieldValue("provider", value);
+      form.setFieldValue("provider", value);
     },
-    [formInst]
+    [form]
   );
 
   const handleProviderSelect = (value: string) => {
@@ -156,10 +145,10 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
 
     // TODO: 暂时不支持切换部署目标，需后端调整，否则之前若存在部署结果输出就不会再部署
     // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
-    if (node.config?.provider === value) {
-      formInst.resetFields();
+    if (initialValues?.provider === value) {
+      form.resetFields();
     } else {
-      const oldValues = formInst.getFieldsValue();
+      const oldValues = form.getFieldsValue();
       const newValues: Record<string, unknown> = {};
       for (const key in oldValues) {
         if (key === "provider" || key === "providerAccessId" || key === "certificate") {
@@ -168,16 +157,29 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
           newValues[key] = undefined;
         }
       }
-      formInst.setFieldsValue(newValues);
+      form.setFieldsValue(newValues);
 
       if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
-        formInst.setFieldValue("providerAccessId", undefined);
+        form.setFieldValue("providerAccessId", undefined);
       }
     }
   };
 
+  const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
+    onValuesChange?.(values as DeployNodeFormFieldValues);
+  };
+
   return (
-    <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
+    <Form
+      form={form}
+      disabled={disabled}
+      initialValues={initialValues}
+      layout="vertical"
+      name={formName}
+      preserve={false}
+      scrollToFirstError
+      onValuesChange={handleFormChange}
+    >
       <Show when={!!fieldProvider} fallback={<DeployProviderPicker onSelect={handleProviderPick} />}>
         <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
           <DeployProviderSelect
@@ -213,7 +215,7 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
                   onSubmit={(record) => {
                     const provider = accessProvidersMap.get(record.provider);
                     if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
-                      formInst.setFieldValue("providerAccessId", record.id);
+                      form.setFieldValue("providerAccessId", record.id);
                     }
                   }}
                 />
@@ -264,12 +266,6 @@ const DeployNodeForm = ({ node }: DeployFormProps) => {
         </Divider>
 
         {formFieldsComponent}
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={formPending}>
-            {t("common.button.save")}
-          </Button>
-        </Form.Item>
       </Show>
     </Form>
   );

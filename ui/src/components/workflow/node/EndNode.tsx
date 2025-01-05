@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Typography } from "antd";
 
@@ -14,4 +15,4 @@ const EndNode = () => {
   );
 };
 
-export default EndNode;
+export default memo(EndNode);

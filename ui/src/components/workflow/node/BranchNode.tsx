@@ -7,7 +7,7 @@ import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
 import AddNode from "./AddNode";
-import NodeRender from "./NodeRender";
+import WorkflowElement from "../WorkflowElement";
 
 export type BrandNodeProps = {
   node: WorkflowNode;
@@ -19,12 +19,12 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
 
   const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
 
-  const renderNodes = (node: WorkflowNode, branchNodeId?: string, branchIndex?: number) => {
+  const renderBranch = (node: WorkflowNode, branchNodeId?: string, branchIndex?: number) => {
     const elements: JSX.Element[] = [];
 
-    let current = node as WorkflowNode | undefined;
+    let current = node as typeof node | undefined;
     while (current) {
-      elements.push(<NodeRender key={current.id} node={current} branchId={branchNodeId} branchIndex={branchIndex} disabled={disabled} />);
+      elements.push(<WorkflowElement key={current.id} node={current} disabled={disabled} branchId={branchNodeId} branchIndex={branchIndex} />);
       current = current.next;
     }
 
@@ -47,12 +47,12 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
           {t("workflow_node.action.add_branch")}
         </Button>
 
-        {node.branches!.map((branch, index) => (
+        {node.branches?.map((branch, index) => (
           <div
             key={branch.id}
             className="relative flex flex-col items-center before:absolute  before:left-1/2 before:top-0 before:h-full before:w-[2px] before:-translate-x-1/2 before:bg-stone-200 before:content-['']"
           >
-            <div className="relative flex flex-col items-center">{renderNodes(branch, node.id, index)}</div>
+            <div className="relative flex flex-col items-center">{renderBranch(branch, node.id, index)}</div>
           </div>
         ))}
       </div>

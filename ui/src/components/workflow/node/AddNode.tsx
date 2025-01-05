@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
@@ -43,7 +43,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
         },
       };
     });
-  }, []);
+  }, [node.id, disabled]);
 
   return (
     <div className="relative py-6 before:absolute before:left-1/2 before:top-0 before:h-full before:w-[2px] before:-translate-x-1/2 before:bg-stone-200 before:content-['']">
@@ -56,4 +56,4 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
   );
 };
 
-export default AddNode;
+export default memo(AddNode);
