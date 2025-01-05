@@ -4,7 +4,6 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { type AccessConfigForWebhook } from "@/domain/access";
-import { useAntdForm } from "@/hooks";
 
 type AccessEditFormWebhookConfigFieldValues = Partial<AccessConfigForWebhook>;
 
@@ -29,17 +28,13 @@ const AccessEditFormWebhookConfig = ({ form, formName, disabled, initialValues, 
     url: z.string({ message: t("access.form.webhook_url.placeholder") }).url(t("common.errmsg.url_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    form: form,
-    initialValues: initialValues ?? initFormModel(),
-  });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values as AccessEditFormWebhookConfigFieldValues);
   };
 
   return (
-    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues ?? initFormModel()} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item name="url" label={t("access.form.webhook_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.webhook_url.placeholder")} />
       </Form.Item>

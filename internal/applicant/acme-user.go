@@ -75,7 +75,7 @@ func (u *acmeUser) getPrivateKeyPEM() string {
 	return u.privkey
 }
 
-type AcmeAccountRepository interface {
+type acmeAccountRepository interface {
 	GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error)
 	Save(ca, email, key string, resource *registration.Resource) error
 }

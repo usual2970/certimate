@@ -8,7 +8,6 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { type AccessConfigForKubernetes } from "@/domain/access";
-import { useAntdForm } from "@/hooks";
 import { readFileContent } from "@/utils/file";
 
 type AccessEditFormKubernetesConfigFieldValues = Partial<AccessConfigForKubernetes>;
@@ -36,14 +35,11 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    form: form,
-    initialValues: initialValues ?? initFormModel(),
-  });
 
-  const [kubeFileList, setKubeFileList] = useState<UploadFile[]>([]);
+  const fieldKubeConfig = Form.useWatch("kubeConfig", form);
+  const [fieldKubeFileList, setFieldKubeFileList] = useState<UploadFile[]>([]);
   useDeepCompareEffect(() => {
-    setKubeFileList(initialValues?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
+    setFieldKubeFileList(initialValues?.kubeConfig?.trim() ? [{ uid: "-1", name: "kubeconfig", status: "done" }] : []);
   }, [initialValues]);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
@@ -52,31 +48,26 @@ const AccessEditFormKubernetesConfig = ({ form, formName, disabled, initialValue
 
   const handleKubeFileChange: UploadProps["onChange"] = async ({ file }) => {
     if (file && file.status !== "removed") {
-      formInst.setFieldValue("kubeConfig", await readFileContent(file.originFileObj ?? (file as unknown as File)));
-      setKubeFileList([file]);
+      form.setFieldValue("kubeConfig", await readFileContent(file.originFileObj ?? (file as unknown as File)));
+      setFieldKubeFileList([file]);
     } else {
-      formInst.setFieldValue("kubeConfig", "");
-      setKubeFileList([]);
+      form.setFieldValue("kubeConfig", "");
+      setFieldKubeFileList([]);
     }
 
-    flushSync(() => onValuesChange?.(formInst.getFieldsValue(true)));
+    flushSync(() => onValuesChange?.(form.getFieldsValue(true)));
   };
 
   return (
-    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues ?? initFormModel()} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item name="kubeConfig" noStyle rules={[formRule]}>
-        <Input.TextArea
-          autoComplete="new-password"
-          hidden
-          placeholder={t("access.form.k8s_kubeconfig.placeholder")}
-          value={formInst.getFieldValue("kubeConfig")}
-        />
+        <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.k8s_kubeconfig.placeholder")} value={fieldKubeConfig} />
       </Form.Item>
       <Form.Item
         label={t("access.form.k8s_kubeconfig.label")}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.k8s_kubeconfig.tooltip") }}></span>}
       >
-        <Upload beforeUpload={() => false} fileList={kubeFileList} maxCount={1} onChange={handleKubeFileChange}>
+        <Upload beforeUpload={() => false} fileList={fieldKubeFileList} maxCount={1} onChange={handleKubeFileChange}>
           <Button icon={<UploadOutlinedIcon />}>{t("access.form.k8s_kubeconfig.upload")}</Button>
         </Upload>
       </Form.Item>

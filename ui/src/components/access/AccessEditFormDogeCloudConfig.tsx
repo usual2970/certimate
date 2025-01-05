@@ -4,7 +4,6 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { type AccessConfigForDogeCloud } from "@/domain/access";
-import { useAntdForm } from "@/hooks";
 
 type AccessEditFormDogeCloudConfigFieldValues = Partial<AccessConfigForDogeCloud>;
 
@@ -39,17 +38,13 @@ const AccessEditFormDogeCloudConfig = ({ form, formName, disabled, initialValues
       .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    form: form,
-    initialValues: initialValues ?? initFormModel(),
-  });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values as AccessEditFormDogeCloudConfigFieldValues);
   };
 
   return (
-    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues ?? initFormModel()} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKey"
         label={t("access.form.dogecloud_access_key.label")}

@@ -2,14 +2,15 @@ package notify
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+	"github.com/usual2970/certimate/internal/repository"
 )
 
 func SendToAllChannels(subject, message string) error {
@@ -48,13 +49,14 @@ func SendToChannel(subject, message string, channel string, channelConfig map[st
 }
 
 func getEnabledNotifiers() ([]notifier.Notifier, error) {
-	settings, err := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='notifyChannels'")
+	settingsRepo := repository.NewSettingsRepository()
+	settings, err := settingsRepo.GetByName(context.Background(), "notifyChannels")
 	if err != nil {
 		return nil, fmt.Errorf("find notifyChannels error: %w", err)
 	}
 
 	rs := make(map[string]map[string]any)
-	if err := settings.UnmarshalJSONField("content", &rs); err != nil {
+	if err := json.Unmarshal([]byte(settings.Content), &rs); err != nil {
 		return nil, fmt.Errorf("unmarshal notifyChannels error: %w", err)
 	}
 

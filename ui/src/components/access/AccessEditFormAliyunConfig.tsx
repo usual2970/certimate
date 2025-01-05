@@ -4,7 +4,6 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { type AccessConfigForAliyun } from "@/domain/access";
-import { useAntdForm } from "@/hooks";
 
 type AccessEditFormAliyunConfigFieldValues = Partial<AccessConfigForAliyun>;
 
@@ -39,17 +38,13 @@ const AccessEditFormAliyunConfig = ({ form, formName, disabled, initialValues, o
       .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    form: form,
-    initialValues: initialValues ?? initFormModel(),
-  });
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values as AccessEditFormAliyunConfigFieldValues);
   };
 
   return (
-    <Form {...formProps} form={formInst} disabled={disabled} layout="vertical" name={formName} onValuesChange={handleFormChange}>
+    <Form form={form} disabled={disabled} initialValues={initialValues ?? initFormModel()} layout="vertical" name={formName} onValuesChange={handleFormChange}>
       <Form.Item
         name="accessKeyId"
         label={t("access.form.aliyun_access_key_id.label")}

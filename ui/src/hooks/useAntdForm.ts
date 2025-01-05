@@ -36,24 +36,24 @@ const useAntdForm = <T extends NonNullable<unknown> = any>({ form, initialValues
       return;
     }
 
-    let temp: Promise<Partial<T>>;
+    let p: Promise<Partial<T>>;
     if (typeof initialValues === "function") {
-      temp = Promise.resolve(initialValues());
+      p = Promise.resolve(initialValues());
     } else {
-      temp = Promise.resolve(initialValues);
+      p = Promise.resolve(initialValues);
     }
 
-    temp.then((temp) => {
+    p.then((res) => {
       if (!unmounted) {
         type FieldName = Parameters<FormInstance<T>["getFieldValue"]>[0];
         type FieldsValue = Parameters<FormInstance<T>["setFieldsValue"]>[0];
 
-        const obj = { ...temp };
-        Object.keys(temp).forEach((key) => {
-          obj[key as keyof T] = formInst!.isFieldTouched(key as FieldName) ? formInst!.getFieldValue(key as FieldName) : temp[key as keyof T];
+        const obj = { ...res };
+        Object.keys(res).forEach((key) => {
+          obj[key as keyof T] = formInst!.isFieldTouched(key as FieldName) ? formInst!.getFieldValue(key as FieldName) : res[key as keyof T];
         });
 
-        setFormInitialValues(temp);
+        setFormInitialValues(res);
         formInst!.setFieldsValue(obj as FieldsValue);
       }
     });

@@ -17,12 +17,12 @@ const useTriggerElement = (trigger: React.ReactNode, options?: UseTriggerElement
       return null;
     }
 
-    const temp = isValidElement(trigger) ? trigger : createElement(Fragment, null, trigger);
-    return cloneElement(temp, {
-      ...temp.props,
+    const el = isValidElement(trigger) ? trigger : createElement(Fragment, null, trigger);
+    return cloneElement(el, {
+      ...el.props,
       onClick: (e: MouseEvent) => {
         onClick?.(e);
-        temp.props?.onClick?.(e);
+        el.props?.onClick?.(e);
       },
     });
   }, [trigger, onClick]);

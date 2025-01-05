@@ -2,6 +2,7 @@ package applicant
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,7 +14,6 @@ import (
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
 
-	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
 )
@@ -37,11 +37,11 @@ type ApplyCertResult struct {
 	CSR               string
 }
 
-type applicant interface {
+type Applicant interface {
 	Apply() (*ApplyCertResult, error)
 }
 
-func NewWithApplyNode(node *domain.WorkflowNode) (applicant, error) {
+func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	if node.Type != domain.WorkflowNodeTypeApply {
 		return nil, fmt.Errorf("node type is not apply")
 	}
@@ -74,14 +74,15 @@ func NewWithApplyNode(node *domain.WorkflowNode) (applicant, error) {
 }
 
 func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*ApplyCertResult, error) {
-	record, _ := app.GetApp().Dao().FindFirstRecordByFilter("settings", "name='sslProvider'")
+	settingsRepo := repository.NewSettingsRepository()
+	settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
 
 	sslProvider := &acmeSSLProviderConfig{
 		Config:   acmeSSLProviderConfigContent{},
 		Provider: defaultSSLProvider,
 	}
-	if record != nil {
-		if err := record.UnmarshalJSONField("content", sslProvider); err != nil {
+	if settings != nil {
+		if err := json.Unmarshal([]byte(settings.Content), sslProvider); err != nil {
 			return nil, err
 		}
 	}
