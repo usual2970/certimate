@@ -33,16 +33,19 @@ func NewCertificateService(repo CertificateRepository) *certificateService {
 
 func (s *certificateService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
-
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get expire soon certificate", "err", err)
 			return
 		}
-		msg := buildMsg(certs)
-		// TODO: 空指针 Bug
-		if err := notify.SendToAllChannels(msg.Subject, msg.Message); err != nil {
+
+		notification := buildExpireSoonNotification(certs)
+		if notification == nil {
+			return
+		}
+
+		if err := notify.SendToAllChannels(notification.Subject, notification.Message); err != nil {
 			app.GetLogger().Error("failed to send expire soon certificate", "err", err)
 		}
 	})
@@ -55,21 +58,24 @@ func (s *certificateService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
+type certificateNotification struct {
+	Subject string `json:"subject"`
+	Message string `json:"message"`
+}
+
+func buildExpireSoonNotification(records []domain.Certificate) *certificateNotification {
 	if len(records) == 0 {
 		return nil
 	}
 
-	// 查询模板信息
-	settingRepo := repository.NewSettingsRepository()
-	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
-
 	subject := defaultExpireSubject
 	message := defaultExpireMessage
 
+	// 查询模板信息
+	settingRepo := repository.NewSettingsRepository()
+	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
 	if err == nil {
 		var templates *domain.NotifyTemplatesSettingsContent
-
 		json.Unmarshal([]byte(setting.Content), &templates)
 
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
@@ -81,22 +87,18 @@ func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
 	// 替换变量
 	count := len(records)
 	domains := make([]string, count)
-
 	for i, record := range records {
 		domains[i] = record.SubjectAltNames
 	}
-
 	countStr := strconv.Itoa(count)
 	domainStr := strings.Join(domains, ";")
-
 	subject = strings.ReplaceAll(subject, "${COUNT}", countStr)
 	subject = strings.ReplaceAll(subject, "${DOMAINS}", domainStr)
-
 	message = strings.ReplaceAll(message, "${COUNT}", countStr)
 	message = strings.ReplaceAll(message, "${DOMAINS}", domainStr)
 
 	// 返回消息
-	return &domain.NotifyMessage{
+	return &certificateNotification{
 		Subject: subject,
 		Message: message,
 	}

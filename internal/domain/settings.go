@@ -22,11 +22,6 @@ type NotifyTemplate struct {
 
 type NotifyChannelsSettingsContent map[string]map[string]any
 
-type NotifyMessage struct {
-	Subject string `json:"subject"`
-	Message string `json:"message"`
-}
-
 func (s *Settings) GetNotifyChannelConfig(channel string) (map[string]any, error) {
 	conf := &NotifyChannelsSettingsContent{}
 	if err := json.Unmarshal([]byte(s.Content), conf); err != nil {
