@@ -1,12 +1,16 @@
-import { memo } from "react";
+import { memo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseCircleOutlined as CloseCircleOutlinedIcon, EllipsisOutlined as EllipsisOutlinedIcon } from "@ant-design/icons";
+import {
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  EllipsisOutlined as EllipsisOutlinedIcon,
+  FormOutlined as FormOutlinedIcon,
+  MoreOutlined as MoreOutlinedIcon,
+} from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { Button, Card, Drawer, Dropdown, Modal, Popover, Space } from "antd";
+import { Button, Card, Drawer, Dropdown, Input, Modal, Popover, Space } from "antd";
 import { produce } from "immer";
 import { isEqual } from "radash";
 
-import Show from "@/components/Show";
 import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -18,23 +22,18 @@ export type SharedNodeProps = {
   disabled?: boolean;
 };
 
-type SharedNodeWrapperProps = SharedNodeProps & {
-  children: React.ReactNode;
-  onClick?: (e: React.MouseEvent) => void;
+// #region Title
+type SharedNodeTitleProps = SharedNodeProps & {
+  className?: string;
+  style?: React.CSSProperties;
 };
 
-const SharedNodeWrapper = ({ children, node, disabled, onClick }: SharedNodeWrapperProps) => {
-  const { t } = useTranslation();
+const SharedNodeTitle = ({ className, style, node, disabled }: SharedNodeTitleProps) => {
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
 
-  const { updateNode, removeNode } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode"]));
-
-  const handleNodeClick = (e: React.MouseEvent) => {
-    onClick?.(e);
-  };
-
-  const handleNodeNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     const oldName = node.name;
-    const newName = e.target.innerText.trim().substring(0, 64);
+    const newName = e.target.innerText.trim().substring(0, 64) || oldName;
     if (oldName === newName) {
       return;
     }
@@ -47,48 +46,153 @@ const SharedNodeWrapper = ({ children, node, disabled, onClick }: SharedNodeWrap
   };
 
   return (
+    <div className="w-full cursor-text overflow-hidden text-center">
+      <div className={className} style={style} contentEditable={!disabled} suppressContentEditableWarning onBlur={handleBlur}>
+        {node.name}
+      </div>
+    </div>
+  );
+};
+// #endregion
+
+// #region Menu
+type SharedNodeMenuProps = SharedNodeProps & {
+  branchId?: string;
+  branchIndex?: number;
+  trigger: React.ReactNode;
+  afterUpdate?: () => void;
+  afterDelete?: () => void;
+};
+
+const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterUpdate, afterDelete }: SharedNodeMenuProps) => {
+  const { t } = useTranslation();
+
+  const { updateNode, removeNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode", "removeBranch"]));
+
+  const [modalApi, ModelContextHolder] = Modal.useModal();
+
+  const nameRef = useRef<string>();
+
+  const handleRenameClick = async () => {
+    const oldName = node.name;
+    const newName = nameRef.current?.trim()?.substring(0, 64) || oldName;
+    if (oldName === newName) {
+      return;
+    }
+
+    await updateNode(
+      produce(node, (draft) => {
+        draft.name = newName;
+      })
+    );
+
+    afterUpdate?.();
+  };
+
+  const handleDeleteClick = async () => {
+    if (node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition) {
+      await removeBranch(branchId!, branchIndex!);
+    } else {
+      await removeNode(node.id);
+    }
+
+    afterDelete?.();
+  };
+
+  return (
+    <>
+      {ModelContextHolder}
+
+      <Dropdown
+        menu={{
+          items: [
+            {
+              key: "rename",
+              disabled: disabled,
+              label:
+                node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
+                  ? t("workflow_node.action.rename_branch")
+                  : t("workflow_node.action.rename_node"),
+              icon: <FormOutlinedIcon />,
+              onClick: () => {
+                nameRef.current = node.name;
+
+                const dialog = modalApi.confirm({
+                  title:
+                    node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
+                      ? t("workflow_node.action.rename_branch")
+                      : t("workflow_node.action.rename_node"),
+                  content: (
+                    <div className="pb-2 pt-4">
+                      <Input
+                        ref={(ref) => setTimeout(() => ref?.focus({ cursor: "end" }), 0)}
+                        defaultValue={node.name}
+                        onChange={(e) => (nameRef.current = e.target.value)}
+                        onPressEnter={async () => {
+                          await handleRenameClick();
+                          dialog.destroy();
+                        }}
+                      />
+                    </div>
+                  ),
+                  icon: null,
+                  okText: t("common.button.save"),
+                  onOk: handleRenameClick,
+                });
+              },
+            },
+            {
+              type: "divider",
+            },
+            {
+              key: "remove",
+              disabled: disabled || node.type === WorkflowNodeType.Start,
+              label:
+                node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
+                  ? t("workflow_node.action.remove_branch")
+                  : t("workflow_node.action.remove_node"),
+              icon: <CloseCircleOutlinedIcon />,
+              danger: true,
+              onClick: handleDeleteClick,
+            },
+          ],
+        }}
+        trigger={["click"]}
+      >
+        {trigger}
+      </Dropdown>
+    </>
+  );
+};
+// #endregion
+
+// #region Wrapper
+type SharedNodeBlockProps = SharedNodeProps & {
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent) => void;
+};
+
+const SharedNodeBlock = ({ children, node, disabled, onClick }: SharedNodeBlockProps) => {
+  const handleNodeClick = (e: React.MouseEvent) => {
+    onClick?.(e);
+  };
+
+  return (
     <>
       <Popover
         arrow={false}
-        content={
-          <Show when={node.type !== WorkflowNodeType.Start}>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: "delete",
-                    disabled: disabled,
-                    label: t("workflow_node.action.delete_node"),
-                    icon: <CloseCircleOutlinedIcon />,
-                    danger: true,
-                    onClick: () => {
-                      if (disabled) return;
-
-                      removeNode(node.id);
-                    },
-                  },
-                ],
-              }}
-              trigger={["click"]}
-            >
-              <Button color="primary" icon={<EllipsisOutlinedIcon />} variant="text" />
-            </Dropdown>
-          </Show>
-        }
+        content={<SharedNodeMenu node={node} disabled={disabled} trigger={<Button color="primary" icon={<MoreOutlinedIcon />} variant="text" />} />}
         overlayClassName="shadow-md"
         overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
         <Card className="relative w-[256px] overflow-hidden shadow-md" styles={{ body: { padding: 0 } }} hoverable>
           <div className="bg-primary flex h-[48px] flex-col items-center justify-center truncate px-4 py-2 text-white">
-            <div
-              className="focus:bg-background focus:text-foreground w-full overflow-hidden text-center outline-none focus:rounded-sm"
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={handleNodeNameBlur}
-            >
-              {node.name}
-            </div>
+            <SharedNodeTitle
+              className="focus:bg-background focus:text-foreground overflow-hidden outline-none focus:rounded-sm"
+              node={node}
+              disabled={disabled}
+            />
           </div>
 
           <div className="flex cursor-pointer flex-col justify-center px-4 py-2" onClick={handleNodeClick}>
@@ -101,7 +205,9 @@ const SharedNodeWrapper = ({ children, node, disabled, onClick }: SharedNodeWrap
     </>
   );
 };
+// #endregion
 
+// #region EditDrawer
 type SharedNodeEditDrawerProps = SharedNodeProps & {
   children: React.ReactNode;
   footer?: boolean;
@@ -174,7 +280,16 @@ const SharedNodeConfigDrawer = ({
       <Drawer
         afterOpenChange={(open) => setOpen(open)}
         destroyOnClose
-        loading={loading}
+        extra={
+          <SharedNodeMenu
+            node={node}
+            disabled={disabled}
+            trigger={<Button icon={<EllipsisOutlinedIcon />} type="text" />}
+            afterDelete={() => {
+              setOpen(false);
+            }}
+          />
+        }
         footer={
           !!footer && (
             <Space className="w-full justify-end">
@@ -185,7 +300,9 @@ const SharedNodeConfigDrawer = ({
             </Space>
           )
         }
+        loading={loading}
         open={open}
+        title={<div className="max-w-[480px] truncate">{node.name}</div>}
         width={640}
         onClose={handleClose}
       >
@@ -194,8 +311,11 @@ const SharedNodeConfigDrawer = ({
     </>
   );
 };
+// #endregion
 
 export default {
-  Wrapper: memo(SharedNodeWrapper),
+  Title: memo(SharedNodeTitle),
+  Menu: memo(SharedNodeMenu),
+  Block: memo(SharedNodeBlock),
   ConfigDrawer: memo(SharedNodeConfigDrawer),
 };

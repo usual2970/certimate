@@ -81,9 +81,9 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
 
   return (
     <>
-      <SharedNode.Wrapper node={node} disabled={disabled} onClick={() => setDrawerOpen(true)}>
+      <SharedNode.Block node={node} disabled={disabled} onClick={() => setDrawerOpen(true)}>
         {wrappedEl}
-      </SharedNode.Wrapper>
+      </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
         node={node}

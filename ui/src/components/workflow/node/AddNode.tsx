@@ -35,8 +35,6 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
         label: t(label as string),
         icon: icon,
         onClick: () => {
-          if (disabled) return;
-
           const nextNode = newNode(type as WorkflowNodeType);
           addNode(nextNode, node.id);
         },

@@ -78,9 +78,9 @@ const StartNode = ({ node, disabled }: StartNodeProps) => {
 
   return (
     <>
-      <SharedNode.Wrapper node={node} disabled={disabled} onClick={() => setDrawerOpen(true)}>
+      <SharedNode.Block node={node} disabled={disabled} onClick={() => setDrawerOpen(true)}>
         {wrappedEl}
-      </SharedNode.Wrapper>
+      </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
         node={node}
