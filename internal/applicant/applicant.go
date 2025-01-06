@@ -77,29 +77,33 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 	settingsRepo := repository.NewSettingsRepository()
 	settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
 
-	sslProvider := &acmeSSLProviderConfig{
+	sslProviderConfig := &acmeSSLProviderConfig{
 		Config:   acmeSSLProviderConfigContent{},
 		Provider: defaultSSLProvider,
 	}
 	if settings != nil {
-		if err := json.Unmarshal([]byte(settings.Content), sslProvider); err != nil {
+		if err := json.Unmarshal([]byte(settings.Content), sslProviderConfig); err != nil {
 			return nil, err
 		}
+	}
+
+	if sslProviderConfig.Provider == "" {
+		sslProviderConfig.Provider = defaultSSLProvider
+	}
+
+	myUser, err := newAcmeUser(sslProviderConfig.Provider, applyConfig.ContactEmail)
+	if err != nil {
+		return nil, err
 	}
 
 	// Some unified lego environment variables are configured here.
 	// link: https://github.com/go-acme/lego/issues/1867
 	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(applyConfig.DisableFollowCNAME))
 
-	myUser, err := newAcmeUser(sslProvider.Provider, applyConfig.ContactEmail)
-	if err != nil {
-		return nil, err
-	}
-
 	config := lego.NewConfig(myUser)
 
 	// This CA URL is configured for a local dev instance of Boulder running in Docker in a VM.
-	config.CADirURL = sslProviderUrls[sslProvider.Provider]
+	config.CADirURL = sslProviderUrls[sslProviderConfig.Provider]
 	config.Certificate.KeyType = parseKeyAlgorithm(applyConfig.KeyAlgorithm)
 
 	// A client facilitates communication with the CA server.
@@ -118,29 +122,29 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 
 	// New users will need to register
 	if !myUser.hasRegistration() {
-		reg, err := registerAcmeUser(client, sslProvider, myUser)
+		reg, err := registerAcmeUser(client, sslProviderConfig, myUser)
 		if err != nil {
 			return nil, fmt.Errorf("failed to register: %w", err)
 		}
 		myUser.Registration = reg
 	}
 
-	request := certificate.ObtainRequest{
+	certRequest := certificate.ObtainRequest{
 		Domains: strings.Split(applyConfig.Domains, ";"),
 		Bundle:  true,
 	}
-	certificates, err := client.Certificate.Obtain(request)
+	certResource, err := client.Certificate.Obtain(certRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ApplyCertResult{
-		PrivateKey:        string(certificates.PrivateKey),
-		Certificate:       string(certificates.Certificate),
-		IssuerCertificate: string(certificates.IssuerCertificate),
-		CSR:               string(certificates.CSR),
-		ACMECertUrl:       certificates.CertURL,
-		ACMECertStableUrl: certificates.CertStableURL,
+		PrivateKey:        string(certResource.PrivateKey),
+		Certificate:       string(certResource.Certificate),
+		IssuerCertificate: string(certResource.IssuerCertificate),
+		CSR:               string(certResource.CSR),
+		ACMECertUrl:       certResource.CertURL,
+		ACMECertStableUrl: certResource.CertStableURL,
 	}, nil
 }
 

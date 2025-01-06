@@ -5,7 +5,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
-	"errors"
 	"fmt"
 
 	"github.com/go-acme/lego/v4/lego"
@@ -39,12 +38,12 @@ func newAcmeUser(ca, email string) (*acmeUser, error) {
 			return nil, err
 		}
 
-		keyStr, err := x509.ConvertECPrivateKeyToPEM(key)
+		keyPEM, err := x509.ConvertECPrivateKeyToPEM(key)
 		if err != nil {
 			return nil, err
 		}
 
-		applyUser.privkey = keyStr
+		applyUser.privkey = keyPEM
 		return applyUser, nil
 	}
 
@@ -80,30 +79,30 @@ type acmeAccountRepository interface {
 	Save(ca, email, key string, resource *registration.Resource) error
 }
 
-func registerAcmeUser(client *lego.Client, sslProvider *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
+func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
 	// TODO: fix 潜在的并发问题
 
 	var reg *registration.Resource
 	var err error
-	switch sslProvider.Provider {
+	switch sslProviderConfig.Provider {
 	case sslProviderZeroSSL:
 		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
 			TermsOfServiceAgreed: true,
-			Kid:                  sslProvider.Config.Zerossl.EabKid,
-			HmacEncoded:          sslProvider.Config.Zerossl.EabHmacKey,
+			Kid:                  sslProviderConfig.Config.ZeroSSL.EabKid,
+			HmacEncoded:          sslProviderConfig.Config.ZeroSSL.EabHmacKey,
 		})
-	case sslProviderGts:
+	case sslProviderGoogleTrustServices:
 		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
 			TermsOfServiceAgreed: true,
-			Kid:                  sslProvider.Config.Gts.EabKid,
-			HmacEncoded:          sslProvider.Config.Gts.EabHmacKey,
+			Kid:                  sslProviderConfig.Config.GoogleTrustServices.EabKid,
+			HmacEncoded:          sslProviderConfig.Config.GoogleTrustServices.EabHmacKey,
 		})
 
-	case sslProviderLetsencrypt:
+	case sslProviderLetsEncrypt, sslProviderLetsEncryptStaging:
 		reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 
 	default:
-		err = errors.New("unknown ssl provider")
+		err = fmt.Errorf("unsupported ssl provider: %s", sslProviderConfig.Provider)
 	}
 
 	if err != nil {
@@ -112,13 +111,13 @@ func registerAcmeUser(client *lego.Client, sslProvider *acmeSSLProviderConfig, u
 
 	repo := repository.NewAcmeAccountRepository()
 
-	resp, err := repo.GetByCAAndEmail(sslProvider.Provider, user.GetEmail())
+	resp, err := repo.GetByCAAndEmail(sslProviderConfig.Provider, user.GetEmail())
 	if err == nil {
 		user.privkey = resp.Key
 		return resp.Resource, nil
 	}
 
-	if err := repo.Save(sslProvider.Provider, user.GetEmail(), user.getPrivateKeyPEM(), reg); err != nil {
+	if err := repo.Save(sslProviderConfig.Provider, user.GetEmail(), user.getPrivateKeyPEM(), reg); err != nil {
 		return nil, fmt.Errorf("failed to save registration: %w", err)
 	}
 

@@ -73,6 +73,12 @@
 
   "settings.sslprovider.tab": "Certificate authority",
   "settings.sslprovider.form.provider.label": "ACME provider",
+  "settings.sslprovider.form.provider.option.letsencrypt.label": "Let's Encrypt",
+  "settings.sslprovider.form.provider.option.letsencrypt_staging.label": "Let's Encrypt Staging Environment",
+  "settings.sslprovider.form.provider.option.zerossl.label": "ZeroSSL",
+  "settings.sslprovider.form.provider.option.gts.label": "Google Trust Services",
+  "settings.sslprovider.form.letsencrypt_staging_alert": "The staging environment can reduce the chance of your running up against rate limits.<br><br>Learn more:<br><a href=\"https://letsencrypt.org/docs/staging-environment/\" target=\"_blank\">https://letsencrypt.org/docs/staging-environment/</a>",
+  "settings.sslprovider.form.letsencrypt_staging_warning": "Attention: Certificates from the staging environment are only for testing purposes.",
   "settings.sslprovider.form.zerossl_eab_kid.label": "EAB KID",
   "settings.sslprovider.form.zerossl_eab_kid.placeholder": "Please enter EAB KID",
   "settings.sslprovider.form.zerossl_eab_kid.tooltip": "For more information, see <a href=\"https://zerossl.com/documentation/acme/\" target=\"_blank\">https://zerossl.com/documentation/acme/</a>",

@@ -133,13 +133,11 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 // #endregion
 
 // #region Settings: SSLProvider
-export const SSLPROVIDER_LETSENCRYPT = "letsencrypt" as const;
-export const SSLPROVIDER_ZEROSSL = "zerossl" as const;
-export const SSLPROVIDER_GOOGLETRUSTSERVICES = "gts" as const;
 export const SSLPROVIDERS = Object.freeze({
-  LETS_ENCRYPT: SSLPROVIDER_LETSENCRYPT,
-  ZERO_SSL: SSLPROVIDER_ZEROSSL,
-  GOOGLE_TRUST_SERVICES: SSLPROVIDER_GOOGLETRUSTSERVICES,
+  LETS_ENCRYPT: "letsencrypt",
+  LETS_ENCRYPT_STAGING: "letsencrypt_staging",
+  ZERO_SSL: "zerossl",
+  GOOGLE_TRUST_SERVICES: "gts",
 } as const);
 
 export type SSLProviders = (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
@@ -148,9 +146,10 @@ export type SSLProviderSettingsContent = {
   provider: (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
   config: {
     [key: string]: Record<string, unknown> | undefined;
-    letsencrypt?: SSLProviderLetsEncryptConfig;
-    zerossl?: SSLProviderZeroSSLConfig;
-    gts?: SSLProviderGoogleTrustServicesConfig;
+    [SSLPROVIDERS.LETS_ENCRYPT]?: SSLProviderLetsEncryptConfig;
+    [SSLPROVIDERS.LETS_ENCRYPT_STAGING]?: SSLProviderLetsEncryptConfig;
+    [SSLPROVIDERS.ZERO_SSL]?: SSLProviderZeroSSLConfig;
+    [SSLPROVIDERS.GOOGLE_TRUST_SERVICES]?: SSLProviderGoogleTrustServicesConfig;
   };
 };
 

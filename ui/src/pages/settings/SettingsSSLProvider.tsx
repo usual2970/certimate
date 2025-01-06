@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckCard } from "@ant-design/pro-components";
-import { Button, Form, Input, Skeleton, message, notification } from "antd";
+import { Alert, Button, Form, Input, Skeleton, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { produce } from "immer";
 import { z } from "zod";
@@ -52,6 +52,55 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
 
   return (
     <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
+          {t("common.button.save")}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+const SSLProviderEditFormLetsEncryptStagingConfig = () => {
+  const { t } = useTranslation();
+
+  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
+
+  const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
+    initialValues: settings?.content?.config?.[SSLPROVIDERS.LETS_ENCRYPT_STAGING],
+    onSubmit: async (values) => {
+      const newSettings = produce(settings, (draft) => {
+        draft.content ??= {} as SSLProviderSettingsContent;
+        draft.content.provider = SSLPROVIDERS.LETS_ENCRYPT_STAGING;
+
+        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
+        draft.content.config[SSLPROVIDERS.LETS_ENCRYPT_STAGING] = values;
+      });
+      await updateSettings(newSettings);
+
+      setFormChanged(false);
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
+  useEffect(() => {
+    setFormChanged(settings?.content?.provider !== SSLPROVIDERS.LETS_ENCRYPT_STAGING);
+  }, [settings?.content?.provider]);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
+  };
+
+  return (
+    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item>
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.letsencrypt_staging_alert") }}></span>} />
+      </Form.Item>
+
+      <Form.Item>
+        <Alert type="warning" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.letsencrypt_staging_warning") }}></span>} />
+      </Form.Item>
+
       <Form.Item>
         <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
           {t("common.button.save")}
@@ -231,6 +280,8 @@ const SettingsSSLProvider = () => {
     switch (providerType) {
       case SSLPROVIDERS.LETS_ENCRYPT:
         return <SSLProviderEditFormLetsEncryptConfig />;
+      case SSLPROVIDERS.LETS_ENCRYPT_STAGING:
+        return <SSLProviderEditFormLetsEncryptStagingConfig />;
       case SSLPROVIDERS.ZERO_SSL:
         return <SSLProviderEditFormZeroSSLConfig />;
       case SSLPROVIDERS.GOOGLE_TRUST_SERVICES:
@@ -272,14 +323,25 @@ const SettingsSSLProvider = () => {
               <CheckCard
                 avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
                 size="small"
-                title="Let's Encrypt"
+                title={t("settings.sslprovider.form.provider.option.letsencrypt.label")}
                 value={SSLPROVIDERS.LETS_ENCRYPT}
               />
-              <CheckCard avatar={<img src={"/imgs/acme/zerossl.svg"} className="size-8" />} size="small" title="ZeroSSL" value={SSLPROVIDERS.ZERO_SSL} />
+              <CheckCard
+                avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
+                size="small"
+                title={t("settings.sslprovider.form.provider.option.letsencrypt_staging.label")}
+                value={SSLPROVIDERS.LETS_ENCRYPT_STAGING}
+              />
+              <CheckCard
+                avatar={<img src={"/imgs/acme/zerossl.svg"} className="size-8" />}
+                size="small"
+                title={t("settings.sslprovider.form.provider.option.zerossl.label")}
+                value={SSLPROVIDERS.ZERO_SSL}
+              />
               <CheckCard
                 avatar={<img src={"/imgs/acme/google.svg"} className="size-8" />}
                 size="small"
-                title="Google Trust Services"
+                title={t("settings.sslprovider.form.provider.option.gts.label")}
                 value={SSLPROVIDERS.GOOGLE_TRUST_SERVICES}
               />
             </CheckCard.Group>
