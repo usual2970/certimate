@@ -1,7 +1,7 @@
 ﻿import { Fragment, cloneElement, createElement, isValidElement, useMemo } from "react";
 
 export type UseTriggerElementOptions = {
-  onClick?: (e: MouseEvent) => void;
+  onClick?: (e: React.MouseEvent) => void;
 };
 
 /**
@@ -21,7 +21,7 @@ const useTriggerElement = (trigger: React.ReactNode, options?: UseTriggerElement
     const el = isValidElement(trigger) ? trigger : createElement(Fragment, null, trigger);
     return cloneElement(el, {
       ...el.props,
-      onClick: (e: MouseEvent) => {
+      onClick: (e: React.MouseEvent) => {
         onClick?.(e);
         el.props?.onClick?.(e);
       },

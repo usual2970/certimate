@@ -17,7 +17,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
   const { accesses, loadedAtOnce, fetchAccesses } = useAccessesStore(useZustandShallowSelector(["accesses", "loadedAtOnce", "fetchAccesses"]));
   useEffect(() => {
     fetchAccesses();
-  }, [fetchAccesses]);
+  }, []);
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessModel }>>([]);
   useEffect(() => {

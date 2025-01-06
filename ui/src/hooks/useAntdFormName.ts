@@ -1,5 +1,6 @@
 ﻿import { useCreation } from "ahooks";
 import { type FormInstance } from "antd";
+import { nanoid } from "nanoid/non-secure";
 
 export interface UseAntdFormNameOptions<T extends NonNullable<unknown> = any> {
   form: FormInstance<T>;
@@ -13,7 +14,7 @@ export interface UseAntdFormNameOptions<T extends NonNullable<unknown> = any> {
  * @returns {string}
  */
 const useAntdFormName = <T extends NonNullable<unknown> = any>(options: UseAntdFormNameOptions<T>) => {
-  const formName = useCreation(() => `${options.name}_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, [options.name, options.form]);
+  const formName = useCreation(() => `${options.name}_${nanoid()}`, [options.name, options.form]);
   return formName;
 };
 

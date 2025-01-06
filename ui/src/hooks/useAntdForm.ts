@@ -8,7 +8,7 @@ export interface UseAntdFormOptions<T extends NonNullable<unknown> = any> {
   form?: FormInstance<T>;
   initialValues?: Partial<T> | (() => Partial<T> | Promise<Partial<T>>);
   name?: string;
-  onSubmit?: (values: T) => unknown;
+  onSubmit?: (values: T) => unknown | Promise<unknown>;
 }
 
 export interface UseAntdFormReturns<T extends NonNullable<unknown> = any> {
@@ -95,7 +95,7 @@ const useAntdForm = <T extends NonNullable<unknown> = any>({ form, initialValues
   const formProps: FormProps = {
     form: formInst,
     initialValues: formInitialValues,
-    name: options.name ? formName : undefined,
+    name: formName,
     onFinish,
   };
 

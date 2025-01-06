@@ -4,20 +4,18 @@ import { CloseCircleOutlined as CloseCircleOutlinedIcon, EllipsisOutlined as Ell
 import { Button, Card, Dropdown, Popover } from "antd";
 import { produce } from "immer";
 
-import { type WorkflowNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
 import AddNode from "./AddNode";
+import { type SharedNodeProps } from "./_SharedNode";
 
-export type ConditionNodeProps = {
-  node: WorkflowNode;
+export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;
   branchIndex: number;
-  disabled?: boolean;
 };
 
-const ConditionNode = ({ node, branchId, branchIndex, disabled }: ConditionNodeProps) => {
+const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeProps) => {
   const { t } = useTranslation();
 
   const { updateNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeBranch"]));

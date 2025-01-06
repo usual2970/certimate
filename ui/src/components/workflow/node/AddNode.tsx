@@ -9,14 +9,13 @@ import {
 } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
-import { type WorkflowNode, WorkflowNodeType, newNode } from "@/domain/workflow";
+import { WorkflowNodeType, newNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
-export type AddNodeProps = {
-  node: WorkflowNode;
-  disabled?: boolean;
-};
+import { type SharedNodeProps } from "./_SharedNode";
+
+export type AddNodeProps = SharedNodeProps;
 
 const AddNode = ({ node, disabled }: AddNodeProps) => {
   const { t } = useTranslation();

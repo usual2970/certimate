@@ -316,9 +316,9 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
       try {
         await workflowState.setBaseInfo(values.name!, values.description!);
       } catch (err) {
-        console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-        return false;
+
+        throw err;
       }
     },
   });

@@ -48,7 +48,7 @@ const MultipleInput = ({
   });
 
   const handleCreate = () => {
-    const newValue = produce(value, (draft) => {
+    const newValue = produce(value ?? [], (draft) => {
       draft.push("");
     });
     setValue(newValue);

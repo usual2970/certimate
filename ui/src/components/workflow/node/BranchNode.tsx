@@ -8,11 +8,9 @@ import { useWorkflowStore } from "@/stores/workflow";
 
 import AddNode from "./AddNode";
 import WorkflowElement from "../WorkflowElement";
+import { type SharedNodeProps } from "./_SharedNode";
 
-export type BrandNodeProps = {
-  node: WorkflowNode;
-  disabled?: boolean;
-};
+export type BrandNodeProps = SharedNodeProps;
 
 const BranchNode = ({ node, disabled }: BrandNodeProps) => {
   const { t } = useTranslation();

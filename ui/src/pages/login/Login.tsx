@@ -31,6 +31,8 @@ const Login = () => {
         await navigage("/");
       } catch (err) {
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       }
     },
   });

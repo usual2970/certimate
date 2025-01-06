@@ -73,10 +73,9 @@ const WorkflowNew = () => {
         workflow = await saveWorkflow(workflow);
         navigate(`/workflows/${workflow.id}`, { replace: true });
       } catch (err) {
-        console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
 
-        return false;
+        throw err;
       }
     },
   });
@@ -155,6 +154,7 @@ const WorkflowNew = () => {
         </div>
 
         <ModalForm
+          {...formProps}
           disabled={formPending}
           layout="vertical"
           form={formInst}
@@ -165,7 +165,6 @@ const WorkflowNew = () => {
           width={480}
           onFinish={handleModalFormFinish}
           onOpenChange={handleModalOpenChange}
-          {...formProps}
         >
           <Form.Item name="name" label={t("workflow.new.modal.form.name.label")} rules={[formRule]}>
             <Input ref={(ref) => setTimeout(() => ref?.focus({ cursor: "end" }), 0)} placeholder={t("workflow.new.modal.form.name.placeholder")} />

@@ -64,16 +64,23 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
     initialValues: initialValues,
   });
 
-  const configProvider = Form.useWatch("provider", formInst);
-  const [configFormInst] = Form.useForm();
-  const configFormName = useAntdFormName({ form: configFormInst, name: "accessEditConfigForm" });
-  const configFormEl = useMemo(() => {
+  const fieldProvider = Form.useWatch("provider", formInst);
+
+  const [nestedFormInst] = Form.useForm();
+  const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "accessEditFormConfigForm" });
+  const nestedFormEl = useMemo(() => {
+    const configFormProps = {
+      form: nestedFormInst,
+      formName: nestedFormName,
+      disabled: disabled,
+      initialValues: initialValues?.config,
+    };
+
     /*
       注意：如果追加新的子组件，请保持以 ASCII 排序。
       NOTICE: If you add new child component, please keep ASCII order.
      */
-    const configFormProps = { form: configFormInst, formName: configFormName, disabled: disabled, initialValues: initialValues?.config };
-    switch (configProvider) {
+    switch (fieldProvider) {
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessEditFormACMEHttpReqConfig {...configFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:
@@ -113,17 +120,17 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessEditFormWebhookConfig {...configFormProps} />;
     }
-  }, [disabled, initialValues, configProvider, configFormInst, configFormName]);
+  }, [disabled, initialValues, fieldProvider, nestedFormInst, nestedFormName]);
 
   const handleFormProviderChange = (name: string) => {
-    if (name === configFormName) {
-      formInst.setFieldValue("config", configFormInst.getFieldsValue());
+    if (name === nestedFormName) {
+      formInst.setFieldValue("config", nestedFormInst.getFieldsValue());
       onValuesChange?.(formInst.getFieldsValue(true));
     }
   };
 
   const handleFormChange = (_: unknown, values: AccessEditFormFieldValues) => {
-    if (values.provider !== configProvider) {
+    if (values.provider !== fieldProvider) {
       formInst.setFieldValue("provider", values.provider);
     }
 
@@ -140,7 +147,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
       },
       validateFields: (nameList, config) => {
         const t1 = formInst.validateFields(nameList, config);
-        const t2 = configFormInst.validateFields(undefined, config);
+        const t2 = nestedFormInst.validateFields(undefined, config);
         return Promise.all([t1, t2]).then(() => t1);
       },
     } as AccessEditFormInstance;
@@ -164,7 +171,7 @@ const AccessEditForm = forwardRef<AccessEditFormInstance, AccessEditFormProps>((
           </Form.Item>
         </Form>
 
-        {configFormEl}
+        {nestedFormEl}
       </div>
     </Form.Provider>
   );

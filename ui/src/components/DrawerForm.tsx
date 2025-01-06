@@ -11,15 +11,16 @@ export interface DrawerFormProps<T extends NonNullable<unknown> = any> extends O
   cancelButtonProps?: ModalProps["cancelButtonProps"];
   cancelText?: ModalProps["cancelText"];
   defaultOpen?: boolean;
-  drawerProps?: Omit<DrawerProps, "open" | "title" | "width">;
+  drawerProps?: Omit<DrawerProps, "defaultOpen" | "forceRender" | "open" | "title" | "width" | "onOpenChange">;
   okButtonProps?: ModalProps["okButtonProps"];
   okText?: ModalProps["okText"];
   open?: boolean;
   title?: React.ReactNode;
   trigger?: React.ReactNode;
   width?: string | number;
+  onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void | Promise<unknown>;
+  onFinish?: (values: T) => unknown | Promise<unknown>;
   onOpenChange?: (open: boolean) => void;
-  onFinish?: (values: T) => void | Promise<unknown>;
 }
 
 const DrawerForm = <T extends NonNullable<unknown> = any>({
@@ -46,7 +47,13 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
     trigger: "onOpenChange",
   });
 
-  const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
+  const triggerEl = useTriggerElement(trigger, {
+    onClick: () => {
+      console.log("click");
+      setOpen(true);
+      console.log(open);
+    },
+  });
 
   const {
     form: formInst,
@@ -55,31 +62,38 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
     submit,
   } = useAntdForm({
     form,
-    onSubmit: async (values) => {
-      try {
-        const ret = await onFinish?.(values);
-        if (ret != null && !ret) return false;
-        return true;
-      } catch {
-        return false;
-      }
+    onSubmit: (values) => {
+      return onFinish?.(values);
     },
   });
-  const mergedFormProps = {
+
+  const mergedFormProps: FormProps = {
     clearOnDestroy: drawerProps?.destroyOnClose ? true : undefined,
     ...formProps,
     ...props,
   };
 
-  const handleClose = () => {
-    if (formPending) return;
+  const mergedDrawerProps: DrawerProps = {
+    ...drawerProps,
+    afterOpenChange: (open) => {
+      if (!open && !mergedFormProps.preserve) {
+        formInst.resetFields();
+      }
 
-    setOpen(false);
+      drawerProps?.afterOpenChange?.(open);
+    },
+    onClose: async (e) => {
+      if (formPending) return;
+
+      // 关闭 Drawer 时 Promise.reject 阻止关闭
+      await drawerProps?.onClose?.(e);
+      setOpen(false);
+    },
   };
 
   const handleOkClick = async () => {
-    const ret = await submit();
-    if (ret != null && !ret) return;
+    // 提交表单返回 Promise.reject 时不关闭 Drawer
+    await submit();
 
     setOpen(false);
   };
@@ -95,30 +109,23 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
       {triggerEl}
 
       <Drawer
-        afterOpenChange={(open) => {
-          if (!open && !mergedFormProps.preserve) {
-            formInst.resetFields();
-          }
-
-          drawerProps?.afterOpenChange?.(open);
-        }}
+        {...mergedDrawerProps}
         footer={
           <Space className="w-full justify-end">
             <Button {...cancelButtonProps} onClick={handleCancelClick}>
               {cancelText ?? t("common.button.cancel")}
             </Button>
-            <Button type="primary" loading={formPending} {...okButtonProps} onClick={handleOkClick}>
+            <Button {...okButtonProps} type="primary" loading={formPending} onClick={handleOkClick}>
               {okText ?? t("common.button.ok")}
             </Button>
           </Space>
         }
+        forceRender
         open={open}
         title={title}
         width={width}
-        {...drawerProps}
-        onClose={handleClose}
       >
-        <Form className={className} style={style} form={formInst} {...mergedFormProps}>
+        <Form className={className} style={style} {...mergedFormProps} form={formInst}>
           {children}
         </Form>
       </Drawer>

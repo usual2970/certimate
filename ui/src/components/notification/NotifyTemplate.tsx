@@ -55,6 +55,8 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
         messageApi.success(t("common.text.operation_succeeded"));
       } catch (err) {
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       }
     },
   });

@@ -216,7 +216,7 @@ const WorkflowList = () => {
           <Tooltip title={t("workflow.action.delete")}>
             <Button
               color="danger"
-              danger={true}
+              danger
               icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {

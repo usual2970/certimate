@@ -79,10 +79,12 @@ export type NotifyChannelsProps = {
 const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannelsProps) => {
   const { t, i18n } = useTranslation();
 
-  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelsStore();
+  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelsStore(
+    useZustandShallowSelector(["channels", "loadedAtOnce", "setChannel", "fetchChannels"])
+  );
   useEffect(() => {
     fetchChannels();
-  }, [fetchChannels]);
+  }, []);
 
   const channelCollapseItems: CollapseProps["items"] = useDeepCompareMemo(
     () =>
@@ -115,7 +117,7 @@ const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannels
   return (
     <div className={className} style={style}>
       <Show when={loadedAtOnce} fallback={<Skeleton active />}>
-        <Collapse className={classNames?.collapse} style={styles?.collapse} accordion={true} bordered={false} items={channelCollapseItems} />
+        <Collapse className={classNames?.collapse} style={styles?.collapse} accordion bordered={false} items={channelCollapseItems} />
       </Show>
     </div>
   );

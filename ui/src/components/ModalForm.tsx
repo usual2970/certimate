@@ -15,6 +15,7 @@ export interface ModalFormProps<T extends NonNullable<unknown> = any> extends Om
     | "cancelButtonProps"
     | "cancelText"
     | "confirmLoading"
+    | "defaultOpen"
     | "forceRender"
     | "okButtonProps"
     | "okText"
@@ -22,8 +23,9 @@ export interface ModalFormProps<T extends NonNullable<unknown> = any> extends Om
     | "open"
     | "title"
     | "width"
-    | "onOk"
     | "onCancel"
+    | "onOk"
+    | "onOpenChange"
   >;
   okButtonProps?: ModalProps["okButtonProps"];
   okText?: ModalProps["okText"];
@@ -31,8 +33,9 @@ export interface ModalFormProps<T extends NonNullable<unknown> = any> extends Om
   title?: ModalProps["title"];
   trigger?: React.ReactNode;
   width?: ModalProps["width"];
+  onClose?: (e: React.MouseEvent | React.KeyboardEvent) => void | Promise<unknown>;
+  onFinish?: (values: T) => unknown | Promise<unknown>;
   onOpenChange?: (open: boolean) => void;
-  onFinish?: (values: T) => void | Promise<unknown>;
 }
 
 const ModalForm = <T extends NonNullable<unknown> = any>({
@@ -63,29 +66,41 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
     form: formInst,
     formPending,
     formProps,
-    submit,
+    submit: submitForm,
   } = useAntdForm({
     form,
-    onSubmit: async (values) => {
-      try {
-        const ret = await onFinish?.(values);
-        if (ret != null && !ret) return false;
-        return true;
-      } catch {
-        return false;
-      }
+    onSubmit: (values) => {
+      return onFinish?.(values);
     },
   });
-  const mergedFormProps = {
+
+  const mergedFormProps: FormProps = {
     clearOnDestroy: modalProps?.destroyOnClose ? true : undefined,
     ...formProps,
     ...props,
   };
 
-  const handleOkClick = async () => {
-    const ret = await submit();
-    if (ret != null && !ret) return;
+  const mergedModalProps: ModalProps = {
+    ...modalProps,
+    afterClose: () => {
+      if (!mergedFormProps.preserve) {
+        formInst.resetFields();
+      }
 
+      modalProps?.afterClose?.();
+    },
+    onClose: async (e) => {
+      if (formPending) return;
+
+      // 关闭 Modal 时 Promise.reject 阻止关闭
+      await modalProps?.onClose?.(e as React.MouseEvent | React.KeyboardEvent);
+      setOpen(false);
+    },
+  };
+
+  const handleOkClick = async () => {
+    // 提交表单返回 Promise.reject 时不关闭 Modal
+    await submitForm();
     setOpen(false);
   };
 
@@ -100,29 +115,22 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
       {triggerEl}
 
       <Modal
-        afterClose={() => {
-          if (!mergedFormProps.preserve) {
-            formInst.resetFields();
-          }
-
-          modalProps?.afterClose?.();
-        }}
+        {...mergedModalProps}
         cancelButtonProps={cancelButtonProps}
         cancelText={cancelText}
         confirmLoading={formPending}
-        forceRender={true}
+        forceRender
         okButtonProps={okButtonProps}
         okText={okText}
         okType="primary"
         open={open}
         title={title}
         width={width}
-        {...modalProps}
         onOk={handleOkClick}
         onCancel={handleCancelClick}
       >
         <div className="pb-2 pt-4">
-          <Form className={className} style={style} form={formInst} {...mergedFormProps}>
+          <Form className={className} style={style} {...mergedFormProps} form={formInst}>
             {children}
           </Form>
         </div>

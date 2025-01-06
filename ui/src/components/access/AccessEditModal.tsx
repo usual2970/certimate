@@ -18,10 +18,10 @@ export type AccessEditModalProps = {
   preset: AccessEditFormProps["preset"];
   trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
-  onSubmit?: (record: AccessModel) => void;
+  afterSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }: AccessEditModalProps) => {
+const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props }: AccessEditModalProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -39,45 +39,48 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
   const formRef = useRef<AccessEditFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
 
-  const handleClickOk = async () => {
+  const handleOkClick = async () => {
     setFormPending(true);
     try {
       await formRef.current!.validateFields();
     } catch (err) {
       setFormPending(false);
-      return Promise.reject(err);
+      throw err;
     }
 
     try {
-      let temp: AccessModel = formRef.current!.getFieldsValue();
-      temp.usage = accessProvidersMap.get(temp.provider)!.usage;
+      let values: AccessModel = formRef.current!.getFieldsValue();
+      values.usage = accessProvidersMap.get(values.provider)!.usage;
+
       if (preset === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
 
-        temp = await createAccess(temp);
+        values = await createAccess(values);
       } else if (preset === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
 
-        temp = await updateAccess({ ...data, ...temp });
+        values = await updateAccess({ ...data, ...values });
       } else {
         throw "Invalid props: `preset`";
       }
 
-      onSubmit?.(temp);
+      afterSubmit?.(values);
       setOpen(false);
     } catch (err) {
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+      throw err;
     } finally {
       setFormPending(false);
     }
   };
 
-  const handleClickCancel = () => {
-    if (formPending) return Promise.reject();
+  const handleCancelClick = () => {
+    if (formPending) return;
 
     setOpen(false);
   };
@@ -99,8 +102,8 @@ const AccessEditModal = ({ data, loading, trigger, preset, onSubmit, ...props }:
         open={open}
         title={t(`access.action.${preset}`)}
         width={480}
-        onOk={handleClickOk}
-        onCancel={handleClickCancel}
+        onOk={handleOkClick}
+        onCancel={handleCancelClick}
       >
         <div className="pb-2 pt-4">
           <AccessEditForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />

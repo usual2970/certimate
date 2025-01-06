@@ -38,7 +38,7 @@
   "workflow_node.apply.form.key_algorithm.placeholder": "Please select certificate key algorithm",
   "workflow_node.apply.form.nameservers.label": "DNS recursive nameservers (Optional)",
   "workflow_node.apply.form.nameservers.placeholder": "Please enter DNS recursive nameservers (separated by semicolons)",
-  "workflow_node.apply.form.nameservers.tooltip": "It determines whether to custom DNS recursive nameservers during ACME DNS-01 authentication. If you don't understand this option, just keep it by default.",
+  "workflow_node.apply.form.nameservers.tooltip": "It determines whether to custom DNS recursive nameservers during ACME DNS-01 authentication. If you don't understand this option, just keep it by default.<br><a href=\"https://go-acme.github.io/lego/usage/cli/options/index.html#dns-resolvers-and-challenge-verification\" target=\"_blank\">Learn more</a>.",
   "workflow_node.apply.form.nameservers.multiple_input_modal.title": "Change DNS rcursive nameservers",
   "workflow_node.apply.form.nameservers.multiple_input_modal.placeholder": "Please enter DNS recursive nameserver",
   "workflow_node.apply.form.propagation_timeout.label": "DNS propagation timeout (Optional)",
