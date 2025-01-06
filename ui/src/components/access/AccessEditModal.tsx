@@ -9,13 +9,13 @@ import { useTriggerElement, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
-import AccessEditForm, { type AccessEditFormInstance, type AccessEditFormProps } from "./AccessEditForm";
+import AccessForm, { type AccessFormInstance, type AccessFormProps } from "./AccessForm";
 
 export type AccessEditModalProps = {
-  data?: AccessEditFormProps["initialValues"];
+  data?: AccessFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
-  preset: AccessEditFormProps["preset"];
+  preset: AccessFormProps["preset"];
   trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
   afterSubmit?: (record: AccessModel) => void;
@@ -36,7 +36,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props
 
   const triggerEl = useTriggerElement(trigger, { onClick: () => setOpen(true) });
 
-  const formRef = useRef<AccessEditFormInstance>(null);
+  const formRef = useRef<AccessFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
 
   const handleOkClick = async () => {
@@ -106,7 +106,7 @@ const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props
         onCancel={handleCancelClick}
       >
         <div className="pb-2 pt-4">
-          <AccessEditForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />
+          <AccessForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />
         </div>
       </Modal>
     </>

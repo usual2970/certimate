@@ -112,10 +112,10 @@ export type WorkflowNodeConfigForApply = {
 };
 
 export type WorkflowNodeConfigForDeploy = {
+  certificate: string;
   provider: string;
   providerAccessId: string;
-  certificate: string;
-  [key: string]: unknown;
+  providerConfig: Record<string, unknown>;
 };
 
 export type WorkflowNodeConfigForNotify = {

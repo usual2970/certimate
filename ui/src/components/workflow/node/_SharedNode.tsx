@@ -34,7 +34,7 @@ const SharedNodeWrapper = ({ children, node, disabled, onClick }: SharedNodeWrap
 
   const handleNodeNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     const oldName = node.name;
-    const newName = e.target.innerText.trim();
+    const newName = e.target.innerText.trim().substring(0, 64);
     if (oldName === newName) {
       return;
     }

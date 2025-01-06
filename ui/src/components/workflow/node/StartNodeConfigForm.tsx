@@ -57,6 +57,7 @@ const StartNodeConfigForm = forwardRef<StartNodeConfigFormInstance, StartNodeCon
       });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
+      name: "workflowNodeStartConfigForm",
       initialValues: initialValues ?? initFormModel(),
     });
 

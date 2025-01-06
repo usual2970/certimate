@@ -19,17 +19,20 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	PrivateKey  string
 },
 ) (Deployer, error) {
-	if node.Type != domain.WorkflowNodeTypeApply {
+	if node.Type != domain.WorkflowNodeTypeDeploy {
 		return nil, fmt.Errorf("node type is not deploy")
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("providerAccessId"))
+	accessId := node.GetConfigString("providerAccessId")
+	access, err := accessRepo.GetById(context.Background(), accessId)
 	if err != nil {
-		return nil, fmt.Errorf("access record not found: %w", err)
+		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
 	}
 
-	deployer, logger, err := createDeployer(domain.DeployProviderType(node.GetConfigString("provider")), access.Config, node.Config)
+	deployProvider := node.GetConfigString("provider")
+	deployConfig := node.GetConfigMap("providerConfig")
+	deployer, logger, err := createDeployer(domain.DeployProviderType(deployProvider), access.Config, deployConfig)
 	if err != nil {
 		return nil, err
 	}

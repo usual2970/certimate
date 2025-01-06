@@ -47,9 +47,10 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), node.GetConfigString("providerAccessId"))
+	accessId := node.GetConfigString("providerAccessId")
+	access, err := accessRepo.GetById(context.Background(), accessId)
 	if err != nil {
-		return nil, fmt.Errorf("access record not found: %w", err)
+		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
 	}
 
 	applyConfig := &applyConfig{

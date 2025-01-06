@@ -1,7 +1,7 @@
 ﻿import { useMemo } from "react";
 
 import WorkflowElement from "@/components/workflow/WorkflowElement";
-import { type WorkflowNode, WorkflowNodeType, newNode } from "@/domain/workflow";
+import { WorkflowNodeType, newNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -15,9 +15,10 @@ const WorkflowElements = ({ className, style, disabled }: WorkflowElementsProps)
   const { workflow } = useWorkflowStore(useZustandShallowSelector(["workflow"]));
 
   const elements = useMemo(() => {
+    const root = workflow.draft;
     const nodes: JSX.Element[] = [];
 
-    let current = workflow.draft as WorkflowNode | undefined;
+    let current = root as typeof root | undefined;
     while (current) {
       nodes.push(<WorkflowElement key={current.id} node={current} disabled={disabled} />);
       current = current.next;

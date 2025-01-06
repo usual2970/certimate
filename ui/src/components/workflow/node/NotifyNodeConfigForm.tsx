@@ -28,10 +28,7 @@ export type NotifyNodeConfigFormInstance = {
 };
 
 const initFormModel = (): NotifyNodeConfigFormFieldValues => {
-  return {
-    subject: "Completed!",
-    message: "Your workflow has been completed on Certimate.",
-  };
+  return {};
 };
 
 const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNodeConfigFormProps>(
@@ -60,6 +57,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
+      name: "workflowNodeNotifyConfigForm",
       initialValues: initialValues ?? initFormModel(),
     });
 

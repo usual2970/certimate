@@ -22,7 +22,7 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
 
   const handleNodeNameBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     const oldName = node.name;
-    const newName = e.target.innerText.trim();
+    const newName = e.target.innerText.trim().substring(0, 64);
     if (oldName === newName) {
       return;
     }
@@ -33,6 +33,8 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
       })
     );
   };
+
+  // TODO: 条件分支
 
   return (
     <>

@@ -45,7 +45,7 @@ type WorkflowNode struct {
 	Type WorkflowNodeType `json:"type"`
 	Name string           `json:"name"`
 
-	Config  map[string]any   `json:"data"`
+	Config  map[string]any   `json:"config"`
 	Inputs  []WorkflowNodeIO `json:"inputs"`
 	Outputs []WorkflowNodeIO `json:"outputs"`
 
@@ -69,6 +69,16 @@ func (n *WorkflowNode) GetConfigInt32(key string) int32 {
 
 func (n *WorkflowNode) GetConfigInt64(key string) int64 {
 	return maps.GetValueAsInt64(n.Config, key)
+}
+
+func (n *WorkflowNode) GetConfigMap(key string) map[string]any {
+	if val, ok := n.Config[key]; ok {
+		if result, ok := val.(map[string]any); ok {
+			return result
+		}
+	}
+
+	return make(map[string]any)
 }
 
 type WorkflowNodeIO struct {
