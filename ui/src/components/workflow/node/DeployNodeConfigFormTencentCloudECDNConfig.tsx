@@ -33,7 +33,7 @@ const DeployNodeConfigFormTencentCloudECDNConfig = ({
   const formSchema = z.object({
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_ecdn_domain.placeholder") })
-      .refine((v) => validDomainName(v, true), t("common.errmsg.domain_invalid")),
+      .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

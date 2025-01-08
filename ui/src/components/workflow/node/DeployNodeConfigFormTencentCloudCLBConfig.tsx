@@ -66,7 +66,7 @@ const DeployNodeConfigFormTencentCloudCLBConfig = ({
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_clb_domain.placeholder") })
       .nullish()
-      .refine((v) => RESOURCE_TYPE_RULEDOMAIN !== fieldResourceType || validDomainName(v!, true), t("common.errmsg.domain_invalid")),
+      .refine((v) => RESOURCE_TYPE_RULEDOMAIN !== fieldResourceType || validDomainName(v!, { allowWildcard: true }), t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
