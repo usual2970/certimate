@@ -51,7 +51,7 @@ const (
 	DeployProviderTypeDogeCloudCDN     = DeployProviderType("dogecloud-cdn")
 	DeployProviderTypeHuaweiCloudCDN   = DeployProviderType("huaweicloud-cdn")
 	DeployProviderTypeHuaweiCloudELB   = DeployProviderType("huaweicloud-elb")
-	DeployProviderTypeK8sSecret        = DeployProviderType("k8s-secret")
+	DeployProviderTypeKubernetesSecret = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal            = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN         = DeployProviderType("qiniu-cdn")
 	DeployProviderTypeSSH              = DeployProviderType("ssh")

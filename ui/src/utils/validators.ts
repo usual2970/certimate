@@ -4,8 +4,8 @@ export const validCronExpression = (value: string) => {
   return _validCronExpression(value);
 };
 
-export const validDomainName = (value: string, wildcard = false) => {
-  const re = wildcard ? /^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{1,}$/ : /^(?!-)[A-Za-z0-9-]{1,}(?<!-)(\.[A-Za-z0-9-]{1,}(?<!-)){0,}$/;
+export const validDomainName = (value: string, { allowWildcard = false }: { allowWildcard?: boolean }) => {
+  const re = allowWildcard ? /^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{1,}$/ : /^(?!-)[A-Za-z0-9-]{1,}(?<!-)(\.[A-Za-z0-9-]{1,}(?<!-)){0,}$/;
   return re.test(value);
 };
 

@@ -50,7 +50,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
         return String(v)
           .split(MULTIPLE_INPUT_DELIMITER)
-          .every((e) => validDomainName(e, true));
+          .every((e) => validDomainName(e, { allowWildcard: true }));
       }, t("common.errmsg.domain_invalid")),
       contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email(t("common.errmsg.email_invalid")),
       providerAccessId: z
@@ -308,7 +308,7 @@ const DomainsModalInput = memo(({ value, trigger, onChange }: { value?: string; 
 
   const formSchema = z.object({
     domains: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || validDomainName(e.trim(), true));
+      return v.every((e) => !e?.trim() || validDomainName(e.trim(), { allowWildcard: true }));
     }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
