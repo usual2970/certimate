@@ -74,6 +74,12 @@ func (d *TencentTEODeployer) Deploy(ctx context.Context) error {
 		return xerrors.New("`zoneId` is required")
 	}
 
+	tcDomain := strings.ReplaceAll(strings.TrimSpace(d.option.DeployConfig.GetConfigAsString("domain")), "\r", "")
+	tcDomains := strings.Split(tcDomain, "\n")
+	if len(tcDomains) == 0 {
+		return xerrors.New("`domain` is required")
+	}
+
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, d.option.Certificate.Certificate, d.option.Certificate.PrivateKey)
 	if err != nil {
@@ -87,7 +93,7 @@ func (d *TencentTEODeployer) Deploy(ctx context.Context) error {
 	modifyHostsCertificateReq := tcTeo.NewModifyHostsCertificateRequest()
 	modifyHostsCertificateReq.ZoneId = common.StringPtr(tcZoneId)
 	modifyHostsCertificateReq.Mode = common.StringPtr("sslcert")
-	modifyHostsCertificateReq.Hosts = common.StringPtrs(strings.Split(strings.ReplaceAll(d.option.Domain, "\r\n", "\n"), "\n"))
+	modifyHostsCertificateReq.Hosts = common.StringPtrs(tcDomains)
 	modifyHostsCertificateReq.ServerCertInfo = []*tcTeo.ServerCertInfo{{CertId: common.StringPtr(upres.CertId)}}
 	modifyHostsCertificateResp, err := d.sdkClients.teo.ModifyHostsCertificate(modifyHostsCertificateReq)
 	if err != nil {

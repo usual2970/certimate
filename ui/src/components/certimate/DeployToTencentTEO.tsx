@@ -33,9 +33,17 @@ const DeployToTencentTEO = () => {
 
   const formSchema = z.object({
     zoneId: z.string().min(1, t("domain.deployment.form.tencent_teo_zone_id.placeholder")),
-    domain: z.string().regex(/^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, {
-      message: t("common.errmsg.domain_invalid"),
-    }),
+    domain: z.string().refine(
+      (v) =>
+        !!v &&
+        v
+          .trim()
+          .split("\n")
+          .every((s) => /^(?:\*\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/.test(s)),
+      {
+        message: t("common.errmsg.domain_invalid"),
+      }
+    ),
   });
 
   useEffect(() => {
