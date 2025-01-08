@@ -20,7 +20,7 @@ export const list = async (request: ListCertificateRequest) => {
 
   const options: RecordListOptions = {
     sort: "-created",
-    expand: "workflow",
+    expand: "workflowId",
     requestKey: null,
   };
 
@@ -35,4 +35,10 @@ export const list = async (request: ListCertificateRequest) => {
   }
 
   return pb.collection(COLLECTION_NAME).getList<CertificateModel>(page, perPage, options);
+};
+
+export const remove = async (record: MaybeModelRecordWithId<CertificateModel>) => {
+  record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
+
+  await getPocketBase().collection(COLLECTION_NAME).update<CertificateModel>(record.id!, record);
 };

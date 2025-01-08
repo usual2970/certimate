@@ -1,40 +1,42 @@
-import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
-import { useCreation, useDeepCompareEffect } from "ahooks";
-import { Form } from "antd";
+import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { Form, type FormInstance } from "antd";
 
 import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
+import { useAntdForm } from "@/hooks";
+
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
 import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields";
 import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
-import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
+import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 
-type NotifyChannelEditFormModelType = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
+type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 
 export type NotifyChannelEditFormProps = {
   className?: string;
   style?: React.CSSProperties;
   channel: string;
   disabled?: boolean;
-  loading?: boolean;
-  model?: NotifyChannelEditFormModelType;
-  onModelChange?: (model: NotifyChannelEditFormModelType) => void;
+  initialValues?: NotifyChannelEditFormFieldValues;
+  onValuesChange?: (values: NotifyChannelEditFormFieldValues) => void;
 };
 
 export type NotifyChannelEditFormInstance = {
-  getFieldsValue: () => NotifyChannelEditFormModelType;
-  resetFields: () => void;
-  validateFields: () => Promise<NotifyChannelEditFormModelType>;
+  getFieldsValue: () => ReturnType<FormInstance<NotifyChannelEditFormFieldValues>["getFieldsValue"]>;
+  resetFields: FormInstance<NotifyChannelEditFormFieldValues>["resetFields"];
+  validateFields: FormInstance<NotifyChannelEditFormFieldValues>["validateFields"];
 };
 
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
-  ({ className, style, channel, disabled, loading, model, onModelChange }, ref) => {
-    const [form] = Form.useForm();
-    const formName = useCreation(() => `notifyChannelEditForm_${Math.random().toString(36).substring(2, 10)}${new Date().getTime()}`, []);
-    const formFieldsComponent = useMemo(() => {
+  ({ className, style, channel, disabled, initialValues, onValuesChange }, ref) => {
+    const { form: formInst, formProps } = useAntdForm({
+      initialValues: initialValues,
+      name: "notifyChannelEditForm",
+    });
+    const formFieldsEl = useMemo(() => {
       /*
         注意：如果追加新的子组件，请保持以 ASCII 排序。
         NOTICE: If you add new child component, please keep ASCII order.
@@ -59,39 +61,36 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
       }
     }, [channel]);
 
-    const [initialValues, setInitialValues] = useState(model);
-    useDeepCompareEffect(() => {
-      setInitialValues(model);
-    }, [model]);
-
-    const handleFormChange = (_: unknown, fields: NotifyChannelEditFormModelType) => {
-      onModelChange?.(fields);
+    const handleFormChange = (_: unknown, values: NotifyChannelEditFormFieldValues) => {
+      onValuesChange?.(values);
     };
 
-    useImperativeHandle(ref, () => ({
-      getFieldsValue: () => {
-        return form.getFieldsValue(true);
-      },
-      resetFields: () => {
-        return form.resetFields();
-      },
-      validateFields: () => {
-        return form.validateFields();
-      },
-    }));
+    useImperativeHandle(ref, () => {
+      return {
+        getFieldsValue: () => {
+          return formInst.getFieldsValue(true);
+        },
+        resetFields: (fields) => {
+          return formInst.resetFields(fields);
+        },
+        validateFields: (nameList, config) => {
+          return formInst.validateFields(nameList, config);
+        },
+      } as NotifyChannelEditFormInstance;
+    });
 
     return (
       <Form
+        {...formProps}
         className={className}
         style={style}
-        form={form}
-        disabled={loading || disabled}
-        initialValues={initialValues}
+        form={formInst}
+        disabled={disabled}
         layout="vertical"
-        name={formName}
+        scrollToFirstError
         onValuesChange={handleFormChange}
       >
-        {formFieldsComponent}
+        {formFieldsEl}
       </Form>
     );
   }

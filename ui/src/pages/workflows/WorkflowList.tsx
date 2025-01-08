@@ -1,30 +1,40 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+} from "@ant-design/icons";
+
+import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import {
+  Badge,
   Button,
   Divider,
   Empty,
   Menu,
+  type MenuProps,
   Modal,
-  notification,
   Radio,
   Space,
   Switch,
   Table,
-  theme,
+  type TableProps,
   Tooltip,
   Typography,
-  type MenuProps,
-  type TableProps,
+  message,
+  notification,
+  theme,
 } from "antd";
-import { PageHeader } from "@ant-design/pro-components";
-import { Filter as FilterIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { WorkflowModel } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
+import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
@@ -36,6 +46,7 @@ const WorkflowList = () => {
 
   const { token: themeToken } = theme.useToken();
 
+  const [messageApi, MessageContextHolder] = message.useMessage();
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
@@ -61,20 +72,20 @@ const WorkflowList = () => {
       ),
     },
     {
-      key: "type",
-      title: t("workflow.props.execution_method"),
+      key: "trigger",
+      title: t("workflow.props.trigger"),
       ellipsis: true,
       render: (_, record) => {
-        const method = record.type;
-        if (!method) {
+        const trigger = record.trigger;
+        if (!trigger) {
           return "-";
-        } else if (method === "manual") {
-          return <Typography.Text>{t("workflow.node.start.form.executionMethod.options.manual")}</Typography.Text>;
-        } else if (method === "auto") {
+        } else if (trigger === WORKFLOW_TRIGGERS.MANUAL) {
+          return <Typography.Text>{t("workflow.props.trigger.manual")}</Typography.Text>;
+        } else if (trigger === WORKFLOW_TRIGGERS.AUTO) {
           return (
             <Space className="max-w-full" direction="vertical" size={4}>
-              <Typography.Text>{t("workflow.node.start.form.executionMethod.options.auto")}</Typography.Text>
-              <Typography.Text type="secondary">{record.crontab ?? ""}</Typography.Text>
+              <Typography.Text>{t("workflow.props.trigger.auto")}</Typography.Text>
+              <Typography.Text type="secondary">{record.triggerCron ?? ""}</Typography.Text>
             </Space>
           );
         }
@@ -120,7 +131,7 @@ const WorkflowList = () => {
           <div style={{ padding: 0 }}>
             <Menu items={items} selectable={false} />
             <Divider style={{ margin: 0 }} />
-            <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
+            <Space className="w-full justify-end" style={{ padding: themeToken.paddingSM }}>
               <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
                 {t("common.button.reset")}
               </Button>
@@ -131,7 +142,6 @@ const WorkflowList = () => {
           </div>
         );
       },
-      filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
         const enabled = record.enabled;
         return (
@@ -145,11 +155,28 @@ const WorkflowList = () => {
       },
     },
     {
-      key: "lastExecutedAt",
-      title: "最近执行状态",
-      render: () => {
-        // TODO: 最近执行状态
-        return <>TODO</>;
+      key: "lastRun",
+      title: t("workflow.props.last_run_at"),
+      render: (_, record) => {
+        if (record.lastRunId) {
+          if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
+            return (
+              <Space>
+                <Badge status="success" count={<CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />} />
+                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+              </Space>
+            );
+          } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
+            return (
+              <Space>
+                <Badge status="error" count={<CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />} />
+                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+              </Space>
+            );
+          }
+        }
+
+        return <></>;
       },
     },
     {
@@ -174,27 +201,30 @@ const WorkflowList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Space size={0}>
+        <Button.Group>
           <Tooltip title={t("workflow.action.edit")}>
             <Button
-              type="link"
-              icon={<PencilIcon size={16} />}
+              color="primary"
+              icon={<EditOutlinedIcon />}
+              variant="text"
               onClick={() => {
-                navigate(`/workflows/detail?id=${record.id}`);
+                navigate(`/workflows/${record.id}`);
               }}
             />
           </Tooltip>
+
           <Tooltip title={t("workflow.action.delete")}>
             <Button
-              type="link"
-              danger={true}
-              icon={<Trash2Icon size={16} />}
+              color="danger"
+              danger
+              icon={<DeleteOutlinedIcon />}
+              variant="text"
               onClick={() => {
                 handleDeleteClick(record);
               }}
             />
           </Tooltip>
-        </Space>
+        </Button.Group>
       ),
     },
   ];
@@ -235,8 +265,17 @@ const WorkflowList = () => {
     }
   );
 
+  const handleCreateClick = () => {
+    navigate("/workflows/new");
+  };
+
   const handleEnabledChange = async (workflow: WorkflowModel) => {
     try {
+      if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
+        messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
+        return;
+      }
+
       const resp = await saveWorkflow({
         id: workflow.id,
         enabled: !tableData.find((item) => item.id === workflow.id)?.enabled,
@@ -275,12 +314,9 @@ const WorkflowList = () => {
     });
   };
 
-  const handleCreateClick = () => {
-    navigate("/workflows/detail");
-  };
-
   return (
     <div className="p-4">
+      {MessageContextHolder}
       {ModelContextHolder}
       {NotificationContextHolder}
 
@@ -290,7 +326,7 @@ const WorkflowList = () => {
           <Button
             key="create"
             type="primary"
-            icon={<PlusIcon size={16} />}
+            icon={<PlusOutlinedIcon />}
             onClick={() => {
               handleCreateClick();
             }}

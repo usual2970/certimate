@@ -1,220 +1,248 @@
+import { produce } from "immer";
 import { create } from "zustand";
 
 import {
+  type WorkflowModel,
+  type WorkflowNode,
+  type WorkflowNodeConfigForStart,
   addBranch,
   addNode,
-  getExecuteMethod,
   getWorkflowOutputBeforeId,
-  initWorkflow,
   removeBranch,
   removeNode,
   updateNode,
-  WorkflowBranchNode,
-  WorkflowModel,
-  WorkflowNode,
-  WorkflowNodeType,
 } from "@/domain/workflow";
 import { get as getWorkflow, save as saveWorkflow } from "@/repository/workflow";
 
 export type WorkflowState = {
   workflow: WorkflowModel;
   initialized: boolean;
-  updateNode: (node: WorkflowNode) => void;
-  addNode: (node: WorkflowNode, preId: string) => void;
-  addBranch: (branchId: string) => void;
-  removeNode: (nodeId: string) => void;
-  removeBranch: (branchId: string, index: number) => void;
-  getWorkflowOuptutBeforeId: (id: string, type: string) => WorkflowNode[];
-  switchEnable(): void;
-  save(): void;
-  init(id?: string): void;
+
+  init(id: string): void;
   setBaseInfo: (name: string, description: string) => void;
+  setEnabled(enabled: boolean): void;
+  release(): void;
+  discard(): void;
+  destroy(): void;
+
+  addNode: (node: WorkflowNode, preId: string) => void;
+  updateNode: (node: WorkflowNode) => void;
+  removeNode: (nodeId: string) => void;
+
+  addBranch: (branchId: string) => void;
+  removeBranch: (branchId: string, index: number) => void;
+
+  getWorkflowOuptutBeforeId: (id: string, type: string) => WorkflowNode[];
 };
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
-  workflow: {
-    id: "",
-    name: "placeholder",
-    type: WorkflowNodeType.Start,
-  } as WorkflowModel,
+  workflow: {} as WorkflowModel,
   initialized: false,
-  init: async (id?: string) => {
-    let data = {
-      id: "",
-      name: "placeholder",
-      type: "auto",
-    } as WorkflowModel;
 
-    if (!id) {
-      data = initWorkflow();
-    } else {
-      data = await getWorkflow(id);
-    }
+  init: async (id: string) => {
+    const data = await getWorkflow(id);
 
     set({
       workflow: data,
       initialized: true,
     });
   },
+
+  destroy: () => {
+    set({
+      workflow: {} as WorkflowModel,
+      initialized: false,
+    });
+  },
+
   setBaseInfo: async (name: string, description: string) => {
-    const data: Record<string, string | boolean | WorkflowNode> = {
-      id: (get().workflow.id as string) ?? "",
-      name: name,
-      description: description,
-    };
-    if (!data.id) {
-      data.draft = get().workflow.draft as WorkflowNode;
-    }
-    const resp = await saveWorkflow(data);
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      name: name || "",
+      description: description || "",
+    });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          name,
-          description,
-          id: resp.id,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.name = resp.name;
+          draft.description = resp.description;
+        }),
       };
     });
   },
-  switchEnable: async () => {
-    const root = get().workflow.draft as WorkflowNode;
-    const executeMethod = getExecuteMethod(root);
+
+  setEnabled: async (enabled: boolean) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
     const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      content: root,
-      enabled: !get().workflow.enabled,
-      hasDraft: false,
-      type: executeMethod.type,
-      crontab: executeMethod.crontab,
+      id: get().workflow.id!,
+      enabled: enabled,
     });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          id: resp.id,
-          content: resp.content,
-          enabled: resp.enabled,
-          hasDraft: false,
-          type: resp.type,
-          crontab: resp.crontab,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.enabled = resp.enabled;
+        }),
       };
     });
   },
-  save: async () => {
-    const root = get().workflow.draft as WorkflowNode;
-    const executeMethod = getExecuteMethod(root);
+
+  release: async () => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = get().workflow.draft!;
+    const startConfig = root.config as WorkflowNodeConfigForStart;
     const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
+      id: get().workflow.id!,
+      trigger: startConfig.trigger,
+      triggerCron: startConfig.triggerCron,
       content: root,
       hasDraft: false,
-      type: executeMethod.type,
-      crontab: executeMethod.crontab,
     });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          id: resp.id,
-          content: resp.content,
-          hasDraft: false,
-          type: resp.type,
-          crontab: resp.crontab,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.trigger = resp.trigger;
+          draft.triggerCron = resp.triggerCron;
+          draft.content = resp.content;
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
       };
     });
   },
-  updateNode: async (node: WorkflowNode | WorkflowBranchNode) => {
-    const newRoot = updateNode(get().workflow.draft as WorkflowNode, node);
+
+  discard: async () => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = get().workflow.content!;
+    const startConfig = root.config as WorkflowNodeConfigForStart;
     const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      draft: newRoot,
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: false,
+      trigger: startConfig.trigger,
+      triggerCron: startConfig.triggerCron,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.trigger = resp.trigger;
+          draft.triggerCron = resp.triggerCron;
+          draft.content = resp.content;
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
+  addNode: async (node: WorkflowNode, preId: string) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = addNode(get().workflow.draft!, preId, node);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
       hasDraft: true,
     });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          draft: newRoot,
-          id: resp.id,
-          hasDraft: true,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
       };
     });
   },
-  addNode: async (node: WorkflowNode | WorkflowBranchNode, preId: string) => {
-    const newRoot = addNode(get().workflow.draft as WorkflowNode, preId, node);
+
+  updateNode: async (node: WorkflowNode) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = updateNode(get().workflow.draft!, node);
     const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      draft: newRoot,
+      id: get().workflow.id!,
+      draft: root,
       hasDraft: true,
     });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          draft: newRoot,
-          id: resp.id,
-          hasDraft: true,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
       };
     });
   },
-  addBranch: async (branchId: string) => {
-    const newRoot = addBranch(get().workflow.draft as WorkflowNode, branchId);
-    const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      draft: newRoot,
-      hasDraft: true,
-    });
-    set((state: WorkflowState) => {
-      return {
-        workflow: {
-          ...state.workflow,
-          draft: newRoot,
-          id: resp.id,
-          hasDraft: true,
-        },
-      };
-    });
-  },
-  removeBranch: async (branchId: string, index: number) => {
-    const newRoot = removeBranch(get().workflow.draft as WorkflowNode, branchId, index);
-    const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      draft: newRoot,
-      hasDraft: true,
-    });
-    set((state: WorkflowState) => {
-      return {
-        workflow: {
-          ...state.workflow,
-          draft: newRoot,
-          id: resp.id,
-          hasDraft: true,
-        },
-      };
-    });
-  },
+
   removeNode: async (nodeId: string) => {
-    const newRoot = removeNode(get().workflow.draft as WorkflowNode, nodeId);
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = removeNode(get().workflow.draft!, nodeId);
     const resp = await saveWorkflow({
-      id: (get().workflow.id as string) ?? "",
-      draft: newRoot,
+      id: get().workflow.id!,
+      draft: root,
       hasDraft: true,
     });
+
     set((state: WorkflowState) => {
       return {
-        workflow: {
-          ...state.workflow,
-          draft: newRoot,
-          id: resp.id,
-          hasDraft: true,
-        },
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
       };
     });
   },
+
+  addBranch: async (branchId: string) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = addBranch(get().workflow.draft!, branchId);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
+  removeBranch: async (branchId: string, index: number) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = removeBranch(get().workflow.draft!, branchId, index);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
   getWorkflowOuptutBeforeId: (id: string, type: string) => {
     return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, id, type);
   },

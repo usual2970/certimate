@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
+import { ReadOutlined as ReadOutlinedIcon } from "@ant-design/icons";
 import { Divider, Space, Typography } from "antd";
-import { BookOpen as BookOpenIcon } from "lucide-react";
 
 import { version } from "@/domain/version";
 
@@ -16,7 +16,7 @@ const Version = ({ className, style }: VersionProps) => {
     <Space className={className} style={style} size={4}>
       <Typography.Link type="secondary" href="https://docs.certimate.me" target="_blank">
         <div className="flex items-center justify-center space-x-1">
-          <BookOpenIcon size={16} />
+          <ReadOutlinedIcon />
           <span>{t("common.menu.document")}</span>
         </div>
       </Typography.Link>

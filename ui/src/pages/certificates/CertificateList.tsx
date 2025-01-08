@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRequest } from "ahooks";
-import { Button, Divider, Empty, Menu, notification, Radio, Space, Table, theme, Tooltip, Typography, type MenuProps, type TableProps } from "antd";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
-import { Eye as EyeIcon, Filter as FilterIcon } from "lucide-react";
+import { useRequest } from "ahooks";
+import { Button, Divider, Empty, Menu, type MenuProps, Radio, Space, Table, type TableProps, Tooltip, Typography, notification, theme } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
-import { CertificateModel } from "@/domain/certificate";
-import { list as listCertificate, type ListCertificateRequest } from "@/repository/certificate";
+import { CERTIFICATE_SOURCES, type CertificateModel } from "@/domain/certificate";
+import { type ListCertificateRequest, list as listCertificate } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
@@ -33,18 +33,18 @@ const CertificateList = () => {
     },
     {
       key: "name",
-      title: t("certificate.props.san"),
-      render: (_, record) => <Typography.Text>{record.san}</Typography.Text>,
+      title: t("certificate.props.subject_alt_names"),
+      render: (_, record) => <Typography.Text>{record.subjectAltNames}</Typography.Text>,
     },
     {
       key: "expiry",
-      title: t("certificate.props.expiry"),
+      title: t("certificate.props.validity"),
       ellipsis: true,
       defaultFilteredValue: searchParams.has("state") ? [searchParams.get("state") as string] : undefined,
       filterDropdown: ({ setSelectedKeys, confirm, clearFilters }) => {
         const items: Required<MenuProps>["items"] = [
-          ["expireSoon", "certificate.props.expiry.filter.expire_soon"],
-          ["expired", "certificate.props.expiry.filter.expired"],
+          ["expireSoon", "certificate.props.validity.filter.expire_soon"],
+          ["expired", "certificate.props.validity.filter.expired"],
         ].map(([key, label]) => {
           return {
             key,
@@ -77,7 +77,7 @@ const CertificateList = () => {
           <div style={{ padding: 0 }}>
             <Menu items={items} selectable={false} />
             <Divider style={{ margin: 0 }} />
-            <Space className="justify-end w-full" style={{ padding: themeToken.paddingSM }}>
+            <Space className="w-full justify-end" style={{ padding: themeToken.paddingSM }}>
               <Button size="small" disabled={!filters.state} onClick={handleResetClick}>
                 {t("common.button.reset")}
               </Button>
@@ -88,20 +88,19 @@ const CertificateList = () => {
           </div>
         );
       },
-      filterIcon: () => <FilterIcon size={14} />,
       render: (_, record) => {
         const total = dayjs(record.expireAt).diff(dayjs(record.created), "d") + 1;
         const left = dayjs(record.expireAt).diff(dayjs(), "d");
         return (
           <Space className="max-w-full" direction="vertical" size={4}>
             {left > 0 ? (
-              <Typography.Text type="success">{t("certificate.props.expiry.left_days", { left, total })}</Typography.Text>
+              <Typography.Text type="success">{t("certificate.props.validity.left_days", { left, total })}</Typography.Text>
             ) : (
-              <Typography.Text type="danger">{t("certificate.props.expiry.expired")}</Typography.Text>
+              <Typography.Text type="danger">{t("certificate.props.validity.expired")}</Typography.Text>
             )}
 
             <Typography.Text type="secondary">
-              {t("certificate.props.expiry.expiration", { date: dayjs(record.expireAt).format("YYYY-MM-DD") })}
+              {t("certificate.props.validity.expiration", { date: dayjs(record.expireAt).format("YYYY-MM-DD") })}
             </Typography.Text>
           </Space>
         );
@@ -112,23 +111,29 @@ const CertificateList = () => {
       title: t("certificate.props.source"),
       ellipsis: true,
       render: (_, record) => {
-        const workflowId = record.workflow;
-        return workflowId ? (
-          <Space className="max-w-full" direction="vertical" size={4}>
-            <Typography.Text>{t("certificate.props.source.workflow")}</Typography.Text>
-            <Typography.Link
-              type="secondary"
-              ellipsis
-              onClick={() => {
-                navigate(`/workflows/detail?id=${workflowId}`);
-              }}
-            >
-              {record.expand?.workflow?.name ?? ""}
-            </Typography.Link>
-          </Space>
-        ) : (
-          <>TODO: 支持手动上传</>
-        );
+        if (record.source === CERTIFICATE_SOURCES.WORKFLOW) {
+          const workflowId = record.workflowId;
+          return (
+            <Space className="max-w-full" direction="vertical" size={4}>
+              <Typography.Text>{t("certificate.props.source.workflow")}</Typography.Text>
+              <Typography.Link
+                type="secondary"
+                ellipsis
+                onClick={() => {
+                  if (workflowId) {
+                    navigate(`/workflows/${workflowId}`);
+                  }
+                }}
+              >
+                {record.expand?.workflowId?.name ?? <span className="font-mono">{t(`#${workflowId}`)}</span>}
+              </Typography.Link>
+            </Space>
+          );
+        } else if (record.source === CERTIFICATE_SOURCES.UPLOAD) {
+          return <Typography.Text>{t("certificate.props.source.upload")}</Typography.Text>;
+        }
+
+        return <></>;
       },
     },
     {
@@ -153,16 +158,27 @@ const CertificateList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Space size={0}>
+        <Button.Group>
           <CertificateDetailDrawer
             data={record}
             trigger={
               <Tooltip title={t("certificate.action.view")}>
-                <Button type="link" icon={<EyeIcon size={16} />} />
+                <Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />
               </Tooltip>
             }
           />
-        </Space>
+
+          <Tooltip title={t("certificate.action.delete")}>
+            <Button
+              color="danger"
+              icon={<DeleteOutlinedIcon />}
+              variant="text"
+              onClick={() => {
+                alert("TODO: 暂时不支持删除证书");
+              }}
+            />
+          </Tooltip>
+        </Button.Group>
       ),
     },
   ];

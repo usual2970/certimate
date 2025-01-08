@@ -1,6 +1,6 @@
-import { useRequest } from "ahooks";
 import { useTranslation } from "react-i18next";
-import { Button, message, notification, type ButtonProps } from "antd";
+import { useRequest } from "ahooks";
+import { Button, type ButtonProps, message, notification } from "antd";
 
 import { notifyTest } from "@/api/notify";
 import { getErrMsg } from "@/utils/error";

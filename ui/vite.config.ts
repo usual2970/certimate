@@ -1,9 +1,9 @@
-import path from "path";
-import legacy from "@vitejs/plugin-legacy";
-import react from "@vitejs/plugin-react";
-import { defineConfig, Plugin } from "vite";
+import path from "node:path";
 
+import legacyPlugin from "@vitejs/plugin-legacy";
+import reactPlugin from "@vitejs/plugin-react";
 import fs from "fs-extra";
+import { type Plugin, defineConfig } from "vite";
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   return {
@@ -34,8 +34,8 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
 
 export default defineConfig({
   plugins: [
-    react({}),
-    legacy({
+    reactPlugin({}),
+    legacyPlugin({
       targets: ["defaults", "not IE 11"],
     }),
     preserveFilesPlugin(["dist/.gitkeep"]),

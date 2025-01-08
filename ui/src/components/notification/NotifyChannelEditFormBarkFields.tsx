@@ -9,7 +9,7 @@ const NotifyChannelEditFormBarkFields = () => {
   const formSchema = z.object({
     serverUrl: z
       .string({ message: t("settings.notification.channel.form.bark_server_url.placeholder") })
-      .url({ message: t("common.errmsg.url_invalid") })
+      .url(t("common.errmsg.url_invalid"))
       .nullish(),
     deviceKey: z
       .string({ message: t("settings.notification.channel.form.bark_device_key.placeholder") })

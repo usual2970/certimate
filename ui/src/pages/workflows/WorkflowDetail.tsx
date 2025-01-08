@@ -1,194 +1,357 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, message, notification, Switch } from "antd";
-import { useShallow } from "zustand/shallow";
-import { ArrowLeft as ArrowLeftIcon } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  ApartmentOutlined as ApartmentOutlinedIcon,
+  CaretRightOutlined as CaretRightOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
+  DownOutlined as DownOutlinedIcon,
+  EllipsisOutlined as EllipsisOutlinedIcon,
+  HistoryOutlined as HistoryOutlinedIcon,
+  UndoOutlined as UndoOutlinedIcon,
+} from "@ant-design/icons";
+import { PageHeader } from "@ant-design/pro-components";
+import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
+import { createSchemaFieldRule } from "antd-zod";
+import { ClientResponseError } from "pocketbase";
+import { isEqual } from "radash";
+import { z } from "zod";
 
-import Show from "@/components/Show";
-import End from "@/components/workflow/End";
-import NodeRender from "@/components/workflow/NodeRender";
-import WorkflowBaseInfoEditDialog from "@/components/workflow/WorkflowBaseInfoEditDialog";
-import WorkflowLog from "@/components/workflow/WorkflowLog";
-import WorkflowProvider from "@/components/workflow/WorkflowProvider";
-import { cn } from "@/components/ui/utils";
-import { allNodesValidated, WorkflowNode } from "@/domain/workflow";
-import { useWorkflowStore, WorkflowState } from "@/stores/workflow";
 import { run as runWorkflow } from "@/api/workflow";
-
-const selectState = (state: WorkflowState) => ({
-  workflow: state.workflow,
-  init: state.init,
-  switchEnable: state.switchEnable,
-  save: state.save,
-});
+import ModalForm from "@/components/ModalForm";
+import Show from "@/components/Show";
+import WorkflowElements from "@/components/workflow/WorkflowElements";
+import WorkflowRuns from "@/components/workflow/WorkflowRuns";
+import { isAllNodesValidated } from "@/domain/workflow";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { remove as removeWorkflow } from "@/repository/workflow";
+import { useWorkflowStore } from "@/stores/workflow";
+import { getErrMsg } from "@/utils/error";
 
 const WorkflowDetail = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const { t } = useTranslation();
 
   const [messageApi, MessageContextHolder] = message.useMessage();
-  const [_, NotificationContextHolder] = notification.useNotification();
+  const [modalApi, ModalContextHolder] = Modal.useModal();
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  // 3. 使用正确的选择器和 shallow 比较
-  const { workflow, init, switchEnable, save } = useWorkflowStore(useShallow(selectState));
-
-  // 从 url 中获取 workflowId
-  const [locId, setLocId] = useState<string>("");
-  const id = searchParams.get("id");
-
-  const [tab, setTab] = useState("workflow");
-
-  const [running, setRunning] = useState(false);
-
+  const { id: workflowId } = useParams();
+  const { workflow, initialized, ...workflowState } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
+  );
   useEffect(() => {
-    init(id ?? "");
-    if (id) {
-      setLocId(id);
-    }
-  }, [id]);
+    // TODO: loading & error
+    workflowState.init(workflowId!);
 
-  const elements = useMemo(() => {
-    let current = workflow.draft as WorkflowNode;
+    return () => {
+      workflowState.destroy();
+    };
+  }, [workflowId]);
 
-    const elements: JSX.Element[] = [];
+  const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
-    while (current) {
-      // 处理普通节点
-      elements.push(<NodeRender data={current} key={current.id} />);
-      current = current.next as WorkflowNode;
-    }
+  const [isRunning, setIsRunning] = useState(false);
 
-    elements.push(<End key="workflow-end" />);
+  const [allowDiscard, setAllowDiscard] = useState(false);
+  const [allowRelease, setAllowRelease] = useState(false);
+  const [allowRun, setAllowRun] = useState(false);
+  useEffect(() => {
+    const hasReleased = !!workflow.content;
+    const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
+    setAllowDiscard(!isRunning && hasReleased && hasChanges);
+    setAllowRelease(!isRunning && hasChanges);
+    setAllowRun(hasReleased);
+  }, [workflow.content, workflow.draft, workflow.hasDraft, isRunning]);
 
-    return elements;
-  }, [workflow]);
-
-  const handleBackClick = () => {
-    // 返回上一步
-    navigate(-1);
-  };
-
-  const handleEnableChange = () => {
-    if (!workflow.enabled && !allNodesValidated(workflow.draft as WorkflowNode)) {
-      messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
+  const handleEnableChange = async () => {
+    if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
+      messageApi.warning(t("workflow.action.enable.failed.uncompleted"));
       return;
     }
-    switchEnable();
-    if (!locId) {
-      navigate(`/workflows/detail?id=${workflow.id}`);
-    }
-  };
 
-  const handleWorkflowSaveClick = () => {
-    if (!allNodesValidated(workflow.draft as WorkflowNode)) {
-      messageApi.warning(t("workflow.detail.action.save.failed.uncompleted"));
-      return;
-    }
-    save();
-    if (!locId) {
-      navigate(`/workflows/detail?id=${workflow.id}`);
-    }
-  };
-
-  const getTabCls = (tabName: string) => {
-    if (tab === tabName) {
-      return "text-primary border-primary";
-    }
-    return "border-transparent hover:text-primary hover:border-b-primary";
-  };
-
-  const handleRunClick = async () => {
-    if (running) {
-      return;
-    }
-    setRunning(true);
     try {
-      await runWorkflow(workflow.id as string);
-      messageApi.success(t("workflow.detail.action.run.success"));
-    } catch (e) {
-      messageApi.warning(t("workflow.detail.action.run.failed"));
+      await workflowState.setEnabled(!workflow.enabled);
+    } catch (err) {
+      console.error(err);
+      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     }
-    setRunning(false);
+  };
+
+  const handleDeleteClick = () => {
+    modalApi.confirm({
+      title: t("workflow.action.delete"),
+      content: t("workflow.action.delete.confirm"),
+      onOk: async () => {
+        try {
+          const resp: boolean = await removeWorkflow(workflow);
+          if (resp) {
+            navigate("/workflows", { replace: true });
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
+  const handleDiscardClick = () => {
+    modalApi.confirm({
+      title: t("workflow.detail.orchestration.action.discard"),
+      content: t("workflow.detail.orchestration.action.discard.confirm"),
+      onOk: async () => {
+        try {
+          await workflowState.discard();
+
+          messageApi.success(t("common.text.operation_succeeded"));
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
+  const handleReleaseClick = () => {
+    if (!isAllNodesValidated(workflow.draft!)) {
+      messageApi.warning(t("workflow.detail.orchestration.action.release.failed.uncompleted"));
+      return;
+    }
+
+    modalApi.confirm({
+      title: t("workflow.detail.orchestration.action.release"),
+      content: t("workflow.detail.orchestration.action.release.confirm"),
+      onOk: async () => {
+        try {
+          await workflowState.release();
+
+          messageApi.success(t("common.text.operation_succeeded"));
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
+  const handleRunClick = () => {
+    const { promise, resolve, reject } = Promise.withResolvers();
+    if (workflow.hasDraft) {
+      modalApi.confirm({
+        title: t("workflow.detail.orchestration.action.run"),
+        content: t("workflow.detail.orchestration.action.run.confirm"),
+        onOk: () => resolve(void 0),
+        onCancel: () => reject(),
+      });
+    } else {
+      resolve(void 0);
+    }
+
+    // TODO: 异步执行
+    promise.then(async () => {
+      setIsRunning(true);
+
+      try {
+        await runWorkflow(workflowId!);
+
+        messageApi.success(t("common.text.operation_succeeded"));
+      } catch (err) {
+        if (err instanceof ClientResponseError && err.isAbort) {
+          return;
+        }
+
+        console.error(err);
+        messageApi.warning(t("common.text.operation_failed"));
+      } finally {
+        setIsRunning(false);
+      }
+    });
   };
 
   return (
     <div>
       {MessageContextHolder}
+      {ModalContextHolder}
       {NotificationContextHolder}
 
-      <WorkflowProvider>
-        <div className="h-16 sticky  top-0 left-0 z-[1]` shadow-md bg-muted/40 flex justify-between items-center">
-          <div className="px-5 text-stone-700 dark:text-stone-200 flex items-center space-x-2">
-            <ArrowLeftIcon className="cursor-pointer" onClick={handleBackClick} />
-            <WorkflowBaseInfoEditDialog
-              trigger={
-                <div className="flex flex-col space-y-1 cursor-pointer items-start">
-                  <div className="truncate  max-w-[200px]">{workflow.name ? workflow.name : t("workflow.props.name.default")}</div>
-                  <div className="text-sm text-muted-foreground truncate  max-w-[200px]">
-                    {workflow.description ? workflow.description : t("workflow.props.description.placeholder")}
-                  </div>
+      <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }}>
+        <PageHeader
+          style={{ paddingBottom: 0 }}
+          title={workflow.name}
+          extra={
+            initialized
+              ? [
+                  <WorkflowBaseInfoModal key="edit" trigger={<Button>{t("common.button.edit")}</Button>} />,
+
+                  <Button key="enable" onClick={handleEnableChange}>
+                    {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
+                  </Button>,
+
+                  <Dropdown
+                    key="more"
+                    menu={{
+                      items: [
+                        {
+                          key: "delete",
+                          label: t("workflow.action.delete"),
+                          danger: true,
+                          icon: <DeleteOutlinedIcon />,
+                          onClick: () => {
+                            handleDeleteClick();
+                          },
+                        },
+                      ],
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Button icon={<DownOutlinedIcon />} iconPosition="end">
+                      {t("common.button.more")}
+                    </Button>
+                  </Dropdown>,
+                ]
+              : []
+          }
+        >
+          <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
+          <Tabs
+            activeKey={tabValue}
+            defaultActiveKey="orchestration"
+            items={[
+              { key: "orchestration", label: t("workflow.detail.orchestration.tab"), icon: <ApartmentOutlinedIcon /> },
+              { key: "runs", label: t("workflow.detail.runs.tab"), icon: <HistoryOutlinedIcon /> },
+            ]}
+            renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} style={{ margin: 0 }} />}
+            tabBarStyle={{ border: "none" }}
+            onChange={(key) => setTabValue(key as typeof tabValue)}
+          />
+        </PageHeader>
+      </Card>
+
+      <div className="p-4">
+        <Card loading={!initialized}>
+          <Show when={tabValue === "orchestration"}>
+            <div className="relative">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 overflow-hidden">
+                  <Show when={workflow.hasDraft!}>
+                    <Alert banner message={<div className="truncate">{t("workflow.detail.orchestration.draft.alert")}</div>} type="warning" />
+                  </Show>
                 </div>
-              }
-            />
-          </div>
+                <div className="flex justify-end">
+                  <Space>
+                    <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
+                      {t("workflow.detail.orchestration.action.run")}
+                    </Button>
 
-          <div className="flex justify-between space-x-5 text-muted-foreground text-lg h-full">
-            <div
-              className={cn("h-full flex items-center cursor-pointer border-b-2", getTabCls("workflow"))}
-              onClick={() => {
-                setTab("workflow");
-              }}
-            >
-              <div>{t("workflow.detail.title")}</div>
+                    <Button.Group>
+                      <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
+                        {t("workflow.detail.orchestration.action.release")}
+                      </Button>
+
+                      <Dropdown
+                        menu={{
+                          items: [
+                            {
+                              key: "discard",
+                              disabled: !allowDiscard,
+                              label: t("workflow.detail.orchestration.action.discard"),
+                              icon: <UndoOutlinedIcon />,
+                              onClick: handleDiscardClick,
+                            },
+                          ],
+                        }}
+                        trigger={["click"]}
+                      >
+                        <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
+                      </Dropdown>
+                    </Button.Group>
+                  </Space>
+                </div>
+              </div>
+              <div className="px-12 py-8">
+                <WorkflowElements />
+              </div>
             </div>
-            <div
-              className={cn("h-full flex items-center cursor-pointer border-b-2", getTabCls("history"))}
-              onClick={() => {
-                setTab("history");
-              }}
-            >
-              <div>{t("workflow.detail.history")}</div>
-            </div>
-          </div>
+          </Show>
 
-          <div className="px-5 flex items-center space-x-3">
-            <Show when={!!workflow.enabled}>
-              <Show
-                when={!!workflow.hasDraft}
-                fallback={
-                  <Button type="text" onClick={handleRunClick}>
-                    {running ? t("workflow.detail.action.running") : t("workflow.detail.action.run")}
-                  </Button>
-                }
-              >
-                <Button type="primary" onClick={handleWorkflowSaveClick}>
-                  {t("workflow.detail.action.save")}
-                </Button>
-              </Show>
-            </Show>
-
-            <Switch checked={workflow.enabled ?? false} onChange={handleEnableChange} />
-          </div>
-        </div>
-
-        <Show when={tab === "workflow"}>
-          <div className="p-4">
-            <div className="flex flex-col items-center p-4 bg-background">{elements}</div>
-          </div>
-        </Show>
-
-        <Show when={!!locId && tab === "history"}>
-          <div className="p-4">
-            <div className="flex flex-col items-center p-4 bg-background">
-              <WorkflowLog />
-            </div>
-          </div>
-        </Show>
-      </WorkflowProvider>
+          <Show when={tabValue === "runs"}>
+            <WorkflowRuns workflowId={workflowId!} />
+          </Show>
+        </Card>
+      </div>
     </div>
+  );
+};
+
+const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
+  const { t } = useTranslation();
+
+  const [notificationApi, NotificationContextHolder] = notification.useNotification();
+
+  const { workflow, ...workflowState } = useWorkflowStore(useZustandShallowSelector(["workflow", "setBaseInfo"]));
+
+  const formSchema = z.object({
+    name: z
+      .string({ message: t("workflow.detail.baseinfo.form.name.placeholder") })
+      .min(1, t("workflow.detail.baseinfo.form.name.placeholder"))
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
+    description: z
+      .string({ message: t("workflow.detail.baseinfo.form.description.placeholder") })
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+    submit: submitForm,
+  } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: { name: workflow.name, description: workflow.description },
+    onSubmit: async (values) => {
+      try {
+        await workflowState.setBaseInfo(values.name!, values.description!);
+      } catch (err) {
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
+      }
+    },
+  });
+
+  const handleFormFinish = async () => {
+    return submitForm();
+  };
+
+  return (
+    <>
+      {NotificationContextHolder}
+
+      <ModalForm
+        disabled={formPending}
+        layout="vertical"
+        form={formInst}
+        modalProps={{ destroyOnClose: true }}
+        okText={t("common.button.save")}
+        title={t(`workflow.detail.baseinfo.modal.title`)}
+        trigger={trigger}
+        width={480}
+        {...formProps}
+        onFinish={handleFormFinish}
+      >
+        <Form.Item name="name" label={t("workflow.detail.baseinfo.form.name.label")} rules={[formRule]}>
+          <Input placeholder={t("workflow.detail.baseinfo.form.name.placeholder")} />
+        </Form.Item>
+
+        <Form.Item name="description" label={t("workflow.detail.baseinfo.form.description.label")} rules={[formRule]}>
+          <Input placeholder={t("workflow.detail.baseinfo.form.description.placeholder")} />
+        </Form.Item>
+      </ModalForm>
+    </>
   );
 };
 

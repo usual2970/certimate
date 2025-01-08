@@ -10,6 +10,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerCdn "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
 )
@@ -25,7 +26,7 @@ type BytePlusCDNDeployerConfig struct {
 
 type BytePlusCDNDeployer struct {
 	config      *BytePlusCDNDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *bpCdn.CDN
 	sslUploader uploader.Uploader
 }
@@ -33,10 +34,10 @@ type BytePlusCDNDeployer struct {
 var _ deployer.Deployer = (*BytePlusCDNDeployer)(nil)
 
 func New(config *BytePlusCDNDeployerConfig) (*BytePlusCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *BytePlusCDNDeployerConfig, logger deployer.Logger) (*BytePlusCDNDeployer, error) {
+func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*BytePlusCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

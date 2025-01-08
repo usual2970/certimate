@@ -13,34 +13,37 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
 type K8sSecretDeployerConfig struct {
 	// kubeconfig 文件内容。
 	KubeConfig string `json:"kubeConfig,omitempty"`
-	// K8s 命名空间。
+	// Kubernetes 命名空间。
 	Namespace string `json:"namespace,omitempty"`
-	// K8s Secret 名称。
+	// Kubernetes Secret 名称。
 	SecretName string `json:"secretName"`
-	// K8s Secret 中用于存放证书的 Key。
+	// Kubernetes Secret 类型。
+	SecretType string `json:"secretType"`
+	// Kubernetes Secret 中用于存放证书的 Key。
 	SecretDataKeyForCrt string `json:"secretDataKeyForCrt,omitempty"`
-	// K8s Secret 中用于存放私钥的 Key。
+	// Kubernetes Secret 中用于存放私钥的 Key。
 	SecretDataKeyForKey string `json:"secretDataKeyForKey,omitempty"`
 }
 
 type K8sSecretDeployer struct {
 	config *K8sSecretDeployerConfig
-	logger deployer.Logger
+	logger logger.Logger
 }
 
 var _ deployer.Deployer = (*K8sSecretDeployer)(nil)
 
 func New(config *K8sSecretDeployerConfig) (*K8sSecretDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *K8sSecretDeployerConfig, logger deployer.Logger) (*K8sSecretDeployer, error) {
+func NewWithLogger(config *K8sSecretDeployerConfig, logger logger.Logger) (*K8sSecretDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -101,7 +104,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 				Name:        d.config.SecretName,
 				Annotations: secretAnnotations,
 			},
-			Type: k8sCore.SecretType("kubernetes.io/tls"),
+			Type: k8sCore.SecretType(d.config.SecretType),
 		}
 		secretPayload.Data = make(map[string][]byte)
 		secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPem)
@@ -117,7 +120,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 	}
 
 	// 更新 Secret 实例
-	secretPayload.Type = k8sCore.SecretType("kubernetes.io/tls")
+	secretPayload.Type = k8sCore.SecretType(d.config.SecretType)
 	if secretPayload.ObjectMeta.Annotations == nil {
 		secretPayload.ObjectMeta.Annotations = secretAnnotations
 	} else {

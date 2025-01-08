@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 type AccessRepository struct{}
@@ -24,16 +24,16 @@ func (a *AccessRepository) GetById(ctx context.Context, id string) (*domain.Acce
 		return nil, err
 	}
 
-	rs := &domain.Access{
+	access := &domain.Access{
 		Meta: domain.Meta{
-			Id:      record.GetId(),
-			Created: record.GetTime("created"),
-			Updated: record.GetTime("updated"),
+			Id:        record.GetId(),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
 		},
-		Name:       record.GetString("name"),
-		Config:     record.GetString("config"),
-		ConfigType: record.GetString("configType"),
-		Usage:      record.GetString("usage"),
+		Name:     record.GetString("name"),
+		Provider: record.GetString("provider"),
+		Config:   record.GetString("config"),
+		Usage:    record.GetString("usage"),
 	}
-	return rs, nil
+	return access, nil
 }

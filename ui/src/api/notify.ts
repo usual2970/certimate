@@ -1,3 +1,5 @@
+import { ClientResponseError } from "pocketbase";
+
 import { getPocketBase } from "@/repository/pocketbase";
 
 export const notifyTest = async (channel: string) => {
@@ -14,7 +16,7 @@ export const notifyTest = async (channel: string) => {
   });
 
   if (resp.code != 0) {
-    throw new Error(resp.msg);
+    throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
 
   return resp;

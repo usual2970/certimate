@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	aliyunCdn "github.com/alibabacloud-go/cdn-20180510/v5/client"
@@ -12,6 +13,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type AliyunCDNDeployerConfig struct {
@@ -19,23 +21,23 @@ type AliyunCDNDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 加速域名（不支持泛域名）。
+	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
 type AliyunCDNDeployer struct {
 	config    *AliyunCDNDeployerConfig
-	logger    deployer.Logger
+	logger    logger.Logger
 	sdkClient *aliyunCdn.Client
 }
 
 var _ deployer.Deployer = (*AliyunCDNDeployer)(nil)
 
 func New(config *AliyunCDNDeployerConfig) (*AliyunCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *AliyunCDNDeployerConfig, logger deployer.Logger) (*AliyunCDNDeployer, error) {
+func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*AliyunCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
@@ -57,10 +59,13 @@ func NewWithLogger(config *AliyunCDNDeployerConfig, logger deployer.Logger) (*Al
 }
 
 func (d *AliyunCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+	// "*.example.com" → ".example.com"，适配阿里云 CDN 要求的泛域名格式
+	domain := strings.TrimPrefix(d.config.Domain, "*")
+
 	// 设置 CDN 域名域名证书
 	// REF: https://help.aliyun.com/zh/cdn/developer-reference/api-cdn-2018-05-10-setcdndomainsslcertificate
 	setCdnDomainSSLCertificateReq := &aliyunCdn.SetCdnDomainSSLCertificateRequest{
-		DomainName:  tea.String(d.config.Domain),
+		DomainName:  tea.String(domain),
 		CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		CertType:    tea.String("upload"),
 		SSLProtocol: tea.String("on"),

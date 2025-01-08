@@ -6,19 +6,19 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/notify"
 	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 const (
-	defaultExpireSubject = "您有 {COUNT} 张证书即将过期"
-	defaultExpireMessage = "有 {COUNT} 张证书即将过期，域名分别为 {DOMAINS}，请保持关注！"
+	defaultExpireSubject = "您有 ${COUNT} 张证书即将过期"
+	defaultExpireMessage = "有 ${COUNT} 张证书即将过期，域名分别为 ${DOMAINS}，请保持关注！"
 )
 
 type CertificateRepository interface {
-	GetExpireSoon(ctx context.Context) ([]domain.Certificate, error)
+	ListExpireSoon(ctx context.Context) ([]domain.Certificate, error)
 }
 
 type certificateService struct {
@@ -33,69 +33,72 @@ func NewCertificateService(repo CertificateRepository) *certificateService {
 
 func (s *certificateService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
-
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
-		certs, err := s.repo.GetExpireSoon(context.Background())
+		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
-			app.GetApp().Logger().Error("failed to get expire soon certificate", "err", err)
+			app.GetLogger().Error("failed to get expire soon certificate", "err", err)
 			return
 		}
-		msg := buildMsg(certs)
-		if err := notify.SendToAllChannels(msg.Subject, msg.Message); err != nil {
-			app.GetApp().Logger().Error("failed to send expire soon certificate", "err", err)
+
+		notification := buildExpireSoonNotification(certs)
+		if notification == nil {
+			return
+		}
+
+		if err := notify.SendToAllChannels(notification.Subject, notification.Message); err != nil {
+			app.GetLogger().Error("failed to send expire soon certificate", "err", err)
 		}
 	})
 	if err != nil {
-		app.GetApp().Logger().Error("failed to add schedule", "err", err)
+		app.GetLogger().Error("failed to add schedule", "err", err)
 		return err
 	}
 	scheduler.Start()
-	app.GetApp().Logger().Info("certificate schedule started")
+	app.GetLogger().Info("certificate schedule started")
 	return nil
 }
 
-func buildMsg(records []domain.Certificate) *domain.NotifyMessage {
+type certificateNotification struct {
+	Subject string `json:"subject"`
+	Message string `json:"message"`
+}
+
+func buildExpireSoonNotification(records []domain.Certificate) *certificateNotification {
 	if len(records) == 0 {
 		return nil
 	}
 
-	// 查询模板信息
-	settingRepo := repository.NewSettingRepository()
-	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
-
 	subject := defaultExpireSubject
 	message := defaultExpireMessage
 
+	// 查询模板信息
+	settingRepo := repository.NewSettingsRepository()
+	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
 	if err == nil {
-		var templates *domain.NotifyTemplates
-
+		var templates *domain.NotifyTemplatesSettingsContent
 		json.Unmarshal([]byte(setting.Content), &templates)
 
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
-			subject = templates.NotifyTemplates[0].Title
-			message = templates.NotifyTemplates[0].Content
+			subject = templates.NotifyTemplates[0].Subject
+			message = templates.NotifyTemplates[0].Message
 		}
 	}
 
 	// 替换变量
 	count := len(records)
 	domains := make([]string, count)
-
 	for i, record := range records {
-		domains[i] = record.SAN
+		domains[i] = record.SubjectAltNames
 	}
-
 	countStr := strconv.Itoa(count)
 	domainStr := strings.Join(domains, ";")
-
-	subject = strings.ReplaceAll(subject, "{COUNT}", countStr)
-	subject = strings.ReplaceAll(subject, "{DOMAINS}", domainStr)
-
-	message = strings.ReplaceAll(message, "{COUNT}", countStr)
-	message = strings.ReplaceAll(message, "{DOMAINS}", domainStr)
+	subject = strings.ReplaceAll(subject, "${COUNT}", countStr)
+	subject = strings.ReplaceAll(subject, "${DOMAINS}", domainStr)
+	message = strings.ReplaceAll(message, "${COUNT}", countStr)
+	message = strings.ReplaceAll(message, "${DOMAINS}", domainStr)
 
 	// 返回消息
-	return &domain.NotifyMessage{
+	return &certificateNotification{
 		Subject: subject,
 		Message: message,
 	}

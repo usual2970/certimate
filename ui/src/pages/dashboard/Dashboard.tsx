@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRequest } from "ahooks";
-import { Card, Col, Divider, notification, Row, Space, Statistic, theme, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@ant-design/pro-components";
+import { useRequest } from "ahooks";
+import { Card, Col, Divider, Row, Space, Statistic, Typography, notification, theme } from "antd";
 import {
   CalendarClock as CalendarClockIcon,
   CalendarX2 as CalendarX2Icon,
@@ -13,8 +13,8 @@ import {
 } from "lucide-react";
 import { ClientResponseError } from "pocketbase";
 
-import { type Statistics } from "@/domain/statistics";
 import { get as getStatistics } from "@/api/statistics";
+import { type Statistics } from "@/domain/statistics";
 import { getErrMsg } from "@/utils/error";
 
 const Dashboard = () => {

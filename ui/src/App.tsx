@@ -1,16 +1,16 @@
 ﻿import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { RouterProvider } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { App, ConfigProvider, theme, type ThemeConfig } from "antd";
+import { RouterProvider } from "react-router-dom";
+import { App, ConfigProvider, type ThemeConfig, theme } from "antd";
 import { type Locale } from "antd/es/locale";
 import AntdLocaleEnUs from "antd/locale/en_US";
 import AntdLocaleZhCN from "antd/locale/zh_CN";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 
-import { localeNames } from "./i18n";
-import { useBrowserTheme } from "./hooks";
-import { router } from "./router.tsx";
+import { useBrowserTheme } from "@/hooks";
+import { localeNames } from "@/i18n";
+import { router } from "@/router.tsx";
 
 const RootApp = () => {
   const { i18n } = useTranslation();
@@ -30,7 +30,13 @@ const RootApp = () => {
     dayjs.locale(i18n.language);
   };
   i18n.on("languageChanged", handleLanguageChanged);
-  useLayoutEffect(handleLanguageChanged, [antdLocalesMap, i18n]);
+  useLayoutEffect(() => {
+    handleLanguageChanged();
+
+    return () => {
+      i18n.off("languageChanged", handleLanguageChanged);
+    };
+  }, [antdLocalesMap, i18n]);
 
   const antdThemesMap: Record<string, ThemeConfig> = useMemo(
     () => ({
@@ -54,7 +60,9 @@ const RootApp = () => {
       theme={{
         ...antdTheme,
         token: {
-          colorPrimary: "hsl(24.6 95% 53.1%)",
+          /* @see tailwind.config.js */
+          colorPrimary: browserTheme === "dark" ? "hsl(20.5 90.2% 48.2%)" : "hsl(24.6 95% 53.1%)",
+          colorLink: browserTheme === "dark" ? "hsl(20.5 90.2% 48.2%)" : "hsl(24.6 95% 53.1%)",
         },
       }}
     >

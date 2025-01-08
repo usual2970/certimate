@@ -4,109 +4,88 @@ import "time"
 
 type Access struct {
 	Meta
-	Name       string    `json:"name"`
-	Config     string    `json:"config"`
-	ConfigType string    `json:"configType"`
-	Deleted    time.Time `json:"deleted"`
-	Usage      string    `json:"usage"`
+	Name      string    `json:"name" db:"name"`
+	Provider  string    `json:"provider" db:"provider"`
+	Config    string    `json:"config" db:"config"`
+	Usage     string    `json:"usage" db:"usage"`
+	DeletedAt time.Time `json:"deleted" db:"deleted"`
 }
 
-// 兼容一下原 pocketbase 的 record
-func (a *Access) GetString(key string) string {
-	switch key {
-	case "name":
-		return a.Name
-	default:
-		return ""
-	}
-}
-
-type AliyunAccess struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	AccessKeySecret string `json:"accessKeySecret"`
-}
-
-type ByteplusAccess struct {
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
-}
-
-type TencentAccess struct {
-	SecretId  string `json:"secretId"`
-	SecretKey string `json:"secretKey"`
-}
-
-type HuaweiCloudAccess struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	SecretAccessKey string `json:"secretAccessKey"`
-	Region          string `json:"region"`
-}
-
-type BaiduCloudAccess struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	SecretAccessKey string `json:"secretAccessKey"`
-}
-
-type AwsAccess struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	SecretAccessKey string `json:"secretAccessKey"`
-	Region          string `json:"region"`
-	HostedZoneId    string `json:"hostedZoneId"`
-}
-
-type CloudflareAccess struct {
-	DnsApiToken string `json:"dnsApiToken"`
-}
-
-type QiniuAccess struct {
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
-}
-
-type DogeCloudAccess struct {
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
-}
-
-type NameSiloAccess struct {
-	ApiKey string `json:"apiKey"`
-}
-
-type GodaddyAccess struct {
-	ApiKey    string `json:"apiKey"`
-	ApiSecret string `json:"apiSecret"`
-}
-
-type NameDotComAccess struct {
-	Username string `json:"username"`
-	ApiToken string `json:"apiToken"`
-}
-
-type PdnsAccess struct {
-	ApiUrl string `json:"apiUrl"`
-	ApiKey string `json:"apiKey"`
-}
-
-type VolcEngineAccess struct {
-	AccessKey string `json:"accessKey"`
-	SecretKey string `json:"secretKey"`
-
-	// Deprecated: Use [AccessKey] and [SecretKey] instead in the future
-	AccessKeyId string `json:"accessKeyId"`
-	// Deprecated: Use [AccessKey] and [SecretKey] instead in the future
-	SecretAccessKey string `json:"secretAccessKey"`
-}
-
-type HttpreqAccess struct {
+type AccessConfigForACMEHttpReq struct {
 	Endpoint string `json:"endpoint"`
 	Mode     string `json:"mode"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type LocalAccess struct{}
+type AccessConfigForAliyun struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
 
-type SSHAccess struct {
+type AccessConfigForAWS struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+	Region          string `json:"region"`
+	HostedZoneId    string `json:"hostedZoneId"`
+}
+
+type AccessConfigForBaiduCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+}
+
+type AccessConfigForBytePlus struct {
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}
+
+type AccessConfigForCloudflare struct {
+	DnsApiToken string `json:"dnsApiToken"`
+}
+
+type AccessConfigForDogeCloud struct {
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}
+
+type AccessConfigForGoDaddy struct {
+	ApiKey    string `json:"apiKey"`
+	ApiSecret string `json:"apiSecret"`
+}
+
+type AccessConfigForHuaweiCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+	Region          string `json:"region"`
+}
+
+type AccessConfigForLocal struct{}
+
+type AccessConfigForKubernetes struct {
+	KubeConfig string `json:"kubeConfig"`
+}
+
+type AccessConfigForNameDotCom struct {
+	Username string `json:"username"`
+	ApiToken string `json:"apiToken"`
+}
+
+type AccessConfigForNameSilo struct {
+	ApiKey string `json:"apiKey"`
+}
+
+type AccessConfigForPowerDNS struct {
+	ApiUrl string `json:"apiUrl"`
+	ApiKey string `json:"apiKey"`
+}
+
+type AccessConfigForQiniu struct {
+	AccessKey string `json:"accessKey"`
+	SecretKey string `json:"secretKey"`
+}
+
+type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          string `json:"port"`
 	Username      string `json:"username"`
@@ -115,10 +94,16 @@ type SSHAccess struct {
 	KeyPassphrase string `json:"keyPassphrase"`
 }
 
-type WebhookAccess struct {
-	Url string `json:"url"`
+type AccessConfigForTencentCloud struct {
+	SecretId  string `json:"secretId"`
+	SecretKey string `json:"secretKey"`
 }
 
-type KubernetesAccess struct {
-	KubeConfig string `json:"kubeConfig"`
+type AccessConfigForVolcEngine struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+}
+
+type AccessConfigForWebhook struct {
+	Url string `json:"url"`
 }

@@ -118,6 +118,12 @@ func GetValueOrDefaultAsInt64(dict map[string]any, key string, defaultValue int6
 			}
 		}
 
+		if result, ok := value.(int32); ok {
+			if result != 0 {
+				return int64(result)
+			}
+		}
+
 		// 兼容字符串类型的值
 		if str, ok := value.(string); ok {
 			if result, err := strconv.ParseInt(str, 10, 64); err == nil {

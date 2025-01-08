@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/app"
 )
 
 type StatisticsRepository struct{}
@@ -13,47 +13,54 @@ func NewStatisticsRepository() *StatisticsRepository {
 	return &StatisticsRepository{}
 }
 
-type totalResp struct {
-	Total int `json:"total" db:"total"`
-}
-
 func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, error) {
 	rs := &domain.Statistics{}
+
 	// 所有证书
-	certTotal := totalResp{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from certificate").One(&certTotal); err != nil {
+	certTotal := struct {
+		Total int `db:"total"`
+	}{}
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM certificate").One(&certTotal); err != nil {
 		return nil, err
 	}
 	rs.CertificateTotal = certTotal.Total
 
 	// 即将过期证书
-	certExpireSoonTotal := totalResp{}
+	certExpireSoonTotal := struct {
+		Total int `db:"total"`
+	}{}
 	if err := app.GetApp().Dao().DB().
-		NewQuery("select count(*) as total from certificate where expireAt > datetime('now') and expireAt < datetime('now', '+20 days')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt > DATETIME('now') and expireAt < DATETIME('now', '+20 days')").
 		One(&certExpireSoonTotal); err != nil {
 		return nil, err
 	}
 	rs.CertificateExpireSoon = certExpireSoonTotal.Total
 
 	// 已过期证书
-	certExpiredTotal := totalResp{}
+	certExpiredTotal := struct {
+		Total int `db:"total"`
+	}{}
 	if err := app.GetApp().Dao().DB().
-		NewQuery("select count(*) as total from certificate where expireAt < datetime('now')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt < DATETIME('now')").
 		One(&certExpiredTotal); err != nil {
 		return nil, err
 	}
 	rs.CertificateExpired = certExpiredTotal.Total
 
 	// 所有工作流
-	workflowTotal := totalResp{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from workflow").One(&workflowTotal); err != nil {
+	workflowTotal := struct {
+		Total int `db:"total"`
+	}{}
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM workflow").One(&workflowTotal); err != nil {
 		return nil, err
 	}
 	rs.WorkflowTotal = workflowTotal.Total
 
 	// 已启用工作流
-	workflowEnabledTotal := totalResp{}
-	if err := app.GetApp().Dao().DB().NewQuery("select count(*) as total from workflow where enabled is TRUE").One(&workflowEnabledTotal); err != nil {
+	workflowEnabledTotal := struct {
+		Total int `db:"total"`
+	}{}
+	if err := app.GetApp().Dao().DB().NewQuery("SELECT COUNT(*) AS total FROM workflow WHERE enabled IS TRUE").One(&workflowEnabledTotal); err != nil {
 		return nil, err
 	}
 	rs.WorkflowEnabled = workflowEnabledTotal.Total

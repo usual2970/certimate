@@ -1,6 +1,6 @@
 import { type RecordListOptions } from "pocketbase";
 
-import { type WorkflowModel, type WorkflowNode } from "@/domain/workflow";
+import { type WorkflowModel } from "@/domain/workflow";
 import { getPocketBase } from "./pocketbase";
 
 const COLLECTION_NAME = "workflow";
@@ -17,7 +17,11 @@ export const list = async (request: ListWorkflowRequest) => {
   const page = request.page || 1;
   const perPage = request.perPage || 10;
 
-  const options: RecordListOptions = { sort: "-created" };
+  const options: RecordListOptions = {
+    sort: "-created",
+    requestKey: null,
+  };
+
   if (request.enabled != null) {
     options.filter = pb.filter("enabled={:enabled}", { enabled: request.enabled });
   }
@@ -26,10 +30,12 @@ export const list = async (request: ListWorkflowRequest) => {
 };
 
 export const get = async (id: string) => {
-  return await getPocketBase().collection(COLLECTION_NAME).getOne<WorkflowModel>(id);
+  return await getPocketBase().collection(COLLECTION_NAME).getOne<WorkflowModel>(id, {
+    requestKey: null,
+  });
 };
 
-export const save = async (record: Record<string, string | boolean | WorkflowNode>) => {
+export const save = async (record: MaybeModelRecord<WorkflowModel>) => {
   if (record.id) {
     return await getPocketBase()
       .collection(COLLECTION_NAME)

@@ -12,6 +12,7 @@ import (
 	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -38,7 +39,7 @@ type TencentCloudCLBDeployerConfig struct {
 
 type TencentCloudCLBDeployer struct {
 	config      *TencentCloudCLBDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
@@ -51,10 +52,10 @@ type wSdkClients struct {
 }
 
 func New(config *TencentCloudCLBDeployerConfig) (*TencentCloudCLBDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger deployer.Logger) (*TencentCloudCLBDeployer, error) {
+func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) (*TencentCloudCLBDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

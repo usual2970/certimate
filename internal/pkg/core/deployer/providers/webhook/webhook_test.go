@@ -14,7 +14,8 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fUrl           string
+	fWebhookUrl    string
+	fWebhookData   string
 )
 
 func init() {
@@ -22,7 +23,8 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fUrl, argsPrefix+"URL", "", "")
+	flag.StringVar(&fWebhookUrl, argsPrefix+"URL", "", "")
+	flag.StringVar(&fWebhookData, argsPrefix+"DATA", "", "")
 }
 
 /*
@@ -31,7 +33,8 @@ Shell command to run this test:
 	go test -v webhook_test.go -args \
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url"
+	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url" \
+	--CERTIMATE_DEPLOYER_WEBHOOK_DATA="{\"certificate\":\"${Certificate}\",\"privateKey\":\"${PrivateKey}\"}"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -41,11 +44,13 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("URL: %v", fUrl),
+			fmt.Sprintf("WEBHOOKURL: %v", fWebhookUrl),
+			fmt.Sprintf("WEBHOOKDATA: %v", fWebhookData),
 		}, "\n"))
 
 		deployer, err := provider.New(&provider.WebhookDeployerConfig{
-			Url: fUrl,
+			WebhookUrl:  fWebhookUrl,
+			WebhookData: fWebhookData,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

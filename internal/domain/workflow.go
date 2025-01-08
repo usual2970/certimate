@@ -1,95 +1,101 @@
 package domain
 
 import (
-	"fmt"
-	"strconv"
+	"time"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-const (
-	WorkflowNodeTypeStart     = "start"
-	WorkflowNodeTypeEnd       = "end"
-	WorkflowNodeTypeApply     = "apply"
-	WorkflowNodeTypeDeploy    = "deploy"
-	WorkflowNodeTypeNotify    = "notify"
-	WorkflowNodeTypeBranch    = "branch"
-	WorkflowNodeTypeCondition = "condition"
-)
+type WorkflowNodeType string
 
 const (
-	WorkflowTypeAuto   = "auto"
-	WorkflowTypeManual = "manual"
+	WorkflowNodeTypeStart     = WorkflowNodeType("start")
+	WorkflowNodeTypeEnd       = WorkflowNodeType("end")
+	WorkflowNodeTypeApply     = WorkflowNodeType("apply")
+	WorkflowNodeTypeDeploy    = WorkflowNodeType("deploy")
+	WorkflowNodeTypeNotify    = WorkflowNodeType("notify")
+	WorkflowNodeTypeBranch    = WorkflowNodeType("branch")
+	WorkflowNodeTypeCondition = WorkflowNodeType("condition")
+)
+
+type WorkflowTriggerType string
+
+const (
+	WorkflowTriggerTypeAuto   = WorkflowTriggerType("auto")
+	WorkflowTriggerTypeManual = WorkflowTriggerType("manual")
 )
 
 type Workflow struct {
 	Meta
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
-	Type        string        `json:"type"`
-	Crontab     string        `json:"crontab"`
-	Content     *WorkflowNode `json:"content"`
-	Draft       *WorkflowNode `json:"draft"`
-	Enabled     bool          `json:"enabled"`
-	HasDraft    bool          `json:"hasDraft"`
+	Name          string                `json:"name" db:"name"`
+	Description   string                `json:"description" db:"description"`
+	Trigger       WorkflowTriggerType   `json:"trigger" db:"trigger"`
+	TriggerCron   string                `json:"triggerCron" db:"triggerCron"`
+	Enabled       bool                  `json:"enabled" db:"enabled"`
+	Content       *WorkflowNode         `json:"content" db:"content"`
+	Draft         *WorkflowNode         `json:"draft" db:"draft"`
+	HasDraft      bool                  `json:"hasDraft" db:"hasDraft"`
+	LastRunId     string                `json:"lastRunId" db:"lastRunId"`
+	LastRunStatus WorkflowRunStatusType `json:"lastRunStatus" db:"lastRunStatus"`
+	LastRunTime   time.Time             `json:"lastRunTime" db:"lastRunTime"`
 }
 
 type WorkflowNode struct {
-	Id     string           `json:"id"`
-	Name   string           `json:"name"`
-	Next   *WorkflowNode    `json:"next"`
-	Config map[string]any   `json:"config"`
-	Input  []WorkflowNodeIo `json:"input"`
-	Output []WorkflowNodeIo `json:"output"`
+	Id   string           `json:"id"`
+	Type WorkflowNodeType `json:"type"`
+	Name string           `json:"name"`
 
-	Validated bool   `json:"validated"`
-	Type      string `json:"type"`
+	Config  map[string]any   `json:"config"`
+	Inputs  []WorkflowNodeIO `json:"inputs"`
+	Outputs []WorkflowNodeIO `json:"outputs"`
 
+	Next     *WorkflowNode  `json:"next"`
 	Branches []WorkflowNode `json:"branches"`
+
+	Validated bool `json:"validated"`
 }
 
 func (n *WorkflowNode) GetConfigString(key string) string {
-	if v, ok := n.Config[key]; ok {
-		if s, ok := v.(string); ok {
-			return s
-		}
-	}
-	return ""
+	return maps.GetValueAsString(n.Config, key)
 }
 
 func (n *WorkflowNode) GetConfigBool(key string) bool {
-	if v, ok := n.Config[key]; ok {
-		if b, ok := v.(bool); ok {
-			return b
-		}
-	}
-	return false
+	return maps.GetValueAsBool(n.Config, key)
+}
+
+func (n *WorkflowNode) GetConfigInt32(key string) int32 {
+	return maps.GetValueAsInt32(n.Config, key)
 }
 
 func (n *WorkflowNode) GetConfigInt64(key string) int64 {
-	// 先转成字符串，再转成 int64
-	if v, ok := n.Config[key]; ok {
-		temp := fmt.Sprintf("%v", v)
-		if i, err := strconv.ParseInt(temp, 10, 64); err == nil {
-			return i
+	return maps.GetValueAsInt64(n.Config, key)
+}
+
+func (n *WorkflowNode) GetConfigMap(key string) map[string]any {
+	if val, ok := n.Config[key]; ok {
+		if result, ok := val.(map[string]any); ok {
+			return result
 		}
 	}
 
-	return 0
+	return make(map[string]any)
 }
 
-type WorkflowNodeIo struct {
+type WorkflowNodeIO struct {
 	Label         string                      `json:"label"`
 	Name          string                      `json:"name"`
 	Type          string                      `json:"type"`
 	Required      bool                        `json:"required"`
 	Value         any                         `json:"value"`
-	ValueSelector WorkflowNodeIoValueSelector `json:"valueSelector"`
+	ValueSelector WorkflowNodeIOValueSelector `json:"valueSelector"`
 }
 
-type WorkflowNodeIoValueSelector struct {
+type WorkflowNodeIOValueSelector struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
 type WorkflowRunReq struct {
-	Id string `json:"id"`
+	WorkflowId string              `json:"workflowId"`
+	Trigger    WorkflowTriggerType `json:"trigger"`
 }

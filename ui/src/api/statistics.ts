@@ -1,4 +1,6 @@
-import { Statistics } from "@/domain/statistics";
+import { ClientResponseError } from "pocketbase";
+
+import { type Statistics } from "@/domain/statistics";
 import { getPocketBase } from "@/repository/pocketbase";
 
 export const get = async () => {
@@ -8,8 +10,8 @@ export const get = async () => {
     method: "GET",
   });
 
-  if (resp.code !== 0) {
-    throw new Error(resp.msg);
+  if (resp.code != 0) {
+    throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
 
   return resp.data as Statistics;

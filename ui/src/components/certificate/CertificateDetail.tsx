@@ -1,7 +1,7 @@
-import { useTranslation } from "react-i18next";
-import { Button, Dropdown, Form, Input, message, Space, Tooltip } from "antd";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { ChevronDown as ChevronDownIcon, Clipboard as ClipboardIcon, ThumbsUp as ThumbsUpIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { CopyOutlined as CopyOutlinedIcon, DownOutlined as DownOutlinedIcon, LikeOutlined as LikeOutlinedIcon } from "@ant-design/icons";
+import { Button, Dropdown, Form, Input, Space, Tooltip, message } from "antd";
 import dayjs from "dayjs";
 
 import { type CertificateModel } from "@/domain/certificate";
@@ -19,14 +19,14 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
   const [messageApi, MessageContextHolder] = message.useMessage();
 
   const handleDownloadPEMClick = async () => {
-    const zipName = `${data.id}-${data.san}.zip`;
+    const zipName = `${data.id}-${data.subjectAltNames}.zip`;
     const files = [
       {
-        name: `${data.san}.pem`,
+        name: `${data.subjectAltNames}.pem`,
         content: data.certificate ?? "",
       },
       {
-        name: `${data.san}.key`,
+        name: `${data.subjectAltNames}.key`,
         content: data.privateKey ?? "",
       },
     ];
@@ -39,13 +39,17 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
       {MessageContextHolder}
 
       <Form layout="vertical">
-        <Form.Item label={t("certificate.props.san")}>{data.san}</Form.Item>
+        <Form.Item label={t("certificate.props.subject_alt_names")}>
+          <Input value={data.subjectAltNames} placeholder="" />
+        </Form.Item>
 
-        <Form.Item label={t("certificate.props.expiry")}>{dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}</Form.Item>
+        <Form.Item label={t("certificate.props.validity")}>
+          <Input value={`${dayjs(data.effectAt).format("YYYY-MM-DD HH:mm:ss")} ~ ${dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}`} placeholder="" />
+        </Form.Item>
 
         <Form.Item>
-          <div className="flex items-center justify-between w-full mb-2">
-            <label className="font-medium">{t("certificate.props.certificate_chain")}</label>
+          <div className="mb-2 flex w-full items-center justify-between">
+            <label>{t("certificate.props.certificate")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.certificate}
@@ -53,7 +57,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                   messageApi.success(t("common.text.copied"));
                 }}
               >
-                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+                <Button size="small" type="text" icon={<CopyOutlinedIcon />}></Button>
               </CopyToClipboard>
             </Tooltip>
           </div>
@@ -61,8 +65,8 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
         </Form.Item>
 
         <Form.Item>
-          <div className="flex items-center justify-between w-full mb-2">
-            <label className="font-medium">{t("certificate.props.private_key")}</label>
+          <div className="mb-2 flex w-full items-center justify-between">
+            <label>{t("certificate.props.private_key")}</label>
             <Tooltip title={t("common.button.copy")}>
               <CopyToClipboard
                 text={data.privateKey}
@@ -70,7 +74,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                   messageApi.success(t("common.text.copied"));
                 }}
               >
-                <Button type="text" icon={<ClipboardIcon size={14} />}></Button>
+                <Button size="small" type="text" icon={<CopyOutlinedIcon />}></Button>
               </CopyToClipboard>
             </Tooltip>
           </div>
@@ -85,23 +89,21 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               {
                 key: "PEM",
                 label: "PEM",
-                extra: <ThumbsUpIcon size="14" />,
+                extra: <LikeOutlinedIcon />,
                 onClick: () => handleDownloadPEMClick(),
               },
               {
                 key: "PFX",
                 label: "PFX",
                 onClick: () => {
-                  // TODO: 下载 PFX 格式证书
-                  alert("TODO");
+                  alert("TODO: 暂时不支持下载 PFX 证书");
                 },
               },
               {
                 key: "JKS",
                 label: "JKS",
                 onClick: () => {
-                  // TODO: 下载 JKS 格式证书
-                  alert("TODO");
+                  alert("TODO: 暂时不支持下载 JKS 证书");
                 },
               },
             ],
@@ -110,7 +112,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
           <Button type="primary">
             <Space>
               <span>{t("certificate.action.download")}</span>
-              <ChevronDownIcon size={14} />
+              <DownOutlinedIcon />
             </Space>
           </Button>
         </Dropdown>

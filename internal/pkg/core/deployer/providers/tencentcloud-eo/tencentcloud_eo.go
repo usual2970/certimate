@@ -11,6 +11,7 @@ import (
 	tcTeo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -28,7 +29,7 @@ type TencentCloudEODeployerConfig struct {
 
 type TencentCloudEODeployer struct {
 	config      *TencentCloudEODeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
@@ -41,10 +42,10 @@ type wSdkClients struct {
 }
 
 func New(config *TencentCloudEODeployerConfig) (*TencentCloudEODeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *TencentCloudEODeployerConfig, logger deployer.Logger) (*TencentCloudEODeployer, error) {
+func NewWithLogger(config *TencentCloudEODeployerConfig, logger logger.Logger) (*TencentCloudEODeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

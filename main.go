@@ -6,20 +6,20 @@ import (
 	"os"
 	"strings"
 
+	_ "time/tzdata"
+
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
-	_ "github.com/usual2970/certimate/migrations"
-
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/routes"
 	"github.com/usual2970/certimate/internal/scheduler"
-	"github.com/usual2970/certimate/internal/utils/app"
 	"github.com/usual2970/certimate/internal/workflow"
 	"github.com/usual2970/certimate/ui"
 
-	_ "time/tzdata"
+	_ "github.com/usual2970/certimate/migrations"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 		Automigrate: isGoRun,
 	})
 
-	workflow.AddEvent()
+	workflow.RegisterEvents()
 
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
 		routes.Register(e.Router)

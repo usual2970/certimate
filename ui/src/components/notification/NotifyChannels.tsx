@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDeepCompareMemo } from "@ant-design/pro-components";
-import { Button, Collapse, message, notification, Skeleton, Space, Switch, type CollapseProps } from "antd";
+import { Button, Collapse, type CollapseProps, Skeleton, Space, Switch, message, notification } from "antd";
+
+import Show from "@/components/Show";
+import { notifyChannelsMap } from "@/domain/settings";
+import { useZustandShallowSelector } from "@/hooks";
+import { useNotifyChannelsStore } from "@/stores/notify";
+import { getErrMsg } from "@/utils/error";
 
 import NotifyChannelEditForm, { type NotifyChannelEditFormInstance } from "./NotifyChannelEditForm";
 import NotifyTestButton from "./NotifyTestButton";
-import { notifyChannelsMap } from "@/domain/settings";
-import { useNotifyChannelStore } from "@/stores/notify";
-import { getErrMsg } from "@/utils/error";
 
 type NotifyChannelProps = {
   className?: string;
@@ -21,13 +24,13 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { channels, setChannel } = useNotifyChannelStore();
+  const { channels, setChannel } = useNotifyChannelsStore(useZustandShallowSelector(["channels", "setChannel"]));
 
   const channelConfig = useDeepCompareMemo(() => channels[channel], [channels, channel]);
-  const [channelFormChanged, setChannelFormChanged] = useState(false);
   const channelFormRef = useRef<NotifyChannelEditFormInstance>(null);
+  const [channelFormChanged, setChannelFormChanged] = useState(false);
 
-  const handleClickSubmit = async () => {
+  const handleSubmit = async () => {
     await channelFormRef.current!.validateFields();
 
     try {
@@ -45,10 +48,16 @@ const NotifyChannel = ({ className, style, channel }: NotifyChannelProps) => {
       {MessageContextHolder}
       {NotificationContextHolder}
 
-      <NotifyChannelEditForm ref={channelFormRef} className="mt-2" channel={channel} model={channelConfig} onModelChange={() => setChannelFormChanged(true)} />
+      <NotifyChannelEditForm
+        ref={channelFormRef}
+        className="mt-2"
+        channel={channel}
+        initialValues={channelConfig}
+        onValuesChange={() => setChannelFormChanged(true)}
+      />
 
       <Space className="mb-2">
-        <Button type="primary" disabled={!channelFormChanged} onClick={handleClickSubmit}>
+        <Button type="primary" disabled={!channelFormChanged} onClick={handleSubmit}>
           {t("common.button.save")}
         </Button>
 
@@ -70,10 +79,12 @@ export type NotifyChannelsProps = {
 const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannelsProps) => {
   const { t, i18n } = useTranslation();
 
-  const { initialized, channels, setChannel, fetchChannels } = useNotifyChannelStore();
+  const { channels, loadedAtOnce, setChannel, fetchChannels } = useNotifyChannelsStore(
+    useZustandShallowSelector(["channels", "loadedAtOnce", "setChannel", "fetchChannels"])
+  );
   useEffect(() => {
     fetchChannels();
-  }, [fetchChannels]);
+  }, []);
 
   const channelCollapseItems: CollapseProps["items"] = useDeepCompareMemo(
     () =>
@@ -105,11 +116,9 @@ const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannels
 
   return (
     <div className={className} style={style}>
-      {!initialized ? (
-        <Skeleton active />
-      ) : (
-        <Collapse className={classNames?.collapse} style={styles?.collapse} accordion={true} bordered={false} items={channelCollapseItems} />
-      )}
+      <Show when={loadedAtOnce} fallback={<Skeleton active />}>
+        <Collapse className={classNames?.collapse} style={styles?.collapse} accordion bordered={false} items={channelCollapseItems} />
+      </Show>
     </div>
   );
 };

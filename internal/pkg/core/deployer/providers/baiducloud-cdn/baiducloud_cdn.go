@@ -11,6 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type BaiduCloudCDNDeployerConfig struct {
@@ -18,23 +19,23 @@ type BaiduCloudCDNDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 百度智能云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
-	// 加速域名（不支持泛域名）。
+	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
 type BaiduCloudCDNDeployer struct {
 	config    *BaiduCloudCDNDeployerConfig
-	logger    deployer.Logger
+	logger    logger.Logger
 	sdkClient *bceCdn.Client
 }
 
 var _ deployer.Deployer = (*BaiduCloudCDNDeployer)(nil)
 
 func New(config *BaiduCloudCDNDeployerConfig) (*BaiduCloudCDNDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *BaiduCloudCDNDeployerConfig, logger deployer.Logger) (*BaiduCloudCDNDeployer, error) {
+func NewWithLogger(config *BaiduCloudCDNDeployerConfig, logger logger.Logger) (*BaiduCloudCDNDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

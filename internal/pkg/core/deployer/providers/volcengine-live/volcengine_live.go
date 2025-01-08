@@ -10,6 +10,7 @@ import (
 	veLive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
 	"github.com/usual2970/certimate/internal/pkg/utils/cast"
@@ -26,7 +27,7 @@ type VolcEngineLiveDeployerConfig struct {
 
 type VolcEngineLiveDeployer struct {
 	config      *VolcEngineLiveDeployerConfig
-	logger      deployer.Logger
+	logger      logger.Logger
 	sdkClient   *veLive.Live
 	sslUploader uploader.Uploader
 }
@@ -34,10 +35,10 @@ type VolcEngineLiveDeployer struct {
 var _ deployer.Deployer = (*VolcEngineLiveDeployer)(nil)
 
 func New(config *VolcEngineLiveDeployerConfig) (*VolcEngineLiveDeployer, error) {
-	return NewWithLogger(config, deployer.NewNilLogger())
+	return NewWithLogger(config, logger.NewNilLogger())
 }
 
-func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger deployer.Logger) (*VolcEngineLiveDeployer, error) {
+func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (*VolcEngineLiveDeployer, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}

@@ -6,9 +6,10 @@ import (
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/models"
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/app"
 	"golang.org/x/sync/singleflight"
+
+	"github.com/usual2970/certimate/internal/app"
+	"github.com/usual2970/certimate/internal/domain"
 )
 
 type AcmeAccountRepository struct{}
@@ -46,13 +47,15 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 	}
 
 	return &domain.AcmeAccount{
-		Id:       record.GetString("id"),
-		Ca:       record.GetString("ca"),
+		Meta: domain.Meta{
+			Id:        record.GetId(),
+			CreatedAt: record.GetCreated().Time(),
+			UpdatedAt: record.GetUpdated().Time(),
+		},
+		CA:       record.GetString("ca"),
 		Email:    record.GetString("email"),
 		Key:      record.GetString("key"),
 		Resource: resource,
-		Created:  record.GetTime("created"),
-		Updated:  record.GetTime("updated"),
 	}, nil
 }
 

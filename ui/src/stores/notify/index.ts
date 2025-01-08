@@ -1,24 +1,40 @@
-﻿import { create } from "zustand";
-import { produce } from "immer";
+﻿import { produce } from "immer";
+import { create } from "zustand";
 
-import { SETTINGS_NAMES, type NotifyChannelsSettingsContent, type SettingsModel } from "@/domain/settings";
+import { type NotifyChannelsSettingsContent, SETTINGS_NAMES, type SettingsModel } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
-export interface NotifyChannelState {
-  initialized: boolean;
+export interface NotifyChannelsState {
   channels: NotifyChannelsSettingsContent;
-  setChannel: (channel: keyof NotifyChannelsSettingsContent, config: NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent]) => void;
-  setChannels: (channels: NotifyChannelsSettingsContent) => void;
+  loading: boolean;
+  loadedAtOnce: boolean;
+
   fetchChannels: () => Promise<void>;
+  setChannel: (channel: keyof NotifyChannelsSettingsContent, config: NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent]) => Promise<void>;
+  setChannels: (channels: NotifyChannelsSettingsContent) => Promise<void>;
 }
 
-export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
+export const useNotifyChannelsStore = create<NotifyChannelsState>((set, get) => {
   let fetcher: Promise<SettingsModel<NotifyChannelsSettingsContent>> | null = null; // 防止多次重复请求
   let settings: SettingsModel<NotifyChannelsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用
 
   return {
-    initialized: false,
     channels: {},
+    loading: false,
+    loadedAtOnce: false,
+
+    fetchChannels: async () => {
+      fetcher ??= getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
+
+      try {
+        set({ loading: true });
+        settings = await fetcher;
+        set({ channels: settings.content ?? {}, loadedAtOnce: true });
+      } finally {
+        fetcher = null;
+        set({ loading: false });
+      }
+    },
 
     setChannel: async (channel, config) => {
       settings ??= await getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
@@ -38,22 +54,11 @@ export const useNotifyChannelStore = create<NotifyChannelState>((set, get) => {
       });
 
       set(
-        produce((state: NotifyChannelState) => {
+        produce((state: NotifyChannelsState) => {
           state.channels = settings.content;
-          state.initialized = true;
+          state.loadedAtOnce = true;
         })
       );
-    },
-
-    fetchChannels: async () => {
-      fetcher ??= getSettings<NotifyChannelsSettingsContent>(SETTINGS_NAMES.NOTIFY_CHANNELS);
-
-      try {
-        settings = await fetcher;
-        set({ channels: settings.content ?? {}, initialized: true });
-      } finally {
-        fetcher = null;
-      }
     },
   };
 });

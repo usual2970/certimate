@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, Space } from "antd";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  ApiOutlined as ApiOutlinedIcon,
+  LockOutlined as LockOutlinedIcon,
+  SendOutlined as SendOutlinedIcon,
+  UserOutlined as UserOutlinedIcon,
+} from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
-import { KeyRound as KeyRoundIcon, Megaphone as MegaphoneIcon, ShieldCheck as ShieldCheckIcon, UserRound as UserRoundIcon } from "lucide-react";
+import { Card, Space } from "antd";
 
 const Settings = () => {
   const location = useLocation();
@@ -20,7 +25,7 @@ const Settings = () => {
     }
 
     setTabValue(path);
-  }, [location]);
+  }, [location.pathname]);
 
   return (
     <div className="p-4">
@@ -32,7 +37,7 @@ const Settings = () => {
             key: "account",
             label: (
               <Space>
-                <UserRoundIcon size={14} />
+                <UserOutlinedIcon />
                 <label>{t("settings.account.tab")}</label>
               </Space>
             ),
@@ -41,7 +46,7 @@ const Settings = () => {
             key: "password",
             label: (
               <Space>
-                <KeyRoundIcon size={14} />
+                <LockOutlinedIcon />
                 <label>{t("settings.password.tab")}</label>
               </Space>
             ),
@@ -50,7 +55,7 @@ const Settings = () => {
             key: "notification",
             label: (
               <Space>
-                <MegaphoneIcon size={14} />
+                <SendOutlinedIcon />
                 <label>{t("settings.notification.tab")}</label>
               </Space>
             ),
@@ -59,7 +64,7 @@ const Settings = () => {
             key: "ssl-provider",
             label: (
               <Space>
-                <ShieldCheckIcon size={14} />
+                <ApiOutlinedIcon />
                 <label>{t("settings.sslprovider.tab")}</label>
               </Space>
             ),

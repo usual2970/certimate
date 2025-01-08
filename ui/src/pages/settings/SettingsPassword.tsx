@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { getErrMsg } from "@/utils/error";
+import { useAntdForm } from "@/hooks";
 import { getPocketBase } from "@/repository/pocketbase";
+import { getErrMsg } from "@/utils/error";
 
 const SettingsPassword = () => {
   const navigate = useNavigate();
@@ -16,54 +17,47 @@ const SettingsPassword = () => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const formSchema = z
-    .object({
-      oldPassword: z
-        .string({ message: t("settings.password.form.old_password.placeholder") })
-        .min(10, { message: t("settings.password.form.password.errmsg.invalid") }),
-      newPassword: z
-        .string({ message: t("settings.password.form.new_password.placeholder") })
-        .min(10, { message: t("settings.password.form.password.errmsg.invalid") }),
-      confirmPassword: z
-        .string({ message: t("settings.password.form.confirm_password.placeholder") })
-        .min(10, { message: t("settings.password.form.password.errmsg.invalid") }),
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-      message: t("settings.password.form.password.errmsg.not_matched"),
-      path: ["confirmPassword"],
-    });
+  const formSchema = z.object({
+    oldPassword: z.string({ message: t("settings.password.form.old_password.placeholder") }).min(10, t("settings.password.form.password.errmsg.invalid")),
+    newPassword: z.string({ message: t("settings.password.form.new_password.placeholder") }).min(10, t("settings.password.form.password.errmsg.invalid")),
+    confirmPassword: z
+      .string({ message: t("settings.password.form.confirm_password.placeholder") })
+      .min(10, t("settings.password.form.password.errmsg.invalid"))
+      .refine((v) => v === formInst.getFieldValue("newPassword"), t("settings.password.form.password.errmsg.not_matched")),
+  });
   const formRule = createSchemaFieldRule(formSchema);
-  const [form] = Form.useForm<z.infer<typeof formSchema>>();
-  const [formPending, setFormPending] = useState(false);
+  const {
+    form: formInst,
+    formPending,
+    formProps,
+  } = useAntdForm({
+    onSubmit: async (values) => {
+      try {
+        await getPocketBase().admins.authWithPassword(getPocketBase().authStore.model?.email, values.oldPassword);
+        await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
+          password: values.newPassword,
+          passwordConfirm: values.confirmPassword,
+        });
 
-  const [initialChanged, setInitialChanged] = useState(false);
+        messageApi.success(t("common.text.operation_succeeded"));
+
+        setTimeout(() => {
+          getPocketBase().authStore.clear();
+          navigate("/login");
+        }, 500);
+      } catch (err) {
+        notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
+      }
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
 
   const handleInputChange = () => {
-    const fields = form.getFieldsValue();
-    setInitialChanged(!!fields.oldPassword && !!fields.newPassword && !!fields.confirmPassword);
-  };
-
-  const handleFormFinish = async (fields: z.infer<typeof formSchema>) => {
-    setFormPending(true);
-
-    try {
-      await getPocketBase().admins.authWithPassword(getPocketBase().authStore.model?.email, fields.oldPassword);
-      await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
-        password: fields.newPassword,
-        passwordConfirm: fields.confirmPassword,
-      });
-
-      messageApi.success(t("common.text.operation_succeeded"));
-
-      setTimeout(() => {
-        getPocketBase().authStore.clear();
-        navigate("/login");
-      }, 500);
-    } catch (err) {
-      notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
-    } finally {
-      setFormPending(false);
-    }
+    const values = formInst.getFieldsValue();
+    setFormChanged(!!values.oldPassword && !!values.newPassword && !!values.confirmPassword);
   };
 
   return (
@@ -72,7 +66,7 @@ const SettingsPassword = () => {
       {NotificationContextHolder}
 
       <div className="md:max-w-[40rem]">
-        <Form form={form} disabled={formPending} layout="vertical" onFinish={handleFormFinish}>
+        <Form {...formProps} form={formInst} disabled={formPending} layout="vertical">
           <Form.Item name="oldPassword" label={t("settings.password.form.old_password.label")} rules={[formRule]}>
             <Input.Password placeholder={t("settings.password.form.old_password.placeholder")} onChange={handleInputChange} />
           </Form.Item>
@@ -86,7 +80,7 @@ const SettingsPassword = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={!initialChanged} loading={formPending}>
+            <Button type="primary" htmlType="submit" disabled={!formChanged} loading={formPending}>
               {t("common.button.save")}
             </Button>
           </Form.Item>

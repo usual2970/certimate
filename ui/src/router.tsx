@@ -2,17 +2,18 @@ import { createHashRouter } from "react-router-dom";
 
 import AuthLayout from "./pages/AuthLayout";
 import ConsoleLayout from "./pages/ConsoleLayout";
-import Login from "./pages/login/Login";
-import Dashboard from "./pages/dashboard/Dashboard";
 import AccessList from "./pages/accesses/AccessList";
-import WorkflowList from "./pages/workflows/WorkflowList";
-import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import CertificateList from "./pages/certificates/CertificateList";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Login from "./pages/login/Login";
 import Settings from "./pages/settings/Settings";
 import SettingsAccount from "./pages/settings/SettingsAccount";
-import SettingsPassword from "./pages/settings/SettingsPassword";
 import SettingsNotification from "./pages/settings/SettingsNotification";
+import SettingsPassword from "./pages/settings/SettingsPassword";
 import SettingsSSLProvider from "./pages/settings/SettingsSSLProvider";
+import WorkflowDetail from "./pages/workflows/WorkflowDetail";
+import WorkflowList from "./pages/workflows/WorkflowList";
+import WorkflowNew from "./pages/workflows/WorkflowNew";
 
 export const router = createHashRouter([
   {
@@ -36,7 +37,11 @@ export const router = createHashRouter([
         element: <WorkflowList />,
       },
       {
-        path: "/workflows/detail",
+        path: "/workflows/new",
+        element: <WorkflowNew />,
+      },
+      {
+        path: "/workflows/:id",
         element: <WorkflowDetail />,
       },
       {

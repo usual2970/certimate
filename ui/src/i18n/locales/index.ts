@@ -1,7 +1,7 @@
-import { Resource } from "i18next";
+import { type Resource } from "i18next";
 
-import zh from "./zh";
 import en from "./en";
+import zh from "./zh";
 
 export const LOCALE_ZH_NAME = "zh" as const;
 export const LOCALE_EN_NAME = "en" as const;

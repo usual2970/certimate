@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRequest } from "ahooks";
-import { Avatar, Button, Empty, Modal, notification, Space, Table, Tooltip, Typography, type TableProps } from "antd";
+import {
+  DeleteOutlined as DeleteOutlinedIcon,
+  EditOutlined as EditOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+  SnippetsOutlined as SnippetsOutlinedIcon,
+} from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
-import { Copy as CopyIcon, Pencil as PencilIcon, Plus as PlusIcon, Trash2 as Trash2Icon } from "lucide-react";
+import { useRequest } from "ahooks";
+import { Avatar, Button, Empty, Modal, Space, Table, type TableProps, Tooltip, Typography, notification } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
-import { accessProvidersMap, type AccessModel } from "@/domain/access";
-import { useAccessStore } from "@/stores/access";
+import { type AccessModel } from "@/domain/access";
+import { accessProvidersMap } from "@/domain/provider";
+import { useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
 const AccessList = () => {
@@ -18,7 +25,9 @@ const AccessList = () => {
   const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const { initialized, accesses, fetchAccesses, deleteAccess } = useAccessStore();
+  const { accesses, loadedAtOnce, fetchAccesses, deleteAccess } = useAccessesStore(
+    useZustandShallowSelector(["accesses", "loadedAtOnce", "fetchAccesses", "deleteAccess"])
+  );
 
   const tableColumns: TableProps<AccessModel>["columns"] = [
     {
@@ -41,8 +50,8 @@ const AccessList = () => {
       render: (_, record) => {
         return (
           <Space className="max-w-full truncate" size={4}>
-            <Avatar src={accessProvidersMap.get(record.configType)?.icon} size="small" />
-            <Typography.Text ellipsis>{t(accessProvidersMap.get(record.configType)?.name ?? "")}</Typography.Text>
+            <Avatar src={accessProvidersMap.get(record.provider)?.icon} size="small" />
+            <Typography.Text ellipsis>{t(accessProvidersMap.get(record.provider)?.name ?? "")}</Typography.Text>
           </Space>
         );
       },
@@ -69,40 +78,38 @@ const AccessList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <>
-          <Space size={0}>
-            <AccessEditModal
-              data={record}
-              mode="edit"
-              trigger={
-                <Tooltip title={t("access.action.edit")}>
-                  <Button type="link" icon={<PencilIcon size={16} />} />
-                </Tooltip>
-              }
-            />
+        <Button.Group>
+          <AccessEditModal
+            data={record}
+            preset="edit"
+            trigger={
+              <Tooltip title={t("access.action.edit")}>
+                <Button color="primary" icon={<EditOutlinedIcon />} variant="text" />
+              </Tooltip>
+            }
+          />
 
-            <AccessEditModal
-              data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-              mode="add"
-              trigger={
-                <Tooltip title={t("access.action.copy")}>
-                  <Button type="link" icon={<CopyIcon size={16} />} />
-                </Tooltip>
-              }
-            />
+          <AccessEditModal
+            data={{ ...record, id: undefined, name: `${record.name}-copy` }}
+            preset="add"
+            trigger={
+              <Tooltip title={t("access.action.duplicate")}>
+                <Button color="primary" icon={<SnippetsOutlinedIcon />} variant="text" />
+              </Tooltip>
+            }
+          />
 
-            <Tooltip title={t("access.action.delete")}>
-              <Button
-                type="link"
-                danger={true}
-                icon={<Trash2Icon size={16} />}
-                onClick={() => {
-                  handleDeleteClick(record);
-                }}
-              />
-            </Tooltip>
-          </Space>
-        </>
+          <Tooltip title={t("access.action.delete")}>
+            <Button
+              color="danger"
+              icon={<DeleteOutlinedIcon />}
+              variant="text"
+              onClick={() => {
+                handleDeleteClick(record);
+              }}
+            />
+          </Tooltip>
+        </Button.Group>
       ),
     },
   ];
@@ -168,9 +175,9 @@ const AccessList = () => {
         extra={[
           <AccessEditModal
             key="create"
-            mode="add"
+            preset="add"
             trigger={
-              <Button type="primary" icon={<PlusIcon size={16} />}>
+              <Button type="primary" icon={<PlusOutlinedIcon />}>
                 {t("access.action.add")}
               </Button>
             }
@@ -181,7 +188,7 @@ const AccessList = () => {
       <Table<AccessModel>
         columns={tableColumns}
         dataSource={tableData}
-        loading={!initialized || loading}
+        loading={!loadedAtOnce || loading}
         locale={{
           emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("access.nodata")} />,
         }}

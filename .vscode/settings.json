@@ -11,6 +11,7 @@
   "gopls": {
     "formatting.gofumpt": true,
   },
+  "typescript.tsdk": "ui/node_modules/typescript/lib",
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },

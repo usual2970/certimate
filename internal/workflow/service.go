@@ -3,15 +3,16 @@ package workflow
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/utils/app"
 	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
 )
 
 type WorkflowRepository interface {
-	Get(ctx context.Context, id string) (*domain.Workflow, error)
-	SaveRunLog(ctx context.Context, log *domain.WorkflowRunLog) error
+	GetById(ctx context.Context, id string) (*domain.Workflow, error)
+	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
 	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
 }
 
@@ -26,76 +27,74 @@ func NewWorkflowService(repo WorkflowRepository) *WorkflowService {
 }
 
 func (s *WorkflowService) InitSchedule(ctx context.Context) error {
-	// 查询所有的 enabled auto workflow
 	workflows, err := s.repo.ListEnabledAuto(ctx)
 	if err != nil {
 		return err
 	}
+
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
-		err := scheduler.Add(workflow.Id, workflow.Crontab, func() {
+		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
 			s.Run(ctx, &domain.WorkflowRunReq{
-				Id: workflow.Id,
+				WorkflowId: workflow.Id,
+				Trigger:    domain.WorkflowTriggerTypeAuto,
 			})
 		})
 		if err != nil {
-			app.GetApp().Logger().Error("failed to add schedule", "err", err)
+			app.GetLogger().Error("failed to add schedule", "err", err)
 			return err
 		}
 	}
 	scheduler.Start()
-	app.GetApp().Logger().Info("workflow schedule started")
+
+	app.GetLogger().Info("workflow schedule started")
+
 	return nil
 }
 
-func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) error {
+func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunReq) error {
 	// 查询
-	if req.Id == "" {
-		return domain.ErrInvalidParams
-	}
-
-	workflow, err := s.repo.Get(ctx, req.Id)
+	workflow, err := s.repo.GetById(ctx, options.WorkflowId)
 	if err != nil {
-		app.GetApp().Logger().Error("failed to get workflow", "id", req.Id, "err", err)
+		app.GetLogger().Error("failed to get workflow", "id", options.WorkflowId, "err", err)
 		return err
 	}
 
 	// 执行
-	if !workflow.Enabled {
-		app.GetApp().Logger().Error("workflow is disabled", "id", req.Id)
-		return fmt.Errorf("workflow is disabled")
+	run := &domain.WorkflowRun{
+		WorkflowId: workflow.Id,
+		Status:     domain.WorkflowRunStatusTypeRunning,
+		Trigger:    options.Trigger,
+		StartedAt:  time.Now(),
+		EndedAt:    time.Now(),
 	}
-
 	processor := nodeprocessor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
-		log := &domain.WorkflowRunLog{
-			Workflow: workflow.Id,
-			Log:      processor.Log(ctx),
-			Succeed:  false,
-			Error:    err.Error(),
+		run.Status = domain.WorkflowRunStatusTypeFailed
+		run.EndedAt = time.Now()
+		run.Logs = processor.Log(ctx)
+		run.Error = err.Error()
+
+		if err := s.repo.SaveRun(ctx, run); err != nil {
+			app.GetLogger().Error("failed to save workflow run", "err", err)
 		}
-		if err := s.repo.SaveRunLog(ctx, log); err != nil {
-			app.GetApp().Logger().Error("failed to save run log", "err", err)
-		}
+
 		return fmt.Errorf("failed to run workflow: %w", err)
 	}
 
-	// 保存执行日志
+	// 保存日志
 	logs := processor.Log(ctx)
-	runLogs := domain.RunLogs(logs)
-	runErr := runLogs.Error()
-	succeed := true
-	if runErr != "" {
-		succeed = false
+	runStatus := domain.WorkflowRunStatusTypeSucceeded
+	runError := domain.WorkflowRunLogs(logs).FirstError()
+	if runError != "" {
+		runStatus = domain.WorkflowRunStatusTypeFailed
 	}
-	log := &domain.WorkflowRunLog{
-		Workflow: workflow.Id,
-		Log:      processor.Log(ctx),
-		Error:    runErr,
-		Succeed:  succeed,
-	}
-	if err := s.repo.SaveRunLog(ctx, log); err != nil {
-		app.GetApp().Logger().Error("failed to save run log", "err", err)
+	run.Status = runStatus
+	run.EndedAt = time.Now()
+	run.Logs = processor.Log(ctx)
+	run.Error = runError
+	if err := s.repo.SaveRun(ctx, run); err != nil {
+		app.GetLogger().Error("failed to save workflow run", "err", err)
 		return err
 	}
 

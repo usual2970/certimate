@@ -74,7 +74,6 @@ func TestDeploy(t *testing.T) {
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)
-			panic(err)
 		}
 
 		fInputCertData, _ := os.ReadFile(fInputCertPath)
@@ -82,7 +81,6 @@ func TestDeploy(t *testing.T) {
 		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
 		if err != nil {
 			t.Errorf("err: %+v", err)
-			panic(err)
 		}
 
 		t.Logf("ok: %v", res)
