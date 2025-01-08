@@ -129,7 +129,7 @@ func (d *TencentCloudECDNDeployer) getDomainsByCertificateId(cloudCertId string)
 	}
 
 	domains := make([]string, 0)
-	if describeCertDomainsResp.Response.Domains == nil {
+	if describeCertDomainsResp.Response.Domains != nil {
 		for _, domain := range describeCertDomainsResp.Response.Domains {
 			domains = append(domains, *domain)
 		}
