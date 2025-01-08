@@ -210,7 +210,7 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeK8sSecret:
+	case domain.DeployProviderTypeKubernetesSecret:
 		{
 			access := &domain.AccessConfigForKubernetes{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
