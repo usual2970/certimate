@@ -26,7 +26,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v lark_test.go -args \
+	go test -v ./lark_test.go -args \
 	--CERTIMATE_NOTIFIER_LARK_WEBHOOKURL="https://example.com/your-webhook-url"
 */
 func TestNotify(t *testing.T) {

@@ -40,7 +40,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v email_test.go -args \
+	go test -v ./email_test.go -args \
 	--CERTIMATE_NOTIFIER_EMAIL_SMTPHOST="smtp.example.com" \
 	--CERTIMATE_NOTIFIER_EMAIL_SMTPPORT=465 \
 	--CERTIMATE_NOTIFIER_EMAIL_SMTPTLS=true \

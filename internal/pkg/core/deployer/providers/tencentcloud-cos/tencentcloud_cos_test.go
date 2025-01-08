@@ -36,7 +36,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v tencentcloud_cos_test.go -args \
+	go test -v ./tencentcloud_cos_test.go -args \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_SECRETID="your-secret-id" \

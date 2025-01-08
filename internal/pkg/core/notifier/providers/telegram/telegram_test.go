@@ -30,7 +30,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v telegram_test.go -args \
+	go test -v ./telegram_test.go -args \
 	--CERTIMATE_NOTIFIER_TELEGRAM_APITOKEN="your-api-token" \
 	--CERTIMATE_NOTIFIER_TELEGRAM_CHATID=123456
 */

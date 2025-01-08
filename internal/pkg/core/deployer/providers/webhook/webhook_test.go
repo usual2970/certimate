@@ -30,7 +30,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v webhook_test.go -args \
+	go test -v ./webhook_test.go -args \
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url" \

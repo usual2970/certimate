@@ -32,7 +32,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v tencentcloud_ecdn_test.go -args \
+	go test -v ./tencentcloud_ecdn_test.go -args \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDECDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDECDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDECDN_SECRETID="your-secret-id" \

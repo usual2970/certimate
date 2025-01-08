@@ -9,7 +9,7 @@ import (
 /*
 Shell command to run this test:
 
-	go test -v logger_test.go
+	go test -v ./logger_test.go
 */
 func TestLogger(t *testing.T) {
 	t.Run("Logger_Appendt", func(t *testing.T) {

@@ -32,7 +32,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v aliyun_dcdn_test.go -args \
+	go test -v ./aliyun_dcdn_test.go -args \
 	--CERTIMATE_DEPLOYER_ALIYUNDCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNDCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNDCDN_ACCESSKEYID="your-access-key-id" \
