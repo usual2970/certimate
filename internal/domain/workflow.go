@@ -40,6 +40,10 @@ type Workflow struct {
 	LastRunTime   time.Time             `json:"lastRunTime" db:"lastRunTime"`
 }
 
+func (w *Workflow) Table() string {
+	return "workflow"
+}
+
 type WorkflowNode struct {
 	Id   string           `json:"id"`
 	Type WorkflowNodeType `json:"type"`
