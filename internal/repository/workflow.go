@@ -94,16 +94,16 @@ func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRu
 		}
 
 		// unable trigger sse using DB()
-		wordflowRecord, err := txDao.FindRecordById("workflow", run.WorkflowId)
+		workflowRecord, err := txDao.FindRecordById("workflow", run.WorkflowId)
 		if err != nil {
 			return err
 		}
 
-		wordflowRecord.Set("lastRunId", record.GetId())
-		wordflowRecord.Set("lastRunStatus", record.GetString("status"))
-		wordflowRecord.Set("lastRunTime", record.GetString("startedAt"))
+		workflowRecord.Set("lastRunId", record.GetId())
+		workflowRecord.Set("lastRunStatus", record.GetString("status"))
+		workflowRecord.Set("lastRunTime", record.GetString("startedAt"))
 
-		return txDao.SaveRecord(wordflowRecord)
+		return txDao.SaveRecord(workflowRecord)
 	})
 	if err != nil {
 		return err
