@@ -2,7 +2,9 @@ package workflow
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/usual2970/certimate/internal/app"
@@ -10,19 +12,56 @@ import (
 	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
 )
 
+const defaultRoutines = 10
+
+type workflowRunData struct {
+	Workflow *domain.Workflow
+	Options  *domain.WorkflowRunReq
+}
+
 type WorkflowRepository interface {
 	GetById(ctx context.Context, id string) (*domain.Workflow, error)
 	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
+	Save(ctx context.Context, workflow *domain.Workflow) error
 	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
 }
 
 type WorkflowService struct {
-	repo WorkflowRepository
+	ch     chan *workflowRunData
+	repo   WorkflowRepository
+	wg     sync.WaitGroup
+	cancel context.CancelFunc
 }
 
 func NewWorkflowService(repo WorkflowRepository) *WorkflowService {
-	return &WorkflowService{
+	rs := &WorkflowService{
 		repo: repo,
+		ch:   make(chan *workflowRunData, 1),
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	rs.cancel = cancel
+
+	rs.wg.Add(defaultRoutines)
+	for i := 0; i < defaultRoutines; i++ {
+		go rs.process(ctx)
+	}
+
+	return rs
+}
+
+func (s *WorkflowService) process(ctx context.Context) {
+	defer s.wg.Done()
+	for {
+		select {
+		case data := <-s.ch:
+			// 执行
+			if err := s.run(ctx, data); err != nil {
+				app.GetLogger().Error("failed to run workflow", "id", data.Workflow.Id, "err", err)
+			}
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
@@ -60,7 +99,32 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 		return err
 	}
 
+	if workflow.LastRunStatus == domain.WorkflowRunStatusTypeRunning {
+		return errors.New("workflow is running")
+	}
+
+	// set last run
+	workflow.LastRunTime = time.Now()
+	workflow.LastRunStatus = domain.WorkflowRunStatusTypeRunning
+	workflow.LastRunId = ""
+
+	if err := s.repo.Save(ctx, workflow); err != nil {
+		return err
+	}
+
+	s.ch <- &workflowRunData{
+		Workflow: workflow,
+		Options:  options,
+	}
+
+	return nil
+}
+
+func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) error {
 	// 执行
+	workflow := runData.Workflow
+	options := runData.Options
+
 	run := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Status:     domain.WorkflowRunStatusTypeRunning,
@@ -99,4 +163,9 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 	}
 
 	return nil
+}
+
+func (s *WorkflowService) Stop() {
+	s.cancel()
+	s.wg.Wait()
 }
