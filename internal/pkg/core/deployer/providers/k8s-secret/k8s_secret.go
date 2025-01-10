@@ -65,6 +65,9 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 	if d.config.SecretName == "" {
 		return nil, errors.New("config `secretName` is required")
 	}
+	if d.config.SecretType == "" {
+		return nil, errors.New("config `secretType` is required")
+	}
 	if d.config.SecretDataKeyForCrt == "" {
 		return nil, errors.New("config `secretDataKeyForCrt` is required")
 	}

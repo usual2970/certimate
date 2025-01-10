@@ -1,7 +1,6 @@
-import type { RecordModel, RecordSubscription } from "pocketbase";
-import { ClientResponseError } from "pocketbase";
+import { ClientResponseError, type RecordSubscription } from "pocketbase";
 
-import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowModel } from "@/domain/workflow";
 import { getPocketBase } from "@/repository/pocketbase";
 
 export const run = async (id: string) => {
@@ -25,14 +24,14 @@ export const run = async (id: string) => {
   return resp;
 };
 
-export const subscribe = async (id: string, cb: (e: RecordSubscription<RecordModel>) => void) => {
+export const subscribe = async (id: string, cb: (e: RecordSubscription<WorkflowModel>) => void) => {
   const pb = getPocketBase();
 
-  pb.collection("workflow").subscribe(id, cb);
+  return pb.collection("workflow").subscribe(id, cb);
 };
 
 export const unsubscribe = async (id: string) => {
   const pb = getPocketBase();
 
-  pb.collection("workflow").unsubscribe(id);
+  return pb.collection("workflow").unsubscribe(id);
 };
