@@ -10,6 +10,7 @@ import (
 
 type WorkflowService interface {
 	Run(ctx context.Context, req *domain.WorkflowRunReq) error
+	Stop()
 }
 
 type workflowHandler struct {

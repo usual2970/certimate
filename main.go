@@ -55,7 +55,12 @@ func main() {
 		return nil
 	})
 
-	defer log.Println("Exit!")
+	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
+		routes.Unregister()
+		log.Println("Exit!")
+		return nil
+	})
+
 	log.Printf("Visit the website: http://%s", httpFlag)
 
 	if err := app.Start(); err != nil {

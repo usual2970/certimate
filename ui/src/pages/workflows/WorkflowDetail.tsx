@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -17,7 +17,7 @@ import { ClientResponseError } from "pocketbase";
 import { isEqual } from "radash";
 import { z } from "zod";
 
-import { run as runWorkflow } from "@/api/workflow";
+import { run as runWorkflow, subscribe, unsubscribe } from "@/api/workflow";
 import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElements from "@/components/workflow/WorkflowElements";
@@ -57,6 +57,30 @@ const WorkflowDetail = () => {
   const [allowDiscard, setAllowDiscard] = useState(false);
   const [allowRelease, setAllowRelease] = useState(false);
   const [allowRun, setAllowRun] = useState(false);
+
+  const lastRunStatus = useMemo(() => {
+    return workflow.lastRunStatus;
+  }, [workflow]);
+
+  useEffect(() => {
+    if (lastRunStatus && lastRunStatus == "running") {
+      setIsRunning(true);
+    } else {
+      setIsRunning(false);
+    }
+  }, [lastRunStatus]);
+
+  useEffect(() => {
+    if (isRunning && workflowId) {
+      subscribe(workflowId, (e) => {
+        if (e.record.lastRunStatus !== "running") {
+          setIsRunning(false);
+          unsubscribe(workflowId);
+        }
+      });
+    }
+  }, [workflowId, isRunning]);
+
   useEffect(() => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
@@ -149,13 +173,18 @@ const WorkflowDetail = () => {
       resolve(void 0);
     }
 
-    // TODO: 异步执行
     promise.then(async () => {
-      setIsRunning(true);
-
       try {
+        // subscribe before running workflow
+        subscribe(workflowId!, (e) => {
+          if (e.record.lastRunStatus !== "running") {
+            setIsRunning(false);
+            unsubscribe(workflowId!);
+          }
+        });
         await runWorkflow(workflowId!);
 
+        setIsRunning(true);
         messageApi.success(t("common.text.operation_succeeded"));
       } catch (err) {
         if (err instanceof ClientResponseError && err.isAbort) {
@@ -164,7 +193,6 @@ const WorkflowDetail = () => {
 
         console.error(err);
         messageApi.warning(t("common.text.operation_failed"));
-      } finally {
         setIsRunning(false);
       }
     });

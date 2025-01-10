@@ -40,6 +40,39 @@ func (w *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]domain.Work
 	return rs, nil
 }
 
+func (w *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow) error {
+	collection, err := app.GetApp().Dao().FindCollectionByNameOrId(workflow.Table())
+	if err != nil {
+		return err
+	}
+	var record *models.Record
+	if workflow.Id == "" {
+		record = models.NewRecord(collection)
+	} else {
+		record, err = app.GetApp().Dao().FindRecordById(workflow.Table(), workflow.Id)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return domain.ErrRecordNotFound
+			}
+			return err
+		}
+	}
+
+	record.Set("name", workflow.Name)
+	record.Set("description", workflow.Description)
+	record.Set("trigger", string(workflow.Trigger))
+	record.Set("triggerCron", workflow.TriggerCron)
+	record.Set("enabled", workflow.Enabled)
+	record.Set("content", workflow.Content)
+	record.Set("draft", workflow.Draft)
+	record.Set("hasDraft", workflow.HasDraft)
+	record.Set("lastRunId", workflow.LastRunId)
+	record.Set("lastRunStatus", string(workflow.LastRunStatus))
+	record.Set("lastRunTime", workflow.LastRunTime)
+
+	return app.GetApp().Dao().SaveRecord(record)
+}
+
 func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRun) error {
 	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run")
 	if err != nil {
@@ -60,20 +93,17 @@ func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRu
 			return err
 		}
 
-		_, err = txDao.DB().Update(
-			"workflow",
-			dbx.Params{
-				"lastRunId":     record.GetId(),
-				"lastRunStatus": record.GetString("status"),
-				"lastRunTime":   record.GetString("startedAt"),
-			},
-			dbx.NewExp("id={:id}", dbx.Params{"id": run.WorkflowId}),
-		).Execute()
+		// unable trigger sse using DB()
+		workflowRecord, err := txDao.FindRecordById("workflow", run.WorkflowId)
 		if err != nil {
 			return err
 		}
 
-		return nil
+		workflowRecord.Set("lastRunId", record.GetId())
+		workflowRecord.Set("lastRunStatus", record.GetString("status"))
+		workflowRecord.Set("lastRunTime", record.GetString("startedAt"))
+
+		return txDao.SaveRecord(workflowRecord)
 	})
 	if err != nil {
 		return err
