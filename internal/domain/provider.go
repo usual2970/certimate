@@ -3,7 +3,7 @@
 type AccessProviderType string
 
 /*
-提供商类型常量值。
+授权提供商类型常量值。
 
 	注意：如果追加新的常量值，请保持以 ASCII 排序。
 	NOTICE: If you add new constant, please keep ASCII order.
@@ -30,11 +30,39 @@ const (
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
 )
 
+type ApplyDNSProviderType string
+
+/*
+申请证书 DNS 提供商常量值。
+短横线前的部分始终等于授权提供商类型。
+
+	注意：如果追加新的常量值，请保持以 ASCII 排序。
+	NOTICE: If you add new constant, please keep ASCII order.
+*/
+const (
+	ApplyDNSProviderTypeACMEHttpReq     = ApplyDNSProviderType("acmehttpreq")
+	ApplyDNSProviderTypeAliyun          = ApplyDNSProviderType("aliyun") // 兼容旧值，等同于 [ApplyDNSProviderTypeAliyunDNS]
+	ApplyDNSProviderTypeAliyunDNS       = ApplyDNSProviderType("aliyun-dns")
+	ApplyDNSProviderTypeAWS             = ApplyDNSProviderType("aws") // 兼容旧值，等同于 [ApplyDNSProviderTypeAWSRoute53]
+	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
+	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
+	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
+	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
+	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")
+	ApplyDNSProviderTypeNameDotCom      = ApplyDNSProviderType("namedotcom")
+	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
+	ApplyDNSProviderTypePowerDNS        = ApplyDNSProviderType("powerdns")
+	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
+	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
+	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
+	ApplyDNSProviderTypeVolcEngineDNS   = ApplyDNSProviderType("volcengine-dns")
+)
+
 type DeployProviderType string
 
 /*
-提供商部署目标常量值。
-短横线前的部分始终等于提供商类型。
+部署目标提供商常量值。
+短横线前的部分始终等于授权提供商类型。
 
 	注意：如果追加新的常量值，请保持以 ASCII 排序。
 	NOTICE: If you add new constant, please keep ASCII order.

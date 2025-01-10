@@ -10,9 +10,11 @@ import ModalForm from "@/components/ModalForm";
 import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
+import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
+import { ACCESS_USAGES, accessProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
-import { useAntdForm } from "@/hooks";
+import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
 
@@ -46,6 +48,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
   ({ className, style, disabled, initialValues, onValuesChange }, ref) => {
     const { t } = useTranslation();
 
+    const { accesses } = useAccessesStore(useZustandShallowSelector("accesses"));
+
     const formSchema = z.object({
       domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
         return String(v)
@@ -53,6 +57,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           .every((e) => validDomainName(e, { allowWildcard: true }));
       }, t("common.errmsg.domain_invalid")),
       contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email(t("common.errmsg.email_invalid")),
+      provider: z.string({ message: t("workflow_node.apply.form.provider.placeholder") }).nonempty(t("workflow_node.apply.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
         .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
@@ -82,8 +87,33 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       initialValues: initialValues ?? initFormModel(),
     });
 
+    const fieldProvider = Form.useWatch<string>("provider", { form: formInst, preserve: true });
+    const fieldProviderAccessId = Form.useWatch<string>("providerAccessId", formInst);
     const fieldDomains = Form.useWatch<string>("domains", formInst);
     const fieldNameservers = Form.useWatch<string>("nameservers", formInst);
+
+    const handleProviderSelect = (value: string) => {
+      if (fieldProvider === value) return;
+
+      if (initialValues?.provider === value) {
+        formInst.setFieldValue("providerAccessId", initialValues?.providerAccessId);
+        onValuesChange?.(formInst.getFieldsValue(true));
+      } else {
+        if (applyDNSProvidersMap.get(fieldProvider)?.provider !== applyDNSProvidersMap.get(value)?.provider) {
+          formInst.setFieldValue("providerAccessId", undefined);
+          onValuesChange?.(formInst.getFieldsValue(true));
+        }
+      }
+    };
+
+    const handleProviderAccessSelect = (value: string) => {
+      if (fieldProviderAccessId === value) return;
+
+      // DNS 提供商和授权提供商目前一一对应，因此切换授权时，自动切换到相应提供商
+      const access = accesses.find((access) => access.id === value);
+      formInst.setFieldValue("provider", Array.from(applyDNSProvidersMap.values()).find((provider) => provider.provider === access?.provider)?.type);
+      onValuesChange?.(formInst.getFieldsValue(true));
+    };
 
     const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
       onValuesChange?.(values as ApplyNodeConfigFormFieldValues);
@@ -136,6 +166,16 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           <EmailInput placeholder={t("workflow_node.apply.form.contact_email.placeholder")} />
         </Form.Item>
 
+        <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden rules={[formRule]}>
+          <ApplyDNSProviderSelect
+            allowClear
+            disabled
+            placeholder={t("workflow_node.apply.form.provider.placeholder")}
+            showSearch
+            onSelect={handleProviderSelect}
+          />
+        </Form.Item>
+
         <Form.Item className="mb-0">
           <label className="mb-1 block">
             <div className="flex w-full items-center justify-between gap-4">
@@ -173,6 +213,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 const provider = accessProvidersMap.get(record.provider);
                 return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
               }}
+              onChange={handleProviderAccessSelect}
             />
           </Form.Item>
         </Form.Item>

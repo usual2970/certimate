@@ -53,6 +53,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
 	}
 
+	applyProvider := node.GetConfigString("provider")
 	applyConfig := &applyConfig{
 		Domains:            node.GetConfigString("domains"),
 		ContactEmail:       node.GetConfigString("contactEmail"),
@@ -63,7 +64,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
 	}
 
-	challengeProvider, err := createChallengeProvider(domain.AccessProviderType(access.Provider), access.Config, applyConfig)
+	challengeProvider, err := createChallengeProvider(domain.ApplyDNSProviderType(applyProvider), access.Config, applyConfig)
 	if err != nil {
 		return nil, err
 	}

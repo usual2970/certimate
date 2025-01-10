@@ -1,3 +1,4 @@
+// #region AccessProvider
 /*
   注意：如果追加新的常量值，请保持以 ASCII 排序。
   NOTICE: If you add new constant, please keep ASCII order.
@@ -47,25 +48,25 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
    NOTICE: The following order determines the order displayed at the frontend.
   */
   [
-    [ACCESS_PROVIDERS.LOCAL, "common.provider.local", "/imgs/providers/local.svg", "deploy"],
-    [ACCESS_PROVIDERS.SSH, "common.provider.ssh", "/imgs/providers/ssh.svg", "deploy"],
-    [ACCESS_PROVIDERS.WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", "deploy"],
-    [ACCESS_PROVIDERS.KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", "deploy"],
-    [ACCESS_PROVIDERS.ALIYUN, "common.provider.aliyun", "/imgs/providers/aliyun.svg", "all"],
-    [ACCESS_PROVIDERS.TENCENTCLOUD, "common.provider.tencentcloud", "/imgs/providers/tencentcloud.svg", "all"],
-    [ACCESS_PROVIDERS.HUAWEICLOUD, "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", "all"],
-    [ACCESS_PROVIDERS.BAIDUCLOUD, "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", "all"],
-    [ACCESS_PROVIDERS.QINIU, "common.provider.qiniu", "/imgs/providers/qiniu.svg", "deploy"],
-    [ACCESS_PROVIDERS.DOGECLOUD, "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", "deploy"],
-    [ACCESS_PROVIDERS.VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", "all"],
-    [ACCESS_PROVIDERS.BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", "all"],
-    [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", "apply"],
-    [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", "apply"],
-    [ACCESS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", "apply"],
-    [ACCESS_PROVIDERS.NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", "apply"],
-    [ACCESS_PROVIDERS.GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", "apply"],
-    [ACCESS_PROVIDERS.POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", "apply"],
-    [ACCESS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", "apply"],
+    [ACCESS_PROVIDERS.LOCAL, "common.provider.local", "/imgs/providers/local.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.SSH, "common.provider.ssh", "/imgs/providers/ssh.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.WEBHOOK, "common.provider.webhook", "/imgs/providers/webhook.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.KUBERNETES, "common.provider.kubernetes", "/imgs/providers/kubernetes.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.ALIYUN, "common.provider.aliyun", "/imgs/providers/aliyun.svg", ACCESS_USAGES.ALL],
+    [ACCESS_PROVIDERS.TENCENTCLOUD, "common.provider.tencentcloud", "/imgs/providers/tencentcloud.svg", ACCESS_USAGES.ALL],
+    [ACCESS_PROVIDERS.HUAWEICLOUD, "common.provider.huaweicloud", "/imgs/providers/huaweicloud.svg", ACCESS_USAGES.ALL],
+    [ACCESS_PROVIDERS.BAIDUCLOUD, "common.provider.baiducloud", "/imgs/providers/baiducloud.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.QINIU, "common.provider.qiniu", "/imgs/providers/qiniu.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.DOGECLOUD, "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", ACCESS_USAGES.ALL],
+    [ACCESS_PROVIDERS.BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", ACCESS_USAGES.APPLY],
   ].map(([type, name, icon, usage]) => [
     type,
     {
@@ -76,7 +77,66 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     },
   ])
 );
+// #endregion
 
+// #region DNSProvider
+/*
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
+export const APPLY_DNS_PROVIDERS = Object.freeze({
+  ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
+  ALIYUN_DNS: `${ACCESS_PROVIDERS.ALIYUN}-dns`,
+  AWS_ROUTE53: `${ACCESS_PROVIDERS.AWS}-route53`,
+  CLOUDFLARE: `${ACCESS_PROVIDERS.CLOUDFLARE}`,
+  GODADDY: `${ACCESS_PROVIDERS.GODADDY}`,
+  HUAWEICLOUD_DNS: `${ACCESS_PROVIDERS.HUAWEICLOUD}-dns`,
+  NAMEDOTCOM: `${ACCESS_PROVIDERS.NAMEDOTCOM}`,
+  NAMESILO: `${ACCESS_PROVIDERS.NAMESILO}`,
+  POWERDNS: `${ACCESS_PROVIDERS.POWERDNS}`,
+  TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
+  VOLCENGINE_DNS: `${ACCESS_PROVIDERS.VOLCENGINE}-dns`,
+} as const);
+
+export type ApplyDNSProviderType = (typeof APPLY_DNS_PROVIDERS)[keyof typeof APPLY_DNS_PROVIDERS];
+
+export type ApplyDNSProvider = {
+  type: ApplyDNSProviderType;
+  name: string;
+  icon: string;
+  provider: AccessProviderType;
+};
+
+export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyDNSProvider> = new Map(
+  /*
+   注意：此处的顺序决定显示在前端的顺序。
+   NOTICE: The following order determines the order displayed at the frontend.
+  */
+  [
+    [APPLY_DNS_PROVIDERS.ALIYUN_DNS, "common.provider.aliyun.dns"],
+    [APPLY_DNS_PROVIDERS.TENCENTCLOUD_DNS, "common.provider.tencentcloud.dns"],
+    [APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS, "common.provider.huaweicloud.dns"],
+    [APPLY_DNS_PROVIDERS.VOLCENGINE_DNS, "common.provider.volcengine.dns"],
+    [APPLY_DNS_PROVIDERS.AWS_ROUTE53, "common.provider.aws.route53"],
+    [APPLY_DNS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare"],
+    [APPLY_DNS_PROVIDERS.GODADDY, "common.provider.godaddy"],
+    [APPLY_DNS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom"],
+    [APPLY_DNS_PROVIDERS.NAMESILO, "common.provider.namesilo"],
+    [APPLY_DNS_PROVIDERS.POWERDNS, "common.provider.powerdns"],
+    [APPLY_DNS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq"],
+  ].map(([type, name]) => [
+    type,
+    {
+      type: type as ApplyDNSProviderType,
+      name: name,
+      icon: accessProvidersMap.get(type.split("-")[0])!.icon,
+      provider: type.split("-")[0] as AccessProviderType,
+    },
+  ])
+);
+// #endregion
+
+// #region DeployProvider
 /*
   注意：如果追加新的常量值，请保持以 ASCII 排序。
   NOTICE: If you add new constant, please keep ASCII order.
@@ -155,3 +215,4 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     },
   ])
 );
+// #endregion

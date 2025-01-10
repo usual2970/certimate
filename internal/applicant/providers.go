@@ -20,13 +20,13 @@ import (
 	providerVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
 )
 
-func createChallengeProvider(provider domain.AccessProviderType, accessConfig string, applyConfig *applyConfig) (challenge.Provider, error) {
+func createChallengeProvider(provider domain.ApplyDNSProviderType, accessConfig string, applyConfig *applyConfig) (challenge.Provider, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch provider {
-	case domain.AccessProviderTypeACMEHttpReq:
+	case domain.ApplyDNSProviderTypeACMEHttpReq:
 		{
 			access := &domain.AccessConfigForACMEHttpReq{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -43,7 +43,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeAliyun:
+	case domain.ApplyDNSProviderTypeAliyun, domain.ApplyDNSProviderTypeAliyunDNS:
 		{
 			access := &domain.AccessConfigForAliyun{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -58,7 +58,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeAWS:
+	case domain.ApplyDNSProviderTypeAWS, domain.ApplyDNSProviderTypeAWSRoute53:
 		{
 			access := &domain.AccessConfigForAWS{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -75,7 +75,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeCloudflare:
+	case domain.ApplyDNSProviderTypeCloudflare:
 		{
 			access := &domain.AccessConfigForCloudflare{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -89,7 +89,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeGoDaddy:
+	case domain.ApplyDNSProviderTypeGoDaddy:
 		{
 			access := &domain.AccessConfigForGoDaddy{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -104,7 +104,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeHuaweiCloud:
+	case domain.ApplyDNSProviderTypeHuaweiCloud, domain.ApplyDNSProviderTypeHuaweiCloudDNS:
 		{
 			access := &domain.AccessConfigForHuaweiCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -120,7 +120,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeNameDotCom:
+	case domain.ApplyDNSProviderTypeNameDotCom:
 		{
 			access := &domain.AccessConfigForNameDotCom{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -135,7 +135,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeNameSilo:
+	case domain.ApplyDNSProviderTypeNameSilo:
 		{
 			access := &domain.AccessConfigForNameSilo{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -149,7 +149,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypePowerDNS:
+	case domain.ApplyDNSProviderTypePowerDNS:
 		{
 			access := &domain.AccessConfigForPowerDNS{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -164,7 +164,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeTencentCloud:
+	case domain.ApplyDNSProviderTypeTencentCloud, domain.ApplyDNSProviderTypeTencentCloudDNS:
 		{
 			access := &domain.AccessConfigForTencentCloud{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
@@ -179,7 +179,7 @@ func createChallengeProvider(provider domain.AccessProviderType, accessConfig st
 			return applicant, err
 		}
 
-	case domain.AccessProviderTypeVolcEngine:
+	case domain.ApplyDNSProviderTypeVolcEngine, domain.ApplyDNSProviderTypeVolcEngineDNS:
 		{
 			access := &domain.AccessConfigForVolcEngine{}
 			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {

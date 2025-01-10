@@ -31,6 +31,8 @@
   "workflow_node.apply.form.contact_email.label": "Contact email",
   "workflow_node.apply.form.contact_email.placeholder": "Please enter contact email",
   "workflow_node.apply.form.contact_email.tooltip": "Contact information required for SSL certificate application. Please pay attention to the <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">rate limits</a>.",
+  "workflow_node.apply.form.provider.label": "DNS provider",
+  "workflow_node.apply.form.provider.placeholder": "Please select DNS provider of the domains",
   "workflow_node.apply.form.provider_access.label": "DNS provider authorization",
   "workflow_node.apply.form.provider_access.placeholder": "Please select an authorization of DNS provider",
   "workflow_node.apply.form.provider_access.tooltip": "Used to manage DNS records during ACME DNS-01 authentication.",
