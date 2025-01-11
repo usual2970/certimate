@@ -340,17 +340,17 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			switch options.Provider {
 			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
-					AccessKey: access.AccessKeyId,
-					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
 			case domain.DeployProviderTypeVolcEngineLive:
 				deployer, err := providerVolcEngineLive.NewWithLogger(&providerVolcEngineLive.VolcEngineLiveDeployerConfig{
-					AccessKey: access.AccessKeyId,
-					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 

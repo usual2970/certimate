@@ -12,11 +12,11 @@ import (
 )
 
 var (
-	fInputCertPath string
-	fInputKeyPath  string
-	fAccessKey     string
-	fSecretKey     string
-	fDomain        string
+	fInputCertPath   string
+	fInputKeyPath    string
+	fAccessKeyId     string
+	fAccessKeySecret string
+	fDomain          string
 )
 
 func init() {
@@ -24,8 +24,8 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fAccessKey, argsPrefix+"ACCESSKEY", "", "")
-	flag.StringVar(&fSecretKey, argsPrefix+"SECRETKEY", "", "")
+	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
+	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
@@ -35,8 +35,8 @@ Shell command to run this test:
 	go test -v ./volcengine_cdn_test.go -args \
 	--CERTIMATE_DEPLOYER_VOLCENGINECDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_VOLCENGINECDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECDN_ACCESSKEY="your-access-key" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECDN_SECRETKEY="your-secret-key" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECDN_ACCESSKEYSECRET="your-access-key-secret" \
 	--CERTIMATE_DEPLOYER_VOLCENGINECDN_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
@@ -47,15 +47,15 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("ACCESSKEY: %v", fAccessKey),
-			fmt.Sprintf("SECRETKEY: %v", fSecretKey),
+			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
+			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
 		deployer, err := provider.New(&provider.VolcEngineCDNDeployerConfig{
-			AccessKey: fAccessKey,
-			SecretKey: fSecretKey,
-			Domain:    fDomain,
+			AccessKeyId:     fAccessKeyId,
+			AccessKeySecret: fAccessKeySecret,
+			Domain:          fDomain,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)
