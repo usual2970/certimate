@@ -1,6 +1,10 @@
 ﻿package maps
 
-import "strconv"
+import (
+	"strconv"
+
+	mapstructure "github.com/go-viper/mapstructure/v2"
+)
 
 // 以字符串形式从字典中获取指定键的值。
 //
@@ -177,4 +181,28 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 	}
 
 	return defaultValue
+}
+
+// 将字典解码为指定类型的结构体。
+//
+// 入参：
+//   - dict: 字典。
+//   - output: 结构体指针。
+//
+// 出参：
+//   - 错误信息。如果解码失败，则返回错误信息。
+func Decode(dict map[string]any, output any) error {
+	config := &mapstructure.DecoderConfig{
+		Metadata:         nil,
+		Result:           output,
+		WeaklyTypedInput: true,
+		TagName:          "json",
+	}
+
+	decoder, err := mapstructure.NewDecoder(config)
+	if err != nil {
+		return err
+	}
+
+	return decoder.Decode(dict)
 }

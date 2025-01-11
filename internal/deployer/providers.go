@@ -1,7 +1,6 @@
 package deployer
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -34,30 +33,30 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-func createDeployer(provider domain.DeployProviderType, accessConfig string, deployConfig map[string]any) (deployer.Deployer, logger.Logger, error) {
+func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger, error) {
 	logger := logger.NewDefaultLogger()
 
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
-	switch provider {
+	switch options.Provider {
 	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS:
 		{
-			access := &domain.AccessConfigForAliyun{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForAliyun{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			switch provider {
+			switch options.Provider {
 			case domain.DeployProviderTypeAliyunALB:
 				deployer, err := providerAliyunALB.NewWithLogger(&providerAliyunALB.AliyunALBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunALB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
-					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
-					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerAliyunALB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 
@@ -65,7 +64,7 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerAliyunCDN.NewWithLogger(&providerAliyunCDN.AliyunCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maps.GetValueAsString(deployConfig, "domain"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -73,10 +72,10 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerAliyunCLB.NewWithLogger(&providerAliyunCLB.AliyunCLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunCLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
-					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
-					ListenerPort:    maps.GetValueAsInt32(deployConfig, "listenerPort"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerAliyunCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerPort:    maps.GetValueAsInt32(options.ProviderDeployConfig, "listenerPort"),
 				}, logger)
 				return deployer, logger, err
 
@@ -84,7 +83,7 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerAliyunDCDN.NewWithLogger(&providerAliyunDCDN.AliyunDCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maps.GetValueAsString(deployConfig, "domain"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -92,10 +91,10 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerAliyunNLB.NewWithLogger(&providerAliyunNLB.AliyunNLBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerAliyunNLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
-					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
-					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerAliyunNLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 
@@ -103,9 +102,9 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerAliyunOSS.NewWithLogger(&providerAliyunOSS.AliyunOSSDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					Bucket:          maps.GetValueAsString(deployConfig, "bucket"),
-					Domain:          maps.GetValueAsString(deployConfig, "domain"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					Bucket:          maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -116,63 +115,63 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 
 	case domain.DeployProviderTypeBaiduCloudCDN:
 		{
-			access := &domain.AccessConfigForBaiduCloud{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForBaiduCloud{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerBaiduCloudCDN.NewWithLogger(&providerBaiduCloudCDN.BaiduCloudCDNDeployerConfig{
 				AccessKeyId:     access.AccessKeyId,
 				SecretAccessKey: access.SecretAccessKey,
-				Domain:          maps.GetValueAsString(deployConfig, "domain"),
+				Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeBytePlusCDN:
 		{
-			access := &domain.AccessConfigForBytePlus{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForBytePlus{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerBytePlusCDN.NewWithLogger(&providerBytePlusCDN.BytePlusCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
-				Domain:    maps.GetValueAsString(deployConfig, "domain"),
+				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeDogeCloudCDN:
 		{
-			access := &domain.AccessConfigForDogeCloud{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForDogeCloud{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerDogeCDN.NewWithLogger(&providerDogeCDN.DogeCloudCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
-				Domain:    maps.GetValueAsString(deployConfig, "domain"),
+				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB:
 		{
-			access := &domain.AccessConfigForHuaweiCloud{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForHuaweiCloud{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			switch provider {
+			switch options.Provider {
 			case domain.DeployProviderTypeHuaweiCloudCDN:
 				deployer, err := providerHuaweiCloudCDN.NewWithLogger(&providerHuaweiCloudCDN.HuaweiCloudCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					Domain:          maps.GetValueAsString(deployConfig, "domain"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -180,11 +179,11 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerHuaweiCloudELB.NewWithLogger(&providerHuaweiCloudELB.HuaweiCloudELBDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:    providerHuaweiCloudELB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
-					CertificateId:   maps.GetValueAsString(deployConfig, "certificateId"),
-					LoadbalancerId:  maps.GetValueAsString(deployConfig, "loadbalancerId"),
-					ListenerId:      maps.GetValueAsString(deployConfig, "listenerId"),
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerHuaweiCloudELB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					CertificateId:   maps.GetValueAsString(options.ProviderDeployConfig, "certificateId"),
+					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 
@@ -196,58 +195,58 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 	case domain.DeployProviderTypeLocal:
 		{
 			deployer, err := providerLocal.NewWithLogger(&providerLocal.LocalDeployerConfig{
-				ShellEnv:       providerLocal.ShellEnvType(maps.GetValueAsString(deployConfig, "shellEnv")),
-				PreCommand:     maps.GetValueAsString(deployConfig, "preCommand"),
-				PostCommand:    maps.GetValueAsString(deployConfig, "postCommand"),
-				OutputFormat:   providerLocal.OutputFormatType(maps.GetValueOrDefaultAsString(deployConfig, "format", string(providerLocal.OUTPUT_FORMAT_PEM))),
-				OutputCertPath: maps.GetValueAsString(deployConfig, "certPath"),
-				OutputKeyPath:  maps.GetValueAsString(deployConfig, "keyPath"),
-				PfxPassword:    maps.GetValueAsString(deployConfig, "pfxPassword"),
-				JksAlias:       maps.GetValueAsString(deployConfig, "jksAlias"),
-				JksKeypass:     maps.GetValueAsString(deployConfig, "jksKeypass"),
-				JksStorepass:   maps.GetValueAsString(deployConfig, "jksStorepass"),
+				ShellEnv:       providerLocal.ShellEnvType(maps.GetValueAsString(options.ProviderDeployConfig, "shellEnv")),
+				PreCommand:     maps.GetValueAsString(options.ProviderDeployConfig, "preCommand"),
+				PostCommand:    maps.GetValueAsString(options.ProviderDeployConfig, "postCommand"),
+				OutputFormat:   providerLocal.OutputFormatType(maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "format", string(providerLocal.OUTPUT_FORMAT_PEM))),
+				OutputCertPath: maps.GetValueAsString(options.ProviderDeployConfig, "certPath"),
+				OutputKeyPath:  maps.GetValueAsString(options.ProviderDeployConfig, "keyPath"),
+				PfxPassword:    maps.GetValueAsString(options.ProviderDeployConfig, "pfxPassword"),
+				JksAlias:       maps.GetValueAsString(options.ProviderDeployConfig, "jksAlias"),
+				JksKeypass:     maps.GetValueAsString(options.ProviderDeployConfig, "jksKeypass"),
+				JksStorepass:   maps.GetValueAsString(options.ProviderDeployConfig, "jksStorepass"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeKubernetesSecret:
 		{
-			access := &domain.AccessConfigForKubernetes{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForKubernetes{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerK8sSecret.NewWithLogger(&providerK8sSecret.K8sSecretDeployerConfig{
 				KubeConfig:          access.KubeConfig,
-				Namespace:           maps.GetValueOrDefaultAsString(deployConfig, "namespace", "default"),
-				SecretName:          maps.GetValueAsString(deployConfig, "secretName"),
-				SecretType:          maps.GetValueOrDefaultAsString(deployConfig, "secretType", "kubernetes.io/tls"),
-				SecretDataKeyForCrt: maps.GetValueOrDefaultAsString(deployConfig, "secretDataKeyForCrt", "tls.crt"),
-				SecretDataKeyForKey: maps.GetValueOrDefaultAsString(deployConfig, "secretDataKeyForKey", "tls.key"),
+				Namespace:           maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "namespace", "default"),
+				SecretName:          maps.GetValueAsString(options.ProviderDeployConfig, "secretName"),
+				SecretType:          maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "secretType", "kubernetes.io/tls"),
+				SecretDataKeyForCrt: maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "secretDataKeyForCrt", "tls.crt"),
+				SecretDataKeyForKey: maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "secretDataKeyForKey", "tls.key"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeQiniuCDN:
 		{
-			access := &domain.AccessConfigForQiniu{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForQiniu{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerQiniuCDN.NewWithLogger(&providerQiniuCDN.QiniuCDNDeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
-				Domain:    maps.GetValueAsString(deployConfig, "domain"),
+				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeSSH:
 		{
-			access := &domain.AccessConfigForSSH{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForSSH{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			sshPort, _ := strconv.ParseInt(access.Port, 10, 32)
@@ -258,32 +257,32 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				SshPassword:      access.Password,
 				SshKey:           access.Key,
 				SshKeyPassphrase: access.KeyPassphrase,
-				PreCommand:       maps.GetValueAsString(deployConfig, "preCommand"),
-				PostCommand:      maps.GetValueAsString(deployConfig, "postCommand"),
-				OutputFormat:     providerSSH.OutputFormatType(maps.GetValueOrDefaultAsString(deployConfig, "format", string(providerSSH.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:   maps.GetValueAsString(deployConfig, "certPath"),
-				OutputKeyPath:    maps.GetValueAsString(deployConfig, "keyPath"),
-				PfxPassword:      maps.GetValueAsString(deployConfig, "pfxPassword"),
-				JksAlias:         maps.GetValueAsString(deployConfig, "jksAlias"),
-				JksKeypass:       maps.GetValueAsString(deployConfig, "jksKeypass"),
-				JksStorepass:     maps.GetValueAsString(deployConfig, "jksStorepass"),
+				PreCommand:       maps.GetValueAsString(options.ProviderDeployConfig, "preCommand"),
+				PostCommand:      maps.GetValueAsString(options.ProviderDeployConfig, "postCommand"),
+				OutputFormat:     providerSSH.OutputFormatType(maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "format", string(providerSSH.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:   maps.GetValueAsString(options.ProviderDeployConfig, "certPath"),
+				OutputKeyPath:    maps.GetValueAsString(options.ProviderDeployConfig, "keyPath"),
+				PfxPassword:      maps.GetValueAsString(options.ProviderDeployConfig, "pfxPassword"),
+				JksAlias:         maps.GetValueAsString(options.ProviderDeployConfig, "jksAlias"),
+				JksKeypass:       maps.GetValueAsString(options.ProviderDeployConfig, "jksKeypass"),
+				JksStorepass:     maps.GetValueAsString(options.ProviderDeployConfig, "jksStorepass"),
 			}, logger)
 			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
 		{
-			access := &domain.AccessConfigForTencentCloud{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForTencentCloud{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			switch provider {
+			switch options.Provider {
 			case domain.DeployProviderTypeTencentCloudCDN:
 				deployer, err := providerTencentCloudCDN.NewWithLogger(&providerTencentCloudCDN.TencentCloudCDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -291,11 +290,11 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerTencentCloudCLB.NewWithLogger(&providerTencentCloudCLB.TencentCloudCLBDeployerConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
-					Region:         maps.GetValueAsString(deployConfig, "region"),
-					ResourceType:   providerTencentCloudCLB.DeployResourceType(maps.GetValueAsString(deployConfig, "resourceType")),
-					LoadbalancerId: maps.GetValueAsString(deployConfig, "loadbalancerId"),
-					ListenerId:     maps.GetValueAsString(deployConfig, "listenerId"),
-					Domain:         maps.GetValueAsString(deployConfig, "domain"),
+					Region:         maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:   providerTencentCloudCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId: maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:     maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+					Domain:         maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -303,9 +302,9 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerTencentCloudCOD.NewWithLogger(&providerTencentCloudCOD.TencentCloudCOSDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Region:    maps.GetValueAsString(deployConfig, "region"),
-					Bucket:    maps.GetValueAsString(deployConfig, "bucket"),
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					Region:    maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					Bucket:    maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -313,7 +312,7 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerTencentCloudECDN.NewWithLogger(&providerTencentCloudECDN.TencentCloudECDNDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -321,8 +320,8 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerTencentCloudEO.NewWithLogger(&providerTencentCloudEO.TencentCloudEODeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					ZoneId:    maps.GetValueAsString(deployConfig, "zoneId"),
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -333,17 +332,17 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 
 	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineLive:
 		{
-			access := &domain.AccessConfigForVolcEngine{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForVolcEngine{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			switch provider {
+			switch options.Provider {
 			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
 					AccessKey: access.AccessKeyId,
 					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -351,7 +350,7 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 				deployer, err := providerVolcEngineLive.NewWithLogger(&providerVolcEngineLive.VolcEngineLiveDeployerConfig{
 					AccessKey: access.AccessKeyId,
 					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(deployConfig, "domain"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -362,18 +361,18 @@ func createDeployer(provider domain.DeployProviderType, accessConfig string, dep
 
 	case domain.DeployProviderTypeWebhook:
 		{
-			access := &domain.AccessConfigForWebhook{}
-			if err := json.Unmarshal([]byte(accessConfig), access); err != nil {
-				return nil, nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+			access := domain.AccessConfigForWebhook{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
 			deployer, err := providerWebhook.NewWithLogger(&providerWebhook.WebhookDeployerConfig{
 				WebhookUrl:  access.Url,
-				WebhookData: maps.GetValueAsString(deployConfig, "webhookData"),
+				WebhookData: maps.GetValueAsString(options.ProviderDeployConfig, "webhookData"),
 			}, logger)
 			return deployer, logger, err
 		}
 	}
 
-	return nil, nil, fmt.Errorf("unsupported deployer provider: %s", provider)
+	return nil, nil, fmt.Errorf("unsupported deployer provider: %s", string(options.Provider))
 }

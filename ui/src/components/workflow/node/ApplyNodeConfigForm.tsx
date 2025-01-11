@@ -1,4 +1,4 @@
-import { forwardRef, memo, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
@@ -11,12 +11,15 @@ import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
-import { ACCESS_USAGES, accessProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
+import { ACCESS_PROVIDERS, ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
+
+import ApplyNodeConfigFormAWSRoute53Config from "./ApplyNodeConfigFormAWSRoute53Config";
+import ApplyNodeConfigFormHuaweiCloudDNSConfig from "./ApplyNodeConfigFormHuaweiCloudDNSConfig";
 
 type ApplyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForApply>;
 
@@ -61,6 +64,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       providerAccessId: z
         .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
         .min(1, t("workflow_node.apply.form.provider_access.placeholder")),
+      providerConfig: z.any(),
       keyAlgorithm: z
         .string({ message: t("workflow_node.apply.form.key_algorithm.placeholder") })
         .nonempty(t("workflow_node.apply.form.key_algorithm.placeholder")),
@@ -92,6 +96,30 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     const fieldDomains = Form.useWatch<string>("domains", formInst);
     const fieldNameservers = Form.useWatch<string>("nameservers", formInst);
 
+    const [nestedFormInst] = Form.useForm();
+    const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeApplyConfigFormProviderConfigForm" });
+    const nestedFormEl = useMemo(() => {
+      const nestedFormProps = {
+        form: nestedFormInst,
+        formName: nestedFormName,
+        disabled: disabled,
+        initialValues: initialValues?.providerConfig,
+      };
+
+      /*
+        注意：如果追加新的子组件，请保持以 ASCII 排序。
+        NOTICE: If you add new child component, please keep ASCII order.
+       */
+      switch (fieldProvider) {
+        case ACCESS_PROVIDERS.AWS:
+        case APPLY_DNS_PROVIDERS.AWS_ROUTE53:
+          return <ApplyNodeConfigFormAWSRoute53Config {...nestedFormProps} />;
+        case ACCESS_PROVIDERS.HUAWEICLOUD:
+        case APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS:
+          return <ApplyNodeConfigFormHuaweiCloudDNSConfig {...nestedFormProps} />;
+      }
+    }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
+
     const handleProviderSelect = (value: string) => {
       if (fieldProvider === value) return;
 
@@ -115,6 +143,13 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       onValuesChange?.(formInst.getFieldsValue(true));
     };
 
+    const handleFormProviderChange = (name: string) => {
+      if (name === nestedFormName) {
+        formInst.setFieldValue("providerConfig", nestedFormInst.getFieldsValue());
+        onValuesChange?.(formInst.getFieldsValue(true));
+      }
+    };
+
     const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
       onValuesChange?.(values as ApplyNodeConfigFormFieldValues);
     };
@@ -122,101 +157,113 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     useImperativeHandle(ref, () => {
       return {
         getFieldsValue: () => {
-          return formInst.getFieldsValue(true);
+          const values = formInst.getFieldsValue(true);
+          values.providerConfig = nestedFormInst.getFieldsValue();
+          return values;
         },
         resetFields: (fields) => {
-          return formInst.resetFields(fields);
+          formInst.resetFields(fields);
+
+          if (!!fields && fields.includes("providerConfig")) {
+            nestedFormInst.resetFields(fields);
+          }
         },
         validateFields: (nameList, config) => {
-          return formInst.validateFields(nameList, config);
+          const t1 = formInst.validateFields(nameList, config);
+          const t2 = nestedFormInst.validateFields(undefined, config);
+          return Promise.all([t1, t2]).then(() => t1);
         },
       } as ApplyNodeConfigFormInstance;
     });
 
     return (
-      <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-        <Form.Item
-          label={t("workflow_node.apply.form.domains.label")}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.domains.tooltip") }}></span>}
-        >
-          <Space.Compact style={{ width: "100%" }}>
-            <Form.Item name="domains" noStyle rules={[formRule]}>
-              <Input placeholder={t("workflow_node.apply.form.domains.placeholder")} />
-            </Form.Item>
-            <DomainsModalInput
-              value={fieldDomains}
-              trigger={
-                <Button disabled={disabled}>
-                  <FormOutlinedIcon />
-                </Button>
-              }
-              onChange={(v) => {
-                formInst.setFieldValue("domains", v);
-              }}
-            />
-          </Space.Compact>
-        </Form.Item>
+      <Form.Provider onFormChange={handleFormProviderChange}>
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+          <Form.Item
+            label={t("workflow_node.apply.form.domains.label")}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.domains.tooltip") }}></span>}
+          >
+            <Space.Compact style={{ width: "100%" }}>
+              <Form.Item name="domains" noStyle rules={[formRule]}>
+                <Input placeholder={t("workflow_node.apply.form.domains.placeholder")} />
+              </Form.Item>
+              <DomainsModalInput
+                value={fieldDomains}
+                trigger={
+                  <Button disabled={disabled}>
+                    <FormOutlinedIcon />
+                  </Button>
+                }
+                onChange={(v) => {
+                  formInst.setFieldValue("domains", v);
+                }}
+              />
+            </Space.Compact>
+          </Form.Item>
 
-        <Form.Item
-          name="contactEmail"
-          label={t("workflow_node.apply.form.contact_email.label")}
-          rules={[formRule]}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.contact_email.tooltip") }}></span>}
-        >
-          <EmailInput placeholder={t("workflow_node.apply.form.contact_email.placeholder")} />
-        </Form.Item>
+          <Form.Item
+            name="contactEmail"
+            label={t("workflow_node.apply.form.contact_email.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.contact_email.tooltip") }}></span>}
+          >
+            <EmailInput placeholder={t("workflow_node.apply.form.contact_email.placeholder")} />
+          </Form.Item>
 
-        <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden rules={[formRule]}>
-          <ApplyDNSProviderSelect
-            allowClear
-            disabled
-            placeholder={t("workflow_node.apply.form.provider.placeholder")}
-            showSearch
-            onSelect={handleProviderSelect}
-          />
-        </Form.Item>
-
-        <Form.Item className="mb-0">
-          <label className="mb-1 block">
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="max-w-full grow truncate">
-                <span>{t("workflow_node.apply.form.provider_access.label")}</span>
-                <Tooltip title={t("workflow_node.apply.form.provider_access.tooltip")}>
-                  <Typography.Text className="ms-1" type="secondary">
-                    <QuestionCircleOutlinedIcon />
-                  </Typography.Text>
-                </Tooltip>
-              </div>
-              <div className="text-right">
-                <AccessEditModal
-                  preset="add"
-                  trigger={
-                    <Button size="small" type="link">
-                      <PlusOutlinedIcon />
-                      {t("workflow_node.apply.form.provider_access.button")}
-                    </Button>
-                  }
-                  afterSubmit={(record) => {
-                    const provider = accessProvidersMap.get(record.provider);
-                    if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
-                      formInst.setFieldValue("providerAccessId", record.id);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </label>
-          <Form.Item name="providerAccessId" rules={[formRule]}>
-            <AccessSelect
-              placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
-              filter={(record) => {
-                const provider = accessProvidersMap.get(record.provider);
-                return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
-              }}
-              onChange={handleProviderAccessSelect}
+          <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden rules={[formRule]}>
+            <ApplyDNSProviderSelect
+              allowClear
+              disabled
+              placeholder={t("workflow_node.apply.form.provider.placeholder")}
+              showSearch
+              onSelect={handleProviderSelect}
             />
           </Form.Item>
-        </Form.Item>
+
+          <Form.Item className="mb-0">
+            <label className="mb-1 block">
+              <div className="flex w-full items-center justify-between gap-4">
+                <div className="max-w-full grow truncate">
+                  <span>{t("workflow_node.apply.form.provider_access.label")}</span>
+                  <Tooltip title={t("workflow_node.apply.form.provider_access.tooltip")}>
+                    <Typography.Text className="ms-1" type="secondary">
+                      <QuestionCircleOutlinedIcon />
+                    </Typography.Text>
+                  </Tooltip>
+                </div>
+                <div className="text-right">
+                  <AccessEditModal
+                    preset="add"
+                    trigger={
+                      <Button size="small" type="link">
+                        <PlusOutlinedIcon />
+                        {t("workflow_node.apply.form.provider_access.button")}
+                      </Button>
+                    }
+                    afterSubmit={(record) => {
+                      const provider = accessProvidersMap.get(record.provider);
+                      if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
+                        formInst.setFieldValue("providerAccessId", record.id);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </label>
+            <Form.Item name="providerAccessId" rules={[formRule]}>
+              <AccessSelect
+                placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
+                filter={(record) => {
+                  const provider = accessProvidersMap.get(record.provider);
+                  return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
+                }}
+                onChange={handleProviderAccessSelect}
+              />
+            </Form.Item>
+          </Form.Item>
+        </Form>
+
+        {nestedFormEl}
 
         <Divider className="my-1">
           <Typography.Text className="text-xs font-normal" type="secondary">
@@ -224,71 +271,73 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Typography.Text>
         </Divider>
 
-        <Form.Item name="keyAlgorithm" label={t("workflow_node.apply.form.key_algorithm.label")} rules={[formRule]}>
-          <Select
-            options={["RSA2048", "RSA3072", "RSA4096", "RSA8192", "EC256", "EC384"].map((e) => ({
-              label: e,
-              value: e,
-            }))}
-            placeholder={t("workflow_node.apply.form.key_algorithm.placeholder")}
-          />
-        </Form.Item>
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+          <Form.Item name="keyAlgorithm" label={t("workflow_node.apply.form.key_algorithm.label")} rules={[formRule]}>
+            <Select
+              options={["RSA2048", "RSA3072", "RSA4096", "RSA8192", "EC256", "EC384"].map((e) => ({
+                label: e,
+                value: e,
+              }))}
+              placeholder={t("workflow_node.apply.form.key_algorithm.placeholder")}
+            />
+          </Form.Item>
 
-        <Form.Item
-          label={t("workflow_node.apply.form.nameservers.label")}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.nameservers.tooltip") }}></span>}
-        >
-          <Space.Compact style={{ width: "100%" }}>
-            <Form.Item name="nameservers" noStyle rules={[formRule]}>
-              <Input
-                allowClear
-                disabled={disabled}
+          <Form.Item
+            label={t("workflow_node.apply.form.nameservers.label")}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.nameservers.tooltip") }}></span>}
+          >
+            <Space.Compact style={{ width: "100%" }}>
+              <Form.Item name="nameservers" noStyle rules={[formRule]}>
+                <Input
+                  allowClear
+                  disabled={disabled}
+                  value={fieldNameservers}
+                  placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
+                  onChange={(e) => {
+                    formInst.setFieldValue("nameservers", e.target.value);
+                  }}
+                />
+              </Form.Item>
+              <NameserversModalInput
                 value={fieldNameservers}
-                placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
-                onChange={(e) => {
-                  formInst.setFieldValue("nameservers", e.target.value);
+                trigger={
+                  <Button disabled={disabled}>
+                    <FormOutlinedIcon />
+                  </Button>
+                }
+                onChange={(value) => {
+                  formInst.setFieldValue("nameservers", value);
                 }}
               />
-            </Form.Item>
-            <NameserversModalInput
-              value={fieldNameservers}
-              trigger={
-                <Button disabled={disabled}>
-                  <FormOutlinedIcon />
-                </Button>
-              }
-              onChange={(value) => {
-                formInst.setFieldValue("nameservers", value);
-              }}
+            </Space.Compact>
+          </Form.Item>
+
+          <Form.Item
+            name="propagationTimeout"
+            label={t("workflow_node.apply.form.propagation_timeout.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.propagation_timeout.tooltip") }}></span>}
+          >
+            <Input
+              type="number"
+              allowClear
+              min={0}
+              max={3600}
+              placeholder={t("workflow_node.apply.form.propagation_timeout.placeholder")}
+              addonAfter={t("workflow_node.apply.form.propagation_timeout.suffix")}
             />
-          </Space.Compact>
-        </Form.Item>
+          </Form.Item>
 
-        <Form.Item
-          name="propagationTimeout"
-          label={t("workflow_node.apply.form.propagation_timeout.label")}
-          rules={[formRule]}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.propagation_timeout.tooltip") }}></span>}
-        >
-          <Input
-            type="number"
-            allowClear
-            min={0}
-            max={3600}
-            placeholder={t("workflow_node.apply.form.propagation_timeout.placeholder")}
-            addonAfter={t("workflow_node.apply.form.propagation_timeout.suffix")}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="disableFollowCNAME"
-          label={t("workflow_node.apply.form.disable_follow_cname.label")}
-          rules={[formRule]}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_follow_cname.tooltip") }}></span>}
-        >
-          <Switch />
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name="disableFollowCNAME"
+            label={t("workflow_node.apply.form.disable_follow_cname.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_follow_cname.tooltip") }}></span>}
+          >
+            <Switch />
+          </Form.Item>
+        </Form>
+      </Form.Provider>
     );
   }
 );

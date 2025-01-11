@@ -9,7 +9,7 @@
   "workflow.action.delete.confirm": "确定要删除此工作流吗？",
   "workflow.action.enable": "启用",
   "workflow.action.enable.failed.uncompleted": "请先完成流程编排并发布更改",
-  "workflow.action.disable": "禁用",
+  "workflow.action.disable": "停用",
 
   "workflow.props.name": "名称",
   "workflow.props.description": "描述",

@@ -19,8 +19,6 @@ const initFormModel = (): AccessFormAWSConfigFieldValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
-    region: "us-east-1",
-    hostedZoneId: "",
   };
 };
 
@@ -38,18 +36,6 @@ const AccessFormAWSConfig = ({ form: formInst, formName, disabled, initialValues
       .min(1, t("access.form.aws_secret_access_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
-    // TODO: 该字段仅用于申请证书，后续迁移到工作流表单中
-    region: z
-      .string()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
-      .nullish(),
-    // TODO: 该字段仅用于申请证书，后续迁移到工作流表单中
-    hostedZoneId: z
-      .string()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
-      .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -82,24 +68,6 @@ const AccessFormAWSConfig = ({ form: formInst, formName, disabled, initialValues
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aws_secret_access_key.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.aws_secret_access_key.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
-        name="region"
-        label={t("access.form.aws_region.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aws_region.tooltip") }}></span>}
-      >
-        <Input placeholder={t("access.form.aws_region.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
-        name="hostedZoneId"
-        label={t("access.form.aws_hosted_zone_id.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aws_hosted_zone_id.tooltip") }}></span>}
-      >
-        <Input placeholder={t("access.form.aws_hosted_zone_id.placeholder")} />
       </Form.Item>
     </Form>
   );

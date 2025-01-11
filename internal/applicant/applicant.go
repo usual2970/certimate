@@ -18,16 +18,6 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
-type applyConfig struct {
-	Domains            string
-	ContactEmail       string
-	AccessConfig       string
-	KeyAlgorithm       string
-	Nameservers        string
-	PropagationTimeout int32
-	DisableFollowCNAME bool
-}
-
 type ApplyCertResult struct {
 	Certificate       string
 	PrivateKey        string
@@ -39,6 +29,18 @@ type ApplyCertResult struct {
 
 type Applicant interface {
 	Apply() (*ApplyCertResult, error)
+}
+
+type applicantOptions struct {
+	Domains              []string
+	ContactEmail         string
+	Provider             domain.ApplyDNSProviderType
+	ProviderAccessConfig map[string]any
+	ProviderApplyConfig  map[string]any
+	KeyAlgorithm         string
+	Nameservers          []string
+	PropagationTimeout   int32
+	DisableFollowCNAME   bool
 }
 
 func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -53,29 +55,35 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
 	}
 
-	applyProvider := node.GetConfigString("provider")
-	applyConfig := &applyConfig{
-		Domains:            node.GetConfigString("domains"),
-		ContactEmail:       node.GetConfigString("contactEmail"),
-		AccessConfig:       access.Config,
-		KeyAlgorithm:       node.GetConfigString("keyAlgorithm"),
-		Nameservers:        node.GetConfigString("nameservers"),
-		PropagationTimeout: node.GetConfigInt32("propagationTimeout"),
-		DisableFollowCNAME: node.GetConfigBool("disableFollowCNAME"),
+	accessConfig, err := access.UnmarshalConfigToMap()
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 	}
 
-	challengeProvider, err := createChallengeProvider(domain.ApplyDNSProviderType(applyProvider), access.Config, applyConfig)
+	options := &applicantOptions{
+		Domains:              strings.Split(node.GetConfigString("domains"), ";"),
+		ContactEmail:         node.GetConfigString("contactEmail"),
+		Provider:             domain.ApplyDNSProviderType(node.GetConfigString("provider")),
+		ProviderAccessConfig: accessConfig,
+		ProviderApplyConfig:  node.GetConfigMap("providerConfig"),
+		KeyAlgorithm:         node.GetConfigString("keyAlgorithm"),
+		Nameservers:          strings.Split(node.GetConfigString("nameservers"), ";"),
+		PropagationTimeout:   node.GetConfigInt32("propagationTimeout"),
+		DisableFollowCNAME:   node.GetConfigBool("disableFollowCNAME"),
+	}
+
+	applicant, err := createApplicant(options)
 	if err != nil {
 		return nil, err
 	}
 
 	return &proxyApplicant{
-		applicant:   challengeProvider,
-		applyConfig: applyConfig,
+		applicant: applicant,
+		options:   options,
 	}, nil
 }
 
-func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*ApplyCertResult, error) {
+func apply(challengeProvider challenge.Provider, options *applicantOptions) (*ApplyCertResult, error) {
 	settingsRepo := repository.NewSettingsRepository()
 	settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
 
@@ -93,20 +101,20 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 		sslProviderConfig.Provider = defaultSSLProvider
 	}
 
-	myUser, err := newAcmeUser(sslProviderConfig.Provider, applyConfig.ContactEmail)
+	myUser, err := newAcmeUser(sslProviderConfig.Provider, options.ContactEmail)
 	if err != nil {
 		return nil, err
 	}
 
 	// Some unified lego environment variables are configured here.
 	// link: https://github.com/go-acme/lego/issues/1867
-	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(applyConfig.DisableFollowCNAME))
+	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(options.DisableFollowCNAME))
 
 	config := lego.NewConfig(myUser)
 
 	// This CA URL is configured for a local dev instance of Boulder running in Docker in a VM.
 	config.CADirURL = sslProviderUrls[sslProviderConfig.Provider]
-	config.Certificate.KeyType = parseKeyAlgorithm(applyConfig.KeyAlgorithm)
+	config.Certificate.KeyType = parseKeyAlgorithm(options.KeyAlgorithm)
 
 	// A client facilitates communication with the CA server.
 	client, err := lego.NewClient(config)
@@ -115,8 +123,8 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 	}
 
 	challengeOptions := make([]dns01.ChallengeOption, 0)
-	if len(applyConfig.Nameservers) > 0 {
-		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(dns01.ParseNameservers(strings.Split(applyConfig.Nameservers, ";"))))
+	if len(options.Nameservers) > 0 {
+		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(dns01.ParseNameservers(options.Nameservers)))
 		challengeOptions = append(challengeOptions, dns01.DisableAuthoritativeNssPropagationRequirement())
 	}
 
@@ -132,7 +140,7 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 	}
 
 	certRequest := certificate.ObtainRequest{
-		Domains: strings.Split(applyConfig.Domains, ";"),
+		Domains: options.Domains,
 		Bundle:  true,
 	}
 	certResource, err := client.Certificate.Obtain(certRequest)
@@ -144,9 +152,9 @@ func apply(challengeProvider challenge.Provider, applyConfig *applyConfig) (*App
 		PrivateKey:        string(certResource.PrivateKey),
 		Certificate:       string(certResource.Certificate),
 		IssuerCertificate: string(certResource.IssuerCertificate),
-		CSR:               string(certResource.CSR),
 		ACMECertUrl:       certResource.CertURL,
 		ACMECertStableUrl: certResource.CertStableURL,
+		CSR:               string(certResource.CSR),
 	}, nil
 }
 
@@ -171,10 +179,10 @@ func parseKeyAlgorithm(algo string) certcrypto.KeyType {
 
 // TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
 type proxyApplicant struct {
-	applicant   challenge.Provider
-	applyConfig *applyConfig
+	applicant challenge.Provider
+	options   *applicantOptions
 }
 
 func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
-	return apply(d.applicant, d.applyConfig)
+	return apply(d.applicant, d.options)
 }

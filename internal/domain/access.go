@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type Access struct {
 	Meta
@@ -9,6 +12,15 @@ type Access struct {
 	Config    string    `json:"config" db:"config"`
 	Usage     string    `json:"usage" db:"usage"`
 	DeletedAt time.Time `json:"deleted" db:"deleted"`
+}
+
+func (a *Access) UnmarshalConfigToMap() (map[string]any, error) {
+	config := make(map[string]any)
+	if err := json.Unmarshal([]byte(a.Config), &config); err != nil {
+		return nil, err
+	}
+
+	return config, nil
 }
 
 type AccessConfigForACMEHttpReq struct {
@@ -26,8 +38,6 @@ type AccessConfigForAliyun struct {
 type AccessConfigForAWS struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
-	Region          string `json:"region"`
-	HostedZoneId    string `json:"hostedZoneId"`
 }
 
 type AccessConfigForBaiduCloud struct {
@@ -57,7 +67,6 @@ type AccessConfigForGoDaddy struct {
 type AccessConfigForHuaweiCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
-	Region          string `json:"region"`
 }
 
 type AccessConfigForLocal struct{}
