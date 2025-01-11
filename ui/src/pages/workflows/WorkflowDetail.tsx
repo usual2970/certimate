@@ -189,7 +189,7 @@ const WorkflowDetail = () => {
 
         await runWorkflow(workflowId!);
 
-        messageApi.success(t("common.text.operation_succeeded"));
+        messageApi.info(t("workflow.detail.orchestration.action.run.prompt"));
       } catch (err) {
         setIsRunning(false);
         unsubscribeFn?.();
