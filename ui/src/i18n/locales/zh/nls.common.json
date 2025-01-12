@@ -79,6 +79,7 @@
   "common.provider.volcengine.dcdn": "火山引擎 - 全站加速 DCDN",
   "common.provider.volcengine.dns": "火山引擎 - 云解析 DNS",
   "common.provider.volcengine.live": "火山引擎 - 视频直播 Live",
+  "common.provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
   "common.provider.webhook": "Webhook",
 
   "common.notifier.bark": "Bark",
