@@ -1,3 +1,5 @@
+import type { WorkflowModel } from "./workflow";
+
 export interface WorkflowRunModel extends BaseModel {
   workflowId: string;
   status: string;
@@ -6,6 +8,9 @@ export interface WorkflowRunModel extends BaseModel {
   endedAt: ISO8601String;
   logs: WorkflowRunLog[];
   error: string;
+  expand?: {
+    workflowId?: WorkflowModel;
+  };
 }
 
 export type WorkflowRunLog = {

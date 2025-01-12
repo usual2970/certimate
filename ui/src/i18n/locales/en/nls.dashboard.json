@@ -8,5 +8,11 @@
   "dashboard.statistics.enabled_workflows": "Enabled workflows",
   "dashboard.statistics.unit": "",
 
-  "dashboard.latest_workflow_run": "Latest workflow run"
+  "dashboard.latest_workflow_run": "Latest workflow run",
+
+  "dashboard.quick_actions": "Quick actions",
+  "dashboard.quick_actions.create_workflow": "Create workflow",
+  "dashboard.quick_actions.change_login_password": "Change login password",
+  "dashboard.quick_actions.notification_settings": "Notification settings",
+  "dashboard.quick_actions.certificate_authority_configuration": "Certificate authority configuration"
 }
