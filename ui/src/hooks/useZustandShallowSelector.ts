@@ -18,11 +18,11 @@ export type UseZustandShallowSelectorReturns<T extends object, TKeys extends key
  * const { foo, bar, baz } = useStore(useZustandShallowSelector(["foo", "bar", "baz"]));
  *
  * // 以上代码等效于：
- * const { foo, bar, baz } = useStore((state) => ({
+ * const { foo, bar, baz } = useStore(useShallow((state) => ({
  *  foo: state.foo,
  *  bar: state.bar,
  *  baz: state.baz,
- * }));
+ * })));
  * ```
  */
 const useZustandShallowSelector = <T extends object, TKeys extends keyof T>(paths: MaybeMany<TKeys>): UseZustandShallowSelectorReturns<T, TKeys> => {

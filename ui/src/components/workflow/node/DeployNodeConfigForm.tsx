@@ -80,7 +80,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
-        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
+        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder"))
+        .refine(() => !!formInst.getFieldValue("provider"), t("workflow_node.deploy.form.provider.placeholder")),
       providerConfig: z.any(),
     });
     const formRule = createSchemaFieldRule(formSchema);
@@ -200,10 +201,16 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     useImperativeHandle(ref, () => {
       return {
         getFieldsValue: () => {
-          return formInst.getFieldsValue(true);
+          const values = formInst.getFieldsValue(true);
+          values.providerConfig = nestedFormInst.getFieldsValue();
+          return values;
         },
         resetFields: (fields) => {
-          return formInst.resetFields(fields);
+          formInst.resetFields(fields);
+
+          if (!!fields && fields.includes("providerConfig")) {
+            nestedFormInst.resetFields(fields);
+          }
         },
         validateFields: (nameList, config) => {
           const t1 = formInst.validateFields(nameList, config);
@@ -216,7 +223,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     return (
       <Form.Provider onFormChange={handleFormProviderChange}>
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-          <Show when={!!fieldProvider} fallback={<DeployProviderPicker onSelect={handleProviderPick} />}>
+          <Show
+            when={!!fieldProvider}
+            fallback={<DeployProviderPicker placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+          >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeployProviderSelect
                 allowClear
@@ -294,16 +304,18 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 placeholder={t("workflow_node.deploy.form.certificate.placeholder")}
               />
             </Form.Item>
-
-            <Divider className="my-1">
-              <Typography.Text className="text-xs font-normal" type="secondary">
-                {t("workflow_node.deploy.form.params_config.label")}
-              </Typography.Text>
-            </Divider>
           </Show>
         </Form>
 
-        <Show when={!!fieldProvider}>{nestedFormEl}</Show>
+        <Show when={!!fieldProvider}>
+          <Divider className="my-1">
+            <Typography.Text className="text-xs font-normal" type="secondary">
+              {t("workflow_node.deploy.form.params_config.label")}
+            </Typography.Text>
+          </Divider>
+
+          {nestedFormEl}
+        </Show>
       </Form.Provider>
     );
   }

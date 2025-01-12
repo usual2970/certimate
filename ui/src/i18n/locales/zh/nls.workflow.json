@@ -9,7 +9,7 @@
   "workflow.action.delete.confirm": "确定要删除此工作流吗？",
   "workflow.action.enable": "启用",
   "workflow.action.enable.failed.uncompleted": "请先完成流程编排并发布更改",
-  "workflow.action.disable": "禁用",
+  "workflow.action.disable": "停用",
 
   "workflow.props.name": "名称",
   "workflow.props.description": "描述",
@@ -50,5 +50,6 @@
   "workflow.detail.orchestration.action.release.failed.uncompleted": "流程编排未完成，请检查是否有节点未配置",
   "workflow.detail.orchestration.action.run": "执行",
   "workflow.detail.orchestration.action.run.confirm": "你有尚未发布的更改。你确定要以最近一次发布的版本继续执行吗？",
+  "workflow.detail.orchestration.action.run.prompt": "执行中……请稍后查看执行历史",
   "workflow.detail.runs.tab": "执行历史"
 }

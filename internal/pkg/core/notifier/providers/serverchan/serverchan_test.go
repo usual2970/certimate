@@ -26,7 +26,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v serverchan_test.go -args \
+	go test -v ./serverchan_test.go -args \
 	--CERTIMATE_NOTIFIER_SERVERCHAN_URL="https://example.com/your-webhook-url" \
 */
 func TestNotify(t *testing.T) {

@@ -105,6 +105,7 @@ export type WorkflowNodeConfigForApply = {
   contactEmail: string;
   provider: string;
   providerAccessId: string;
+  providerConfig?: Record<string, unknown>;
   keyAlgorithm: string;
   nameservers?: string;
   propagationTimeout?: number;

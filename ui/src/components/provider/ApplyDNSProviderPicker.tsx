@@ -3,21 +3,21 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, Row, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { deployProvidersMap } from "@/domain/provider";
+import { applyDNSProvidersMap } from "@/domain/provider";
 
-export type DeployProviderPickerProps = {
+export type ApplyDNSProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   placeholder?: string;
   onSelect?: (value: string) => void;
 };
 
-const DeployProviderPicker = ({ className, style, placeholder, onSelect }: DeployProviderPickerProps) => {
+const ApplyDNSProviderPicker = ({ className, style, placeholder, onSelect }: ApplyDNSProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
 
-  const providers = Array.from(deployProvidersMap.values());
+  const providers = Array.from(applyDNSProvidersMap.values());
   const filteredProviders = providers.filter((provider) => {
     if (keyword) {
       const value = keyword.toLowerCase();
@@ -64,4 +64,4 @@ const DeployProviderPicker = ({ className, style, placeholder, onSelect }: Deplo
   );
 };
 
-export default memo(DeployProviderPicker);
+export default memo(ApplyDNSProviderPicker);

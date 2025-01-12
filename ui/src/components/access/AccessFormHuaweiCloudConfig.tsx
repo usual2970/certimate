@@ -19,7 +19,6 @@ const initFormModel = (): AccessFormHuaweiCloudConfigFieldValues => {
   return {
     accessKeyId: "",
     secretAccessKey: "",
-    region: "cn-north-1",
   };
 };
 
@@ -37,12 +36,6 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
       .min(1, t("access.form.huaweicloud_secret_access_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
-    // TODO: 该字段仅用于申请证书，后续迁移到工作流表单中
-    region: z
-      .string()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
-      .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -75,15 +68,6 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_secret_access_key.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.huaweicloud_secret_access_key.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
-        name="region"
-        label={t("access.form.huaweicloud_region.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_region.tooltip") }}></span>}
-      >
-        <Input placeholder={t("access.form.huaweicloud_region.placeholder")} />
       </Form.Item>
     </Form>
   );

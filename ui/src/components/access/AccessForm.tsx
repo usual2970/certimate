@@ -130,20 +130,22 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
   };
 
   const handleFormChange = (_: unknown, values: AccessFormFieldValues) => {
-    if (values.provider !== fieldProvider) {
-      formInst.setFieldValue("provider", values.provider);
-    }
-
     onValuesChange?.(values);
   };
 
   useImperativeHandle(ref, () => {
     return {
       getFieldsValue: () => {
-        return formInst.getFieldsValue(true);
+        const values = formInst.getFieldsValue(true);
+        values.config = nestedFormInst.getFieldsValue();
+        return values;
       },
       resetFields: (fields) => {
-        return formInst.resetFields(fields);
+        formInst.resetFields(fields);
+
+        if (!!fields && fields.includes("config")) {
+          nestedFormInst.resetFields(fields);
+        }
       },
       validateFields: (nameList, config) => {
         const t1 = formInst.validateFields(nameList, config);

@@ -38,7 +38,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ssh_test.go -args \
+	go test -v ./ssh_test.go -args \
 	--CERTIMATE_DEPLOYER_SSH_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_SSH_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_SSH_SSHHOST="localhost" \

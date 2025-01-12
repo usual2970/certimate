@@ -13,16 +13,16 @@ import {
 import { PageHeader } from "@ant-design/pro-components";
 import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
-import { ClientResponseError } from "pocketbase";
 import { isEqual } from "radash";
 import { z } from "zod";
 
-import { run as runWorkflow, subscribe, unsubscribe } from "@/api/workflow";
+import { run as runWorkflow, subscribe as subscribeWorkflow, unsubscribe as unsubscribeWorkflow } from "@/api/workflow";
 import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElements from "@/components/workflow/WorkflowElements";
 import WorkflowRuns from "@/components/workflow/WorkflowRuns";
 import { isAllNodesValidated } from "@/domain/workflow";
+import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow } from "@/repository/workflow";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -63,21 +63,21 @@ const WorkflowDetail = () => {
   }, [workflow]);
 
   useEffect(() => {
-    if (lastRunStatus && lastRunStatus == "running") {
-      setIsRunning(true);
-    } else {
-      setIsRunning(false);
-    }
+    setIsRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
   }, [lastRunStatus]);
 
   useEffect(() => {
-    if (isRunning && workflowId) {
-      subscribe(workflowId, (e) => {
-        if (e.record.lastRunStatus !== "running") {
+    if (!!workflowId && isRunning) {
+      subscribeWorkflow(workflowId, (e) => {
+        if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
           setIsRunning(false);
-          unsubscribe(workflowId);
+          unsubscribeWorkflow(workflowId);
         }
       });
+
+      return () => {
+        unsubscribeWorkflow(workflowId);
+      };
     }
   }, [workflowId, isRunning]);
 
@@ -174,26 +174,28 @@ const WorkflowDetail = () => {
     }
 
     promise.then(async () => {
+      let unsubscribeFn: Awaited<ReturnType<typeof subscribeWorkflow>> | undefined = undefined;
+
       try {
+        setIsRunning(true);
+
         // subscribe before running workflow
-        subscribe(workflowId!, (e) => {
-          if (e.record.lastRunStatus !== "running") {
+        unsubscribeFn = await subscribeWorkflow(workflowId!, (e) => {
+          if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
             setIsRunning(false);
-            unsubscribe(workflowId!);
+            unsubscribeFn?.();
           }
         });
+
         await runWorkflow(workflowId!);
 
-        setIsRunning(true);
-        messageApi.success(t("common.text.operation_succeeded"));
+        messageApi.info(t("workflow.detail.orchestration.action.run.prompt"));
       } catch (err) {
-        if (err instanceof ClientResponseError && err.isAbort) {
-          return;
-        }
+        setIsRunning(false);
+        unsubscribeFn?.();
 
         console.error(err);
         messageApi.warning(t("common.text.operation_failed"));
-        setIsRunning(false);
       }
     });
   };

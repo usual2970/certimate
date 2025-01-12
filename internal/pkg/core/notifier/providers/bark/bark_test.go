@@ -30,7 +30,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v bark_test.go -args \
+	go test -v ./bark_test.go -args \
 	--CERTIMATE_NOTIFIER_BARK_SERVERURL="https://example.com/your-server-url" \
 	--CERTIMATE_NOTIFIER_BARK_DEVICEKEY="your-device-key"
 */

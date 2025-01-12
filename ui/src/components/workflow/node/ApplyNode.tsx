@@ -5,7 +5,6 @@ import { produce } from "immer";
 
 import { type WorkflowNodeConfigForApply, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
-import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -21,7 +20,6 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
 
   const { t } = useTranslation();
 
-  const { accesses } = useAccessesStore(useZustandShallowSelector("accesses"));
   const { addEmail } = useContactEmailsStore(useZustandShallowSelector(["addEmail"]));
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
 
@@ -58,7 +56,6 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
       const newNode = produce(node, (draft) => {
         draft.config = {
           ...newValues,
-          provider: accesses.find((e) => e.id === newValues.providerAccessId)?.provider,
         };
         draft.validated = true;
       });

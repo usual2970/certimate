@@ -14,6 +14,12 @@ type Deployer interface {
 	Deploy(ctx context.Context) error
 }
 
+type deployerOptions struct {
+	Provider             domain.DeployProviderType
+	ProviderAccessConfig map[string]any
+	ProviderDeployConfig map[string]any
+}
+
 func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	Certificate string
 	PrivateKey  string
@@ -30,9 +36,16 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
 	}
 
-	deployProvider := node.GetConfigString("provider")
-	deployConfig := node.GetConfigMap("providerConfig")
-	deployer, logger, err := createDeployer(domain.DeployProviderType(deployProvider), access.Config, deployConfig)
+	accessConfig, err := access.UnmarshalConfigToMap()
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal access config: %w", err)
+	}
+
+	deployer, logger, err := createDeployer(&deployerOptions{
+		Provider:             domain.DeployProviderType(node.GetConfigString("provider")),
+		ProviderAccessConfig: accessConfig,
+		ProviderDeployConfig: node.GetConfigMap("providerConfig"),
+	})
 	if err != nil {
 		return nil, err
 	}

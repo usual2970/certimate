@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_"
+	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDEO_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -34,13 +34,13 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v tencentcloud_cdn_test.go -args \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_SECRETID="your-secret-id" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_ZONEID="your-zone-id" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDEEO_DOMAIN="example.com"
+	go test -v ./tencentcloud_eo_test.go -args \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_SECRETID="your-secret-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_SECRETKEY="your-secret-key" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_ZONEID="your-zone-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDEO_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
