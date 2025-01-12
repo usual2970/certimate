@@ -76,6 +76,7 @@
   "common.provider.tencentcloud.eo": "Tencent Cloud - EdgeOne",
   "common.provider.volcengine": "Volcengine",
   "common.provider.volcengine.cdn": "Volcengine - CDN",
+  "common.provider.volcengine.clb": "Volcengine - CLB",
   "common.provider.volcengine.dcdn": "Volcengine - DCDN",
   "common.provider.volcengine.dns": "Volcengine - DNS",
   "common.provider.volcengine.live": "Volcengine - Live",

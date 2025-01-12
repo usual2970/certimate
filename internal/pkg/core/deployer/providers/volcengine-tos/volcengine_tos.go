@@ -19,7 +19,7 @@ type VolcEngineTOSDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 火山引擎区域。
+	// 火山引擎地域。
 	Region string `json:"region"`
 	// 存储桶名。
 	Bucket string `json:"bucket"`

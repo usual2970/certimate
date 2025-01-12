@@ -17,7 +17,7 @@ type VolcEngineCertCenterUploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 火山引擎区域。
+	// 火山引擎地域。
 	Region string `json:"region"`
 }
 
@@ -73,7 +73,7 @@ func (u *VolcEngineCertCenterUploader) Upload(ctx context.Context, certPem strin
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*veCertCenter.CertCenter, error) {
 	if region == "" {
-		region = "cn-beijing"
+		region = "cn-beijing" // 证书中心默认区域：北京
 	}
 
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)

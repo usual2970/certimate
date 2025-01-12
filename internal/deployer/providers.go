@@ -27,6 +27,7 @@ import (
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
+	providerVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	providerVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
 	providerVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	providerVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
@@ -332,7 +333,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
+	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -345,6 +346,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeVolcEngineCLB:
+				deployer, err := providerVolcEngineCLB.NewWithLogger(&providerVolcEngineCLB.VolcEngineCLBDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerVolcEngineCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err
 

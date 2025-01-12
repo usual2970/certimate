@@ -21,7 +21,7 @@ type VolcEngineDCDNDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 火山引擎区域。
+	// 火山引擎地域。
 	Region string `json:"region"`
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
@@ -102,7 +102,7 @@ func (d *VolcEngineDCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*veDcdn.DCDN, error) {
 	if region == "" {
-		region = "cn-beijing"
+		region = "cn-beijing" // 证书中心默认区域：北京
 	}
 
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)
