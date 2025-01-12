@@ -8,5 +8,12 @@
   "dashboard.statistics.enabled_workflows": "已启用工作流",
   "dashboard.statistics.unit": "个",
 
-  "dashboard.latest_workflow_run": "最近执行的工作流"
+  "dashboard.latest_workflow_run": "最近执行的工作流",
+
+  "dashboard.quick_actions": "快捷操作",
+  "dashboard.quick_actions.create_workflow": "新建工作流",
+  "dashboard.quick_actions.change_login_password": "修改登录密码",
+  "dashboard.quick_actions.notification_settings": "消息推送设置",
+  "dashboard.quick_actions.certificate_authority_configuration": "证书颁发机构配置"
 }
+
