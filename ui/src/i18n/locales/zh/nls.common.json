@@ -46,6 +46,8 @@
   "common.provider.aliyun.oss": "阿里云 - 对象存储 OSS",
   "common.provider.aws": "AWS",
   "common.provider.aws.route53": "AWS - Route53",
+  "common.provider.azure": "Azure",
+  "common.provider.azure.dns": "Azure - DNS",
   "common.provider.baiducloud": "百度智能云",
   "common.provider.baiducloud.cdn": "百度智能云 - 内容分发网络 CDN",
   "common.provider.byteplus": "BytePlus",

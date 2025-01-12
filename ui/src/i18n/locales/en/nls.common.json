@@ -46,6 +46,8 @@
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS",
   "common.provider.aws": "AWS",
   "common.provider.aws.route53": "AWS - Route53",
+  "common.provider.azure": "Azure",
+  "common.provider.azure.dns": "Azure - DNS",
   "common.provider.baiducloud": "Baidu Cloud",
   "common.provider.baiducloud.cdn": "Baidu Cloud - CDN",
   "common.provider.byteplus": "BytePlus",

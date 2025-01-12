@@ -11,7 +11,7 @@ import MultipleInput from "@/components/MultipleInput";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
-import { ACCESS_PROVIDERS, ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
@@ -111,10 +111,10 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
-        case ACCESS_PROVIDERS.AWS:
+        case APPLY_DNS_PROVIDERS.AWS:
         case APPLY_DNS_PROVIDERS.AWS_ROUTE53:
           return <ApplyNodeConfigFormAWSRoute53Config {...nestedFormProps} />;
-        case ACCESS_PROVIDERS.HUAWEICLOUD:
+        case APPLY_DNS_PROVIDERS.HUAWEICLOUD:
         case APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS:
           return <ApplyNodeConfigFormHuaweiCloudDNSConfig {...nestedFormProps} />;
       }

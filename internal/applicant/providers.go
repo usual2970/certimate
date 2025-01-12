@@ -8,7 +8,8 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 	providerACMEHttpReq "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/acmehttpreq"
 	providerAliyun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aliyun"
-	providerAWS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws"
+	providerAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
+	providerAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
 	providerCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
 	providerGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
 	providerHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
@@ -65,11 +66,28 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			applicant, err := providerAWS.NewChallengeProvider(&providerAWS.AWSApplicantConfig{
+			applicant, err := providerAWSRoute53.NewChallengeProvider(&providerAWSRoute53.AWSRoute53ApplicantConfig{
 				AccessKeyId:        access.AccessKeyId,
 				SecretAccessKey:    access.SecretAccessKey,
 				Region:             maps.GetValueAsString(options.ProviderApplyConfig, "region"),
 				HostedZoneId:       maps.GetValueAsString(options.ProviderApplyConfig, "hostedZoneId"),
+				PropagationTimeout: options.PropagationTimeout,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeAzureDNS:
+		{
+			access := domain.AccessConfigForAzure{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			applicant, err := providerAzureDNS.NewChallengeProvider(&providerAzureDNS.AzureDNSApplicantConfig{
+				TenantId:           access.TenantId,
+				ClientId:           access.ClientId,
+				ClientSecret:       access.ClientSecret,
+				CloudName:          access.CloudName,
 				PropagationTimeout: options.PropagationTimeout,
 			})
 			return applicant, err

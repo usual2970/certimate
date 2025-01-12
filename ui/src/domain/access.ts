@@ -11,6 +11,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
       | AccessConfigForAWS
+      | AccessConfigForAzure
       | AccessConfigForBaiduCloud
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
@@ -47,8 +48,13 @@ export type AccessConfigForAliyun = {
 export type AccessConfigForAWS = {
   accessKeyId: string;
   secretAccessKey: string;
-  region?: string;
-  hostedZoneId?: string;
+};
+
+export type AccessConfigForAzure = {
+  tenantId: string;
+  clientId: string;
+  clientSecret: string;
+  environment?: string;
 };
 
 export type AccessConfigForBaiduCloud = {
@@ -78,7 +84,6 @@ export type AccessConfigForGoDaddy = {
 export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
-  region?: string;
 };
 
 export type AccessConfigForKubernetes = {

@@ -1,4 +1,4 @@
-package aws
+package awsroute53
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/route53"
 )
 
-type AWSApplicantConfig struct {
+type AWSRoute53ApplicantConfig struct {
 	AccessKeyId        string `json:"accessKeyId"`
 	SecretAccessKey    string `json:"secretAccessKey"`
 	Region             string `json:"region"`
@@ -16,7 +16,7 @@ type AWSApplicantConfig struct {
 	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
 }
 
-func NewChallengeProvider(config *AWSApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *AWSRoute53ApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
 		return nil, errors.New("config is nil")
 	}
