@@ -163,6 +163,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
   VOLCENGINE_CDN: `${ACCESS_PROVIDERS.VOLCENGINE}-cdn`,
+  VOLCENGINE_DCDN: `${ACCESS_PROVIDERS.VOLCENGINE}-dcdn`,
   VOLCENGINE_LIVE: `${ACCESS_PROVIDERS.VOLCENGINE}-live`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
 } as const);
@@ -201,6 +202,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.HUAWEICLOUD_ELB, "common.provider.huaweicloud.elb"],
     [DEPLOY_PROVIDERS.BAIDUCLOUD_CDN, "common.provider.baiducloud.cdn"],
     [DEPLOY_PROVIDERS.VOLCENGINE_CDN, "common.provider.volcengine.cdn"],
+    [DEPLOY_PROVIDERS.VOLCENGINE_DCDN, "common.provider.volcengine.dcdn"],
     [DEPLOY_PROVIDERS.VOLCENGINE_LIVE, "common.provider.volcengine.live"],
     [DEPLOY_PROVIDERS.QINIU_CDN, "common.provider.qiniu.cdn"],
     [DEPLOY_PROVIDERS.DOGECLOUD_CDN, "common.provider.dogecloud.cdn"],

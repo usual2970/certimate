@@ -27,6 +27,7 @@ import (
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
+	providerVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
 	providerVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
@@ -330,7 +331,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineLive:
+	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineLive:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -340,6 +341,14 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			switch options.Provider {
 			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeVolcEngineDCDN:
+				deployer, err := providerVolcEngineDCDN.NewWithLogger(&providerVolcEngineDCDN.VolcEngineDCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),

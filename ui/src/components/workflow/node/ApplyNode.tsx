@@ -5,7 +5,6 @@ import { produce } from "immer";
 
 import { type WorkflowNodeConfigForApply, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
-import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
 

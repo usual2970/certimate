@@ -76,6 +76,7 @@
   "common.provider.tencentcloud.eo": "腾讯云 - 边缘安全加速平台 EdgeOne",
   "common.provider.volcengine": "火山引擎",
   "common.provider.volcengine.cdn": "火山引擎 - 内容分发网络 CDN",
+  "common.provider.volcengine.dcdn": "火山引擎 - 全站加速 DCDN",
   "common.provider.volcengine.dns": "火山引擎 - 云解析 DNS",
   "common.provider.volcengine.live": "火山引擎 - 视频直播 Live",
   "common.provider.webhook": "Webhook",

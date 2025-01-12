@@ -35,7 +35,7 @@ func New(config *VolcEngineCertCenterUploaderConfig) (*VolcEngineCertCenterUploa
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client: %w")
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &VolcEngineCertCenterUploader{
