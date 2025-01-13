@@ -23,7 +23,8 @@ import (
 	providerSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	providerTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
 	providerTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
-	providerTencentCloudCOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	providerTencentCloudCOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	providerTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -283,7 +284,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -312,11 +313,19 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return deployer, logger, err
 
 			case domain.DeployProviderTypeTencentCloudCOS:
-				deployer, err := providerTencentCloudCOD.NewWithLogger(&providerTencentCloudCOD.TencentCloudCOSDeployerConfig{
+				deployer, err := providerTencentCloudCOS.NewWithLogger(&providerTencentCloudCOS.TencentCloudCOSDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					Region:    maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Bucket:    maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeTencentCloudCSS:
+				deployer, err := providerTencentCloudCSS.NewWithLogger(&providerTencentCloudCSS.TencentCloudCSSDeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err

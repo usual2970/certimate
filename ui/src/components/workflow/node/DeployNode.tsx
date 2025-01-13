@@ -45,7 +45,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
     const provider = deployProvidersMap.get(config.provider);
     return (
-      <Space>
+      <Space className="max-w-full">
         <Avatar src={provider?.icon} size="small" />
         <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
       </Space>

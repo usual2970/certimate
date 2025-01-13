@@ -89,6 +89,7 @@ const (
 	DeployProviderTypeTencentCloudCDN  = DeployProviderType("tencentcloud-cdn")
 	DeployProviderTypeTencentCloudCLB  = DeployProviderType("tencentcloud-clb")
 	DeployProviderTypeTencentCloudCOS  = DeployProviderType("tencentcloud-cos")
+	DeployProviderTypeTencentCloudCSS  = DeployProviderType("tencentcloud-css")
 	DeployProviderTypeTencentCloudECDN = DeployProviderType("tencentcloud-ecdn")
 	DeployProviderTypeTencentCloudEO   = DeployProviderType("tencentcloud-eo")
 	DeployProviderTypeVolcEngineCDN    = DeployProviderType("volcengine-cdn")

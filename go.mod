@@ -10,6 +10,7 @@ require (
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.4
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10
+	github.com/alibabacloud-go/live-20161101 v1.1.1
 	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.9
 	github.com/alibabacloud-go/tea v1.2.2
@@ -29,7 +30,8 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.25.1
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1065
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1065
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1065
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1080
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1080
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1065
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1065
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.8
@@ -50,7 +52,6 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns v1.3.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
-	github.com/alibabacloud-go/live-20161101 v1.1.1 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect

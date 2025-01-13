@@ -74,6 +74,7 @@
   "common.provider.tencentcloud.cdn": "腾讯云 - 内容分发网络 CDN",
   "common.provider.tencentcloud.clb": "腾讯云 - 负载均衡 CLB",
   "common.provider.tencentcloud.cos": "腾讯云 - 对象存储 COS",
+  "common.provider.tencentcloud.css": "腾讯云 - 云直播 CSS",
   "common.provider.tencentcloud.dns": "腾讯云 - 云解析 DNS",
   "common.provider.tencentcloud.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "common.provider.tencentcloud.eo": "腾讯云 - 边缘安全加速平台 EdgeOne",
