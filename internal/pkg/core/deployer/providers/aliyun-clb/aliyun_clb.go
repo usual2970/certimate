@@ -31,6 +31,9 @@ type AliyunCLBDeployerConfig struct {
 	// 负载均衡监听端口。
 	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
 	ListenerPort int32 `json:"listenerPort,omitempty"`
+	// SNI 域名（支持泛域名）。
+	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER] 时选填。
+	Domain string `json:"domain,omitempty"`
 }
 
 type AliyunCLBDeployer struct {
@@ -110,8 +113,6 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		return errors.New("config `loadbalancerId` is required")
 	}
 
-	listenerPorts := make([]int32, 0)
-
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
 	describeLoadBalancerAttributeReq := &aliyunSlb.DescribeLoadBalancerAttributeRequest{
@@ -127,14 +128,14 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerlisteners
-	listListenersPage := 1
-	listListenersLimit := int32(100)
-	var listListenersToken *string = nil
+	listenerPorts := make([]int32, 0)
+	describeLoadBalancerListenersLimit := int32(100)
+	var describeLoadBalancerListenersToken *string = nil
 	for {
 		describeLoadBalancerListenersReq := &aliyunSlb.DescribeLoadBalancerListenersRequest{
 			RegionId:         tea.String(d.config.Region),
-			MaxResults:       tea.Int32(listListenersLimit),
-			NextToken:        listListenersToken,
+			MaxResults:       tea.Int32(describeLoadBalancerListenersLimit),
+			NextToken:        describeLoadBalancerListenersToken,
 			LoadBalancerId:   []*string{tea.String(d.config.LoadbalancerId)},
 			ListenerProtocol: tea.String("https"),
 		}
@@ -152,22 +153,27 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		if len(describeLoadBalancerListenersResp.Body.Listeners) == 0 || describeLoadBalancerListenersResp.Body.NextToken == nil {
 			break
 		} else {
-			listListenersToken = describeLoadBalancerListenersResp.Body.NextToken
-			listListenersPage += 1
+			describeLoadBalancerListenersToken = describeLoadBalancerListenersResp.Body.NextToken
 		}
 	}
 
 	d.logger.Logt("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", listenerPorts)
 
-	// 批量更新监听证书
-	var errs []error
-	for _, listenerPort := range listenerPorts {
-		if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listenerPort, cloudCertId); err != nil {
-			errs = append(errs, err)
+	// 遍历更新监听证书
+	if len(listenerPorts) == 0 {
+		return xerrors.New("listener not found")
+	} else {
+		var errs []error
+
+		for _, listenerPort := range listenerPorts {
+			if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listenerPort, cloudCertId); err != nil {
+				errs = append(errs, err)
+			}
 		}
-	}
-	if len(errs) > 0 {
-		return errors.Join(errs...)
+
+		if len(errs) > 0 {
+			return errors.Join(errs...)
+		}
 	}
 
 	return nil
@@ -203,67 +209,76 @@ func (d *AliyunCLBDeployer) updateListenerCertificate(ctx context.Context, cloud
 
 	d.logger.Logt("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp)
 
-	// 查询扩展域名
-	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
-	describeDomainExtensionsReq := &aliyunSlb.DescribeDomainExtensionsRequest{
-		RegionId:       tea.String(d.config.Region),
-		LoadBalancerId: tea.String(cloudLoadbalancerId),
-		ListenerPort:   tea.Int32(cloudListenerPort),
-	}
-	describeDomainExtensionsResp, err := d.sdkClient.DescribeDomainExtensions(describeDomainExtensionsReq)
-	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
-	}
+	if d.config.Domain == "" {
+		// 未指定 SNI，只需部署到监听器
 
-	d.logger.Logt("已查询到 CLB 扩展域名", describeDomainExtensionsResp)
+		// 修改监听配置
+		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
+		//
+		// 注意修改监听配置要放在修改扩展域名之后
+		setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
+			RegionId:            tea.String(d.config.Region),
+			LoadBalancerId:      tea.String(cloudLoadbalancerId),
+			ListenerPort:        tea.Int32(cloudListenerPort),
+			ServerCertificateId: tea.String(cloudCertId),
+		}
+		setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
+		if err != nil {
+			return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
+		}
 
-	// 遍历修改扩展域名
-	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
-	//
-	// 这里仅修改跟被替换证书一致的扩展域名
-	if describeDomainExtensionsResp.Body.DomainExtensions != nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension != nil {
-		for _, domainExtension := range describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension {
-			if *domainExtension.ServerCertificateId != *describeLoadBalancerHTTPSListenerAttributeResp.Body.ServerCertificateId {
-				continue
+		d.logger.Logt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
+	} else {
+		// 指定 SNI，需部署到扩展域名（支持泛域名）
+
+		// 查询扩展域名
+		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
+		describeDomainExtensionsReq := &aliyunSlb.DescribeDomainExtensionsRequest{
+			RegionId:       tea.String(d.config.Region),
+			LoadBalancerId: tea.String(cloudLoadbalancerId),
+			ListenerPort:   tea.Int32(cloudListenerPort),
+		}
+		describeDomainExtensionsResp, err := d.sdkClient.DescribeDomainExtensions(describeDomainExtensionsReq)
+		if err != nil {
+			return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
+		}
+
+		d.logger.Logt("已查询到 CLB 扩展域名", describeDomainExtensionsResp)
+
+		// 遍历修改扩展域名
+		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
+		if describeDomainExtensionsResp.Body.DomainExtensions != nil && describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension != nil {
+			var errs []error
+
+			for _, domainExtension := range describeDomainExtensionsResp.Body.DomainExtensions.DomainExtension {
+				if *domainExtension.Domain != d.config.Domain {
+					continue
+				}
+
+				setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
+					RegionId:            tea.String(d.config.Region),
+					DomainExtensionId:   tea.String(*domainExtension.DomainExtensionId),
+					ServerCertificateId: tea.String(cloudCertId),
+				}
+				setDomainExtensionAttributeResp, err := d.sdkClient.SetDomainExtensionAttribute(setDomainExtensionAttributeReq)
+				if err != nil {
+					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'"))
+					continue
+				}
+
+				d.logger.Logt("已修改 CLB 扩展域名", setDomainExtensionAttributeResp)
 			}
 
-			setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
-				RegionId:            tea.String(d.config.Region),
-				DomainExtensionId:   tea.String(*domainExtension.DomainExtensionId),
-				ServerCertificateId: tea.String(cloudCertId),
-			}
-			_, err := d.sdkClient.SetDomainExtensionAttribute(setDomainExtensionAttributeReq)
-			if err != nil {
-				return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'")
+			if len(errs) > 0 {
+				return errors.Join(errs...)
 			}
 		}
 	}
-
-	// 修改监听配置
-	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
-	//
-	// 注意修改监听配置要放在修改扩展域名之后
-	setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
-		RegionId:            tea.String(d.config.Region),
-		LoadBalancerId:      tea.String(cloudLoadbalancerId),
-		ListenerPort:        tea.Int32(cloudListenerPort),
-		ServerCertificateId: tea.String(cloudCertId),
-	}
-	setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
-	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
-	}
-
-	d.logger.Logt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
 
 	return nil
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
-	if region == "" {
-		region = "cn-hangzhou" // CLB(SLB) 服务默认区域：华东一杭州
-	}
-
 	// 接入点一览 https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-endpoint
 	var endpoint string
 	switch region {

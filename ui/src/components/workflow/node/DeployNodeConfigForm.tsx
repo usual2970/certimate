@@ -239,7 +239,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeployProviderSelect
                 allowClear
-                disabled
+                disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
                 showSearch
                 onSelect={handleProviderSelect}

@@ -59,6 +59,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					ResourceType:    providerAliyunALB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -77,7 +78,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					ResourceType:    providerAliyunCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
-					ListenerPort:    maps.GetValueAsInt32(options.ProviderDeployConfig, "listenerPort"),
+					ListenerPort:    maps.GetValueOrDefaultAsInt32(options.ProviderDeployConfig, "listenerPort", 443),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -251,10 +253,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			sshPort := access.Port
 			deployer, err := providerSSH.NewWithLogger(&providerSSH.SshDeployerConfig{
 				SshHost:          access.Host,
-				SshPort:          int32(sshPort),
+				SshPort:          access.Port,
 				SshUsername:      access.Username,
 				SshPassword:      access.Password,
 				SshKey:           access.Key,

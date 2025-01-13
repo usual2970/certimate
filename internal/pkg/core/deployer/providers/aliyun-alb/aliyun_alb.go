@@ -4,12 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	aliyunAlb "github.com/alibabacloud-go/alb-20200616/v2/client"
+	aliyunCas "github.com/alibabacloud-go/cas-20200407/v3/client"
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
@@ -32,16 +36,24 @@ type AliyunALBDeployerConfig struct {
 	// 负载均衡监听 ID。
 	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
+	// SNI 域名（支持泛域名）。
+	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER] 时选填。
+	Domain string `json:"domain,omitempty"`
 }
 
 type AliyunALBDeployer struct {
 	config      *AliyunALBDeployerConfig
 	logger      logger.Logger
-	sdkClient   *aliyunAlb.Client
+	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
 var _ deployer.Deployer = (*AliyunALBDeployer)(nil)
+
+type wSdkClients struct {
+	alb *aliyunAlb.Client
+	cas *aliyunCas.Client
+}
 
 func New(config *AliyunALBDeployerConfig) (*AliyunALBDeployer, error) {
 	return NewWithLogger(config, logger.NewNilLogger())
@@ -56,9 +68,9 @@ func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, errors.New("logger is nil")
 	}
 
-	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
 	aliyunCasRegion := config.Region
@@ -84,7 +96,7 @@ func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*Aliy
 	return &AliyunALBDeployer{
 		logger:      logger,
 		config:      config,
-		sdkClient:   client,
+		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
@@ -122,14 +134,12 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 		return errors.New("config `loadbalancerId` is required")
 	}
 
-	listenerIds := make([]string, 0)
-
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getloadbalancerattribute
 	getLoadBalancerAttributeReq := &aliyunAlb.GetLoadBalancerAttributeRequest{
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
-	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
+	getLoadBalancerAttributeResp, err := d.sdkClients.alb.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetLoadBalancerAttribute'")
 	}
@@ -138,7 +148,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
-	listListenersPage := 1
+	listenerIds := make([]string, 0)
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
@@ -148,7 +158,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
 			ListenerProtocol: tea.String("HTTPS"),
 		}
-		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
@@ -163,7 +173,6 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			break
 		} else {
 			listListenersToken = listListenersResp.Body.NextToken
-			listListenersPage += 1
 		}
 	}
 
@@ -171,7 +180,6 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 
 	// 查询 QUIC 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
-	listListenersPage = 1
 	listListenersToken = nil
 	for {
 		listListenersReq := &aliyunAlb.ListListenersRequest{
@@ -180,7 +188,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
 			ListenerProtocol: tea.String("QUIC"),
 		}
-		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
@@ -195,21 +203,26 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 			break
 		} else {
 			listListenersToken = listListenersResp.Body.NextToken
-			listListenersPage += 1
 		}
 	}
 
 	d.logger.Logt("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", listenerIds)
 
-	// 批量更新监听证书
-	var errs []error
-	for _, listenerId := range listenerIds {
-		if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
-			errs = append(errs, err)
+	// 遍历更新监听证书
+	if len(listenerIds) == 0 {
+		return xerrors.New("listener not found")
+	} else {
+		var errs []error
+
+		for _, listenerId := range listenerIds {
+			if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
+				errs = append(errs, err)
+			}
 		}
-	}
-	if len(errs) > 0 {
-		return errors.Join(errs...)
+
+		if len(errs) > 0 {
+			return errors.Join(errs...)
+		}
 	}
 
 	return nil
@@ -234,57 +247,202 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloud
 	getListenerAttributeReq := &aliyunAlb.GetListenerAttributeRequest{
 		ListenerId: tea.String(cloudListenerId),
 	}
-	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
+	getListenerAttributeResp, err := d.sdkClients.alb.GetListenerAttribute(getListenerAttributeReq)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetListenerAttribute'")
 	}
 
 	d.logger.Logt("已查询到 ALB 监听配置", getListenerAttributeResp)
 
-	// 修改监听的属性
-	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-updatelistenerattribute
-	updateListenerAttributeReq := &aliyunAlb.UpdateListenerAttributeRequest{
-		ListenerId: tea.String(cloudListenerId),
-		Certificates: []*aliyunAlb.UpdateListenerAttributeRequestCertificates{{
-			CertificateId: tea.String(cloudCertId),
-		}},
-	}
-	updateListenerAttributeResp, err := d.sdkClient.UpdateListenerAttribute(updateListenerAttributeReq)
-	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
-	}
+	if d.config.Domain == "" {
+		// 未指定 SNI，只需部署到监听器
 
-	d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
+		// 修改监听的属性
+		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-updatelistenerattribute
+		updateListenerAttributeReq := &aliyunAlb.UpdateListenerAttributeRequest{
+			ListenerId: tea.String(cloudListenerId),
+			Certificates: []*aliyunAlb.UpdateListenerAttributeRequestCertificates{{
+				CertificateId: tea.String(cloudCertId),
+			}},
+		}
+		updateListenerAttributeResp, err := d.sdkClients.alb.UpdateListenerAttribute(updateListenerAttributeReq)
+		if err != nil {
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
+		}
 
-	// TODO: #347
+		d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
+	} else {
+		// 指定 SNI，需部署到扩展域名（支持泛域名）
+
+		// 查询监听证书列表
+		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
+		listenerCertificates := make([]aliyunAlb.ListListenerCertificatesResponseBodyCertificates, 0)
+		listListenerCertificatesLimit := int32(100)
+		var listListenerCertificatesToken *string = nil
+		for {
+			listListenerCertificatesReq := &aliyunAlb.ListListenerCertificatesRequest{
+				NextToken:       listListenerCertificatesToken,
+				MaxResults:      tea.Int32(listListenerCertificatesLimit),
+				ListenerId:      tea.String(cloudListenerId),
+				CertificateType: tea.String("Server"),
+			}
+			listListenerCertificatesResp, err := d.sdkClients.alb.ListListenerCertificates(listListenerCertificatesReq)
+			if err != nil {
+				return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListenerCertificates'")
+			}
+
+			if listListenerCertificatesResp.Body.Certificates != nil {
+				for _, listenerCertificate := range listListenerCertificatesResp.Body.Certificates {
+					listenerCertificates = append(listenerCertificates, *listenerCertificate)
+				}
+			}
+
+			if len(listListenerCertificatesResp.Body.Certificates) == 0 || listListenerCertificatesResp.Body.NextToken == nil {
+				break
+			} else {
+				listListenerCertificatesToken = listListenerCertificatesResp.Body.NextToken
+			}
+		}
+
+		d.logger.Logt("已查询到 ALB 监听下全部证书", listenerCertificates)
+
+		// 遍历查询监听证书，并找出需要解除关联的证书
+		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
+		// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-getusercertificatedetail
+		certificateIsAssociated := false
+		certificateIdsExpired := make([]string, 0)
+		if len(listenerCertificates) > 0 {
+			var errs []error
+
+			for _, listenerCertificate := range listenerCertificates {
+				if *listenerCertificate.CertificateId == cloudCertId {
+					certificateIsAssociated = true
+					continue
+				}
+
+				if *listenerCertificate.IsDefault || !strings.EqualFold(*listenerCertificate.Status, "Associated") {
+					continue
+				}
+
+				listenerCertificateId, err := strconv.ParseInt(*listenerCertificate.CertificateId, 10, 64)
+				if err != nil {
+					errs = append(errs, err)
+					continue
+				}
+
+				getUserCertificateDetailReq := &aliyunCas.GetUserCertificateDetailRequest{
+					CertId: tea.Int64(listenerCertificateId),
+				}
+				getUserCertificateDetailResp, err := d.sdkClients.cas.GetUserCertificateDetail(getUserCertificateDetailReq)
+				if err != nil {
+					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'"))
+					continue
+				}
+
+				certCnMatched := getUserCertificateDetailResp.Body.Common != nil && *getUserCertificateDetailResp.Body.Common == d.config.Domain
+				certSanMatched := getUserCertificateDetailResp.Body.Sans != nil && slices.Contains(strings.Split(*getUserCertificateDetailResp.Body.Sans, ","), d.config.Domain)
+				if !certCnMatched && !certSanMatched {
+					continue
+				}
+
+				certEndDate, _ := time.Parse("2006-01-02", *getUserCertificateDetailResp.Body.EndDate)
+				if time.Now().Before(certEndDate) {
+					continue
+				}
+
+				certificateIdsExpired = append(certificateIdsExpired, *listenerCertificate.CertificateId)
+			}
+
+			if len(errs) > 0 {
+				return errors.Join(errs...)
+			}
+		}
+
+		// 关联监听和扩展证书
+		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-associateadditionalcertificateswithlistener
+		if !certificateIsAssociated {
+			associateAdditionalCertificatesFromListenerReq := &aliyunAlb.AssociateAdditionalCertificatesWithListenerRequest{
+				ListenerId: tea.String(cloudListenerId),
+				Certificates: []*aliyunAlb.AssociateAdditionalCertificatesWithListenerRequestCertificates{
+					{
+						CertificateId: tea.String(cloudCertId),
+					},
+				},
+			}
+			associateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.AssociateAdditionalCertificatesWithListener(associateAdditionalCertificatesFromListenerReq)
+			if err != nil {
+				return xerrors.Wrap(err, "failed to execute sdk request 'alb.AssociateAdditionalCertificatesWithListener'")
+			}
+
+			d.logger.Logt("已关联 ALB 监听和扩展证书", associateAdditionalCertificatesFromListenerResp)
+		}
+
+		// 解除关联监听和扩展证书
+		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-dissociateadditionalcertificatesfromlistener
+		if len(certificateIdsExpired) > 0 {
+			dissociateAdditionalCertificates := make([]*aliyunAlb.DissociateAdditionalCertificatesFromListenerRequestCertificates, 0)
+			for _, certificateId := range certificateIdsExpired {
+				dissociateAdditionalCertificates = append(dissociateAdditionalCertificates, &aliyunAlb.DissociateAdditionalCertificatesFromListenerRequestCertificates{
+					CertificateId: tea.String(certificateId),
+				})
+			}
+
+			dissociateAdditionalCertificatesFromListenerReq := &aliyunAlb.DissociateAdditionalCertificatesFromListenerRequest{
+				ListenerId:   tea.String(cloudListenerId),
+				Certificates: dissociateAdditionalCertificates,
+			}
+			dissociateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.DissociateAdditionalCertificatesFromListener(dissociateAdditionalCertificatesFromListenerReq)
+			if err != nil {
+				return xerrors.Wrap(err, "failed to execute sdk request 'alb.DissociateAdditionalCertificatesFromListener'")
+			}
+
+			d.logger.Logt("已解除关联 ALB 监听和扩展证书", dissociateAdditionalCertificatesFromListenerResp)
+		}
+	}
 
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunAlb.Client, error) {
-	if region == "" {
-		region = "cn-hangzhou"
-	}
-
-	// 接入点一览 https://www.alibabacloud.com/help/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-endpoint
-	var endpoint string
+func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients, error) {
+	// 接入点一览 https://www.alibabacloud.com/help/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-albEndpoint
+	var albEndpoint string
 	switch region {
 	case "cn-hangzhou-finance":
-		endpoint = "alb.cn-hangzhou.aliyuncs.com"
+		albEndpoint = "alb.cn-hangzhou.aliyuncs.com"
 	default:
-		endpoint = fmt.Sprintf("alb.%s.aliyuncs.com", region)
+		albEndpoint = fmt.Sprintf("alb.%s.aliyuncs.com", region)
 	}
 
-	config := &aliyunOpen.Config{
+	albConfig := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
-		Endpoint:        tea.String(endpoint),
+		Endpoint:        tea.String(albEndpoint),
 	}
-
-	client, err := aliyunAlb.NewClient(config)
+	albClient, err := aliyunAlb.NewClient(albConfig)
 	if err != nil {
 		return nil, err
 	}
 
-	return client, nil
+	// 接入点一览 https://help.aliyun.com/zh/ssl-certificate/developer-reference/endpoints
+	var casEndpoint string
+	if !strings.HasPrefix(region, "cn-") {
+		casEndpoint = "cas.ap-southeast-1.aliyuncs.com"
+	} else {
+		casEndpoint = "cas.aliyuncs.com"
+	}
+
+	casConfig := &aliyunOpen.Config{
+		Endpoint:        tea.String(casEndpoint),
+		AccessKeyId:     tea.String(accessKeyId),
+		AccessKeySecret: tea.String(accessKeySecret),
+	}
+	casClient, err := aliyunCas.NewClient(casConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return &wSdkClients{
+		alb: albClient,
+		cas: casClient,
+	}, nil
 }

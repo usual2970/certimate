@@ -4,12 +4,14 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import Show from "@/components/Show";
+import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormAliyunALBConfigFieldValues = Nullish<{
   resourceType: string;
   region: string;
   loadbalancerId?: string;
   listenerId?: string;
+  domain?: string;
 }>;
 
 export type DeployNodeConfigFormAliyunALBConfigProps = {
@@ -56,6 +58,13 @@ const DeployNodeConfigFormAliyunALBConfig = ({
       .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_LISTENER || !!v?.trim(), t("workflow_node.deploy.form.aliyun_alb_listener_id.placeholder")),
+    domain: z
+      .string()
+      .nullish()
+      .refine((v) => {
+        if (![RESOURCE_TYPE_LOADBALANCER, RESOURCE_TYPE_LISTENER].includes(fieldResourceType)) return true;
+        return !v || validDomainName(v!, { allowWildcard: true });
+      }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -113,6 +122,17 @@ const DeployNodeConfigFormAliyunALBConfig = ({
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_alb_listener_id.tooltip") }}></span>}
         >
           <Input placeholder={t("workflow_node.deploy.form.aliyun_alb_listener_id.placeholder")} />
+        </Form.Item>
+      </Show>
+
+      <Show when={fieldResourceType === RESOURCE_TYPE_LOADBALANCER || fieldResourceType === RESOURCE_TYPE_LISTENER}>
+        <Form.Item
+          name="domain"
+          label={t("workflow_node.deploy.form.aliyun_alb_snidomain.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_alb_snidomain.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.aliyun_alb_snidomain.placeholder")} />
         </Form.Item>
       </Show>
     </Form>
