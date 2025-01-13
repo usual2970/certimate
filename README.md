@@ -16,7 +16,7 @@ Certimate 就是为了解决上述问题而产生的，它具有以下特点：
 
 1. 操作简单：自动申请、部署、续期 SSL 证书，全程无需人工干预。
 2. 支持私有部署：部署方法简单，只需下载二进制文件执行即可。二进制文件、Docker 镜像全部用 Github Actions 生成，过程透明，可自行审计。
-3. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在服务商的服务器，确保数据的安全性。
+3. 数据安全：由于是私有部署，所有数据均存储在本地，不会保存在提供商的服务器，确保数据的安全性。
 
 相关文章：
 
@@ -76,49 +76,78 @@ make local.run
 
 [![观看视频](https://i.imgur.com/4DAUKEE.gif)](https://www.bilibili.com/video/BV1xockeZEm2)
 
-## 三、支持的服务商列表
+## 三、支持的提供商列表
 
-|   服务商   | 支持申请证书 | 支持部署证书 | 备注                                                              |
-| :--------: | :----------: | :----------: | ----------------------------------------------------------------- |
-|   阿里云   |      √       |      √       | 可签发在阿里云注册的域名；可部署到阿里云 OSS、CDN、SLB            |
-|   腾讯云   |      √       |      √       | 可签发在腾讯云注册的域名；可部署到腾讯云 COS、CDN、ECDN、CLB、TEO |
-| 百度智能云 |              |      √       | 可部署到百度智能云 CDN                                            |
-|   华为云   |      √       |      √       | 可签发在华为云注册的域名；可部署到华为云 CDN、ELB                 |
-|   七牛云   |              |      √       | 可部署到七牛云 CDN                                                |
-|   多吉云   |              |      √       | 可部署到多吉云 CDN                                                |
-|  火山引擎  |      √       |      √       | 可签发在火山引擎注册的域名；可部署到火山引擎 Live、CDN            |
-|    AWS     |      √       |              | 可签发在 AWS Route53 托管的域名                                   |
-| CloudFlare |      √       |              | 可签发在 CloudFlare 注册的域名；CloudFlare 服务自带 SSL 证书      |
-|  GoDaddy   |      √       |              | 可签发在 GoDaddy 注册的域名                                       |
-|  Name.com  |      √       |              | 可签发在 Name.com 注册的域名                                      |
-|  NameSilo  |      √       |              | 可签发在 NameSilo 注册的域名                                      |
-|  PowerDNS  |      √       |              | 可签发在 PowerDNS 托管的域名                                      |
-| HTTP 请求  |      √       |              | 可签发允许通过 HTTP 请求修改 DNS 的域名                           |
-|  本地部署  |              |      √       | 可部署到本地服务器                                                |
-|    SSH     |              |      √       | 可部署到 SSH 服务器                                               |
-|  Webhook   |              |      √       | 可部署时回调到 Webhook                                            |
-| Kubernetes |              |      √       | 可部署到 Kubernetes Secret                                        |
+### 证书申请
+
+支持以下的 DNS 提供商的托管域名：
+
+<details>
+
+<summary>[展开查看]</summary>
+
+| 提供商                                         | 备注                                    |
+| :--------------------------------------------- | :-------------------------------------- |
+| [阿里云](https://www.aliyun.com/)              |                                         |
+| [腾讯云](https://cloud.tencent.com/)           |                                         |
+| [华为云](https://www.huaweicloud.com/)         |                                         |
+| [火山引擎](https://www.volcengine.com/)        |                                         |
+| [AWS Route53](https://aws.amazon.com/route53/) |                                         |
+| [Azure](https://azure.microsoft.com/)          |                                         |
+| [CloudFlare](https://www.cloudflare.com/)      |                                         |
+| [GoDaddy](https://www.godaddy.com/)            |                                         |
+| [Name.com](https://www.name.com/)              |                                         |
+| [NameSilo](https://www.namesilo.com/)          |                                         |
+| [PowerDNS](https://www.powerdns.com/)          |                                         |
+| ACME 代理 HTTP 请求                            | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
+
+</details>
+
+### 证书部署
+
+支持以下的主机提供商：
+
+<details>
+
+<summary>[展开查看]</summary>
+
+| 提供商                                  | 备注                                                           |
+| :-------------------------------------- | :------------------------------------------------------------- |
+| 本地部署                                | 可部署到本地服务器                                             |
+| SSH 部署                                | 可部署到远程服务器（通过 SSH+SFTP）                            |
+| Webhook 回调                            | 可部署到 Webhook                                               |
+| [Kubernetes](https://kubernetes.io/)    | 可部署到 Kubernetes Secret                                     |
+| [阿里云](https://www.aliyun.com/)       | 可部署到阿里云 OSS、CDN、DCDN、SLB（CLB/ALB/NLB）、Live 等服务 |
+| [腾讯云](https://cloud.tencent.com/)    | 可部署到腾讯云 COS、CDN、ECDN、EdgeOne、CLB、CSS 等服务        |
+| [百度智能云](https://cloud.baidu.com/)  | 可部署到百度智能云 CDN 等服务                                  |
+| [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB 等服务                                 |
+| [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、Live 等服务              |
+| [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN                                             |
+| [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                             |
+| [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                   |
+
+</details>
 
 ## 四、概念
 
 Certimate 的工作流程如下：
 
-- 用户通过 Certimate 管理页面填写申请证书的信息，包括域名、DNS 服务商的授权信息、以及要部署到的服务商的授权信息。
+- 用户通过 Certimate 管理页面填写申请证书的信息，包括域名、DNS 提供商的授权信息、以及要部署到的提供商的授权信息。
 - Certimate 向证书厂商的 API 发起申请请求，获取 SSL 证书。
 - Certimate 存储证书信息，包括证书内容、私钥、证书有效期等，并在证书即将过期时自动续期。
-- Certimate 向服务商的 API 发起部署请求，将证书部署到服务商的服务器上。
+- Certimate 向提供商的 API 发起部署请求，将证书部署到提供商的服务器上。
 
-这就涉及域名、DNS 服务商的授权信息、部署服务商的授权信息等。
+这就涉及域名、DNS 提供商的授权信息、部署提供商的授权信息等。
 
 ### 1. 域名
 
 就是要申请证书的域名。
 
-### 2. DNS 服务商授权信息
+### 2. DNS 提供商授权信息
 
-给域名申请证书需要证明域名是你的，所以我们手动申请证书的时候一般需要在域名服务商的控制台解析记录中添加一个 TXT 域名解析记录。
+给域名申请证书需要证明域名是你的，所以我们手动申请证书的时候一般需要在域名提供商的控制台解析记录中添加一个 TXT 域名解析记录。
 
-Certimate 会自动添加一个 TXT 域名解析记录，你只需要在 Certimate 后台中填写你的域名服务商的授权信息即可。
+Certimate 会自动添加一个 TXT 域名解析记录，你只需要在 Certimate 后台中填写你的域名提供商的授权信息即可。
 
 比如你在阿里云购买的域名，授权信息如下：
 
@@ -134,15 +163,15 @@ secretId: your-secret-id
 secretKey: your-secret-key
 ```
 
-注意，此授权信息需具有访问域名及 DNS 解析的管理权限，具体的权限清单请参阅各服务商自己的技术文档。
+注意，此授权信息需具有访问域名及 DNS 解析的管理权限，具体的权限清单请参阅各提供商自己的技术文档。
 
-### 3. 部署服务商授权信息
+### 3. 部署提供商授权信息
 
 Certimate 申请证书后，会自动将证书部署到你指定的目标上，比如阿里云 CDN，Certimate 会根据你填写的授权信息及域名找到对应的 CDN 服务，并将证书部署到对应的 CDN 服务上。
 
-部署服务商授权信息和 DNS 服务商授权信息基本一致，区别在于 DNS 服务商授权信息用于证明域名是你的，部署服务商授权信息用于提供证书部署的授权信息。
+部署提供商授权信息和 DNS 提供商授权信息基本一致，区别在于 DNS 提供商授权信息用于证明域名是你的，部署提供商授权信息用于提供证书部署的授权信息。
 
-注意，此授权信息需具有访问部署目标服务的相关管理权限，具体的权限清单请参阅各服务商自己的技术文档。
+注意，此授权信息需具有访问部署目标服务的相关管理权限，具体的权限清单请参阅各提供商自己的技术文档。
 
 ## 五、常见问题
 
@@ -167,7 +196,7 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 - 提交代码：如果你发现了 Bug 或有新的功能需求，而你又有相关经验，可以[提交代码](CONTRIBUTING.md)给我们。
 - 提交 Issue：功能建议或者 Bug 可以[提交 Issue](https://github.com/usual2970/certimate/issues) 给我们。
 
-支持更多服务商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家提交 PR。
+支持更多提供商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家提交 PR。
 
 ## 七、免责声明
 
