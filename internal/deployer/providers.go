@@ -2,7 +2,6 @@ package deployer
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -249,7 +248,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			sshPort, _ := strconv.ParseInt(access.Port, 10, 32)
+			sshPort := access.Port
 			deployer, err := providerSSH.NewWithLogger(&providerSSH.SshDeployerConfig{
 				SshHost:          access.Host,
 				SshPort:          int32(sshPort),

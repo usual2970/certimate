@@ -72,7 +72,7 @@ make local.run
 密码：1234567890
 ```
 
-![usage.gif](https://i.imgur.com/zpCoLVM.gif)
+<iframe src="//player.bilibili.com/player.html?bvid=BV1xockeZEm2&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 
 ## 三、支持的服务商列表
 
