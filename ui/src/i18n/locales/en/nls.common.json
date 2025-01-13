@@ -42,6 +42,7 @@
   "common.provider.aliyun.clb": "Alibaba Cloud - CLB",
   "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN",
   "common.provider.aliyun.dns": "Alibaba Cloud - DNS",
+  "common.provider.aliyun.live": "Alibaba Cloud - ApsaraVideo Live",
   "common.provider.aliyun.nlb": "Alibaba Cloud - NLB",
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS",
   "common.provider.aws": "AWS",

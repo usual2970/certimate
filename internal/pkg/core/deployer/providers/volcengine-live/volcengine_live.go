@@ -21,7 +21,7 @@ type VolcEngineLiveDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 加速域名（支持泛域名）。
+	// 直播流域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
