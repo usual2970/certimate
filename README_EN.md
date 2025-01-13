@@ -73,7 +73,7 @@ password：1234567890
 
 ### Watch the video
 
-[![Watch the video](https://img.youtube.com/vi/am_yzdfyNOE/0.jpg)](https://www.youtube.com/watch?v=am_yzdfyNOE)
+[![Watch the video](https://i.imgur.com/4DAUKEE.gif)](https://www.youtube.com/watch?v=am_yzdfyNOE)
 
 ## List of Supported Providers
 

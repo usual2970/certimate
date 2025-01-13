@@ -74,7 +74,7 @@ make local.run
 
 ### 视频介绍
 
-[![观看视频](https://i0.hdslb.com/bfs/archive/abb1189d49395ba88fbd79fe610e3d5b1cb95271.jpg)](https://www.bilibili.com/video/BV1xockeZEm2)
+[![观看视频](https://i.imgur.com/4DAUKEE.gif)](https://www.bilibili.com/video/BV1xockeZEm2)
 
 ## 三、支持的服务商列表
 
