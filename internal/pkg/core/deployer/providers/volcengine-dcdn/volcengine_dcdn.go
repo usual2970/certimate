@@ -102,7 +102,7 @@ func (d *VolcEngineDCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*veDcdn.DCDN, error) {
 	if region == "" {
-		region = "cn-beijing" // 证书中心默认区域：北京
+		region = "cn-beijing" // DCDN 服务默认区域：北京
 	}
 
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)

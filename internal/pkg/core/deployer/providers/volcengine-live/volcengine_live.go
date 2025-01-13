@@ -8,12 +8,12 @@ import (
 
 	xerrors "github.com/pkg/errors"
 	veLive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
+	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 )
 
 type VolcEngineLiveDeployerConfig struct {
@@ -128,7 +128,7 @@ func (d *VolcEngineLiveDeployer) Deploy(ctx context.Context, certPem string, pri
 			bindCertReq := &veLive.BindCertBody{
 				ChainID: upres.CertId,
 				Domain:  domain,
-				HTTPS:   cast.BoolPtr(true),
+				HTTPS:   ve.Bool(true),
 			}
 			bindCertResp, err := d.sdkClient.BindCert(ctx, bindCertReq)
 			if err != nil {

@@ -14,8 +14,8 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerScm "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
-	hcCdnSdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk/cdn"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
+	hwsdkCdn "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk/cdn"
 )
 
 type HuaweiCloudCDNDeployerConfig struct {
@@ -32,7 +32,7 @@ type HuaweiCloudCDNDeployerConfig struct {
 type HuaweiCloudCDNDeployer struct {
 	config      *HuaweiCloudCDNDeployerConfig
 	logger      logger.Logger
-	sdkClient   *hcCdnSdk.Client
+	sdkClient   *hwsdkCdn.Client
 	sslUploader uploader.Uploader
 }
 
@@ -100,15 +100,15 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 	// 更新加速域名配置
 	// REF: https://support.huaweicloud.com/api-cdn/UpdateDomainMultiCertificates.html
 	// REF: https://support.huaweicloud.com/usermanual-cdn/cdn_01_0306.html
-	updateDomainMultiCertificatesReqBodyContent := &hcCdnSdk.UpdateDomainMultiCertificatesExRequestBodyContent{}
+	updateDomainMultiCertificatesReqBodyContent := &hwsdkCdn.UpdateDomainMultiCertificatesExRequestBodyContent{}
 	updateDomainMultiCertificatesReqBodyContent.DomainName = d.config.Domain
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
-	updateDomainMultiCertificatesReqBodyContent.CertificateType = cast.Int32Ptr(2)
-	updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = cast.StringPtr(upres.CertId)
-	updateDomainMultiCertificatesReqBodyContent.CertName = cast.StringPtr(upres.CertName)
+	updateDomainMultiCertificatesReqBodyContent.CertificateType = hwsdk.Int32Ptr(2)
+	updateDomainMultiCertificatesReqBodyContent.SCMCertificateId = hwsdk.StringPtr(upres.CertId)
+	updateDomainMultiCertificatesReqBodyContent.CertName = hwsdk.StringPtr(upres.CertName)
 	updateDomainMultiCertificatesReqBodyContent = updateDomainMultiCertificatesReqBodyContent.MergeConfig(showDomainFullConfigResp.Configs)
-	updateDomainMultiCertificatesReq := &hcCdnSdk.UpdateDomainMultiCertificatesExRequest{
-		Body: &hcCdnSdk.UpdateDomainMultiCertificatesExRequestBody{
+	updateDomainMultiCertificatesReq := &hwsdkCdn.UpdateDomainMultiCertificatesExRequest{
+		Body: &hwsdkCdn.UpdateDomainMultiCertificatesExRequestBody{
 			Https: updateDomainMultiCertificatesReqBodyContent,
 		},
 	}
@@ -122,7 +122,7 @@ func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcCdnSdk.Client, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hwsdkCdn.Client, error) {
 	if region == "" {
 		region = "cn-north-1" // CDN 服务默认区域：华北一北京
 	}
@@ -148,6 +148,6 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcCdnSdk.Cli
 		return nil, err
 	}
 
-	client := hcCdnSdk.NewClient(hcClient)
+	client := hwsdkCdn.NewClient(hcClient)
 	return client, nil
 }

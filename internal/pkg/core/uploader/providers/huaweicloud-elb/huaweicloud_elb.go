@@ -17,8 +17,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
 type HuaweiCloudELBUploaderConfig struct {
@@ -66,12 +66,11 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 
 	// 遍历查询已有证书，避免重复上传
 	// REF: https://support.huaweicloud.com/api-elb/ListCertificates.html
-	listCertificatesPage := 1
 	listCertificatesLimit := int32(2000)
 	var listCertificatesMarker *string = nil
 	for {
 		listCertificatesReq := &hcElbModel.ListCertificatesRequest{
-			Limit:  cast.Int32Ptr(listCertificatesLimit),
+			Limit:  hwsdk.Int32Ptr(listCertificatesLimit),
 			Marker: listCertificatesMarker,
 			Type:   &[]string{"server"},
 		}
@@ -108,10 +107,6 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 			break
 		} else {
 			listCertificatesMarker = listCertificatesResp.PageInfo.NextMarker
-			listCertificatesPage++
-			if listCertificatesPage >= 9 { // 避免死循环
-				break
-			}
 		}
 	}
 
@@ -131,10 +126,10 @@ func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, pri
 	createCertificateReq := &hcElbModel.CreateCertificateRequest{
 		Body: &hcElbModel.CreateCertificateRequestBody{
 			Certificate: &hcElbModel.CreateCertificateOption{
-				ProjectId:   cast.StringPtr(projectId),
-				Name:        cast.StringPtr(certName),
-				Certificate: cast.StringPtr(certPem),
-				PrivateKey:  cast.StringPtr(privkeyPem),
+				ProjectId:   hwsdk.StringPtr(projectId),
+				Name:        hwsdk.StringPtr(certName),
+				Certificate: hwsdk.StringPtr(certPem),
+				PrivateKey:  hwsdk.StringPtr(privkeyPem),
 			},
 		},
 	}

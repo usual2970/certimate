@@ -13,8 +13,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
 type HuaweiCloudSCMUploaderConfig struct {
@@ -63,15 +63,14 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 	// 遍历查询已有证书，避免重复上传
 	// REF: https://support.huaweicloud.com/api-ccm/ListCertificates.html
 	// REF: https://support.huaweicloud.com/api-ccm/ExportCertificate_0.html
-	listCertificatesPage := 1
 	listCertificatesLimit := int32(50)
 	listCertificatesOffset := int32(0)
 	for {
 		listCertificatesReq := &hcScmModel.ListCertificatesRequest{
-			Limit:   cast.Int32Ptr(listCertificatesLimit),
-			Offset:  cast.Int32Ptr(listCertificatesOffset),
-			SortDir: cast.StringPtr("DESC"),
-			SortKey: cast.StringPtr("certExpiredTime"),
+			Limit:   hwsdk.Int32Ptr(listCertificatesLimit),
+			Offset:  hwsdk.Int32Ptr(listCertificatesOffset),
+			SortDir: hwsdk.StringPtr("DESC"),
+			SortKey: hwsdk.StringPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		if err != nil {
@@ -117,10 +116,6 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 			break
 		} else {
 			listCertificatesOffset += listCertificatesLimit
-			listCertificatesPage += 1
-			if listCertificatesPage > 99 { // 避免死循环
-				break
-			}
 		}
 	}
 
