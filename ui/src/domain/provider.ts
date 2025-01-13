@@ -7,6 +7,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: "acmehttpreq",
   ALIYUN: "aliyun",
   AWS: "aws",
+  AZURE: "azure",
   BAIDUCLOUD: "baiducloud",
   BYTEPLUS: "byteplus",
   CLOUDFLARE: "cloudflare",
@@ -61,6 +62,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", ACCESS_USAGES.ALL],
     [ACCESS_PROVIDERS.BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", ACCESS_USAGES.DEPLOY],
     [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.AZURE, "common.provider.azure", "/imgs/providers/azure.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", ACCESS_USAGES.APPLY],
@@ -86,15 +88,21 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
  */
 export const APPLY_DNS_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
+  ALIYUN: `${ACCESS_PROVIDERS.ALIYUN}`, // 兼容旧值，等同于 `ALIYUN_DNS`
   ALIYUN_DNS: `${ACCESS_PROVIDERS.ALIYUN}-dns`,
+  AWS: `${ACCESS_PROVIDERS.AWS}`, // 兼容旧值，等同于 `AWS_ROUTE53`
   AWS_ROUTE53: `${ACCESS_PROVIDERS.AWS}-route53`,
+  AZURE_DNS: `${ACCESS_PROVIDERS.AZURE}-dns`,
   CLOUDFLARE: `${ACCESS_PROVIDERS.CLOUDFLARE}`,
   GODADDY: `${ACCESS_PROVIDERS.GODADDY}`,
+  HUAWEICLOUD: `${ACCESS_PROVIDERS.HUAWEICLOUD}`, // 兼容旧值，等同于 `HUAWEICLOUD_DNS`
   HUAWEICLOUD_DNS: `${ACCESS_PROVIDERS.HUAWEICLOUD}-dns`,
   NAMEDOTCOM: `${ACCESS_PROVIDERS.NAMEDOTCOM}`,
   NAMESILO: `${ACCESS_PROVIDERS.NAMESILO}`,
   POWERDNS: `${ACCESS_PROVIDERS.POWERDNS}`,
+  TENCENTCLOUD: `${ACCESS_PROVIDERS.TENCENTCLOUD}`, // 兼容旧值，等同于 `TENCENTCLOUD_DNS`
   TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
+  VOLCENGINE: `${ACCESS_PROVIDERS.VOLCENGINE}`, // 兼容旧值，等同于 `VOLCENGINE_DNS`
   VOLCENGINE_DNS: `${ACCESS_PROVIDERS.VOLCENGINE}-dns`,
 } as const);
 
@@ -118,6 +126,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS, "common.provider.huaweicloud.dns"],
     [APPLY_DNS_PROVIDERS.VOLCENGINE_DNS, "common.provider.volcengine.dns"],
     [APPLY_DNS_PROVIDERS.AWS_ROUTE53, "common.provider.aws.route53"],
+    [APPLY_DNS_PROVIDERS.AZURE_DNS, "common.provider.azure.dns"],
     [APPLY_DNS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare"],
     [APPLY_DNS_PROVIDERS.GODADDY, "common.provider.godaddy"],
     [APPLY_DNS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom"],
@@ -163,7 +172,10 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
   VOLCENGINE_CDN: `${ACCESS_PROVIDERS.VOLCENGINE}-cdn`,
+  VOLCENGINE_CLB: `${ACCESS_PROVIDERS.VOLCENGINE}-clb`,
+  VOLCENGINE_DCDN: `${ACCESS_PROVIDERS.VOLCENGINE}-dcdn`,
   VOLCENGINE_LIVE: `${ACCESS_PROVIDERS.VOLCENGINE}-live`,
+  VOLCENGINE_TOS: `${ACCESS_PROVIDERS.VOLCENGINE}-tos`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
 } as const);
 
@@ -192,16 +204,19 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.ALIYUN_CLB, "common.provider.aliyun.clb"],
     [DEPLOY_PROVIDERS.ALIYUN_ALB, "common.provider.aliyun.alb"],
     [DEPLOY_PROVIDERS.ALIYUN_NLB, "common.provider.aliyun.nlb"],
+    [DEPLOY_PROVIDERS.TENCENTCLOUD_COS, "common.provider.tencentcloud.cos"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CDN, "common.provider.tencentcloud.cdn"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_ECDN, "common.provider.tencentcloud.ecdn"],
-    [DEPLOY_PROVIDERS.TENCENTCLOUD_CLB, "common.provider.tencentcloud.clb"],
-    [DEPLOY_PROVIDERS.TENCENTCLOUD_COS, "common.provider.tencentcloud.cos"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_EO, "common.provider.tencentcloud.eo"],
+    [DEPLOY_PROVIDERS.TENCENTCLOUD_CLB, "common.provider.tencentcloud.clb"],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_CDN, "common.provider.huaweicloud.cdn"],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_ELB, "common.provider.huaweicloud.elb"],
     [DEPLOY_PROVIDERS.BAIDUCLOUD_CDN, "common.provider.baiducloud.cdn"],
+    [DEPLOY_PROVIDERS.VOLCENGINE_TOS, "common.provider.volcengine.tos"],
     [DEPLOY_PROVIDERS.VOLCENGINE_CDN, "common.provider.volcengine.cdn"],
+    [DEPLOY_PROVIDERS.VOLCENGINE_DCDN, "common.provider.volcengine.dcdn"],
     [DEPLOY_PROVIDERS.VOLCENGINE_LIVE, "common.provider.volcengine.live"],
+    [DEPLOY_PROVIDERS.VOLCENGINE_CLB, "common.provider.volcengine.clb"],
     [DEPLOY_PROVIDERS.QINIU_CDN, "common.provider.qiniu.cdn"],
     [DEPLOY_PROVIDERS.DOGECLOUD_CDN, "common.provider.dogecloud.cdn"],
     [DEPLOY_PROVIDERS.BYTEPLUS_CDN, "common.provider.byteplus.cdn"],

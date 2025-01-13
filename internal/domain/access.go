@@ -40,6 +40,13 @@ type AccessConfigForAWS struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
+type AccessConfigForAzure struct {
+	TenantId     string `json:"tenantId"`
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
+	CloudName    string `json:"cloudName,omitempty"`
+}
+
 type AccessConfigForBaiduCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`

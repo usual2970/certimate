@@ -1,4 +1,4 @@
-﻿package volcenginelive_test
+﻿package volcengineclb_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 )
 
 var (
@@ -16,28 +16,31 @@ var (
 	fInputKeyPath    string
 	fAccessKeyId     string
 	fAccessKeySecret string
-	fDomain          string
+	fRegion          string
+	fListenerId      string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINELIVE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINECLB_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
-	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
+	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
+	flag.StringVar(&fListenerId, argsPrefix+"LISTENERID", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./volcengine_live_test.go -args \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_DOMAIN="example.com"
+	go test -v ./volcengine_clb_test.go -args \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_REGION="cn-beijing" \
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_LISTENERID="cn-beijing"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -49,13 +52,16 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
-			fmt.Sprintf("DOMAIN: %v", fDomain),
+			fmt.Sprintf("REGION: %v", fRegion),
+			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.VolcEngineLiveDeployerConfig{
+		deployer, err := provider.New(&provider.VolcEngineCLBDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
-			Domain:          fDomain,
+			Region:          fRegion,
+			ResourceType:    provider.DEPLOY_RESOURCE_LISTENER,
+			ListenerId:      fListenerId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

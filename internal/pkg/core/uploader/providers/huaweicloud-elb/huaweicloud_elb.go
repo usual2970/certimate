@@ -48,7 +48,7 @@ func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) 
 		config.Region,
 	)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client: %w")
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &HuaweiCloudELBUploader{

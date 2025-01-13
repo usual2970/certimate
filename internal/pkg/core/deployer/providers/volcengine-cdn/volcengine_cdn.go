@@ -16,10 +16,10 @@ import (
 )
 
 type VolcEngineCDNDeployerConfig struct {
-	// 火山引擎 AccessKey。
-	AccessKey string `json:"accessKey"`
-	// 火山引擎 SecretKey。
-	SecretKey string `json:"secretKey"`
+	// 火山引擎 AccessKeyId。
+	AccessKeyId string `json:"accessKeyId"`
+	// 火山引擎 AccessKeySecret。
+	AccessKeySecret string `json:"accessKeySecret"`
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
@@ -47,12 +47,12 @@ func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*
 	}
 
 	client := veCdn.NewInstance()
-	client.Client.SetAccessKey(config.AccessKey)
-	client.Client.SetSecretKey(config.SecretKey)
+	client.Client.SetAccessKey(config.AccessKeyId)
+	client.Client.SetSecretKey(config.AccessKeySecret)
 
 	uploader, err := providerCdn.New(&providerCdn.VolcEngineCDNUploaderConfig{
-		AccessKeyId:     config.AccessKey,
-		AccessKeySecret: config.SecretKey,
+		AccessKeyId:     config.AccessKeyId,
+		AccessKeySecret: config.AccessKeySecret,
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")

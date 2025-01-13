@@ -17,10 +17,10 @@ import (
 )
 
 type VolcEngineLiveDeployerConfig struct {
-	// 火山引擎 AccessKey。
-	AccessKey string `json:"accessKey"`
-	// 火山引擎 SecretKey。
-	SecretKey string `json:"secretKey"`
+	// 火山引擎 AccessKeyId。
+	AccessKeyId string `json:"accessKeyId"`
+	// 火山引擎 AccessKeySecret。
+	AccessKeySecret string `json:"accessKeySecret"`
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
@@ -48,12 +48,12 @@ func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (
 	}
 
 	client := veLive.NewInstance()
-	client.SetAccessKey(config.AccessKey)
-	client.SetSecretKey(config.SecretKey)
+	client.SetAccessKey(config.AccessKeyId)
+	client.SetSecretKey(config.AccessKeySecret)
 
 	uploader, err := providerLive.New(&providerLive.VolcEngineLiveUploaderConfig{
-		AccessKeyId:     config.AccessKey,
-		AccessKeySecret: config.SecretKey,
+		AccessKeyId:     config.AccessKeyId,
+		AccessKeySecret: config.AccessKeySecret,
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")

@@ -12,6 +12,7 @@ import { useAntdForm, useAntdFormName } from "@/hooks";
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
 import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
+import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
@@ -87,6 +88,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormAliyunConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.AWS:
         return <AccessFormAWSConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.AZURE:
+        return <AccessFormAzureConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BAIDUCLOUD:
         return <AccessFormBaiduCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BYTEPLUS:

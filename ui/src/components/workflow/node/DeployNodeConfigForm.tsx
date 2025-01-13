@@ -36,7 +36,10 @@ import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
+import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
+import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineLiveConfig from "./DeployNodeConfigFormVolcEngineLiveConfig.tsx";
+import DeployNodeConfigFormVolcEngineTOSConfig from "./DeployNodeConfigFormVolcEngineTOSConfig.tsx";
 import DeployNodeConfigFormWebhookConfig from "./DeployNodeConfigFormWebhookConfig.tsx";
 
 type DeployNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForDeploy>;
@@ -149,8 +152,14 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_CLB:
+          return <DeployNodeConfigFormVolcEngineCLBConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_DCDN:
+          return <DeployNodeConfigFormVolcEngineDCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_LIVE:
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_TOS:
+          return <DeployNodeConfigFormVolcEngineTOSConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.WEBHOOK:
           return <DeployNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }

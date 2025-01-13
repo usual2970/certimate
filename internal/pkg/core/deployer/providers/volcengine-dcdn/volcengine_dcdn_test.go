@@ -1,4 +1,4 @@
-﻿package volcenginelive_test
+﻿package volcenginedcdn_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINELIVE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINEDCDN_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -32,12 +32,12 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./volcengine_live_test.go -args \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_VOLCENGINELIVE_DOMAIN="example.com"
+	go test -v ./volcengine_dcdn_test.go -args \
+	--CERTIMATE_DEPLOYER_VOLCENGINEDCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEDCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEDCDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEDCDN_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEDCDN_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.VolcEngineLiveDeployerConfig{
+		deployer, err := provider.New(&provider.VolcEngineDCDNDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Domain:          fDomain,

@@ -12,6 +12,7 @@ const (
 	AccessProviderTypeACMEHttpReq  = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAliyun       = AccessProviderType("aliyun")
 	AccessProviderTypeAWS          = AccessProviderType("aws")
+	AccessProviderTypeAzure        = AccessProviderType("azure")
 	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
@@ -45,6 +46,7 @@ const (
 	ApplyDNSProviderTypeAliyunDNS       = ApplyDNSProviderType("aliyun-dns")
 	ApplyDNSProviderTypeAWS             = ApplyDNSProviderType("aws") // 兼容旧值，等同于 [ApplyDNSProviderTypeAWSRoute53]
 	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
+	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
@@ -89,6 +91,9 @@ const (
 	DeployProviderTypeTencentCloudECDN = DeployProviderType("tencentcloud-ecdn")
 	DeployProviderTypeTencentCloudEO   = DeployProviderType("tencentcloud-eo")
 	DeployProviderTypeVolcEngineCDN    = DeployProviderType("volcengine-cdn")
+	DeployProviderTypeVolcEngineCLB    = DeployProviderType("volcengine-clb")
+	DeployProviderTypeVolcEngineDCDN   = DeployProviderType("volcengine-dcdn")
 	DeployProviderTypeVolcEngineLive   = DeployProviderType("volcengine-live")
+	DeployProviderTypeVolcEngineTOS    = DeployProviderType("volcengine-tos")
 	DeployProviderTypeWebhook          = DeployProviderType("webhook")
 )

@@ -1,4 +1,4 @@
-﻿package huaweicloudcdnsdk
+﻿package cdn
 
 import (
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core"

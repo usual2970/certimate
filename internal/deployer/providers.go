@@ -26,7 +26,10 @@ import (
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
+	providerVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
+	providerVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
 	providerVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
+	providerVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
@@ -329,7 +332,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineLive:
+	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -339,17 +342,45 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			switch options.Provider {
 			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := providerVolcEngineCDN.NewWithLogger(&providerVolcEngineCDN.VolcEngineCDNDeployerConfig{
-					AccessKey: access.AccessKeyId,
-					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeVolcEngineCLB:
+				deployer, err := providerVolcEngineCLB.NewWithLogger(&providerVolcEngineCLB.VolcEngineCLBDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    providerVolcEngineCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeVolcEngineDCDN:
+				deployer, err := providerVolcEngineDCDN.NewWithLogger(&providerVolcEngineDCDN.VolcEngineDCDNDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
 			case domain.DeployProviderTypeVolcEngineLive:
 				deployer, err := providerVolcEngineLive.NewWithLogger(&providerVolcEngineLive.VolcEngineLiveDeployerConfig{
-					AccessKey: access.AccessKeyId,
-					SecretKey: access.SecretAccessKey,
-					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeVolcEngineTOS:
+				deployer, err := providerVolcEngineTOS.NewWithLogger(&providerVolcEngineTOS.VolcEngineTOSDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					Bucket:          maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
