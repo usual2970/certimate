@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
+	uploaderLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
 )
 
 type VolcEngineLiveDeployerConfig struct {
@@ -51,7 +51,7 @@ func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (
 	client.SetAccessKey(config.AccessKeyId)
 	client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := providerLive.New(&providerLive.VolcEngineLiveUploaderConfig{
+	uploader, err := uploaderLive.New(&uploaderLive.VolcEngineLiveUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})
