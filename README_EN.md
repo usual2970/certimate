@@ -71,8 +71,9 @@ username：admin@certimate.fun
 password：1234567890
 ```
 
-[![Watch the video](https://img.youtube.com/vi/am_yzdfyNOE/0.jpg)](https://www.youtube.com/watch?v=am_yzdfyNOE)
+### Watch the video
 
+[![Watch the video](https://img.youtube.com/vi/am_yzdfyNOE/0.jpg)](https://www.youtube.com/watch?v=am_yzdfyNOE)
 
 ## List of Supported Providers
 
@@ -96,16 +97,6 @@ password：1234567890
 |      SSH      |              |     √      | Supports deployment to SSH servers                                                                          |
 |    Webhook    |              |     √      | Supports callback to Webhook                                                                                |
 |  Kubernetes   |              |     √      | Supports deployment to Kubernetes Secret                                                                    |
-
-## Screenshots
-
-<div align="center">
-<img src="https://i.imgur.com/SYjjbql.jpeg" title="Login page" width="95%"/>
-<img src="https://i.imgur.com/WMVbBId.jpeg" title="Dashboard page" width="47%"/>
-<img src="https://i.imgur.com/8wit3ZA.jpeg" title="Domains page" width="47%"/>
-<img src="https://i.imgur.com/EWtOoJ0.jpeg" title="Accesses page" width="47%"/>
-<img src="https://i.imgur.com/aaPtSW7.jpeg" title="History page" width="47%"/>
-</div>
 
 ## Concepts
 
@@ -195,4 +186,3 @@ User Responsibility: By using this software, you agree to take full responsibili
 ## Star History
 
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
-

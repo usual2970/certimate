@@ -72,6 +72,8 @@ make local.run
 密码：1234567890
 ```
 
+### 视频介绍
+
 [![观看视频](https://i0.hdslb.com/bfs/archive/abb1189d49395ba88fbd79fe610e3d5b1cb95271.jpg)](https://www.bilibili.com/video/BV1xockeZEm2)
 
 ## 三、支持的服务商列表
@@ -97,17 +99,7 @@ make local.run
 |  Webhook   |              |      √       | 可部署时回调到 Webhook                                            |
 | Kubernetes |              |      √       | 可部署到 Kubernetes Secret                                        |
 
-## 四、系统截图
-
-<div align="center">
-<img src="https://i.imgur.com/SYjjbql.jpeg" title="Login page" width="95%"/>
-<img src="https://i.imgur.com/WMVbBId.jpeg" title="Dashboard page" width="47%"/>
-<img src="https://i.imgur.com/8wit3ZA.jpeg" title="Domains page" width="47%"/>
-<img src="https://i.imgur.com/EWtOoJ0.jpeg" title="Accesses page" width="47%"/>
-<img src="https://i.imgur.com/aaPtSW7.jpeg" title="History page" width="47%"/>
-</div>
-
-## 五、概念
+## 四、概念
 
 Certimate 的工作流程如下：
 
@@ -152,7 +144,7 @@ Certimate 申请证书后，会自动将证书部署到你指定的目标上，�
 
 注意，此授权信息需具有访问部署目标服务的相关管理权限，具体的权限清单请参阅各服务商自己的技术文档。
 
-## 六、常见问题
+## 五、常见问题
 
 Q: 提供 SaaS 服务吗？
 
@@ -166,7 +158,7 @@ Q: 自动续期证书？
 
 > A: 已经申请的证书会在**过期前 10 天**自动续期。每天会检查一次证书是否快要过期，快要过期时会自动重新申请证书并部署到目标服务上。
 
-## 七、贡献
+## 六、贡献
 
 Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.md)。你可以使用它做任何你想做的事，甚至把它当作一个付费服务提供给用户。
 
@@ -177,7 +169,7 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 支持更多服务商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家提交 PR。
 
-## 八、免责声明
+## 七、免责声明
 
 本软件依据 MIT 许可证（MIT License）发布，免费提供，旨在“按现状”供用户使用。作者及贡献者不对使用本软件所产生的任何直接或间接后果承担责任，包括但不限于性能下降、数据丢失、服务中断、或任何其他类型的损害。
 
@@ -185,13 +177,13 @@ Certimate 是一个免费且开源的项目，采用 [MIT 开源协议](LICENSE.
 
 用户责任：使用本软件即表示您理解并同意承担由此产生的一切风险及责任。
 
-## 九、加入社区
+## 八、加入社区
 
 - [Telegram-a new era of messaging](https://t.me/+ZXphsppxUg41YmVl)
 - 微信群聊（超 200 人需邀请入群，可先加作者好友）
 
 <img src="https://i.imgur.com/8xwsLTA.png" width="400"/>
 
-## 十、Star 趋势图
+## 九、Star 趋势图
 
 [![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
