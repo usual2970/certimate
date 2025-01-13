@@ -5,6 +5,7 @@ go 1.23.0
 toolchain go1.23.2
 
 require (
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0
 	github.com/alibabacloud-go/alb-20200616/v2 v2.2.6
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.4
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2
@@ -16,6 +17,7 @@ require (
 	github.com/baidubce/bce-sdk-go v0.9.209
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.35
 	github.com/go-acme/lego/v4 v4.21.0
+	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.128
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
@@ -30,7 +32,9 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1065
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1065
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1065
+	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.8
 	github.com/volcengine/volc-sdk-golang v1.0.189
+	github.com/volcengine/volcengine-go-sdk v1.0.177
 	golang.org/x/crypto v0.32.0
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67
 	k8s.io/api v0.32.0
@@ -40,7 +44,6 @@ require (
 )
 
 require (
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.10.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/dns/armdns v1.2.0 // indirect
@@ -62,7 +65,6 @@ require (
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
@@ -77,8 +79,6 @@ require (
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.8 // indirect
-	github.com/volcengine/volcengine-go-sdk v1.0.177 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.12.0 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
