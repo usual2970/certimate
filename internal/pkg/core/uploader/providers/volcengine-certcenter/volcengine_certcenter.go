@@ -9,7 +9,7 @@ import (
 	veSession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	veCertCenter "github.com/usual2970/certimate/internal/pkg/vendors/volcengine-sdk/certcenter"
+	vesdkCc "github.com/usual2970/certimate/internal/pkg/vendors/volcengine-sdk/certcenter"
 )
 
 type VolcEngineCertCenterUploaderConfig struct {
@@ -23,7 +23,7 @@ type VolcEngineCertCenterUploaderConfig struct {
 
 type VolcEngineCertCenterUploader struct {
 	config    *VolcEngineCertCenterUploaderConfig
-	sdkClient *veCertCenter.CertCenter
+	sdkClient *vesdkCc.CertCenter
 }
 
 var _ uploader.Uploader = (*VolcEngineCertCenterUploader)(nil)
@@ -47,8 +47,8 @@ func New(config *VolcEngineCertCenterUploaderConfig) (*VolcEngineCertCenterUploa
 func (u *VolcEngineCertCenterUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 上传证书
 	// REF: https://www.volcengine.com/docs/6638/1365580
-	importCertificateReq := &veCertCenter.ImportCertificateInput{
-		CertificateInfo: &veCertCenter.ImportCertificateInputCertificateInfo{
+	importCertificateReq := &vesdkCc.ImportCertificateInput{
+		CertificateInfo: &vesdkCc.ImportCertificateInputCertificateInfo{
 			CertificateChain: ve.String(certPem),
 			PrivateKey:       ve.String(privkeyPem),
 		},
@@ -71,7 +71,7 @@ func (u *VolcEngineCertCenterUploader) Upload(ctx context.Context, certPem strin
 	}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veCertCenter.CertCenter, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*vesdkCc.CertCenter, error) {
 	if region == "" {
 		region = "cn-beijing" // 证书中心默认区域：北京
 	}
@@ -83,6 +83,6 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*veCertCenter
 		return nil, err
 	}
 
-	client := veCertCenter.New(session)
+	client := vesdkCc.New(session)
 	return client, nil
 }

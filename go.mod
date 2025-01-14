@@ -80,7 +80,9 @@ require (
 	github.com/namedotcom/go v0.0.0-20180403034216-08470befbe04 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	github.com/ucloud/ucloud-sdk-go v0.22.31 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.12.0 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
