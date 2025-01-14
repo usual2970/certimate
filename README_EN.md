@@ -124,6 +124,7 @@ The following hosting providers are supported:
 | [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN                                      |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                       |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                         |
+| [UCloud](https://www.ucloud.cn/)                | Supports deployment to UCloud UCDN                                          |
 
 </details>
 
