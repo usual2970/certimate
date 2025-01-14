@@ -40,7 +40,7 @@ const DeployProviderPicker = ({ className, style, placeholder, onSelect }: Deplo
           <Row gutter={[16, 16]}>
             {filteredProviders.map((provider, index) => {
               return (
-                <Col key={index} span={12}>
+                <Col key={index} xs={24} md={12} span={12}>
                   <Card
                     className="h-16 w-full overflow-hidden shadow-sm"
                     styles={{ body: { height: "100%", padding: "0.5rem 1rem" } }}

@@ -300,7 +300,7 @@ const WorkflowDetail = () => {
                   </Space>
                 </div>
               </div>
-              <div className="px-12 py-8">
+              <div className="px-12 py-8 max-md:px-4">
                 <WorkflowElements />
               </div>
             </div>
