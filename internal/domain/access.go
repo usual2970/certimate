@@ -25,9 +25,9 @@ func (a *Access) UnmarshalConfigToMap() (map[string]any, error) {
 
 type AccessConfigForACMEHttpReq struct {
 	Endpoint string `json:"endpoint"`
-	Mode     string `json:"mode"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Mode     string `json:"mode,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 type AccessConfigForAliyun struct {
@@ -79,7 +79,7 @@ type AccessConfigForHuaweiCloud struct {
 type AccessConfigForLocal struct{}
 
 type AccessConfigForKubernetes struct {
-	KubeConfig string `json:"kubeConfig"`
+	KubeConfig string `json:"kubeConfig,omitempty"`
 }
 
 type AccessConfigForNameDotCom struct {
@@ -105,9 +105,9 @@ type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`
 	Username      string `json:"username"`
-	Password      string `json:"password"`
-	Key           string `json:"key"`
-	KeyPassphrase string `json:"keyPassphrase"`
+	Password      string `json:"password,omitempty"`
+	Key           string `json:"key,omitempty"`
+	KeyPassphrase string `json:"keyPassphrase,omitempty"`
 }
 
 type AccessConfigForTencentCloud struct {
@@ -118,6 +118,7 @@ type AccessConfigForTencentCloud struct {
 type AccessConfigForUCloud struct {
 	PrivateKey string `json:"privateKey"`
 	PublicKey  string `json:"publicKey"`
+	ProjectId  string `json:"projectId,omitempty"`
 }
 
 type AccessConfigForVolcEngine struct {

@@ -80,6 +80,7 @@
   "common.provider.tencentcloud.eo": "Tencent Cloud - EdgeOne",
   "common.provider.ucloud": "UCloud",
   "common.provider.ucloud.ucdn": "UCloud - UCloud Content Delivery Network (UCDN)",
+  "common.provider.ucloud.us3": "UCloud - UCloud Object-based Storage (US3)",
   "common.provider.volcengine": "Volcengine",
   "common.provider.volcengine.cdn": "Volcengine - Content Delivery Network (CDN)",
   "common.provider.volcengine.clb": "Volcengine - Cloud Load Balancer (CLB)",

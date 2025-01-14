@@ -28,6 +28,7 @@ import (
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
+	providerUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	providerVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	providerVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
@@ -353,7 +354,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
-	case domain.DeployProviderTypeUCloudUCDN:
+	case domain.DeployProviderTypeUCloudUCDN, domain.DeployProviderTypeUCloudUS3:
 		{
 			access := domain.AccessConfigForUCloud{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -365,8 +366,19 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				deployer, err := providerUCloudUCDN.NewWithLogger(&providerUCloudUCDN.UCloudUCDNDeployerConfig{
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
-					ProjectId:  maps.GetValueAsString(options.ProviderDeployConfig, "projectId"),
+					ProjectId:  access.ProjectId,
 					DomainId:   maps.GetValueAsString(options.ProviderDeployConfig, "domainId"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeUCloudUS3:
+				deployer, err := providerUCloudUS3.NewWithLogger(&providerUCloudUS3.UCloudUS3DeployerConfig{
+					PrivateKey: access.PrivateKey,
+					PublicKey:  access.PublicKey,
+					ProjectId:  access.ProjectId,
+					Region:     maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					Bucket:     maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:     maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 

@@ -1,4 +1,4 @@
-﻿package uclouducdn_test
+﻿package ucloudus3_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 )
 
 var (
@@ -16,28 +16,34 @@ var (
 	fInputKeyPath  string
 	fPrivateKey    string
 	fPublicKey     string
-	fDomainId      string
+	fRegion        string
+	fBucket        string
+	fDomain        string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_UCLOUDUCDN_"
+	argsPrefix := "CERTIMATE_DEPLOYER_UCLOUDUS3_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fPrivateKey, argsPrefix+"PRIVATEKEY", "", "")
 	flag.StringVar(&fPublicKey, argsPrefix+"PUBLICKEY", "", "")
-	flag.StringVar(&fDomainId, argsPrefix+"DOMAINID", "", "")
+	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
+	flag.StringVar(&fBucket, argsPrefix+"BUCKET", "", "")
+	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./ucloud_ucdn_test.go -args \
-	--CERTIMATE_DEPLOYER_UCLOUDUCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_UCLOUDUCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_UCLOUDUCDN_PRIVATEKEY="your-private-key" \
-	--CERTIMATE_DEPLOYER_UCLOUDUCDN_PUBLICKEY="your-public-key" \
-	--CERTIMATE_DEPLOYER_UCLOUDUCDN_DOMAINID="your-domain-id"
+	go test -v ./ucloud_us3_test.go -args \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_PRIVATEKEY="your-private-key" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_PUBLICKEY="your-public-key" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_REGION="cn-bj2" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_BUCKET="your-us3-bucket" \
+	--CERTIMATE_DEPLOYER_UCLOUDUS3_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -49,13 +55,17 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("PRIVATEKEY: %v", fPrivateKey),
 			fmt.Sprintf("PUBLICKEY: %v", fPublicKey),
-			fmt.Sprintf("DOMAIN: %v", fDomainId),
+			fmt.Sprintf("REGION: %v", fRegion),
+			fmt.Sprintf("BUCKET: %v", fBucket),
+			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.UCloudUCDNDeployerConfig{
+		deployer, err := provider.New(&provider.UCloudUS3DeployerConfig{
 			PrivateKey: fPrivateKey,
 			PublicKey:  fPublicKey,
-			DomainId:   fDomainId,
+			Region:     fRegion,
+			Bucket:     fBucket,
+			Domain:     fDomain,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

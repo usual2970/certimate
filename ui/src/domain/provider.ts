@@ -176,6 +176,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
   UCLOUD_UCDN: `${ACCESS_PROVIDERS.UCLOUD}-ucdn`,
+  UCLOUD_US3: `${ACCESS_PROVIDERS.UCLOUD}-us3`,
   VOLCENGINE_CDN: `${ACCESS_PROVIDERS.VOLCENGINE}-cdn`,
   VOLCENGINE_CLB: `${ACCESS_PROVIDERS.VOLCENGINE}-clb`,
   VOLCENGINE_DCDN: `${ACCESS_PROVIDERS.VOLCENGINE}-dcdn`,
@@ -227,6 +228,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.QINIU_CDN, "common.provider.qiniu.cdn"],
     [DEPLOY_PROVIDERS.DOGECLOUD_CDN, "common.provider.dogecloud.cdn"],
     [DEPLOY_PROVIDERS.BYTEPLUS_CDN, "common.provider.byteplus.cdn"],
+    [DEPLOY_PROVIDERS.UCLOUD_US3, "common.provider.ucloud.us3"],
     [DEPLOY_PROVIDERS.UCLOUD_UCDN, "common.provider.ucloud.ucdn"],
   ].map(([type, name]) => [
     type,
