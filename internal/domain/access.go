@@ -103,7 +103,7 @@ type AccessConfigForQiniu struct {
 
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
-	Port          int    `json:"port"`
+	Port          int32  `json:"port"`
 	Username      string `json:"username"`
 	Password      string `json:"password"`
 	Key           string `json:"key"`

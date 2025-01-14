@@ -3,7 +3,7 @@
 import (
 	hcCdnModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2/model"
 
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
 type UpdateDomainMultiCertificatesExRequestBodyContent struct {
@@ -34,11 +34,11 @@ func (m *UpdateDomainMultiCertificatesExRequestBodyContent) MergeConfig(src *hcC
 	// 而且蛋疼的是查询接口返回的数据结构和更新接口传入的参数结构不一致，需要做很多转化。
 
 	if *src.OriginProtocol == "follow" {
-		m.AccessOriginWay = cast.Int32Ptr(1)
+		m.AccessOriginWay = hwsdk.Int32Ptr(1)
 	} else if *src.OriginProtocol == "http" {
-		m.AccessOriginWay = cast.Int32Ptr(2)
+		m.AccessOriginWay = hwsdk.Int32Ptr(2)
 	} else if *src.OriginProtocol == "https" {
-		m.AccessOriginWay = cast.Int32Ptr(3)
+		m.AccessOriginWay = hwsdk.Int32Ptr(3)
 	}
 
 	if src.ForceRedirect != nil {
@@ -54,7 +54,7 @@ func (m *UpdateDomainMultiCertificatesExRequestBodyContent) MergeConfig(src *hcC
 
 	if src.Https != nil {
 		if *src.Https.Http2Status == "on" {
-			m.Http2 = cast.Int32Ptr(1)
+			m.Http2 = hwsdk.Int32Ptr(1)
 		}
 	}
 

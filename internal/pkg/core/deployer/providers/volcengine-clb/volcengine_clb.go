@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerCertCenter "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
+	uploaderCertCenter "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
 
 type VolcEngineCLBDeployerConfig struct {
@@ -57,7 +57,7 @@ func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerCertCenter.New(&providerCertCenter.VolcEngineCertCenterUploaderConfig{
+	uploader, err := uploaderCertCenter.New(&uploaderCertCenter.VolcEngineCertCenterUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          config.Region,

@@ -8,12 +8,12 @@ import (
 
 	xerrors "github.com/pkg/errors"
 	veLive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
+	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
+	uploaderLive "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
 )
 
 type VolcEngineLiveDeployerConfig struct {
@@ -21,7 +21,7 @@ type VolcEngineLiveDeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 加速域名（支持泛域名）。
+	// 直播流域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
@@ -51,7 +51,7 @@ func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (
 	client.SetAccessKey(config.AccessKeyId)
 	client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := providerLive.New(&providerLive.VolcEngineLiveUploaderConfig{
+	uploader, err := uploaderLive.New(&uploaderLive.VolcEngineLiveUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})
@@ -128,7 +128,7 @@ func (d *VolcEngineLiveDeployer) Deploy(ctx context.Context, certPem string, pri
 			bindCertReq := &veLive.BindCertBody{
 				ChainID: upres.CertId,
 				Domain:  domain,
-				HTTPS:   cast.BoolPtr(true),
+				HTTPS:   ve.Bool(true),
 			}
 			bindCertResp, err := d.sdkClient.BindCert(ctx, bindCertReq)
 			if err != nil {

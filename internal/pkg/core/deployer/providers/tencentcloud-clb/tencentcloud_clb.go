@@ -138,10 +138,10 @@ func (d *TencentCloudCLBDeployer) deployToInstanceUseSsl(ctx context.Context, cl
 	deployCertificateInstanceReq.ResourceType = common.StringPtr("clb")
 	deployCertificateInstanceReq.Status = common.Int64Ptr(1)
 	if d.config.Domain == "" {
-		// 未开启 SNI，只需指定到监听器
+		// 未指定 SNI，只需部署到监听器
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s", d.config.LoadbalancerId, d.config.ListenerId)})
 	} else {
-		// 开启 SNI，需指定到域名（支持泛域名）
+		// 指定 SNI，需部署到域名（支持泛域名）
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", d.config.LoadbalancerId, d.config.ListenerId, d.config.Domain)})
 	}
 	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
@@ -159,10 +159,9 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 		return errors.New("config `loadbalancerId` is required")
 	}
 
-	listenerIds := make([]string, 0)
-
 	// 查询监听器列表
 	// REF: https://cloud.tencent.com/document/api/214/30686
+	listenerIds := make([]string, 0)
 	describeListenersReq := tcClb.NewDescribeListenersRequest()
 	describeListenersReq.LoadBalancerId = common.StringPtr(d.config.LoadbalancerId)
 	describeListenersResp, err := d.sdkClients.clb.DescribeListeners(describeListenersReq)
@@ -182,8 +181,10 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 
 	d.logger.Logt("已查询到负载均衡器下的监听器", listenerIds)
 
-	// 批量更新监听器证书
-	if len(listenerIds) > 0 {
+	// 遍历更新监听器证书
+	if len(listenerIds) == 0 {
+		return xerrors.New("listener not found")
+	} else {
 		var errs []error
 
 		for _, listenerId := range listenerIds {

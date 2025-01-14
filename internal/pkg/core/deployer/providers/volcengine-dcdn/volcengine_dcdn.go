@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerCertCenter "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
+	uploaderCertCenter "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
 
 type VolcEngineDCDNDeployerConfig struct {
@@ -54,7 +54,7 @@ func NewWithLogger(config *VolcEngineDCDNDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerCertCenter.New(&providerCertCenter.VolcEngineCertCenterUploaderConfig{
+	uploader, err := uploaderCertCenter.New(&uploaderCertCenter.VolcEngineCertCenterUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          config.Region,
@@ -102,7 +102,7 @@ func (d *VolcEngineDCDNDeployer) Deploy(ctx context.Context, certPem string, pri
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*veDcdn.DCDN, error) {
 	if region == "" {
-		region = "cn-beijing" // 证书中心默认区域：北京
+		region = "cn-beijing" // DCDN 服务默认区域：北京
 	}
 
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)

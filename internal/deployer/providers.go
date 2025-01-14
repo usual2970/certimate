@@ -9,6 +9,7 @@ import (
 	providerAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	providerAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
 	providerAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
+	providerAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
@@ -22,7 +23,8 @@ import (
 	providerSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	providerTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
 	providerTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
-	providerTencentCloudCOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	providerTencentCloudCOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	providerTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -43,7 +45,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -59,6 +61,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					ResourceType:    providerAliyunALB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -77,7 +80,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					ResourceType:    providerAliyunCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
-					ListenerPort:    maps.GetValueAsInt32(options.ProviderDeployConfig, "listenerPort"),
+					ListenerPort:    maps.GetValueOrDefaultAsInt32(options.ProviderDeployConfig, "listenerPort", 443),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -85,6 +89,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				deployer, err := providerAliyunDCDN.NewWithLogger(&providerAliyunDCDN.AliyunDCDNDeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunLive:
+				deployer, err := providerAliyunLive.NewWithLogger(&providerAliyunLive.AliyunLiveDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
@@ -251,10 +264,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			sshPort := access.Port
 			deployer, err := providerSSH.NewWithLogger(&providerSSH.SshDeployerConfig{
 				SshHost:          access.Host,
-				SshPort:          int32(sshPort),
+				SshPort:          access.Port,
 				SshUsername:      access.Username,
 				SshPassword:      access.Password,
 				SshKey:           access.Key,
@@ -272,7 +284,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -301,11 +313,19 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return deployer, logger, err
 
 			case domain.DeployProviderTypeTencentCloudCOS:
-				deployer, err := providerTencentCloudCOD.NewWithLogger(&providerTencentCloudCOD.TencentCloudCOSDeployerConfig{
+				deployer, err := providerTencentCloudCOS.NewWithLogger(&providerTencentCloudCOS.TencentCloudCOSDeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					Region:    maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Bucket:    maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeTencentCloudCSS:
+				deployer, err := providerTencentCloudCSS.NewWithLogger(&providerTencentCloudCSS.TencentCloudCSSDeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err

@@ -19,6 +19,7 @@ import DeployNodeConfigFormAliyunALBConfig from "./DeployNodeConfigFormAliyunALB
 import DeployNodeConfigFormAliyunCDNConfig from "./DeployNodeConfigFormAliyunCDNConfig";
 import DeployNodeConfigFormAliyunCLBConfig from "./DeployNodeConfigFormAliyunCLBConfig";
 import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDCDNConfig";
+import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
@@ -33,6 +34,7 @@ import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudCLBConfig from "./DeployNodeConfigFormTencentCloudCLBConfig.tsx";
 import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTencentCloudCOSConfig.tsx";
+import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTencentCloudCSSConfig.tsx";
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
@@ -118,6 +120,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_DCDN:
           return <DeployNodeConfigFormAliyunDCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_LIVE:
+          return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_NLB:
           return <DeployNodeConfigFormAliyunNLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_OSS:
@@ -146,6 +150,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudCLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_COS:
           return <DeployNodeConfigFormTencentCloudCOSConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.TENCENTCLOUD_CSS:
+          return <DeployNodeConfigFormTencentCloudCSSConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_ECDN:
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
@@ -239,7 +245,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeployProviderSelect
                 allowClear
-                disabled
+                disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
                 showSearch
                 onSelect={handleProviderSelect}

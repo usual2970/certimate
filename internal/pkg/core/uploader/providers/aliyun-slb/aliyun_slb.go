@@ -120,10 +120,6 @@ func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyP
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
-	if region == "" {
-		region = "cn-hangzhou" // SLB 服务默认区域：华东一杭州
-	}
-
 	// 接入点一览 https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-endpoint
 	var endpoint string
 	switch region {

@@ -196,7 +196,7 @@ const SharedNodeBlock = ({ children, node, disabled, onClick }: SharedNodeBlockP
           </div>
 
           <div className="flex cursor-pointer flex-col justify-center px-4 py-2" onClick={handleNodeClick}>
-            <div className="text-sm">{children}</div>
+            <div className="overflow-hidden text-sm">{children}</div>
           </div>
         </Card>
       </Popover>
