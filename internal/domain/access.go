@@ -115,6 +115,11 @@ type AccessConfigForTencentCloud struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForUCloud struct {
+	PrivateKey string `json:"privateKey"`
+	PublicKey  string `json:"publicKey"`
+}
+
 type AccessConfigForVolcEngine struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`

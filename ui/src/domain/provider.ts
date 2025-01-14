@@ -22,6 +22,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   QINIU: "qiniu",
   SSH: "ssh",
   TENCENTCLOUD: "tencentcloud",
+  UCLOUD: "ucloud",
   VOLCENGINE: "volcengine",
   WEBHOOK: "webhook",
 } as const);
@@ -61,6 +62,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.DOGECLOUD, "common.provider.dogecloud", "/imgs/providers/dogecloud.svg", ACCESS_USAGES.DEPLOY],
     [ACCESS_PROVIDERS.VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", ACCESS_USAGES.ALL],
     [ACCESS_PROVIDERS.BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.UCLOUD, "common.provider.ucloud", "/imgs/providers/ucloud.svg", ACCESS_USAGES.DEPLOY],
     [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.AZURE, "common.provider.azure", "/imgs/providers/azure.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
@@ -173,6 +175,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_CSS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-css`,
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
+  UCLOUD_UCDN: `${ACCESS_PROVIDERS.UCLOUD}-ucdn`,
   VOLCENGINE_CDN: `${ACCESS_PROVIDERS.VOLCENGINE}-cdn`,
   VOLCENGINE_CLB: `${ACCESS_PROVIDERS.VOLCENGINE}-clb`,
   VOLCENGINE_DCDN: `${ACCESS_PROVIDERS.VOLCENGINE}-dcdn`,
@@ -224,6 +227,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.QINIU_CDN, "common.provider.qiniu.cdn"],
     [DEPLOY_PROVIDERS.DOGECLOUD_CDN, "common.provider.dogecloud.cdn"],
     [DEPLOY_PROVIDERS.BYTEPLUS_CDN, "common.provider.byteplus.cdn"],
+    [DEPLOY_PROVIDERS.UCLOUD_UCDN, "common.provider.ucloud.ucdn"],
   ].map(([type, name]) => [
     type,
     {

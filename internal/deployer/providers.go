@@ -27,6 +27,7 @@ import (
 	providerTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	providerUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	providerVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	providerVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
@@ -344,6 +345,28 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeUCloudUCDN:
+		{
+			access := domain.AccessConfigForUCloud{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeUCloudUCDN:
+				deployer, err := providerUCloudUCDN.NewWithLogger(&providerUCloudUCDN.UCloudUCDNDeployerConfig{
+					PrivateKey: access.PrivateKey,
+					PublicKey:  access.PublicKey,
+					ProjectId:  maps.GetValueAsString(options.ProviderDeployConfig, "projectId"),
+					DomainId:   maps.GetValueAsString(options.ProviderDeployConfig, "domainId"),
 				}, logger)
 				return deployer, logger, err
 

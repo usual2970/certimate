@@ -26,6 +26,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForQiniu
       | AccessConfigForSSH
       | AccessConfigForTencentCloud
+      | AccessConfigForUCloud
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
     );
@@ -123,6 +124,12 @@ export type AccessConfigForSSH = {
 export type AccessConfigForTencentCloud = {
   secretId: string;
   secretKey: string;
+};
+
+export type AccessConfigForUCloud = {
+  privateKey: string;
+  publicKey: string;
+  projectId?: string;
 };
 
 export type AccessConfigForVolcEngine = {
