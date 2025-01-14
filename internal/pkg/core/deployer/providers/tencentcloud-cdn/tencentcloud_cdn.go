@@ -30,13 +30,13 @@ type TencentCloudCDNDeployerConfig struct {
 type TencentCloudCDNDeployer struct {
 	config      *TencentCloudCDNDeployerConfig
 	logger      logger.Logger
-	sdkClients  *tencentCloudCDNDeployerSdkClients
+	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
 var _ deployer.Deployer = (*TencentCloudCDNDeployer)(nil)
 
-type tencentCloudCDNDeployerSdkClients struct {
+type wSdkClients struct {
 	ssl *tcSsl.Client
 	cdn *tcCdn.Client
 }
@@ -179,7 +179,7 @@ func (d *TencentCloudCDNDeployer) getDeployedDomainsByCertificateId(cloudCertId 
 	return domains, nil
 }
 
-func createSdkClients(secretId, secretKey string) (*tencentCloudCDNDeployerSdkClients, error) {
+func createSdkClients(secretId, secretKey string) (*wSdkClients, error) {
 	credential := common.NewCredential(secretId, secretKey)
 
 	sslClient, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
@@ -192,7 +192,7 @@ func createSdkClients(secretId, secretKey string) (*tencentCloudCDNDeployerSdkCl
 		return nil, err
 	}
 
-	return &tencentCloudCDNDeployerSdkClients{
+	return &wSdkClients{
 		ssl: sslClient,
 		cdn: cdnClient,
 	}, nil

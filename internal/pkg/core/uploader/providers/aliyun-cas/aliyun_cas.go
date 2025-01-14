@@ -113,9 +113,6 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 			break
 		} else {
 			listUserCertificateOrderPage += 1
-			if listUserCertificateOrderPage > 99 { // 避免死循环
-				break
-			}
 		}
 	}
 

@@ -20,7 +20,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	providerElb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
 type HuaweiCloudELBDeployerConfig struct {
@@ -131,8 +131,8 @@ func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context, certPe
 		CertificateId: d.config.CertificateId,
 		Body: &hcElbModel.UpdateCertificateRequestBody{
 			Certificate: &hcElbModel.UpdateCertificateOption{
-				Certificate: cast.StringPtr(certPem),
-				PrivateKey:  cast.StringPtr(privkeyPem),
+				Certificate: hwsdk.StringPtr(certPem),
+				PrivateKey:  hwsdk.StringPtr(privkeyPem),
 			},
 		},
 	}
@@ -151,8 +151,6 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 		return errors.New("config `loadbalancerId` is required")
 	}
 
-	listenerIds := make([]string, 0)
-
 	// 查询负载均衡器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowLoadBalancer.html
 	showLoadBalancerReq := &hcElbModel.ShowLoadBalancerRequest{
@@ -167,11 +165,12 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 
 	// 查询监听器列表
 	// REF: https://support.huaweicloud.com/api-elb/ListListeners.html
+	listenerIds := make([]string, 0)
 	listListenersLimit := int32(2000)
 	var listListenersMarker *string = nil
 	for {
 		listListenersReq := &hcElbModel.ListListenersRequest{
-			Limit:          cast.Int32Ptr(listListenersLimit),
+			Limit:          hwsdk.Int32Ptr(listListenersLimit),
 			Marker:         listListenersMarker,
 			Protocol:       &[]string{"HTTPS", "TERMINATED_HTTPS"},
 			LoadbalancerId: &[]string{showLoadBalancerResp.Loadbalancer.Id},
@@ -204,15 +203,21 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 
 	d.logger.Logt("certificate file uploaded", upres)
 
-	// 批量更新监听器证书
-	var errs []error
-	for _, listenerId := range listenerIds {
-		if err := d.modifyListenerCertificate(ctx, listenerId, upres.CertId); err != nil {
-			errs = append(errs, err)
+	// 遍历更新监听器证书
+	if len(listenerIds) == 0 {
+		return xerrors.New("listener not found")
+	} else {
+		var errs []error
+
+		for _, listenerId := range listenerIds {
+			if err := d.modifyListenerCertificate(ctx, listenerId, upres.CertId); err != nil {
+				errs = append(errs, err)
+			}
 		}
-	}
-	if len(errs) > 0 {
-		return errors.Join(errs...)
+
+		if len(errs) > 0 {
+			return errors.Join(errs...)
+		}
 	}
 
 	return nil
@@ -258,7 +263,7 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 		ListenerId: cloudListenerId,
 		Body: &hcElbModel.UpdateListenerRequestBody{
 			Listener: &hcElbModel.UpdateListenerOption{
-				DefaultTlsContainerRef: cast.StringPtr(cloudCertId),
+				DefaultTlsContainerRef: hwsdk.StringPtr(cloudCertId),
 			},
 		},
 	}
@@ -305,7 +310,7 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 		}
 
 		if showListenerResp.Listener.SniMatchAlgo != "" {
-			updateListenerReq.Body.Listener.SniMatchAlgo = cast.StringPtr(showListenerResp.Listener.SniMatchAlgo)
+			updateListenerReq.Body.Listener.SniMatchAlgo = hwsdk.StringPtr(showListenerResp.Listener.SniMatchAlgo)
 		}
 	}
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)
@@ -319,10 +324,6 @@ func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, 
 }
 
 func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
-	if region == "" {
-		region = "cn-north-4" // ELB 服务默认区域：华北四北京
-	}
-
 	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
 	if err != nil {
 		return nil, err

@@ -77,26 +77,55 @@ password：1234567890
 
 ## List of Supported Providers
 
-|   Provider    | Registration | Deployment | Remarks                                                                                                     |
-| :-----------: | :----------: | :--------: | ----------------------------------------------------------------------------------------------------------- |
-| Alibaba Cloud |      √       |     √      | Supports domains registered on Alibaba Cloud; supports deployment to Alibaba Cloud OSS, CDN,SLB             |
-| Tencent Cloud |      √       |     √      | Supports domains registered on Tencent Cloud; supports deployment to Tencent Cloud COS, CDN, ECDN, CLB, TEO |
-|  Baidu Cloud  |              |     √      | Supports deployment to Baidu Cloud CDN                                                                      |
-| Huawei Cloud  |      √       |     √      | Supports domains registered on Huawei Cloud; supports deployment to Huawei Cloud CDN, ELB                   |
-|  Qiniu Cloud  |              |     √      | Supports deployment to Qiniu Cloud CDN                                                                      |
-|  Doge Cloud   |              |     √      | Supports deployment to Doge Cloud CDN                                                                       |
-|  Volcengine   |      √       |     √      | Supports domains registered on Volcengine; supports deployment to Volcengine Live, CDN                      |
-|      AWS      |      √       |            | Supports domains managed on AWS Route53                                                                     |
-|  CloudFlare   |      √       |            | Supports domains registered on CloudFlare; CloudFlare services come with SSL certificates                   |
-|    GoDaddy    |      √       |            | Supports domains registered on GoDaddy                                                                      |
-|   Name.com    |      √       |            | Supports domains registered on Name.com                                                                     |
-|   NameSilo    |      √       |            | Supports domains registered on NameSilo                                                                     |
-|   PowerDNS    |      √       |            | Supports domains managed on PowerDNS                                                                        |
-| HTTP Request  |      √       |            | Supports domains which allow managing DNS by HTTP request                                                   |
-| Local Deploy  |              |     √      | Supports deployment to local servers                                                                        |
-|      SSH      |              |     √      | Supports deployment to SSH servers                                                                          |
-|    Webhook    |              |     √      | Supports callback to Webhook                                                                                |
-|  Kubernetes   |              |     √      | Supports deployment to Kubernetes Secret                                                                    |
+### Request certificates
+
+The following DNS providers are supported:
+
+<details>
+
+<summary>[Fold/Unfold to view ...]</summary>
+
+| Provider                                       | Remarks                               |
+| :--------------------------------------------- | :------------------------------------ |
+| [Alibaba Cloud](https://www.alibabacloud.com/) |                                       |
+| [Tencent Cloud](https://www.tencentcloud.com/) |                                       |
+| [Huawei Cloud](https://www.huaweicloud.com/)   |                                       |
+| [Volcengine](https://www.volcengine.com/)      |                                       |
+| [AWS Route53](https://aws.amazon.com/route53/) |                                       |
+| [Azure DNS](https://azure.microsoft.com/)      |                                       |
+| [CloudFlare](https://www.cloudflare.com/)      |                                       |
+| [GoDaddy](https://www.godaddy.com/)            |                                       |
+| [Name.com](https://www.name.com/)              |                                       |
+| [NameSilo](https://www.namesilo.com/)          |                                       |
+| [PowerDNS](https://www.powerdns.com/)          |                                       |
+| ACME Proxy HTTP Request                        | Supports managing DNS by HTTP request |
+
+</details>
+
+### Deploy certificates
+
+The following hosting providers are supported:
+
+<details>
+
+<summary>[Fold/Unfold to view ...]</summary>
+
+| Provider                                        | Remarks                                                                     |
+| :---------------------------------------------- | :-------------------------------------------------------------------------- |
+| Local                                           | Supports deployment to local servers                                        |
+| SSH                                             | Supports deployment to remote servers (via SSH+SFTP)                        |
+| Webhook                                         | Supports deployment to Webhook                                              |
+| [Kubernetes](https://kubernetes.io/)            | Supports deployment to Kubernetes Secret                                    |
+| [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), Live |
+| [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, CSS      |
+| [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                   |
+| [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB                                |
+| [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, Live                 |
+| [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN                                      |
+| [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                       |
+| [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                         |
+
+</details>
 
 ## Concepts
 

@@ -19,6 +19,7 @@ var (
 	fRegion          string
 	fLoadbalancerId  string
 	fListenerId      string
+	fDomain          string
 )
 
 func init() {
@@ -31,6 +32,7 @@ func init() {
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
 	flag.StringVar(&fLoadbalancerId, argsPrefix+"LOADBALANCERID", "", "")
 	flag.StringVar(&fListenerId, argsPrefix+"LISTENERID", "", "")
+	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
 /*
@@ -43,7 +45,8 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNALB_ACCESSKEYSECRET="your-access-key-secret" \
 	--CERTIMATE_DEPLOYER_ALIYUNALB_REGION="cn-hangzhou" \
 	--CERTIMATE_DEPLOYER_ALIYUNALB_LOADBALANCERID="your-alb-instance-id" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_LISTENERID="your-alb-listener-id"
+	--CERTIMATE_DEPLOYER_ALIYUNALB_LISTENERID="your-alb-listener-id" \
+	--CERTIMATE_DEPLOYER_ALIYUNALB_DOMAIN="your-alb-sni-domain"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -57,6 +60,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("REGION: %v", fRegion),
 			fmt.Sprintf("LOADBALANCERID: %v", fLoadbalancerId),
+			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
 		deployer, err := provider.New(&provider.AliyunALBDeployerConfig{
@@ -65,6 +69,7 @@ func TestDeploy(t *testing.T) {
 			Region:          fRegion,
 			ResourceType:    provider.DEPLOY_RESOURCE_LOADBALANCER,
 			LoadbalancerId:  fLoadbalancerId,
+			Domain:          fDomain,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)
@@ -99,6 +104,7 @@ func TestDeploy(t *testing.T) {
 			Region:          fRegion,
 			ResourceType:    provider.DEPLOY_RESOURCE_LISTENER,
 			ListenerId:      fListenerId,
+			Domain:          fDomain,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

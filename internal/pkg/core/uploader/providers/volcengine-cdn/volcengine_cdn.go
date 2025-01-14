@@ -12,9 +12,9 @@ import (
 
 	xerrors "github.com/pkg/errors"
 	veCdn "github.com/volcengine/volc-sdk-golang/service/cdn"
+	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/cast"
 	"github.com/usual2970/certimate/internal/pkg/utils/x509"
 )
 
@@ -60,8 +60,8 @@ func (u *VolcEngineCDNUploader) Upload(ctx context.Context, certPem string, priv
 	listCertInfoPageSize := int64(100)
 	listCertInfoTotal := 0
 	listCertInfoReq := &veCdn.ListCertInfoRequest{
-		PageNum:  cast.Int64Ptr(listCertInfoPageNum),
-		PageSize: cast.Int64Ptr(listCertInfoPageSize),
+		PageNum:  ve.Int64(listCertInfoPageNum),
+		PageSize: ve.Int64(listCertInfoPageSize),
 		Source:   "volc_cert_center",
 	}
 	for {
@@ -104,8 +104,8 @@ func (u *VolcEngineCDNUploader) Upload(ctx context.Context, certPem string, priv
 	addCertificateReq := &veCdn.AddCertificateRequest{
 		Certificate: certPem,
 		PrivateKey:  privkeyPem,
-		Source:      cast.StringPtr("volc_cert_center"),
-		Desc:        cast.StringPtr(certName),
+		Source:      ve.String("volc_cert_center"),
+		Desc:        ve.String(certName),
 	}
 	addCertificateResp, err := u.sdkClient.AddCertificate(addCertificateReq)
 	if err != nil {

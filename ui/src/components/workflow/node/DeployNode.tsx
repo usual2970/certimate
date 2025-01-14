@@ -25,13 +25,13 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
   const formRef = useRef<DeployNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
 
-  const [fieldProvider, setFieldProvider] = useState<string | undefined>((node.config as WorkflowNodeConfigForDeploy)?.provider);
-  useEffect(() => {
-    setFieldProvider((node.config as WorkflowNodeConfigForDeploy)?.provider);
-  }, [node.config?.provider]);
-
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerFooterShow, setDrawerFooterShow] = useState(true);
   const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForDeploy;
+
+  useEffect(() => {
+    setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
+  }, [node.config?.provider]);
 
   const wrappedEl = useMemo(() => {
     if (node.type !== WorkflowNodeType.Deploy) {
@@ -45,7 +45,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
     const provider = deployProvidersMap.get(config.provider);
     return (
-      <Space>
+      <Space className="max-w-full">
         <Avatar src={provider?.icon} size="small" />
         <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
       </Space>
@@ -76,7 +76,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
   };
 
   const handleFormValuesChange = (values: Partial<WorkflowNodeConfigForDeploy>) => {
-    setFieldProvider(values.provider!);
+    setDrawerFooterShow(!!values.provider);
   };
 
   return (
@@ -87,11 +87,17 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
 
       <SharedNode.ConfigDrawer
         node={node}
-        footer={!!fieldProvider}
+        footer={drawerFooterShow}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
-        onOpenChange={(open) => setDrawerOpen(open)}
+        onOpenChange={(open) => {
+          setDrawerOpen(open);
+
+          if (!open) {
+            setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
+          }
+        }}
         getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <DeployNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} nodeId={node.id} onValuesChange={handleFormValuesChange} />
