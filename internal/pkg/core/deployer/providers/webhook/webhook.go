@@ -1,15 +1,13 @@
 package webhook
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"strings"
 	"time"
 
-	"github.com/gojek/heimdall/v7/httpclient"
+	"github.com/go-resty/resty/v2"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -27,7 +25,7 @@ type WebhookDeployerConfig struct {
 type WebhookDeployer struct {
 	config     *WebhookDeployerConfig
 	logger     logger.Logger
-	httpClient *httpclient.Client
+	httpClient *resty.Client
 }
 
 var _ deployer.Deployer = (*WebhookDeployer)(nil)
@@ -45,7 +43,10 @@ func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*Webhoo
 		return nil, errors.New("logger is nil")
 	}
 
-	client := httpclient.NewClient(httpclient.WithHTTPTimeout(30 * time.Second))
+	client := resty.New().
+		SetTimeout(30 * time.Second).
+		SetRetryCount(3).
+		SetRetryWaitTime(5 * time.Second)
 
 	return &WebhookDeployer{
 		config:     config,
@@ -72,25 +73,20 @@ func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem
 	replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPem)
 	replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPem)
 
-	reqBody, _ := json.Marshal(&webhookData)
-	resp, err := d.httpClient.Post(d.config.WebhookUrl, bytes.NewReader(reqBody), map[string][]string{"Content-Type": {"application/json"}})
+	resp, err := d.httpClient.R().
+		SetContext(ctx).
+		SetHeader("Content-Type", "application/json").
+		SetBody(webhookData).
+		Post(d.config.WebhookUrl)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to send webhook request")
-	}
-	defer resp.Body.Close()
-
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to read response body")
+	} else if resp.StatusCode() != 200 {
+		return nil, xerrors.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
 	}
 
-	d.logger.Logt("Webhook Response", string(respBody))
+	d.logger.Logt("Webhook request sent", resp.String())
 
-	return &deployer.DeployResult{
-		ExtendedData: map[string]any{
-			"responseText": string(respBody),
-		},
-	}, nil
+	return &deployer.DeployResult{}, nil
 }
 
 func replaceJsonValueRecursively(data interface{}, oldStr, newStr string) interface{} {

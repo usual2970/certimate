@@ -20,7 +20,6 @@ require (
 	github.com/go-acme/lego/v4 v4.21.0
 	github.com/go-resty/resty/v2 v2.16.3
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.128
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
 	github.com/nikoksr/notify v1.1.0
@@ -143,7 +142,6 @@ require (
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/goccy/go-json v0.10.4 // indirect
-	github.com/gojek/valkyrie v0.0.0-20180215180059-6aee720afcdf // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
