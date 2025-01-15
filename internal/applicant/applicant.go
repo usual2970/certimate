@@ -15,6 +15,7 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -61,13 +62,13 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	options := &applicantOptions{
-		Domains:              strings.Split(node.GetConfigString("domains"), ";"),
+		Domains:              slices.Filter(strings.Split(node.GetConfigString("domains"), ";"), func(s string) bool { return s != "" }),
 		ContactEmail:         node.GetConfigString("contactEmail"),
 		Provider:             domain.ApplyDNSProviderType(node.GetConfigString("provider")),
 		ProviderAccessConfig: accessConfig,
 		ProviderApplyConfig:  node.GetConfigMap("providerConfig"),
 		KeyAlgorithm:         node.GetConfigString("keyAlgorithm"),
-		Nameservers:          strings.Split(node.GetConfigString("nameservers"), ";"),
+		Nameservers:          slices.Filter(strings.Split(node.GetConfigString("nameservers"), ";"), func(s string) bool { return s != "" }),
 		PropagationTimeout:   node.GetConfigInt32("propagationTimeout"),
 		DisableFollowCNAME:   node.GetConfigBool("disableFollowCNAME"),
 	}
