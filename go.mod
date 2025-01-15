@@ -18,6 +18,7 @@ require (
 	github.com/baidubce/bce-sdk-go v0.9.209
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.35
 	github.com/go-acme/lego/v4 v4.21.0
+	github.com/go-resty/resty/v2 v2.16.3
 	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.128

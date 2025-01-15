@@ -17,6 +17,7 @@ import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
+import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
@@ -102,6 +103,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GODADDY:
         return <AccessFormGoDaddyConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EDGIO:
+        return <AccessFormEdgioConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.KUBERNETES:

@@ -127,6 +127,7 @@ make local.run
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                             |
 | [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                   |
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                |
+| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications 等服务                             |
 
 </details>
 

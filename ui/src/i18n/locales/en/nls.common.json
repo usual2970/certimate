@@ -56,6 +56,8 @@
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.dogecloud": "Doge Cloud",
   "common.provider.dogecloud.cdn": "Doge Cloud - Content Delivery Network (CDN)",
+  "common.provider.edgio": "Edgio",
+  "common.provider.edgio.applications": "Edgio - Applications",
   "common.provider.godaddy": "GoDaddy",
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.huaweicloud.cdn": "Huawei Cloud - Content Delivery Network (CDN)",

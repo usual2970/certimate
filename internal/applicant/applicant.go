@@ -20,9 +20,9 @@ import (
 )
 
 type ApplyCertResult struct {
-	Certificate       string
-	PrivateKey        string
+	CertificateChain  string
 	IssuerCertificate string
+	PrivateKey        string
 	ACMECertUrl       string
 	ACMECertStableUrl string
 	CSR               string
@@ -150,9 +150,9 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	}
 
 	return &ApplyCertResult{
-		PrivateKey:        string(certResource.PrivateKey),
-		Certificate:       string(certResource.Certificate),
-		IssuerCertificate: string(certResource.IssuerCertificate),
+		CertificateChain:  strings.TrimSpace(string(certResource.Certificate)),
+		IssuerCertificate: strings.TrimSpace(string(certResource.IssuerCertificate)),
+		PrivateKey:        strings.TrimSpace(string(certResource.PrivateKey)),
 		ACMECertUrl:       certResource.CertURL,
 		ACMECertStableUrl: certResource.CertStableURL,
 		CSR:               string(certResource.CSR),

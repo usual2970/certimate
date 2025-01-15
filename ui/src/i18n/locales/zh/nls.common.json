@@ -56,6 +56,8 @@
   "common.provider.cloudflare": "Cloudflare",
   "common.provider.dogecloud": "多吉云",
   "common.provider.dogecloud.cdn": "多吉云 - 内容分发网络 CDN",
+  "common.provider.edgio": "Edgio",
+  "common.provider.edgio.applications": "Edgio - Applications",
   "common.provider.godaddy": "GoDaddy",
   "common.provider.huaweicloud": "华为云",
   "common.provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",

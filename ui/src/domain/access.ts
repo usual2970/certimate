@@ -16,6 +16,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
       | AccessConfigForDogeCloud
+      | AccessConfigForEdgio
       | AccessConfigForGoDaddy
       | AccessConfigForHuaweiCloud
       | AccessConfigForKubernetes
@@ -75,6 +76,11 @@ export type AccessConfigForCloudflare = {
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForEdgio = {
+  clientId: string;
+  clientSecret: string;
 };
 
 export type AccessConfigForGoDaddy = {

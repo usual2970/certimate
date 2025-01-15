@@ -13,6 +13,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   CLOUDFLARE: "cloudflare",
   DOGECLOUD: "dogecloud",
   GODADDY: "godaddy",
+  EDGIO: "edgio",
   HUAWEICLOUD: "huaweicloud",
   KUBERNETES: "k8s",
   LOCAL: "local",
@@ -64,6 +65,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.VOLCENGINE, "common.provider.volcengine", "/imgs/providers/volcengine.svg", ACCESS_USAGES.ALL],
     [ACCESS_PROVIDERS.BYTEPLUS, "common.provider.byteplus", "/imgs/providers/byteplus.svg", ACCESS_USAGES.DEPLOY],
     [ACCESS_PROVIDERS.UCLOUD, "common.provider.ucloud", "/imgs/providers/ucloud.svg", ACCESS_USAGES.DEPLOY],
+    [ACCESS_PROVIDERS.EDGIO, "common.provider.edgio", "/imgs/providers/edgio.svg", ACCESS_USAGES.DEPLOY],
     [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.AZURE, "common.provider.azure", "/imgs/providers/azure.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
@@ -167,6 +169,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   BAIDUCLOUD_CDN: `${ACCESS_PROVIDERS.BAIDUCLOUD}-cdn`,
   BYTEPLUS_CDN: `${ACCESS_PROVIDERS.BYTEPLUS}-cdn`,
   DOGECLOUD_CDN: `${ACCESS_PROVIDERS.DOGECLOUD}-cdn`,
+  EDGIO_APPLICATIONS: `${ACCESS_PROVIDERS.EDGIO}-applications`,
   HUAWEICLOUD_CDN: `${ACCESS_PROVIDERS.HUAWEICLOUD}-cdn`,
   HUAWEICLOUD_ELB: `${ACCESS_PROVIDERS.HUAWEICLOUD}-elb`,
   KUBERNETES_SECRET: `${ACCESS_PROVIDERS.KUBERNETES}-secret`,
@@ -234,6 +237,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.BYTEPLUS_CDN, "common.provider.byteplus.cdn"],
     [DEPLOY_PROVIDERS.UCLOUD_US3, "common.provider.ucloud.us3"],
     [DEPLOY_PROVIDERS.UCLOUD_UCDN, "common.provider.ucloud.ucdn"],
+    [DEPLOY_PROVIDERS.EDGIO_APPLICATIONS, "common.provider.edgio.applications"],
   ].map(([type, name]) => [
     type,
     {

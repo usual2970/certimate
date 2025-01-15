@@ -126,6 +126,7 @@ The following hosting providers are supported:
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                       |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                         |
 | [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                     |
+| [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                   |
 
 </details>
 
