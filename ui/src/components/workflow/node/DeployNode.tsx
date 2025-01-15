@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Space, Typography } from "antd";
+import { Avatar, Flex, Typography } from "antd";
 import { produce } from "immer";
 
 import { deployProvidersMap } from "@/domain/provider";
@@ -45,10 +45,10 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
     const provider = deployProvidersMap.get(config.provider);
     return (
-      <Space className="max-w-full">
+      <Flex className="size-full overflow-hidden" align="center" gap={8}>
         <Avatar src={provider?.icon} size="small" />
-        <Typography.Text className="truncate">{t(provider?.name ?? "")}</Typography.Text>
-      </Space>
+        <Typography.Text className="flex-1 truncate">{t(provider?.name ?? "")}</Typography.Text>
+      </Flex>
     );
   }, [node]);
 

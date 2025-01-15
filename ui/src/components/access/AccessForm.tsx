@@ -27,6 +27,7 @@ import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
+import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
 
@@ -118,6 +119,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormSSHConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.TENCENTCLOUD:
         return <AccessFormTencentCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.UCLOUD:
+        return <AccessFormUCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.VOLCENGINE:
         return <AccessFormVolcEngineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:

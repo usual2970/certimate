@@ -37,6 +37,8 @@ import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTencentCloudCSSConfig.tsx";
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
+import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
+import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
@@ -156,6 +158,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UCLOUD_UCDN:
+          return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UCLOUD_US3:
+          return <DeployNodeConfigFormUCloudUS3Config {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CLB:

@@ -40,7 +40,7 @@ const ApplyDNSProviderPicker = ({ className, style, placeholder, onSelect }: App
           <Row gutter={[16, 16]}>
             {filteredProviders.map((provider, index) => {
               return (
-                <Col key={index} span={12}>
+                <Col key={index} xs={24} md={12} span={12}>
                   <Card
                     className="h-16 w-full overflow-hidden shadow-sm"
                     styles={{ body: { height: "100%", padding: "0.5rem 1rem" } }}
@@ -51,7 +51,7 @@ const ApplyDNSProviderPicker = ({ className, style, placeholder, onSelect }: App
                   >
                     <Flex className="size-full overflow-hidden" align="center" gap={8}>
                       <Avatar src={provider.icon} size="small" />
-                      <Typography.Text className="line-clamp-2">{t(provider.name)}</Typography.Text>
+                      <Typography.Text className="line-clamp-2 flex-1">{t(provider.name)}</Typography.Text>
                     </Flex>
                   </Card>
                 </Col>

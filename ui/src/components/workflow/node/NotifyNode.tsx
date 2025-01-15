@@ -1,6 +1,6 @@
 import { memo, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Typography } from "antd";
+import { Flex, Typography } from "antd";
 import { produce } from "immer";
 
 import { notifyChannelsMap } from "@/domain/settings";
@@ -40,12 +40,12 @@ const NotifyNode = ({ node, disabled }: NotifyNodeProps) => {
     const config = (node.config as WorkflowNodeConfigForNotify) ?? {};
     const channel = notifyChannelsMap.get(config.channel as string);
     return (
-      <div className="flex items-center justify-between space-x-2">
-        <Typography.Text className="truncate">{t(channel?.name ?? "　")}</Typography.Text>
+      <Flex className="size-full overflow-hidden" align="center" gap={8}>
+        <Typography.Text className="flex-1 truncate">{t(channel?.name ?? "　")}</Typography.Text>
         <Typography.Text className="truncate" type="secondary">
           {config.subject ?? ""}
         </Typography.Text>
-      </div>
+      </Flex>
     );
   }, [node]);
 
