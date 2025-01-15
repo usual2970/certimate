@@ -14,7 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 type WebhookDeployerConfig struct {
@@ -55,7 +55,7 @@ func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*Webhoo
 }
 
 func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
-	certX509, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to parse x509")
 	}

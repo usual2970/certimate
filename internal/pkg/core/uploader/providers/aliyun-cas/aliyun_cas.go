@@ -13,7 +13,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 type AliyunCASUploaderConfig struct {
@@ -54,7 +54,7 @@ func New(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
 
 func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -90,12 +90,12 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 					if *getUserCertificateDetailResp.Body.Cert == certPem {
 						isSameCert = true
 					} else {
-						oldCertX509, err := x509.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
+						oldCertX509, err := certs.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
 						if err != nil {
 							continue
 						}
 
-						isSameCert = x509.EqualCertificate(certX509, oldCertX509)
+						isSameCert = certs.EqualCertificate(certX509, oldCertX509)
 					}
 
 					// 如果已存在相同证书，直接返回已有的证书信息

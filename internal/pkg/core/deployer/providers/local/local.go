@@ -12,8 +12,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/fs"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/files"
 )
 
 type LocalDeployerConfig struct {
@@ -84,41 +84,41 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	// 写入证书和私钥文件
 	switch d.config.OutputFormat {
 	case OUTPUT_FORMAT_PEM:
-		if err := fs.WriteFileString(d.config.OutputCertPath, certPem); err != nil {
+		if err := files.WriteString(d.config.OutputCertPath, certPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 
 		d.logger.Logt("certificate file saved")
 
-		if err := fs.WriteFileString(d.config.OutputKeyPath, privkeyPem); err != nil {
+		if err := files.WriteString(d.config.OutputKeyPath, privkeyPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save private key file")
 		}
 
 		d.logger.Logt("private key file saved")
 
 	case OUTPUT_FORMAT_PFX:
-		pfxData, err := x509.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
+		pfxData, err := certs.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
 
 		d.logger.Logt("certificate transformed to PFX")
 
-		if err := fs.WriteFile(d.config.OutputCertPath, pfxData); err != nil {
+		if err := files.Write(d.config.OutputCertPath, pfxData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 
 		d.logger.Logt("certificate file saved")
 
 	case OUTPUT_FORMAT_JKS:
-		jksData, err := x509.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
+		jksData, err := certs.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}
 
 		d.logger.Logt("certificate transformed to JKS")
 
-		if err := fs.WriteFile(d.config.OutputCertPath, jksData); err != nil {
+		if err := files.Write(d.config.OutputCertPath, jksData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 

@@ -20,12 +20,12 @@ import (
 )
 
 type ApplyCertResult struct {
-	CertificateChain  string
-	IssuerCertificate string
-	PrivateKey        string
-	ACMECertUrl       string
-	ACMECertStableUrl string
-	CSR               string
+	CertificateFullChain string
+	IssuerCertificate    string
+	PrivateKey           string
+	ACMECertUrl          string
+	ACMECertStableUrl    string
+	CSR                  string
 }
 
 type Applicant interface {
@@ -150,12 +150,12 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	}
 
 	return &ApplyCertResult{
-		CertificateChain:  strings.TrimSpace(string(certResource.Certificate)),
-		IssuerCertificate: strings.TrimSpace(string(certResource.IssuerCertificate)),
-		PrivateKey:        strings.TrimSpace(string(certResource.PrivateKey)),
-		ACMECertUrl:       certResource.CertURL,
-		ACMECertStableUrl: certResource.CertStableURL,
-		CSR:               string(certResource.CSR),
+		CertificateFullChain: strings.TrimSpace(string(certResource.Certificate)),
+		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
+		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
+		ACMECertUrl:          certResource.CertURL,
+		ACMECertStableUrl:    certResource.CertStableURL,
+		CSR:                  string(certResource.CSR),
 	}, nil
 }
 

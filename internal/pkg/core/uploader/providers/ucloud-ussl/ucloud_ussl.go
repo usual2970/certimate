@@ -16,7 +16,7 @@ import (
 	uAuth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	x509util "github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	usdkSsl "github.com/usual2970/certimate/internal/pkg/vendors/ucloud-sdk/ussl"
 )
 
@@ -94,7 +94,7 @@ func (u *UCloudUSSLUploader) Upload(ctx context.Context, certPem string, privkey
 
 func (u *UCloudUSSLUploader) getExistCert(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := x509util.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}

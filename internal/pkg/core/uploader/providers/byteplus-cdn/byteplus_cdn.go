@@ -14,7 +14,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 type ByteplusCDNUploaderConfig struct {
@@ -48,7 +48,7 @@ func New(config *ByteplusCDNUploaderConfig) (*ByteplusCDNUploader, error) {
 
 func (u *ByteplusCDNUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
