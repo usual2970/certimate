@@ -66,6 +66,7 @@
   "common.provider.local": "本地部署",
   "common.provider.namedotcom": "Name.com",
   "common.provider.namesilo": "NameSilo",
+  "common.provider.ns1": "NS1（IBM NS1 Connect）",
   "common.provider.powerdns": "PowerDNS",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",

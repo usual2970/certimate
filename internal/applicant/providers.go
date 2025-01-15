@@ -15,6 +15,7 @@ import (
 	providerHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
 	providerNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
 	providerNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
+	providerNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
 	providerPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
 	providerTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
 	providerVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
@@ -161,6 +162,20 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerNameSilo.NewChallengeProvider(&providerNameSilo.NameSiloApplicantConfig{
+				ApiKey:             access.ApiKey,
+				PropagationTimeout: options.PropagationTimeout,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeNS1:
+		{
+			access := domain.AccessConfigForNS1{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			applicant, err := providerNS1.NewChallengeProvider(&providerNS1.NS1ApplicantConfig{
 				ApiKey:             access.ApiKey,
 				PropagationTimeout: options.PropagationTimeout,
 			})

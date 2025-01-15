@@ -23,6 +23,7 @@ const (
 	AccessProviderTypeLocal        = AccessProviderType("local")
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
 	AccessProviderTypeNameSilo     = AccessProviderType("namesilo")
+	AccessProviderTypeNS1          = AccessProviderType("ns1")
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
@@ -54,6 +55,7 @@ const (
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")
 	ApplyDNSProviderTypeNameDotCom      = ApplyDNSProviderType("namedotcom")
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
+	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")
 	ApplyDNSProviderTypePowerDNS        = ApplyDNSProviderType("powerdns")
 	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")

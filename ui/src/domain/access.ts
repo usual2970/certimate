@@ -102,6 +102,10 @@ export type AccessConfigForNameSilo = {
   apiKey: string;
 };
 
+export type AccessConfigForNS1 = {
+  apiKey: string;
+};
+
 export type AccessConfigForPowerDNS = {
   apiUrl: string;
   apiKey: string;

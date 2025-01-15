@@ -85,20 +85,21 @@ The following DNS providers are supported:
 
 <summary>[Fold/Unfold to view ...]</summary>
 
-| Provider                                       | Remarks                               |
-| :--------------------------------------------- | :------------------------------------ |
-| [Alibaba Cloud](https://www.alibabacloud.com/) |                                       |
-| [Tencent Cloud](https://www.tencentcloud.com/) |                                       |
-| [Huawei Cloud](https://www.huaweicloud.com/)   |                                       |
-| [Volcengine](https://www.volcengine.com/)      |                                       |
-| [AWS Route53](https://aws.amazon.com/route53/) |                                       |
-| [Azure DNS](https://azure.microsoft.com/)      |                                       |
-| [CloudFlare](https://www.cloudflare.com/)      |                                       |
-| [GoDaddy](https://www.godaddy.com/)            |                                       |
-| [Name.com](https://www.name.com/)              |                                       |
-| [NameSilo](https://www.namesilo.com/)          |                                       |
-| [PowerDNS](https://www.powerdns.com/)          |                                       |
-| ACME Proxy HTTP Request                        | Supports managing DNS by HTTP request |
+| Provider                                                     | Remarks                               |
+| :----------------------------------------------------------- | :------------------------------------ |
+| [Alibaba Cloud](https://www.alibabacloud.com/)               |                                       |
+| [Tencent Cloud](https://www.tencentcloud.com/)               |                                       |
+| [Huawei Cloud](https://www.huaweicloud.com/)                 |                                       |
+| [Volcengine](https://www.volcengine.com/)                    |                                       |
+| [AWS Route53](https://aws.amazon.com/route53/)               |                                       |
+| [Azure DNS](https://azure.microsoft.com/)                    |                                       |
+| [CloudFlare](https://www.cloudflare.com/)                    |                                       |
+| [GoDaddy](https://www.godaddy.com/)                          |                                       |
+| [Name.com](https://www.name.com/)                            |                                       |
+| [NameSilo](https://www.namesilo.com/)                        |                                       |
+| [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
+| [PowerDNS](https://www.powerdns.com/)                        |                                       |
+| ACME Proxy HTTP Request                                      | Supports managing DNS by HTTP request |
 
 </details>
 

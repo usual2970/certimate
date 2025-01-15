@@ -91,6 +91,10 @@ type AccessConfigForNameSilo struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForNS1 struct {
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForPowerDNS struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`

@@ -18,6 +18,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   LOCAL: "local",
   NAMEDOTCOM: "namedotcom",
   NAMESILO: "namesilo",
+  NS1: "ns1",
   POWERDNS: "powerdns",
   QINIU: "qiniu",
   SSH: "ssh",
@@ -68,6 +69,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.NS1, "common.provider.ns1", "/imgs/providers/ns1.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", ACCESS_USAGES.APPLY],
@@ -101,6 +103,7 @@ export const APPLY_DNS_PROVIDERS = Object.freeze({
   HUAWEICLOUD_DNS: `${ACCESS_PROVIDERS.HUAWEICLOUD}-dns`,
   NAMEDOTCOM: `${ACCESS_PROVIDERS.NAMEDOTCOM}`,
   NAMESILO: `${ACCESS_PROVIDERS.NAMESILO}`,
+  NS1: `${ACCESS_PROVIDERS.NS1}`,
   POWERDNS: `${ACCESS_PROVIDERS.POWERDNS}`,
   TENCENTCLOUD: `${ACCESS_PROVIDERS.TENCENTCLOUD}`, // 兼容旧值，等同于 `TENCENTCLOUD_DNS`
   TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
@@ -133,6 +136,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.GODADDY, "common.provider.godaddy"],
     [APPLY_DNS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom"],
     [APPLY_DNS_PROVIDERS.NAMESILO, "common.provider.namesilo"],
+    [APPLY_DNS_PROVIDERS.NS1, "common.provider.ns1"],
     [APPLY_DNS_PROVIDERS.POWERDNS, "common.provider.powerdns"],
     [APPLY_DNS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq"],
   ].map(([type, name]) => [

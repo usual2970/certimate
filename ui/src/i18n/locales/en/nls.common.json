@@ -66,6 +66,7 @@
   "common.provider.local": "Local deployment",
   "common.provider.namedotcom": "Name.com",
   "common.provider.namesilo": "NameSilo",
+  "common.provider.ns1": "NS1 (IBM NS1 Connect)",
   "common.provider.powerdns": "PowerDNS",
   "common.provider.qiniu": "Qiniu",
   "common.provider.qiniu.cdn": "Qiniu - Content Delivery Network (CDN)",
