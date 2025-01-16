@@ -13,7 +13,6 @@
   "dashboard.quick_actions": "快捷操作",
   "dashboard.quick_actions.create_workflow": "新建工作流",
   "dashboard.quick_actions.change_login_password": "修改登录密码",
-  "dashboard.quick_actions.notification_settings": "消息推送设置",
-  "dashboard.quick_actions.certificate_authority_configuration": "证书颁发机构配置"
+  "dashboard.quick_actions.cofigure_notification": "消息推送设置",
+  "dashboard.quick_actions.configure_ca": "证书颁发机构配置"
 }
-
