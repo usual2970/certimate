@@ -5,6 +5,7 @@
 
   "certificate.action.view": "查看证书",
   "certificate.action.delete": "删除证书",
+  "certificate.action.delete.confirm": "确定要删除此证书吗？",
   "certificate.action.download": "下载证书",
 
   "certificate.props.subject_alt_names": "名称",

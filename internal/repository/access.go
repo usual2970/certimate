@@ -9,7 +9,6 @@ import (
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type AccessRepository struct{}
@@ -27,7 +26,7 @@ func (r *AccessRepository) GetById(ctx context.Context, id string) (*domain.Acce
 		return nil, err
 	}
 
-	if !types.IsNil(record.Get("deleted")) {
+	if !record.GetDateTime("deleted").Time().IsZero() {
 		return nil, domain.ErrRecordNotFound
 	}
 

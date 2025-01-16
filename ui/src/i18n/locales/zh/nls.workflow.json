@@ -49,7 +49,7 @@
   "workflow.detail.orchestration.action.release.confirm": "确定要发布更改吗？",
   "workflow.detail.orchestration.action.release.failed.uncompleted": "流程编排未完成，请检查是否有节点未配置",
   "workflow.detail.orchestration.action.run": "执行",
-  "workflow.detail.orchestration.action.run.confirm": "你有尚未发布的更改。你确定要以最近一次发布的版本继续执行吗？",
+  "workflow.detail.orchestration.action.run.confirm": "你有尚未发布的更改。确定要以最近一次发布的版本继续执行吗？",
   "workflow.detail.orchestration.action.run.prompt": "执行中……请稍后查看执行历史",
   "workflow.detail.runs.tab": "执行历史"
 }

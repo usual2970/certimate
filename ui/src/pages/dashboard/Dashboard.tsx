@@ -251,10 +251,10 @@ const Dashboard = () => {
               {t("dashboard.quick_actions.change_login_password")}
             </Button>
             <Button block size="large" icon={<SendOutlined />} onClick={() => navigate("/settings/notification")}>
-              {t("dashboard.quick_actions.notification_settings")}
+              {t("dashboard.quick_actions.cofigure_notification")}
             </Button>
             <Button block size="large" icon={<ApiOutlined />} onClick={() => navigate("/settings/ssl-provider")}>
-              {t("dashboard.quick_actions.certificate_authority_configuration")}
+              {t("dashboard.quick_actions.configure_ca")}
             </Button>
           </Space>
         </Card>

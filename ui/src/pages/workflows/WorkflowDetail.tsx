@@ -109,7 +109,7 @@ const WorkflowDetail = () => {
       content: t("workflow.action.delete.confirm"),
       onOk: async () => {
         try {
-          const resp: boolean = await removeWorkflow(workflow);
+          const resp = await removeWorkflow(workflow);
           if (resp) {
             navigate("/workflows", { replace: true });
           }

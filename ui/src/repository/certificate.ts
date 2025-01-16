@@ -42,4 +42,5 @@ export const remove = async (record: MaybeModelRecordWithId<CertificateModel>) =
   record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
 
   await getPocketBase().collection(COLLECTION_NAME).update<CertificateModel>(record.id!, record);
+  return true;
 };

@@ -240,7 +240,7 @@ const WorkflowList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const { loading } = useRequest(
+  const { loading, run: refreshTableData } = useRequest(
     () => {
       return listWorkflow({
         page: page,
@@ -302,9 +302,10 @@ const WorkflowList = () => {
       content: t("workflow.action.delete.confirm"),
       onOk: async () => {
         try {
-          const resp: boolean = await removeWorkflow(workflow);
+          const resp = await removeWorkflow(workflow);
           if (resp) {
             setTableData((prev) => prev.filter((item) => item.id !== workflow.id));
+            refreshTableData();
           }
         } catch (err) {
           console.error(err);

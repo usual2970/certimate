@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultExpireSubject = "您有 ${COUNT} 张证书即将过期"
+	defaultExpireSubject = "有 ${COUNT} 张证书即将过期"
 	defaultExpireMessage = "有 ${COUNT} 张证书即将过期，域名分别为 ${DOMAINS}，请保持关注！"
 )
 
@@ -36,7 +36,7 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
-			app.GetLogger().Error("failed to get expire soon certificate", "err", err)
+			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
 			return
 		}
 
@@ -46,7 +46,7 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 		}
 
 		if err := notify.SendToAllChannels(notification.Subject, notification.Message); err != nil {
-			app.GetLogger().Error("failed to send expire soon certificate", "err", err)
+			app.GetLogger().Error("failed to send notification", "err", err)
 		}
 	})
 	if err != nil {

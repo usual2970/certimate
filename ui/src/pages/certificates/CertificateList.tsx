@@ -4,13 +4,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
-import { Button, Divider, Empty, Menu, type MenuProps, Radio, Space, Table, type TableProps, Tooltip, Typography, notification, theme } from "antd";
+import { Button, Divider, Empty, Menu, type MenuProps, Modal, Radio, Space, Table, type TableProps, Tooltip, Typography, notification, theme } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { CERTIFICATE_SOURCES, type CertificateModel } from "@/domain/certificate";
-import { type ListCertificateRequest, list as listCertificate } from "@/repository/certificate";
+import { type ListCertificateRequest, list as listCertificate, remove as removeCertificate } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
@@ -21,6 +21,7 @@ const CertificateList = () => {
 
   const { token: themeToken } = theme.useToken();
 
+  const [modalApi, ModalContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const tableColumns: TableProps<CertificateModel>["columns"] = [
@@ -169,14 +170,7 @@ const CertificateList = () => {
           />
 
           <Tooltip title={t("certificate.action.delete")}>
-            <Button
-              color="danger"
-              icon={<DeleteOutlinedIcon />}
-              variant="text"
-              onClick={() => {
-                alert("TODO: 暂时不支持删除证书");
-              }}
-            />
+            <Button color="danger" icon={<DeleteOutlinedIcon />} variant="text" onClick={() => handleDeleteClick(record)} />
           </Tooltip>
         </Button.Group>
       ),
@@ -194,7 +188,7 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const { loading } = useRequest(
+  const { loading, run: refreshTableData } = useRequest(
     () => {
       return listCertificate({
         page: page,
@@ -219,8 +213,28 @@ const CertificateList = () => {
     }
   );
 
+  const handleDeleteClick = (certificate: CertificateModel) => {
+    modalApi.confirm({
+      title: t("certificate.action.delete"),
+      content: t("certificate.action.delete.confirm"),
+      onOk: async () => {
+        try {
+          const resp = await removeCertificate(certificate);
+          if (resp) {
+            setTableData((prev) => prev.filter((item) => item.id !== certificate.id));
+            refreshTableData();
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
   return (
     <div className="p-4">
+      {ModalContextHolder}
       {NotificationContextHolder}
 
       <PageHeader title={t("certificate.page.title")} />

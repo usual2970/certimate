@@ -130,7 +130,7 @@ const AccessList = () => {
     });
   }, []);
 
-  const { loading } = useRequest(
+  const { loading, run: refreshTableData } = useRequest(
     () => {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
@@ -157,6 +157,7 @@ const AccessList = () => {
         // TODO: 有关联数据的不允许被删除
         try {
           await deleteAccess(data);
+          refreshTableData();
         } catch (err) {
           console.error(err);
           notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
