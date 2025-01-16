@@ -20,6 +20,9 @@ var (
 	fJksAlias       string
 	fJksKeypass     string
 	fJksStorepass   string
+	fShellEnv       string
+	fPreCommand     string
+	fPostCommand    string
 )
 
 func init() {
@@ -33,6 +36,9 @@ func init() {
 	flag.StringVar(&fJksAlias, argsPrefix+"JKSALIAS", "", "")
 	flag.StringVar(&fJksKeypass, argsPrefix+"JKSKEYPASS", "", "")
 	flag.StringVar(&fJksStorepass, argsPrefix+"JKSSTOREPASS", "", "")
+	flag.StringVar(&fShellEnv, argsPrefix+"SHELLENV", "", "")
+	flag.StringVar(&fPreCommand, argsPrefix+"PRECOMMAND", "", "")
+	flag.StringVar(&fPostCommand, argsPrefix+"POSTCOMMAND", "", "")
 }
 
 /*
@@ -46,7 +52,10 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_LOCAL_PFXPASSWORD="your-pfx-password" \
 	--CERTIMATE_DEPLOYER_LOCAL_JKSALIAS="your-jks-alias" \
 	--CERTIMATE_DEPLOYER_LOCAL_JKSKEYPASS="your-jks-keypass" \
-	--CERTIMATE_DEPLOYER_LOCAL_JKSSTOREPASS="your-jks-storepass"
+	--CERTIMATE_DEPLOYER_LOCAL_JKSSTOREPASS="your-jks-storepass" \
+	--CERTIMATE_DEPLOYER_LOCAL_SHELLENV="sh" \
+	--CERTIMATE_DEPLOYER_LOCAL_PRECOMMAND="echo 'hello world'" \
+	--CERTIMATE_DEPLOYER_LOCAL_POSTCOMMAND="echo 'bye-bye world'"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -58,11 +67,18 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
 			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
+			fmt.Sprintf("SHELLENV: %v", fShellEnv),
+			fmt.Sprintf("PRECOMMAND: %v", fPreCommand),
+			fmt.Sprintf("POSTCOMMAND: %v", fPostCommand),
 		}, "\n"))
 
 		deployer, err := provider.New(&provider.LocalDeployerConfig{
-			OutputCertPath: fOutputCertPath,
-			OutputKeyPath:  fOutputKeyPath,
+			OutputFormat:   provider.OUTPUT_FORMAT_PEM,
+			OutputCertPath: fOutputCertPath + ".pem",
+			OutputKeyPath:  fOutputKeyPath + ".pem",
+			ShellEnv:       provider.ShellEnvType(fShellEnv),
+			PreCommand:     fPreCommand,
+			PostCommand:    fPostCommand,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)
@@ -77,7 +93,7 @@ func TestDeploy(t *testing.T) {
 			return
 		}
 
-		fstat1, err := os.Stat(fOutputCertPath)
+		fstat1, err := os.Stat(fOutputCertPath + ".pem")
 		if err != nil {
 			t.Errorf("err: %+v", err)
 			return
@@ -86,7 +102,7 @@ func TestDeploy(t *testing.T) {
 			return
 		}
 
-		fstat2, err := os.Stat(fOutputKeyPath)
+		fstat2, err := os.Stat(fOutputKeyPath + ".pem")
 		if err != nil {
 			t.Errorf("err: %+v", err)
 			return
@@ -104,14 +120,12 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
-			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
 			fmt.Sprintf("PFXPASSWORD: %v", fPfxPassword),
 		}, "\n"))
 
 		deployer, err := provider.New(&provider.LocalDeployerConfig{
 			OutputFormat:   provider.OUTPUT_FORMAT_PFX,
-			OutputCertPath: fOutputCertPath,
-			OutputKeyPath:  fOutputKeyPath,
+			OutputCertPath: fOutputCertPath + ".pfx",
 			PfxPassword:    fPfxPassword,
 		})
 		if err != nil {
@@ -127,7 +141,7 @@ func TestDeploy(t *testing.T) {
 			return
 		}
 
-		fstat, err := os.Stat(fOutputCertPath)
+		fstat, err := os.Stat(fOutputCertPath + ".pfx")
 		if err != nil {
 			t.Errorf("err: %+v", err)
 			return
@@ -145,7 +159,6 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("OUTPUTCERTPATH: %v", fOutputCertPath),
-			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
 			fmt.Sprintf("JKSALIAS: %v", fJksAlias),
 			fmt.Sprintf("JKSKEYPASS: %v", fJksKeypass),
 			fmt.Sprintf("JKSSTOREPASS: %v", fJksStorepass),
@@ -153,8 +166,7 @@ func TestDeploy(t *testing.T) {
 
 		deployer, err := provider.New(&provider.LocalDeployerConfig{
 			OutputFormat:   provider.OUTPUT_FORMAT_JKS,
-			OutputCertPath: fOutputCertPath,
-			OutputKeyPath:  fOutputKeyPath,
+			OutputCertPath: fOutputCertPath + ".jks",
 			JksAlias:       fJksAlias,
 			JksKeypass:     fJksKeypass,
 			JksStorepass:   fJksStorepass,
@@ -172,7 +184,7 @@ func TestDeploy(t *testing.T) {
 			return
 		}
 
-		fstat, err := os.Stat(fOutputCertPath)
+		fstat, err := os.Stat(fOutputCertPath + ".jks")
 		if err != nil {
 			t.Errorf("err: %+v", err)
 			return

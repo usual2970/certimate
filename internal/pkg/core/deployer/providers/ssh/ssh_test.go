@@ -69,6 +69,7 @@ func TestDeploy(t *testing.T) {
 			SshPort:        int32(fSshPort),
 			SshUsername:    fSshUsername,
 			SshPassword:    fSshPassword,
+			OutputFormat:   provider.OUTPUT_FORMAT_PEM,
 			OutputCertPath: fOutputCertPath,
 			OutputKeyPath:  fOutputKeyPath,
 		})

@@ -103,7 +103,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 	if d.config.PreCommand != "" {
 		stdout, stderr, err := execSshCommand(client, d.config.PreCommand)
 		if err != nil {
-			return nil, xerrors.Wrapf(err, "failed to run pre-command: stdout: %s, stderr: %s", stdout, stderr)
+			return nil, xerrors.Wrapf(err, "failed to execute pre-command: stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.logger.Logt("SSH pre-command executed", stdout)
@@ -160,7 +160,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 	if d.config.PostCommand != "" {
 		stdout, stderr, err := execSshCommand(client, d.config.PostCommand)
 		if err != nil {
-			return nil, xerrors.Wrapf(err, "failed to run command, stdout: %s, stderr: %s", stdout, stderr)
+			return nil, xerrors.Wrapf(err, "failed to execute post-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.logger.Logt("SSH post-command executed", stdout)
@@ -211,13 +211,13 @@ func execSshCommand(sshCli *ssh.Client, command string) (string, string, error) 
 	}
 	defer session.Close()
 
-	var stdoutBuf bytes.Buffer
-	session.Stdout = &stdoutBuf
-	var stderrBuf bytes.Buffer
-	session.Stderr = &stderrBuf
+	stdoutBuf := bytes.NewBuffer(nil)
+	session.Stdout = stdoutBuf
+	stderrBuf := bytes.NewBuffer(nil)
+	session.Stderr = stderrBuf
 	err = session.Run(command)
 	if err != nil {
-		return "", "", err
+		return stdoutBuf.String(), stderrBuf.String(), xerrors.Wrap(err, "failed to execute ssh command")
 	}
 
 	return stdoutBuf.String(), stderrBuf.String(), nil
