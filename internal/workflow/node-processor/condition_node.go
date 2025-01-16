@@ -8,13 +8,13 @@ import (
 
 type conditionNode struct {
 	node *domain.WorkflowNode
-	*Logger
+	*nodeLogger
 }
 
 func NewConditionNode(node *domain.WorkflowNode) *conditionNode {
 	return &conditionNode{
-		node:   node,
-		Logger: NewLogger(node),
+		node:       node,
+		nodeLogger: NewNodeLogger(node),
 	}
 }
 

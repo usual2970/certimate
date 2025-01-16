@@ -17,8 +17,14 @@ func NewWorkflowOutputRepository() *WorkflowOutputRepository {
 	return &WorkflowOutputRepository{}
 }
 
-func (w *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter("workflow_output", "nodeId={:nodeId}", "-created", 1, 0, dbx.Params{"nodeId": nodeId})
+func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
+	records, err := app.GetApp().Dao().FindRecordsByFilter(
+		"workflow_output",
+		"nodeId={:nodeId}",
+		"-created",
+		1, 0,
+		dbx.Params{"nodeId": nodeId},
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
@@ -56,44 +62,8 @@ func (w *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId strin
 	return rs, nil
 }
 
-func (w *WorkflowOutputRepository) GetCertificateByNodeId(ctx context.Context, nodeId string) (*domain.Certificate, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter("certificate", "workflowNodeId={:workflowNodeId}", "-created", 1, 0, dbx.Params{"workflowNodeId": nodeId})
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domain.ErrRecordNotFound
-		}
-		return nil, err
-	}
-	if len(records) == 0 {
-		return nil, domain.ErrRecordNotFound
-	}
-
-	record := records[0]
-
-	rs := &domain.Certificate{
-		Meta: domain.Meta{
-			Id:        record.GetId(),
-			CreatedAt: record.GetCreated().Time(),
-			UpdatedAt: record.GetUpdated().Time(),
-		},
-		Source:            domain.CertificateSourceType(record.GetString("source")),
-		SubjectAltNames:   record.GetString("subjectAltNames"),
-		Certificate:       record.GetString("certificate"),
-		PrivateKey:        record.GetString("privateKey"),
-		IssuerCertificate: record.GetString("issuerCertificate"),
-		EffectAt:          record.GetDateTime("effectAt").Time(),
-		ExpireAt:          record.GetDateTime("expireAt").Time(),
-		ACMECertUrl:       record.GetString("acmeCertUrl"),
-		ACMECertStableUrl: record.GetString("acmeCertStableUrl"),
-		WorkflowId:        record.GetString("workflowId"),
-		WorkflowNodeId:    record.GetString("workflowNodeId"),
-		WorkflowOutputId:  record.GetString("workflowOutputId"),
-	}
-	return rs, nil
-}
-
 // 保存节点输出
-func (w *WorkflowOutputRepository) Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error {
+func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error {
 	var record *models.Record
 	var err error
 

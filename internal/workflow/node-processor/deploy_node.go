@@ -12,15 +12,17 @@ import (
 
 type deployNode struct {
 	node       *domain.WorkflowNode
-	outputRepo WorkflowOutputRepository
-	*Logger
+	certRepo   certificateRepository
+	outputRepo workflowOutputRepository
+	*nodeLogger
 }
 
 func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
 		node:       node,
-		Logger:     NewLogger(node),
+		nodeLogger: NewNodeLogger(node),
 		outputRepo: repository.NewWorkflowOutputRepository(),
+		certRepo:   repository.NewCertificateRepository(),
 	}
 }
 
@@ -28,7 +30,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 	d.AddOutput(ctx, d.node.Name, "开始执行")
 	// 检查是否部署过（部署过则直接返回，和 v0.2 暂时保持一致）
 	output, err := d.outputRepo.GetByNodeId(ctx, d.node.Id)
-	if err != nil && !domain.IsRecordNotFound(err) {
+	if err != nil && !domain.IsRecordNotFoundError(err) {
 		d.AddOutput(ctx, d.node.Name, "查询部署记录失败", err.Error())
 		return err
 	}
@@ -42,7 +44,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 		return fmt.Errorf("证书来源配置错误: %s", certSource)
 	}
 
-	cert, err := d.outputRepo.GetCertificateByNodeId(ctx, certSourceSlice[0])
+	cert, err := d.certRepo.GetByWorkflowNodeId(ctx, certSourceSlice[0])
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取证书失败", err.Error())
 		return err

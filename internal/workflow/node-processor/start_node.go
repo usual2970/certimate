@@ -8,13 +8,13 @@ import (
 
 type startNode struct {
 	node *domain.WorkflowNode
-	*Logger
+	*nodeLogger
 }
 
 func NewStartNode(node *domain.WorkflowNode) *startNode {
 	return &startNode{
-		node:   node,
-		Logger: NewLogger(node),
+		node:       node,
+		nodeLogger: NewNodeLogger(node),
 	}
 }
 

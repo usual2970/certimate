@@ -12,15 +12,15 @@ const (
 	notifyTestBody  = "欢迎使用 Certimate ，这是一条测试通知。"
 )
 
-type SettingsRepository interface {
+type settingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 type NotifyService struct {
-	settingRepo SettingsRepository
+	settingRepo settingsRepository
 }
 
-func NewNotifyService(settingRepo SettingsRepository) *NotifyService {
+func NewNotifyService(settingRepo settingsRepository) *NotifyService {
 	return &NotifyService{
 		settingRepo: settingRepo,
 	}

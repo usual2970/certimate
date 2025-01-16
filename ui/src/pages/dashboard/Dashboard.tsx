@@ -164,9 +164,9 @@ const Dashboard = () => {
     },
     {
       refreshDeps: [page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems > 3 ? 3 : data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems > 3 ? 3 : res.totalItems);
       },
       onError: (err) => {
         if (err instanceof ClientResponseError && err.isAbort) {
@@ -193,8 +193,8 @@ const Dashboard = () => {
       return getStatistics();
     },
     {
-      onSuccess: (data) => {
-        setStatistics(data);
+      onSuccess: (res) => {
+        setStatistics(res.data);
       },
       onError: (err) => {
         if (err instanceof ClientResponseError && err.isAbort) {

@@ -142,9 +142,9 @@ const AccessList = () => {
     },
     {
       refreshDeps: [accesses, page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems);
       },
     }
   );

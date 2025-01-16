@@ -8,20 +8,17 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
-type SettingRepository interface {
-	GetByName(ctx context.Context, name string) (*domain.Settings, error)
-}
 type notifyNode struct {
-	node        *domain.WorkflowNode
-	settingRepo SettingRepository
-	*Logger
+	node         *domain.WorkflowNode
+	settingsRepo settingRepository
+	*nodeLogger
 }
 
 func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	return &notifyNode{
-		node:        node,
-		Logger:      NewLogger(node),
-		settingRepo: repository.NewSettingsRepository(),
+		node:         node,
+		nodeLogger:   NewNodeLogger(node),
+		settingsRepo: repository.NewSettingsRepository(),
 	}
 }
 
@@ -29,7 +26,7 @@ func (n *notifyNode) Run(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	// 获取通知配置
-	setting, err := n.settingRepo.GetByName(ctx, "notifyChannels")
+	setting, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
 		n.AddOutput(ctx, n.node.Name, "获取通知配置失败", err.Error())
 		return err

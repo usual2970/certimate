@@ -14,7 +14,7 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-func Succ(e echo.Context, data interface{}) error {
+func Ok(e echo.Context, data interface{}) error {
 	rs := &Response{
 		Code: 0,
 		Msg:  "success",
@@ -24,10 +24,11 @@ func Succ(e echo.Context, data interface{}) error {
 }
 
 func Err(e echo.Context, err error) error {
-	xerr, ok := err.(*domain.XError)
-	code := 100
+	code := 500
+
+	xerr, ok := err.(*domain.Error)
 	if ok {
-		code = xerr.GetCode()
+		code = xerr.Code
 	}
 
 	rs := &Response{

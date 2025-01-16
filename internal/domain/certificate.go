@@ -23,4 +23,5 @@ type Certificate struct {
 	WorkflowId        string                `json:"workflowId" db:"workflowId"`
 	WorkflowNodeId    string                `json:"workflowNodeId" db:"workflowNodeId"`
 	WorkflowOutputId  string                `json:"workflowOutputId" db:"workflowOutputId"`
+	DeletedAt         *time.Time            `json:"deleted" db:"deleted"`
 }

@@ -30,6 +30,6 @@ func (handler *statisticsHandler) get(c echo.Context) error {
 	if statistics, err := handler.service.Get(c.Request().Context()); err != nil {
 		return resp.Err(c, err)
 	} else {
-		return resp.Succ(c, statistics)
+		return resp.Ok(c, statistics)
 	}
 }

@@ -36,5 +36,5 @@ func (handler *workflowHandler) run(c echo.Context) error {
 	if err := handler.service.Run(c.Request().Context(), req); err != nil {
 		return resp.Err(c, err)
 	}
-	return resp.Succ(c, nil)
+	return resp.Ok(c, nil)
 }

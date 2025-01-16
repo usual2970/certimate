@@ -19,17 +19,18 @@ export const list = async (request: ListCertificateRequest) => {
   const perPage = request.perPage || 10;
 
   const options: RecordListOptions = {
-    sort: "-created",
     expand: "workflowId",
+    filter: "deleted=null",
+    sort: "-created",
     requestKey: null,
   };
 
   if (request.state === "expireSoon") {
-    options.filter = pb.filter("expireAt<{:expiredAt}", {
-      expiredAt: dayjs().add(15, "d").toDate(),
+    options.filter = pb.filter("expireAt<{:expiredAt} && deleted=null", {
+      expiredAt: dayjs().add(20, "d").toDate(),
     });
   } else if (request.state === "expired") {
-    options.filter = pb.filter("expireAt<={:expiredAt}", {
+    options.filter = pb.filter("expireAt<={:expiredAt} && deleted=null", {
       expiredAt: new Date(),
     });
   }

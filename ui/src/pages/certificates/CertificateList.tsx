@@ -204,9 +204,9 @@ const CertificateList = () => {
     },
     {
       refreshDeps: [filters, page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems);
       },
       onError: (err) => {
         if (err instanceof ClientResponseError && err.isAbort) {

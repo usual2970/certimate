@@ -17,21 +17,21 @@ const (
 	defaultExpireMessage = "有 ${COUNT} 张证书即将过期，域名分别为 ${DOMAINS}，请保持关注！"
 )
 
-type CertificateRepository interface {
-	ListExpireSoon(ctx context.Context) ([]domain.Certificate, error)
+type certificateRepository interface {
+	ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error)
 }
 
-type certificateService struct {
-	repo CertificateRepository
+type CertificateService struct {
+	repo certificateRepository
 }
 
-func NewCertificateService(repo CertificateRepository) *certificateService {
-	return &certificateService{
+func NewCertificateService(repo certificateRepository) *CertificateService {
+	return &CertificateService{
 		repo: repo,
 	}
 }
 
-func (s *certificateService) InitSchedule(ctx context.Context) error {
+func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
 	err := scheduler.Add("certificate", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
@@ -58,13 +58,11 @@ func (s *certificateService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-type certificateNotification struct {
-	Subject string `json:"subject"`
-	Message string `json:"message"`
-}
-
-func buildExpireSoonNotification(records []domain.Certificate) *certificateNotification {
-	if len(records) == 0 {
+func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {
+	Subject string
+	Message string
+} {
+	if len(certificates) == 0 {
 		return nil
 	}
 
@@ -85,9 +83,9 @@ func buildExpireSoonNotification(records []domain.Certificate) *certificateNotif
 	}
 
 	// 替换变量
-	count := len(records)
+	count := len(certificates)
 	domains := make([]string, count)
-	for i, record := range records {
+	for i, record := range certificates {
 		domains[i] = record.SubjectAltNames
 	}
 	countStr := strconv.Itoa(count)
@@ -98,8 +96,8 @@ func buildExpireSoonNotification(records []domain.Certificate) *certificateNotif
 	message = strings.ReplaceAll(message, "${DOMAINS}", domainStr)
 
 	// 返回消息
-	return &certificateNotification{
-		Subject: subject,
-		Message: message,
-	}
+	return &struct {
+		Subject string
+		Message string
+	}{Subject: subject, Message: message}
 }

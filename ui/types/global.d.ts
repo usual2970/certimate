@@ -12,6 +12,12 @@ declare global {
   declare type MaybeModelRecord<T extends BaseModel = BaseModel> = T | Omit<T, "id" | "created" | "updated" | "deleted">;
 
   declare type MaybeModelRecordWithId<T extends BaseModel = BaseModel> = T | Pick<T, "id">;
+
+  declare interface BaseResponse<T = any> {
+    code: number;
+    msg: string;
+    data: T;
+  }
 }
 
 export {};

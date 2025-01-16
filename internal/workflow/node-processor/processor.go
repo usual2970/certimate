@@ -8,18 +8,18 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type NodeProcessor interface {
+type nodeProcessor interface {
 	Run(ctx context.Context) error
 	Log(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
 }
 
-type Logger struct {
+type nodeLogger struct {
 	log *domain.WorkflowRunLog
 }
 
-func NewLogger(node *domain.WorkflowNode) *Logger {
-	return &Logger{
+func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
+	return &nodeLogger{
 		log: &domain.WorkflowRunLog{
 			NodeId:   node.Id,
 			NodeName: node.Name,
@@ -28,11 +28,11 @@ func NewLogger(node *domain.WorkflowNode) *Logger {
 	}
 }
 
-func (l *Logger) Log(ctx context.Context) *domain.WorkflowRunLog {
+func (l *nodeLogger) Log(ctx context.Context) *domain.WorkflowRunLog {
 	return l.log
 }
 
-func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...string) {
+func (l *nodeLogger) AddOutput(ctx context.Context, title, content string, err ...string) {
 	output := domain.WorkflowRunLogOutput{
 		Time:    time.Now().UTC().Format(time.RFC3339),
 		Title:   title,
@@ -45,7 +45,7 @@ func (l *Logger) AddOutput(ctx context.Context, title, content string, err ...st
 	l.log.Outputs = append(l.log.Outputs, output)
 }
 
-func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
+func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
 	switch node.Type {
 	case domain.WorkflowNodeTypeStart:
 		return NewStartNode(node), nil
@@ -59,4 +59,17 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 		return NewNotifyNode(node), nil
 	}
 	return nil, errors.New("not implemented")
+}
+
+type certificateRepository interface {
+	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
+}
+
+type workflowOutputRepository interface {
+	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
+	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
+}
+
+type settingRepository interface {
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
