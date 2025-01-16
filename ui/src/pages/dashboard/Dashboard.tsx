@@ -66,6 +66,8 @@ const Dashboard = () => {
 
         console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       },
     }
   );
@@ -176,6 +178,8 @@ const Dashboard = () => {
 
         console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       },
     }
   );

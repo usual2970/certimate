@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
+import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon, WarningOutlined as WarningOutlinedIcon } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, type MenuProps, Modal, Radio, Space, Table, type TableProps, Tooltip, Typography, notification, theme } from "antd";
@@ -188,7 +188,11 @@ const CertificateList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const { loading, run: refreshTableData } = useRequest(
+  const {
+    loading,
+    error: loadedError,
+    run: refreshData,
+  } = useRequest(
     () => {
       return listCertificate({
         page: page,
@@ -209,6 +213,8 @@ const CertificateList = () => {
 
         console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       },
     }
   );
@@ -222,7 +228,7 @@ const CertificateList = () => {
           const resp = await removeCertificate(certificate);
           if (resp) {
             setTableData((prev) => prev.filter((item) => item.id !== certificate.id));
-            refreshTableData();
+            refreshData();
           }
         } catch (err) {
           console.error(err);
@@ -244,7 +250,7 @@ const CertificateList = () => {
         dataSource={tableData}
         loading={loading}
         locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("certificate.nodata")} />,
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : t("certificate.nodata")} />,
         }}
         pagination={{
           current: page,
