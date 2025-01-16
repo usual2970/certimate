@@ -20,7 +20,6 @@ import {
   type MenuProps,
   Modal,
   Radio,
-  Result,
   Space,
   Switch,
   Table,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon, WarningOutlined as WarningOutlinedIcon } from "@ant-design/icons";
+import { DeleteOutlined as DeleteOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import { Button, Divider, Empty, Menu, type MenuProps, Modal, Radio, Space, Table, type TableProps, Tooltip, Typography, notification, theme } from "antd";

@@ -129,7 +129,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const { loading, loadedError } = useRequest(
+  const { loading, error: loadedError } = useRequest(
     () => {
       return listWorkflowRuns({
         workflowId: workflowId,
