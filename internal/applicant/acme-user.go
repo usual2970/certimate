@@ -11,7 +11,7 @@ import (
 	"github.com/go-acme/lego/v4/registration"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -38,7 +38,7 @@ func newAcmeUser(ca, email string) (*acmeUser, error) {
 			return nil, err
 		}
 
-		keyPEM, err := x509.ConvertECPrivateKeyToPEM(key)
+		keyPEM, err := certs.ConvertECPrivateKeyToPEM(key)
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +62,7 @@ func (u acmeUser) GetRegistration() *registration.Resource {
 }
 
 func (u *acmeUser) GetPrivateKey() crypto.PrivateKey {
-	rs, _ := x509.ParseECPrivateKeyFromPEM(u.privkey)
+	rs, _ := certs.ParseECPrivateKeyFromPEM(u.privkey)
 	return rs
 }
 

@@ -66,6 +66,11 @@ type AccessConfigForDogeCloud struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForEdgio struct {
+	ClientId     string `json:"clientId"`
+	ClientSecret string `json:"clientSecret"`
+}
+
 type AccessConfigForGoDaddy struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
@@ -88,6 +93,10 @@ type AccessConfigForNameDotCom struct {
 }
 
 type AccessConfigForNameSilo struct {
+	ApiKey string `json:"apiKey"`
+}
+
+type AccessConfigForNS1 struct {
 	ApiKey string `json:"apiKey"`
 }
 

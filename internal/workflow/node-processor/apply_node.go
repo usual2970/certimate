@@ -7,7 +7,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -89,7 +89,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 		Outputs:    a.node.Outputs,
 	}
 
-	certX509, err := x509.ParseCertificateFromPEM(applyResult.Certificate)
+	certX509, err := certs.ParseCertificateFromPEM(applyResult.CertificateFullChain)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "解析证书失败", err.Error())
 		return err
@@ -98,7 +98,7 @@ func (a *applyNode) Run(ctx context.Context) error {
 	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
 		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
-		Certificate:       applyResult.Certificate,
+		Certificate:       applyResult.CertificateFullChain,
 		PrivateKey:        applyResult.PrivateKey,
 		IssuerCertificate: applyResult.IssuerCertificate,
 		ACMECertUrl:       applyResult.ACMECertUrl,

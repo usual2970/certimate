@@ -13,7 +13,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -55,7 +55,7 @@ func New(config *HuaweiCloudSCMUploaderConfig) (*HuaweiCloudSCMUploader, error) 
 
 func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -94,12 +94,12 @@ func (u *HuaweiCloudSCMUploader) Upload(ctx context.Context, certPem string, pri
 				if *exportCertificateResp.Certificate == certPem {
 					isSameCert = true
 				} else {
-					oldCertX509, err := x509.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
+					oldCertX509, err := certs.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = x509.EqualCertificate(certX509, oldCertX509)
+					isSameCert = certs.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回已有的证书信息

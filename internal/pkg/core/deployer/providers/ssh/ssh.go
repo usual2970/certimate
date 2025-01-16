@@ -14,7 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 type SshDeployerConfig struct {
@@ -125,7 +125,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 		d.logger.Logt("private key file uploaded")
 
 	case OUTPUT_FORMAT_PFX:
-		pfxData, err := x509.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
+		pfxData, err := certs.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
@@ -139,7 +139,7 @@ func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem str
 		d.logger.Logt("certificate file uploaded")
 
 	case OUTPUT_FORMAT_JKS:
-		jksData, err := x509.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
+		jksData, err := certs.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}

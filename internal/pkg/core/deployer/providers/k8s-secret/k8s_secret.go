@@ -14,7 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/x509"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 type K8sSecretDeployerConfig struct {
@@ -75,7 +75,7 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 		return nil, errors.New("config `secretDataKeyForKey` is required")
 	}
 
-	certX509, err := x509.ParseCertificateFromPEM(certPem)
+	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}

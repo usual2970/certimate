@@ -18,8 +18,8 @@ require (
 	github.com/baidubce/bce-sdk-go v0.9.209
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.35
 	github.com/go-acme/lego/v4 v4.21.0
+	github.com/go-resty/resty/v2 v2.16.3
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/gojek/heimdall/v7 v7.0.3
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.128
 	github.com/labstack/echo/v5 v5.0.0-20230722203903-ec5b858dab61
 	github.com/nikoksr/notify v1.1.0
@@ -87,6 +87,7 @@ require (
 	go.mongodb.org/mongo-driver v1.12.0 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
+	gopkg.in/ns1/ns1-go.v2 v2.13.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
@@ -141,7 +142,6 @@ require (
 	github.com/go-jose/go-jose/v4 v4.0.4 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/goccy/go-json v0.10.4 // indirect
-	github.com/gojek/valkyrie v0.0.0-20180215180059-6aee720afcdf // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.1 // indirect
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect

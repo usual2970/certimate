@@ -15,16 +15,17 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
 type ApplyCertResult struct {
-	Certificate       string
-	PrivateKey        string
-	IssuerCertificate string
-	ACMECertUrl       string
-	ACMECertStableUrl string
-	CSR               string
+	CertificateFullChain string
+	IssuerCertificate    string
+	PrivateKey           string
+	ACMECertUrl          string
+	ACMECertStableUrl    string
+	CSR                  string
 }
 
 type Applicant interface {
@@ -61,13 +62,13 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	options := &applicantOptions{
-		Domains:              strings.Split(node.GetConfigString("domains"), ";"),
+		Domains:              slices.Filter(strings.Split(node.GetConfigString("domains"), ";"), func(s string) bool { return s != "" }),
 		ContactEmail:         node.GetConfigString("contactEmail"),
 		Provider:             domain.ApplyDNSProviderType(node.GetConfigString("provider")),
 		ProviderAccessConfig: accessConfig,
 		ProviderApplyConfig:  node.GetConfigMap("providerConfig"),
 		KeyAlgorithm:         node.GetConfigString("keyAlgorithm"),
-		Nameservers:          strings.Split(node.GetConfigString("nameservers"), ";"),
+		Nameservers:          slices.Filter(strings.Split(node.GetConfigString("nameservers"), ";"), func(s string) bool { return s != "" }),
 		PropagationTimeout:   node.GetConfigInt32("propagationTimeout"),
 		DisableFollowCNAME:   node.GetConfigBool("disableFollowCNAME"),
 	}
@@ -149,12 +150,12 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	}
 
 	return &ApplyCertResult{
-		PrivateKey:        string(certResource.PrivateKey),
-		Certificate:       string(certResource.Certificate),
-		IssuerCertificate: string(certResource.IssuerCertificate),
-		ACMECertUrl:       certResource.CertURL,
-		ACMECertStableUrl: certResource.CertStableURL,
-		CSR:               string(certResource.CSR),
+		CertificateFullChain: strings.TrimSpace(string(certResource.Certificate)),
+		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
+		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
+		ACMECertUrl:          certResource.CertURL,
+		ACMECertStableUrl:    certResource.CertStableURL,
+		CSR:                  string(certResource.CSR),
 	}, nil
 }
 

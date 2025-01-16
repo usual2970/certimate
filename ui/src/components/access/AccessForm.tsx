@@ -17,10 +17,12 @@ import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
+import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLocalConfig from "./AccessFormLocalConfig";
+import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
 import AccessFormNameSiloConfig from "./AccessFormNameSiloConfig";
 import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
@@ -101,6 +103,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GODADDY:
         return <AccessFormGoDaddyConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EDGIO:
+        return <AccessFormEdgioConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.KUBERNETES:
@@ -111,6 +115,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormNameDotComConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.NAMESILO:
         return <AccessFormNameSiloConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.NS1:
+        return <AccessFormNS1Config {...nestedFormProps} />;
       case ACCESS_PROVIDERS.POWERDNS:
         return <AccessFormPowerDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.QINIU:

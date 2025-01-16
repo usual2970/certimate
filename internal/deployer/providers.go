@@ -15,6 +15,7 @@ import (
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
 	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
+	providerEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	providerHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	providerHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	providerK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
@@ -171,6 +172,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
 				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+			}, logger)
+			return deployer, logger, err
+		}
+
+	case domain.DeployProviderTypeEdgioApplications:
+		{
+			access := domain.AccessConfigForEdgio{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			deployer, err := providerEdgioApplications.NewWithLogger(&providerEdgioApplications.EdgioApplicationsDeployerConfig{
+				ClientId:      access.ClientId,
+				ClientSecret:  access.ClientSecret,
+				EnvironmentId: maps.GetValueAsString(options.ProviderDeployConfig, "environmentId"),
 			}, logger)
 			return deployer, logger, err
 		}

@@ -86,20 +86,21 @@ make local.run
 
 <summary>[展开查看]</summary>
 
-| 提供商                                         | 备注                                    |
-| :--------------------------------------------- | :-------------------------------------- |
-| [阿里云](https://www.aliyun.com/)              |                                         |
-| [腾讯云](https://cloud.tencent.com/)           |                                         |
-| [华为云](https://www.huaweicloud.com/)         |                                         |
-| [火山引擎](https://www.volcengine.com/)        |                                         |
-| [AWS Route53](https://aws.amazon.com/route53/) |                                         |
-| [Azure](https://azure.microsoft.com/)          |                                         |
-| [CloudFlare](https://www.cloudflare.com/)      |                                         |
-| [GoDaddy](https://www.godaddy.com/)            |                                         |
-| [Name.com](https://www.name.com/)              |                                         |
-| [NameSilo](https://www.namesilo.com/)          |                                         |
-| [PowerDNS](https://www.powerdns.com/)          |                                         |
-| ACME 代理 HTTP 请求                            | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
+| 提供商                                                             | 备注                                    |
+| :----------------------------------------------------------------- | :-------------------------------------- |
+| [阿里云](https://www.aliyun.com/)                                  |                                         |
+| [腾讯云](https://cloud.tencent.com/)                               |                                         |
+| [华为云](https://www.huaweicloud.com/)                             |                                         |
+| [火山引擎](https://www.volcengine.com/)                            |                                         |
+| [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
+| [Azure](https://azure.microsoft.com/)                              |                                         |
+| [CloudFlare](https://www.cloudflare.com/)                          |                                         |
+| [GoDaddy](https://www.godaddy.com/)                                |                                         |
+| [Name.com](https://www.name.com/)                                  |                                         |
+| [NameSilo](https://www.namesilo.com/)                              |                                         |
+| [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
+| [PowerDNS](https://www.powerdns.com/)                              |                                         |
+| ACME 代理 HTTP 请求                                                | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
 
 </details>
 
@@ -126,6 +127,7 @@ make local.run
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                             |
 | [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                   |
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                |
+| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications 等服务                             |
 
 </details>
 

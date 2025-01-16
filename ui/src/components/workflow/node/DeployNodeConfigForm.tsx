@@ -25,6 +25,7 @@ import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSS
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
+import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
 import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaweiCloudELBConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
@@ -134,6 +135,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.DOGECLOUD_CDN:
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.EDGIO_APPLICATIONS:
+          return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_CDN:
           return <DeployNodeConfigFormHuaweiCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_ELB:

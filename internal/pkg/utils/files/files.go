@@ -1,4 +1,4 @@
-﻿package fs
+﻿package files
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 	xerrors "github.com/pkg/errors"
 )
 
-// 与 [WriteFile] 类似，但写入的是字符串内容。
+// 与 [Write] 类似，但写入的是字符串内容。
 //
 // 入参:
 //   - path: 文件路径。
@@ -15,8 +15,8 @@ import (
 //
 // 出参:
 //   - 错误。
-func WriteFileString(path string, content string) error {
-	return WriteFile(path, []byte(content))
+func WriteString(path string, content string) error {
+	return Write(path, []byte(content))
 }
 
 // 将数据写入指定路径的文件。
@@ -29,7 +29,7 @@ func WriteFileString(path string, content string) error {
 //
 // 出参:
 //   - 错误。
-func WriteFile(path string, data []byte) error {
+func Write(path string, data []byte) error {
 	dir := filepath.Dir(path)
 
 	err := os.MkdirAll(dir, os.ModePerm)
