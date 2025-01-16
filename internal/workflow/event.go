@@ -14,7 +14,7 @@ import (
 
 const tableName = "workflow"
 
-func RegisterEvents() error {
+func Register() {
 	app := app.GetApp()
 
 	app.OnRecordAfterCreateRequest(tableName).Add(func(e *core.RecordCreateEvent) error {
@@ -28,8 +28,6 @@ func RegisterEvents() error {
 	app.OnRecordAfterDeleteRequest(tableName).Add(func(e *core.RecordDeleteEvent) error {
 		return delete(e.HttpContext.Request().Context(), e.Record)
 	})
-
-	return nil
 }
 
 func update(ctx context.Context, record *models.Record) error {
