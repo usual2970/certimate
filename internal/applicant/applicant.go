@@ -15,9 +15,23 @@ import (
 	"github.com/go-acme/lego/v4/lego"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/utils/pool"
 	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 	"github.com/usual2970/certimate/internal/repository"
 )
+
+const defaultPoolSize = 8
+
+var poolInstance *pool.Pool[proxyApplicant, applicantResult]
+
+type applicantResult struct {
+	result *ApplyCertResult
+	err    error
+}
+
+func init() {
+	poolInstance = pool.NewPool[proxyApplicant, applicantResult](defaultPoolSize)
+}
 
 type ApplyCertResult struct {
 	CertificateFullChain string
@@ -82,6 +96,17 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		applicant: applicant,
 		options:   options,
 	}, nil
+}
+
+func applyAsync(applicant challenge.Provider, options *applicantOptions) <-chan applicantResult {
+	return poolInstance.Submit(context.Background(), func(p proxyApplicant) applicantResult {
+		rs := applicantResult{}
+		rs.result, rs.err = apply(p.applicant, p.options)
+		return rs
+	}, proxyApplicant{
+		applicant: applicant,
+		options:   options,
+	})
 }
 
 func apply(challengeProvider challenge.Provider, options *applicantOptions) (*ApplyCertResult, error) {
@@ -185,5 +210,6 @@ type proxyApplicant struct {
 }
 
 func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
-	return apply(d.applicant, d.options)
+	rs := <-applyAsync(d.applicant, d.options)
+	return rs.result, rs.err
 }
