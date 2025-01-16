@@ -39,7 +39,7 @@ require (
 	github.com/volcengine/volc-sdk-golang v1.0.189
 	github.com/volcengine/volcengine-go-sdk v1.0.177
 	golang.org/x/crypto v0.32.0
-	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67
+	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
 	k8s.io/api v0.32.0
 	k8s.io/apimachinery v0.32.0
 	k8s.io/client-go v0.32.0

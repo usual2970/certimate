@@ -26,18 +26,20 @@ func (n *notifyNode) Run(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	// 获取通知配置
-	setting, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
+	settings, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
 		n.AddOutput(ctx, n.node.Name, "获取通知配置失败", err.Error())
 		return err
 	}
 
-	channelConfig, err := setting.GetNotifyChannelConfig(n.node.GetConfigString("channel"))
+	// 获取通知渠道
+	channelConfig, err := settings.GetNotifyChannelConfig(n.node.GetConfigString("channel"))
 	if err != nil {
 		n.AddOutput(ctx, n.node.Name, "获取通知渠道配置失败", err.Error())
 		return err
 	}
 
+	// 发送通知
 	if err := notify.SendToChannel(n.node.GetConfigString("subject"),
 		n.node.GetConfigString("message"),
 		n.node.GetConfigString("channel"),
@@ -46,7 +48,7 @@ func (n *notifyNode) Run(ctx context.Context) error {
 		n.AddOutput(ctx, n.node.Name, "发送通知失败", err.Error())
 		return err
 	}
-
 	n.AddOutput(ctx, n.node.Name, "发送通知成功")
+
 	return nil
 }
