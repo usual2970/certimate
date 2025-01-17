@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
+	"golang.org/x/sync/singleflight"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
@@ -79,9 +80,21 @@ type acmeAccountRepository interface {
 	Save(ca, email, key string, resource *registration.Resource) error
 }
 
-func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
-	// TODO: fix 潜在的并发问题
+var registerGroup singleflight.Group
 
+func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
+	resp, err, _ := registerGroup.Do(fmt.Sprintf("register_acme_user_%s_%s", sslProviderConfig.Provider, user.GetEmail()), func() (interface{}, error) {
+		return register(client, sslProviderConfig, user)
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.(*registration.Resource), nil
+}
+
+func register(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
 	var reg *registration.Resource
 	var err error
 	switch sslProviderConfig.Provider {
