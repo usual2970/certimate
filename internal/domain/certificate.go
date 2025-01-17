@@ -25,3 +25,8 @@ type Certificate struct {
 	WorkflowOutputId  string                `json:"workflowOutputId" db:"workflowOutputId"`
 	DeletedAt         *time.Time            `json:"deleted" db:"deleted"`
 }
+
+type CertificateArchiveFileReq struct {
+	CertificateId string `json:"-"`
+	Format        string `json:"format"`
+}

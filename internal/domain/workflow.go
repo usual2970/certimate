@@ -152,6 +152,6 @@ type WorkflowNodeIOValueSelector struct {
 }
 
 type WorkflowRunReq struct {
-	WorkflowId string              `json:"workflowId"`
+	WorkflowId string              `json:"-"`
 	Trigger    WorkflowTriggerType `json:"trigger"`
 }

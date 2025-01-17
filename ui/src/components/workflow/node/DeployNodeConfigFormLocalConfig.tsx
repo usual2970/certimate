@@ -5,6 +5,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import Show from "@/components/Show";
+import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 
 type DeployNodeConfigFormLocalConfigFieldValues = Nullish<{
   format: string;
@@ -27,9 +28,9 @@ export type DeployNodeConfigFormLocalConfigProps = {
   onValuesChange?: (values: DeployNodeConfigFormLocalConfigFieldValues) => void;
 };
 
-const FORMAT_PEM = "PEM" as const;
-const FORMAT_PFX = "PFX" as const;
-const FORMAT_JKS = "JKS" as const;
+const FORMAT_PEM = CERTIFICATE_FORMATS.PEM;
+const FORMAT_PFX = CERTIFICATE_FORMATS.PFX;
+const FORMAT_JKS = CERTIFICATE_FORMATS.JKS;
 
 const SHELLENV_SH = "sh" as const;
 const SHELLENV_CMD = "cmd" as const;

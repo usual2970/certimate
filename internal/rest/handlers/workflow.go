@@ -24,12 +24,13 @@ func NewWorkflowHandler(router *router.RouterGroup[*core.RequestEvent], service 
 		service: service,
 	}
 
-	group := router.Group("/workflow")
-	group.POST("/run", handler.run)
+	group := router.Group("/workflows")
+	group.POST("/{id}/run", handler.run)
 }
 
 func (handler *WorkflowHandler) run(e *core.RequestEvent) error {
 	req := &domain.WorkflowRunReq{}
+	req.WorkflowId = e.Request.PathValue("id")
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}

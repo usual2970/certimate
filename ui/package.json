@@ -16,10 +16,10 @@
     "antd": "^5.22.7",
     "antd-zod": "^6.0.0",
     "cron-parser": "^4.9.0",
+    "file-saver": "^2.0.5",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "immer": "^10.1.1",
-    "jszip": "^3.10.1",
     "lucide-react": "^0.469.0",
     "nanoid": "^5.0.9",
     "pocketbase": "^0.25.0",
@@ -33,6 +33,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.10.3",
     "@types/react": "^18.3.12",

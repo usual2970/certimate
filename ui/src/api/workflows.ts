@@ -6,13 +6,12 @@ import { getPocketBase } from "@/repository/_pocketbase";
 export const run = async (id: string) => {
   const pb = getPocketBase();
 
-  const resp = await pb.send<BaseResponse>("/api/workflow/run", {
+  const resp = await pb.send<BaseResponse>(`/api/workflows/${encodeURIComponent(id)}/run`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: {
-      workflowId: id,
       trigger: WORKFLOW_TRIGGERS.MANUAL,
     },
   });

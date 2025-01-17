@@ -7,6 +7,7 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/router"
 
+	"github.com/usual2970/certimate/internal/certificate"
 	"github.com/usual2970/certimate/internal/notify"
 	"github.com/usual2970/certimate/internal/repository"
 	"github.com/usual2970/certimate/internal/rest/handlers"
@@ -15,14 +16,15 @@ import (
 )
 
 var (
-	notifySvc     *notify.NotifyService
-	workflowSvc   *workflow.WorkflowService
-	statisticsSvc *statistics.StatisticsService
+	certificateSvc *certificate.CertificateService
+	workflowSvc    *workflow.WorkflowService
+	statisticsSvc  *statistics.StatisticsService
+	notifySvc      *notify.NotifyService
 )
 
 func Register(router *router.Router[*core.RequestEvent]) {
-	notifyRepo := repository.NewSettingsRepository()
-	notifySvc = notify.NewNotifyService(notifyRepo)
+	certificateRepo := repository.NewCertificateRepository()
+	certificateSvc = certificate.NewCertificateService(certificateRepo)
 
 	workflowRepo := repository.NewWorkflowRepository()
 	workflowSvc = workflow.NewWorkflowService(workflowRepo)
@@ -30,11 +32,15 @@ func Register(router *router.Router[*core.RequestEvent]) {
 	statisticsRepo := repository.NewStatisticsRepository()
 	statisticsSvc = statistics.NewStatisticsService(statisticsRepo)
 
+	notifyRepo := repository.NewSettingsRepository()
+	notifySvc = notify.NewNotifyService(notifyRepo)
+
 	group := router.Group("/api")
 	group.Bind(apis.RequireSuperuserAuth())
+	handlers.NewCertificateHandler(group, certificateSvc)
 	handlers.NewWorkflowHandler(group, workflowSvc)
-	handlers.NewNotifyHandler(group, notifySvc)
 	handlers.NewStatisticsHandler(group, statisticsSvc)
+	handlers.NewNotifyHandler(group, notifySvc)
 }
 
 func Unregister() {
