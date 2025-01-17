@@ -7,12 +7,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
+	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/utils/slices"
@@ -184,6 +186,20 @@ type proxyApplicant struct {
 	options   *applicantOptions
 }
 
+var limiters sync.Map
+
+const (
+	limitBurst         = 300
+	limitRate  float64 = float64(1) / float64(36)
+)
+
+func getLimiter(key string) *rate.Limiter {
+	limiter, _ := limiters.LoadOrStore(key, rate.NewLimiter(rate.Limit(limitRate), 300))
+	return limiter.(*rate.Limiter)
+}
+
 func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
+	limiter := getLimiter(fmt.Sprintf("apply_%s", d.options.ContactEmail))
+	limiter.Wait(context.Background())
 	return apply(d.applicant, d.options)
 }
