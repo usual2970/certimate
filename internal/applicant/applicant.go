@@ -7,31 +7,19 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/lego"
+	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/pool"
 	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 	"github.com/usual2970/certimate/internal/repository"
 )
-
-const defaultPoolSize = 8
-
-var poolInstance *pool.Pool[proxyApplicant, applicantResult]
-
-type applicantResult struct {
-	result *ApplyCertResult
-	err    error
-}
-
-func init() {
-	poolInstance = pool.NewPool[proxyApplicant, applicantResult](defaultPoolSize)
-}
 
 type ApplyCertResult struct {
 	CertificateFullChain string
@@ -96,17 +84,6 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		applicant: applicant,
 		options:   options,
 	}, nil
-}
-
-func applyAsync(applicant challenge.Provider, options *applicantOptions) <-chan applicantResult {
-	return poolInstance.Submit(context.Background(), func(p proxyApplicant) applicantResult {
-		rs := applicantResult{}
-		rs.result, rs.err = apply(p.applicant, p.options)
-		return rs
-	}, proxyApplicant{
-		applicant: applicant,
-		options:   options,
-	})
 }
 
 func apply(challengeProvider challenge.Provider, options *applicantOptions) (*ApplyCertResult, error) {
@@ -209,7 +186,20 @@ type proxyApplicant struct {
 	options   *applicantOptions
 }
 
+var limiters sync.Map
+
+const (
+	limitBurst         = 300
+	limitRate  float64 = float64(1) / float64(36)
+)
+
+func getLimiter(key string) *rate.Limiter {
+	limiter, _ := limiters.LoadOrStore(key, rate.NewLimiter(rate.Limit(limitRate), 300))
+	return limiter.(*rate.Limiter)
+}
+
 func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
-	rs := <-applyAsync(d.applicant, d.options)
-	return rs.result, rs.err
+	limiter := getLimiter(fmt.Sprintf("apply_%s", d.options.ContactEmail))
+	limiter.Wait(context.Background())
+	return apply(d.applicant, d.options)
 }
