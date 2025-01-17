@@ -70,11 +70,11 @@ func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {
 	message := defaultExpireMessage
 
 	// 查询模板信息
-	settingRepo := repository.NewSettingsRepository()
-	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
+	settingsRepo := repository.NewSettingsRepository()
+	settings, err := settingsRepo.GetByName(context.Background(), "notifyTemplates")
 	if err == nil {
 		var templates *domain.NotifyTemplatesSettingsContent
-		json.Unmarshal([]byte(setting.Content), &templates)
+		json.Unmarshal([]byte(settings.Content), &templates)
 
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
 			subject = templates.NotifyTemplates[0].Subject

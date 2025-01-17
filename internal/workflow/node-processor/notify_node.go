@@ -10,7 +10,7 @@ import (
 
 type notifyNode struct {
 	node         *domain.WorkflowNode
-	settingsRepo settingRepository
+	settingsRepo settingsRepository
 	*nodeLogger
 }
 

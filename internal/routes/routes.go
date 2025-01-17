@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"sync"
+	"context"
 
 	"github.com/usual2970/certimate/internal/notify"
 	"github.com/usual2970/certimate/internal/repository"
@@ -14,36 +14,29 @@ import (
 )
 
 var (
-	workflowSvc     rest.WorkflowService
-	workflowSvcOnce sync.Once
+	notifySvc     *notify.NotifyService
+	workflowSvc   *workflow.WorkflowService
+	statisticsSvc *statistics.StatisticsService
 )
 
-func getWorkflowService() rest.WorkflowService {
-	workflowSvcOnce.Do(func() {
-		workflowRepo := repository.NewWorkflowRepository()
-		workflowSvc = workflow.NewWorkflowService(workflowRepo)
-	})
-	return workflowSvc
-}
-
 func Register(e *echo.Echo) {
-	group := e.Group("/api", apis.RequireAdminAuth())
-
 	notifyRepo := repository.NewSettingsRepository()
-	notifySvc := notify.NewNotifyService(notifyRepo)
+	notifySvc = notify.NewNotifyService(notifyRepo)
 
-	workflowSvc := getWorkflowService()
+	workflowRepo := repository.NewWorkflowRepository()
+	workflowSvc = workflow.NewWorkflowService(workflowRepo)
 
 	statisticsRepo := repository.NewStatisticsRepository()
-	statisticsSvc := statistics.NewStatisticsService(statisticsRepo)
+	statisticsSvc = statistics.NewStatisticsService(statisticsRepo)
 
+	group := e.Group("/api", apis.RequireAdminAuth())
 	rest.NewWorkflowHandler(group, workflowSvc)
-
 	rest.NewNotifyHandler(group, notifySvc)
-
 	rest.NewStatisticsHandler(group, statisticsSvc)
 }
 
 func Unregister() {
-	getWorkflowService().Stop()
+	if workflowSvc != nil {
+		workflowSvc.Stop(context.Background())
+	}
 }

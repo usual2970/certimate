@@ -70,6 +70,6 @@ type workflowOutputRepository interface {
 	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
 }
 
-type settingRepository interface {
+type settingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }

@@ -17,22 +17,22 @@ type settingsRepository interface {
 }
 
 type NotifyService struct {
-	settingRepo settingsRepository
+	settingsRepo settingsRepository
 }
 
-func NewNotifyService(settingRepo settingsRepository) *NotifyService {
+func NewNotifyService(settingsRepo settingsRepository) *NotifyService {
 	return &NotifyService{
-		settingRepo: settingRepo,
+		settingsRepo: settingsRepo,
 	}
 }
 
 func (n *NotifyService) Test(ctx context.Context, req *domain.NotifyTestPushReq) error {
-	setting, err := n.settingRepo.GetByName(ctx, "notifyChannels")
+	settings, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
 		return fmt.Errorf("failed to get notify channels settings: %w", err)
 	}
 
-	channelConfig, err := setting.GetNotifyChannelConfig(req.Channel)
+	channelConfig, err := settings.GetNotifyChannelConfig(req.Channel)
 	if err != nil {
 		return fmt.Errorf("failed to get notify channel \"%s\" config: %w", req.Channel, err)
 	}

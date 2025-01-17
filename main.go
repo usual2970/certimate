@@ -43,6 +43,7 @@ func main() {
 		workflow.Register()
 
 		routes.Register(e.Router)
+
 		e.Router.GET(
 			"/*",
 			echo.StaticDirectoryHandler(ui.DistDirFS, false),

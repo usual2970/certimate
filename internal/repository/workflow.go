@@ -61,6 +61,7 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	if err != nil {
 		return err
 	}
+
 	var record *models.Record
 	if workflow.Id == "" {
 		record = models.NewRecord(collection)

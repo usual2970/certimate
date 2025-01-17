@@ -8,26 +8,25 @@ import (
 	"github.com/usual2970/certimate/internal/rest/resp"
 )
 
-type WorkflowService interface {
+type workflowService interface {
 	Run(ctx context.Context, req *domain.WorkflowRunReq) error
-	Stop()
+	Stop(ctx context.Context)
 }
 
-type workflowHandler struct {
-	service WorkflowService
+type WorkflowHandler struct {
+	service workflowService
 }
 
-func NewWorkflowHandler(route *echo.Group, service WorkflowService) {
-	handler := &workflowHandler{
+func NewWorkflowHandler(route *echo.Group, service workflowService) {
+	handler := &WorkflowHandler{
 		service: service,
 	}
 
 	group := route.Group("/workflow")
-
 	group.POST("/run", handler.run)
 }
 
-func (handler *workflowHandler) run(c echo.Context) error {
+func (handler *WorkflowHandler) run(c echo.Context) error {
 	req := &domain.WorkflowRunReq{}
 	if err := c.Bind(req); err != nil {
 		return resp.Err(c, err)
@@ -36,5 +35,6 @@ func (handler *workflowHandler) run(c echo.Context) error {
 	if err := handler.service.Run(c.Request().Context(), req); err != nil {
 		return resp.Err(c, err)
 	}
+
 	return resp.Ok(c, nil)
 }

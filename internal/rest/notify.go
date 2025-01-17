@@ -9,25 +9,24 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
-type NotifyService interface {
+type notifyService interface {
 	Test(ctx context.Context, req *domain.NotifyTestPushReq) error
 }
 
-type notifyHandler struct {
-	service NotifyService
+type NotifyHandler struct {
+	service notifyService
 }
 
-func NewNotifyHandler(route *echo.Group, service NotifyService) {
-	handler := &notifyHandler{
+func NewNotifyHandler(route *echo.Group, service notifyService) {
+	handler := &NotifyHandler{
 		service: service,
 	}
 
 	group := route.Group("/notify")
-
 	group.POST("/test", handler.test)
 }
 
-func (handler *notifyHandler) test(c echo.Context) error {
+func (handler *NotifyHandler) test(c echo.Context) error {
 	req := &domain.NotifyTestPushReq{}
 	if err := c.Bind(req); err != nil {
 		return resp.Err(c, err)

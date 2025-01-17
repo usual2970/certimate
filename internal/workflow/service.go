@@ -23,7 +23,7 @@ type workflowRepository interface {
 	ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error)
 	GetById(ctx context.Context, id string) (*domain.Workflow, error)
 	Save(ctx context.Context, workflow *domain.Workflow) error
-	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
+	SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error
 }
 
 type WorkflowService struct {
@@ -91,11 +91,11 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunReq) error {
+func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) error {
 	// 查询
-	workflow, err := s.repo.GetById(ctx, options.WorkflowId)
+	workflow, err := s.repo.GetById(ctx, req.WorkflowId)
 	if err != nil {
-		app.GetLogger().Error("failed to get workflow", "id", options.WorkflowId, "err", err)
+		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
 		return err
 	}
 
@@ -114,7 +114,7 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 
 	s.ch <- &workflowRunData{
 		Workflow: workflow,
-		Options:  options,
+		Options:  req,
 	}
 
 	return nil
@@ -165,7 +165,7 @@ func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) err
 	return nil
 }
 
-func (s *WorkflowService) Stop() {
+func (s *WorkflowService) Stop(ctx context.Context) {
 	s.cancel()
 	s.wg.Wait()
 }
