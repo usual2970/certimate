@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 import { type AccessModel } from "@/domain/access";
-import { getPocketBase } from "./pocketbase";
+import { getPocketBase } from "./_pocketbase";
 
 const COLLECTION_NAME = "access";
 
@@ -22,13 +22,8 @@ export const save = async (record: MaybeModelRecord<AccessModel>) => {
 };
 
 export const remove = async (record: MaybeModelRecordWithId<AccessModel>) => {
-  record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
-
-  // TODO: 仅为兼容旧版本，后续迭代时删除
-  if ("provider" in record && record.provider === "httpreq") record.provider = "acmehttpreq";
-  if ("provider" in record && record.provider === "tencent") record.provider = "tencentcloud";
-  if ("provider" in record && record.provider === "pdns") record.provider = "powerdns";
-
-  await getPocketBase().collection(COLLECTION_NAME).update<AccessModel>(record.id!, record);
+  await getPocketBase()
+    .collection(COLLECTION_NAME)
+    .update<AccessModel>(record.id!, { deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") });
   return true;
 };

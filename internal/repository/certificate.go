@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/pocketbase/dbx"
-	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/core"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -19,7 +19,7 @@ func NewCertificateRepository() *CertificateRepository {
 }
 
 func (r *CertificateRepository) ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter(
+	records, err := app.GetApp().FindRecordsByFilter(
 		"certificate",
 		"expireAt>DATETIME('now') && expireAt<DATETIME('now', '+20 days') && deleted=null",
 		"-created",
@@ -43,7 +43,7 @@ func (r *CertificateRepository) ListExpireSoon(ctx context.Context) ([]*domain.C
 }
 
 func (r *CertificateRepository) GetById(ctx context.Context, id string) (*domain.Certificate, error) {
-	record, err := app.GetApp().Dao().FindRecordById("certificate", id)
+	record, err := app.GetApp().FindRecordById("certificate", id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
@@ -59,7 +59,7 @@ func (r *CertificateRepository) GetById(ctx context.Context, id string) (*domain
 }
 
 func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter(
+	records, err := app.GetApp().FindRecordsByFilter(
 		"certificate",
 		"workflowNodeId={:workflowNodeId} && deleted=null",
 		"-created", 1, 0,
@@ -78,16 +78,16 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 	return r.castRecordToModel(records[0])
 }
 
-func (r *CertificateRepository) castRecordToModel(record *models.Record) (*domain.Certificate, error) {
+func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.Certificate, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")
 	}
 
 	certificate := &domain.Certificate{
 		Meta: domain.Meta{
-			Id:        record.GetId(),
-			CreatedAt: record.GetCreated().Time(),
-			UpdatedAt: record.GetUpdated().Time(),
+			Id:        record.Id,
+			CreatedAt: record.GetDateTime("created").Time(),
+			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		Source:            domain.CertificateSourceType(record.GetString("source")),
 		SubjectAltNames:   record.GetString("subjectAltNames"),

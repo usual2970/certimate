@@ -84,9 +84,6 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 			return err
 		}
 	}
-	scheduler.Start()
-
-	app.GetLogger().Info("workflow schedule started")
 
 	return nil
 }

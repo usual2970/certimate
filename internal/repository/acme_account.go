@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-acme/lego/v4/registration"
 	"github.com/pocketbase/dbx"
-	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/core"
 	"golang.org/x/sync/singleflight"
 
 	"github.com/usual2970/certimate/internal/app"
@@ -22,7 +22,7 @@ var g singleflight.Group
 
 func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error) {
 	resp, err, _ := g.Do(fmt.Sprintf("acme_account_%s_%s", ca, email), func() (interface{}, error) {
-		resp, err := app.GetApp().Dao().FindFirstRecordByFilter(
+		resp, err := app.GetApp().FindFirstRecordByFilter(
 			"acme_accounts",
 			"ca={:ca} && email={:email}",
 			dbx.Params{"ca": ca, "email": email},
@@ -40,7 +40,7 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 		return nil, domain.ErrRecordNotFound
 	}
 
-	record, ok := resp.(*models.Record)
+	record, ok := resp.(*core.Record)
 	if !ok {
 		return nil, domain.ErrRecordNotFound
 	}
@@ -49,20 +49,20 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 }
 
 func (r *AcmeAccountRepository) Save(ca, email, key string, resource *registration.Resource) error {
-	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("acme_accounts")
+	collection, err := app.GetApp().FindCollectionByNameOrId("acme_accounts")
 	if err != nil {
 		return err
 	}
 
-	record := models.NewRecord(collection)
+	record := core.NewRecord(collection)
 	record.Set("ca", ca)
 	record.Set("email", email)
 	record.Set("key", key)
 	record.Set("resource", resource)
-	return app.GetApp().Dao().Save(record)
+	return app.GetApp().Save(record)
 }
 
-func (r *AcmeAccountRepository) castRecordToModel(record *models.Record) (*domain.AcmeAccount, error) {
+func (r *AcmeAccountRepository) castRecordToModel(record *core.Record) (*domain.AcmeAccount, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")
 	}
@@ -74,9 +74,9 @@ func (r *AcmeAccountRepository) castRecordToModel(record *models.Record) (*domai
 
 	acmeAccount := &domain.AcmeAccount{
 		Meta: domain.Meta{
-			Id:        record.GetId(),
-			CreatedAt: record.GetCreated().Time(),
-			UpdatedAt: record.GetUpdated().Time(),
+			Id:        record.Id,
+			CreatedAt: record.GetDateTime("created").Time(),
+			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		CA:       record.GetString("ca"),
 		Email:    record.GetString("email"),

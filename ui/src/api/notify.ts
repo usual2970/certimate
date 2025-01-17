@@ -1,6 +1,6 @@
 import { ClientResponseError } from "pocketbase";
 
-import { getPocketBase } from "@/repository/pocketbase";
+import { getPocketBase } from "@/repository/_pocketbase";
 
 export const notifyTest = async (channel: string) => {
   const pb = getPocketBase();

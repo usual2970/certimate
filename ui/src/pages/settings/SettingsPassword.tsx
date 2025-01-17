@@ -6,7 +6,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { useAntdForm } from "@/hooks";
-import { getPocketBase } from "@/repository/pocketbase";
+import { authWithPassword, getAuthStore, save as saveAdmin } from "@/repository/admin";
 import { getErrMsg } from "@/utils/error";
 
 const SettingsPassword = () => {
@@ -33,16 +33,13 @@ const SettingsPassword = () => {
   } = useAntdForm({
     onSubmit: async (values) => {
       try {
-        await getPocketBase().admins.authWithPassword(getPocketBase().authStore.model?.email, values.oldPassword);
-        await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
-          password: values.newPassword,
-          passwordConfirm: values.confirmPassword,
-        });
+        await authWithPassword(getAuthStore().record!.email, values.oldPassword);
+        await saveAdmin({ password: values.newPassword });
 
         messageApi.success(t("common.text.operation_succeeded"));
 
         setTimeout(() => {
-          getPocketBase().authStore.clear();
+          getAuthStore().clear();
           navigate("/login");
         }, 500);
       } catch (err) {

@@ -1,7 +1,7 @@
 import { ClientResponseError } from "pocketbase";
 
 import { type SettingsModel, type SettingsNames } from "@/domain/settings";
-import { getPocketBase } from "./pocketbase";
+import { getPocketBase } from "./_pocketbase";
 
 export const get = async <T extends NonNullable<unknown>>(name: SettingsNames) => {
   try {

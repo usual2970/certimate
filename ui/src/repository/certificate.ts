@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { type RecordListOptions } from "pocketbase";
 
 import { type CertificateModel } from "@/domain/certificate";
-import { getPocketBase } from "./pocketbase";
+import { getPocketBase } from "./_pocketbase";
 
 const COLLECTION_NAME = "certificate";
 
@@ -39,8 +39,8 @@ export const list = async (request: ListCertificateRequest) => {
 };
 
 export const remove = async (record: MaybeModelRecordWithId<CertificateModel>) => {
-  record = { ...record, deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") };
-
-  await getPocketBase().collection(COLLECTION_NAME).update<CertificateModel>(record.id!, record);
+  await getPocketBase()
+    .collection(COLLECTION_NAME)
+    .update<CertificateModel>(record.id!, { deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") });
   return true;
 };

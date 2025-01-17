@@ -1,7 +1,7 @@
 import { ClientResponseError } from "pocketbase";
 
 import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
-import { getPocketBase } from "@/repository/pocketbase";
+import { getPocketBase } from "@/repository/_pocketbase";
 
 export const run = async (id: string) => {
   const pb = getPocketBase();

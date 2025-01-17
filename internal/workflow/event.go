@@ -5,43 +5,62 @@ import (
 	"fmt"
 
 	"github.com/pocketbase/pocketbase/core"
-	"github.com/pocketbase/pocketbase/models"
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
-const tableName = "workflow"
-
 func Register() {
+	const tableName = "workflow"
+
 	app := app.GetApp()
+	app.OnRecordCreateRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
 
-	app.OnRecordAfterCreateRequest(tableName).Add(func(e *core.RecordCreateEvent) error {
-		return update(e.HttpContext.Request().Context(), e.Record)
+		if err := update(e.Request.Context(), e.Record); err != nil {
+			return err
+		}
+
+		return nil
 	})
+	app.OnRecordUpdateRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
 
-	app.OnRecordAfterUpdateRequest(tableName).Add(func(e *core.RecordUpdateEvent) error {
-		return update(e.HttpContext.Request().Context(), e.Record)
+		if err := update(e.Request.Context(), e.Record); err != nil {
+			return err
+		}
+
+		return nil
 	})
+	app.OnRecordDeleteRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+		if err := e.Next(); err != nil {
+			return err
+		}
 
-	app.OnRecordAfterDeleteRequest(tableName).Add(func(e *core.RecordDeleteEvent) error {
-		return delete(e.HttpContext.Request().Context(), e.Record)
+		if err := delete(e.Request.Context(), e.Record); err != nil {
+			return err
+		}
+
+		return nil
 	})
 }
 
-func update(ctx context.Context, record *models.Record) error {
+func update(ctx context.Context, record *core.Record) error {
 	scheduler := app.GetScheduler()
 
 	// 向数据库插入/更新时，同时更新定时任务
-	workflowId := record.GetId()
+	workflowId := record.Id
 	enabled := record.GetBool("enabled")
 	trigger := record.GetString("trigger")
 
 	// 如果是手动触发或未启用，移除定时任务
 	if !enabled || trigger == string(domain.WorkflowTriggerTypeManual) {
 		scheduler.Remove(fmt.Sprintf("workflow#%s", workflowId))
-		scheduler.Start()
 		return nil
 	}
 
@@ -57,18 +76,15 @@ func update(ctx context.Context, record *models.Record) error {
 		return fmt.Errorf("add cron job failed: %w", err)
 	}
 
-	scheduler.Start()
-
 	return nil
 }
 
-func delete(_ context.Context, record *models.Record) error {
+func delete(_ context.Context, record *core.Record) error {
 	scheduler := app.GetScheduler()
 
 	// 从数据库删除时，同时移除定时任务
-	workflowId := record.GetId()
+	workflowId := record.Id
 	scheduler.Remove(fmt.Sprintf("workflow#%s", workflowId))
-	scheduler.Start()
 
 	return nil
 }

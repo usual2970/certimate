@@ -32,8 +32,7 @@ func NewCertificateService(repo certificateRepository) *CertificateService {
 }
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
-	scheduler := app.GetScheduler()
-	err := scheduler.Add("certificate", "0 0 * * *", func() {
+	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
@@ -49,12 +48,6 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 			app.GetLogger().Error("failed to send notification", "err", err)
 		}
 	})
-	if err != nil {
-		app.GetLogger().Error("failed to add schedule", "err", err)
-		return err
-	}
-	scheduler.Start()
-	app.GetLogger().Info("certificate schedule started")
 	return nil
 }
 

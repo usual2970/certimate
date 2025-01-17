@@ -12,11 +12,13 @@ var scheduler *cron.Cron
 var schedulerOnce sync.Once
 
 func GetScheduler() *cron.Cron {
+	scheduler = GetApp().Cron()
 	schedulerOnce.Do(func() {
-		scheduler = cron.New()
 		location, err := time.LoadLocation("Local")
 		if err == nil {
+			scheduler.Stop()
 			scheduler.SetTimezone(location)
+			scheduler.Start()
 		}
 	})
 

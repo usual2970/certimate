@@ -6,7 +6,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { useAntdForm } from "@/hooks";
-import { getPocketBase } from "@/repository/pocketbase";
+import { getAuthStore, save as saveAdmin } from "@/repository/admin";
 import { getErrMsg } from "@/utils/error";
 
 const SettingsAccount = () => {
@@ -27,18 +27,16 @@ const SettingsAccount = () => {
     formProps,
   } = useAntdForm<z.infer<typeof formSchema>>({
     initialValues: {
-      username: getPocketBase().authStore.model?.email,
+      username: getAuthStore().record?.email,
     },
     onSubmit: async (values) => {
       try {
-        await getPocketBase().admins.update(getPocketBase().authStore.model?.id, {
-          email: values.username,
-        });
+        await saveAdmin({ email: values.username });
 
         messageApi.success(t("common.text.operation_succeeded"));
 
         setTimeout(() => {
-          getPocketBase().authStore.clear();
+          getAuthStore().clear();
           navigate("/login");
         }, 500);
       } catch (err) {
