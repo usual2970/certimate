@@ -59,23 +59,44 @@ type WorkflowNode struct {
 	Validated bool `json:"validated"`
 }
 
-func (n *WorkflowNode) GetConfigString(key string) string {
+type WorkflowNodeConfigForApply struct {
+	Domains            string         `json:"domains"`
+	ContactEmail       string         `json:"contactEmail"`
+	Provider           string         `json:"provider"`
+	ProviderAccessId   string         `json:"providerAccessId"`
+	ProviderConfig     map[string]any `json:"providerConfig"`
+	KeyAlgorithm       string         `json:"keyAlgorithm"`
+	Nameservers        string         `json:"nameservers"`
+	PropagationTimeout int32          `json:"propagationTimeout"`
+	DisableFollowCNAME bool           `json:"disableFollowCNAME"`
+}
+
+type WorkflowNodeConfigForDeploy struct {
+	Certificate      string         `json:"certificate"`
+	Provider         string         `json:"provider"`
+	ProviderAccessId string         `json:"providerAccessId"`
+	ProviderConfig   map[string]any `json:"providerConfig"`
+}
+
+type WorkflowNodeConfigForNotify struct {
+	Channel string `json:"channel"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
+}
+
+func (n *WorkflowNode) getConfigValueAsString(key string) string {
 	return maps.GetValueAsString(n.Config, key)
 }
 
-func (n *WorkflowNode) GetConfigBool(key string) bool {
+func (n *WorkflowNode) getConfigValueAsBool(key string) bool {
 	return maps.GetValueAsBool(n.Config, key)
 }
 
-func (n *WorkflowNode) GetConfigInt32(key string) int32 {
+func (n *WorkflowNode) getConfigValueAsInt32(key string) int32 {
 	return maps.GetValueAsInt32(n.Config, key)
 }
 
-func (n *WorkflowNode) GetConfigInt64(key string) int64 {
-	return maps.GetValueAsInt64(n.Config, key)
-}
-
-func (n *WorkflowNode) GetConfigMap(key string) map[string]any {
+func (n *WorkflowNode) getConfigValueAsMap(key string) map[string]any {
 	if val, ok := n.Config[key]; ok {
 		if result, ok := val.(map[string]any); ok {
 			return result
@@ -83,6 +104,37 @@ func (n *WorkflowNode) GetConfigMap(key string) map[string]any {
 	}
 
 	return make(map[string]any)
+}
+
+func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
+	return WorkflowNodeConfigForApply{
+		Domains:            n.getConfigValueAsString("domains"),
+		ContactEmail:       n.getConfigValueAsString("contactEmail"),
+		Provider:           n.getConfigValueAsString("provider"),
+		ProviderAccessId:   n.getConfigValueAsString("providerAccessId"),
+		ProviderConfig:     n.getConfigValueAsMap("providerConfig"),
+		KeyAlgorithm:       n.getConfigValueAsString("keyAlgorithm"),
+		Nameservers:        n.getConfigValueAsString("nameservers"),
+		PropagationTimeout: n.getConfigValueAsInt32("propagationTimeout"),
+		DisableFollowCNAME: n.getConfigValueAsBool("disableFollowCNAME"),
+	}
+}
+
+func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
+	return WorkflowNodeConfigForDeploy{
+		Certificate:      n.getConfigValueAsString("certificate"),
+		Provider:         n.getConfigValueAsString("provider"),
+		ProviderAccessId: n.getConfigValueAsString("providerAccessId"),
+		ProviderConfig:   n.getConfigValueAsMap("providerConfig"),
+	}
+}
+
+func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
+	return WorkflowNodeConfigForNotify{
+		Channel: n.getConfigValueAsString("channel"),
+		Subject: n.getConfigValueAsString("subject"),
+		Message: n.getConfigValueAsString("message"),
+	}
 }
 
 type WorkflowNodeIO struct {

@@ -114,19 +114,21 @@ func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 	// TODO: 可控制是否强制申请
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
-		if lastOutput.Node.GetConfigString("domains") != a.node.GetConfigString("domains") {
+		currentNodeConfig := a.node.GetConfigForApply()
+		lastNodeConfig := lastOutput.Node.GetConfigForApply()
+		if currentNodeConfig.Domains != lastNodeConfig.Domains {
 			return false, "配置项变化：域名"
 		}
-		if lastOutput.Node.GetConfigString("contactEmail") != a.node.GetConfigString("contactEmail") {
+		if currentNodeConfig.ContactEmail != lastNodeConfig.ContactEmail {
 			return false, "配置项变化：联系邮箱"
 		}
-		if lastOutput.Node.GetConfigString("provider") != a.node.GetConfigString("provider") {
+		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
 			return false, "配置项变化：DNS 提供商授权"
 		}
-		if !maps.Equal(lastOutput.Node.GetConfigMap("providerConfig"), a.node.GetConfigMap("providerConfig")) {
+		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
 			return false, "配置项变化：DNS 提供商参数"
 		}
-		if lastOutput.Node.GetConfigString("keyAlgorithm") != a.node.GetConfigString("keyAlgorithm") {
+		if currentNodeConfig.KeyAlgorithm != lastNodeConfig.KeyAlgorithm {
 			return false, "配置项变化：数字签名算法"
 		}
 

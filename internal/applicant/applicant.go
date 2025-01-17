@@ -51,11 +51,12 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		return nil, fmt.Errorf("node type is not apply")
 	}
 
+	nodeConfig := node.GetConfigForApply()
+
 	accessRepo := repository.NewAccessRepository()
-	accessId := node.GetConfigString("providerAccessId")
-	access, err := accessRepo.GetById(context.Background(), accessId)
+	access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get access #%s record: %w", accessId, err)
+		return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
 	}
 
 	accessConfig, err := access.UnmarshalConfigToMap()
@@ -64,15 +65,15 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	options := &applicantOptions{
-		Domains:              slices.Filter(strings.Split(node.GetConfigString("domains"), ";"), func(s string) bool { return s != "" }),
-		ContactEmail:         node.GetConfigString("contactEmail"),
-		Provider:             domain.ApplyDNSProviderType(node.GetConfigString("provider")),
+		Domains:              slices.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:         nodeConfig.ContactEmail,
+		Provider:             domain.ApplyDNSProviderType(nodeConfig.Provider),
 		ProviderAccessConfig: accessConfig,
-		ProviderApplyConfig:  node.GetConfigMap("providerConfig"),
-		KeyAlgorithm:         node.GetConfigString("keyAlgorithm"),
-		Nameservers:          slices.Filter(strings.Split(node.GetConfigString("nameservers"), ";"), func(s string) bool { return s != "" }),
-		PropagationTimeout:   node.GetConfigInt32("propagationTimeout"),
-		DisableFollowCNAME:   node.GetConfigBool("disableFollowCNAME"),
+		ProviderApplyConfig:  nodeConfig.ProviderConfig,
+		KeyAlgorithm:         nodeConfig.KeyAlgorithm,
+		Nameservers:          slices.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		PropagationTimeout:   nodeConfig.PropagationTimeout,
+		DisableFollowCNAME:   nodeConfig.DisableFollowCNAME,
 	}
 
 	applicant, err := createApplicant(options)

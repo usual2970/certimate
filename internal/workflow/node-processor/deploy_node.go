@@ -38,13 +38,13 @@ func (d *deployNode) Run(ctx context.Context) error {
 	}
 
 	// 获取前序节点输出证书
-	certSource := d.node.GetConfigString("certificate")
-	certSourceSlice := strings.Split(certSource, "#")
-	if len(certSourceSlice) != 2 {
-		d.AddOutput(ctx, d.node.Name, "证书来源配置错误", certSource)
-		return fmt.Errorf("证书来源配置错误: %s", certSource)
+	previousNodeOutputCertificateSource := d.node.GetConfigForDeploy().Certificate
+	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, "#")
+	if len(previousNodeOutputCertificateSourceSlice) != 2 {
+		d.AddOutput(ctx, d.node.Name, "证书来源配置错误", previousNodeOutputCertificateSource)
+		return fmt.Errorf("证书来源配置错误: %s", previousNodeOutputCertificateSource)
 	}
-	certificate, err := d.certRepo.GetByWorkflowNodeId(ctx, certSourceSlice[0])
+	certificate, err := d.certRepo.GetByWorkflowNodeId(ctx, previousNodeOutputCertificateSourceSlice[0])
 	if err != nil {
 		d.AddOutput(ctx, d.node.Name, "获取证书失败", err.Error())
 		return err
@@ -102,10 +102,12 @@ func (d *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 	// TODO: 可控制是否强制部署
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次部署时的关键配置（即影响证书部署的）参数是否一致
-		if lastOutput.Node.GetConfigString("provider") != d.node.GetConfigString("provider") {
+		currentNodeConfig := d.node.GetConfigForDeploy()
+		lastNodeConfig := lastOutput.Node.GetConfigForDeploy()
+		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
 			return false, "配置项变化：主机提供商授权"
 		}
-		if !maps.Equal(lastOutput.Node.GetConfigMap("providerConfig"), d.node.GetConfigMap("providerConfig")) {
+		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
 			return false, "配置项变化：主机提供商参数"
 		}
 
