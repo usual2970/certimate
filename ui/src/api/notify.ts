@@ -5,7 +5,7 @@ import { getPocketBase } from "@/repository/pocketbase";
 export const notifyTest = async (channel: string) => {
   const pb = getPocketBase();
 
-  const resp = await pb.send("/api/notify/test", {
+  const resp = await pb.send<BaseResponse>("/api/notify/test", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

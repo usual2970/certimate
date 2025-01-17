@@ -240,7 +240,11 @@ const WorkflowList = () => {
   const [page, setPage] = useState<number>(() => parseInt(+searchParams.get("page")! + "") || 1);
   const [pageSize, setPageSize] = useState<number>(() => parseInt(+searchParams.get("perPage")! + "") || 10);
 
-  const { loading } = useRequest(
+  const {
+    loading,
+    error: loadedError,
+    run: refreshData,
+  } = useRequest(
     () => {
       return listWorkflow({
         page: page,
@@ -250,9 +254,9 @@ const WorkflowList = () => {
     },
     {
       refreshDeps: [filters, page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems);
       },
       onError: (err) => {
         if (err instanceof ClientResponseError && err.isAbort) {
@@ -261,6 +265,8 @@ const WorkflowList = () => {
 
         console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       },
     }
   );
@@ -302,9 +308,10 @@ const WorkflowList = () => {
       content: t("workflow.action.delete.confirm"),
       onOk: async () => {
         try {
-          const resp: boolean = await removeWorkflow(workflow);
+          const resp = await removeWorkflow(workflow);
           if (resp) {
             setTableData((prev) => prev.filter((item) => item.id !== workflow.id));
+            refreshData();
           }
         } catch (err) {
           console.error(err);
@@ -341,7 +348,7 @@ const WorkflowList = () => {
         dataSource={tableData}
         loading={loading}
         locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t("workflow.nodata")} />,
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : t("workflow.nodata")} />,
         }}
         pagination={{
           current: page,

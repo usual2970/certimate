@@ -25,27 +25,24 @@ import (
 func main() {
 	app := app.GetApp()
 
-	isGoRun := strings.HasPrefix(os.Args[0], os.TempDir())
-
-	// 获取启动命令中的http参数
-	var httpFlag string
-	flag.StringVar(&httpFlag, "http", "127.0.0.1:8090", "HTTP server address")
-	// "serve"影响解析
-	_ = flag.CommandLine.Parse(os.Args[2:])
+	var flagHttp string
+	var flagDir string
+	flag.StringVar(&flagHttp, "http", "127.0.0.1:8090", "HTTP server address")
+	flag.StringVar(&flagDir, "dir", "/pb_data/database", "Pocketbase data directory")
+	_ = flag.CommandLine.Parse(os.Args[2:]) // skip the first two arguments: "main.go serve"
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{
 		// enable auto creation of migration files when making collection changes in the Admin UI
 		// (the isGoRun check is to enable it only during development)
-		Automigrate: isGoRun,
+		Automigrate: strings.HasPrefix(os.Args[0], os.TempDir()),
 	})
 
-	workflow.RegisterEvents()
-
 	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		routes.Register(e.Router)
-
 		scheduler.Register()
 
+		workflow.Register()
+
+		routes.Register(e.Router)
 		e.Router.GET(
 			"/*",
 			echo.StaticDirectoryHandler(ui.DistDirFS, false),
@@ -57,11 +54,13 @@ func main() {
 
 	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
 		routes.Unregister()
+
 		log.Println("Exit!")
+
 		return nil
 	})
 
-	log.Printf("Visit the website: http://%s", httpFlag)
+	log.Printf("Visit the website: http://%s", flagHttp)
 
 	if err := app.Start(); err != nil {
 		log.Fatal(err)

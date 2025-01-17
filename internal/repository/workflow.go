@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/daos"
@@ -18,29 +19,44 @@ func NewWorkflowRepository() *WorkflowRepository {
 	return &WorkflowRepository{}
 }
 
-func (w *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error) {
+func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error) {
 	records, err := app.GetApp().Dao().FindRecordsByFilter(
 		"workflow",
 		"enabled={:enabled} && trigger={:trigger}",
-		"-created", 1000, 0, dbx.Params{"enabled": true, "trigger": domain.WorkflowTriggerTypeAuto},
+		"-created",
+		0, 0,
+		dbx.Params{"enabled": true, "trigger": domain.WorkflowTriggerTypeAuto},
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	rs := make([]domain.Workflow, 0)
+	workflows := make([]*domain.Workflow, 0)
 	for _, record := range records {
-		workflow, err := record2Workflow(record)
+		workflow, err := r.castRecordToModel(record)
 		if err != nil {
 			return nil, err
 		}
-		rs = append(rs, *workflow)
+
+		workflows = append(workflows, workflow)
 	}
 
-	return rs, nil
+	return workflows, nil
 }
 
-func (w *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow) error {
+func (r *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Workflow, error) {
+	record, err := app.GetApp().Dao().FindRecordById("workflow", id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return r.castRecordToModel(record)
+}
+
+func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow) error {
 	collection, err := app.GetApp().Dao().FindCollectionByNameOrId(workflow.Table())
 	if err != nil {
 		return err
@@ -73,7 +89,7 @@ func (w *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	return app.GetApp().Dao().SaveRecord(record)
 }
 
-func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRun) error {
+func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error {
 	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run")
 	if err != nil {
 		return err
@@ -81,20 +97,20 @@ func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRu
 
 	err = app.GetApp().Dao().RunInTransaction(func(txDao *daos.Dao) error {
 		record := models.NewRecord(collection)
-		record.Set("workflowId", run.WorkflowId)
-		record.Set("trigger", string(run.Trigger))
-		record.Set("status", string(run.Status))
-		record.Set("startedAt", run.StartedAt)
-		record.Set("endedAt", run.EndedAt)
-		record.Set("logs", run.Logs)
-		record.Set("error", run.Error)
+		record.Set("workflowId", workflowRun.WorkflowId)
+		record.Set("trigger", string(workflowRun.Trigger))
+		record.Set("status", string(workflowRun.Status))
+		record.Set("startedAt", workflowRun.StartedAt)
+		record.Set("endedAt", workflowRun.EndedAt)
+		record.Set("logs", workflowRun.Logs)
+		record.Set("error", workflowRun.Error)
 		err = txDao.SaveRecord(record)
 		if err != nil {
 			return err
 		}
 
 		// unable trigger sse using DB()
-		workflowRecord, err := txDao.FindRecordById("workflow", run.WorkflowId)
+		workflowRecord, err := txDao.FindRecordById("workflow", workflowRun.WorkflowId)
 		if err != nil {
 			return err
 		}
@@ -112,19 +128,11 @@ func (w *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRu
 	return nil
 }
 
-func (w *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Workflow, error) {
-	record, err := app.GetApp().Dao().FindRecordById("workflow", id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domain.ErrRecordNotFound
-		}
-		return nil, err
+func (r *WorkflowRepository) castRecordToModel(record *models.Record) (*domain.Workflow, error) {
+	if record == nil {
+		return nil, fmt.Errorf("record is nil")
 	}
 
-	return record2Workflow(record)
-}
-
-func record2Workflow(record *models.Record) (*domain.Workflow, error) {
 	content := &domain.WorkflowNode{}
 	if err := record.UnmarshalJSONField("content", content); err != nil {
 		return nil, err

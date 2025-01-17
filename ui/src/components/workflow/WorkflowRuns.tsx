@@ -129,7 +129,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const { loading } = useRequest(
+  const { loading, error: loadedError } = useRequest(
     () => {
       return listWorkflowRuns({
         workflowId: workflowId,
@@ -139,9 +139,9 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
     },
     {
       refreshDeps: [workflowId, page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems);
       },
       onError: (err) => {
         if (err instanceof ClientResponseError && err.isAbort) {
@@ -150,6 +150,8 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
 
         console.error(err);
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+
+        throw err;
       },
     }
   );
@@ -164,7 +166,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           dataSource={tableData}
           loading={loading}
           locale={{
-            emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />,
+            emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : undefined} />,
           }}
           pagination={{
             current: page,

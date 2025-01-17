@@ -75,7 +75,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	if d.config.PreCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PreCommand)
 		if err != nil {
-			return nil, xerrors.Wrapf(err, "failed to run pre-command, stdout: %s, stderr: %s", stdout, stderr)
+			return nil, xerrors.Wrapf(err, "failed to execute pre-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.logger.Logt("pre-command executed", stdout)
@@ -132,7 +132,7 @@ func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem s
 	if d.config.PostCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PostCommand)
 		if err != nil {
-			return nil, xerrors.Wrapf(err, "failed to run command, stdout: %s, stderr: %s", stdout, stderr)
+			return nil, xerrors.Wrapf(err, "failed to execute post-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
 
 		d.logger.Logt("post-command executed", stdout)
@@ -154,7 +154,7 @@ func execCommand(shellEnv ShellEnvType, command string) (string, string, error) 
 	case SHELL_ENV_POWERSHELL:
 		cmd = exec.Command("powershell", "-Command", command)
 
-	case "":
+	case ShellEnvType(""):
 		if runtime.GOOS == "windows" {
 			cmd = exec.Command("cmd", "/C", command)
 		} else {
@@ -165,14 +165,13 @@ func execCommand(shellEnv ShellEnvType, command string) (string, string, error) 
 		return "", "", fmt.Errorf("unsupported shell env: %s", shellEnv)
 	}
 
-	var stdoutBuf bytes.Buffer
-	cmd.Stdout = &stdoutBuf
-	var stderrBuf bytes.Buffer
-	cmd.Stderr = &stderrBuf
-
+	stdoutBuf := bytes.NewBuffer(nil)
+	cmd.Stdout = stdoutBuf
+	stderrBuf := bytes.NewBuffer(nil)
+	cmd.Stderr = stderrBuf
 	err := cmd.Run()
 	if err != nil {
-		return "", "", xerrors.Wrap(err, "failed to execute shell command")
+		return stdoutBuf.String(), stderrBuf.String(), xerrors.Wrap(err, "failed to execute command")
 	}
 
 	return stdoutBuf.String(), stderrBuf.String(), nil

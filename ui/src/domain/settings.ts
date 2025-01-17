@@ -29,7 +29,7 @@ export type NotifyTemplate = {
 };
 
 export const defaultNotifyTemplate: NotifyTemplate = {
-  subject: "您有 ${COUNT} 张证书即将过期",
+  subject: "有 ${COUNT} 张证书即将过期",
   message: "有 ${COUNT} 张证书即将过期，域名分别为 ${DOMAINS}，请保持关注！",
 };
 // #endregion

@@ -30,4 +30,5 @@ export const remove = async (record: MaybeModelRecordWithId<AccessModel>) => {
   if ("provider" in record && record.provider === "pdns") record.provider = "powerdns";
 
   await getPocketBase().collection(COLLECTION_NAME).update<AccessModel>(record.id!, record);
+  return true;
 };

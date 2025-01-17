@@ -130,7 +130,7 @@ const AccessList = () => {
     });
   }, []);
 
-  const { loading } = useRequest(
+  const { loading, run: refreshData } = useRequest(
     () => {
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
@@ -142,9 +142,9 @@ const AccessList = () => {
     },
     {
       refreshDeps: [accesses, page, pageSize],
-      onSuccess: (data) => {
-        setTableData(data.items);
-        setTableTotal(data.totalItems);
+      onSuccess: (res) => {
+        setTableData(res.items);
+        setTableTotal(res.totalItems);
       },
     }
   );
@@ -157,6 +157,7 @@ const AccessList = () => {
         // TODO: 有关联数据的不允许被删除
         try {
           await deleteAccess(data);
+          refreshData();
         } catch (err) {
           console.error(err);
           notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });

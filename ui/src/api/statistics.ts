@@ -6,7 +6,7 @@ import { getPocketBase } from "@/repository/pocketbase";
 export const get = async () => {
   const pb = getPocketBase();
 
-  const resp = await pb.send("/api/statistics/get", {
+  const resp = await pb.send<BaseResponse<Statistics>>("/api/statistics/get", {
     method: "GET",
   });
 
@@ -14,5 +14,5 @@ export const get = async () => {
     throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
 
-  return resp.data as Statistics;
+  return resp;
 };

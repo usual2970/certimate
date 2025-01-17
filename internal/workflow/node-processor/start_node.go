@@ -8,21 +8,19 @@ import (
 
 type startNode struct {
 	node *domain.WorkflowNode
-	*Logger
+	*nodeLogger
 }
 
 func NewStartNode(node *domain.WorkflowNode) *startNode {
 	return &startNode{
-		node:   node,
-		Logger: NewLogger(node),
+		node:       node,
+		nodeLogger: NewNodeLogger(node),
 	}
 }
 
-// 开始节点没有任何操作
 func (s *startNode) Run(ctx context.Context) error {
-	s.AddOutput(ctx,
-		s.node.Name,
-		"完成",
-	)
+	// 开始节点没有任何操作
+	s.AddOutput(ctx, s.node.Name, "完成")
+
 	return nil
 }

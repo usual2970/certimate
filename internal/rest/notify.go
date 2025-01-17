@@ -37,5 +37,5 @@ func (handler *notifyHandler) test(c echo.Context) error {
 		return resp.Err(c, err)
 	}
 
-	return resp.Succ(c, nil)
+	return resp.Ok(c, nil)
 }

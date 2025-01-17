@@ -6,15 +6,15 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type StatisticsRepository interface {
+type statisticsRepository interface {
 	Get(ctx context.Context) (*domain.Statistics, error)
 }
 
 type StatisticsService struct {
-	repo StatisticsRepository
+	repo statisticsRepository
 }
 
-func NewStatisticsService(repo StatisticsRepository) *StatisticsService {
+func NewStatisticsService(repo statisticsRepository) *StatisticsService {
 	return &StatisticsService{
 		repo: repo,
 	}

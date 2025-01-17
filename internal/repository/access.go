@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
+	"github.com/pocketbase/pocketbase/models"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -15,13 +17,25 @@ func NewAccessRepository() *AccessRepository {
 	return &AccessRepository{}
 }
 
-func (a *AccessRepository) GetById(ctx context.Context, id string) (*domain.Access, error) {
+func (r *AccessRepository) GetById(ctx context.Context, id string) (*domain.Access, error) {
 	record, err := app.GetApp().Dao().FindRecordById("access", id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
 		}
 		return nil, err
+	}
+
+	if !record.GetDateTime("deleted").Time().IsZero() {
+		return nil, domain.ErrRecordNotFound
+	}
+
+	return r.castRecordToModel(record)
+}
+
+func (r *AccessRepository) castRecordToModel(record *models.Record) (*domain.Access, error) {
+	if record == nil {
+		return nil, fmt.Errorf("record is nil")
 	}
 
 	access := &domain.Access{

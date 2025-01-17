@@ -19,21 +19,21 @@ type workflowRunData struct {
 	Options  *domain.WorkflowRunReq
 }
 
-type WorkflowRepository interface {
+type workflowRepository interface {
+	ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error)
 	GetById(ctx context.Context, id string) (*domain.Workflow, error)
-	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
 	Save(ctx context.Context, workflow *domain.Workflow) error
-	ListEnabledAuto(ctx context.Context) ([]domain.Workflow, error)
+	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
 }
 
 type WorkflowService struct {
 	ch     chan *workflowRunData
-	repo   WorkflowRepository
+	repo   workflowRepository
 	wg     sync.WaitGroup
 	cancel context.CancelFunc
 }
 
-func NewWorkflowService(repo WorkflowRepository) *WorkflowService {
+func NewWorkflowService(repo workflowRepository) *WorkflowService {
 	rs := &WorkflowService{
 		repo: repo,
 		ch:   make(chan *workflowRunData, 1),

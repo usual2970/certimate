@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/exp/maps"
+
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
@@ -13,60 +15,45 @@ import (
 
 type applyNode struct {
 	node       *domain.WorkflowNode
-	outputRepo WorkflowOutputRepository
-	*Logger
+	certRepo   certificateRepository
+	outputRepo workflowOutputRepository
+	*nodeLogger
 }
-
-var validityDuration = time.Hour * 24 * 10
 
 func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:       node,
-		Logger:     NewLogger(node),
+		nodeLogger: NewNodeLogger(node),
 		outputRepo: repository.NewWorkflowOutputRepository(),
+		certRepo:   repository.NewCertificateRepository(),
 	}
-}
-
-type WorkflowOutputRepository interface {
-	// 查询节点输出
-	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
-
-	// 查询申请节点的证书
-	GetCertificateByNodeId(ctx context.Context, nodeId string) (*domain.Certificate, error)
-
-	// 保存节点输出
-	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
 }
 
 // 申请节点根据申请类型执行不同的操作
 func (a *applyNode) Run(ctx context.Context) error {
 	a.AddOutput(ctx, a.node.Name, "开始执行")
-	// 查询是否申请过，已申请过则直接返回
-	// TODO: 先保持和 v0.2 一致，后续增加是否强制申请的参数
-	output, err := a.outputRepo.GetByNodeId(ctx, a.node.Id)
-	if err != nil && !domain.IsRecordNotFound(err) {
+
+	// 查询上次执行结果
+	lastOutput, err := a.outputRepo.GetByNodeId(ctx, a.node.Id)
+	if err != nil && !domain.IsRecordNotFoundError(err) {
 		a.AddOutput(ctx, a.node.Name, "查询申请记录失败", err.Error())
 		return err
 	}
 
-	if output != nil && output.Succeeded {
-		lastCertificate, _ := a.outputRepo.GetCertificateByNodeId(ctx, a.node.Id)
-		if lastCertificate != nil {
-			if time.Until(lastCertificate.ExpireAt) > validityDuration {
-				a.AddOutput(ctx, a.node.Name, "已申请过证书，且证书在有效期内")
-				return nil
-			}
-		}
+	// 检测是否可以跳过本次执行
+	if skippable, skipReason := a.checkCanSkip(ctx, lastOutput); skippable {
+		a.AddOutput(ctx, a.node.Name, skipReason)
+		return nil
 	}
 
-	// 获取Applicant
+	// 初始化申请器
 	applicant, err := applicant.NewWithApplyNode(a.node)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "获取申请对象失败", err.Error())
 		return err
 	}
 
-	// 申请
+	// 申请证书
 	applyResult, err := applicant.Apply()
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "申请失败", err.Error())
@@ -74,27 +61,12 @@ func (a *applyNode) Run(ctx context.Context) error {
 	}
 	a.AddOutput(ctx, a.node.Name, "申请成功")
 
-	// 记录申请结果
-	// 保持一个节点只有一个输出
-	outputId := ""
-	if output != nil {
-		outputId = output.Id
-	}
-	output = &domain.WorkflowOutput{
-		Meta:       domain.Meta{Id: outputId},
-		WorkflowId: GetWorkflowId(ctx),
-		NodeId:     a.node.Id,
-		Node:       a.node,
-		Succeeded:  true,
-		Outputs:    a.node.Outputs,
-	}
-
+	// 解析证书并生成实体
 	certX509, err := certs.ParseCertificateFromPEM(applyResult.CertificateFullChain)
 	if err != nil {
 		a.AddOutput(ctx, a.node.Name, "解析证书失败", err.Error())
 		return err
 	}
-
 	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
 		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
@@ -109,7 +81,19 @@ func (a *applyNode) Run(ctx context.Context) error {
 		WorkflowNodeId:    a.node.Id,
 	}
 
-	if err := a.outputRepo.Save(ctx, output, certificate, func(id string) error {
+	// 保存执行结果
+	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
+	currentOutput := &domain.WorkflowOutput{
+		WorkflowId: GetWorkflowId(ctx),
+		NodeId:     a.node.Id,
+		Node:       a.node,
+		Succeeded:  true,
+		Outputs:    a.node.Outputs,
+	}
+	if lastOutput != nil {
+		currentOutput.Id = lastOutput.Id
+	}
+	if err := a.outputRepo.Save(ctx, currentOutput, certificate, func(id string) error {
 		if certificate != nil {
 			certificate.WorkflowOutputId = id
 		}
@@ -119,8 +103,38 @@ func (a *applyNode) Run(ctx context.Context) error {
 		a.AddOutput(ctx, a.node.Name, "保存申请记录失败", err.Error())
 		return err
 	}
-
 	a.AddOutput(ctx, a.node.Name, "保存申请记录成功")
 
 	return nil
+}
+
+func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+	const validityDuration = time.Hour * 24 * 10
+
+	// TODO: 可控制是否强制申请
+	if lastOutput != nil && lastOutput.Succeeded {
+		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
+		if lastOutput.Node.GetConfigString("domains") != a.node.GetConfigString("domains") {
+			return false, "配置项变化：域名"
+		}
+		if lastOutput.Node.GetConfigString("contactEmail") != a.node.GetConfigString("contactEmail") {
+			return false, "配置项变化：联系邮箱"
+		}
+		if lastOutput.Node.GetConfigString("provider") != a.node.GetConfigString("provider") {
+			return false, "配置项变化：DNS 提供商授权"
+		}
+		if !maps.Equal(lastOutput.Node.GetConfigMap("providerConfig"), a.node.GetConfigMap("providerConfig")) {
+			return false, "配置项变化：DNS 提供商参数"
+		}
+		if lastOutput.Node.GetConfigString("keyAlgorithm") != a.node.GetConfigString("keyAlgorithm") {
+			return false, "配置项变化：数字签名算法"
+		}
+
+		lastCertificate, _ := a.certRepo.GetByWorkflowNodeId(ctx, a.node.Id)
+		if lastCertificate != nil && time.Until(lastCertificate.ExpireAt) > validityDuration {
+			return true, "已申请过证书，且证书尚未临近过期"
+		}
+	}
+
+	return false, "无历史申请记录"
 }

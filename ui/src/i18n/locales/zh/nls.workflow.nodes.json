@@ -7,7 +7,7 @@
   "workflow_node.action.rename_branch": "重命名",
   "workflow_node.action.remove_branch": "删除分支",
 
-  "workflow_node.unsaved_changes.confirm": "你有尚未保存的更改。你确定要关闭面板吗？",
+  "workflow_node.unsaved_changes.confirm": "你有尚未保存的更改。确定要关闭面板吗？",
 
   "workflow_node.start.label": "开始",
   "workflow_node.start.form.trigger.label": "触发方式",

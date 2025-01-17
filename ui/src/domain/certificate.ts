@@ -8,7 +8,7 @@ export interface CertificateModel extends BaseModel {
   effectAt: ISO8601String;
   expireAt: ISO8601String;
   workflowId: string;
-  expand: {
+  expand?: {
     workflowId?: WorkflowModel; // TODO: ugly, maybe to use an alias?
   };
 }
