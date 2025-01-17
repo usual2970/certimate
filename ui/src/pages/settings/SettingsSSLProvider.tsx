@@ -98,10 +98,6 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
       </Form.Item>
 
       <Form.Item>
-        <Alert type="warning" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.letsencrypt_staging_warning") }}></span>} />
-      </Form.Item>
-
-      <Form.Item>
         <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
           {t("common.button.save")}
         </Button>
@@ -324,27 +320,35 @@ const SettingsSSLProvider = () => {
                 avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.letsencrypt.label")}
+                description="letsencrypt.org"
                 value={SSLPROVIDERS.LETS_ENCRYPT}
               />
               <CheckCard
                 avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.letsencrypt_staging.label")}
+                description="letsencrypt.org"
                 value={SSLPROVIDERS.LETS_ENCRYPT_STAGING}
               />
               <CheckCard
                 avatar={<img src={"/imgs/acme/zerossl.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.zerossl.label")}
+                description="zerossl.com"
                 value={SSLPROVIDERS.ZERO_SSL}
               />
               <CheckCard
                 avatar={<img src={"/imgs/acme/google.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.gts.label")}
+                description="pki.goog"
                 value={SSLPROVIDERS.GOOGLE_TRUST_SERVICES}
               />
             </CheckCard.Group>
+          </Form.Item>
+
+          <Form.Item>
+            <Alert type="warning" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.provider.alert") }}></span>} />
           </Form.Item>
         </Form>
 
