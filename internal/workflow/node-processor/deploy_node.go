@@ -99,7 +99,6 @@ func (d *deployNode) Run(ctx context.Context) error {
 }
 
 func (d *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
-	// TODO: 可控制是否强制部署
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次部署时的关键配置（即影响证书部署的）参数是否一致
 		currentNodeConfig := d.node.GetConfigForDeploy()
@@ -111,8 +110,10 @@ func (d *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 			return false, "配置项变化：主机提供商参数"
 		}
 
-		return true, "已部署过证书"
+		if currentNodeConfig.SkipOnLastSucceeded {
+			return true, "已部署过证书"
+		}
 	}
 
-	return false, "无历史部署记录"
+	return false, ""
 }

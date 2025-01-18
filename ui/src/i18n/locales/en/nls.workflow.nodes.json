@@ -67,8 +67,8 @@
   "workflow_node.apply.form.strategy_config.label": "Strategy settings",
   "workflow_node.apply.form.skip_before_expiry_days.label": "Renewal interval",
   "workflow_node.apply.form.skip_before_expiry_days.placeholder": "Please enter renewal interval",
-  "workflow_node.apply.form.skip_before_expiry_days.prefix": "Skip when the certificate expiration time exceeds",
-  "workflow_node.apply.form.skip_before_expiry_days.suffix": "",
+  "workflow_node.apply.form.skip_before_expiry_days.prefix": "If the certificate expiration time exceeds",
+  "workflow_node.apply.form.skip_before_expiry_days.suffix": ", skip to re-apply.",
   "workflow_node.apply.form.skip_before_expiry_days.unit": "days",
   "workflow_node.apply.form.skip_before_expiry_days.tooltip": "Be careful not to exceed the validity period limit of the CA, otherwise the certificate may never be renewed.",
 
@@ -359,6 +359,12 @@
   "workflow_node.deploy.form.webhook_data.guide": "Tips: The Webhook data should be a key-value pair in JSON format. The values in JSON support template variables, which will be replaced by actual values when sent to the Webhook URL. <br><br>Supported variables: <br><strong>${DOMAIN}</strong>: The primary domain of the certificate (<i>CommonName</i>).<br><strong>${DOMAINS}</strong>: The domain list of the certificate (<i>SubjectAltNames</i>).<br><strong>${CERTIFICATE}</strong>: The PEM format content of the certificate file.<br><strong>${PRIVATE_KEY}</strong>: The PEM format content of the private key file.",
   "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
   "workflow_node.deploy.form.webhook_data_preset.button": "Use preset template",
+  "workflow_node.deploy.form.strategy_config.label": "Strategy settings",
+  "workflow_node.deploy.form.skip_on_last_succeeded.label": "Repeated deployment",
+  "workflow_node.deploy.form.skip_on_last_succeeded.prefix": "If the last deployment was successful, ",
+  "workflow_node.deploy.form.skip_on_last_succeeded.suffix": " to re-deploy.",
+  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.on": "skip",
+  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.off": "not skip",
 
   "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",

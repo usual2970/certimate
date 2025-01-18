@@ -119,6 +119,7 @@ export type WorkflowNodeConfigForDeploy = {
   provider: string;
   providerAccessId: string;
   providerConfig: Record<string, unknown>;
+  skipOnLastSucceeded: boolean;
 };
 
 export type WorkflowNodeConfigForNotify = {

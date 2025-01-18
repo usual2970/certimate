@@ -76,7 +76,7 @@ type WorkflowNodeConfigForDeploy struct {
 	Provider            string         `json:"provider"`            // 主机提供商
 	ProviderAccessId    string         `json:"providerAccessId"`    // 主机提供商授权记录 ID
 	ProviderConfig      map[string]any `json:"providerConfig"`      // 主机提供商额外配置
-	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"` // TODO: 上次部署成功时是否跳过
+	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"` // 上次部署成功时是否跳过
 }
 
 type WorkflowNodeConfigForNotify struct {

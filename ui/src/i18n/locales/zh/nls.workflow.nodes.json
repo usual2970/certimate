@@ -67,8 +67,8 @@
   "workflow_node.apply.form.strategy_config.label": "执行策略",
   "workflow_node.apply.form.skip_before_expiry_days.label": "续期间隔",
   "workflow_node.apply.form.skip_before_expiry_days.placeholder": "请输入续期间隔",
-  "workflow_node.apply.form.skip_before_expiry_days.prefix": "当距上次申请的证书到期时间前",
-  "workflow_node.apply.form.skip_before_expiry_days.suffix": "时跳过执行",
+  "workflow_node.apply.form.skip_before_expiry_days.prefix": "当上次签发的证书到期时间超过",
+  "workflow_node.apply.form.skip_before_expiry_days.suffix": "时，跳过重新申请。",
   "workflow_node.apply.form.skip_before_expiry_days.unit": "天",
   "workflow_node.apply.form.skip_before_expiry_days.tooltip": "注意不要超过 CA 的证书有效期限制，否则证书可能永远不会续期。",
 
@@ -359,6 +359,12 @@
   "workflow_node.deploy.form.webhook_data.guide": "小贴士：回调数据是一个 JSON 格式的键值对。其中值支持模板变量，将在被发送到指定的 Webhook URL 时被替换为实际值；其他内容将保持原样。<br><br>支持的变量：<br><strong>${DOMAIN}</strong>：证书的主域名（即 <i>CommonName</i>）<br><strong>${DOMAINS}</strong>：证书的多域名列表（即 <i>SubjectAltNames</i>）<br><strong>${CERTIFICATE}</strong>：证书文件 PEM 格式内容<br><strong>${PRIVATE_KEY}</strong>：私钥文件 PEM 格式内容",
   "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "请输入有效的 JSON 格式字符串",
   "workflow_node.deploy.form.webhook_data_preset.button": "使用预设模板",
+  "workflow_node.deploy.form.strategy_config.label": "执行策略",
+  "workflow_node.deploy.form.skip_on_last_succeeded.label": "重复部署",
+  "workflow_node.deploy.form.skip_on_last_succeeded.prefix": "当上次部署已成功时",
+  "workflow_node.deploy.form.skip_on_last_succeeded.suffix": "重新部署。",
+  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.on": "跳过",
+  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.off": "不跳过",
 
   "workflow_node.notify.label": "通知",
   "workflow_node.notify.form.subject.label": "通知主题",

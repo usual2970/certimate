@@ -136,5 +136,5 @@ func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 		}
 	}
 
-	return false, "无历史申请记录"
+	return false, ""
 }

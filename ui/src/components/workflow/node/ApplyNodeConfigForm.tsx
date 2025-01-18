@@ -391,11 +391,11 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             label={t("workflow_node.apply.form.skip_before_expiry_days.label")}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.skip_before_expiry_days.tooltip") }}></span>}
           >
-            <Flex align="center" gap={8}>
+            <Flex align="center" gap={8} wrap="wrap">
               <div>{t("workflow_node.apply.form.skip_before_expiry_days.prefix")}</div>
               <Form.Item name="skipBeforeExpiryDays" noStyle rules={[formRule]}>
                 <InputNumber
-                  className="flex-1"
+                  className="w-36"
                   min={1}
                   max={60}
                   placeholder={t("workflow_node.apply.form.skip_before_expiry_days.placeholder")}

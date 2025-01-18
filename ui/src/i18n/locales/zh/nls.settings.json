@@ -25,7 +25,7 @@
   "settings.notification.template.form.message.extra": "支持的变量（${COUNT}: 即将过期张数；${DOMAINS}: 域名列表）",
   "settings.notification.channels.card.title": "通知渠道",
   "settings.notification.channel.enabled.on": "启用",
-  "settings.notification.channel.enabled.off": "未启用",
+  "settings.notification.channel.enabled.off": "停用",
   "settings.notification.push_test.button": "推送测试消息",
   "settings.notification.push_test.pushed": "已推送",
   "settings.notification.channel.form.bark_server_url.label": "服务器地址",
