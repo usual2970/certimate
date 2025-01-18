@@ -9,10 +9,11 @@ import (
 )
 
 type HuaweiCloudApplicantConfig struct {
-	AccessKeyId        string `json:"accessKeyId"`
-	SecretAccessKey    string `json:"secretAccessKey"`
-	Region             string `json:"region"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	AccessKeyId           string `json:"accessKeyId"`
+	SecretAccessKey       string `json:"secretAccessKey"`
+	Region                string `json:"region"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *HuaweiCloudApplicantConfig) (challenge.Provider, error) {
@@ -30,8 +31,11 @@ func NewChallengeProvider(config *HuaweiCloudApplicantConfig) (challenge.Provide
 	providerConfig.AccessKeyID = config.AccessKeyId
 	providerConfig.SecretAccessKey = config.SecretAccessKey
 	providerConfig.Region = region
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = config.DnsTTL
 	}
 
 	provider, err := hwc.NewDNSProviderConfig(providerConfig)

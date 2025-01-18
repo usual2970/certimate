@@ -108,7 +108,8 @@ export type WorkflowNodeConfigForApply = {
   providerConfig?: Record<string, unknown>;
   keyAlgorithm: string;
   nameservers?: string;
-  propagationTimeout?: number;
+  dnsPropagationTimeout?: number;
+  dnsTTL?: number;
   disableFollowCNAME?: boolean;
 };
 

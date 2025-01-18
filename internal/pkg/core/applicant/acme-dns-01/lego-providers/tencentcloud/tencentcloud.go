@@ -9,9 +9,10 @@ import (
 )
 
 type TencentCloudApplicantConfig struct {
-	SecretId           string `json:"secretId"`
-	SecretKey          string `json:"secretKey"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	SecretId              string `json:"secretId"`
+	SecretKey             string `json:"secretKey"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *TencentCloudApplicantConfig) (challenge.Provider, error) {
@@ -22,8 +23,11 @@ func NewChallengeProvider(config *TencentCloudApplicantConfig) (challenge.Provid
 	providerConfig := tencentcloud.NewDefaultConfig()
 	providerConfig.SecretID = config.SecretId
 	providerConfig.SecretKey = config.SecretKey
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := tencentcloud.NewDNSProviderConfig(providerConfig)

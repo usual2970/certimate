@@ -58,28 +58,31 @@ type WorkflowNode struct {
 }
 
 type WorkflowNodeConfigForApply struct {
-	Domains            string         `json:"domains"`
-	ContactEmail       string         `json:"contactEmail"`
-	Provider           string         `json:"provider"`
-	ProviderAccessId   string         `json:"providerAccessId"`
-	ProviderConfig     map[string]any `json:"providerConfig"`
-	KeyAlgorithm       string         `json:"keyAlgorithm"`
-	Nameservers        string         `json:"nameservers"`
-	PropagationTimeout int32          `json:"propagationTimeout"`
-	DisableFollowCNAME bool           `json:"disableFollowCNAME"`
+	Domains               string         `json:"domains"`               // 域名列表，以半角逗号分隔
+	ContactEmail          string         `json:"contactEmail"`          // 联系邮箱
+	Provider              string         `json:"provider"`              // DNS 提供商
+	ProviderAccessId      string         `json:"providerAccessId"`      // DNS 提供商授权记录 ID
+	ProviderConfig        map[string]any `json:"providerConfig"`        // DNS 提供商额外配置
+	KeyAlgorithm          string         `json:"keyAlgorithm"`          // 密钥算法
+	Nameservers           string         `json:"nameservers"`           // DNS 服务器列表，以半角逗号分隔
+	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（默认取决于提供商）
+	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（默认取决于提供商）
+	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否禁用 CNAME 跟随
+	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // TODO: 证书到期前多少天前跳过续期（默认值：30）
 }
 
 type WorkflowNodeConfigForDeploy struct {
-	Certificate      string         `json:"certificate"`
-	Provider         string         `json:"provider"`
-	ProviderAccessId string         `json:"providerAccessId"`
-	ProviderConfig   map[string]any `json:"providerConfig"`
+	Certificate         string         `json:"certificate"`         // 前序节点输出的证书，形如“${NodeId}#certificate”
+	Provider            string         `json:"provider"`            // 主机提供商
+	ProviderAccessId    string         `json:"providerAccessId"`    // 主机提供商授权记录 ID
+	ProviderConfig      map[string]any `json:"providerConfig"`      // 主机提供商额外配置
+	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"` // TODO: 上次部署成功时是否跳过
 }
 
 type WorkflowNodeConfigForNotify struct {
-	Channel string `json:"channel"`
-	Subject string `json:"subject"`
-	Message string `json:"message"`
+	Channel string `json:"channel"` // 通知渠道
+	Subject string `json:"subject"` // 通知主题
+	Message string `json:"message"` // 通知内容
 }
 
 func (n *WorkflowNode) getConfigValueAsString(key string) string {
@@ -105,25 +108,33 @@ func (n *WorkflowNode) getConfigValueAsMap(key string) map[string]any {
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
+	skipBeforeExpiryDays := n.getConfigValueAsInt32("skipBeforeExpiryDays")
+	if skipBeforeExpiryDays == 0 {
+		skipBeforeExpiryDays = 30
+	}
+
 	return WorkflowNodeConfigForApply{
-		Domains:            n.getConfigValueAsString("domains"),
-		ContactEmail:       n.getConfigValueAsString("contactEmail"),
-		Provider:           n.getConfigValueAsString("provider"),
-		ProviderAccessId:   n.getConfigValueAsString("providerAccessId"),
-		ProviderConfig:     n.getConfigValueAsMap("providerConfig"),
-		KeyAlgorithm:       n.getConfigValueAsString("keyAlgorithm"),
-		Nameservers:        n.getConfigValueAsString("nameservers"),
-		PropagationTimeout: n.getConfigValueAsInt32("propagationTimeout"),
-		DisableFollowCNAME: n.getConfigValueAsBool("disableFollowCNAME"),
+		Domains:               n.getConfigValueAsString("domains"),
+		ContactEmail:          n.getConfigValueAsString("contactEmail"),
+		Provider:              n.getConfigValueAsString("provider"),
+		ProviderAccessId:      n.getConfigValueAsString("providerAccessId"),
+		ProviderConfig:        n.getConfigValueAsMap("providerConfig"),
+		KeyAlgorithm:          n.getConfigValueAsString("keyAlgorithm"),
+		Nameservers:           n.getConfigValueAsString("nameservers"),
+		DnsPropagationTimeout: n.getConfigValueAsInt32("dnsPropagationTimeout"),
+		DnsTTL:                n.getConfigValueAsInt32("dnsTTL"),
+		DisableFollowCNAME:    n.getConfigValueAsBool("disableFollowCNAME"),
+		SkipBeforeExpiryDays:  skipBeforeExpiryDays,
 	}
 }
 
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
-		Certificate:      n.getConfigValueAsString("certificate"),
-		Provider:         n.getConfigValueAsString("provider"),
-		ProviderAccessId: n.getConfigValueAsString("providerAccessId"),
-		ProviderConfig:   n.getConfigValueAsMap("providerConfig"),
+		Certificate:         n.getConfigValueAsString("certificate"),
+		Provider:            n.getConfigValueAsString("provider"),
+		ProviderAccessId:    n.getConfigValueAsString("providerAccessId"),
+		ProviderConfig:      n.getConfigValueAsMap("providerConfig"),
+		SkipOnLastSucceeded: n.getConfigValueAsBool("skipOnLastSucceeded"),
 	}
 }
 

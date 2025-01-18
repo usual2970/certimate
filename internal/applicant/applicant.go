@@ -35,15 +35,17 @@ type Applicant interface {
 }
 
 type applicantOptions struct {
-	Domains              []string
-	ContactEmail         string
-	Provider             domain.ApplyDNSProviderType
-	ProviderAccessConfig map[string]any
-	ProviderApplyConfig  map[string]any
-	KeyAlgorithm         string
-	Nameservers          []string
-	PropagationTimeout   int32
-	DisableFollowCNAME   bool
+	Domains               []string
+	ContactEmail          string
+	Provider              domain.ApplyDNSProviderType
+	ProviderAccessConfig  map[string]any
+	ProviderApplyConfig   map[string]any
+	KeyAlgorithm          string
+	Nameservers           []string
+	DnsPropagationTimeout int32
+	DnsTTL                int32
+	DisableFollowCNAME    bool
+	SkipBeforeExpiryDays  int32
 }
 
 func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -65,15 +67,17 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	}
 
 	options := &applicantOptions{
-		Domains:              slices.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
-		ContactEmail:         nodeConfig.ContactEmail,
-		Provider:             domain.ApplyDNSProviderType(nodeConfig.Provider),
-		ProviderAccessConfig: accessConfig,
-		ProviderApplyConfig:  nodeConfig.ProviderConfig,
-		KeyAlgorithm:         nodeConfig.KeyAlgorithm,
-		Nameservers:          slices.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
-		PropagationTimeout:   nodeConfig.PropagationTimeout,
-		DisableFollowCNAME:   nodeConfig.DisableFollowCNAME,
+		Domains:               slices.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:          nodeConfig.ContactEmail,
+		Provider:              domain.ApplyDNSProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:  accessConfig,
+		ProviderApplyConfig:   nodeConfig.ProviderConfig,
+		KeyAlgorithm:          nodeConfig.KeyAlgorithm,
+		Nameservers:           slices.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationTimeout: nodeConfig.DnsPropagationTimeout,
+		DnsTTL:                nodeConfig.DnsTTL,
+		DisableFollowCNAME:    nodeConfig.DisableFollowCNAME,
+		SkipBeforeExpiryDays:  nodeConfig.SkipBeforeExpiryDays,
 	}
 
 	applicant, err := createApplicant(options)

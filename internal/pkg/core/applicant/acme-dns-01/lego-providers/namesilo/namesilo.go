@@ -9,8 +9,9 @@ import (
 )
 
 type NameSiloApplicantConfig struct {
-	ApiKey             string `json:"apiKey"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	ApiKey                string `json:"apiKey"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *NameSiloApplicantConfig) (challenge.Provider, error) {
@@ -20,8 +21,11 @@ func NewChallengeProvider(config *NameSiloApplicantConfig) (challenge.Provider, 
 
 	providerConfig := namesilo.NewDefaultConfig()
 	providerConfig.APIKey = config.ApiKey
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := namesilo.NewDNSProviderConfig(providerConfig)

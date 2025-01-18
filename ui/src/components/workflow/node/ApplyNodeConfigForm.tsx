@@ -42,7 +42,6 @@ const MULTIPLE_INPUT_DELIMITER = ";";
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
   return {
     keyAlgorithm: "RSA2048",
-    propagationTimeout: 60,
     disableFollowCNAME: true,
   };
 };
@@ -77,10 +76,16 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             .split(MULTIPLE_INPUT_DELIMITER)
             .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         }, t("common.errmsg.host_invalid")),
-      propagationTimeout: z
+      dnsPropagationTimeout: z
         .union([
-          z.number().int().gte(1, t("workflow_node.apply.form.propagation_timeout.placeholder")),
-          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.propagation_timeout.placeholder")),
+          z.number().int().gte(1, t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
+          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
+        ])
+        .nullish(),
+      dnsTTL: z
+        .union([
+          z.number().int().gte(1, t("workflow_node.apply.form.dns_ttl.placeholder")),
+          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_ttl.placeholder")),
         ])
         .nullish(),
       disableFollowCNAME: z.boolean().nullish(),
@@ -313,18 +318,34 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
 
           <Form.Item
-            name="propagationTimeout"
-            label={t("workflow_node.apply.form.propagation_timeout.label")}
+            name="dnsPropagationTimeout"
+            label={t("workflow_node.apply.form.dns_propagation_timeout.label")}
             rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.propagation_timeout.tooltip") }}></span>}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.dns_propagation_timeout.tooltip") }}></span>}
           >
             <Input
               type="number"
               allowClear
               min={0}
               max={3600}
-              placeholder={t("workflow_node.apply.form.propagation_timeout.placeholder")}
-              addonAfter={t("workflow_node.apply.form.propagation_timeout.suffix")}
+              placeholder={t("workflow_node.apply.form.dns_propagation_timeout.placeholder")}
+              addonAfter={t("workflow_node.apply.form.dns_propagation_timeout.suffix")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="dnsTTL"
+            label={t("workflow_node.apply.form.dns_ttl.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.dns_ttl.tooltip") }}></span>}
+          >
+            <Input
+              type="number"
+              allowClear
+              min={0}
+              max={86400}
+              placeholder={t("workflow_node.apply.form.dns_ttl.placeholder")}
+              addonAfter={t("workflow_node.apply.form.dns_ttl.suffix")}
             />
           </Form.Item>
 
