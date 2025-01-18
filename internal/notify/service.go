@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 )
 
 const (
@@ -26,16 +27,16 @@ func NewNotifyService(settingsRepo settingsRepository) *NotifyService {
 	}
 }
 
-func (n *NotifyService) Test(ctx context.Context, req *domain.NotifyTestPushReq) error {
+func (n *NotifyService) Test(ctx context.Context, req *dtos.NotifyTestPushReq) error {
 	settings, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
 		return fmt.Errorf("failed to get notify channels settings: %w", err)
 	}
 
-	channelConfig, err := settings.GetNotifyChannelConfig(req.Channel)
+	channelConfig, err := settings.GetNotifyChannelConfig(string(req.Channel))
 	if err != nil {
 		return fmt.Errorf("failed to get notify channel \"%s\" config: %w", req.Channel, err)
 	}
 
-	return SendToChannel(notifyTestTitle, notifyTestBody, req.Channel, channelConfig)
+	return SendToChannel(notifyTestTitle, notifyTestBody, string(req.Channel), channelConfig)
 }

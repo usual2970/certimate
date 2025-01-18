@@ -6,12 +6,12 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/router"
 
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/rest/resp"
 )
 
 type workflowService interface {
-	Run(ctx context.Context, req *domain.WorkflowRunReq) error
+	Run(ctx context.Context, req *dtos.WorkflowRunReq) error
 	Stop(ctx context.Context)
 }
 
@@ -29,7 +29,7 @@ func NewWorkflowHandler(router *router.RouterGroup[*core.RequestEvent], service 
 }
 
 func (handler *WorkflowHandler) run(e *core.RequestEvent) error {
-	req := &domain.WorkflowRunReq{}
+	req := &dtos.WorkflowRunReq{}
 	req.WorkflowId = e.Request.PathValue("id")
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)

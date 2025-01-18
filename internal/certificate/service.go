@@ -10,6 +10,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/notify"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	"github.com/usual2970/certimate/internal/repository"
@@ -55,7 +56,7 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func (s *CertificateService) ArchiveFile(ctx context.Context, req *domain.CertificateArchiveFileReq) ([]byte, error) {
+func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) ([]byte, error) {
 	certificate, err := s.repo.GetById(ctx, req.CertificateId)
 	if err != nil {
 		return nil, err

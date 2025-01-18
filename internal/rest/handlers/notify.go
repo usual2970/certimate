@@ -6,12 +6,12 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/router"
 
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/rest/resp"
 )
 
 type notifyService interface {
-	Test(ctx context.Context, req *domain.NotifyTestPushReq) error
+	Test(ctx context.Context, req *dtos.NotifyTestPushReq) error
 }
 
 type NotifyHandler struct {
@@ -28,7 +28,7 @@ func NewNotifyHandler(router *router.RouterGroup[*core.RequestEvent], service no
 }
 
 func (handler *NotifyHandler) test(e *core.RequestEvent) error {
-	req := &domain.NotifyTestPushReq{}
+	req := &dtos.NotifyTestPushReq{}
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}

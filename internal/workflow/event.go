@@ -8,6 +8,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -64,7 +65,7 @@ func onWorkflowRecordCreateOrUpdate(ctx context.Context, record *core.Record) er
 
 	// 反之，重新添加定时任务
 	err := scheduler.Add(fmt.Sprintf("workflow#%s", workflowId), record.GetString("triggerCron"), func() {
-		NewWorkflowService(repository.NewWorkflowRepository()).Run(ctx, &domain.WorkflowRunReq{
+		NewWorkflowService(repository.NewWorkflowRepository()).Run(ctx, &dtos.WorkflowRunReq{
 			WorkflowId: workflowId,
 			Trigger:    domain.WorkflowTriggerTypeAuto,
 		})

@@ -9,14 +9,15 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	processor "github.com/usual2970/certimate/internal/workflow/processor"
 )
 
 const defaultRoutines = 10
 
 type workflowRunData struct {
-	Workflow *domain.Workflow
-	Options  *domain.WorkflowRunReq
+	Workflow   *domain.Workflow
+	RunTrigger domain.WorkflowTriggerType
 }
 
 type workflowRepository interface {
@@ -74,7 +75,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
 		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
-			s.Run(ctx, &domain.WorkflowRunReq{
+			s.Run(ctx, &dtos.WorkflowRunReq{
 				WorkflowId: workflow.Id,
 				Trigger:    domain.WorkflowTriggerTypeAuto,
 			})
@@ -88,7 +89,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) error {
+func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) error {
 	// 查询
 	workflow, err := s.repo.GetById(ctx, req.WorkflowId)
 	if err != nil {
@@ -110,8 +111,8 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 	}
 
 	s.ch <- &workflowRunData{
-		Workflow: workflow,
-		Options:  req,
+		Workflow:   workflow,
+		RunTrigger: req.Trigger,
 	}
 
 	return nil
@@ -120,15 +121,14 @@ func (s *WorkflowService) Run(ctx context.Context, req *domain.WorkflowRunReq) e
 func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) error {
 	// 执行
 	workflow := runData.Workflow
-	options := runData.Options
-
 	run := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Status:     domain.WorkflowRunStatusTypeRunning,
-		Trigger:    options.Trigger,
+		Trigger:    runData.RunTrigger,
 		StartedAt:  time.Now(),
 		EndedAt:    time.Now(),
 	}
+
 	processor := processor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed

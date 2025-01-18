@@ -27,8 +27,3 @@ const (
 	CertificateSourceTypeWorkflow = CertificateSourceType("workflow")
 	CertificateSourceTypeUpload   = CertificateSourceType("upload")
 )
-
-type CertificateArchiveFileReq struct {
-	CertificateId string `json:"-"`
-	Format        string `json:"format"`
-}

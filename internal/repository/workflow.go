@@ -97,6 +97,7 @@ func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.Wo
 
 	err = app.GetApp().RunInTransaction(func(txApp core.App) error {
 		workflowRunRecord := core.NewRecord(collection)
+		workflowRunRecord.Id = workflowRun.Id
 		workflowRunRecord.Set("workflowId", workflowRun.WorkflowId)
 		workflowRunRecord.Set("trigger", string(workflowRun.Trigger))
 		workflowRunRecord.Set("status", string(workflowRun.Status))

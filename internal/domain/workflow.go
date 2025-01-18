@@ -149,13 +149,4 @@ type WorkflowNodeIOValueSelector struct {
 	Name string `json:"name"`
 }
 
-type WorkflowNodeIONameType = string
-
-const (
-	WorkflowNodeIONameCertificate WorkflowNodeIONameType = "certificate"
-)
-
-type WorkflowRunReq struct {
-	WorkflowId string              `json:"-"`
-	Trigger    WorkflowTriggerType `json:"trigger"`
-}
+const WorkflowNodeIONameCertificate string = "certificate"
