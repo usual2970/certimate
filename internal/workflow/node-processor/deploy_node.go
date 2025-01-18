@@ -81,7 +81,7 @@ func (d *deployNode) Run(ctx context.Context) error {
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	currentOutput := &domain.WorkflowOutput{
 		Meta:       domain.Meta{},
-		WorkflowId: GetWorkflowId(ctx),
+		WorkflowId: getContextWorkflowId(ctx),
 		NodeId:     d.node.Id,
 		Node:       d.node,
 		Succeeded:  true,

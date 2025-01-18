@@ -2,14 +2,7 @@ package domain
 
 import "time"
 
-type WorkflowRunStatusType string
-
-const (
-	WorkflowRunStatusTypePending   WorkflowRunStatusType = "pending"
-	WorkflowRunStatusTypeRunning   WorkflowRunStatusType = "running"
-	WorkflowRunStatusTypeSucceeded WorkflowRunStatusType = "succeeded"
-	WorkflowRunStatusTypeFailed    WorkflowRunStatusType = "failed"
-)
+const CollectionNameWorkflowRun = "workflow_run"
 
 type WorkflowRun struct {
 	Meta
@@ -21,6 +14,15 @@ type WorkflowRun struct {
 	Logs       []WorkflowRunLog      `json:"logs" db:"logs"`
 	Error      string                `json:"error" db:"error"`
 }
+
+type WorkflowRunStatusType string
+
+const (
+	WorkflowRunStatusTypePending   WorkflowRunStatusType = "pending"
+	WorkflowRunStatusTypeRunning   WorkflowRunStatusType = "running"
+	WorkflowRunStatusTypeSucceeded WorkflowRunStatusType = "succeeded"
+	WorkflowRunStatusTypeFailed    WorkflowRunStatusType = "failed"
+)
 
 type WorkflowRunLog struct {
 	NodeId   string                 `json:"nodeId"`

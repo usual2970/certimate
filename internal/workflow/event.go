@@ -12,37 +12,35 @@ import (
 )
 
 func Register() {
-	const tableName = "workflow"
-
 	app := app.GetApp()
-	app.OnRecordCreateRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+	app.OnRecordCreateRequest(domain.CollectionNameWorkflow).BindFunc(func(e *core.RecordRequestEvent) error {
 		if err := e.Next(); err != nil {
 			return err
 		}
 
-		if err := update(e.Request.Context(), e.Record); err != nil {
+		if err := onWorkflowRecordCreateOrUpdate(e.Request.Context(), e.Record); err != nil {
 			return err
 		}
 
 		return nil
 	})
-	app.OnRecordUpdateRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+	app.OnRecordUpdateRequest(domain.CollectionNameWorkflow).BindFunc(func(e *core.RecordRequestEvent) error {
 		if err := e.Next(); err != nil {
 			return err
 		}
 
-		if err := update(e.Request.Context(), e.Record); err != nil {
+		if err := onWorkflowRecordCreateOrUpdate(e.Request.Context(), e.Record); err != nil {
 			return err
 		}
 
 		return nil
 	})
-	app.OnRecordDeleteRequest(tableName).BindFunc(func(e *core.RecordRequestEvent) error {
+	app.OnRecordDeleteRequest(domain.CollectionNameWorkflow).BindFunc(func(e *core.RecordRequestEvent) error {
 		if err := e.Next(); err != nil {
 			return err
 		}
 
-		if err := delete(e.Request.Context(), e.Record); err != nil {
+		if err := onWorkflowRecordDelete(e.Request.Context(), e.Record); err != nil {
 			return err
 		}
 
@@ -50,7 +48,7 @@ func Register() {
 	})
 }
 
-func update(ctx context.Context, record *core.Record) error {
+func onWorkflowRecordCreateOrUpdate(ctx context.Context, record *core.Record) error {
 	scheduler := app.GetScheduler()
 
 	// 向数据库插入/更新时，同时更新定时任务
@@ -79,7 +77,7 @@ func update(ctx context.Context, record *core.Record) error {
 	return nil
 }
 
-func delete(_ context.Context, record *core.Record) error {
+func onWorkflowRecordDelete(_ context.Context, record *core.Record) error {
 	scheduler := app.GetScheduler()
 
 	// 从数据库删除时，同时移除定时任务

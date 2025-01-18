@@ -19,7 +19,7 @@ func NewAccessRepository() *AccessRepository {
 }
 
 func (r *AccessRepository) GetById(ctx context.Context, id string) (*domain.Access, error) {
-	record, err := app.GetApp().FindRecordById("access", id)
+	record, err := app.GetApp().FindRecordById(domain.CollectionNameAccess, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound

@@ -2,12 +2,7 @@ package domain
 
 import "time"
 
-type CertificateSourceType string
-
-const (
-	CertificateSourceTypeWorkflow = CertificateSourceType("workflow")
-	CertificateSourceTypeUpload   = CertificateSourceType("upload")
-)
+const CollectionNameCertificate = "certificate"
 
 type Certificate struct {
 	Meta
@@ -25,6 +20,13 @@ type Certificate struct {
 	WorkflowOutputId  string                `json:"workflowOutputId" db:"workflowOutputId"`
 	DeletedAt         *time.Time            `json:"deleted" db:"deleted"`
 }
+
+type CertificateSourceType string
+
+const (
+	CertificateSourceTypeWorkflow = CertificateSourceType("workflow")
+	CertificateSourceTypeUpload   = CertificateSourceType("upload")
+)
 
 type CertificateArchiveFileReq struct {
 	CertificateId string `json:"-"`

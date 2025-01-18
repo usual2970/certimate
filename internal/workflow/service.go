@@ -9,7 +9,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
+	processor "github.com/usual2970/certimate/internal/workflow/processor"
 )
 
 const defaultRoutines = 10
@@ -129,7 +129,7 @@ func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) err
 		StartedAt:  time.Now(),
 		EndedAt:    time.Now(),
 	}
-	processor := nodeprocessor.NewWorkflowProcessor(workflow)
+	processor := processor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed
 		run.EndedAt = time.Now()

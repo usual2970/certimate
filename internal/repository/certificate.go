@@ -20,7 +20,7 @@ func NewCertificateRepository() *CertificateRepository {
 
 func (r *CertificateRepository) ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error) {
 	records, err := app.GetApp().FindRecordsByFilter(
-		"certificate",
+		domain.CollectionNameCertificate,
 		"expireAt>DATETIME('now') && expireAt<DATETIME('now', '+20 days') && deleted=null",
 		"-created",
 		0, 0,
@@ -43,7 +43,7 @@ func (r *CertificateRepository) ListExpireSoon(ctx context.Context) ([]*domain.C
 }
 
 func (r *CertificateRepository) GetById(ctx context.Context, id string) (*domain.Certificate, error) {
-	record, err := app.GetApp().FindRecordById("certificate", id)
+	record, err := app.GetApp().FindRecordById(domain.CollectionNameCertificate, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
@@ -60,7 +60,7 @@ func (r *CertificateRepository) GetById(ctx context.Context, id string) (*domain
 
 func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error) {
 	records, err := app.GetApp().FindRecordsByFilter(
-		"certificate",
+		domain.CollectionNameCertificate,
 		"workflowNodeId={:workflowNodeId} && deleted=null",
 		"-created", 1, 0,
 		dbx.Params{"workflowNodeId": workflowNodeId},

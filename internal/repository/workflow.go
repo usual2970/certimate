@@ -20,7 +20,7 @@ func NewWorkflowRepository() *WorkflowRepository {
 
 func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error) {
 	records, err := app.GetApp().FindRecordsByFilter(
-		"workflow",
+		domain.CollectionNameWorkflow,
 		"enabled={:enabled} && trigger={:trigger}",
 		"-created",
 		0, 0,
@@ -44,7 +44,7 @@ func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Wor
 }
 
 func (r *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Workflow, error) {
-	record, err := app.GetApp().FindRecordById("workflow", id)
+	record, err := app.GetApp().FindRecordById(domain.CollectionNameWorkflow, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
@@ -56,7 +56,7 @@ func (r *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Wo
 }
 
 func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow) error {
-	collection, err := app.GetApp().FindCollectionByNameOrId(workflow.Table())
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflow)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	if workflow.Id == "" {
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById(workflow.Table(), workflow.Id)
+		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflow, workflow.Id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return domain.ErrRecordNotFound
@@ -90,7 +90,7 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 }
 
 func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error {
-	collection, err := app.GetApp().FindCollectionByNameOrId("workflow_run")
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowRun)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.Wo
 			return err
 		}
 
-		workflowRecord, err := txApp.FindRecordById("workflow", workflowRun.WorkflowId)
+		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, workflowRun.WorkflowId)
 		if err != nil {
 			return err
 		}

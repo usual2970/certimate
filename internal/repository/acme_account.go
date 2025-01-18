@@ -23,7 +23,7 @@ var g singleflight.Group
 func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error) {
 	resp, err, _ := g.Do(fmt.Sprintf("acme_account_%s_%s", ca, email), func() (interface{}, error) {
 		resp, err := app.GetApp().FindFirstRecordByFilter(
-			"acme_accounts",
+			domain.CollectionNameAcmeAccount,
 			"ca={:ca} && email={:email}",
 			dbx.Params{"ca": ca, "email": email},
 		)
@@ -49,7 +49,7 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 }
 
 func (r *AcmeAccountRepository) Save(ca, email, key string, resource *registration.Resource) error {
-	collection, err := app.GetApp().FindCollectionByNameOrId("acme_accounts")
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameAcmeAccount)
 	if err != nil {
 		return err
 	}

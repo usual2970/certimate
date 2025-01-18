@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const CollectionNameAccess = "access"
+
 type Access struct {
 	Meta
 	Name      string     `json:"name" db:"name"`

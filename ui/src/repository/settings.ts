@@ -3,9 +3,11 @@ import { ClientResponseError } from "pocketbase";
 import { type SettingsModel, type SettingsNames } from "@/domain/settings";
 import { getPocketBase } from "./_pocketbase";
 
+const COLLECTION_NAME = "settings";
+
 export const get = async <T extends NonNullable<unknown>>(name: SettingsNames) => {
   try {
-    const resp = await getPocketBase().collection("settings").getFirstListItem<SettingsModel<T>>(`name='${name}'`, {
+    const resp = await getPocketBase().collection(COLLECTION_NAME).getFirstListItem<SettingsModel<T>>(`name='${name}'`, {
       requestKey: null,
     });
     return resp;
@@ -23,8 +25,8 @@ export const get = async <T extends NonNullable<unknown>>(name: SettingsNames) =
 
 export const save = async <T extends NonNullable<unknown>>(record: MaybeModelRecordWithId<SettingsModel<T>>) => {
   if (record.id) {
-    return await getPocketBase().collection("settings").update<SettingsModel<T>>(record.id, record);
+    return await getPocketBase().collection(COLLECTION_NAME).update<SettingsModel<T>>(record.id, record);
   }
 
-  return await getPocketBase().collection("settings").create<SettingsModel<T>>(record);
+  return await getPocketBase().collection(COLLECTION_NAME).create<SettingsModel<T>>(record);
 };

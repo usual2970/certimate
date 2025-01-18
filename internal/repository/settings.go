@@ -18,7 +18,7 @@ func NewSettingsRepository() *SettingsRepository {
 
 func (r *SettingsRepository) GetByName(ctx context.Context, name string) (*domain.Settings, error) {
 	record, err := app.GetApp().FindFirstRecordByFilter(
-		"settings",
+		domain.CollectionNameSettings,
 		"name={:name}",
 		dbx.Params{"name": name},
 	)

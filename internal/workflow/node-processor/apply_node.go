@@ -77,14 +77,14 @@ func (a *applyNode) Run(ctx context.Context) error {
 		ACMECertStableUrl: applyResult.ACMECertStableUrl,
 		EffectAt:          certX509.NotBefore,
 		ExpireAt:          certX509.NotAfter,
-		WorkflowId:        GetWorkflowId(ctx),
+		WorkflowId:        getContextWorkflowId(ctx),
 		WorkflowNodeId:    a.node.Id,
 	}
 
 	// 保存执行结果
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	currentOutput := &domain.WorkflowOutput{
-		WorkflowId: GetWorkflowId(ctx),
+		WorkflowId: getContextWorkflowId(ctx),
 		NodeId:     a.node.Id,
 		Node:       a.node,
 		Succeeded:  true,

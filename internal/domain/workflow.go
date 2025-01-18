@@ -6,6 +6,23 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
+const CollectionNameWorkflow = "workflow"
+
+type Workflow struct {
+	Meta
+	Name          string                `json:"name" db:"name"`
+	Description   string                `json:"description" db:"description"`
+	Trigger       WorkflowTriggerType   `json:"trigger" db:"trigger"`
+	TriggerCron   string                `json:"triggerCron" db:"triggerCron"`
+	Enabled       bool                  `json:"enabled" db:"enabled"`
+	Content       *WorkflowNode         `json:"content" db:"content"`
+	Draft         *WorkflowNode         `json:"draft" db:"draft"`
+	HasDraft      bool                  `json:"hasDraft" db:"hasDraft"`
+	LastRunId     string                `json:"lastRunId" db:"lastRunId"`
+	LastRunStatus WorkflowRunStatusType `json:"lastRunStatus" db:"lastRunStatus"`
+	LastRunTime   time.Time             `json:"lastRunTime" db:"lastRunTime"`
+}
+
 type WorkflowNodeType string
 
 const (
@@ -24,25 +41,6 @@ const (
 	WorkflowTriggerTypeAuto   = WorkflowTriggerType("auto")
 	WorkflowTriggerTypeManual = WorkflowTriggerType("manual")
 )
-
-type Workflow struct {
-	Meta
-	Name          string                `json:"name" db:"name"`
-	Description   string                `json:"description" db:"description"`
-	Trigger       WorkflowTriggerType   `json:"trigger" db:"trigger"`
-	TriggerCron   string                `json:"triggerCron" db:"triggerCron"`
-	Enabled       bool                  `json:"enabled" db:"enabled"`
-	Content       *WorkflowNode         `json:"content" db:"content"`
-	Draft         *WorkflowNode         `json:"draft" db:"draft"`
-	HasDraft      bool                  `json:"hasDraft" db:"hasDraft"`
-	LastRunId     string                `json:"lastRunId" db:"lastRunId"`
-	LastRunStatus WorkflowRunStatusType `json:"lastRunStatus" db:"lastRunStatus"`
-	LastRunTime   time.Time             `json:"lastRunTime" db:"lastRunTime"`
-}
-
-func (w *Workflow) Table() string {
-	return "workflow"
-}
 
 type WorkflowNode struct {
 	Id   string           `json:"id"`
@@ -150,6 +148,12 @@ type WorkflowNodeIOValueSelector struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
+
+type WorkflowNodeIONameType = string
+
+const (
+	WorkflowNodeIONameCertificate WorkflowNodeIONameType = "certificate"
+)
 
 type WorkflowRunReq struct {
 	WorkflowId string              `json:"-"`

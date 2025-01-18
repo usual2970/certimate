@@ -19,7 +19,7 @@ func NewWorkflowOutputRepository() *WorkflowOutputRepository {
 
 func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
 	records, err := app.GetApp().FindRecordsByFilter(
-		"workflow_output",
+		domain.CollectionNameWorkflowOutput,
 		"nodeId={:nodeId}",
 		"-created",
 		1, 0,
@@ -68,13 +68,13 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 	var err error
 
 	if output.Id == "" {
-		collection, err := app.GetApp().FindCollectionByNameOrId("workflow_output")
+		collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
 		if err != nil {
 			return err
 		}
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById("workflow_output", output.Id)
+		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflowOutput, output.Id)
 		if err != nil {
 			return err
 		}
@@ -94,7 +94,7 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 			return err
 		}
 
-		certCollection, err := app.GetApp().FindCollectionByNameOrId("certificate")
+		certCollection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
 		if err != nil {
 			return err
 		}
@@ -119,7 +119,7 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 
 		// 更新 certificate
 		for i, item := range output.Outputs {
-			if item.Name == domain.WORKFLOW_OUTPUT_CERTIFICATE {
+			if item.Name == string(domain.WorkflowNodeIONameCertificate) {
 				output.Outputs[i].Value = certRecord.Id
 				break
 			}
