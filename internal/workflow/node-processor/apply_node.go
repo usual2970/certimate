@@ -109,9 +109,6 @@ func (a *applyNode) Run(ctx context.Context) error {
 }
 
 func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
-	const validityDuration = time.Hour * 24 * 10
-
-	// TODO: 可控制是否强制申请
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
 		currentNodeConfig := a.node.GetConfigForApply()
@@ -133,7 +130,8 @@ func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 		}
 
 		lastCertificate, _ := a.certRepo.GetByWorkflowNodeId(ctx, a.node.Id)
-		if lastCertificate != nil && time.Until(lastCertificate.ExpireAt) > validityDuration {
+		renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
+		if lastCertificate != nil && time.Until(lastCertificate.ExpireAt) > renewalInterval {
 			return true, "已申请过证书，且证书尚未临近过期"
 		}
 	}

@@ -68,7 +68,7 @@ type WorkflowNodeConfigForApply struct {
 	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（默认取决于提供商）
 	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（默认取决于提供商）
 	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否禁用 CNAME 跟随
-	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // TODO: 证书到期前多少天前跳过续期（默认值：30）
+	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // 证书到期前多少天前跳过续期（默认值：30）
 }
 
 type WorkflowNodeConfigForDeploy struct {

@@ -111,6 +111,7 @@ export type WorkflowNodeConfigForApply = {
   dnsPropagationTimeout?: number;
   dnsTTL?: number;
   disableFollowCNAME?: boolean;
+  skipBeforeExpiryDays: number;
 };
 
 export type WorkflowNodeConfigForDeploy = {
