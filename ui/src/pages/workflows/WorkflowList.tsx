@@ -7,6 +7,7 @@ import {
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
+  SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 
 import { PageHeader } from "@ant-design/pro-components";
@@ -159,7 +160,14 @@ const WorkflowList = () => {
       title: t("workflow.props.last_run_at"),
       render: (_, record) => {
         if (record.lastRunId) {
-          if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
+          if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.RUNNING) {
+            return (
+              <Space>
+                <Badge status="processing" count={<SyncOutlinedIcon style={{ color: themeToken.colorInfo }} />} />
+                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
+              </Space>
+            );
+          } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
             return (
               <Space>
                 <Badge status="success" count={<CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />} />

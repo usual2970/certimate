@@ -1,7 +1,7 @@
 import { type RecordListOptions, type RecordSubscription } from "pocketbase";
 
 import { type WorkflowModel } from "@/domain/workflow";
-import { getPocketBase } from "./pocketbase";
+import { getPocketBase } from "./_pocketbase";
 
 const COLLECTION_NAME = "workflow";
 

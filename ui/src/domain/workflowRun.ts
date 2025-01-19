@@ -6,8 +6,8 @@ export interface WorkflowRunModel extends BaseModel {
   trigger: string;
   startedAt: ISO8601String;
   endedAt: ISO8601String;
-  logs: WorkflowRunLog[];
-  error: string;
+  logs?: WorkflowRunLog[];
+  error?: string;
   expand?: {
     workflowId?: WorkflowModel;
   };
@@ -16,15 +16,15 @@ export interface WorkflowRunModel extends BaseModel {
 export type WorkflowRunLog = {
   nodeId: string;
   nodeName: string;
-  outputs: WorkflowRunLogOutput[];
-  error: string;
+  outputs?: WorkflowRunLogOutput[];
+  error?: string;
 };
 
 export type WorkflowRunLogOutput = {
   time: ISO8601String;
   title: string;
   content: string;
-  error: string;
+  error?: string;
 };
 
 export const WORKFLOW_RUN_STATUSES = Object.freeze({

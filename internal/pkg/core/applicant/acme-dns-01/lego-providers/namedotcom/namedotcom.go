@@ -9,9 +9,10 @@ import (
 )
 
 type NameDotComApplicantConfig struct {
-	Username           string `json:"username"`
-	ApiToken           string `json:"apiToken"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	Username              string `json:"username"`
+	ApiToken              string `json:"apiToken"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *NameDotComApplicantConfig) (challenge.Provider, error) {
@@ -22,8 +23,11 @@ func NewChallengeProvider(config *NameDotComApplicantConfig) (challenge.Provider
 	providerConfig := namedotcom.NewDefaultConfig()
 	providerConfig.Username = config.Username
 	providerConfig.APIToken = config.ApiToken
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := namedotcom.NewDNSProviderConfig(providerConfig)

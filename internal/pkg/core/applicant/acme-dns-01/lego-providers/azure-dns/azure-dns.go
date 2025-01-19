@@ -12,11 +12,12 @@ import (
 )
 
 type AzureDNSApplicantConfig struct {
-	TenantId           string `json:"tenantId"`
-	ClientId           string `json:"clientId"`
-	ClientSecret       string `json:"clientSecret"`
-	CloudName          string `json:"cloudName,omitempty"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	TenantId              string `json:"tenantId"`
+	ClientId              string `json:"clientId"`
+	ClientSecret          string `json:"clientSecret"`
+	CloudName             string `json:"cloudName,omitempty"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *AzureDNSApplicantConfig) (challenge.Provider, error) {
@@ -40,8 +41,11 @@ func NewChallengeProvider(config *AzureDNSApplicantConfig) (challenge.Provider, 
 			return nil, fmt.Errorf("azuredns: unknown environment %s", config.CloudName)
 		}
 	}
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := azuredns.NewDNSProviderConfig(providerConfig)

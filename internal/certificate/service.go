@@ -1,6 +1,8 @@
 package certificate
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
 	"encoding/json"
 	"strconv"
@@ -8,7 +10,9 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/notify"
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -18,6 +22,7 @@ const (
 )
 
 type certificateRepository interface {
+	GetById(ctx context.Context, id string) (*domain.Certificate, error)
 	ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error)
 }
 
@@ -32,8 +37,7 @@ func NewCertificateService(repo certificateRepository) *CertificateService {
 }
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
-	scheduler := app.GetScheduler()
-	err := scheduler.Add("certificate", "0 0 * * *", func() {
+	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
 		certs, err := s.repo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
@@ -49,13 +53,127 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 			app.GetLogger().Error("failed to send notification", "err", err)
 		}
 	})
-	if err != nil {
-		app.GetLogger().Error("failed to add schedule", "err", err)
-		return err
-	}
-	scheduler.Start()
-	app.GetLogger().Info("certificate schedule started")
 	return nil
+}
+
+func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) ([]byte, error) {
+	certificate, err := s.repo.GetById(ctx, req.CertificateId)
+	if err != nil {
+		return nil, err
+	}
+
+	var buf bytes.Buffer
+	zipWriter := zip.NewWriter(&buf)
+	defer zipWriter.Close()
+
+	switch strings.ToUpper(req.Format) {
+	case "", "PEM":
+		{
+			certWriter, err := zipWriter.Create("certbundle.pem")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = certWriter.Write([]byte(certificate.Certificate))
+			if err != nil {
+				return nil, err
+			}
+
+			keyWriter, err := zipWriter.Create("privkey.pem")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = keyWriter.Write([]byte(certificate.PrivateKey))
+			if err != nil {
+				return nil, err
+			}
+
+			err = zipWriter.Close()
+			if err != nil {
+				return nil, err
+			}
+
+			return buf.Bytes(), nil
+		}
+
+	case "PFX":
+		{
+			const pfxPassword = "certimate"
+
+			certPFX, err := certs.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
+			if err != nil {
+				return nil, err
+			}
+
+			certWriter, err := zipWriter.Create("cert.pfx")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = certWriter.Write(certPFX)
+			if err != nil {
+				return nil, err
+			}
+
+			keyWriter, err := zipWriter.Create("pfx-password.txt")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = keyWriter.Write([]byte(pfxPassword))
+			if err != nil {
+				return nil, err
+			}
+
+			err = zipWriter.Close()
+			if err != nil {
+				return nil, err
+			}
+
+			return buf.Bytes(), nil
+		}
+
+	case "JKS":
+		{
+			const jksPassword = "certimate"
+
+			certJKS, err := certs.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
+			if err != nil {
+				return nil, err
+			}
+
+			certWriter, err := zipWriter.Create("cert.jks")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = certWriter.Write(certJKS)
+			if err != nil {
+				return nil, err
+			}
+
+			keyWriter, err := zipWriter.Create("jks-password.txt")
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = keyWriter.Write([]byte(jksPassword))
+			if err != nil {
+				return nil, err
+			}
+
+			err = zipWriter.Close()
+			if err != nil {
+				return nil, err
+			}
+
+			return buf.Bytes(), nil
+		}
+
+	default:
+		return nil, domain.ErrInvalidParams
+	}
 }
 
 func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {
@@ -70,11 +188,11 @@ func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {
 	message := defaultExpireMessage
 
 	// 查询模板信息
-	settingRepo := repository.NewSettingsRepository()
-	setting, err := settingRepo.GetByName(context.Background(), "notifyTemplates")
+	settingsRepo := repository.NewSettingsRepository()
+	settings, err := settingsRepo.GetByName(context.Background(), "notifyTemplates")
 	if err == nil {
 		var templates *domain.NotifyTemplatesSettingsContent
-		json.Unmarshal([]byte(setting.Content), &templates)
+		json.Unmarshal([]byte(settings.Content), &templates)
 
 		if templates != nil && len(templates.NotifyTemplates) > 0 {
 			subject = templates.NotifyTemplates[0].Subject

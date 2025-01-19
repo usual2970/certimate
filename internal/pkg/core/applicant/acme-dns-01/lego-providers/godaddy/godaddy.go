@@ -9,9 +9,10 @@ import (
 )
 
 type GoDaddyApplicantConfig struct {
-	ApiKey             string `json:"apiKey"`
-	ApiSecret          string `json:"apiSecret"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	ApiKey                string `json:"apiKey"`
+	ApiSecret             string `json:"apiSecret"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *GoDaddyApplicantConfig) (challenge.Provider, error) {
@@ -22,8 +23,11 @@ func NewChallengeProvider(config *GoDaddyApplicantConfig) (challenge.Provider, e
 	providerConfig := godaddy.NewDefaultConfig()
 	providerConfig.APIKey = config.ApiKey
 	providerConfig.APISecret = config.ApiSecret
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := godaddy.NewDNSProviderConfig(providerConfig)

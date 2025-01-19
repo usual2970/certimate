@@ -1,7 +1,7 @@
 import { ClientResponseError } from "pocketbase";
 
 import { type Statistics } from "@/domain/statistics";
-import { getPocketBase } from "@/repository/pocketbase";
+import { getPocketBase } from "@/repository/_pocketbase";
 
 export const get = async () => {
   const pb = getPocketBase();

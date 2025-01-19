@@ -2,10 +2,10 @@ package scheduler
 
 import "context"
 
-type WorkflowService interface {
+type workflowService interface {
 	InitSchedule(ctx context.Context) error
 }
 
-func NewWorkflowScheduler(service WorkflowService) error {
+func NewWorkflowScheduler(service workflowService) error {
 	return service.InitSchedule(context.Background())
 }

@@ -9,21 +9,22 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
+	"github.com/usual2970/certimate/internal/domain/dtos"
+	processor "github.com/usual2970/certimate/internal/workflow/processor"
 )
 
 const defaultRoutines = 10
 
 type workflowRunData struct {
-	Workflow *domain.Workflow
-	Options  *domain.WorkflowRunReq
+	Workflow   *domain.Workflow
+	RunTrigger domain.WorkflowTriggerType
 }
 
 type workflowRepository interface {
 	ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error)
 	GetById(ctx context.Context, id string) (*domain.Workflow, error)
 	Save(ctx context.Context, workflow *domain.Workflow) error
-	SaveRun(ctx context.Context, run *domain.WorkflowRun) error
+	SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error
 }
 
 type WorkflowService struct {
@@ -74,7 +75,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
 		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
-			s.Run(ctx, &domain.WorkflowRunReq{
+			s.Run(ctx, &dtos.WorkflowRunReq{
 				WorkflowId: workflow.Id,
 				Trigger:    domain.WorkflowTriggerTypeAuto,
 			})
@@ -84,18 +85,15 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 			return err
 		}
 	}
-	scheduler.Start()
-
-	app.GetLogger().Info("workflow schedule started")
 
 	return nil
 }
 
-func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunReq) error {
+func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) error {
 	// 查询
-	workflow, err := s.repo.GetById(ctx, options.WorkflowId)
+	workflow, err := s.repo.GetById(ctx, req.WorkflowId)
 	if err != nil {
-		app.GetLogger().Error("failed to get workflow", "id", options.WorkflowId, "err", err)
+		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
 		return err
 	}
 
@@ -113,8 +111,8 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 	}
 
 	s.ch <- &workflowRunData{
-		Workflow: workflow,
-		Options:  options,
+		Workflow:   workflow,
+		RunTrigger: req.Trigger,
 	}
 
 	return nil
@@ -123,16 +121,15 @@ func (s *WorkflowService) Run(ctx context.Context, options *domain.WorkflowRunRe
 func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) error {
 	// 执行
 	workflow := runData.Workflow
-	options := runData.Options
-
 	run := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Status:     domain.WorkflowRunStatusTypeRunning,
-		Trigger:    options.Trigger,
+		Trigger:    runData.RunTrigger,
 		StartedAt:  time.Now(),
 		EndedAt:    time.Now(),
 	}
-	processor := nodeprocessor.NewWorkflowProcessor(workflow)
+
+	processor := processor.NewWorkflowProcessor(workflow)
 	if err := processor.Run(ctx); err != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed
 		run.EndedAt = time.Now()
@@ -165,7 +162,7 @@ func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) err
 	return nil
 }
 
-func (s *WorkflowService) Stop() {
+func (s *WorkflowService) Stop(ctx context.Context) {
 	s.cancel()
 	s.wg.Wait()
 }

@@ -18,6 +18,19 @@ type nodeLogger struct {
 	log *domain.WorkflowRunLog
 }
 
+type certificateRepository interface {
+	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
+}
+
+type workflowOutputRepository interface {
+	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
+	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
+}
+
+type settingsRepository interface {
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
+}
+
 func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
 	return &nodeLogger{
 		log: &domain.WorkflowRunLog{
@@ -61,15 +74,6 @@ func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
 	return nil, errors.New("not implemented")
 }
 
-type certificateRepository interface {
-	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
-}
-
-type workflowOutputRepository interface {
-	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
-	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
-}
-
-type settingRepository interface {
-	GetByName(ctx context.Context, name string) (*domain.Settings, error)
+func getContextWorkflowId(ctx context.Context) string {
+	return ctx.Value("workflow_id").(string)
 }

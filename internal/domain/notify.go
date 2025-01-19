@@ -18,7 +18,3 @@ const (
 	NotifyChannelTypeWebhook    = NotifyChannelType("webhook")
 	NotifyChannelTypeWeCom      = NotifyChannelType("wecom")
 )
-
-type NotifyTestPushReq struct {
-	Channel string `json:"channel"`
-}

@@ -2,7 +2,22 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } f
 import { useTranslation } from "react-i18next";
 import { FormOutlined as FormOutlinedIcon, PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { AutoComplete, type AutoCompleteProps, Button, Divider, Form, type FormInstance, Input, Select, Space, Switch, Tooltip, Typography } from "antd";
+import {
+  AutoComplete,
+  type AutoCompleteProps,
+  Button,
+  Divider,
+  Flex,
+  Form,
+  type FormInstance,
+  Input,
+  InputNumber,
+  Select,
+  Space,
+  Switch,
+  Tooltip,
+  Typography,
+} from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -42,8 +57,8 @@ const MULTIPLE_INPUT_DELIMITER = ";";
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
   return {
     keyAlgorithm: "RSA2048",
-    propagationTimeout: 60,
     disableFollowCNAME: true,
+    skipBeforeExpiryDays: 20,
   };
 };
 
@@ -77,13 +92,24 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             .split(MULTIPLE_INPUT_DELIMITER)
             .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         }, t("common.errmsg.host_invalid")),
-      propagationTimeout: z
+      dnsPropagationTimeout: z
         .union([
-          z.number().int().gte(1, t("workflow_node.apply.form.propagation_timeout.placeholder")),
-          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.propagation_timeout.placeholder")),
+          z.number().int().gte(1, t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
+          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
+        ])
+        .nullish(),
+      dnsTTL: z
+        .union([
+          z.number().int().gte(1, t("workflow_node.apply.form.dns_ttl.placeholder")),
+          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_ttl.placeholder")),
         ])
         .nullish(),
       disableFollowCNAME: z.boolean().nullish(),
+      skipBeforeExpiryDays: z
+        .number({ message: t("workflow_node.apply.form.skip_before_expiry_days.placeholder") })
+        .int(t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
+        .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
+        .lte(60, t("workflow_node.apply.form.skip_before_expiry_days.placeholder")),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -313,18 +339,34 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
 
           <Form.Item
-            name="propagationTimeout"
-            label={t("workflow_node.apply.form.propagation_timeout.label")}
+            name="dnsPropagationTimeout"
+            label={t("workflow_node.apply.form.dns_propagation_timeout.label")}
             rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.propagation_timeout.tooltip") }}></span>}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.dns_propagation_timeout.tooltip") }}></span>}
           >
             <Input
               type="number"
               allowClear
               min={0}
               max={3600}
-              placeholder={t("workflow_node.apply.form.propagation_timeout.placeholder")}
-              addonAfter={t("workflow_node.apply.form.propagation_timeout.suffix")}
+              placeholder={t("workflow_node.apply.form.dns_propagation_timeout.placeholder")}
+              addonAfter={t("workflow_node.apply.form.dns_propagation_timeout.unit")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="dnsTTL"
+            label={t("workflow_node.apply.form.dns_ttl.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.dns_ttl.tooltip") }}></span>}
+          >
+            <Input
+              type="number"
+              allowClear
+              min={0}
+              max={86400}
+              placeholder={t("workflow_node.apply.form.dns_ttl.placeholder")}
+              addonAfter={t("workflow_node.apply.form.dns_ttl.unit")}
             />
           </Form.Item>
 
@@ -335,6 +377,33 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_follow_cname.tooltip") }}></span>}
           >
             <Switch />
+          </Form.Item>
+        </Form>
+
+        <Divider className="my-1">
+          <Typography.Text className="text-xs font-normal" type="secondary">
+            {t("workflow_node.apply.form.strategy_config.label")}
+          </Typography.Text>
+        </Divider>
+
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+          <Form.Item
+            label={t("workflow_node.apply.form.skip_before_expiry_days.label")}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.skip_before_expiry_days.tooltip") }}></span>}
+          >
+            <Flex align="center" gap={8} wrap="wrap">
+              <div>{t("workflow_node.apply.form.skip_before_expiry_days.prefix")}</div>
+              <Form.Item name="skipBeforeExpiryDays" noStyle rules={[formRule]}>
+                <InputNumber
+                  className="w-36"
+                  min={1}
+                  max={60}
+                  placeholder={t("workflow_node.apply.form.skip_before_expiry_days.placeholder")}
+                  addonAfter={t("workflow_node.apply.form.skip_before_expiry_days.unit")}
+                />
+              </Form.Item>
+              <div>{t("workflow_node.apply.form.skip_before_expiry_days.suffix")}</div>
+            </Flex>
           </Form.Item>
         </Form>
       </Form.Provider>

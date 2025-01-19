@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PageHeader } from "@ant-design/pro-components";
-import { Card, Col, Form, Input, Row, Spin, Typography, notification } from "antd";
+import { Card, Col, Form, Input, type InputRef, Row, Spin, Typography, notification } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -81,6 +81,17 @@ const WorkflowNew = () => {
   });
   const [formModalOpen, setFormModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (formModalOpen) {
+      setTimeout(() => inputRef.current?.focus({ cursor: "end" }), 1);
+    } else {
+      setTemplateSelectKey(undefined);
+      formInst.resetFields();
+    }
+  }, [formModalOpen]);
+
+  const inputRef = useRef<InputRef>(null);
+
   const handleTemplateClick = (key: TemplateKeys) => {
     setTemplateSelectKey(key);
     setFormModalOpen(true);
@@ -88,11 +99,6 @@ const WorkflowNew = () => {
 
   const handleModalOpenChange = (open: boolean) => {
     setFormModalOpen(open);
-
-    if (!open) {
-      setTemplateSelectKey(undefined);
-      formInst.resetFields();
-    }
   };
 
   const handleModalFormFinish = () => {
@@ -155,6 +161,7 @@ const WorkflowNew = () => {
 
         <ModalForm
           {...formProps}
+          autoFocus
           disabled={formPending}
           layout="vertical"
           form={formInst}
@@ -167,7 +174,7 @@ const WorkflowNew = () => {
           onOpenChange={handleModalOpenChange}
         >
           <Form.Item name="name" label={t("workflow.new.modal.form.name.label")} rules={[formRule]}>
-            <Input ref={(ref) => setTimeout(() => ref?.focus({ cursor: "end" }), 0)} placeholder={t("workflow.new.modal.form.name.placeholder")} />
+            <Input ref={inputRef} autoFocus placeholder={t("workflow.new.modal.form.name.placeholder")} />
           </Form.Item>
 
           <Form.Item name="description" label={t("workflow.new.modal.form.description.label")} rules={[formRule]}>

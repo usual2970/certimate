@@ -19,3 +19,11 @@ export const CERTIFICATE_SOURCES = Object.freeze({
 } as const);
 
 export type CertificateSourceType = (typeof CERTIFICATE_SOURCES)[keyof typeof CERTIFICATE_SOURCES];
+
+export const CERTIFICATE_FORMATS = Object.freeze({
+  PEM: "PEM",
+  PFX: "PFX",
+  JKS: "JKS",
+} as const);
+
+export type CertificateFormatType = (typeof CERTIFICATE_FORMATS)[keyof typeof CERTIFICATE_FORMATS];

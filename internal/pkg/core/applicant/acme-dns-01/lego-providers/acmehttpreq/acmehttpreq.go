@@ -10,11 +10,11 @@ import (
 )
 
 type ACMEHttpReqApplicantConfig struct {
-	Endpoint           string `json:"endpoint"`
-	Mode               string `json:"mode"`
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	Endpoint              string `json:"endpoint"`
+	Mode                  string `json:"mode"`
+	Username              string `json:"username"`
+	Password              string `json:"password"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 }
 
 func NewChallengeProvider(config *ACMEHttpReqApplicantConfig) (challenge.Provider, error) {
@@ -28,8 +28,8 @@ func NewChallengeProvider(config *ACMEHttpReqApplicantConfig) (challenge.Provide
 	providerConfig.Mode = config.Mode
 	providerConfig.Username = config.Username
 	providerConfig.Password = config.Password
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
 
 	provider, err := httpreq.NewDNSProviderConfig(providerConfig)

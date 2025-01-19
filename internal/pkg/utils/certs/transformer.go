@@ -2,6 +2,8 @@
 
 import (
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"encoding/pem"
 	"errors"
 	"time"
@@ -26,9 +28,23 @@ func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPass
 		return nil, err
 	}
 
-	privkey, err := ParsePKCS1PrivateKeyFromPEM(privkeyPem)
-	if err != nil {
-		return nil, err
+	var privkey interface{}
+	switch cert.PublicKey.(type) {
+	case *rsa.PublicKey:
+		{
+			privkey, err = ParsePKCS1PrivateKeyFromPEM(privkeyPem)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+	case *ecdsa.PublicKey:
+		{
+			privkey, err = ParseECPrivateKeyFromPEM(privkeyPem)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
 
 	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, pfxPassword)

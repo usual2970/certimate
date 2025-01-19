@@ -10,9 +10,10 @@ import (
 )
 
 type PowerDNSApplicantConfig struct {
-	ApiUrl             string `json:"apiUrl"`
-	ApiKey             string `json:"apiKey"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	ApiUrl                string `json:"apiUrl"`
+	ApiKey                string `json:"apiKey"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *PowerDNSApplicantConfig) (challenge.Provider, error) {
@@ -24,8 +25,11 @@ func NewChallengeProvider(config *PowerDNSApplicantConfig) (challenge.Provider, 
 	providerConfig := pdns.NewDefaultConfig()
 	providerConfig.Host = host
 	providerConfig.APIKey = config.ApiKey
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := pdns.NewDNSProviderConfig(providerConfig)

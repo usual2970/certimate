@@ -1,7 +1,7 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
-import { Button, Divider, Form, type FormInstance, Select, Tooltip, Typography } from "antd";
+import { Button, Divider, Flex, Form, type FormInstance, Select, Switch, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -65,7 +65,9 @@ export type DeployNodeConfigFormInstance = {
 };
 
 const initFormModel = (): DeployNodeConfigFormFieldValues => {
-  return {};
+  return {
+    skipOnLastSucceeded: true,
+  };
 };
 
 const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNodeConfigFormProps>(
@@ -91,6 +93,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         .nonempty(t("workflow_node.deploy.form.provider_access.placeholder"))
         .refine(() => !!formInst.getFieldValue("provider"), t("workflow_node.deploy.form.provider.placeholder")),
       providerConfig: z.any(),
+      skipOnLastSucceeded: z.boolean(),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -340,6 +343,27 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
 
           {nestedFormEl}
         </Show>
+
+        <Divider className="my-1">
+          <Typography.Text className="text-xs font-normal" type="secondary">
+            {t("workflow_node.deploy.form.strategy_config.label")}
+          </Typography.Text>
+        </Divider>
+
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+          <Form.Item label={t("workflow_node.deploy.form.skip_on_last_succeeded.label")}>
+            <Flex align="center" gap={8} wrap="wrap">
+              <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.prefix")}</div>
+              <Form.Item name="skipOnLastSucceeded" noStyle rules={[formRule]}>
+                <Switch
+                  checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.on")}
+                  unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.off")}
+                />
+              </Form.Item>
+              <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.suffix")}</div>
+            </Flex>
+          </Form.Item>
+        </Form>
       </Form.Provider>
     );
   }

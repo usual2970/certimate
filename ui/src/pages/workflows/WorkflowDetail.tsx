@@ -16,7 +16,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { isEqual } from "radash";
 import { z } from "zod";
 
-import { run as runWorkflow } from "@/api/workflow";
+import { run as runWorkflow } from "@/api/workflows";
 import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElements from "@/components/workflow/WorkflowElements";

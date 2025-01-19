@@ -4,6 +4,8 @@ import (
 	"github.com/go-acme/lego/v4/registration"
 )
 
+const CollectionNameAcmeAccount = "acme_accounts"
+
 type AcmeAccount struct {
 	Meta
 	CA       string                 `json:"ca" db:"ca"`

@@ -5,7 +5,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { useAntdForm } from "@/hooks";
-import { getPocketBase } from "@/repository/pocketbase";
+import { authWithPassword } from "@/repository/admin";
 import { getErrMsg } from "@/utils/error";
 
 const Login = () => {
@@ -27,7 +27,7 @@ const Login = () => {
   } = useAntdForm<z.infer<typeof formSchema>>({
     onSubmit: async (values) => {
       try {
-        await getPocketBase().admins.authWithPassword(values.username, values.password);
+        await authWithPassword(values.username, values.password);
         await navigage("/");
       } catch (err) {
         notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });

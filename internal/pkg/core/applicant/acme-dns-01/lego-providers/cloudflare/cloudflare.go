@@ -9,8 +9,9 @@ import (
 )
 
 type CloudflareApplicantConfig struct {
-	DnsApiToken        string `json:"dnsApiToken"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	DnsApiToken           string `json:"dnsApiToken"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *CloudflareApplicantConfig) (challenge.Provider, error) {
@@ -20,8 +21,11 @@ func NewChallengeProvider(config *CloudflareApplicantConfig) (challenge.Provider
 
 	providerConfig := cloudflare.NewDefaultConfig()
 	providerConfig.AuthToken = config.DnsApiToken
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := cloudflare.NewDNSProviderConfig(providerConfig)

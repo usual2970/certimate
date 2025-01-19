@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/pocketbase/dbx"
-	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/core"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -18,8 +18,8 @@ func NewWorkflowOutputRepository() *WorkflowOutputRepository {
 }
 
 func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter(
-		"workflow_output",
+	records, err := app.GetApp().FindRecordsByFilter(
+		domain.CollectionNameWorkflowOutput,
 		"nodeId={:nodeId}",
 		"-created",
 		1, 0,
@@ -48,9 +48,9 @@ func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId strin
 
 	rs := &domain.WorkflowOutput{
 		Meta: domain.Meta{
-			Id:        record.GetId(),
-			CreatedAt: record.GetCreated().Time(),
-			UpdatedAt: record.GetUpdated().Time(),
+			Id:        record.Id,
+			CreatedAt: record.GetDateTime("created").Time(),
+			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		WorkflowId: record.GetString("workflowId"),
 		NodeId:     record.GetString("nodeId"),
@@ -64,17 +64,17 @@ func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId strin
 
 // 保存节点输出
 func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error {
-	var record *models.Record
+	var record *core.Record
 	var err error
 
 	if output.Id == "" {
-		collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_output")
+		collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
 		if err != nil {
 			return err
 		}
-		record = models.NewRecord(collection)
+		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().Dao().FindRecordById("workflow_output", output.Id)
+		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflowOutput, output.Id)
 		if err != nil {
 			return err
 		}
@@ -85,21 +85,21 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 	record.Set("outputs", output.Outputs)
 	record.Set("succeeded", output.Succeeded)
 
-	if err := app.GetApp().Dao().SaveRecord(record); err != nil {
+	if err := app.GetApp().Save(record); err != nil {
 		return err
 	}
 
 	if cb != nil && certificate != nil {
-		if err := cb(record.GetId()); err != nil {
+		if err := cb(record.Id); err != nil {
 			return err
 		}
 
-		certCollection, err := app.GetApp().Dao().FindCollectionByNameOrId("certificate")
+		certCollection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
 		if err != nil {
 			return err
 		}
 
-		certRecord := models.NewRecord(certCollection)
+		certRecord := core.NewRecord(certCollection)
 		certRecord.Set("source", string(certificate.Source))
 		certRecord.Set("subjectAltNames", certificate.SubjectAltNames)
 		certRecord.Set("certificate", certificate.Certificate)
@@ -113,21 +113,21 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.Work
 		certRecord.Set("workflowNodeId", certificate.WorkflowNodeId)
 		certRecord.Set("workflowOutputId", certificate.WorkflowOutputId)
 
-		if err := app.GetApp().Dao().SaveRecord(certRecord); err != nil {
+		if err := app.GetApp().Save(certRecord); err != nil {
 			return err
 		}
 
 		// 更新 certificate
 		for i, item := range output.Outputs {
-			if item.Name == domain.WORKFLOW_OUTPUT_CERTIFICATE {
-				output.Outputs[i].Value = certRecord.GetId()
+			if item.Name == string(domain.WorkflowNodeIONameCertificate) {
+				output.Outputs[i].Value = certRecord.Id
 				break
 			}
 		}
 
 		record.Set("outputs", output.Outputs)
 
-		if err := app.GetApp().Dao().SaveRecord(record); err != nil {
+		if err := app.GetApp().Save(record); err != nil {
 			return err
 		}
 
