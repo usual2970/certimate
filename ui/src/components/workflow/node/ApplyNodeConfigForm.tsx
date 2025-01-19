@@ -57,7 +57,6 @@ const MULTIPLE_INPUT_DELIMITER = ";";
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
   return {
     keyAlgorithm: "RSA2048",
-    disableFollowCNAME: true,
     skipBeforeExpiryDays: 20,
   };
 };
@@ -105,11 +104,11 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         ])
         .nullish(),
       disableFollowCNAME: z.boolean().nullish(),
+      disableARI: z.boolean().nullish(),
       skipBeforeExpiryDays: z
         .number({ message: t("workflow_node.apply.form.skip_before_expiry_days.placeholder") })
         .int(t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
-        .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
-        .lte(60, t("workflow_node.apply.form.skip_before_expiry_days.placeholder")),
+        .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder")),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -378,6 +377,15 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           >
             <Switch />
           </Form.Item>
+
+          <Form.Item
+            name="disableARI"
+            label={t("workflow_node.apply.form.disable_ari.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.disable_ari.tooltip") }}></span>}
+          >
+            <Switch />
+          </Form.Item>
         </Form>
 
         <Divider className="my-1">
@@ -397,7 +405,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 <InputNumber
                   className="w-36"
                   min={1}
-                  max={60}
+                  max={90}
                   placeholder={t("workflow_node.apply.form.skip_before_expiry_days.placeholder")}
                   addonAfter={t("workflow_node.apply.form.skip_before_expiry_days.unit")}
                 />

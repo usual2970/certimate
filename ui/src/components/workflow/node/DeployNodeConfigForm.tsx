@@ -342,28 +342,28 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           </Divider>
 
           {nestedFormEl}
+
+          <Divider className="my-1">
+            <Typography.Text className="text-xs font-normal" type="secondary">
+              {t("workflow_node.deploy.form.strategy_config.label")}
+            </Typography.Text>
+          </Divider>
+
+          <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+            <Form.Item label={t("workflow_node.deploy.form.skip_on_last_succeeded.label")}>
+              <Flex align="center" gap={8} wrap="wrap">
+                <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.prefix")}</div>
+                <Form.Item name="skipOnLastSucceeded" noStyle rules={[formRule]}>
+                  <Switch
+                    checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.on")}
+                    unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.off")}
+                  />
+                </Form.Item>
+                <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.suffix")}</div>
+              </Flex>
+            </Form.Item>
+          </Form>
         </Show>
-
-        <Divider className="my-1">
-          <Typography.Text className="text-xs font-normal" type="secondary">
-            {t("workflow_node.deploy.form.strategy_config.label")}
-          </Typography.Text>
-        </Divider>
-
-        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-          <Form.Item label={t("workflow_node.deploy.form.skip_on_last_succeeded.label")}>
-            <Flex align="center" gap={8} wrap="wrap">
-              <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.prefix")}</div>
-              <Form.Item name="skipOnLastSucceeded" noStyle rules={[formRule]}>
-                <Switch
-                  checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.on")}
-                  unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.off")}
-                />
-              </Form.Item>
-              <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.suffix")}</div>
-            </Flex>
-          </Form.Item>
-        </Form>
       </Form.Provider>
     );
   }
