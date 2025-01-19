@@ -7,8 +7,7 @@ import (
 	"fmt"
 
 	"github.com/pocketbase/dbx"
-	"github.com/pocketbase/pocketbase/daos"
-	"github.com/pocketbase/pocketbase/models"
+	"github.com/pocketbase/pocketbase/core"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 )
@@ -20,8 +19,8 @@ func NewWorkflowRepository() *WorkflowRepository {
 }
 
 func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error) {
-	records, err := app.GetApp().Dao().FindRecordsByFilter(
-		"workflow",
+	records, err := app.GetApp().FindRecordsByFilter(
+		domain.CollectionNameWorkflow,
 		"enabled={:enabled} && trigger={:trigger}",
 		"-created",
 		0, 0,
@@ -45,7 +44,7 @@ func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Wor
 }
 
 func (r *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Workflow, error) {
-	record, err := app.GetApp().Dao().FindRecordById("workflow", id)
+	record, err := app.GetApp().FindRecordById(domain.CollectionNameWorkflow, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrRecordNotFound
@@ -57,15 +56,16 @@ func (r *WorkflowRepository) GetById(ctx context.Context, id string) (*domain.Wo
 }
 
 func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow) error {
-	collection, err := app.GetApp().Dao().FindCollectionByNameOrId(workflow.Table())
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflow)
 	if err != nil {
 		return err
 	}
-	var record *models.Record
+
+	var record *core.Record
 	if workflow.Id == "" {
-		record = models.NewRecord(collection)
+		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().Dao().FindRecordById(workflow.Table(), workflow.Id)
+		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflow, workflow.Id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return domain.ErrRecordNotFound
@@ -86,40 +86,44 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	record.Set("lastRunStatus", string(workflow.LastRunStatus))
 	record.Set("lastRunTime", workflow.LastRunTime)
 
-	return app.GetApp().Dao().SaveRecord(record)
+	return app.GetApp().Save(record)
 }
 
 func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error {
-	collection, err := app.GetApp().Dao().FindCollectionByNameOrId("workflow_run")
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowRun)
 	if err != nil {
 		return err
 	}
 
-	err = app.GetApp().Dao().RunInTransaction(func(txDao *daos.Dao) error {
-		record := models.NewRecord(collection)
-		record.Set("workflowId", workflowRun.WorkflowId)
-		record.Set("trigger", string(workflowRun.Trigger))
-		record.Set("status", string(workflowRun.Status))
-		record.Set("startedAt", workflowRun.StartedAt)
-		record.Set("endedAt", workflowRun.EndedAt)
-		record.Set("logs", workflowRun.Logs)
-		record.Set("error", workflowRun.Error)
-		err = txDao.SaveRecord(record)
+	err = app.GetApp().RunInTransaction(func(txApp core.App) error {
+		workflowRunRecord := core.NewRecord(collection)
+		workflowRunRecord.Id = workflowRun.Id
+		workflowRunRecord.Set("workflowId", workflowRun.WorkflowId)
+		workflowRunRecord.Set("trigger", string(workflowRun.Trigger))
+		workflowRunRecord.Set("status", string(workflowRun.Status))
+		workflowRunRecord.Set("startedAt", workflowRun.StartedAt)
+		workflowRunRecord.Set("endedAt", workflowRun.EndedAt)
+		workflowRunRecord.Set("logs", workflowRun.Logs)
+		workflowRunRecord.Set("error", workflowRun.Error)
+		err = txApp.Save(workflowRunRecord)
 		if err != nil {
 			return err
 		}
 
-		// unable trigger sse using DB()
-		workflowRecord, err := txDao.FindRecordById("workflow", workflowRun.WorkflowId)
+		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, workflowRun.WorkflowId)
 		if err != nil {
 			return err
 		}
 
-		workflowRecord.Set("lastRunId", record.GetId())
-		workflowRecord.Set("lastRunStatus", record.GetString("status"))
-		workflowRecord.Set("lastRunTime", record.GetString("startedAt"))
+		workflowRecord.Set("lastRunId", workflowRunRecord.Id)
+		workflowRecord.Set("lastRunStatus", workflowRunRecord.GetString("status"))
+		workflowRecord.Set("lastRunTime", workflowRunRecord.GetString("startedAt"))
+		err = txApp.Save(workflowRecord)
+		if err != nil {
+			return err
+		}
 
-		return txDao.SaveRecord(workflowRecord)
+		return nil
 	})
 	if err != nil {
 		return err
@@ -128,7 +132,7 @@ func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.Wo
 	return nil
 }
 
-func (r *WorkflowRepository) castRecordToModel(record *models.Record) (*domain.Workflow, error) {
+func (r *WorkflowRepository) castRecordToModel(record *core.Record) (*domain.Workflow, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")
 	}
@@ -145,9 +149,9 @@ func (r *WorkflowRepository) castRecordToModel(record *models.Record) (*domain.W
 
 	workflow := &domain.Workflow{
 		Meta: domain.Meta{
-			Id:        record.GetId(),
-			CreatedAt: record.GetCreated().Time(),
-			UpdatedAt: record.GetUpdated().Time(),
+			Id:        record.Id,
+			CreatedAt: record.GetDateTime("created").Time(),
+			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		Name:          record.GetString("name"),
 		Description:   record.GetString("description"),

@@ -5,25 +5,24 @@ import (
 	"log"
 	"os"
 	"strings"
-
 	_ "time/tzdata"
 
-	"github.com/labstack/echo/v5"
-	"github.com/labstack/echo/v5/middleware"
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
+	"github.com/pocketbase/pocketbase/tools/hook"
 
 	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/routes"
+	"github.com/usual2970/certimate/internal/rest/routes"
 	"github.com/usual2970/certimate/internal/scheduler"
 	"github.com/usual2970/certimate/internal/workflow"
 	"github.com/usual2970/certimate/ui"
-
-	_ "github.com/usual2970/certimate/migrations"
+	//_ "github.com/usual2970/certimate/migrations"
 )
 
 func main() {
-	app := app.GetApp()
+	app := app.GetApp().(*pocketbase.PocketBase)
 
 	var flagHttp string
 	var flagDir string
@@ -37,27 +36,29 @@ func main() {
 		Automigrate: strings.HasPrefix(os.Args[0], os.TempDir()),
 	})
 
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
 		scheduler.Register()
-
 		workflow.Register()
-
 		routes.Register(e.Router)
-		e.Router.GET(
-			"/*",
-			echo.StaticDirectoryHandler(ui.DistDirFS, false),
-			middleware.Gzip(),
-		)
-
-		return nil
+		return e.Next()
 	})
 
-	app.OnTerminate().Add(func(e *core.TerminateEvent) error {
+	app.OnServe().Bind(&hook.Handler[*core.ServeEvent]{
+		Func: func(e *core.ServeEvent) error {
+			e.Router.
+				GET("/{path...}", apis.Static(ui.DistDirFS, false)).
+				Bind(apis.Gzip())
+			return e.Next()
+		},
+		Priority: 999,
+	})
+
+	app.OnTerminate().BindFunc(func(e *core.TerminateEvent) error {
 		routes.Unregister()
 
 		log.Println("Exit!")
 
-		return nil
+		return e.Next()
 	})
 
 	log.Printf("Visit the website: http://%s", flagHttp)

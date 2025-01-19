@@ -1,4 +1,4 @@
-package applicant
+package applicant_test
 
 import (
 	"testing"

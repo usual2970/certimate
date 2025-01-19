@@ -9,11 +9,12 @@ import (
 )
 
 type AWSRoute53ApplicantConfig struct {
-	AccessKeyId        string `json:"accessKeyId"`
-	SecretAccessKey    string `json:"secretAccessKey"`
-	Region             string `json:"region"`
-	HostedZoneId       string `json:"hostedZoneId"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	AccessKeyId           string `json:"accessKeyId"`
+	SecretAccessKey       string `json:"secretAccessKey"`
+	Region                string `json:"region"`
+	HostedZoneId          string `json:"hostedZoneId"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *AWSRoute53ApplicantConfig) (challenge.Provider, error) {
@@ -26,8 +27,11 @@ func NewChallengeProvider(config *AWSRoute53ApplicantConfig) (challenge.Provider
 	providerConfig.SecretAccessKey = config.SecretAccessKey
 	providerConfig.Region = config.Region
 	providerConfig.HostedZoneID = config.HostedZoneId
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := route53.NewDNSProviderConfig(providerConfig)

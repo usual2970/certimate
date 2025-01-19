@@ -52,7 +52,7 @@ const MultipleInput = ({
       draft.push("");
     });
     setValue(newValue);
-    setTimeout(() => itemRefs.current[newValue.length - 1]?.focus(), 0);
+    setTimeout(() => itemRefs.current[newValue.length - 1]?.focus(), 1);
 
     onValueCreate?.(newValue.length - 1);
   };
@@ -110,7 +110,7 @@ const MultipleInput = ({
       draft.splice(index + 1, 0, "");
     });
     setValue(newValue);
-    setTimeout(() => itemRefs.current[index + 1]?.focus(), 0);
+    setTimeout(() => itemRefs.current[index + 1]?.focus(), 1);
 
     onValueCreate?.(index + 1);
   };

@@ -5,6 +5,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import Show from "@/components/Show";
+import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 
 type DeployNodeConfigFormSSHConfigFieldValues = Nullish<{
   format: string;
@@ -26,9 +27,9 @@ export type DeployNodeConfigFormSSHConfigProps = {
   onValuesChange?: (values: DeployNodeConfigFormSSHConfigFieldValues) => void;
 };
 
-const FORMAT_PEM = "PEM" as const;
-const FORMAT_PFX = "PFX" as const;
-const FORMAT_JKS = "JKS" as const;
+const FORMAT_PEM = CERTIFICATE_FORMATS.PEM;
+const FORMAT_PFX = CERTIFICATE_FORMATS.PFX;
+const FORMAT_JKS = CERTIFICATE_FORMATS.JKS;
 
 const initFormModel = (): DeployNodeConfigFormSSHConfigFieldValues => {
   return {

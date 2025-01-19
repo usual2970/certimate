@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from "react-router-dom";
 
 import Version from "@/components/Version";
-import { getPocketBase } from "@/repository/pocketbase";
+import { getAuthStore } from "@/repository/admin";
 
 const AuthLayout = () => {
-  const auth = getPocketBase().authStore;
-  if (auth.isValid && auth.isAdmin) {
+  const auth = getAuthStore();
+  if (auth.isValid && auth.isSuperuser) {
     return <Navigate to="/" />;
   }
 

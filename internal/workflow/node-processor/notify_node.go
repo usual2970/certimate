@@ -10,7 +10,7 @@ import (
 
 type notifyNode struct {
 	node         *domain.WorkflowNode
-	settingsRepo settingRepository
+	settingsRepo settingsRepository
 	*nodeLogger
 }
 
@@ -25,6 +25,8 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 func (n *notifyNode) Run(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
+	nodeConfig := n.node.GetConfigForNotify()
+
 	// 获取通知配置
 	settings, err := n.settingsRepo.GetByName(ctx, "notifyChannels")
 	if err != nil {
@@ -33,18 +35,14 @@ func (n *notifyNode) Run(ctx context.Context) error {
 	}
 
 	// 获取通知渠道
-	channelConfig, err := settings.GetNotifyChannelConfig(n.node.GetConfigString("channel"))
+	channelConfig, err := settings.GetNotifyChannelConfig(nodeConfig.Channel)
 	if err != nil {
 		n.AddOutput(ctx, n.node.Name, "获取通知渠道配置失败", err.Error())
 		return err
 	}
 
 	// 发送通知
-	if err := notify.SendToChannel(n.node.GetConfigString("subject"),
-		n.node.GetConfigString("message"),
-		n.node.GetConfigString("channel"),
-		channelConfig,
-	); err != nil {
+	if err := notify.SendToChannel(nodeConfig.Subject, nodeConfig.Message, nodeConfig.Channel, channelConfig); err != nil {
 		n.AddOutput(ctx, n.node.Name, "发送通知失败", err.Error())
 		return err
 	}

@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { CopyOutlined as CopyOutlinedIcon, DownOutlined as DownOutlinedIcon, LikeOutlined as LikeOutlinedIcon } from "@ant-design/icons";
 import { Button, Dropdown, Form, Input, Space, Tooltip, message } from "antd";
 import dayjs from "dayjs";
+import { saveAs } from "file-saver";
 
-import { type CertificateModel } from "@/domain/certificate";
-import { saveFiles2Zip } from "@/utils/file";
+import { archive as archiveCertificate } from "@/api/certificates";
+import { CERTIFICATE_FORMATS, type CertificateFormatType, type CertificateModel } from "@/domain/certificate";
 
 export type CertificateDetailProps = {
   className?: string;
@@ -18,20 +19,17 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
 
   const [messageApi, MessageContextHolder] = message.useMessage();
 
-  const handleDownloadPEMClick = async () => {
-    const zipName = `${data.id}-${data.subjectAltNames}.zip`;
-    const files = [
-      {
-        name: `${data.subjectAltNames}.pem`,
-        content: data.certificate ?? "",
-      },
-      {
-        name: `${data.subjectAltNames}.key`,
-        content: data.privateKey ?? "",
-      },
-    ];
-
-    await saveFiles2Zip(zipName, files);
+  const handleDownloadClick = async (format: CertificateFormatType) => {
+    try {
+      const res = await archiveCertificate(data.id, format);
+      const bstr = atob(res.data);
+      const u8arr = Uint8Array.from(bstr, (ch) => ch.charCodeAt(0));
+      const blob = new Blob([u8arr], { type: "application/zip" });
+      saveAs(blob, `${data.id}-${data.subjectAltNames}.zip`);
+    } catch (err) {
+      console.log(err);
+      messageApi.warning(t("common.text.operation_failed"));
+    }
   };
 
   return (
@@ -90,21 +88,17 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
                 key: "PEM",
                 label: "PEM",
                 extra: <LikeOutlinedIcon />,
-                onClick: () => handleDownloadPEMClick(),
+                onClick: () => handleDownloadClick(CERTIFICATE_FORMATS.PEM),
               },
               {
                 key: "PFX",
                 label: "PFX",
-                onClick: () => {
-                  alert("TODO: 暂时不支持下载 PFX 证书");
-                },
+                onClick: () => handleDownloadClick(CERTIFICATE_FORMATS.PFX),
               },
               {
                 key: "JKS",
                 label: "JKS",
-                onClick: () => {
-                  alert("TODO: 暂时不支持下载 JKS 证书");
-                },
+                onClick: () => handleDownloadClick(CERTIFICATE_FORMATS.JKS),
               },
             ],
           }}

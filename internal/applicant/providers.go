@@ -36,11 +36,11 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerACMEHttpReq.NewChallengeProvider(&providerACMEHttpReq.ACMEHttpReqApplicantConfig{
-				Endpoint:           access.Endpoint,
-				Mode:               access.Mode,
-				Username:           access.Username,
-				Password:           access.Password,
-				PropagationTimeout: options.PropagationTimeout,
+				Endpoint:              access.Endpoint,
+				Mode:                  access.Mode,
+				Username:              access.Username,
+				Password:              access.Password,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
 			})
 			return applicant, err
 		}
@@ -53,9 +53,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerAliyun.NewChallengeProvider(&providerAliyun.AliyunApplicantConfig{
-				AccessKeyId:        access.AccessKeyId,
-				AccessKeySecret:    access.AccessKeySecret,
-				PropagationTimeout: options.PropagationTimeout,
+				AccessKeyId:           access.AccessKeyId,
+				AccessKeySecret:       access.AccessKeySecret,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -68,11 +69,12 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerAWSRoute53.NewChallengeProvider(&providerAWSRoute53.AWSRoute53ApplicantConfig{
-				AccessKeyId:        access.AccessKeyId,
-				SecretAccessKey:    access.SecretAccessKey,
-				Region:             maps.GetValueAsString(options.ProviderApplyConfig, "region"),
-				HostedZoneId:       maps.GetValueAsString(options.ProviderApplyConfig, "hostedZoneId"),
-				PropagationTimeout: options.PropagationTimeout,
+				AccessKeyId:           access.AccessKeyId,
+				SecretAccessKey:       access.SecretAccessKey,
+				Region:                maps.GetValueAsString(options.ProviderApplyConfig, "region"),
+				HostedZoneId:          maps.GetValueAsString(options.ProviderApplyConfig, "hostedZoneId"),
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -85,11 +87,12 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerAzureDNS.NewChallengeProvider(&providerAzureDNS.AzureDNSApplicantConfig{
-				TenantId:           access.TenantId,
-				ClientId:           access.ClientId,
-				ClientSecret:       access.ClientSecret,
-				CloudName:          access.CloudName,
-				PropagationTimeout: options.PropagationTimeout,
+				TenantId:              access.TenantId,
+				ClientId:              access.ClientId,
+				ClientSecret:          access.ClientSecret,
+				CloudName:             access.CloudName,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -102,8 +105,9 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerCloudflare.NewChallengeProvider(&providerCloudflare.CloudflareApplicantConfig{
-				DnsApiToken:        access.DnsApiToken,
-				PropagationTimeout: options.PropagationTimeout,
+				DnsApiToken:           access.DnsApiToken,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -116,9 +120,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerGoDaddy.NewChallengeProvider(&providerGoDaddy.GoDaddyApplicantConfig{
-				ApiKey:             access.ApiKey,
-				ApiSecret:          access.ApiSecret,
-				PropagationTimeout: options.PropagationTimeout,
+				ApiKey:                access.ApiKey,
+				ApiSecret:             access.ApiSecret,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -131,10 +136,11 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerHuaweiCloud.NewChallengeProvider(&providerHuaweiCloud.HuaweiCloudApplicantConfig{
-				AccessKeyId:        access.AccessKeyId,
-				SecretAccessKey:    access.SecretAccessKey,
-				Region:             maps.GetValueAsString(options.ProviderApplyConfig, "region"),
-				PropagationTimeout: options.PropagationTimeout,
+				AccessKeyId:           access.AccessKeyId,
+				SecretAccessKey:       access.SecretAccessKey,
+				Region:                maps.GetValueAsString(options.ProviderApplyConfig, "region"),
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -147,9 +153,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerNameDotCom.NewChallengeProvider(&providerNameDotCom.NameDotComApplicantConfig{
-				Username:           access.Username,
-				ApiToken:           access.ApiToken,
-				PropagationTimeout: options.PropagationTimeout,
+				Username:              access.Username,
+				ApiToken:              access.ApiToken,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -162,8 +169,9 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerNameSilo.NewChallengeProvider(&providerNameSilo.NameSiloApplicantConfig{
-				ApiKey:             access.ApiKey,
-				PropagationTimeout: options.PropagationTimeout,
+				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -176,8 +184,9 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerNS1.NewChallengeProvider(&providerNS1.NS1ApplicantConfig{
-				ApiKey:             access.ApiKey,
-				PropagationTimeout: options.PropagationTimeout,
+				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -190,9 +199,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerPowerDNS.NewChallengeProvider(&providerPowerDNS.PowerDNSApplicantConfig{
-				ApiUrl:             access.ApiUrl,
-				ApiKey:             access.ApiKey,
-				PropagationTimeout: options.PropagationTimeout,
+				ApiUrl:                access.ApiUrl,
+				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -205,9 +215,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerTencentCloud.NewChallengeProvider(&providerTencentCloud.TencentCloudApplicantConfig{
-				SecretId:           access.SecretId,
-				SecretKey:          access.SecretKey,
-				PropagationTimeout: options.PropagationTimeout,
+				SecretId:              access.SecretId,
+				SecretKey:             access.SecretKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}
@@ -220,9 +231,10 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			}
 
 			applicant, err := providerVolcEngine.NewChallengeProvider(&providerVolcEngine.VolcEngineApplicantConfig{
-				AccessKeyId:        access.AccessKeyId,
-				SecretAccessKey:    access.SecretAccessKey,
-				PropagationTimeout: options.PropagationTimeout,
+				AccessKeyId:           access.AccessKeyId,
+				SecretAccessKey:       access.SecretAccessKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
 			})
 			return applicant, err
 		}

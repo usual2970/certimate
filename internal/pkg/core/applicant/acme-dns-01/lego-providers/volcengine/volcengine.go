@@ -9,9 +9,10 @@ import (
 )
 
 type VolcEngineApplicantConfig struct {
-	AccessKeyId        string `json:"accessKeyId"`
-	SecretAccessKey    string `json:"secretAccessKey"`
-	PropagationTimeout int32  `json:"propagationTimeout,omitempty"`
+	AccessKeyId           string `json:"accessKeyId"`
+	SecretAccessKey       string `json:"secretAccessKey"`
+	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *VolcEngineApplicantConfig) (challenge.Provider, error) {
@@ -22,8 +23,11 @@ func NewChallengeProvider(config *VolcEngineApplicantConfig) (challenge.Provider
 	providerConfig := volcengine.NewDefaultConfig()
 	providerConfig.AccessKey = config.AccessKeyId
 	providerConfig.SecretKey = config.SecretAccessKey
-	if config.PropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.PropagationTimeout) * time.Second
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
+	}
+	if config.DnsTTL != 0 {
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := volcengine.NewDNSProviderConfig(providerConfig)

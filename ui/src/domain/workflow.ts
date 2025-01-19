@@ -114,8 +114,10 @@ export type WorkflowNodeConfigForApply = {
   providerConfig?: Record<string, unknown>;
   keyAlgorithm: string;
   nameservers?: string;
-  propagationTimeout?: number;
+  dnsPropagationTimeout?: number;
+  dnsTTL?: number;
   disableFollowCNAME?: boolean;
+  skipBeforeExpiryDays: number;
 };
 
 export type WorkflowNodeConfigForDeploy = {
@@ -123,6 +125,7 @@ export type WorkflowNodeConfigForDeploy = {
   provider: string;
   providerAccessId: string;
   providerConfig: Record<string, unknown>;
+  skipOnLastSucceeded: boolean;
 };
 
 export type WorkflowNodeConfigForNotify = {

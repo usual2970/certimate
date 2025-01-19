@@ -7,7 +7,7 @@ import {
   MoreOutlined as MoreOutlinedIcon,
 } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { Button, Card, Drawer, Dropdown, Input, Modal, Popover, Space } from "antd";
+import { Button, Card, Drawer, Dropdown, Input, type InputRef, Modal, Popover, Space } from "antd";
 import { produce } from "immer";
 import { isEqual } from "radash";
 
@@ -71,9 +71,10 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
 
+  const nameInputRef = useRef<InputRef>(null);
   const nameRef = useRef<string>();
 
-  const handleRenameClick = async () => {
+  const handleRenameConfirm = async () => {
     const oldName = node.name;
     const newName = nameRef.current?.trim()?.substring(0, 64) || oldName;
     if (oldName === newName) {
@@ -131,11 +132,12 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
                   content: (
                     <div className="pb-2 pt-4">
                       <Input
-                        ref={(ref) => setTimeout(() => ref?.focus({ cursor: "end" }), 0)}
+                        ref={nameInputRef}
+                        autoFocus
                         defaultValue={node.name}
                         onChange={(e) => (nameRef.current = e.target.value)}
                         onPressEnter={async () => {
-                          await handleRenameClick();
+                          await handleRenameConfirm();
                           dialog.destroy();
                         }}
                       />
@@ -143,8 +145,9 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
                   ),
                   icon: null,
                   okText: t("common.button.save"),
-                  onOk: handleRenameClick,
+                  onOk: handleRenameConfirm,
                 });
+                setTimeout(() => nameInputRef.current?.focus(), 1);
               },
             },
             {

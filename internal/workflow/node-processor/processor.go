@@ -8,7 +8,7 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type nodeProcessor interface {
+type NodeProcessor interface {
 	Run(ctx context.Context) error
 	Log(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
@@ -16,6 +16,19 @@ type nodeProcessor interface {
 
 type nodeLogger struct {
 	log *domain.WorkflowRunLog
+}
+
+type certificateRepository interface {
+	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
+}
+
+type workflowOutputRepository interface {
+	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
+	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
+}
+
+type settingsRepository interface {
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
@@ -45,7 +58,7 @@ func (l *nodeLogger) AddOutput(ctx context.Context, title, content string, err .
 	l.log.Outputs = append(l.log.Outputs, output)
 }
 
-func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
+func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 	switch node.Type {
 	case domain.WorkflowNodeTypeStart:
 		return NewStartNode(node), nil
@@ -65,15 +78,6 @@ func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
 	return nil, errors.New("not implemented")
 }
 
-type certificateRepository interface {
-	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
-}
-
-type workflowOutputRepository interface {
-	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
-	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
-}
-
-type settingRepository interface {
-	GetByName(ctx context.Context, name string) (*domain.Settings, error)
+func getContextWorkflowId(ctx context.Context) string {
+	return ctx.Value("workflow_id").(string)
 }

@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+const CollectionNameSettings = "settings"
+
 type Settings struct {
 	Meta
 	Name    string `json:"name" db:"name"`

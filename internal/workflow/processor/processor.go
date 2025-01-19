@@ -1,9 +1,10 @@
-package nodeprocessor
+package processor
 
 import (
 	"context"
 
 	"github.com/usual2970/certimate/internal/domain"
+	nodes "github.com/usual2970/certimate/internal/workflow/node-processor"
 )
 
 type workflowProcessor struct {
@@ -23,26 +24,26 @@ func (w *workflowProcessor) Log(ctx context.Context) []domain.WorkflowRunLog {
 }
 
 func (w *workflowProcessor) Run(ctx context.Context) error {
-	ctx = WithWorkflowId(ctx, w.workflow.Id)
-	return w.runNode(ctx, w.workflow.Content)
+	ctx = setContextWorkflowId(ctx, w.workflow.Id)
+	return w.processNode(ctx, w.workflow.Content)
 }
 
-func (w *workflowProcessor) runNode(ctx context.Context, node *domain.WorkflowNode) error {
+func (w *workflowProcessor) processNode(ctx context.Context, node *domain.WorkflowNode) error {
 	current := node
 	for current != nil {
 		if current.Type == domain.WorkflowNodeTypeBranch || current.Type == domain.WorkflowNodeTypeExecuteResultBranch {
 			for _, branch := range current.Branches {
-				if err := w.runNode(ctx, &branch); err != nil {
+				if err := w.processNode(ctx, &branch); err != nil {
 					continue
 				}
 			}
 		}
 
 		var runErr error
-		var processor nodeProcessor
+		var processor nodes.NodeProcessor
 		for {
 			if current.Type != domain.WorkflowNodeTypeBranch && current.Type != domain.WorkflowNodeTypeExecuteResultBranch {
-				processor, runErr = GetProcessor(current)
+				processor, runErr = nodes.GetProcessor(current)
 				if runErr != nil {
 					break
 				}
@@ -74,7 +75,7 @@ func (w *workflowProcessor) runNode(ctx context.Context, node *domain.WorkflowNo
 	return nil
 }
 
-func WithWorkflowId(ctx context.Context, id string) context.Context {
+func setContextWorkflowId(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, "workflow_id", id)
 }
 

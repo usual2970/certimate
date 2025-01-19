@@ -6,7 +6,7 @@ import { z } from "zod";
 import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormAliyunOSSConfigFieldValues = Nullish<{
-  endpoint: string;
+  region: string;
   bucket: string;
   domain: string;
 }>;
@@ -33,9 +33,9 @@ const DeployNodeConfigFormAliyunOSSConfig = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    endpoint: z
-      .string({ message: t("workflow_node.deploy.form.aliyun_oss_endpoint.placeholder") })
-      .url(t("common.errmsg.url_invalid"))
+    region: z
+      .string({ message: t("workflow_node.deploy.form.aliyun_oss_region.placeholder") })
+      .nonempty(t("workflow_node.deploy.form.aliyun_oss_region.placeholder"))
       .trim(),
     bucket: z
       .string({ message: t("workflow_node.deploy.form.aliyun_oss_bucket.placeholder") })
@@ -61,12 +61,12 @@ const DeployNodeConfigFormAliyunOSSConfig = ({
       onValuesChange={handleFormChange}
     >
       <Form.Item
-        name="endpoint"
-        label={t("workflow_node.deploy.form.aliyun_oss_endpoint.label")}
+        name="region"
+        label={t("workflow_node.deploy.form.aliyun_oss_region.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_oss_endpoint.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_oss_region.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.aliyun_oss_endpoint.placeholder")} />
+        <Input placeholder={t("workflow_node.deploy.form.aliyun_oss_region.placeholder")} />
       </Form.Item>
 
       <Form.Item

@@ -17,7 +17,7 @@ import { Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProp
 
 import Version from "@/components/Version";
 import { useBrowserTheme, useTriggerElement } from "@/hooks";
-import { getPocketBase } from "@/repository/pocketbase";
+import { getAuthStore } from "@/repository/admin";
 
 const ConsoleLayout = () => {
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ const ConsoleLayout = () => {
     navigate("/settings/account");
   };
 
-  const auth = getPocketBase().authStore;
-  if (!auth.isValid || !auth.isAdmin) {
+  const auth = getAuthStore();
+  if (!auth.isValid || !auth.isSuperuser) {
     return <Navigate to="/login" />;
   }
 
