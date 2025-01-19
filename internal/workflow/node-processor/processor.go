@@ -57,6 +57,10 @@ func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
 		return NewDeployNode(node), nil
 	case domain.WorkflowNodeTypeNotify:
 		return NewNotifyNode(node), nil
+	case domain.WorkflowNodeTypeExecuteSuccess:
+		return NewExecuteSuccessNode(node), nil
+	case domain.WorkflowNodeTypeExecuteFailure:
+		return NewExecuteFailureNode(node), nil
 	}
 	return nil, errors.New("not implemented")
 }

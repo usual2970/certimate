@@ -362,5 +362,11 @@
 
   "workflow_node.branch.label": "分支",
 
+  "workflow_node.execute_result_branch.label": "执行结果分支",
+
+  "workflow_node.execute_success.label": "执行成功",
+
+  "workflow_node.execute_failure.label": "执行失败",
+
   "workflow_node.condition.label": "条件"
 }

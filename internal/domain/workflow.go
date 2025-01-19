@@ -9,13 +9,16 @@ import (
 type WorkflowNodeType string
 
 const (
-	WorkflowNodeTypeStart     = WorkflowNodeType("start")
-	WorkflowNodeTypeEnd       = WorkflowNodeType("end")
-	WorkflowNodeTypeApply     = WorkflowNodeType("apply")
-	WorkflowNodeTypeDeploy    = WorkflowNodeType("deploy")
-	WorkflowNodeTypeNotify    = WorkflowNodeType("notify")
-	WorkflowNodeTypeBranch    = WorkflowNodeType("branch")
-	WorkflowNodeTypeCondition = WorkflowNodeType("condition")
+	WorkflowNodeTypeStart               = WorkflowNodeType("start")
+	WorkflowNodeTypeEnd                 = WorkflowNodeType("end")
+	WorkflowNodeTypeApply               = WorkflowNodeType("apply")
+	WorkflowNodeTypeDeploy              = WorkflowNodeType("deploy")
+	WorkflowNodeTypeNotify              = WorkflowNodeType("notify")
+	WorkflowNodeTypeBranch              = WorkflowNodeType("branch")
+	WorkflowNodeTypeCondition           = WorkflowNodeType("condition")
+	WorkflowNodeTypeExecuteResultBranch = WorkflowNodeType("execute_result_branch")
+	WorkflowNodeTypeExecuteSuccess      = WorkflowNodeType("execute_success")
+	WorkflowNodeTypeExecuteFailure      = WorkflowNodeType("execute_failure")
 )
 
 type WorkflowTriggerType string

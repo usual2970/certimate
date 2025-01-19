@@ -362,5 +362,11 @@
 
   "workflow_node.branch.label": "Branch",
 
+  "workflow_node.execute_result_branch.label": "Execute result branch",
+
+  "workflow_node.execute_success.label": "Execute success",
+
+  "workflow_node.execute_failure.label": "Execute failure",
+
   "workflow_node.condition.label": "Condition"
 }
