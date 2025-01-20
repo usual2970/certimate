@@ -26,13 +26,13 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
       [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
-      [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
     ]
       .filter(([type]) => {
-        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && type === WorkflowNodeType.ExecuteResultBranch) {
-          return false;
+        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && node.type !== WorkflowNodeType.Notify) {
+          return type !== WorkflowNodeType.ExecuteResultBranch;
         }
 
         return true;

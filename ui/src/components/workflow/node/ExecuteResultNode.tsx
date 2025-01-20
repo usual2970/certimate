@@ -1,9 +1,12 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { MoreOutlined as MoreOutlinedIcon } from "@ant-design/icons";
-import { Button, Card, Popover } from "antd";
+import {
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  MoreOutlined as MoreOutlinedIcon,
+} from "@ant-design/icons";
+import { Button, Card, Popover, theme } from "antd";
 
-import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { WorkflowNodeType } from "@/domain/workflow";
 import AddNode from "./AddNode";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
@@ -16,9 +19,13 @@ export type ConditionNodeProps = SharedNodeProps & {
 const ExecuteResultNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeProps) => {
   const { t } = useTranslation();
 
+  const { token: themeToken } = theme.useToken();
+
   return (
     <>
       <Popover
+        classNames={{ root: "shadow-md" }}
+        styles={{ body: { padding: 0 } }}
         arrow={false}
         content={
           <SharedNode.Menu
@@ -29,8 +36,6 @@ const ExecuteResultNode = ({ node, disabled, branchId, branchIndex }: ConditionN
             trigger={<Button color="primary" icon={<MoreOutlinedIcon />} variant="text" />}
           />
         }
-        overlayClassName="shadow-md"
-        overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
         <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable>
@@ -38,12 +43,12 @@ const ExecuteResultNode = ({ node, disabled, branchId, branchIndex }: ConditionN
             <div className="flex items-center space-x-2">
               {node.type === WorkflowNodeType.ExecuteSuccess ? (
                 <>
-                  <CheckCircleIcon size={18} className="text-green-500" />
+                  <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />
                   <div>{t("workflow_node.execute_success.label")}</div>
                 </>
               ) : (
                 <>
-                  <XCircleIcon size={18} className="text-red-500" />
+                  <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
                   <div>{t("workflow_node.execute_failure.label")}</div>
                 </>
               )}

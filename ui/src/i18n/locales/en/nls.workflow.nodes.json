@@ -1,5 +1,5 @@
 {
-  "workflow_node.action.configure_node": "Configure",
+  "workflow_node.action.configure_node": "Configure node",
   "workflow_node.action.add_node": "Add node",
   "workflow_node.action.rename_node": "Rename node",
   "workflow_node.action.remove_node": "Delete node",
@@ -379,13 +379,13 @@
 
   "workflow_node.end.label": "End",
 
-  "workflow_node.branch.label": "Branch",
+  "workflow_node.branch.label": "Parallel branch",
 
-  "workflow_node.execute_result_branch.label": "Execute result branch",
+  "workflow_node.condition.label": "Branch",
 
-  "workflow_node.execute_success.label": "Execute success",
+  "workflow_node.execute_result_branch.label": "Execution result branch",
 
-  "workflow_node.execute_failure.label": "Execute failure",
+  "workflow_node.execute_success.label": "If the previous node succeeded ...",
 
-  "workflow_node.condition.label": "Condition"
+  "workflow_node.execute_failure.label": "If the previous node failed ..."
 }

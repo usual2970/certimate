@@ -64,6 +64,16 @@ type SharedNodeMenuProps = SharedNodeProps & {
   afterDelete?: () => void;
 };
 
+const isBranchingNode = (node: WorkflowNode) => {
+  return (
+    node.type === WorkflowNodeType.Branch ||
+    node.type === WorkflowNodeType.Condition ||
+    node.type === WorkflowNodeType.ExecuteResultBranch ||
+    node.type === WorkflowNodeType.ExecuteSuccess ||
+    node.type === WorkflowNodeType.ExecuteFailure
+  );
+};
+
 const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterUpdate, afterDelete }: SharedNodeMenuProps) => {
   const { t } = useTranslation();
 
@@ -91,13 +101,7 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
   };
 
   const handleDeleteClick = async () => {
-    if (
-      node.type === WorkflowNodeType.Branch ||
-      node.type === WorkflowNodeType.Condition ||
-      node.type === WorkflowNodeType.ExecuteResultBranch ||
-      node.type === WorkflowNodeType.ExecuteSuccess ||
-      node.type === WorkflowNodeType.ExecuteFailure
-    ) {
+    if (isBranchingNode(node)) {
       await removeBranch(branchId!, branchIndex!);
     } else {
       await removeNode(node.id);
@@ -116,19 +120,13 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
             {
               key: "rename",
               disabled: disabled,
-              label:
-                node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
-                  ? t("workflow_node.action.rename_branch")
-                  : t("workflow_node.action.rename_node"),
+              label: isBranchingNode(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
               icon: <FormOutlinedIcon />,
               onClick: () => {
                 nameRef.current = node.name;
 
                 const dialog = modalApi.confirm({
-                  title:
-                    node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
-                      ? t("workflow_node.action.rename_branch")
-                      : t("workflow_node.action.rename_node"),
+                  title: isBranchingNode(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
                   content: (
                     <div className="pb-2 pt-4">
                       <Input
@@ -156,14 +154,7 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
             {
               key: "remove",
               disabled: disabled || node.type === WorkflowNodeType.Start,
-              label:
-                node.type === WorkflowNodeType.Branch ||
-                node.type === WorkflowNodeType.Condition ||
-                node.type === WorkflowNodeType.ExecuteResultBranch ||
-                node.type === WorkflowNodeType.ExecuteSuccess ||
-                node.type === WorkflowNodeType.ExecuteFailure
-                  ? t("workflow_node.action.remove_branch")
-                  : t("workflow_node.action.remove_node"),
+              label: isBranchingNode(node) ? t("workflow_node.action.remove_branch") : t("workflow_node.action.remove_node"),
               icon: <CloseCircleOutlinedIcon />,
               danger: true,
               onClick: handleDeleteClick,
@@ -193,10 +184,10 @@ const SharedNodeBlock = ({ children, node, disabled, onClick }: SharedNodeBlockP
   return (
     <>
       <Popover
+        classNames={{ root: "shadow-md" }}
+        styles={{ body: { padding: 0 } }}
         arrow={false}
         content={<SharedNodeMenu node={node} disabled={disabled} trigger={<Button color="primary" icon={<MoreOutlinedIcon />} variant="text" />} />}
-        overlayClassName="shadow-md"
-        overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
         <Card className="relative w-[256px] overflow-hidden shadow-md" styles={{ body: { padding: 0 } }} hoverable>

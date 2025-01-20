@@ -82,9 +82,9 @@ type acmeAccountRepository interface {
 
 var registerGroup singleflight.Group
 
-func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
+func registerAcmeUserWithSingleFlight(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
 	resp, err, _ := registerGroup.Do(fmt.Sprintf("register_acme_user_%s_%s", sslProviderConfig.Provider, user.GetEmail()), func() (interface{}, error) {
-		return register(client, sslProviderConfig, user)
+		return registerAcmeUser(client, sslProviderConfig, user)
 	})
 
 	if err != nil {
@@ -94,7 +94,7 @@ func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderCon
 	return resp.(*registration.Resource), nil
 }
 
-func register(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
+func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
 	var reg *registration.Resource
 	var err error
 	switch sslProviderConfig.Provider {
@@ -123,7 +123,6 @@ func register(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, use
 	}
 
 	repo := repository.NewAcmeAccountRepository()
-
 	resp, err := repo.GetByCAAndEmail(sslProviderConfig.Provider, user.GetEmail())
 	if err == nil {
 		user.privkey = resp.Key

@@ -42,23 +42,23 @@ func (w *workflowProcessor) processNode(ctx context.Context, node *domain.Workfl
 		var runErr error
 		var processor nodes.NodeProcessor
 		for {
-			if current.Type != domain.WorkflowNodeTypeBranch && current.Type != domain.WorkflowNodeTypeExecuteResultBranch {
-				processor, runErr = nodes.GetProcessor(current)
-				if runErr != nil {
-					break
-				}
-
-				runErr = processor.Run(ctx)
-
-				log := processor.Log(ctx)
-				if log != nil {
-					w.logs = append(w.logs, *log)
-				}
-				if runErr != nil {
-					break
-				}
+			if current.Type == domain.WorkflowNodeTypeBranch || current.Type == domain.WorkflowNodeTypeExecuteResultBranch {
+				break
 			}
-			break
+
+			processor, runErr = nodes.GetProcessor(current)
+			if runErr != nil {
+				break
+			}
+
+			runErr = processor.Run(ctx)
+			log := processor.Log(ctx)
+			if log != nil {
+				w.logs = append(w.logs, *log)
+			}
+			if runErr != nil {
+				break
+			}
 		}
 
 		if runErr != nil && current.Next != nil && current.Next.Type != domain.WorkflowNodeTypeExecuteResultBranch {
@@ -70,17 +70,13 @@ func (w *workflowProcessor) processNode(ctx context.Context, node *domain.Workfl
 		} else {
 			current = current.Next
 		}
-
 	}
+
 	return nil
 }
 
 func setContextWorkflowId(ctx context.Context, id string) context.Context {
 	return context.WithValue(ctx, "workflow_id", id)
-}
-
-func GetWorkflowId(ctx context.Context) string {
-	return ctx.Value("workflow_id").(string)
 }
 
 func getBranchByType(branches []domain.WorkflowNode, nodeType domain.WorkflowNodeType) *domain.WorkflowNode {

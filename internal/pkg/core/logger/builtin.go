@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 // 表示默认的日志记录器类型。
@@ -21,7 +23,7 @@ func (l *DefaultLogger) Logt(tag string, data ...any) {
 	temp[0] = tag
 	for i, v := range data {
 		s := ""
-		if v == nil {
+		if types.IsNil(v) {
 			s = "<nil>"
 		} else {
 			switch reflect.ValueOf(v).Kind() {

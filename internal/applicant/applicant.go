@@ -159,7 +159,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 
 	// New users need to register first
 	if !acmeUser.hasRegistration() {
-		reg, err := registerAcmeUser(client, sslProviderConfig, acmeUser)
+		reg, err := registerAcmeUserWithSingleFlight(client, sslProviderConfig, acmeUser)
 		if err != nil {
 			return nil, fmt.Errorf("failed to register: %w", err)
 		}

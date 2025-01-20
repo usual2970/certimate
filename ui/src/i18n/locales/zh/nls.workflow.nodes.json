@@ -3,7 +3,7 @@
   "workflow_node.branch.add_node": "添加节点",
   "workflow_node.action.rename_node": "重命名",
   "workflow_node.action.remove_node": "删除节点",
-  "workflow_node.action.add_branch": "添加分支",
+  "workflow_node.action.add_branch": "添加并行分支",
   "workflow_node.action.rename_branch": "重命名",
   "workflow_node.action.remove_branch": "删除分支",
 
@@ -379,13 +379,13 @@
 
   "workflow_node.end.label": "结束",
 
-  "workflow_node.branch.label": "分支",
+  "workflow_node.branch.label": "并行分支",
+
+  "workflow_node.condition.label": "分支",
 
   "workflow_node.execute_result_branch.label": "执行结果分支",
 
-  "workflow_node.execute_success.label": "执行成功",
+  "workflow_node.execute_success.label": "若前一节点执行成功…",
 
-  "workflow_node.execute_failure.label": "执行失败",
-
-  "workflow_node.condition.label": "条件"
+  "workflow_node.execute_failure.label": "若前一节点执行失败…"
 }
