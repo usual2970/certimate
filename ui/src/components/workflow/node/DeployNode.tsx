@@ -92,11 +92,8 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => {
+          setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
           setDrawerOpen(open);
-
-          if (!open) {
-            setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
-          }
         }}
         getFormValues={() => formRef.current!.getFieldsValue()}
       >
