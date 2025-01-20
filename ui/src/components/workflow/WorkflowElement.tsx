@@ -7,6 +7,8 @@ import BranchNode from "./node/BranchNode";
 import ConditionNode from "./node/ConditionNode";
 import DeployNode from "./node/DeployNode";
 import EndNode from "./node/EndNode";
+import ExecuteResultBranchNode from "./node/ExecuteResultBranchNode";
+import ExecuteResultNode from "./node/ExecuteResultNode";
 import NotifyNode from "./node/NotifyNode";
 import StartNode from "./node/StartNode";
 
@@ -34,6 +36,13 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 
       case WorkflowNodeType.Branch:
         return <BranchNode node={node} disabled={disabled} />;
+
+      case WorkflowNodeType.ExecuteResultBranch:
+        return <ExecuteResultBranchNode node={node} disabled={disabled} />;
+
+      case WorkflowNodeType.ExecuteSuccess:
+      case WorkflowNodeType.ExecuteFailure:
+        return <ExecuteResultNode node={node} disabled={disabled} branchId={branchId!} branchIndex={branchIndex!} />;
 
       case WorkflowNodeType.Condition:
         return <ConditionNode node={node} disabled={disabled} branchId={branchId!} branchIndex={branchIndex!} />;

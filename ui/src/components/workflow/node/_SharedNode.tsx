@@ -91,7 +91,13 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
   };
 
   const handleDeleteClick = async () => {
-    if (node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition) {
+    if (
+      node.type === WorkflowNodeType.Branch ||
+      node.type === WorkflowNodeType.Condition ||
+      node.type === WorkflowNodeType.ExecuteResultBranch ||
+      node.type === WorkflowNodeType.ExecuteSuccess ||
+      node.type === WorkflowNodeType.ExecuteFailure
+    ) {
       await removeBranch(branchId!, branchIndex!);
     } else {
       await removeNode(node.id);
@@ -151,7 +157,11 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
               key: "remove",
               disabled: disabled || node.type === WorkflowNodeType.Start,
               label:
-                node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.Condition
+                node.type === WorkflowNodeType.Branch ||
+                node.type === WorkflowNodeType.Condition ||
+                node.type === WorkflowNodeType.ExecuteResultBranch ||
+                node.type === WorkflowNodeType.ExecuteSuccess ||
+                node.type === WorkflowNodeType.ExecuteFailure
                   ? t("workflow_node.action.remove_branch")
                   : t("workflow_node.action.remove_node"),
               icon: <CloseCircleOutlinedIcon />,

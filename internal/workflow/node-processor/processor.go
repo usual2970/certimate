@@ -8,7 +8,7 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 )
 
-type nodeProcessor interface {
+type NodeProcessor interface {
 	Run(ctx context.Context) error
 	Log(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
@@ -58,7 +58,7 @@ func (l *nodeLogger) AddOutput(ctx context.Context, title, content string, err .
 	l.log.Outputs = append(l.log.Outputs, output)
 }
 
-func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
+func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 	switch node.Type {
 	case domain.WorkflowNodeTypeStart:
 		return NewStartNode(node), nil
@@ -70,6 +70,10 @@ func GetProcessor(node *domain.WorkflowNode) (nodeProcessor, error) {
 		return NewDeployNode(node), nil
 	case domain.WorkflowNodeTypeNotify:
 		return NewNotifyNode(node), nil
+	case domain.WorkflowNodeTypeExecuteSuccess:
+		return NewExecuteSuccessNode(node), nil
+	case domain.WorkflowNodeTypeExecuteFailure:
+		return NewExecuteFailureNode(node), nil
 	}
 	return nil, errors.New("not implemented")
 }
