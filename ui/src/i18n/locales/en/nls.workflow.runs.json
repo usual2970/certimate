@@ -1,7 +1,9 @@
 {
   "workflow_run.action.view": "View detail",
-  "workflow_run.action.delete": "Delete history run",
-  "workflow_run.action.delete.confirm": "Are you sure to delete this history run?",
+  "workflow_run.action.cancel": "Cancel run",
+  "workflow_run.action.cancel.confirm": "Are you sure to cancel this run?",
+  "workflow_run.action.delete": "Delete run",
+  "workflow_run.action.delete.confirm": "Are you sure to delete this run?",
 
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "Status",

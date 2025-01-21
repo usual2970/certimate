@@ -6,6 +6,7 @@ import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   PauseCircleOutlined as PauseCircleOutlinedIcon,
+  PauseOutlined as PauseOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -14,6 +15,7 @@ import { Button, Empty, Modal, Table, type TableProps, Tag, Tooltip, notificatio
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
+import { cancelRun as cancelWorkflowRun } from "@/api/workflows";
 import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
 import { list as listWorkflowRuns, remove as removeWorkflowRun } from "@/repository/workflowRun";
@@ -125,35 +127,51 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       align: "end",
       fixed: "right",
       width: 120,
-      render: (_, record) => (
-        <Button.Group>
-          <WorkflowRunDetailDrawer
-            data={record}
-            trigger={
-              <Tooltip title={t("workflow_run.action.view")}>
-                <Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />
-              </Tooltip>
-            }
-          />
+      render: (_, record) => {
+        const allowCancel = record.status === WORKFLOW_RUN_STATUSES.PENDING || record.status === WORKFLOW_RUN_STATUSES.RUNNING;
+        const aloowDelete =
+          record.status === WORKFLOW_RUN_STATUSES.SUCCEEDED ||
+          record.status === WORKFLOW_RUN_STATUSES.FAILED ||
+          record.status === WORKFLOW_RUN_STATUSES.CANCELED;
 
-          <Tooltip title={t("workflow_run.action.delete")}>
-            <Button
-              color="danger"
-              danger
-              disabled={
-                record.status !== WORKFLOW_RUN_STATUSES.SUCCEEDED &&
-                record.status !== WORKFLOW_RUN_STATUSES.FAILED &&
-                record.status !== WORKFLOW_RUN_STATUSES.CANCELED
+        return (
+          <Button.Group>
+            <WorkflowRunDetailDrawer
+              data={record}
+              trigger={
+                <Tooltip title={t("workflow_run.action.view")}>
+                  <Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />
+                </Tooltip>
               }
-              icon={<DeleteOutlinedIcon />}
-              variant="text"
-              onClick={() => {
-                handleDeleteClick(record);
-              }}
             />
-          </Tooltip>
-        </Button.Group>
-      ),
+
+            <Tooltip title={t("workflow_run.action.cancel")}>
+              <Button
+                color="default"
+                disabled={!allowCancel}
+                icon={<PauseOutlinedIcon />}
+                variant="text"
+                onClick={() => {
+                  handleCancelClick(record);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip title={t("workflow_run.action.delete")}>
+              <Button
+                color="danger"
+                danger
+                disabled={!aloowDelete}
+                icon={<DeleteOutlinedIcon />}
+                variant="text"
+                onClick={() => {
+                  handleDeleteClick(record);
+                }}
+              />
+            </Tooltip>
+          </Button.Group>
+        );
+      },
     },
   ];
   const [tableData, setTableData] = useState<WorkflowRunModel[]>([]);
@@ -192,6 +210,24 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       },
     }
   );
+
+  const handleCancelClick = (workflowRun: WorkflowRunModel) => {
+    modalApi.confirm({
+      title: t("workflow_run.action.cancel"),
+      content: t("workflow_run.action.cancel.confirm"),
+      onOk: async () => {
+        try {
+          const resp = await cancelWorkflowRun(workflowId, workflowRun.id);
+          if (resp) {
+            refreshData();
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
 
   const handleDeleteClick = (workflowRun: WorkflowRunModel) => {
     modalApi.confirm({

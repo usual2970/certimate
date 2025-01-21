@@ -16,7 +16,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { isEqual } from "radash";
 import { z } from "zod";
 
-import { run as runWorkflow } from "@/api/workflows";
+import { startRun as startWorkflowRun } from "@/api/workflows";
 import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElements from "@/components/workflow/WorkflowElements";
@@ -187,7 +187,7 @@ const WorkflowDetail = () => {
           }
         });
 
-        await runWorkflow(workflowId!);
+        await startWorkflowRun(workflowId!);
 
         messageApi.info(t("workflow.detail.orchestration.action.run.prompt"));
       } catch (err) {

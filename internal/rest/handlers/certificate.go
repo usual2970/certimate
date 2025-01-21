@@ -24,12 +24,12 @@ func NewCertificateHandler(router *router.RouterGroup[*core.RequestEvent], servi
 	}
 
 	group := router.Group("/certificates")
-	group.POST("/{id}/archive", handler.run)
+	group.POST("/{certificateId}/archive", handler.run)
 }
 
 func (handler *CertificateHandler) run(e *core.RequestEvent) error {
 	req := &dtos.CertificateArchiveFileReq{}
-	req.CertificateId = e.Request.PathValue("id")
+	req.CertificateId = e.Request.PathValue("certificateId")
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}

@@ -1,7 +1,9 @@
 {
-  "workflow_run.action.edit": "查看详情",
-  "workflow_run.action.delete": "删除执行历史",
-  "workflow_run.action.delete.confirm": "确定要删除此执行历史吗？此操作仅清除日志，不会影响各节点的执行结果和签发的证书。",
+  "workflow_run.action.view": "查看详情",
+  "workflow_run.action.cancel": "取消执行",
+  "workflow_run.action.cancel.confirm": "确定要取消此执行吗？请注意此操作仅中止流程，但不会回滚已执行的节点。",
+  "workflow_run.action.delete": "删除执行",
+  "workflow_run.action.delete.confirm": "确定要删除此执行吗？请注意此操作仅清除日志历史，但不会影响各节点的执行结果和签发的证书。",
 
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "状态",

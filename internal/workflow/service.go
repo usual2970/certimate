@@ -60,7 +60,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
 		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
-			s.Run(ctx, &dtos.WorkflowRunReq{
+			s.StartRun(ctx, &dtos.WorkflowStartRunReq{
 				WorkflowId: workflow.Id,
 				Trigger:    domain.WorkflowTriggerTypeAuto,
 			})
@@ -74,7 +74,7 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) error {
+func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartRunReq) error {
 	workflow, err := s.repo.GetById(ctx, req.WorkflowId)
 	if err != nil {
 		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
@@ -98,6 +98,12 @@ func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) err
 		Workflow:   workflow,
 		RunTrigger: req.Trigger,
 	}
+
+	return nil
+}
+
+func (s *WorkflowService) CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error {
+	// TODO: 取消运行，防止因为某些原因意外挂起（如进程被杀死）导致工作流一直处于 running 状态无法重新运行
 
 	return nil
 }
