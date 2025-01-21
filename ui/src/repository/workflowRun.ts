@@ -31,3 +31,7 @@ export const list = async (request: ListWorkflowRunsRequest) => {
       expand: request.expand ? "workflowId" : undefined,
     });
 };
+
+export const remove = async (record: MaybeModelRecordWithId<WorkflowRunModel>) => {
+  return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
+};

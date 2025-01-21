@@ -1,4 +1,8 @@
 {
+  "workflow_run.action.edit": "查看详情",
+  "workflow_run.action.delete": "删除执行历史",
+  "workflow_run.action.delete.confirm": "确定要删除此执行历史吗？",
+
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "状态",
   "workflow_run.props.status.pending": "等待执行",

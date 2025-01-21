@@ -2,12 +2,11 @@
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/rsa"
 	"encoding/pem"
 	"errors"
 	"time"
 
+	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/pavlo-v-chernykh/keystore-go/v4"
 	"software.sslmate.com/src/go-pkcs12"
 )
@@ -28,23 +27,9 @@ func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPass
 		return nil, err
 	}
 
-	var privkey interface{}
-	switch cert.PublicKey.(type) {
-	case *rsa.PublicKey:
-		{
-			privkey, err = ParsePKCS1PrivateKeyFromPEM(privkeyPem)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-	case *ecdsa.PublicKey:
-		{
-			privkey, err = ParseECPrivateKeyFromPEM(privkeyPem)
-			if err != nil {
-				return nil, err
-			}
-		}
+	privkey, err := certcrypto.ParsePEMPrivateKey([]byte(privkeyPem))
+	if err != nil {
+		return nil, err
 	}
 
 	pfxData, err := pkcs12.LegacyRC2.Encode(privkey, cert, nil, pfxPassword)

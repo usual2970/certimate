@@ -1,4 +1,8 @@
 {
+  "workflow_run.action.view": "View detail",
+  "workflow_run.action.delete": "Delete history run",
+  "workflow_run.action.delete.confirm": "Are you sure to delete this history run?",
+
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "Status",
   "workflow_run.props.status.pending": "Pending",
