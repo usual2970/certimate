@@ -29,6 +29,7 @@ const (
 	WorkflowNodeTypeStart               = WorkflowNodeType("start")
 	WorkflowNodeTypeEnd                 = WorkflowNodeType("end")
 	WorkflowNodeTypeApply               = WorkflowNodeType("apply")
+	WorkflowNodeTypeUpload              = WorkflowNodeType("upload")
 	WorkflowNodeTypeDeploy              = WorkflowNodeType("deploy")
 	WorkflowNodeTypeNotify              = WorkflowNodeType("notify")
 	WorkflowNodeTypeBranch              = WorkflowNodeType("branch")
@@ -73,6 +74,12 @@ type WorkflowNodeConfigForApply struct {
 	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否禁用 CNAME 跟随
 	DisableARI            bool           `json:"disableARI"`            // 是否禁用 ARI
 	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // 证书到期前多少天前跳过续期（默认值：30）
+}
+
+type WorkflowNodeConfigForUpload struct {
+	Certificate string `json:"certificate"`
+	PrivateKey  string `json:"privateKey"`
+	Domains     string `json:"domains"`
 }
 
 type WorkflowNodeConfigForDeploy struct {
@@ -130,6 +137,14 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		DisableFollowCNAME:    n.getConfigValueAsBool("disableFollowCNAME"),
 		DisableARI:            n.getConfigValueAsBool("disableARI"),
 		SkipBeforeExpiryDays:  skipBeforeExpiryDays,
+	}
+}
+
+func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
+	return WorkflowNodeConfigForUpload{
+		Certificate: n.getConfigValueAsString("certificate"),
+		PrivateKey:  n.getConfigValueAsString("privateKey"),
+		Domains:     n.getConfigValueAsString("domains"),
 	}
 }
 

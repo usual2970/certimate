@@ -377,6 +377,15 @@
   "workflow_node.notify.form.channel.placeholder": "请选择通知渠道",
   "workflow_node.notify.form.channel.button": "去配置",
 
+  "workflow_node.upload.label": "上传证书",
+  "workflow_node.upload.form.domains.label": "证书域名",
+  "workflow_node.upload.form.certificate.label": "证书文件",
+  "workflow_node.upload.form.certificate.placeholder": "证书格式以\"-----BEGIN CERTIFICATE-----\"开头，以\"-----END CERTIFICATE-----\"结尾。",
+  "workflow_node.upload.form.certificate.button": "上传",
+  "workflow_node.upload.form.private_key.label": "证书私钥",
+  "workflow_node.upload.form.private_key.placeholder": "证书私钥格式以\"-----BEGIN (RSA|EC) PRIVATE KEY-----\"开头，以\"-----END(RSA|EC) PRIVATE KEY-----\"结尾。",
+  "workflow_node.upload.form.private_key.button": "上传",
+
   "workflow_node.end.label": "结束",
 
   "workflow_node.branch.label": "分支",
@@ -389,3 +398,4 @@
 
   "workflow_node.condition.label": "条件"
 }
+
