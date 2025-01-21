@@ -6,7 +6,7 @@ import { getPocketBase } from "@/repository/_pocketbase";
 export const archive = async (id: string, format?: CertificateFormatType) => {
   const pb = getPocketBase();
 
-  const resp = await pb.send<BaseResponse>(`/api/certificates/${encodeURIComponent(id)}/archive`, {
+  const resp = await pb.send<BaseResponse<string>>(`/api/certificates/${encodeURIComponent(id)}/archive`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
