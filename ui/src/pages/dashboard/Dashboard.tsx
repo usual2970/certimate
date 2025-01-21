@@ -85,14 +85,22 @@ const Dashboard = () => {
       key: "name",
       title: t("workflow.props.name"),
       ellipsis: true,
-      render: (_, record) => (
-        <Space className="max-w-full" direction="vertical" size={4}>
-          <Typography.Text ellipsis>{record.expand?.workflowId?.name}</Typography.Text>
-          <Typography.Text type="secondary" ellipsis>
-            {record.expand?.workflowId?.description}
-          </Typography.Text>
-        </Space>
-      ),
+      render: (_, record) => {
+        const workflow = record.expand?.workflowId;
+        return (
+          <Typography.Link
+            type="secondary"
+            ellipsis
+            onClick={() => {
+              if (workflow) {
+                navigate(`/workflows/${workflow.id}`);
+              }
+            }}
+          >
+            {workflow?.name ?? <span className="font-mono">{t(`#${record.workflowId}`)}</span>}
+          </Typography.Link>
+        );
+      },
     },
     {
       key: "status",
