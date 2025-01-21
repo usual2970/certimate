@@ -23,8 +23,8 @@ type workflowRunData struct {
 type workflowRepository interface {
 	ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error)
 	GetById(ctx context.Context, id string) (*domain.Workflow, error)
-	Save(ctx context.Context, workflow *domain.Workflow) error
-	SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) error
+	Save(ctx context.Context, workflow *domain.Workflow) (*domain.Workflow, error)
+	SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) (*domain.WorkflowRun, error)
 }
 
 type WorkflowService struct {
@@ -88,9 +88,10 @@ func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) err
 	workflow.LastRunTime = time.Now()
 	workflow.LastRunStatus = domain.WorkflowRunStatusTypePending
 	workflow.LastRunId = ""
-
-	if err := s.repo.Save(ctx, workflow); err != nil {
+	if resp, err := s.repo.Save(ctx, workflow); err != nil {
 		return err
+	} else {
+		workflow = resp
 	}
 
 	s.ch <- &workflowRunData{
@@ -122,12 +123,16 @@ func (s *WorkflowService) run(ctx context.Context) {
 
 func (s *WorkflowService) runWithData(ctx context.Context, runData *workflowRunData) error {
 	workflow := runData.Workflow
-
 	run := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Status:     domain.WorkflowRunStatusTypeRunning,
 		Trigger:    runData.RunTrigger,
 		StartedAt:  time.Now(),
+	}
+	if resp, err := s.repo.SaveRun(ctx, run); err != nil {
+		return err
+	} else {
+		run = resp
 	}
 
 	processor := processor.NewWorkflowProcessor(workflow)
@@ -136,7 +141,7 @@ func (s *WorkflowService) runWithData(ctx context.Context, runData *workflowRunD
 		run.EndedAt = time.Now()
 		run.Logs = processor.GetRunLogs()
 		run.Error = runErr.Error()
-		if err := s.repo.SaveRun(ctx, run); err != nil {
+		if _, err := s.repo.SaveRun(ctx, run); err != nil {
 			app.GetLogger().Error("failed to save workflow run", "err", err)
 		}
 
@@ -151,7 +156,7 @@ func (s *WorkflowService) runWithData(ctx context.Context, runData *workflowRunD
 	} else {
 		run.Status = domain.WorkflowRunStatusTypeFailed
 	}
-	if err := s.repo.SaveRun(ctx, run); err != nil {
+	if _, err := s.repo.SaveRun(ctx, run); err != nil {
 		app.GetLogger().Error("failed to save workflow run", "err", err)
 		return err
 	}
