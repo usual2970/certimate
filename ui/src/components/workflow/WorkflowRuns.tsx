@@ -5,6 +5,7 @@ import {
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
+  PauseCircleOutlined as PauseCircleOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -70,6 +71,12 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
               {t("workflow_run.props.status.failed")}
             </Tag>
           );
+        } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
+          return (
+            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+              {t("workflow_run.props.status.canceled")}
+            </Tag>
+          );
         }
 
         return <></>;
@@ -133,7 +140,11 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
             <Button
               color="danger"
               danger
-              disabled={record.status !== WORKFLOW_RUN_STATUSES.SUCCEEDED && record.status !== WORKFLOW_RUN_STATUSES.FAILED}
+              disabled={
+                record.status !== WORKFLOW_RUN_STATUSES.SUCCEEDED &&
+                record.status !== WORKFLOW_RUN_STATUSES.FAILED &&
+                record.status !== WORKFLOW_RUN_STATUSES.CANCELED
+              }
               icon={<DeleteOutlinedIcon />}
               variant="text"
               onClick={() => {

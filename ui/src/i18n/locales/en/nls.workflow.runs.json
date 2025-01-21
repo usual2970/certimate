@@ -9,6 +9,7 @@
   "workflow_run.props.status.running": "Running",
   "workflow_run.props.status.succeeded": "Succeeded",
   "workflow_run.props.status.failed": "Failed",
+  "workflow_run.props.status.canceled": "Canceled",
   "workflow_run.props.trigger": "Trigger",
   "workflow_run.props.trigger.auto": "Timing",
   "workflow_run.props.trigger.manual": "Manual",

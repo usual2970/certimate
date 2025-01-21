@@ -32,6 +32,7 @@ export const WORKFLOW_RUN_STATUSES = Object.freeze({
   RUNNING: "running",
   SUCCEEDED: "succeeded",
   FAILED: "failed",
+  CANCELED: "canceled",
 } as const);
 
 export type WorkflorRunStatusType = (typeof WORKFLOW_RUN_STATUSES)[keyof typeof WORKFLOW_RUN_STATUSES];

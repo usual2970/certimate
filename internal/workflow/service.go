@@ -35,35 +35,20 @@ type WorkflowService struct {
 }
 
 func NewWorkflowService(repo workflowRepository) *WorkflowService {
-	rs := &WorkflowService{
+	srv := &WorkflowService{
 		repo: repo,
 		ch:   make(chan *workflowRunData, 1),
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	rs.cancel = cancel
+	srv.cancel = cancel
 
-	rs.wg.Add(defaultRoutines)
+	srv.wg.Add(defaultRoutines)
 	for i := 0; i < defaultRoutines; i++ {
-		go rs.process(ctx)
+		go srv.run(ctx)
 	}
 
-	return rs
-}
-
-func (s *WorkflowService) process(ctx context.Context) {
-	defer s.wg.Done()
-	for {
-		select {
-		case data := <-s.ch:
-			// 执行
-			if err := s.run(ctx, data); err != nil {
-				app.GetLogger().Error("failed to run workflow", "id", data.Workflow.Id, "err", err)
-			}
-		case <-ctx.Done():
-			return
-		}
-	}
+	return srv
 }
 
 func (s *WorkflowService) InitSchedule(ctx context.Context) error {
@@ -90,7 +75,6 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 }
 
 func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) error {
-	// 查询
 	workflow, err := s.repo.GetById(ctx, req.WorkflowId)
 	if err != nil {
 		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
@@ -101,9 +85,8 @@ func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) err
 		return errors.New("workflow is running")
 	}
 
-	// set last run
 	workflow.LastRunTime = time.Now()
-	workflow.LastRunStatus = domain.WorkflowRunStatusTypeRunning
+	workflow.LastRunStatus = domain.WorkflowRunStatusTypePending
 	workflow.LastRunId = ""
 
 	if err := s.repo.Save(ctx, workflow); err != nil {
@@ -118,51 +101,60 @@ func (s *WorkflowService) Run(ctx context.Context, req *dtos.WorkflowRunReq) err
 	return nil
 }
 
-func (s *WorkflowService) run(ctx context.Context, runData *workflowRunData) error {
-	// 执行
+func (s *WorkflowService) Stop(ctx context.Context) {
+	s.cancel()
+	s.wg.Wait()
+}
+
+func (s *WorkflowService) run(ctx context.Context) {
+	defer s.wg.Done()
+	for {
+		select {
+		case data := <-s.ch:
+			if err := s.runWithData(ctx, data); err != nil {
+				app.GetLogger().Error("failed to run workflow", "id", data.Workflow.Id, "err", err)
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+func (s *WorkflowService) runWithData(ctx context.Context, runData *workflowRunData) error {
 	workflow := runData.Workflow
+
 	run := &domain.WorkflowRun{
 		WorkflowId: workflow.Id,
 		Status:     domain.WorkflowRunStatusTypeRunning,
 		Trigger:    runData.RunTrigger,
 		StartedAt:  time.Now(),
-		EndedAt:    time.Now(),
 	}
 
 	processor := processor.NewWorkflowProcessor(workflow)
-	if err := processor.Run(ctx); err != nil {
+	if runErr := processor.Run(ctx); runErr != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed
 		run.EndedAt = time.Now()
-		run.Logs = processor.Log(ctx)
-		run.Error = err.Error()
-
+		run.Logs = processor.GetRunLogs()
+		run.Error = runErr.Error()
 		if err := s.repo.SaveRun(ctx, run); err != nil {
 			app.GetLogger().Error("failed to save workflow run", "err", err)
 		}
 
-		return fmt.Errorf("failed to run workflow: %w", err)
+		return fmt.Errorf("failed to run workflow: %w", runErr)
 	}
 
-	// 保存日志
-	logs := processor.Log(ctx)
-	runStatus := domain.WorkflowRunStatusTypeSucceeded
-	runError := domain.WorkflowRunLogs(logs).FirstError()
-	if runError != "" {
-		runStatus = domain.WorkflowRunStatusTypeFailed
-	}
-	run.Status = runStatus
 	run.EndedAt = time.Now()
-	run.Logs = processor.Log(ctx)
-	run.Error = runError
+	run.Logs = processor.GetRunLogs()
+	run.Error = domain.WorkflowRunLogs(run.Logs).ErrorString()
+	if run.Error == "" {
+		run.Status = domain.WorkflowRunStatusTypeSucceeded
+	} else {
+		run.Status = domain.WorkflowRunStatusTypeFailed
+	}
 	if err := s.repo.SaveRun(ctx, run); err != nil {
 		app.GetLogger().Error("failed to save workflow run", "err", err)
 		return err
 	}
 
 	return nil
-}
-
-func (s *WorkflowService) Stop(ctx context.Context) {
-	s.cancel()
-	s.wg.Wait()
 }

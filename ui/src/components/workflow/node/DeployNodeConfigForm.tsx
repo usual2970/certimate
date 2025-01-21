@@ -1,7 +1,7 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
-import { Button, Divider, Flex, Form, type FormInstance, Select, Switch, Tooltip, Typography } from "antd";
+import { Alert, Button, Divider, Flex, Form, type FormInstance, Select, Switch, Tooltip, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -309,6 +309,15 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 />
               </Form.Item>
             </Form.Item>
+
+            <Show when={fieldProvider === DEPLOY_PROVIDERS.LOCAL}>
+              <Form.Item>
+                <Alert
+                  type="info"
+                  message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.provider_access.guide_for_local") }}></span>}
+                />
+              </Form.Item>
+            </Show>
 
             <Form.Item
               name="certificate"

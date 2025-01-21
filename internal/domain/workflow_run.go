@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 const CollectionNameWorkflowRun = "workflow_run"
 
@@ -22,6 +25,7 @@ const (
 	WorkflowRunStatusTypeRunning   WorkflowRunStatusType = "running"
 	WorkflowRunStatusTypeSucceeded WorkflowRunStatusType = "succeeded"
 	WorkflowRunStatusTypeFailed    WorkflowRunStatusType = "failed"
+	WorkflowRunStatusTypeCanceled  WorkflowRunStatusType = "canceled"
 )
 
 type WorkflowRunLog struct {
@@ -40,12 +44,13 @@ type WorkflowRunLogOutput struct {
 
 type WorkflowRunLogs []WorkflowRunLog
 
-func (r WorkflowRunLogs) FirstError() string {
+func (r WorkflowRunLogs) ErrorString() string {
+	var builder strings.Builder
 	for _, log := range r {
 		if log.Error != "" {
-			return log.Error
+			builder.WriteString(log.Error)
+			builder.WriteString("\n")
 		}
 	}
-
-	return ""
+	return builder.String()
 }

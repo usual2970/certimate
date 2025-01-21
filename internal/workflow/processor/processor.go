@@ -19,13 +19,13 @@ func NewWorkflowProcessor(workflow *domain.Workflow) *workflowProcessor {
 	}
 }
 
-func (w *workflowProcessor) Log(ctx context.Context) []domain.WorkflowRunLog {
-	return w.logs
-}
-
 func (w *workflowProcessor) Run(ctx context.Context) error {
 	ctx = setContextWorkflowId(ctx, w.workflow.Id)
 	return w.processNode(ctx, w.workflow.Content)
+}
+
+func (w *workflowProcessor) GetRunLogs() []domain.WorkflowRunLog {
+	return w.logs
 }
 
 func (w *workflowProcessor) processNode(ctx context.Context, node *domain.WorkflowNode) error {
@@ -39,26 +39,26 @@ func (w *workflowProcessor) processNode(ctx context.Context, node *domain.Workfl
 			}
 		}
 
-		var runErr error
 		var processor nodes.NodeProcessor
+		var runErr error
 		for {
-			if current.Type == domain.WorkflowNodeTypeBranch || current.Type == domain.WorkflowNodeTypeExecuteResultBranch {
-				break
+			if current.Type != domain.WorkflowNodeTypeBranch && current.Type != domain.WorkflowNodeTypeExecuteResultBranch {
+				processor, runErr = nodes.GetProcessor(current)
+				if runErr != nil {
+					break
+				}
+
+				runErr = processor.Run(ctx)
+				log := processor.Log(ctx)
+				if log != nil {
+					w.logs = append(w.logs, *log)
+				}
+				if runErr != nil {
+					break
+				}
 			}
 
-			processor, runErr = nodes.GetProcessor(current)
-			if runErr != nil {
-				break
-			}
-
-			runErr = processor.Run(ctx)
-			log := processor.Log(ctx)
-			if log != nil {
-				w.logs = append(w.logs, *log)
-			}
-			if runErr != nil {
-				break
-			}
+			break
 		}
 
 		if runErr != nil && current.Next != nil && current.Next.Type != domain.WorkflowNodeTypeExecuteResultBranch {

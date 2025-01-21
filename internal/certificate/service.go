@@ -22,8 +22,8 @@ const (
 )
 
 type certificateRepository interface {
-	GetById(ctx context.Context, id string) (*domain.Certificate, error)
 	ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error)
+	GetById(ctx context.Context, id string) (*domain.Certificate, error)
 }
 
 type CertificateService struct {

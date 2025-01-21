@@ -7,6 +7,7 @@ import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
+  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -168,6 +169,8 @@ const WorkflowList = () => {
           icon = <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />;
         } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
           icon = <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />;
+        } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.CANCELED) {
+          icon = <PauseCircleOutlinedIcon style={{ color: themeToken.colorWarning }} />;
         }
 
         return (

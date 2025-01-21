@@ -136,7 +136,7 @@ const StartNodeConfigForm = forwardRef<StartNodeConfigFormInstance, StartNodeCon
 
         <Show when={fieldTrigger === WORKFLOW_TRIGGERS.AUTO}>
           <Form.Item>
-            <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron_alert.content") }}></span>} />
+            <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.start.form.trigger_cron.guide") }}></span>} />
           </Form.Item>
         </Show>
       </Form>

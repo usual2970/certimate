@@ -6,7 +6,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/pavlo-v-chernykh/keystore-go/v4"
 	"software.sslmate.com/src/go-pkcs12"
 )
@@ -27,7 +26,7 @@ func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPass
 		return nil, err
 	}
 
-	privkey, err := certcrypto.ParsePEMPrivateKey([]byte(privkeyPem))
+	privkey, err := ParsePrivateKeyFromPEM(privkeyPem)
 	if err != nil {
 		return nil, err
 	}
