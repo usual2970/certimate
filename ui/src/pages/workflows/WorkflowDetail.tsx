@@ -8,6 +8,9 @@ import {
   DownOutlined as DownOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
   HistoryOutlined as HistoryOutlinedIcon,
+  MinusOutlined,
+  PlusCircleOutlined,
+  ReloadOutlined,
   UndoOutlined as UndoOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
@@ -36,6 +39,8 @@ const WorkflowDetail = () => {
   const [messageApi, MessageContextHolder] = message.useMessage();
   const [modalApi, ModalContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
+
+  const [scale, setScale] = useState(1);
 
   const { id: workflowId } = useParams();
   const { workflow, initialized, ...workflowState } = useWorkflowStore(
@@ -300,7 +305,14 @@ const WorkflowDetail = () => {
                   </Space>
                 </div>
               </div>
-              <div className="px-12 py-8 max-md:px-4">
+              <div className="fixed bottom-8 right-8 z-10 flex items-center gap-2 rounded-lg bg-white p-2 shadow-lg">
+                <Button icon={<MinusOutlined />} disabled={scale <= 0.5} onClick={() => setScale((s) => Math.max(0.5, s - 0.1))} />
+                <Typography.Text className="min-w-[3em] text-center">{Math.round(scale * 100)}%</Typography.Text>
+                <Button icon={<PlusCircleOutlined />} disabled={scale >= 2} onClick={() => setScale((s) => Math.min(2, s + 0.1))} />
+                <Button icon={<ReloadOutlined />} onClick={() => setScale(1)} />
+              </div>
+
+              <div className="size-full origin-top px-12 py-8 transition-transform duration-300 max-md:px-4" style={{ transform: `scale(${scale})` }}>
                 <WorkflowElements />
               </div>
             </div>
