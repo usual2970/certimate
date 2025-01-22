@@ -5,9 +5,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/domain/dtos"
@@ -174,6 +177,26 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 	default:
 		return nil, domain.ErrInvalidParams
 	}
+}
+
+func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error) {
+	info, err := certs.ParseCertificateFromPEM(req.Certificate)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Now().After(info.NotAfter) {
+		return nil, errors.New("证书已过期")
+	}
+
+	return &dtos.CertificateValidateCertificateResp{
+		Domains: strings.Join(info.DNSNames, ";"),
+	}, nil
+}
+
+func (s *CertificateService) ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) error {
+	_, err := certcrypto.ParsePEMPrivateKey([]byte(req.PrivateKey))
+	return err
 }
 
 func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {

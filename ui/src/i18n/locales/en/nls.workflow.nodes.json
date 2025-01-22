@@ -377,6 +377,15 @@
   "workflow_node.notify.form.channel.placeholder": "Please select channel",
   "workflow_node.notify.form.channel.button": "Configure",
 
+  "workflow_node.upload.label": "Upload certificate",
+  "workflow_node.upload.form.domains.label": "Domains",
+  "workflow_node.upload.form.certificate.label": "Certificate",
+  "workflow_node.upload.form.certificate.placeholder": "The certificate format begins with \"-----BEGIN CERTIFICATE-----\" and ends with \"-----END CERTIFICATE-----\"",
+  "workflow_node.upload.form.certificate.button": "Upload",
+  "workflow_node.upload.form.private_key.label": "Private key",
+  "workflow_node.upload.form.private_key.placeholder": "The private key begins with \"-----BEGIN (RSA|EC) PRIVATE KEY-----\" and ends with \"-----END(RSA|EC) PRIVATE KEY-----\"",
+  "workflow_node.upload.form.private_key.button": "Upload",
+
   "workflow_node.end.label": "End",
 
   "workflow_node.branch.label": "Branch",
@@ -389,3 +398,4 @@
 
   "workflow_node.condition.label": "Condition"
 }
+

@@ -22,3 +22,41 @@ export const archive = async (id: string, format?: CertificateFormatType) => {
 
   return resp;
 };
+
+type ValidateCertificateResp = {
+  domains: string;
+};
+
+export const validateCertificate = async (certificate: string) => {
+  const pb = getPocketBase();
+  const resp = await pb.send<BaseResponse<ValidateCertificateResp>>(`/api/certificates/validate/certificate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {
+      certificate: certificate,
+    },
+  });
+  if (resp.code != 0) {
+    throw new Error(resp.msg);
+  }
+  return resp;
+};
+
+export const validatePrivateKey = async (privateKey: string) => {
+  const pb = getPocketBase();
+  const resp = await pb.send<BaseResponse>(`/api/certificates/validate/private-key`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {
+      privateKey: privateKey,
+    },
+  });
+  if (resp.code != 0) {
+    throw new Error(resp.msg);
+  }
+  return resp;
+};

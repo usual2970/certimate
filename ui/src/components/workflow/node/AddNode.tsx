@@ -6,6 +6,7 @@ import {
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
   SolutionOutlined as SolutionOutlinedIcon,
+  SafetyOutlined as SafetyOutlinedIcon,
 } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
@@ -25,6 +26,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
   const dropdownMenus = useMemo(() => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
+      [WorkflowNodeType.Upload, "workflow_node.upload.label", <SafetyOutlinedIcon />],
       [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <CloudUploadOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],

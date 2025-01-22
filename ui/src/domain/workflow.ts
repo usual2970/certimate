@@ -35,6 +35,7 @@ export enum WorkflowNodeType {
   ExecuteFailure = "execute_failure",
   Condition = "condition",
   Apply = "apply",
+  Upload = "upload",
   Deploy = "deploy",
   Notify = "notify",
   Custom = "custom",
@@ -49,6 +50,7 @@ const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.label")],
   [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.label")],
   [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
+  [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.label")],
   [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
   [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
   [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
@@ -73,6 +75,17 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
 const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [
     WorkflowNodeType.Apply,
+    [
+      {
+        name: "certificate",
+        type: "certificate",
+        required: true,
+        label: "证书",
+      },
+    ],
+  ],
+  [
+    WorkflowNodeType.Upload,
     [
       {
         name: "certificate",
@@ -119,6 +132,13 @@ export type WorkflowNodeConfigForApply = {
   disableFollowCNAME?: boolean;
   disableARI?: boolean;
   skipBeforeExpiryDays: number;
+};
+
+export type WorkflowNodeConfigForUpload = {
+  certificateId: string;
+  domains: string;
+  certificate: string;
+  privateKey: string;
 };
 
 export type WorkflowNodeConfigForDeploy = {
@@ -202,6 +222,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
 
   switch (nodeType) {
     case WorkflowNodeType.Apply:
+    case WorkflowNodeType.Upload:
     case WorkflowNodeType.Deploy:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
@@ -220,11 +241,13 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
         node.branches = [newNode(WorkflowNodeType.Condition, { branchIndex: 0 }), newNode(WorkflowNodeType.Condition, { branchIndex: 1 })];
       }
       break;
+
     case WorkflowNodeType.ExecuteResultBranch:
       {
         node.branches = [newNode(WorkflowNodeType.ExecuteSuccess), newNode(WorkflowNodeType.ExecuteFailure)];
       }
       break;
+
     case WorkflowNodeType.ExecuteSuccess:
     case WorkflowNodeType.ExecuteFailure:
       {

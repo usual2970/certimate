@@ -66,6 +66,8 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 		return NewConditionNode(node), nil
 	case domain.WorkflowNodeTypeApply:
 		return NewApplyNode(node), nil
+	case domain.WorkflowNodeTypeUpload:
+		return NewUploadNode(node), nil
 	case domain.WorkflowNodeTypeDeploy:
 		return NewDeployNode(node), nil
 	case domain.WorkflowNodeTypeNotify:
