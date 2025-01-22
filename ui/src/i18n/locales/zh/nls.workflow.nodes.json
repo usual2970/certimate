@@ -378,6 +378,16 @@
   "workflow_node.notify.form.channel.placeholder": "请选择通知渠道",
   "workflow_node.notify.form.channel.button": "去配置",
 
+  "workflow_node.upload.label": "上传",
+  "workflow_node.upload.form.domains.label": "域名",
+  "workflow_node.upload.form.domains.placeholder": "上传证书文件后显示",
+  "workflow_node.upload.form.certificate.label": "证书文件（PEM 格式）",
+  "workflow_node.upload.form.certificate.placeholder": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----",
+  "workflow_node.upload.form.certificate.button": "选择文件",
+  "workflow_node.upload.form.private_key.label": "私钥文件（PEM 格式）",
+  "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
+  "workflow_node.upload.form.private_key.button": "选择文件",
+
   "workflow_node.end.label": "结束",
 
   "workflow_node.branch.label": "并行分支",

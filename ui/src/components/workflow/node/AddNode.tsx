@@ -2,6 +2,7 @@ import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
+  DeploymentUnitOutlined as DeploymentUnitOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
@@ -25,7 +26,8 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
   const dropdownMenus = useMemo(() => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
-      [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Upload, "workflow_node.upload.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <DeploymentUnitOutlinedIcon />],
       [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
