@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/domain/dtos"
@@ -194,13 +195,8 @@ func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.
 }
 
 func (s *CertificateService) ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) error {
-	if strings.Contains(req.PrivateKey, "-----BEGIN RSA PRIVATE KEY-----") {
-		_, err := certs.ParsePKCS1PrivateKeyFromPEM(req.PrivateKey)
-		return err
-	} else {
-		_, err := certs.ParseECPrivateKeyFromPEM(req.PrivateKey)
-		return err
-	}
+	_, err := certcrypto.ParsePEMPrivateKey([]byte(req.PrivateKey))
+	return err
 }
 
 func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {
