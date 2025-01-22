@@ -5,11 +5,6 @@ type CertificateArchiveFileReq struct {
 	Format        string `json:"format"`
 }
 
-type CertificateArchiveFileResp struct {
-	Certificate string `json:"certificate"`
-	PrivateKey  string `json:"privateKey"`
-}
-
 type CertificateValidateCertificateReq struct {
 	Certificate string `json:"certificate"`
 }
