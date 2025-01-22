@@ -27,7 +27,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
       const blob = new Blob([u8arr], { type: "application/zip" });
       saveAs(blob, `${data.id}-${data.subjectAltNames}.zip`);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       messageApi.warning(t("common.text.operation_failed"));
     }
   };

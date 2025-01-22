@@ -105,7 +105,7 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 func (s *WorkflowService) CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error {
 	// TODO: 取消运行，防止因为某些原因意外挂起（如进程被杀死）导致工作流一直处于 running 状态无法重新运行
 
-	return nil
+	return errors.New("TODO: 尚未实现")
 }
 
 func (s *WorkflowService) Stop(ctx context.Context) {
