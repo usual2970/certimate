@@ -118,7 +118,7 @@ make local.run
 | 提供商                                  | 备注                                                                |
 | :-------------------------------------- | :------------------------------------------------------------------ |
 | 本地部署                                | 可部署到本地服务器                                                  |
-| SSH 部署                                | 可部署到远程服务器（通过 SSH+SFTP）                                 |
+| SSH 部署                                | 可部署到远程服务器（通过 SSH+SFTP/SCP）                             |
 | Webhook 回调                            | 可部署到 Webhook                                                    |
 | [Kubernetes](https://kubernetes.io/)    | 可部署到 Kubernetes Secret                                          |
 | [阿里云](https://www.aliyun.com/)       | 可部署到阿里云 OSS、CDN、DCDN、SLB（CLB/ALB/NLB）、WAF、Live 等服务 |

@@ -29,6 +29,7 @@ require (
 	github.com/pkg/sftp v1.13.7
 	github.com/pocketbase/dbx v1.11.0
 	github.com/pocketbase/pocketbase v0.24.4
+	github.com/povsister/scp v0.0.0-20240802064259-28781e87b246
 	github.com/qiniu/go-sdk/v7 v7.25.2
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1084
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1084

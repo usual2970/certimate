@@ -117,7 +117,7 @@ The following hosting providers are supported:
 | Provider                                        | Remarks                                                                          |
 | :---------------------------------------------- | :------------------------------------------------------------------------------- |
 | Local                                           | Supports deployment to local servers                                             |
-| SSH                                             | Supports deployment to remote servers (via SSH+SFTP)                             |
+| SSH                                             | Supports deployment to remote servers (via SSH+SFTP/SCP)                         |
 | Webhook                                         | Supports deployment to Webhook                                                   |
 | [Kubernetes](https://kubernetes.io/)            | Supports deployment to Kubernetes Secret                                         |
 | [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), WAF, Live |

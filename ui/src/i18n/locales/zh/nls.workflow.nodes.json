@@ -291,6 +291,8 @@
   "workflow_node.deploy.form.ssh_post_command.placeholder": "请输入保存文件后执行的命令",
   "workflow_node.deploy.form.ssh_preset_scripts.button": "使用预设脚本",
   "workflow_node.deploy.form.ssh_preset_scripts.option.reload_nginx.label": "POSIX Bash - 重启 nginx 进程",
+  "workflow_node.deploy.form.ssh_use_scp.label": "回退使用 SCP",
+  "workflow_node.deploy.form.ssh_use_scp.tooltip": "如果你的远程服务器不支持 SFTP，请开启此选项回退为 SCP。",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.label": "腾讯云 CDN 加速域名（支持泛域名）",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.placeholder": "请输入腾讯云 CDN 加速域名",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.tooltip": "这是什么？请参阅 <a href=\"https://console.cloud.tencent.com/cdn\" target=\"_blank\">https://console.cloud.tencent.com/cdn</a><br><br>泛域名表示形式为：*.example.com",

@@ -291,6 +291,8 @@
   "workflow_node.deploy.form.ssh_post_command.placeholder": "Please enter command to be executed after uploading files",
   "workflow_node.deploy.form.ssh_preset_scripts.button": "Use preset scripts",
   "workflow_node.deploy.form.ssh_preset_scripts.option.reload_nginx.label": "POSIX Bash - Reload nginx",
+  "workflow_node.deploy.form.ssh_use_scp.label": "Fallback to use SCP",
+  "workflow_node.deploy.form.ssh_use_scp.tooltip": "If the remote server does not support SFTP, please enable this option to fallback to SCP.",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.label": "Tencent Cloud CDN domain",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.placeholder": "Please enter Tencent Cloud CDN domain name",
   "workflow_node.deploy.form.tencentcloud_cdn_domain.tooltip": "For more information, see <a href=\"https://console.tencentcloud.com/cdn\" target=\"_blank\">https://console.tencentcloud.com/cdn</a>",
