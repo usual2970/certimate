@@ -175,7 +175,7 @@
   "access.form.westcn_username.label": "西部数码用户名",
   "access.form.westcn_username.placeholder": "请输入西部数码用户名",
   "access.form.westcn_username.tooltip": "这是什么？请参阅 <a href=\"https://www.west.cn/CustomerCenter/doc/apiv2.html#12u3001u8eabu4efdu9a8cu8bc10a3ca20id3d12u3001u8eabu4efdu9a8cu8bc13e203ca3e\" target=\"_blank\">https://www.west.cn/CustomerCenter/doc/apiv2.html</a>",
-  "access.form.westcn_api_password.label": "西部数据 API 密码",
-  "access.form.westcn_api_password.placeholder": "请输入西部数据 API 密码",
+  "access.form.westcn_api_password.label": "西部数码 API 密码",
+  "access.form.westcn_api_password.placeholder": "请输入西部数码 API 密码",
   "access.form.westcn_api_password.tooltip": "这是什么？请参阅 <a href=\"https://www.west.cn/CustomerCenter/doc/apiv2.html#12u3001u8eabu4efdu9a8cu8bc10a3ca20id3d12u3001u8eabu4efdu9a8cu8bc13e203ca3e\" target=\"_blank\">https://www.west.cn/CustomerCenter/doc/apiv2.html</a>"
 }
