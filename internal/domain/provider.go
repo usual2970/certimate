@@ -90,6 +90,7 @@ const (
 	DeployProviderTypeKubernetesSecret  = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal             = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN          = DeployProviderType("qiniu-cdn")
+	DeployProviderTypeQiniuPili         = DeployProviderType("qiniu-pili")
 	DeployProviderTypeSSH               = DeployProviderType("ssh")
 	DeployProviderTypeTencentCloudCDN   = DeployProviderType("tencentcloud-cdn")
 	DeployProviderTypeTencentCloudCLB   = DeployProviderType("tencentcloud-clb")

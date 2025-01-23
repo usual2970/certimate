@@ -72,6 +72,7 @@
   "common.provider.powerdns": "PowerDNS",
   "common.provider.qiniu": "七牛云",
   "common.provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",
+  "common.provider.qiniu.pili": "七牛云 - 视频直播 Pili",
   "common.provider.ssh": "SSH 部署",
   "common.provider.tencentcloud": "腾讯云",
   "common.provider.tencentcloud.cdn": "腾讯云 - 内容分发网络 CDN",

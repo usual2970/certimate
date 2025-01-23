@@ -21,6 +21,7 @@ import (
 	providerK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	providerLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	providerQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
+	providerQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
 	providerSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	providerTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
 	providerTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
@@ -260,19 +261,34 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeQiniuCDN:
+	case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuPili:
 		{
 			access := domain.AccessConfigForQiniu{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			deployer, err := providerQiniuCDN.NewWithLogger(&providerQiniuCDN.QiniuCDNDeployerConfig{
-				AccessKey: access.AccessKey,
-				SecretKey: access.SecretKey,
-				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
-			}, logger)
-			return deployer, logger, err
+			switch options.Provider {
+			case domain.DeployProviderTypeQiniuCDN:
+				deployer, err := providerQiniuCDN.NewWithLogger(&providerQiniuCDN.QiniuCDNDeployerConfig{
+					AccessKey: access.AccessKey,
+					SecretKey: access.SecretKey,
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeQiniuPili:
+				deployer, err := providerQiniuPili.NewWithLogger(&providerQiniuPili.QiniuPiliDeployerConfig{
+					AccessKey: access.AccessKey,
+					SecretKey: access.SecretKey,
+					Hub:       maps.GetValueAsString(options.ProviderDeployConfig, "hub"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeployProviderTypeSSH:

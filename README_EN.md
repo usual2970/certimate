@@ -122,7 +122,7 @@ The following hosting providers are supported:
 | [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                   |
 | [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB                                |
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, Live                 |
-| [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN                                      |
+| [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                       |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                         |
 | [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                     |

@@ -31,6 +31,7 @@ import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaw
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
+import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudCLBConfig from "./DeployNodeConfigFormTencentCloudCLBConfig.tsx";
@@ -150,6 +151,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_CDN:
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.QINIU_PILI:
+          return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SSH:
           return <DeployNodeConfigFormSSHConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_CDN:
