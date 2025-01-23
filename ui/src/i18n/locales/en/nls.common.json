@@ -73,6 +73,7 @@
   "common.provider.qiniu": "Qiniu",
   "common.provider.qiniu.cdn": "Qiniu - Content Delivery Network (CDN)",
   "common.provider.qiniu.pili": "Qiniu - Pili",
+  "common.provider.rainyun": "Rain Yun",
   "common.provider.ssh": "SSH deployment",
   "common.provider.tencentcloud": "Tencent Cloud",
   "common.provider.tencentcloud.cdn": "Tencent Cloud - Content Delivery Network (CDN)",

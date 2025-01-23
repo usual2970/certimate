@@ -99,6 +99,7 @@ make local.run
 | [Name.com](https://www.name.com/)                                  |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |
 | [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
+| [雨云](https://www.rainyun.com/)                                   |                                         |
 | [西部数码](https://www.west.cn/)                                   |                                         |
 | [PowerDNS](https://www.powerdns.com/)                              |                                         |
 | ACME 代理 HTTP 请求                                                | 可申请允许通过 HTTP 请求修改 DNS 的域名 |

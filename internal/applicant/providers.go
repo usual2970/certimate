@@ -17,6 +17,7 @@ import (
 	providerNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
 	providerNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
 	providerPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
+	providerRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
 	providerTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
 	providerVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
 	providerWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
@@ -201,6 +202,21 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 
 			applicant, err := providerPowerDNS.NewChallengeProvider(&providerPowerDNS.PowerDNSApplicantConfig{
 				ApiUrl:                access.ApiUrl,
+				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeRainYun:
+		{
+			access := domain.AccessConfigForRainYun{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			applicant, err := providerRainYun.NewChallengeProvider(&providerRainYun.RainYunApplicantConfig{
 				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,

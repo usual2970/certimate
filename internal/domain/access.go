@@ -112,6 +112,10 @@ type AccessConfigForQiniu struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForRainYun struct {
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`

@@ -27,6 +27,7 @@ const (
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
+	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
@@ -59,6 +60,7 @@ const (
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
 	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")
 	ApplyDNSProviderTypePowerDNS        = ApplyDNSProviderType("powerdns")
+	ApplyDNSProviderTypeRainYun         = ApplyDNSProviderType("rainyun")
 	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
 	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
