@@ -84,6 +84,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: ["builtin"],
         alphabetize: {
           order: "asc",
+          caseInsensitive: true,
         },
       },
     ],

@@ -94,6 +94,7 @@ The following DNS providers are supported:
 | [AWS Route53](https://aws.amazon.com/route53/)               |                                       |
 | [Azure DNS](https://azure.microsoft.com/)                    |                                       |
 | [CloudFlare](https://www.cloudflare.com/)                    |                                       |
+| [ClouDNS](https://www.cloudns.net//)                         |                                       |
 | [GoDaddy](https://www.godaddy.com/)                          |                                       |
 | [Name.com](https://www.name.com/)                            |                                       |
 | [NameSilo](https://www.namesilo.com/)                        |                                       |

@@ -64,4 +64,3 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 };
 
 export default memo(WorkflowElement);
-

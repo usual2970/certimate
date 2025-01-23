@@ -11,6 +11,7 @@ import (
 	providerAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
 	providerAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
 	providerCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
+	providerClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
 	providerGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
 	providerHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
 	providerNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
@@ -108,6 +109,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 
 			applicant, err := providerCloudflare.NewChallengeProvider(&providerCloudflare.CloudflareApplicantConfig{
 				DnsApiToken:           access.DnsApiToken,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeClouDNS:
+		{
+			access := domain.AccessConfigForClouDNS{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			applicant, err := providerClouDNS.NewChallengeProvider(&providerClouDNS.ClouDNSApplicantConfig{
+				AuthId:                access.AuthId,
+				AuthPassword:          access.AuthPassword,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

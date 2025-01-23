@@ -55,6 +55,7 @@
   "common.provider.byteplus": "BytePlus",
   "common.provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
   "common.provider.cloudflare": "Cloudflare",
+  "common.provider.cloudns": "ClouDNS",
   "common.provider.dogecloud": "Doge Cloud",
   "common.provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",
   "common.provider.edgio": "Edgio",

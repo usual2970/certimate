@@ -15,6 +15,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBaiduCloud
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
+      | AccessConfigForClouDNS
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
       | AccessConfigForGoDaddy
@@ -73,6 +74,11 @@ export type AccessConfigForBytePlus = {
 
 export type AccessConfigForCloudflare = {
   dnsApiToken: string;
+};
+
+export type AccessConfigForClouDNS = {
+  authId: string;
+  authPassword: string;
 };
 
 export type AccessConfigForDogeCloud = {

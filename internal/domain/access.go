@@ -63,6 +63,11 @@ type AccessConfigForCloudflare struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }
 
+type AccessConfigForClouDNS struct {
+	AuthId       string `json:"authId"`
+	AuthPassword string `json:"authPassword"`
+}
+
 type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

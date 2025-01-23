@@ -8,8 +8,8 @@ import { type WorkflowNodeConfigForDeploy, WorkflowNodeType } from "@/domain/wor
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
-import DeployNodeConfigForm, { type DeployNodeConfigFormInstance } from "./DeployNodeConfigForm";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import DeployNodeConfigForm, { type DeployNodeConfigFormInstance } from "./DeployNodeConfigForm";
 
 export type DeployNodeProps = SharedNodeProps;
 

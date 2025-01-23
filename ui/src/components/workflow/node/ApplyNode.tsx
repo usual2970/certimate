@@ -8,8 +8,8 @@ import { useZustandShallowSelector } from "@/hooks";
 import { useContactEmailsStore } from "@/stores/contact";
 import { useWorkflowStore } from "@/stores/workflow";
 
-import ApplyNodeConfigForm, { type ApplyNodeConfigFormInstance } from "./ApplyNodeConfigForm";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import ApplyNodeConfigForm, { type ApplyNodeConfigFormInstance } from "./ApplyNodeConfigForm";
 
 export type ApplyNodeProps = SharedNodeProps;
 

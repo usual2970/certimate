@@ -10,21 +10,22 @@ import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
-import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
+import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
+import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLocalConfig from "./AccessFormLocalConfig";
-import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
 import AccessFormNameSiloConfig from "./AccessFormNameSiloConfig";
+import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
@@ -101,6 +102,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormBytePlusConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CLOUDFLARE:
         return <AccessFormCloudflareConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.CLOUDNS:
+        return <AccessFormClouDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GODADDY:

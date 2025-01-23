@@ -8,8 +8,8 @@ import { WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
-import UploadNodeConfigForm, { type UploadNodeConfigFormInstance } from "./UploadNodeConfigForm";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import UploadNodeConfigForm, { type UploadNodeConfigFormInstance } from "./UploadNodeConfigForm";
 
 export type UploadNodeProps = SharedNodeProps;
 

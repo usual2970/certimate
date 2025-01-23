@@ -16,6 +16,7 @@ const (
 	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
+	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
@@ -53,6 +54,7 @@ const (
 	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
+	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")

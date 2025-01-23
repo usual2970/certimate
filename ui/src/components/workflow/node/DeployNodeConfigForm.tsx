@@ -5,11 +5,11 @@ import { Alert, Button, Divider, Flex, Form, type FormInstance, Select, Switch, 
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import Show from "@/components/Show";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
 import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
+import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
