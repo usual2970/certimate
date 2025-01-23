@@ -76,7 +76,7 @@ func (u *UCloudUSSLUploader) Upload(ctx context.Context, certPem string, privkey
 	uploadNormalCertificateResp, err := u.sdkClient.UploadNormalCertificate(uploadNormalCertificateReq)
 	if err != nil {
 		if uploadNormalCertificateResp != nil && uploadNormalCertificateResp.GetRetCode() == 80035 {
-			return u.getExistCert(ctx, certPem, privkeyPem)
+			return u.getExistCert(ctx, certPem)
 		}
 
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ussl.UploadNormalCertificate'")
@@ -92,7 +92,7 @@ func (u *UCloudUSSLUploader) Upload(ctx context.Context, certPem string, privkey
 	}, nil
 }
 
-func (u *UCloudUSSLUploader) getExistCert(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UCloudUSSLUploader) getExistCert(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

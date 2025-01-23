@@ -14,7 +14,9 @@ require (
 	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.10
 	github.com/alibabacloud-go/tea v1.2.2
+	github.com/alibabacloud-go/waf-openapi-20211001/v5 v5.0.4
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
+	github.com/aws/aws-sdk-go-v2/service/acm v1.30.13
 	github.com/baidubce/bce-sdk-go v0.9.214
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.40
 	github.com/go-acme/lego/v4 v4.21.0
@@ -57,8 +59,6 @@ require (
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
-	github.com/alibabacloud-go/waf-openapi-20211001 v1.0.0 // indirect
-	github.com/alibabacloud-go/waf-openapi-20211001/v5 v5.0.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.48.1 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
@@ -118,10 +118,10 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.83 // indirect
 	github.com/aliyun/credentials-go v1.4.3 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.33.0 // indirect
+	github.com/aws/aws-sdk-go-v2 v1.33.0
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.7 // indirect
-	github.com/aws/aws-sdk-go-v2/config v1.29.1 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.54 // indirect
+	github.com/aws/aws-sdk-go-v2/config v1.29.1
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.54
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.52 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.28 // indirect
