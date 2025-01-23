@@ -49,9 +49,7 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
 
   const triggerEl = useTriggerElement(trigger, {
     onClick: () => {
-      console.log("click");
       setOpen(true);
-      console.log(open);
     },
   });
 

@@ -1,5 +1,5 @@
 {
-  "workflow_node.action.configure_node": "Configure",
+  "workflow_node.action.configure_node": "Configure node",
   "workflow_node.action.add_node": "Add node",
   "workflow_node.action.rename_node": "Rename node",
   "workflow_node.action.remove_node": "Delete node",
@@ -20,7 +20,7 @@
   "workflow_node.start.form.trigger_cron.errmsg.invalid": "Please enter a valid cron expression",
   "workflow_node.start.form.trigger_cron.tooltip": "Time zone is based on the server.",
   "workflow_node.start.form.trigger_cron.extra": "Expected execution time for the last 5 times:",
-  "workflow_node.start.form.trigger_cron_alert.content": "Tips: If you have multiple workflows, it is recommended to set them to run at multiple times of the day instead of always running at specific times.<br><br>Reference links:<br>1. <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt rate limits</a><br>2. <a href=\"https://letsencrypt.org/docs/faq/#why-should-my-let-s-encrypt-acme-client-run-at-a-random-time\" target=\"_blank\">Why should my Let’s Encrypt (ACME) client run at a random time?</a>",
+  "workflow_node.start.form.trigger_cron.guide": "Tips: If you have multiple workflows, it is recommended to set them to run at multiple times of the day instead of always running at specific times.<br><br>Reference links:<br>1. <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt rate limits</a><br>2. <a href=\"https://letsencrypt.org/docs/faq/#why-should-my-let-s-encrypt-acme-client-run-at-a-random-time\" target=\"_blank\">Why should my Let’s Encrypt (ACME) client run at a random time?</a>",
 
   "workflow_node.apply.label": "Application",
   "workflow_node.apply.form.domains.label": "Domains",
@@ -82,6 +82,7 @@
   "workflow_node.deploy.form.provider_access.placeholder": "Please select an authorization of host provider",
   "workflow_node.deploy.form.provider_access.tooltip": "Used to deploy certificates.",
   "workflow_node.deploy.form.provider_access.button": "Create",
+  "workflow_node.deploy.form.provider_access.guide_for_local": "Tips: Due to the form validations, youe need to select an authorization for local deployment also, even if it means nothing.",
   "workflow_node.deploy.form.certificate.label": "Certificate",
   "workflow_node.deploy.form.certificate.placeholder": "Please select certificate",
   "workflow_node.deploy.form.certificate.tooltip": "The certificate to be deployed comes from the previous application stage node.",
@@ -377,25 +378,25 @@
   "workflow_node.notify.form.channel.placeholder": "Please select channel",
   "workflow_node.notify.form.channel.button": "Configure",
 
-  "workflow_node.upload.label": "Upload certificate",
+  "workflow_node.upload.label": "Upload",
   "workflow_node.upload.form.domains.label": "Domains",
-  "workflow_node.upload.form.certificate.label": "Certificate",
-  "workflow_node.upload.form.certificate.placeholder": "The certificate format begins with \"-----BEGIN CERTIFICATE-----\" and ends with \"-----END CERTIFICATE-----\"",
-  "workflow_node.upload.form.certificate.button": "Upload",
-  "workflow_node.upload.form.private_key.label": "Private key",
-  "workflow_node.upload.form.private_key.placeholder": "The private key begins with \"-----BEGIN (RSA|EC) PRIVATE KEY-----\" and ends with \"-----END(RSA|EC) PRIVATE KEY-----\"",
-  "workflow_node.upload.form.private_key.button": "Upload",
+  "workflow_node.upload.form.domains.placholder": "Please select certificate file",
+  "workflow_node.upload.form.certificate.label": "Certificate (PEM format)",
+  "workflow_node.upload.form.certificate.placeholder": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----",
+  "workflow_node.upload.form.certificate.button": "Choose file ...",
+  "workflow_node.upload.form.private_key.label": "Private key (PEM format)",
+  "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
+  "workflow_node.upload.form.private_key.button": "Choose file ...",
 
   "workflow_node.end.label": "End",
 
-  "workflow_node.branch.label": "Branch",
+  "workflow_node.branch.label": "Parallel branch",
 
-  "workflow_node.execute_result_branch.label": "Execute result branch",
+  "workflow_node.condition.label": "Branch",
 
-  "workflow_node.execute_success.label": "Execute success",
+  "workflow_node.execute_result_branch.label": "Execution result branch",
 
-  "workflow_node.execute_failure.label": "Execute failure",
+  "workflow_node.execute_success.label": "If the previous node succeeded ...",
 
-  "workflow_node.condition.label": "Condition"
+  "workflow_node.execute_failure.label": "If the previous node failed ..."
 }
-

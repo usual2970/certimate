@@ -3,10 +3,10 @@ import { ClientResponseError } from "pocketbase";
 import { type CertificateFormatType } from "@/domain/certificate";
 import { getPocketBase } from "@/repository/_pocketbase";
 
-export const archive = async (id: string, format?: CertificateFormatType) => {
+export const archive = async (certificateId: string, format?: CertificateFormatType) => {
   const pb = getPocketBase();
 
-  const resp = await pb.send<BaseResponse>(`/api/certificates/${encodeURIComponent(id)}/archive`, {
+  const resp = await pb.send<BaseResponse<string>>(`/api/certificates/${encodeURIComponent(certificateId)}/archive`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,9 +38,11 @@ export const validateCertificate = async (certificate: string) => {
       certificate: certificate,
     },
   });
+
   if (resp.code != 0) {
-    throw new Error(resp.msg);
+    throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
+
   return resp;
 };
 
@@ -55,8 +57,10 @@ export const validatePrivateKey = async (privateKey: string) => {
       privateKey: privateKey,
     },
   });
+
   if (resp.code != 0) {
-    throw new Error(resp.msg);
+    throw new ClientResponseError({ status: resp.code, response: resp, data: {} });
   }
+
   return resp;
 };

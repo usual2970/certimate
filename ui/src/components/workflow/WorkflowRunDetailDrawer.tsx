@@ -41,11 +41,11 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
           </Show>
 
           <div className="mt-4 rounded-md bg-black p-4 text-stone-200">
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-4">
               {data!.logs?.map((item, i) => {
                 return (
                   <div key={i} className="flex flex-col space-y-2">
-                    <div>{item.nodeName}</div>
+                    <div className="font-semibold">{item.nodeName}</div>
                     <div className="flex flex-col space-y-1">
                       {item.outputs?.map((output, j) => {
                         return (

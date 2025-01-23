@@ -109,7 +109,7 @@ const WorkflowNew = () => {
     <div>
       {NotificationContextHolder}
 
-      <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }}>
+      <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }} style={{ borderRadius: 0 }}>
         <PageHeader title={t("workflow.new.title")}>
           <Typography.Paragraph type="secondary">{t("workflow.new.subtitle")}</Typography.Paragraph>
         </PageHeader>

@@ -1,12 +1,14 @@
 ﻿package certs
 
 import (
+	"crypto"
 	"crypto/ecdsa"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
 
+	"github.com/go-acme/lego/v4/certcrypto"
 	xerrors "github.com/pkg/errors"
 )
 
@@ -32,6 +34,19 @@ func ParseCertificateFromPEM(certPem string) (cert *x509.Certificate, err error)
 	}
 
 	return cert, nil
+}
+
+// 从 PEM 编码的私钥字符串解析并返回一个 crypto.PrivateKey 对象。
+//
+// 入参:
+//   - privkeyPem: 私钥 PEM 内容。
+//
+// 出参:
+//   - privkey: crypto.PrivateKey 对象，可能是 rsa.PrivateKey、ecdsa.PrivateKey 或 ed25519.PrivateKey。
+//   - err: 错误。
+func ParsePrivateKeyFromPEM(privkeyPem string) (privkey crypto.PrivateKey, err error) {
+	pemData := []byte(privkeyPem)
+	return certcrypto.ParsePEMPrivateKey(pemData)
 }
 
 // 从 PEM 编码的私钥字符串解析并返回一个 ecdsa.PrivateKey 对象。

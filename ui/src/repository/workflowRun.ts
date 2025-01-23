@@ -14,7 +14,7 @@ export type ListWorkflowRunsRequest = {
 export const list = async (request: ListWorkflowRunsRequest) => {
   const page = request.page || 1;
   const perPage = request.perPage || 10;
-  console.log("request.workflowId", request.workflowId);
+
   let filter = "";
   const params: Record<string, string> = {};
   if (request.workflowId) {
@@ -30,4 +30,8 @@ export const list = async (request: ListWorkflowRunsRequest) => {
       requestKey: null,
       expand: request.expand ? "workflowId" : undefined,
     });
+};
+
+export const remove = async (record: MaybeModelRecordWithId<WorkflowRunModel>) => {
+  return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
 };

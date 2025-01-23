@@ -19,11 +19,11 @@ func NewCertificateRepository() *CertificateRepository {
 }
 
 func (r *CertificateRepository) ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error) {
-	records, err := app.GetApp().FindRecordsByFilter(
+	records, err := app.GetApp().FindAllRecords(
 		domain.CollectionNameCertificate,
-		"expireAt>DATETIME('now') && expireAt<DATETIME('now', '+20 days') && deleted=null",
-		"-created",
-		0, 0,
+		dbx.NewExp("expireAt>DATETIME('now')"),
+		dbx.NewExp("expireAt<DATETIME('now', '+20 days')"),
+		dbx.NewExp("deleted=null"),
 	)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,8 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 	records, err := app.GetApp().FindRecordsByFilter(
 		domain.CollectionNameCertificate,
 		"workflowNodeId={:workflowNodeId} && deleted=null",
-		"-created", 1, 0,
+		"-created",
+		1, 0,
 		dbx.Params{"workflowNodeId": workflowNodeId},
 	)
 	if err != nil {

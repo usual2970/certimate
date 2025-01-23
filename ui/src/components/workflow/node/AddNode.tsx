@@ -2,11 +2,11 @@ import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
+  DeploymentUnitOutlined as DeploymentUnitOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
   SolutionOutlined as SolutionOutlinedIcon,
-  SafetyOutlined as SafetyOutlinedIcon,
 } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
@@ -26,15 +26,15 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
   const dropdownMenus = useMemo(() => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
-      [WorkflowNodeType.Upload, "workflow_node.upload.label", <SafetyOutlinedIcon />],
-      [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Upload, "workflow_node.upload.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <DeploymentUnitOutlinedIcon />],
+      [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
-      [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
     ]
       .filter(([type]) => {
-        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && type === WorkflowNodeType.ExecuteResultBranch) {
-          return false;
+        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && node.type !== WorkflowNodeType.Notify) {
+          return type !== WorkflowNodeType.ExecuteResultBranch;
         }
 
         return true;

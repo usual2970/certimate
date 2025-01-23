@@ -2,15 +2,16 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
-  ApiOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  LockOutlined,
-  PlusOutlined,
-  SelectOutlined,
-  SendOutlined,
-  SyncOutlined,
+  ApiOutlined as ApiOutlinedIcon,
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  ClockCircleOutlined as ClockCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  LockOutlined as LockOutlinedIcon,
+  PauseCircleOutlined as PauseCircleOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+  SelectOutlined as SelectOutlinedIcon,
+  SendOutlined as SendOutlinedIcon,
+  SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
@@ -84,14 +85,22 @@ const Dashboard = () => {
       key: "name",
       title: t("workflow.props.name"),
       ellipsis: true,
-      render: (_, record) => (
-        <Space className="max-w-full" direction="vertical" size={4}>
-          <Typography.Text ellipsis>{record.expand?.workflowId?.name}</Typography.Text>
-          <Typography.Text type="secondary" ellipsis>
-            {record.expand?.workflowId?.description}
-          </Typography.Text>
-        </Space>
-      ),
+      render: (_, record) => {
+        const workflow = record.expand?.workflowId;
+        return (
+          <Typography.Link
+            type="secondary"
+            ellipsis
+            onClick={() => {
+              if (workflow) {
+                navigate(`/workflows/${workflow.id}`);
+              }
+            }}
+          >
+            {workflow?.name ?? <span className="font-mono">{t(`#${record.workflowId}`)}</span>}
+          </Typography.Link>
+        );
+      },
     },
     {
       key: "status",
@@ -99,23 +108,29 @@ const Dashboard = () => {
       ellipsis: true,
       render: (_, record) => {
         if (record.status === WORKFLOW_RUN_STATUSES.PENDING) {
-          return <Tag icon={<ClockCircleOutlined />}>{t("workflow_run.props.status.pending")}</Tag>;
+          return <Tag icon={<ClockCircleOutlinedIcon />}>{t("workflow_run.props.status.pending")}</Tag>;
         } else if (record.status === WORKFLOW_RUN_STATUSES.RUNNING) {
           return (
-            <Tag icon={<SyncOutlined spin />} color="processing">
+            <Tag icon={<SyncOutlinedIcon spin />} color="processing">
               {t("workflow_run.props.status.running")}
             </Tag>
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
           return (
-            <Tag icon={<CheckCircleOutlined />} color="success">
+            <Tag icon={<CheckCircleOutlinedIcon />} color="success">
               {t("workflow_run.props.status.succeeded")}
             </Tag>
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.FAILED) {
           return (
-            <Tag icon={<CloseCircleOutlined />} color="error">
+            <Tag icon={<CloseCircleOutlinedIcon />} color="error">
               {t("workflow_run.props.status.failed")}
+            </Tag>
+          );
+        } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
+          return (
+            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+              {t("workflow_run.props.status.canceled")}
             </Tag>
           );
         }
@@ -153,7 +168,7 @@ const Dashboard = () => {
       width: 120,
       render: (_, record) => (
         <Button.Group>
-          <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<SelectOutlined />} variant="text" />} />
+          <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />} />
         </Button.Group>
       ),
     },
@@ -248,16 +263,16 @@ const Dashboard = () => {
       <Flex justify="stretch" vertical={!breakpoints.lg} gap={16}>
         <Card className="max-lg:flex-1 lg:w-[360px]" title={t("dashboard.quick_actions")}>
           <Space className="w-full" direction="vertical" size="large">
-            <Button block type="primary" size="large" icon={<PlusOutlined />} onClick={() => navigate("/workflows/new")}>
+            <Button block type="primary" size="large" icon={<PlusOutlinedIcon />} onClick={() => navigate("/workflows/new")}>
               {t("dashboard.quick_actions.create_workflow")}
             </Button>
-            <Button block size="large" icon={<LockOutlined />} onClick={() => navigate("/settings/password")}>
+            <Button block size="large" icon={<LockOutlinedIcon />} onClick={() => navigate("/settings/password")}>
               {t("dashboard.quick_actions.change_login_password")}
             </Button>
-            <Button block size="large" icon={<SendOutlined />} onClick={() => navigate("/settings/notification")}>
+            <Button block size="large" icon={<SendOutlinedIcon />} onClick={() => navigate("/settings/notification")}>
               {t("dashboard.quick_actions.cofigure_notification")}
             </Button>
-            <Button block size="large" icon={<ApiOutlined />} onClick={() => navigate("/settings/ssl-provider")}>
+            <Button block size="large" icon={<ApiOutlinedIcon />} onClick={() => navigate("/settings/ssl-provider")}>
               {t("dashboard.quick_actions.configure_ca")}
             </Button>
           </Space>

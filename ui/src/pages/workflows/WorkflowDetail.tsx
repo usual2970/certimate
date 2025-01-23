@@ -8,9 +8,6 @@ import {
   DownOutlined as DownOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
   HistoryOutlined as HistoryOutlinedIcon,
-  MinusOutlined,
-  PlusCircleOutlined,
-  ReloadOutlined,
   UndoOutlined as UndoOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
@@ -19,10 +16,10 @@ import { createSchemaFieldRule } from "antd-zod";
 import { isEqual } from "radash";
 import { z } from "zod";
 
-import { run as runWorkflow } from "@/api/workflows";
+import { startRun as startWorkflowRun } from "@/api/workflows";
 import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
-import WorkflowElements from "@/components/workflow/WorkflowElements";
+import WorkflowElementsContainer from "@/components/workflow/WorkflowElementsContainer";
 import WorkflowRuns from "@/components/workflow/WorkflowRuns";
 import { isAllNodesValidated } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
@@ -40,8 +37,6 @@ const WorkflowDetail = () => {
   const [modalApi, ModalContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
-  const [scale, setScale] = useState(1);
-
   const { id: workflowId } = useParams();
   const { workflow, initialized, ...workflowState } = useWorkflowStore(
     useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
@@ -58,14 +53,11 @@ const WorkflowDetail = () => {
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
   const [isRunning, setIsRunning] = useState(false);
+  const lastRunStatus = useMemo(() => workflow.lastRunStatus, [workflow]);
 
   const [allowDiscard, setAllowDiscard] = useState(false);
   const [allowRelease, setAllowRelease] = useState(false);
   const [allowRun, setAllowRun] = useState(false);
-
-  const lastRunStatus = useMemo(() => {
-    return workflow.lastRunStatus;
-  }, [workflow]);
 
   useEffect(() => {
     setIsRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
@@ -192,7 +184,7 @@ const WorkflowDetail = () => {
           }
         });
 
-        await runWorkflow(workflowId!);
+        await startWorkflowRun(workflowId!);
 
         messageApi.info(t("workflow.detail.orchestration.action.run.prompt"));
       } catch (err) {
@@ -206,123 +198,129 @@ const WorkflowDetail = () => {
   };
 
   return (
-    <div>
+    <div className="flex size-full flex-col">
       {MessageContextHolder}
       {ModalContextHolder}
       {NotificationContextHolder}
 
-      <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }}>
-        <PageHeader
-          style={{ paddingBottom: 0 }}
-          title={workflow.name}
-          extra={
-            initialized
-              ? [
-                  <WorkflowBaseInfoModal key="edit" trigger={<Button>{t("common.button.edit")}</Button>} />,
+      <div>
+        <Card styles={{ body: { padding: "0.5rem", paddingBottom: 0 } }} style={{ borderRadius: 0 }}>
+          <PageHeader
+            style={{ paddingBottom: 0 }}
+            title={workflow.name}
+            extra={
+              initialized
+                ? [
+                    <WorkflowBaseInfoModal key="edit" trigger={<Button>{t("common.button.edit")}</Button>} />,
 
-                  <Button key="enable" onClick={handleEnableChange}>
-                    {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
-                  </Button>,
+                    <Button key="enable" onClick={handleEnableChange}>
+                      {workflow.enabled ? t("workflow.action.disable") : t("workflow.action.enable")}
+                    </Button>,
 
-                  <Dropdown
-                    key="more"
-                    menu={{
-                      items: [
-                        {
-                          key: "delete",
-                          label: t("workflow.action.delete"),
-                          danger: true,
-                          icon: <DeleteOutlinedIcon />,
-                          onClick: () => {
-                            handleDeleteClick();
-                          },
-                        },
-                      ],
-                    }}
-                    trigger={["click"]}
-                  >
-                    <Button icon={<DownOutlinedIcon />} iconPosition="end">
-                      {t("common.button.more")}
-                    </Button>
-                  </Dropdown>,
-                ]
-              : []
-          }
-        >
-          <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
-          <Tabs
-            activeKey={tabValue}
-            defaultActiveKey="orchestration"
-            items={[
-              { key: "orchestration", label: t("workflow.detail.orchestration.tab"), icon: <ApartmentOutlinedIcon /> },
-              { key: "runs", label: t("workflow.detail.runs.tab"), icon: <HistoryOutlinedIcon /> },
-            ]}
-            renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} style={{ margin: 0 }} />}
-            tabBarStyle={{ border: "none" }}
-            onChange={(key) => setTabValue(key as typeof tabValue)}
-          />
-        </PageHeader>
-      </Card>
-
-      <div className="p-4">
-        <Card loading={!initialized}>
-          <Show when={tabValue === "orchestration"}>
-            <div className="relative">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 overflow-hidden">
-                  <Show when={workflow.hasDraft!}>
-                    <Alert banner message={<div className="truncate">{t("workflow.detail.orchestration.draft.alert")}</div>} type="warning" />
-                  </Show>
-                </div>
-                <div className="flex justify-end">
-                  <Space>
-                    <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
-                      {t("workflow.detail.orchestration.action.run")}
-                    </Button>
-
-                    <Button.Group>
-                      <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
-                        {t("workflow.detail.orchestration.action.release")}
-                      </Button>
-
-                      <Dropdown
-                        menu={{
-                          items: [
-                            {
-                              key: "discard",
-                              disabled: !allowDiscard,
-                              label: t("workflow.detail.orchestration.action.discard"),
-                              icon: <UndoOutlinedIcon />,
-                              onClick: handleDiscardClick,
+                    <Dropdown
+                      key="more"
+                      menu={{
+                        items: [
+                          {
+                            key: "delete",
+                            label: t("workflow.action.delete"),
+                            danger: true,
+                            icon: <DeleteOutlinedIcon />,
+                            onClick: () => {
+                              handleDeleteClick();
                             },
-                          ],
-                        }}
-                        trigger={["click"]}
-                      >
-                        <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
-                      </Dropdown>
-                    </Button.Group>
-                  </Space>
-                </div>
-              </div>
-              <div className="fixed bottom-8 right-8 z-10 flex items-center gap-2 rounded-lg bg-white p-2 shadow-lg">
-                <Button icon={<MinusOutlined />} disabled={scale <= 0.5} onClick={() => setScale((s) => Math.max(0.5, s - 0.1))} />
-                <Typography.Text className="min-w-[3em] text-center">{Math.round(scale * 100)}%</Typography.Text>
-                <Button icon={<PlusCircleOutlined />} disabled={scale >= 2} onClick={() => setScale((s) => Math.min(2, s + 0.1))} />
-                <Button icon={<ReloadOutlined />} onClick={() => setScale(1)} />
-              </div>
-
-              <div className="size-full origin-top px-12 py-8 transition-transform duration-300 max-md:px-4" style={{ transform: `scale(${scale})` }}>
-                <WorkflowElements />
-              </div>
-            </div>
-          </Show>
-
-          <Show when={tabValue === "runs"}>
-            <WorkflowRuns workflowId={workflowId!} />
-          </Show>
+                          },
+                        ],
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button icon={<DownOutlinedIcon />} iconPosition="end">
+                        {t("common.button.more")}
+                      </Button>
+                    </Dropdown>,
+                  ]
+                : []
+            }
+          >
+            <Typography.Paragraph type="secondary">{workflow.description}</Typography.Paragraph>
+            <Tabs
+              activeKey={tabValue}
+              defaultActiveKey="orchestration"
+              items={[
+                { key: "orchestration", label: t("workflow.detail.orchestration.tab"), icon: <ApartmentOutlinedIcon /> },
+                { key: "runs", label: t("workflow.detail.runs.tab"), icon: <HistoryOutlinedIcon /> },
+              ]}
+              renderTabBar={(props, DefaultTabBar) => <DefaultTabBar {...props} style={{ margin: 0 }} />}
+              tabBarStyle={{ border: "none" }}
+              onChange={(key) => setTabValue(key as typeof tabValue)}
+            />
+          </PageHeader>
         </Card>
       </div>
+
+      <Show when={tabValue === "orchestration"}>
+        <div className="min-h-[360px] flex-1 overflow-hidden p-4">
+          <Card
+            className="size-full overflow-hidden"
+            styles={{
+              body: {
+                position: "relative",
+                height: "100%",
+                padding: 0,
+              },
+            }}
+            loading={!initialized}
+          >
+            <div className="absolute inset-x-6 top-4 z-[2] flex items-center justify-between gap-4">
+              <div className="flex-1 overflow-hidden">
+                <Show when={workflow.hasDraft!}>
+                  <Alert banner message={<div className="truncate">{t("workflow.detail.orchestration.draft.alert")}</div>} type="warning" />
+                </Show>
+              </div>
+              <div className="flex justify-end">
+                <Space>
+                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
+                    {t("workflow.detail.orchestration.action.run")}
+                  </Button>
+
+                  <Button.Group>
+                    <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
+                      {t("workflow.detail.orchestration.action.release")}
+                    </Button>
+
+                    <Dropdown
+                      menu={{
+                        items: [
+                          {
+                            key: "discard",
+                            disabled: !allowDiscard,
+                            label: t("workflow.detail.orchestration.action.discard"),
+                            icon: <UndoOutlinedIcon />,
+                            onClick: handleDiscardClick,
+                          },
+                        ],
+                      }}
+                      trigger={["click"]}
+                    >
+                      <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
+                    </Dropdown>
+                  </Button.Group>
+                </Space>
+              </div>
+            </div>
+
+            <WorkflowElementsContainer className="pt-16" />
+          </Card>
+        </div>
+      </Show>
+
+      <Show when={tabValue === "runs"}>
+        <div className="p-4">
+          <Card loading={!initialized}>
+            <WorkflowRuns workflowId={workflowId!} />
+          </Card>
+        </div>
+      </Show>
     </div>
   );
 };

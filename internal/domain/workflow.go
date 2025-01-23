@@ -69,11 +69,11 @@ type WorkflowNodeConfigForApply struct {
 	ProviderConfig        map[string]any `json:"providerConfig"`        // DNS 提供商额外配置
 	KeyAlgorithm          string         `json:"keyAlgorithm"`          // 密钥算法
 	Nameservers           string         `json:"nameservers"`           // DNS 服务器列表，以半角逗号分隔
-	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（默认取决于提供商）
-	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（默认取决于提供商）
-	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否禁用 CNAME 跟随
-	DisableARI            bool           `json:"disableARI"`            // 是否禁用 ARI
-	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // 证书到期前多少天前跳过续期（默认值：30）
+	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（零值取决于提供商的默认值）
+	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（零值取决于提供商的默认值）
+	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否关闭 CNAME 跟随
+	DisableARI            bool           `json:"disableARI"`            // 是否关闭 ARI
+	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
 }
 
 type WorkflowNodeConfigForUpload struct {

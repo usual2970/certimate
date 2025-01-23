@@ -1,10 +1,17 @@
 {
+  "workflow_run.action.view": "View detail",
+  "workflow_run.action.cancel": "Cancel run",
+  "workflow_run.action.cancel.confirm": "Are you sure to cancel this run?",
+  "workflow_run.action.delete": "Delete run",
+  "workflow_run.action.delete.confirm": "Are you sure to delete this run?",
+
   "workflow_run.props.id": "ID",
   "workflow_run.props.status": "Status",
   "workflow_run.props.status.pending": "Pending",
   "workflow_run.props.status.running": "Running",
   "workflow_run.props.status.succeeded": "Succeeded",
   "workflow_run.props.status.failed": "Failed",
+  "workflow_run.props.status.canceled": "Canceled",
   "workflow_run.props.trigger": "Trigger",
   "workflow_run.props.trigger.auto": "Timing",
   "workflow_run.props.trigger.manual": "Manual",

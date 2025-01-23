@@ -16,6 +16,8 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
   return (
     <>
       <Popover
+        classNames={{ root: "shadow-md" }}
+        styles={{ body: { padding: 0 } }}
         arrow={false}
         content={
           <SharedNode.Menu
@@ -26,8 +28,6 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
             trigger={<Button color="primary" icon={<MoreOutlinedIcon />} variant="text" />}
           />
         }
-        overlayClassName="shadow-md"
-        overlayInnerStyle={{ padding: 0 }}
         placement="rightTop"
       >
         <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable>

@@ -11,7 +11,8 @@ import (
 )
 
 type workflowService interface {
-	Run(ctx context.Context, req *dtos.WorkflowRunReq) error
+	StartRun(ctx context.Context, req *dtos.WorkflowStartRunReq) error
+	CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error
 	Stop(ctx context.Context)
 }
 
@@ -25,17 +26,30 @@ func NewWorkflowHandler(router *router.RouterGroup[*core.RequestEvent], service 
 	}
 
 	group := router.Group("/workflows")
-	group.POST("/{id}/run", handler.run)
+	group.POST("/{workflowId}/runs", handler.run)
+	group.POST("/{workflowId}/runs/{runId}/cancel", handler.cancel)
 }
 
 func (handler *WorkflowHandler) run(e *core.RequestEvent) error {
-	req := &dtos.WorkflowRunReq{}
-	req.WorkflowId = e.Request.PathValue("id")
+	req := &dtos.WorkflowStartRunReq{}
+	req.WorkflowId = e.Request.PathValue("workflowId")
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}
 
-	if err := handler.service.Run(e.Request.Context(), req); err != nil {
+	if err := handler.service.StartRun(e.Request.Context(), req); err != nil {
+		return resp.Err(e, err)
+	}
+
+	return resp.Ok(e, nil)
+}
+
+func (handler *WorkflowHandler) cancel(e *core.RequestEvent) error {
+	req := &dtos.WorkflowCancelRunReq{}
+	req.WorkflowId = e.Request.PathValue("workflowId")
+	req.RunId = e.Request.PathValue("runId")
+
+	if err := handler.service.CancelRun(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	}
 

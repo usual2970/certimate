@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
+  ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
+  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -13,7 +15,6 @@ import {
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import {
-  Badge,
   Button,
   Divider,
   Empty,
@@ -159,32 +160,25 @@ const WorkflowList = () => {
       key: "lastRun",
       title: t("workflow.props.last_run_at"),
       render: (_, record) => {
-        if (record.lastRunId) {
-          if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.RUNNING) {
-            return (
-              <Space>
-                <Badge status="processing" count={<SyncOutlinedIcon style={{ color: themeToken.colorInfo }} />} />
-                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
-              </Space>
-            );
-          } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
-            return (
-              <Space>
-                <Badge status="success" count={<CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />} />
-                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
-              </Space>
-            );
-          } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
-            return (
-              <Space>
-                <Badge status="error" count={<CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />} />
-                <Typography.Text>{dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss")}</Typography.Text>
-              </Space>
-            );
-          }
+        let icon = <></>;
+        if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.PENDING) {
+          icon = <ClockCircleOutlinedIcon style={{ color: themeToken.colorTextSecondary }} />;
+        } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.RUNNING) {
+          icon = <SyncOutlinedIcon style={{ color: themeToken.colorInfo }} spin />;
+        } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.SUCCEEDED) {
+          icon = <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />;
+        } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
+          icon = <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />;
+        } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.CANCELED) {
+          icon = <PauseCircleOutlinedIcon style={{ color: themeToken.colorWarning }} />;
         }
 
-        return <></>;
+        return (
+          <Space>
+            {icon}
+            <Typography.Text>{record.lastRunTime ? dayjs(record.lastRunTime!).format("YYYY-MM-DD HH:mm:ss") : ""}</Typography.Text>
+          </Space>
+        );
       },
     },
     {

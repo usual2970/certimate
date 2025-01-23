@@ -26,9 +26,23 @@ func NewCertificateHandler(router *router.RouterGroup[*core.RequestEvent], servi
 	}
 
 	group := router.Group("/certificates")
-	group.POST("/{id}/archive", handler.run)
+	group.POST("/{certificateId}/archive", handler.archiveFile)
 	group.POST("/validate/certificate", handler.validateCertificate)
 	group.POST("/validate/private-key", handler.validatePrivateKey)
+}
+
+func (handler *CertificateHandler) archiveFile(e *core.RequestEvent) error {
+	req := &dtos.CertificateArchiveFileReq{}
+	req.CertificateId = e.Request.PathValue("certificateId")
+	if err := e.BindBody(req); err != nil {
+		return resp.Err(e, err)
+	}
+
+	if bt, err := handler.service.ArchiveFile(e.Request.Context(), req); err != nil {
+		return resp.Err(e, err)
+	} else {
+		return resp.Ok(e, bt)
+	}
 }
 
 func (handler *CertificateHandler) validateCertificate(e *core.RequestEvent) error {
@@ -36,6 +50,7 @@ func (handler *CertificateHandler) validateCertificate(e *core.RequestEvent) err
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}
+
 	if rs, err := handler.service.ValidateCertificate(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	} else {
@@ -48,23 +63,10 @@ func (handler *CertificateHandler) validatePrivateKey(e *core.RequestEvent) erro
 	if err := e.BindBody(req); err != nil {
 		return resp.Err(e, err)
 	}
+
 	if err := handler.service.ValidatePrivateKey(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	} else {
 		return resp.Ok(e, nil)
-	}
-}
-
-func (handler *CertificateHandler) run(e *core.RequestEvent) error {
-	req := &dtos.CertificateArchiveFileReq{}
-	req.CertificateId = e.Request.PathValue("id")
-	if err := e.BindBody(req); err != nil {
-		return resp.Err(e, err)
-	}
-
-	if bt, err := handler.service.ArchiveFile(e.Request.Context(), req); err != nil {
-		return resp.Err(e, err)
-	} else {
-		return resp.Ok(e, bt)
 	}
 }

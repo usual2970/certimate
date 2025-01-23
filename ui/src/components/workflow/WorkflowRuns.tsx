@@ -4,17 +4,21 @@ import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
+  PauseCircleOutlined as PauseCircleOutlinedIcon,
+  PauseOutlined as PauseOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Empty, Table, type TableProps, Tag, notification } from "antd";
+import { Button, Empty, Modal, Table, type TableProps, Tag, Tooltip, notification } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
+import { cancelRun as cancelWorkflowRun } from "@/api/workflows";
 import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
-import { list as listWorkflowRuns } from "@/repository/workflowRun";
+import { list as listWorkflowRuns, remove as removeWorkflowRun } from "@/repository/workflowRun";
 import { getErrMsg } from "@/utils/error";
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
 
@@ -27,6 +31,7 @@ export type WorkflowRunsProps = {
 const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const { t } = useTranslation();
 
+  const [modalApi, ModelContextHolder] = Modal.useModal();
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const tableColumns: TableProps<WorkflowRunModel>["columns"] = [
@@ -66,6 +71,12 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           return (
             <Tag icon={<CloseCircleOutlinedIcon />} color="error">
               {t("workflow_run.props.status.failed")}
+            </Tag>
+          );
+        } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
+          return (
+            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+              {t("workflow_run.props.status.canceled")}
             </Tag>
           );
         }
@@ -116,11 +127,51 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       align: "end",
       fixed: "right",
       width: 120,
-      render: (_, record) => (
-        <Button.Group>
-          <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />} />
-        </Button.Group>
-      ),
+      render: (_, record) => {
+        const allowCancel = record.status === WORKFLOW_RUN_STATUSES.PENDING || record.status === WORKFLOW_RUN_STATUSES.RUNNING;
+        const aloowDelete =
+          record.status === WORKFLOW_RUN_STATUSES.SUCCEEDED ||
+          record.status === WORKFLOW_RUN_STATUSES.FAILED ||
+          record.status === WORKFLOW_RUN_STATUSES.CANCELED;
+
+        return (
+          <Button.Group>
+            <WorkflowRunDetailDrawer
+              data={record}
+              trigger={
+                <Tooltip title={t("workflow_run.action.view")}>
+                  <Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />
+                </Tooltip>
+              }
+            />
+
+            <Tooltip title={t("workflow_run.action.cancel")}>
+              <Button
+                color="default"
+                disabled={!allowCancel}
+                icon={<PauseOutlinedIcon />}
+                variant="text"
+                onClick={() => {
+                  handleCancelClick(record);
+                }}
+              />
+            </Tooltip>
+
+            <Tooltip title={t("workflow_run.action.delete")}>
+              <Button
+                color="danger"
+                danger
+                disabled={!aloowDelete}
+                icon={<DeleteOutlinedIcon />}
+                variant="text"
+                onClick={() => {
+                  handleDeleteClick(record);
+                }}
+              />
+            </Tooltip>
+          </Button.Group>
+        );
+      },
     },
   ];
   const [tableData, setTableData] = useState<WorkflowRunModel[]>([]);
@@ -129,7 +180,11 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
 
-  const { loading, error: loadedError } = useRequest(
+  const {
+    loading,
+    error: loadedError,
+    run: refreshData,
+  } = useRequest(
     () => {
       return listWorkflowRuns({
         workflowId: workflowId,
@@ -156,8 +211,46 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
     }
   );
 
+  const handleCancelClick = (workflowRun: WorkflowRunModel) => {
+    modalApi.confirm({
+      title: t("workflow_run.action.cancel"),
+      content: t("workflow_run.action.cancel.confirm"),
+      onOk: async () => {
+        try {
+          const resp = await cancelWorkflowRun(workflowId, workflowRun.id);
+          if (resp) {
+            refreshData();
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
+  const handleDeleteClick = (workflowRun: WorkflowRunModel) => {
+    modalApi.confirm({
+      title: t("workflow_run.action.delete"),
+      content: t("workflow_run.action.delete.confirm"),
+      onOk: async () => {
+        try {
+          const resp = await removeWorkflowRun(workflowRun);
+          if (resp) {
+            setTableData((prev) => prev.filter((item) => item.id !== workflowRun.id));
+            refreshData();
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
+  };
+
   return (
     <>
+      {ModelContextHolder}
       {NotificationContextHolder}
 
       <div className={className} style={style}>

@@ -1,5 +1,6 @@
-import { forwardRef, memo, useEffect, useImperativeHandle } from "react";
+import { forwardRef, memo, useImperativeHandle } from "react";
 import { useTranslation } from "react-i18next";
+import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
 import { Button, Form, type FormInstance, Input, Upload, type UploadProps } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
@@ -35,8 +36,7 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
     const { t } = useTranslation();
 
     const formSchema = z.object({
-      certificateId: z.string().optional(),
-      domains: z.string().optional(),
+      domains: z.string().nullish(),
       certificate: z
         .string({ message: t("workflow_node.upload.form.certificate.placeholder") })
         .min(1, t("workflow_node.upload.form.certificate.placeholder"))
@@ -51,15 +51,6 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
       name: "workflowNodeUploadConfigForm",
       initialValues: initialValues ?? initFormModel(),
     });
-
-    const certificate = Form.useWatch("certificate", formInst);
-    const privateKey = Form.useWatch("privateKey", formInst);
-
-    useEffect(() => {
-      if (certificate && privateKey) {
-        formInst.validateFields(["certificate", "privateKey"]);
-      }
-    }, [certificate, privateKey]);
 
     const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
       onValuesChange?.(values as UploadNodeConfigFormFieldValues);
@@ -87,17 +78,20 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
           const resp = await validateCertificate(certificate);
           formInst.setFields([
             {
-              name: "certificate",
-              value: certificate,
-              errors: [],
-            },
-            {
               name: "domains",
               value: resp.data.domains,
+            },
+            {
+              name: "certificate",
+              value: certificate,
             },
           ]);
         } catch (e) {
           formInst.setFields([
+            {
+              name: "domains",
+              value: "",
+            },
             {
               name: "certificate",
               value: "",
@@ -108,25 +102,27 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
       } else {
         formInst.setFieldValue("certificate", "");
       }
+
       onValuesChange?.(formInst.getFieldsValue(true));
     };
 
     const handlePrivateKeyFileChange: UploadProps["onChange"] = async ({ file }) => {
       if (file && file.status !== "removed") {
         const privateKey = await readFileContent(file.originFileObj ?? (file as unknown as File));
+
         try {
           await validatePrivateKey(privateKey);
           formInst.setFields([
             {
               name: "privateKey",
               value: privateKey,
-              errors: [],
             },
           ]);
         } catch (e) {
           formInst.setFields([
             {
               name: "privateKey",
+              value: "",
               errors: [getErrMsg(e)],
             },
           ]);
@@ -141,35 +137,27 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
     return (
       <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
         <Form.Item name="domains" label={t("workflow_node.upload.form.domains.label")} rules={[formRule]}>
-          <Input readOnly />
+          <Input placeholder={t("workflow_node.upload.form.domains.placeholder")} readOnly />
         </Form.Item>
 
         <Form.Item name="certificate" label={t("workflow_node.upload.form.certificate.label")} rules={[formRule]}>
-          <Input.TextArea
-            readOnly
-            autoSize={{ minRows: 5, maxRows: 10 }}
-            placeholder={t("workflow_node.upload.form.certificate.placeholder")}
-            value={certificate}
-          />
-          <div className="mt-2 text-right">
-            <Upload beforeUpload={() => false} maxCount={1} onChange={handleCertificateFileChange}>
-              <Button>{t("workflow_node.upload.form.certificate.button")}</Button>
-            </Upload>
-          </div>
+          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 10 }} placeholder={t("workflow_node.upload.form.certificate.placeholder")} />
+        </Form.Item>
+
+        <Form.Item>
+          <Upload beforeUpload={() => false} maxCount={1} onChange={handleCertificateFileChange}>
+            <Button icon={<UploadOutlinedIcon />}>{t("workflow_node.upload.form.certificate.button")}</Button>
+          </Upload>
         </Form.Item>
 
         <Form.Item name="privateKey" label={t("workflow_node.upload.form.private_key.label")} rules={[formRule]}>
-          <Input.TextArea
-            readOnly
-            autoSize={{ minRows: 5, maxRows: 10 }}
-            placeholder={t("workflow_node.upload.form.private_key.placeholder")}
-            value={privateKey}
-          />
-          <div className="mt-2 text-right">
-            <Upload beforeUpload={() => false} maxCount={1} onChange={handlePrivateKeyFileChange}>
-              <Button>{t("workflow_node.upload.form.private_key.button")}</Button>
-            </Upload>
-          </div>
+          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 10 }} placeholder={t("workflow_node.upload.form.private_key.placeholder")} />
+        </Form.Item>
+
+        <Form.Item>
+          <Upload beforeUpload={() => false} maxCount={1} onChange={handlePrivateKeyFileChange}>
+            <Button icon={<UploadOutlinedIcon />}>{t("workflow_node.upload.form.private_key.button")}</Button>
+          </Upload>
         </Form.Item>
       </Form>
     );
