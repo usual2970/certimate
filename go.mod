@@ -17,6 +17,7 @@ require (
 	github.com/alibabacloud-go/waf-openapi-20211001/v5 v5.0.4
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/aws/aws-sdk-go-v2/service/acm v1.30.13
+	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.5
 	github.com/baidubce/bce-sdk-go v0.9.214
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.40
 	github.com/go-acme/lego/v4 v4.21.0

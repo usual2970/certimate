@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentCloudCSSDeployerConfig struct {
@@ -51,7 +51,7 @@ func NewWithLogger(config *TencentCloudCSSDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerSsl.New(&providerSsl.TencentCloudSSLUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.TencentCloudSSLUploaderConfig{
 		SecretId:  config.SecretId,
 		SecretKey: config.SecretKey,
 	})

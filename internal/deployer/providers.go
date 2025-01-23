@@ -13,6 +13,7 @@ import (
 	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	providerAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
+	providerAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
 	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
@@ -142,6 +143,28 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
+	case domain.DeployProviderTypeAWSCloudFront:
+		{
+			access := domain.AccessConfigForAWS{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeAWSCloudFront:
+				deployer, err := providerAWSCloudFront.NewWithLogger(&providerAWSCloudFront.AWSCloudFrontDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					DistributionId:  maps.GetValueAsString(options.ProviderDeployConfig, "distributionId"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
+		}
+
 	case domain.DeployProviderTypeBaiduCloudCDN:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
@@ -149,12 +172,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			deployer, err := providerBaiduCloudCDN.NewWithLogger(&providerBaiduCloudCDN.BaiduCloudCDNDeployerConfig{
-				AccessKeyId:     access.AccessKeyId,
-				SecretAccessKey: access.SecretAccessKey,
-				Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
-			}, logger)
-			return deployer, logger, err
+			switch options.Provider {
+			case domain.DeployProviderTypeBaiduCloudCDN:
+				deployer, err := providerBaiduCloudCDN.NewWithLogger(&providerBaiduCloudCDN.BaiduCloudCDNDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeployProviderTypeBytePlusCDN:
@@ -164,12 +193,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
 			}
 
-			deployer, err := providerBytePlusCDN.NewWithLogger(&providerBytePlusCDN.BytePlusCDNDeployerConfig{
-				AccessKey: access.AccessKey,
-				SecretKey: access.SecretKey,
-				Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
-			}, logger)
-			return deployer, logger, err
+			switch options.Provider {
+			case domain.DeployProviderTypeBytePlusCDN:
+				deployer, err := providerBytePlusCDN.NewWithLogger(&providerBytePlusCDN.BytePlusCDNDeployerConfig{
+					AccessKey: access.AccessKey,
+					SecretKey: access.SecretKey,
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeployProviderTypeDogeCloudCDN:

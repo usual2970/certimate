@@ -23,6 +23,7 @@ import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLi
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
+import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
@@ -136,6 +137,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunOSSConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_WAF:
           return <DeployNodeConfigFormAliyunWAFConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.AWS_CLOUDFRONT:
+          return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BYTEPLUS_CDN:

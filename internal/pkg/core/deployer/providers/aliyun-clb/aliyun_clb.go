@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerSlb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-slb"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-slb"
 )
 
 type AliyunCLBDeployerConfig struct {
@@ -63,7 +63,7 @@ func NewWithLogger(config *AliyunCLBDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerSlb.New(&providerSlb.AliyunSLBUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.AliyunSLBUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          config.Region,
@@ -161,7 +161,7 @@ func (d *AliyunCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 
 	// 遍历更新监听证书
 	if len(listenerPorts) == 0 {
-		return xerrors.New("listener not found")
+		return errors.New("listener not found")
 	} else {
 		var errs []error
 

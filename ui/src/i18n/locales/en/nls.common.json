@@ -47,6 +47,7 @@
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS (Object Storage Service)",
   "common.provider.aliyun.waf": "Alibaba Cloud - WAF (Web Application Firewall)",
   "common.provider.aws": "AWS",
+  "common.provider.aws.cloudfront": "AWS - CloudFront",
   "common.provider.aws.route53": "AWS - Route53",
   "common.provider.azure": "Azure",
   "common.provider.azure.dns": "Azure - DNS",

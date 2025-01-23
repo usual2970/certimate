@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/pem"
+	"errors"
 
 	xerrors "github.com/pkg/errors"
 )
@@ -18,7 +19,7 @@ import (
 //   - err: 错误。
 func ConvertCertificateToPEM(cert *x509.Certificate) (certPem string, err error) {
 	if cert == nil {
-		return "", xerrors.New("cert is nil")
+		return "", errors.New("`cert` is nil")
 	}
 
 	block := &pem.Block{
@@ -39,7 +40,7 @@ func ConvertCertificateToPEM(cert *x509.Certificate) (certPem string, err error)
 //   - err: 错误。
 func ConvertECPrivateKeyToPEM(privkey *ecdsa.PrivateKey) (privkeyPem string, err error) {
 	if privkey == nil {
-		return "", xerrors.New("privkey is nil")
+		return "", errors.New("`privkey` is nil")
 	}
 
 	data, err := x509.MarshalECPrivateKey(privkey)

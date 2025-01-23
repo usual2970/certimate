@@ -92,6 +92,5 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*awsAcm.Clien
 		o.Region = region
 		o.Credentials = aws.NewCredentialsCache(awsCred.NewStaticCredentialsProvider(accessKeyId, secretAccessKey, ""))
 	})
-
 	return client, nil
 }

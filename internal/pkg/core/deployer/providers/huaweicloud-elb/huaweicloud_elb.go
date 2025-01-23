@@ -19,7 +19,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerElb "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -70,7 +70,7 @@ func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerElb.New(&providerElb.HuaweiCloudELBUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.HuaweiCloudELBUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		SecretAccessKey: config.SecretAccessKey,
 		Region:          config.Region,
@@ -205,7 +205,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 
 	// 遍历更新监听器证书
 	if len(listenerIds) == 0 {
-		return xerrors.New("listener not found")
+		return errors.New("listener not found")
 	} else {
 		var errs []error
 

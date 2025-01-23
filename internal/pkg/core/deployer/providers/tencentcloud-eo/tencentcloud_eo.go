@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentCloudEODeployerConfig struct {
@@ -59,7 +59,7 @@ func NewWithLogger(config *TencentCloudEODeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	uploader, err := providerSsl.New(&providerSsl.TencentCloudSSLUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.TencentCloudSSLUploaderConfig{
 		SecretId:  config.SecretId,
 		SecretKey: config.SecretKey,
 	})
@@ -77,7 +77,7 @@ func NewWithLogger(config *TencentCloudEODeployerConfig, logger logger.Logger) (
 
 func (d *TencentCloudEODeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.ZoneId == "" {
-		return nil, xerrors.New("config `zoneId` is required")
+		return nil, errors.New("config `zoneId` is required")
 	}
 
 	// 上传证书到 SSL

@@ -35,8 +35,8 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
       .nonempty(t("workflow_node.deploy.form.aliyun_waf_region.placeholder"))
       .trim(),
     instanceId: z
-      .string({ message: t("workflow_node.deploy.form.aliyun_instance_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_instance_id.placeholder"))
+      .string({ message: t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder") })
+      .nonempty(t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
   });

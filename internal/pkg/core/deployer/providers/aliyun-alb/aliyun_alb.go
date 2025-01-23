@@ -18,7 +18,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerCas "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
 type AliyunALBDeployerConfig struct {
@@ -195,7 +195,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 
 	// 遍历更新监听证书
 	if len(listenerIds) == 0 {
-		return xerrors.New("listener not found")
+		return errors.New("listener not found")
 	} else {
 		var errs []error
 
@@ -445,7 +445,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 		}
 	}
 
-	uploader, err := providerCas.New(&providerCas.AliyunCASUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.AliyunCASUploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          casRegion,
