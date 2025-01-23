@@ -45,6 +45,7 @@
   "common.provider.aliyun.live": "阿里云 - 视频直播 Live",
   "common.provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",
   "common.provider.aliyun.oss": "阿里云 - 对象存储 OSS",
+  "common.provider.aliyun.waf": "阿里云 - Web 应用防火墙 WAF",
   "common.provider.aws": "AWS",
   "common.provider.aws.route53": "AWS - Route53",
   "common.provider.azure": "Azure",

@@ -73,22 +73,7 @@ func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	aliyunCasRegion := config.Region
-	if aliyunCasRegion != "" {
-		// 阿里云 CAS 服务接入点是独立于 ALB 服务的
-		// 国内版固定接入点：华东一杭州
-		// 国际版固定接入点：亚太东南一新加坡
-		if !strings.HasPrefix(aliyunCasRegion, "cn-") {
-			aliyunCasRegion = "ap-southeast-1"
-		} else {
-			aliyunCasRegion = "cn-hangzhou"
-		}
-	}
-	uploader, err := providerCas.New(&providerCas.AliyunCASUploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		AccessKeySecret: config.AccessKeySecret,
-		Region:          aliyunCasRegion,
-	})
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
@@ -445,4 +430,25 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		alb: albClient,
 		cas: casClient,
 	}, nil
+}
+
+func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+	casRegion := region
+	if casRegion != "" {
+		// 阿里云 CAS 服务接入点是独立于 ALB 服务的
+		// 国内版固定接入点：华东一杭州
+		// 国际版固定接入点：亚太东南一新加坡
+		if casRegion != "" && !strings.HasPrefix(casRegion, "cn-") {
+			casRegion = "ap-southeast-1"
+		} else {
+			casRegion = "cn-hangzhou"
+		}
+	}
+
+	uploader, err := providerCas.New(&providerCas.AliyunCASUploaderConfig{
+		AccessKeyId:     accessKeyId,
+		AccessKeySecret: accessKeySecret,
+		Region:          casRegion,
+	})
+	return uploader, err
 }

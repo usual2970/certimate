@@ -57,6 +57,8 @@ require (
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
+	github.com/alibabacloud-go/waf-openapi-20211001 v1.0.0 // indirect
+	github.com/alibabacloud-go/waf-openapi-20211001/v5 v5.0.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.48.1 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect

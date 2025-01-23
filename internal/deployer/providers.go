@@ -12,6 +12,7 @@ import (
 	providerAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
+	providerAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
 	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
@@ -49,7 +50,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -124,6 +125,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Bucket:          maps.GetValueAsString(options.ProviderDeployConfig, "bucket"),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunWAF:
+				deployer, err := providerAliyunWAF.NewWithLogger(&providerAliyunWAF.AliyunWAFDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					InstanceId:      maps.GetValueAsString(options.ProviderDeployConfig, "instanceId"),
 				}, logger)
 				return deployer, logger, err
 

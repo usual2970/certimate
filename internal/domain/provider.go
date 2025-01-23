@@ -85,6 +85,7 @@ const (
 	DeployProviderTypeAliyunLive        = DeployProviderType("aliyun-live")
 	DeployProviderTypeAliyunNLB         = DeployProviderType("aliyun-nlb")
 	DeployProviderTypeAliyunOSS         = DeployProviderType("aliyun-oss")
+	DeployProviderTypeAliyunWAF         = DeployProviderType("aliyun-waf")
 	DeployProviderTypeBaiduCloudCDN     = DeployProviderType("baiducloud-cdn")
 	DeployProviderTypeBytePlusCDN       = DeployProviderType("byteplus-cdn")
 	DeployProviderTypeDogeCloudCDN      = DeployProviderType("dogecloud-cdn")

@@ -34,7 +34,7 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./qiniu_cdn_test.go -args \
+	go test -v ./qiniu_pili_test.go -args \
 	--CERTIMATE_DEPLOYER_QINIUPILI_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_QINIUPILI_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_QINIUPILI_ACCESSKEY="your-access-key" \
