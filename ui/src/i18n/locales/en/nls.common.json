@@ -61,6 +61,7 @@
   "common.provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",
   "common.provider.edgio": "Edgio",
   "common.provider.edgio.applications": "Edgio - Applications",
+  "common.provider.gname": "GNAME",
   "common.provider.godaddy": "GoDaddy",
   "common.provider.huaweicloud": "Huawei Cloud",
   "common.provider.huaweicloud.cdn": "Huawei Cloud - CDN (Content Delivery Network)",

@@ -96,6 +96,7 @@ make local.run
 | [Azure](https://azure.microsoft.com/)                              |                                         |
 | [CloudFlare](https://www.cloudflare.com/)                          |                                         |
 | [ClouDNS](https://www.cloudns.net//)                               |                                         |
+| [GNAME](https://www.gname.com/)                                    |                                         |
 | [GoDaddy](https://www.godaddy.com/)                                |                                         |
 | [Name.com](https://www.name.com/)                                  |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |

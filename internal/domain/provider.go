@@ -19,6 +19,7 @@ const (
 	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
+	AccessProviderTypeGname        = AccessProviderType("gname")
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
@@ -55,6 +56,7 @@ const (
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
+	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")

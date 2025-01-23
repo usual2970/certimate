@@ -5,7 +5,7 @@ type BaseResponse interface {
 	GetMsg() string
 }
 
-type AddDNSRecordRequest struct {
+type AddDomainResolutionRequest struct {
 	ZoneName    string `json:"ym"`
 	RecordType  string `json:"lx"`
 	RecordName  string `json:"zj"`
@@ -14,21 +14,21 @@ type AddDNSRecordRequest struct {
 	TTL         int    `json:"ttl"`
 }
 
-type AddDNSRecordResponse struct {
+type AddDomainResolutionResponse struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 	Data int    `json:"data"`
 }
 
-func (r *AddDNSRecordResponse) GetCode() int {
+func (r *AddDomainResolutionResponse) GetCode() int {
 	return r.Code
 }
 
-func (r *AddDNSRecordResponse) GetMsg() string {
+func (r *AddDomainResolutionResponse) GetMsg() string {
 	return r.Msg
 }
 
-type EditDNSRecordRequest struct {
+type ModifyDomainResolutionRequest struct {
 	ID          string `json:"jxid"`
 	ZoneName    string `json:"ym"`
 	RecordType  string `json:"lx"`
@@ -38,53 +38,53 @@ type EditDNSRecordRequest struct {
 	TTL         int    `json:"ttl"`
 }
 
-type EditDNSRecordResponse struct {
+type ModifyDomainResolutionResponse struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
 
-func (r *EditDNSRecordResponse) GetCode() int {
+func (r *ModifyDomainResolutionResponse) GetCode() int {
 	return r.Code
 }
 
-func (r *EditDNSRecordResponse) GetMsg() string {
+func (r *ModifyDomainResolutionResponse) GetMsg() string {
 	return r.Msg
 }
 
-type DeleteDNSRecordRequest struct {
+type DeleteDomainResolutionRequest struct {
 	ZoneName string `json:"ym"`
-	RecordId int    `json:"jxid"`
+	RecordID string `json:"jxid"`
 }
 
-type DeleteDNSRecordResponse struct {
+type DeleteDomainResolutionResponse struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
 
-func (r *DeleteDNSRecordResponse) GetCode() int {
+func (r *DeleteDomainResolutionResponse) GetCode() int {
 	return r.Code
 }
 
-func (r *DeleteDNSRecordResponse) GetMsg() string {
+func (r *DeleteDomainResolutionResponse) GetMsg() string {
 	return r.Msg
 }
 
-type ListDNSRecordRequest struct {
+type ListDomainResolutionRequest struct {
 	ZoneName string `json:"ym"`
 	Page     *int   `json:"page,omitempty"`
 	PageSize *int   `json:"limit,omitempty"`
 }
 
-type ListDNSRecordResponse struct {
-	Code     int          `json:"code"`
-	Msg      string       `json:"msg"`
-	Count    int          `json:"count"`
-	Data     []*DNSRecord `json:"data"`
-	Page     int          `json:"page"`
-	PageSize int          `json:"pagesize"`
+type ListDomainResolutionResponse struct {
+	Code     int                 `json:"code"`
+	Msg      string              `json:"msg"`
+	Count    int                 `json:"count"`
+	Data     []*ResolutionRecord `json:"data"`
+	Page     int                 `json:"page"`
+	PageSize int                 `json:"pagesize"`
 }
 
-type DNSRecord struct {
+type ResolutionRecord struct {
 	ID          string `json:"id"`
 	ZoneName    string `json:"ym"`
 	RecordType  string `json:"lx"`
@@ -93,10 +93,10 @@ type DNSRecord struct {
 	MX          int    `json:"mx"`
 }
 
-func (r *ListDNSRecordResponse) GetCode() int {
+func (r *ListDomainResolutionResponse) GetCode() int {
 	return r.Code
 }
 
-func (r *ListDNSRecordResponse) GetMsg() string {
+func (r *ListDomainResolutionResponse) GetMsg() string {
 	return r.Msg
 }

@@ -18,6 +18,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
+      | AccessConfigForGname
       | AccessConfigForGoDaddy
       | AccessConfigForHuaweiCloud
       | AccessConfigForKubernetes
@@ -89,6 +90,11 @@ export type AccessConfigForDogeCloud = {
 export type AccessConfigForEdgio = {
   clientId: string;
   clientSecret: string;
+};
+
+export type AccessConfigForGname = {
+  appId: string;
+  appKey: string;
 };
 
 export type AccessConfigForGoDaddy = {

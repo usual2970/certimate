@@ -35,12 +35,12 @@ func (c *GnameClient) WithTimeout(timeout time.Duration) *GnameClient {
 	return c
 }
 
-func (c *GnameClient) AddDNSRecord(req *AddDNSRecordRequest) (*AddDNSRecordResponse, error) {
+func (c *GnameClient) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomainResolutionResponse, error) {
 	params := make(map[string]any)
 	jsonData, _ := json.Marshal(req)
 	json.Unmarshal(jsonData, &params)
 
-	result := AddDNSRecordResponse{}
+	result := AddDomainResolutionResponse{}
 	err := c.sendRequestWithResult("/api/resolution/add", params, &result)
 	if err != nil {
 		return nil, err
@@ -48,12 +48,12 @@ func (c *GnameClient) AddDNSRecord(req *AddDNSRecordRequest) (*AddDNSRecordRespo
 	return &result, nil
 }
 
-func (c *GnameClient) EditDNSRecord(req *EditDNSRecordRequest) (*EditDNSRecordResponse, error) {
+func (c *GnameClient) ModifyDomainResolution(req *ModifyDomainResolutionRequest) (*ModifyDomainResolutionResponse, error) {
 	params := make(map[string]any)
 	jsonData, _ := json.Marshal(req)
 	json.Unmarshal(jsonData, &params)
 
-	result := EditDNSRecordResponse{}
+	result := ModifyDomainResolutionResponse{}
 	err := c.sendRequestWithResult("/api/resolution/edit", params, &result)
 	if err != nil {
 		return nil, err
@@ -61,12 +61,12 @@ func (c *GnameClient) EditDNSRecord(req *EditDNSRecordRequest) (*EditDNSRecordRe
 	return &result, nil
 }
 
-func (c *GnameClient) DeleteDNSRecord(req *DeleteDNSRecordRequest) (*DeleteDNSRecordResponse, error) {
+func (c *GnameClient) DeleteDomainResolution(req *DeleteDomainResolutionRequest) (*DeleteDomainResolutionResponse, error) {
 	params := make(map[string]any)
 	jsonData, _ := json.Marshal(req)
 	json.Unmarshal(jsonData, &params)
 
-	result := DeleteDNSRecordResponse{}
+	result := DeleteDomainResolutionResponse{}
 	err := c.sendRequestWithResult("/api/resolution/delete", params, &result)
 	if err != nil {
 		return nil, err
@@ -74,12 +74,12 @@ func (c *GnameClient) DeleteDNSRecord(req *DeleteDNSRecordRequest) (*DeleteDNSRe
 	return &result, nil
 }
 
-func (c *GnameClient) ListDNSRecord(req *ListDNSRecordRequest) (*ListDNSRecordResponse, error) {
+func (c *GnameClient) ListDomainResolution(req *ListDomainResolutionRequest) (*ListDomainResolutionResponse, error) {
 	params := make(map[string]any)
 	jsonData, _ := json.Marshal(req)
 	json.Unmarshal(jsonData, &params)
 
-	result := ListDNSRecordResponse{}
+	result := ListDomainResolutionResponse{}
 	err := c.sendRequestWithResult("/api/resolution/list", params, &result)
 	if err != nil {
 		return nil, err
@@ -124,7 +124,7 @@ func (c *GnameClient) sendRequest(path string, params map[string]any) (*resty.Re
 	data["gntime"] = fmt.Sprintf("%d", time.Now().Unix())
 	data["gntoken"] = c.generateSignature(data)
 
-	url := "https://api.gname.com" + path
+	url := "http://api.gname.com" + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(data)

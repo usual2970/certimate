@@ -78,6 +78,11 @@ type AccessConfigForEdgio struct {
 	ClientSecret string `json:"clientSecret"`
 }
 
+type AccessConfigForGname struct {
+	AppId  string `json:"appId"`
+	AppKey string `json:"appKey"`
+}
+
 type AccessConfigForGoDaddy struct {
 	ApiKey    string `json:"apiKey"`
 	ApiSecret string `json:"apiSecret"`
