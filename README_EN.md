@@ -98,6 +98,7 @@ The following DNS providers are supported:
 | [Name.com](https://www.name.com/)                            |                                       |
 | [NameSilo](https://www.namesilo.com/)                        |                                       |
 | [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
+| [West.cn](https://www.west.cn/)                              |                                       |
 | [PowerDNS](https://www.powerdns.com/)                        |                                       |
 | ACME Proxy HTTP Request                                      | Supports managing DNS by HTTP request |
 

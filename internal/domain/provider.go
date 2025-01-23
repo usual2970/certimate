@@ -32,6 +32,7 @@ const (
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
 	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
+	AccessProviderTypeWestcn       = AccessProviderType("westcn")
 )
 
 type ApplyDNSProviderType string
@@ -62,6 +63,7 @@ const (
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
 	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
 	ApplyDNSProviderTypeVolcEngineDNS   = ApplyDNSProviderType("volcengine-dns")
+	ApplyDNSProviderTypeWestcn          = ApplyDNSProviderType("westcn")
 )
 
 type DeployProviderType string

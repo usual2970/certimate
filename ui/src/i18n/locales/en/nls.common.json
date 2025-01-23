@@ -93,6 +93,7 @@
   "common.provider.volcengine.live": "Volcengine - Live",
   "common.provider.volcengine.tos": "Volcengine - Tinder Object Storage (TOS)",
   "common.provider.webhook": "Webhook",
+  "common.provider.westcn": "West.cn",
 
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "DingTalk",

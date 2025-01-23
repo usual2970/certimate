@@ -19,6 +19,7 @@ import (
 	providerPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
 	providerTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
 	providerVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
+	providerWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
@@ -233,6 +234,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := providerVolcEngine.NewChallengeProvider(&providerVolcEngine.VolcEngineApplicantConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeWestcn:
+		{
+			access := domain.AccessConfigForWestcn{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			applicant, err := providerWestcn.NewChallengeProvider(&providerWestcn.WestcnApplicantConfig{
+				Username:              access.Username,
+				ApiPassword:           access.ApiPassword,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

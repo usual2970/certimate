@@ -140,3 +140,8 @@ type AccessConfigForVolcEngine struct {
 type AccessConfigForWebhook struct {
 	Url string `json:"url"`
 }
+
+type AccessConfigForWestcn struct {
+	Username    string `json:"username"`
+	ApiPassword string `json:"password"`
+}

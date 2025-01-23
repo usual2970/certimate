@@ -27,6 +27,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   UCLOUD: "ucloud",
   VOLCENGINE: "volcengine",
   WEBHOOK: "webhook",
+  WESTCN: "westcn",
 } as const);
 
 export type AccessProviderType = (typeof ACCESS_PROVIDERS)[keyof typeof ACCESS_PROVIDERS];
@@ -69,10 +70,11 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.AWS, "common.provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.AZURE, "common.provider.azure", "/imgs/providers/azure.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.CLOUDFLARE, "common.provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom", "/imgs/providers/namedotcom.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NAMESILO, "common.provider.namesilo", "/imgs/providers/namesilo.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.NS1, "common.provider.ns1", "/imgs/providers/ns1.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.GODADDY, "common.provider.godaddy", "/imgs/providers/godaddy.svg", ACCESS_USAGES.APPLY],
+    [ACCESS_PROVIDERS.WESTCN, "common.provider.westcn", "/imgs/providers/westcn.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.POWERDNS, "common.provider.powerdns", "/imgs/providers/powerdns.svg", ACCESS_USAGES.APPLY],
     [ACCESS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", ACCESS_USAGES.APPLY],
   ].map(([type, name, icon, usage]) => [
@@ -111,6 +113,7 @@ export const APPLY_DNS_PROVIDERS = Object.freeze({
   TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
   VOLCENGINE: `${ACCESS_PROVIDERS.VOLCENGINE}`, // 兼容旧值，等同于 `VOLCENGINE_DNS`
   VOLCENGINE_DNS: `${ACCESS_PROVIDERS.VOLCENGINE}-dns`,
+  WESTCN: `${ACCESS_PROVIDERS.WESTCN}`,
 } as const);
 
 export type ApplyDNSProviderType = (typeof APPLY_DNS_PROVIDERS)[keyof typeof APPLY_DNS_PROVIDERS];
@@ -139,6 +142,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.NAMEDOTCOM, "common.provider.namedotcom"],
     [APPLY_DNS_PROVIDERS.NAMESILO, "common.provider.namesilo"],
     [APPLY_DNS_PROVIDERS.NS1, "common.provider.ns1"],
+    [APPLY_DNS_PROVIDERS.WESTCN, "common.provider.westcn"],
     [APPLY_DNS_PROVIDERS.POWERDNS, "common.provider.powerdns"],
     [APPLY_DNS_PROVIDERS.ACMEHTTPREQ, "common.provider.acmehttpreq"],
   ].map(([type, name]) => [

@@ -32,6 +32,7 @@ import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
+import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 
 type AccessFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessFormPresets = "add" | "edit";
@@ -131,6 +132,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormVolcEngineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessFormWebhookConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.WESTCN:
+        return <AccessFormWestcnConfig {...nestedFormProps} />;
     }
   }, [disabled, initialValues?.config, fieldProvider, nestedFormInst, nestedFormName]);
 

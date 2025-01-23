@@ -30,6 +30,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForUCloud
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
+      | AccessConfigForWestcn
     );
   usage: AccessUsageType;
 }
@@ -149,5 +150,10 @@ export type AccessConfigForVolcEngine = {
 
 export type AccessConfigForWebhook = {
   url: string;
+};
+
+export type AccessConfigForWestcn = {
+  username: string;
+  apiPassword: string;
 };
 // #endregion

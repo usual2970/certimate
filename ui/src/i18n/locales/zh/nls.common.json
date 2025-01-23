@@ -93,6 +93,7 @@
   "common.provider.volcengine.live": "火山引擎 - 视频直播 Live",
   "common.provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
   "common.provider.webhook": "Webhook",
+  "common.provider.westcn": "西部数码",
 
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "钉钉",
