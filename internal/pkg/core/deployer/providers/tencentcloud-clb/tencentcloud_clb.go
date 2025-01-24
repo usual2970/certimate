@@ -14,7 +14,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerSsl "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
 type TencentCloudCLBDeployerConfig struct {
@@ -69,7 +69,7 @@ func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	uploader, err := providerSsl.New(&providerSsl.TencentCloudSSLUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.TencentCloudSSLUploaderConfig{
 		SecretId:  config.SecretId,
 		SecretKey: config.SecretKey,
 	})
@@ -183,7 +183,7 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 
 	// 遍历更新监听器证书
 	if len(listenerIds) == 0 {
-		return xerrors.New("listener not found")
+		return errors.New("listener not found")
 	} else {
 		var errs []error
 

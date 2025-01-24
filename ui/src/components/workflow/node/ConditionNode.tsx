@@ -2,8 +2,8 @@ import { memo } from "react";
 import { MoreOutlined as MoreOutlinedIcon } from "@ant-design/icons";
 import { Button, Card, Popover } from "antd";
 
-import AddNode from "./AddNode";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import AddNode from "./AddNode";
 
 export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;

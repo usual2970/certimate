@@ -10,28 +10,32 @@ import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
-import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
+import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
+import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
+import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLocalConfig from "./AccessFormLocalConfig";
-import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
 import AccessFormNameSiloConfig from "./AccessFormNameSiloConfig";
+import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
+import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
+import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 
 type AccessFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessFormPresets = "add" | "edit";
@@ -99,8 +103,12 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormBytePlusConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CLOUDFLARE:
         return <AccessFormCloudflareConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.CLOUDNS:
+        return <AccessFormClouDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.GNAME:
+        return <AccessFormGnameConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GODADDY:
         return <AccessFormGoDaddyConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.EDGIO:
@@ -121,6 +129,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormPowerDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.QINIU:
         return <AccessFormQiniuConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.RAINYUN:
+        return <AccessFormRainYunConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:
         return <AccessFormSSHConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.TENCENTCLOUD:
@@ -131,6 +141,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormVolcEngineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessFormWebhookConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.WESTCN:
+        return <AccessFormWestcnConfig {...nestedFormProps} />;
     }
   }, [disabled, initialValues?.config, fieldProvider, nestedFormInst, nestedFormName]);
 

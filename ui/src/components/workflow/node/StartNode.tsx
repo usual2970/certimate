@@ -7,8 +7,8 @@ import { WORKFLOW_TRIGGERS, type WorkflowNodeConfigForStart, WorkflowNodeType } 
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
-import StartNodeConfigForm, { type StartNodeConfigFormInstance } from "./StartNodeConfigForm";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import StartNodeConfigForm, { type StartNodeConfigFormInstance } from "./StartNodeConfigForm";
 
 export type StartNodeProps = SharedNodeProps;
 

@@ -95,10 +95,14 @@ make local.run
 | [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
 | [Azure](https://azure.microsoft.com/)                              |                                         |
 | [CloudFlare](https://www.cloudflare.com/)                          |                                         |
+| [ClouDNS](https://www.cloudns.net//)                               |                                         |
+| [GNAME](https://www.gname.com/)                                    |                                         |
 | [GoDaddy](https://www.godaddy.com/)                                |                                         |
 | [Name.com](https://www.name.com/)                                  |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |
 | [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
+| [雨云](https://www.rainyun.com/)                                   |                                         |
+| [西部数码](https://www.west.cn/)                                   |                                         |
 | [PowerDNS](https://www.powerdns.com/)                              |                                         |
 | ACME 代理 HTTP 请求                                                | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
 
@@ -112,22 +116,23 @@ make local.run
 
 <summary>[展开查看]</summary>
 
-| 提供商                                  | 备注                                                           |
-| :-------------------------------------- | :------------------------------------------------------------- |
-| 本地部署                                | 可部署到本地服务器                                             |
-| SSH 部署                                | 可部署到远程服务器（通过 SSH+SFTP）                            |
-| Webhook 回调                            | 可部署到 Webhook                                               |
-| [Kubernetes](https://kubernetes.io/)    | 可部署到 Kubernetes Secret                                     |
-| [阿里云](https://www.aliyun.com/)       | 可部署到阿里云 OSS、CDN、DCDN、SLB（CLB/ALB/NLB）、Live 等服务 |
-| [腾讯云](https://cloud.tencent.com/)    | 可部署到腾讯云 COS、CDN、ECDN、EdgeOne、CLB、CSS 等服务        |
-| [百度智能云](https://cloud.baidu.com/)  | 可部署到百度智能云 CDN 等服务                                  |
-| [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB 等服务                                 |
-| [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、Live 等服务              |
-| [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN                                             |
-| [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                             |
-| [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                   |
-| [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                |
-| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications 等服务                             |
+| 提供商                                  | 备注                                                                |
+| :-------------------------------------- | :------------------------------------------------------------------ |
+| 本地部署                                | 可部署到本地服务器                                                  |
+| SSH 部署                                | 可部署到远程服务器（通过 SSH+SFTP/SCP）                             |
+| Webhook 回调                            | 可部署到 Webhook                                                    |
+| [Kubernetes](https://kubernetes.io/)    | 可部署到 Kubernetes Secret                                          |
+| [阿里云](https://www.aliyun.com/)       | 可部署到阿里云 OSS、CDN、DCDN、SLB（CLB/ALB/NLB）、WAF、Live 等服务 |
+| [腾讯云](https://cloud.tencent.com/)    | 可部署到腾讯云 COS、CDN、ECDN、EdgeOne、CLB、CSS 等服务             |
+| [百度智能云](https://cloud.baidu.com/)  | 可部署到百度智能云 CDN 等服务                                       |
+| [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB 等服务                                      |
+| [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、Live 等服务                   |
+| [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN、直播云等服务                                    |
+| [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                                  |
+| [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                        |
+| [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                     |
+| [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront 等服务                                      |
+| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications 等服务                                  |
 
 </details>
 

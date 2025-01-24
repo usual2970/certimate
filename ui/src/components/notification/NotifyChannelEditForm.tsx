@@ -10,8 +10,8 @@ import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields
 import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
-import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
+import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
 
 type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 

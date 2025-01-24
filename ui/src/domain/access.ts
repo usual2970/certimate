@@ -15,8 +15,10 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBaiduCloud
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
+      | AccessConfigForClouDNS
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
+      | AccessConfigForGname
       | AccessConfigForGoDaddy
       | AccessConfigForHuaweiCloud
       | AccessConfigForKubernetes
@@ -25,11 +27,13 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForNameSilo
       | AccessConfigForPowerDNS
       | AccessConfigForQiniu
+      | AccessConfigForRainYun
       | AccessConfigForSSH
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
+      | AccessConfigForWestcn
     );
   usage: AccessUsageType;
 }
@@ -73,6 +77,11 @@ export type AccessConfigForCloudflare = {
   dnsApiToken: string;
 };
 
+export type AccessConfigForClouDNS = {
+  authId: string;
+  authPassword: string;
+};
+
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
@@ -81,6 +90,11 @@ export type AccessConfigForDogeCloud = {
 export type AccessConfigForEdgio = {
   clientId: string;
   clientSecret: string;
+};
+
+export type AccessConfigForGname = {
+  appId: string;
+  appKey: string;
 };
 
 export type AccessConfigForGoDaddy = {
@@ -122,6 +136,10 @@ export type AccessConfigForQiniu = {
   secretKey: string;
 };
 
+export type AccessConfigForRainYun = {
+  apiKey: string;
+};
+
 export type AccessConfigForSSH = {
   host: string;
   port: number;
@@ -149,5 +167,10 @@ export type AccessConfigForVolcEngine = {
 
 export type AccessConfigForWebhook = {
   url: string;
+};
+
+export type AccessConfigForWestcn = {
+  username: string;
+  apiPassword: string;
 };
 // #endregion

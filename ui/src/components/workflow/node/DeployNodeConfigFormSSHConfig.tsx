@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DownOutlined as DownOutlinedIcon } from "@ant-design/icons";
-import { Button, Dropdown, Form, type FormInstance, Input, Select } from "antd";
+import { Button, Dropdown, Form, type FormInstance, Input, Select, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -17,6 +17,7 @@ type DeployNodeConfigFormSSHConfigFieldValues = Nullish<{
   jksStorepass?: string | null;
   preCommand?: string | null;
   postCommand?: string | null;
+  useSCP?: boolean;
 }>;
 
 export type DeployNodeConfigFormSSHConfigProps = {
@@ -89,6 +90,7 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
       .string()
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish(),
+    useSCP: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -260,6 +262,15 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
         <Form.Item name="postCommand" rules={[formRule]}>
           <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_post_command.placeholder")} />
         </Form.Item>
+      </Form.Item>
+
+      <Form.Item
+        name="useSCP"
+        label={t("workflow_node.deploy.form.ssh_use_scp.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_use_scp.tooltip") }}></span>}
+      >
+        <Switch />
       </Form.Item>
     </Form>
   );

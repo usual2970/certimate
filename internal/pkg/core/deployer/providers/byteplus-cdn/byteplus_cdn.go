@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerCdn "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
 )
 
 type BytePlusCDNDeployerConfig struct {
@@ -50,7 +50,7 @@ func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*By
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
-	uploader, err := providerCdn.New(&providerCdn.ByteplusCDNUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.ByteplusCDNUploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})
@@ -103,7 +103,7 @@ func (d *BytePlusCDNDeployer) Deploy(ctx context.Context, certPem string, privke
 			if len(describeCertConfigResp.Result.SpecifiedCertConfig) > 0 {
 				// 所有可关联的域名都配置了该证书，跳过部署
 			} else {
-				return nil, xerrors.New("domain not found")
+				return nil, errors.New("domain not found")
 			}
 		}
 	} else {

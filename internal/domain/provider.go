@@ -16,8 +16,10 @@ const (
 	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
+	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
+	AccessProviderTypeGname        = AccessProviderType("gname")
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
@@ -27,11 +29,13 @@ const (
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
+	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
 	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
+	AccessProviderTypeWestcn       = AccessProviderType("westcn")
 )
 
 type ApplyDNSProviderType string
@@ -51,6 +55,8 @@ const (
 	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
+	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
+	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")
@@ -58,10 +64,12 @@ const (
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
 	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")
 	ApplyDNSProviderTypePowerDNS        = ApplyDNSProviderType("powerdns")
+	ApplyDNSProviderTypeRainYun         = ApplyDNSProviderType("rainyun")
 	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
 	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
 	ApplyDNSProviderTypeVolcEngineDNS   = ApplyDNSProviderType("volcengine-dns")
+	ApplyDNSProviderTypeWestcn          = ApplyDNSProviderType("westcn")
 )
 
 type DeployProviderType string
@@ -81,6 +89,8 @@ const (
 	DeployProviderTypeAliyunLive        = DeployProviderType("aliyun-live")
 	DeployProviderTypeAliyunNLB         = DeployProviderType("aliyun-nlb")
 	DeployProviderTypeAliyunOSS         = DeployProviderType("aliyun-oss")
+	DeployProviderTypeAliyunWAF         = DeployProviderType("aliyun-waf")
+	DeployProviderTypeAWSCloudFront     = DeployProviderType("aws-cloudfront")
 	DeployProviderTypeBaiduCloudCDN     = DeployProviderType("baiducloud-cdn")
 	DeployProviderTypeBytePlusCDN       = DeployProviderType("byteplus-cdn")
 	DeployProviderTypeDogeCloudCDN      = DeployProviderType("dogecloud-cdn")
@@ -90,6 +100,7 @@ const (
 	DeployProviderTypeKubernetesSecret  = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal             = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN          = DeployProviderType("qiniu-cdn")
+	DeployProviderTypeQiniuPili         = DeployProviderType("qiniu-pili")
 	DeployProviderTypeSSH               = DeployProviderType("ssh")
 	DeployProviderTypeTencentCloudCDN   = DeployProviderType("tencentcloud-cdn")
 	DeployProviderTypeTencentCloudCLB   = DeployProviderType("tencentcloud-clb")

@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	providerScm "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -59,7 +59,7 @@ func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := providerScm.New(&providerScm.HuaweiCloudSCMUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.HuaweiCloudSCMUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		SecretAccessKey: config.SecretAccessKey,
 	})

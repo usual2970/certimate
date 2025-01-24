@@ -1,9 +1,9 @@
 import { createHashRouter } from "react-router-dom";
 
-import AuthLayout from "./pages/AuthLayout";
-import ConsoleLayout from "./pages/ConsoleLayout";
 import AccessList from "./pages/accesses/AccessList";
+import AuthLayout from "./pages/AuthLayout";
 import CertificateList from "./pages/certificates/CertificateList";
+import ConsoleLayout from "./pages/ConsoleLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Login from "./pages/login/Login";
 import Settings from "./pages/settings/Settings";

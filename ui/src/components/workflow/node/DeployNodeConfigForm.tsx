@@ -5,11 +5,11 @@ import { Alert, Button, Divider, Flex, Form, type FormInstance, Select, Switch, 
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import Show from "@/components/Show";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
 import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
+import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
@@ -22,6 +22,8 @@ import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDC
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
+import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
+import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
@@ -31,6 +33,7 @@ import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaw
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
+import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudCLBConfig from "./DeployNodeConfigFormTencentCloudCLBConfig.tsx";
@@ -132,6 +135,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunNLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_OSS:
           return <DeployNodeConfigFormAliyunOSSConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_WAF:
+          return <DeployNodeConfigFormAliyunWAFConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.AWS_CLOUDFRONT:
+          return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
@@ -150,6 +157,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_CDN:
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.QINIU_PILI:
+          return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SSH:
           return <DeployNodeConfigFormSSHConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_CDN:

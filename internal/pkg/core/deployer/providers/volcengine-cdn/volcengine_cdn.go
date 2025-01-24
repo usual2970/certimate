@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderCdn "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
+	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
 )
 
 type VolcEngineCDNDeployerConfig struct {
@@ -50,7 +50,7 @@ func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := uploaderCdn.New(&uploaderCdn.VolcEngineCDNUploaderConfig{
+	uploader, err := uploaderp.New(&uploaderp.VolcEngineCDNUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})
@@ -103,7 +103,7 @@ func (d *VolcEngineCDNDeployer) Deploy(ctx context.Context, certPem string, priv
 			if len(describeCertConfigResp.Result.SpecifiedCertConfig) > 0 {
 				// 所有可关联的域名都配置了该证书，跳过部署
 			} else {
-				return nil, xerrors.New("domain not found")
+				return nil, errors.New("domain not found")
 			}
 		}
 	} else {

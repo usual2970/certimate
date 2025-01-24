@@ -94,10 +94,14 @@ The following DNS providers are supported:
 | [AWS Route53](https://aws.amazon.com/route53/)               |                                       |
 | [Azure DNS](https://azure.microsoft.com/)                    |                                       |
 | [CloudFlare](https://www.cloudflare.com/)                    |                                       |
+| [ClouDNS](https://www.cloudns.net//)                         |                                       |
+| [GNAME](https://www.gname.com/)                              |                                       |
 | [GoDaddy](https://www.godaddy.com/)                          |                                       |
 | [Name.com](https://www.name.com/)                            |                                       |
 | [NameSilo](https://www.namesilo.com/)                        |                                       |
 | [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
+| [Rain Yun](https://www.rainyun.com/)                         |                                       |
+| [West.cn](https://www.west.cn/)                              |                                       |
 | [PowerDNS](https://www.powerdns.com/)                        |                                       |
 | ACME Proxy HTTP Request                                      | Supports managing DNS by HTTP request |
 
@@ -111,22 +115,23 @@ The following hosting providers are supported:
 
 <summary>[Fold/Unfold to view ...]</summary>
 
-| Provider                                        | Remarks                                                                     |
-| :---------------------------------------------- | :-------------------------------------------------------------------------- |
-| Local                                           | Supports deployment to local servers                                        |
-| SSH                                             | Supports deployment to remote servers (via SSH+SFTP)                        |
-| Webhook                                         | Supports deployment to Webhook                                              |
-| [Kubernetes](https://kubernetes.io/)            | Supports deployment to Kubernetes Secret                                    |
-| [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), Live |
-| [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, CSS      |
-| [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                   |
-| [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB                                |
-| [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, Live                 |
-| [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN                                      |
-| [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                       |
-| [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                         |
-| [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                     |
-| [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                   |
+| Provider                                        | Remarks                                                                          |
+| :---------------------------------------------- | :------------------------------------------------------------------------------- |
+| Local                                           | Supports deployment to local servers                                             |
+| SSH                                             | Supports deployment to remote servers (via SSH+SFTP/SCP)                         |
+| Webhook                                         | Supports deployment to Webhook                                                   |
+| [Kubernetes](https://kubernetes.io/)            | Supports deployment to Kubernetes Secret                                         |
+| [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), WAF, Live |
+| [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, CSS           |
+| [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                        |
+| [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB                                     |
+| [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, Live                      |
+| [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                     |
+| [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                            |
+| [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                              |
+| [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                          |
+| [AWS](https://aws.amazon.com/)                  | Supports deployment to AWS CloudFront                                            |
+| [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                        |
 
 </details>
 

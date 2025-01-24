@@ -63,6 +63,11 @@ type AccessConfigForCloudflare struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }
 
+type AccessConfigForClouDNS struct {
+	AuthId       string `json:"authId"`
+	AuthPassword string `json:"authPassword"`
+}
+
 type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
@@ -71,6 +76,11 @@ type AccessConfigForDogeCloud struct {
 type AccessConfigForEdgio struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
+}
+
+type AccessConfigForGname struct {
+	AppId  string `json:"appId"`
+	AppKey string `json:"appKey"`
 }
 
 type AccessConfigForGoDaddy struct {
@@ -112,6 +122,10 @@ type AccessConfigForQiniu struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForRainYun struct {
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`
@@ -139,4 +153,9 @@ type AccessConfigForVolcEngine struct {
 
 type AccessConfigForWebhook struct {
 	Url string `json:"url"`
+}
+
+type AccessConfigForWestcn struct {
+	Username    string `json:"username"`
+	ApiPassword string `json:"password"`
 }

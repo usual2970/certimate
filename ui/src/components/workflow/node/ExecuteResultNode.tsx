@@ -8,8 +8,8 @@ import {
 import { Button, Card, Popover, theme } from "antd";
 
 import { WorkflowNodeType } from "@/domain/workflow";
-import AddNode from "./AddNode";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
+import AddNode from "./AddNode";
 
 export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;
