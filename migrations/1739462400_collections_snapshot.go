@@ -168,6 +168,7 @@ func init() {
 							"cdnfly",
 							"cloudflare",
 							"cloudns",
+							"cmcc",
 							"cmcccloud",
 							"ctcccloud",
 							"cucccloud",

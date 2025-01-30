@@ -42,6 +42,8 @@ require (
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.9
 	github.com/volcengine/volc-sdk-golang v1.0.194
 	github.com/volcengine/volcengine-go-sdk v1.0.180
+	gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1
+	gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0
 	golang.org/x/crypto v0.33.0
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 	k8s.io/api v0.32.1
@@ -201,3 +203,7 @@ require (
 	modernc.org/memory v1.8.2 // indirect
 	modernc.org/sqlite v1.34.5 // indirect
 )
+
+replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkcore@v1.0.0
+
+replace gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkclouddns@v1.0.1

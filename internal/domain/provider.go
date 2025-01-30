@@ -1,4 +1,4 @@
-﻿package domain
+package domain
 
 type AccessProviderType string
 
@@ -23,6 +23,7 @@ const (
 	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly")   // Cdnly（预留）
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
+	AccessProviderTypeCmcc         = AccessProviderType("cmcc")
 	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud") // 移动云（预留）
 	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
@@ -69,6 +70,7 @@ const (
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
+	ApplyDNSProviderTypeCmcc            = ApplyDNSProviderType("cmcc")
 	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]

@@ -61,6 +61,7 @@
   "provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
   "provider.cloudflare": "Cloudflare",
   "provider.cloudns": "ClouDNS",
+  "provider.cmcc": "cmcc",
   "provider.dogecloud": "Doge Cloud",
   "provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",
   "provider.edgio": "Edgio",

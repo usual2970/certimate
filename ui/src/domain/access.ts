@@ -15,6 +15,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
+      | AccessConfigForCmcc
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
       | AccessConfigForGname
@@ -83,6 +84,11 @@ export type AccessConfigForCloudflare = {
 export type AccessConfigForClouDNS = {
   authId: string;
   authPassword: string;
+};
+
+export type AccessConfigForCmcc = {
+  accessKeyId: string;
+  accessKeySecret: string;
 };
 
 export type AccessConfigForDogeCloud = {
@@ -176,4 +182,5 @@ export type AccessConfigForWestcn = {
   username: string;
   apiPassword: string;
 };
+
 // #endregion

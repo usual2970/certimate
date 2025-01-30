@@ -13,6 +13,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   BYTEPLUS: "byteplus",
   CLOUDFLARE: "cloudflare",
   CLOUDNS: "cloudns",
+  CMCC: "cmcc",
   DOGECLOUD: "dogecloud",
   GNAME: "gname",
   GODADDY: "godaddy",
@@ -84,6 +85,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.WESTCN, "provider.westcn", "/imgs/providers/westcn.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.POWERDNS, "provider.powerdns", "/imgs/providers/powerdns.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.ACMEHTTPREQ, "provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.CMCC, "provider.cmcc", "/imgs/providers/cmcc.svg", ACCESS_USAGES.APPLY],
   ].map((e) => [
     e[0] as string,
     {
@@ -124,6 +126,7 @@ export const APPLY_DNS_PROVIDERS = Object.freeze({
   VOLCENGINE: `${ACCESS_PROVIDERS.VOLCENGINE}`, // 兼容旧值，等同于 `VOLCENGINE_DNS`
   VOLCENGINE_DNS: `${ACCESS_PROVIDERS.VOLCENGINE}-dns`,
   WESTCN: `${ACCESS_PROVIDERS.WESTCN}`,
+  CMCC: `${ACCESS_PROVIDERS.CMCC}`,
 } as const);
 
 export type ApplyDNSProviderType = (typeof APPLY_DNS_PROVIDERS)[keyof typeof APPLY_DNS_PROVIDERS];
@@ -158,6 +161,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.WESTCN, "provider.westcn"],
     [APPLY_DNS_PROVIDERS.POWERDNS, "provider.powerdns"],
     [APPLY_DNS_PROVIDERS.ACMEHTTPREQ, "provider.acmehttpreq"],
+    [APPLY_DNS_PROVIDERS.CMCC, "provider.cmcc"],
   ].map(([type, name]) => [
     type,
     {

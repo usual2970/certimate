@@ -86,7 +86,7 @@ The following DNS providers are supported:
 <summary>[Fold/Unfold to view ...]</summary>
 
 | Provider                                                     | Remarks                               |
-| :----------------------------------------------------------- | :------------------------------------ |
+|:-------------------------------------------------------------| :------------------------------------ |
 | [Alibaba Cloud](https://www.alibabacloud.com/)               |                                       |
 | [Tencent Cloud](https://www.tencentcloud.com/)               |                                       |
 | [Huawei Cloud](https://www.huaweicloud.com/)                 |                                       |
@@ -102,6 +102,7 @@ The following DNS providers are supported:
 | [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
 | [Rain Yun](https://www.rainyun.com/)                         |                                       |
 | [West.cn](https://www.west.cn/)                              |                                       |
+| [CMCC](https://ecloud.10086.cn/)                             |                                       |
 | [PowerDNS](https://www.powerdns.com/)                        |                                       |
 | ACME Proxy HTTP Request                                      | Supports managing DNS by HTTP request |
 

@@ -86,12 +86,12 @@ make local.run
 
 <summary>[展开查看]</summary>
 
-| 提供商                                                             | 备注                                    |
-| :----------------------------------------------------------------- | :-------------------------------------- |
-| [阿里云](https://www.aliyun.com/)                                  |                                         |
-| [腾讯云](https://cloud.tencent.com/)                               |                                         |
-| [华为云](https://www.huaweicloud.com/)                             |                                         |
-| [火山引擎](https://www.volcengine.com/)                            |                                         |
+| 提供商                                                                | 备注                                    |
+|:-------------------------------------------------------------------| :-------------------------------------- |
+| [阿里云](https://www.aliyun.com/)                                     |                                         |
+| [腾讯云](https://cloud.tencent.com/)                                  |                                         |
+| [华为云](https://www.huaweicloud.com/)                                |                                         |
+| [火山引擎](https://www.volcengine.com/)                                |                                         |
 | [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
 | [Azure](https://azure.microsoft.com/)                              |                                         |
 | [CloudFlare](https://www.cloudflare.com/)                          |                                         |
@@ -101,10 +101,11 @@ make local.run
 | [Name.com](https://www.name.com/)                                  |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |
 | [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
-| [雨云](https://www.rainyun.com/)                                   |                                         |
-| [西部数码](https://www.west.cn/)                                   |                                         |
+| [雨云](https://www.rainyun.com/)                                     |                                         |
+| [西部数码](https://www.west.cn/)                                       |                                         |
+| [移动云](https://ecloud.10086.cn/)                                        |                                         |
 | [PowerDNS](https://www.powerdns.com/)                              |                                         |
-| ACME 代理 HTTP 请求                                                | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
+| ACME 代理 HTTP 请求                                                    | 可申请允许通过 HTTP 请求修改 DNS 的域名 |
 
 </details>
 
