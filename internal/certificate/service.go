@@ -30,18 +30,18 @@ type certificateRepository interface {
 }
 
 type CertificateService struct {
-	repo certificateRepository
+	certRepo certificateRepository
 }
 
-func NewCertificateService(repo certificateRepository) *CertificateService {
+func NewCertificateService(certRepo certificateRepository) *CertificateService {
 	return &CertificateService{
-		repo: repo,
+		certRepo: certRepo,
 	}
 }
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
-		certs, err := s.repo.ListExpireSoon(context.Background())
+		certs, err := s.certRepo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
 			return
@@ -60,7 +60,7 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 }
 
 func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) ([]byte, error) {
-	certificate, err := s.repo.GetById(ctx, req.CertificateId)
+	certificate, err := s.certRepo.GetById(ctx, req.CertificateId)
 	if err != nil {
 		return nil, err
 	}

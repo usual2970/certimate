@@ -29,9 +29,7 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 	}
 }
 
-// Run 上传证书节点执行
-// 包含上传证书的工作流，理论上应该手动执行，如果每天定时执行，也只是重新保存一下
-func (n *uploadNode) Run(ctx context.Context) error {
+func (n *uploadNode) Process(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "进入上传证书节点")
 
 	nodeConfig := n.node.GetConfigForUpload()

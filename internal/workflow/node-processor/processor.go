@@ -9,7 +9,7 @@ import (
 )
 
 type NodeProcessor interface {
-	Run(ctx context.Context) error
+	Process(ctx context.Context) error
 	GetLog(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
 }

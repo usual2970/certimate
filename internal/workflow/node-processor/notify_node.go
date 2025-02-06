@@ -24,7 +24,7 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	}
 }
 
-func (n *notifyNode) Run(ctx context.Context) error {
+func (n *notifyNode) Process(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	nodeConfig := n.node.GetConfigForNotify()

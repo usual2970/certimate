@@ -94,12 +94,12 @@ func (r *WorkflowOutputRepository) castRecordToModel(record *core.Record) (*doma
 
 	node := &domain.WorkflowNode{}
 	if err := record.UnmarshalJSONField("node", node); err != nil {
-		return nil, errors.New("failed to unmarshal node")
+		return nil, err
 	}
 
 	outputs := make([]domain.WorkflowNodeIO, 0)
 	if err := record.UnmarshalJSONField("outputs", &outputs); err != nil {
-		return nil, errors.New("failed to unmarshal output")
+		return nil, err
 	}
 
 	workflowOutput := &domain.WorkflowOutput{
@@ -118,27 +118,27 @@ func (r *WorkflowOutputRepository) castRecordToModel(record *core.Record) (*doma
 	return workflowOutput, nil
 }
 
-func (r *WorkflowOutputRepository) saveRecord(output *domain.WorkflowOutput) (*core.Record, error) {
+func (r *WorkflowOutputRepository) saveRecord(workflowOutput *domain.WorkflowOutput) (*core.Record, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
 	if err != nil {
 		return nil, err
 	}
 
 	var record *core.Record
-	if output.Id == "" {
+	if workflowOutput.Id == "" {
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById(collection, output.Id)
+		record, err = app.GetApp().FindRecordById(collection, workflowOutput.Id)
 		if err != nil {
 			return record, err
 		}
 	}
-	record.Set("workflowId", output.WorkflowId)
-	record.Set("runId", output.RunId)
-	record.Set("nodeId", output.NodeId)
-	record.Set("node", output.Node)
-	record.Set("outputs", output.Outputs)
-	record.Set("succeeded", output.Succeeded)
+	record.Set("workflowId", workflowOutput.WorkflowId)
+	record.Set("runId", workflowOutput.RunId)
+	record.Set("nodeId", workflowOutput.NodeId)
+	record.Set("node", workflowOutput.Node)
+	record.Set("outputs", workflowOutput.Outputs)
+	record.Set("succeeded", workflowOutput.Succeeded)
 	if err := app.GetApp().Save(record); err != nil {
 		return record, err
 	}

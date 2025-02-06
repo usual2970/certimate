@@ -8,7 +8,8 @@ import (
 
 func Register() {
 	workflowRepo := repository.NewWorkflowRepository()
-	workflowSvc := workflow.NewWorkflowService(workflowRepo)
+	workflowRunRepo := repository.NewWorkflowRunRepository()
+	workflowSvc := workflow.NewWorkflowService(workflowRepo, workflowRunRepo)
 
 	certificateRepo := repository.NewCertificateRepository()
 	certificateSvc := certificate.NewCertificateService(certificateRepo)

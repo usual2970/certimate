@@ -31,7 +31,7 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	}
 }
 
-func (n *applyNode) Run(ctx context.Context) error {
+func (n *applyNode) Process(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	// 查询上次执行结果

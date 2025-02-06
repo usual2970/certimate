@@ -4,7 +4,7 @@ import "github.com/usual2970/certimate/internal/domain"
 
 type WorkflowStartRunReq struct {
 	WorkflowId string                     `json:"-"`
-	Trigger    domain.WorkflowTriggerType `json:"trigger"`
+	RunTrigger domain.WorkflowTriggerType `json:"trigger"`
 }
 
 type WorkflowCancelRunReq struct {

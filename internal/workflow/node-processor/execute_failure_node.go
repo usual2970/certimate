@@ -18,7 +18,7 @@ func NewExecuteFailureNode(node *domain.WorkflowNode) *executeFailureNode {
 	}
 }
 
-func (n *executeFailureNode) Run(ctx context.Context) error {
+func (n *executeFailureNode) Process(ctx context.Context) error {
 	// 此类型节点不需要执行任何操作，直接返回
 	n.AddOutput(ctx, n.node.Name, "进入执行失败分支")
 

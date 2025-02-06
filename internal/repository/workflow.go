@@ -95,65 +95,6 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	return workflow, nil
 }
 
-func (r *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRun) (*domain.WorkflowRun, error) {
-	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowRun)
-	if err != nil {
-		return run, err
-	}
-
-	var runRecord *core.Record
-	if run.Id == "" {
-		runRecord = core.NewRecord(collection)
-	} else {
-		runRecord, err = app.GetApp().FindRecordById(collection, run.Id)
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return run, err
-			}
-			runRecord = core.NewRecord(collection)
-		}
-	}
-
-	err = app.GetApp().RunInTransaction(func(txApp core.App) error {
-		runRecord.Set("workflowId", run.WorkflowId)
-		runRecord.Set("trigger", string(run.Trigger))
-		runRecord.Set("status", string(run.Status))
-		runRecord.Set("startedAt", run.StartedAt)
-		runRecord.Set("endedAt", run.EndedAt)
-		runRecord.Set("logs", run.Logs)
-		runRecord.Set("error", run.Error)
-		err = txApp.Save(runRecord)
-		if err != nil {
-			return err
-		}
-
-		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, run.WorkflowId)
-		if err != nil {
-			return err
-		}
-
-		workflowRecord.IgnoreUnchangedFields(true)
-		workflowRecord.Set("lastRunId", runRecord.Id)
-		workflowRecord.Set("lastRunStatus", runRecord.GetString("status"))
-		workflowRecord.Set("lastRunTime", runRecord.GetString("startedAt"))
-		err = txApp.Save(workflowRecord)
-		if err != nil {
-			return err
-		}
-
-		run.Id = runRecord.Id
-		run.CreatedAt = runRecord.GetDateTime("created").Time()
-		run.UpdatedAt = runRecord.GetDateTime("updated").Time()
-
-		return nil
-	})
-	if err != nil {
-		return run, err
-	}
-
-	return run, nil
-}
-
 func (r *WorkflowRepository) castRecordToModel(record *core.Record) (*domain.Workflow, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")

@@ -29,7 +29,7 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	}
 }
 
-func (n *deployNode) Run(ctx context.Context) error {
+func (n *deployNode) Process(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	// 查询上次执行结果
