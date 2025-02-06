@@ -8,24 +8,27 @@ import (
 )
 
 type workflowProcessor struct {
-	workflow *domain.Workflow
-	logs     []domain.WorkflowRunLog
+	workflow        *domain.Workflow
+	workflowRun     *domain.WorkflowRun
+	workflorRunLogs []domain.WorkflowRunLog
 }
 
-func NewWorkflowProcessor(workflow *domain.Workflow) *workflowProcessor {
+func NewWorkflowProcessor(workflow *domain.Workflow, workflowRun *domain.WorkflowRun) *workflowProcessor {
 	return &workflowProcessor{
-		workflow: workflow,
-		logs:     make([]domain.WorkflowRunLog, 0),
+		workflow:        workflow,
+		workflowRun:     workflowRun,
+		workflorRunLogs: make([]domain.WorkflowRunLog, 0),
 	}
 }
 
 func (w *workflowProcessor) Run(ctx context.Context) error {
-	ctx = setContextWorkflowId(ctx, w.workflow.Id)
+	ctx = context.WithValue(ctx, "workflow_id", w.workflow.Id)
+	ctx = context.WithValue(ctx, "workflow_run_id", w.workflowRun.Id)
 	return w.processNode(ctx, w.workflow.Content)
 }
 
 func (w *workflowProcessor) GetRunLogs() []domain.WorkflowRunLog {
-	return w.logs
+	return w.workflorRunLogs
 }
 
 func (w *workflowProcessor) processNode(ctx context.Context, node *domain.WorkflowNode) error {
@@ -49,9 +52,9 @@ func (w *workflowProcessor) processNode(ctx context.Context, node *domain.Workfl
 				}
 
 				runErr = processor.Run(ctx)
-				log := processor.Log(ctx)
+				log := processor.GetLog(ctx)
 				if log != nil {
-					w.logs = append(w.logs, *log)
+					w.workflorRunLogs = append(w.workflorRunLogs, *log)
 				}
 				if runErr != nil {
 					break
@@ -73,10 +76,6 @@ func (w *workflowProcessor) processNode(ctx context.Context, node *domain.Workfl
 	}
 
 	return nil
-}
-
-func setContextWorkflowId(ctx context.Context, id string) context.Context {
-	return context.WithValue(ctx, "workflow_id", id)
 }
 
 func getBranchByType(branches []domain.WorkflowNode, nodeType domain.WorkflowNodeType) *domain.WorkflowNode {

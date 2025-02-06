@@ -141,7 +141,7 @@ func (s *WorkflowService) runWithData(ctx context.Context, runData *workflowRunD
 		run = resp
 	}
 
-	processor := processor.NewWorkflowProcessor(workflow)
+	processor := processor.NewWorkflowProcessor(workflow, run)
 	if runErr := processor.Run(ctx); runErr != nil {
 		run.Status = domain.WorkflowRunStatusTypeFailed
 		run.EndedAt = time.Now()

@@ -27,6 +27,7 @@ type Certificate struct {
 	ACMECertStableUrl string                      `json:"acmeCertStableUrl" db:"acmeCertStableUrl"`
 	WorkflowId        string                      `json:"workflowId" db:"workflowId"`
 	WorkflowNodeId    string                      `json:"workflowNodeId" db:"workflowNodeId"`
+	WorkflowRunId     string                      `json:"workflowRunId" db:"workflowRunId"`
 	WorkflowOutputId  string                      `json:"workflowOutputId" db:"workflowOutputId"`
 	DeletedAt         *time.Time                  `json:"deleted" db:"deleted"`
 }

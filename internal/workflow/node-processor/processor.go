@@ -10,7 +10,7 @@ import (
 
 type NodeProcessor interface {
 	Run(ctx context.Context) error
-	Log(ctx context.Context) *domain.WorkflowRunLog
+	GetLog(ctx context.Context) *domain.WorkflowRunLog
 	AddOutput(ctx context.Context, title, content string, err ...string)
 }
 
@@ -42,7 +42,7 @@ func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
 	}
 }
 
-func (l *nodeLogger) Log(ctx context.Context) *domain.WorkflowRunLog {
+func (l *nodeLogger) GetLog(ctx context.Context) *domain.WorkflowRunLog {
 	return l.log
 }
 
@@ -83,4 +83,8 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 
 func getContextWorkflowId(ctx context.Context) string {
 	return ctx.Value("workflow_id").(string)
+}
+
+func getContextWorkflowRunId(ctx context.Context) string {
+	return ctx.Value("workflow_run_id").(string)
 }

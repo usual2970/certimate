@@ -14,18 +14,20 @@ import (
 )
 
 type applyNode struct {
-	node       *domain.WorkflowNode
+	node *domain.WorkflowNode
+	*nodeLogger
+
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
-	*nodeLogger
 }
 
 func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:       node,
 		nodeLogger: NewNodeLogger(node),
-		outputRepo: repository.NewWorkflowOutputRepository(),
+
 		certRepo:   repository.NewCertificateRepository(),
+		outputRepo: repository.NewWorkflowOutputRepository(),
 	}
 }
 
@@ -81,6 +83,7 @@ func (n *applyNode) Run(ctx context.Context) error {
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	currentOutput := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
+		RunId:      getContextWorkflowRunId(ctx),
 		NodeId:     n.node.Id,
 		Node:       n.node,
 		Succeeded:  true,

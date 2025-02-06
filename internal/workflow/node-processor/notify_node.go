@@ -9,15 +9,17 @@ import (
 )
 
 type notifyNode struct {
-	node         *domain.WorkflowNode
-	settingsRepo settingsRepository
+	node *domain.WorkflowNode
 	*nodeLogger
+
+	settingsRepo settingsRepository
 }
 
 func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	return &notifyNode{
-		node:         node,
-		nodeLogger:   NewNodeLogger(node),
+		node:       node,
+		nodeLogger: NewNodeLogger(node),
+
 		settingsRepo: repository.NewSettingsRepository(),
 	}
 }

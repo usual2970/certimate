@@ -12,18 +12,20 @@ import (
 )
 
 type deployNode struct {
-	node       *domain.WorkflowNode
+	node *domain.WorkflowNode
+	*nodeLogger
+
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
-	*nodeLogger
 }
 
 func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
 		node:       node,
 		nodeLogger: NewNodeLogger(node),
-		outputRepo: repository.NewWorkflowOutputRepository(),
+
 		certRepo:   repository.NewCertificateRepository(),
+		outputRepo: repository.NewWorkflowOutputRepository(),
 	}
 }
 
@@ -61,7 +63,7 @@ func (n *deployNode) Run(ctx context.Context) error {
 	}
 
 	// 初始化部署器
-	deploy, err := deployer.NewWithDeployNode(n.node, struct {
+	deployer, err := deployer.NewWithDeployNode(n.node, struct {
 		Certificate string
 		PrivateKey  string
 	}{Certificate: certificate.Certificate, PrivateKey: certificate.PrivateKey})
@@ -71,7 +73,7 @@ func (n *deployNode) Run(ctx context.Context) error {
 	}
 
 	// 部署证书
-	if err := deploy.Deploy(ctx); err != nil {
+	if err := deployer.Deploy(ctx); err != nil {
 		n.AddOutput(ctx, n.node.Name, "部署失败", err.Error())
 		return err
 	}
@@ -80,8 +82,8 @@ func (n *deployNode) Run(ctx context.Context) error {
 	// 保存执行结果
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	currentOutput := &domain.WorkflowOutput{
-		Meta:       domain.Meta{},
 		WorkflowId: getContextWorkflowId(ctx),
+		RunId:      getContextWorkflowRunId(ctx),
 		NodeId:     n.node.Id,
 		Node:       n.node,
 		Succeeded:  true,

@@ -40,7 +40,7 @@ func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, workflowNode
 }
 
 func (r *WorkflowOutputRepository) Save(ctx context.Context, workflowOutput *domain.WorkflowOutput) (*domain.WorkflowOutput, error) {
-	record, err := r.saveRecord(ctx, workflowOutput)
+	record, err := r.saveRecord(workflowOutput)
 	if err != nil {
 		return workflowOutput, err
 	}
@@ -52,7 +52,7 @@ func (r *WorkflowOutputRepository) Save(ctx context.Context, workflowOutput *dom
 }
 
 func (r *WorkflowOutputRepository) SaveWithCertificate(ctx context.Context, workflowOutput *domain.WorkflowOutput, certificate *domain.Certificate) (*domain.WorkflowOutput, error) {
-	record, err := r.saveRecord(ctx, workflowOutput)
+	record, err := r.saveRecord(workflowOutput)
 	if err != nil {
 		return workflowOutput, err
 	} else {
@@ -63,6 +63,7 @@ func (r *WorkflowOutputRepository) SaveWithCertificate(ctx context.Context, work
 
 	if certificate != nil {
 		certificate.WorkflowId = workflowOutput.WorkflowId
+		certificate.WorkflowRunId = workflowOutput.RunId
 		certificate.WorkflowNodeId = workflowOutput.NodeId
 		certificate.WorkflowOutputId = workflowOutput.Id
 		certificate, err := NewCertificateRepository().Save(ctx, certificate)
@@ -108,6 +109,7 @@ func (r *WorkflowOutputRepository) castRecordToModel(record *core.Record) (*doma
 			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		WorkflowId: record.GetString("workflowId"),
+		RunId:      record.GetString("runId"),
 		NodeId:     record.GetString("nodeId"),
 		Node:       node,
 		Outputs:    outputs,
@@ -116,7 +118,7 @@ func (r *WorkflowOutputRepository) castRecordToModel(record *core.Record) (*doma
 	return workflowOutput, nil
 }
 
-func (r *WorkflowOutputRepository) saveRecord(ctx context.Context, output *domain.WorkflowOutput) (*core.Record, error) {
+func (r *WorkflowOutputRepository) saveRecord(output *domain.WorkflowOutput) (*core.Record, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
 	if err != nil {
 		return nil, err
@@ -132,6 +134,7 @@ func (r *WorkflowOutputRepository) saveRecord(ctx context.Context, output *domai
 		}
 	}
 	record.Set("workflowId", output.WorkflowId)
+	record.Set("runId", output.RunId)
 	record.Set("nodeId", output.NodeId)
 	record.Set("node", output.Node)
 	record.Set("outputs", output.Outputs)
