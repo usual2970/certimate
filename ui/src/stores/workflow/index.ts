@@ -25,14 +25,14 @@ export type WorkflowState = {
   discard(): void;
   destroy(): void;
 
-  addNode: (node: WorkflowNode, preId: string) => void;
+  addNode: (node: WorkflowNode, previousNodeId: string) => void;
   updateNode: (node: WorkflowNode) => void;
   removeNode: (nodeId: string) => void;
 
   addBranch: (branchId: string) => void;
   removeBranch: (branchId: string, index: number) => void;
 
-  getWorkflowOuptutBeforeId: (id: string, type: string) => WorkflowNode[];
+  getWorkflowOuptutBeforeId: (nodeId: string, type: string) => WorkflowNode[];
 };
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -143,10 +143,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  addNode: async (node: WorkflowNode, preId: string) => {
+  addNode: async (node: WorkflowNode, previousNodeId: string) => {
     if (!get().initialized) throw "Workflow not initialized yet";
 
-    const root = addNode(get().workflow.draft!, preId, node);
+    const root = addNode(get().workflow.draft!, previousNodeId, node);
     const resp = await saveWorkflow({
       id: get().workflow.id!,
       draft: root,
@@ -243,7 +243,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  getWorkflowOuptutBeforeId: (id: string, type: string) => {
-    return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, id, type);
+  getWorkflowOuptutBeforeId: (nodeId: string, type: string) => {
+    return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, nodeId, type);
   },
 }));

@@ -276,21 +276,21 @@ export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
   });
 };
 
-export const addNode = (node: WorkflowNode, preId: string, targetNode: WorkflowNode) => {
+export const addNode = (node: WorkflowNode, previousNodeId: string, targetNode: WorkflowNode) => {
   return produce(node, (draft) => {
     let current = draft;
     while (current) {
-      if (current.id === preId && targetNode.type !== WorkflowNodeType.Branch && targetNode.type !== WorkflowNodeType.ExecuteResultBranch) {
+      if (current.id === previousNodeId && targetNode.type !== WorkflowNodeType.Branch && targetNode.type !== WorkflowNodeType.ExecuteResultBranch) {
         targetNode.next = current.next;
         current.next = targetNode;
         break;
-      } else if (current.id === preId && (targetNode.type === WorkflowNodeType.Branch || targetNode.type === WorkflowNodeType.ExecuteResultBranch)) {
+      } else if (current.id === previousNodeId && (targetNode.type === WorkflowNodeType.Branch || targetNode.type === WorkflowNodeType.ExecuteResultBranch)) {
         targetNode.branches![0].next = current.next;
         current.next = targetNode;
         break;
       }
       if (current.type === WorkflowNodeType.Branch || current.type === WorkflowNodeType.ExecuteResultBranch) {
-        current.branches = current.branches!.map((branch) => addNode(branch, preId, targetNode));
+        current.branches = current.branches!.map((branch) => addNode(branch, previousNodeId, targetNode));
       }
       current = current.next as WorkflowNode;
     }
@@ -382,15 +382,15 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
   });
 };
 
-// 1 个分支的节点，不应该能获取到相邻分支上节点的输出
-export const getWorkflowOutputBeforeId = (node: WorkflowNode, id: string, type: string): WorkflowNode[] => {
+export const getWorkflowOutputBeforeId = (root: WorkflowNode, nodeId: string, type: string): WorkflowNode[] => {
+  // 1 个分支的节点，不应该能获取到相邻分支上节点的输出
   const output: WorkflowNode[] = [];
 
   const traverse = (current: WorkflowNode, output: WorkflowNode[]) => {
     if (!current) {
       return false;
     }
-    if (current.id === id) {
+    if (current.id === nodeId) {
       return true;
     }
 
@@ -422,7 +422,7 @@ export const getWorkflowOutputBeforeId = (node: WorkflowNode, id: string, type: 
     return traverse(current.next as WorkflowNode, output);
   };
 
-  traverse(node, output);
+  traverse(root, output);
   return output;
 };
 
@@ -445,22 +445,4 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   }
 
   return true;
-};
-
-/**
- * @deprecated
- */
-export const getExecuteMethod = (node: WorkflowNode): { trigger: string; triggerCron: string } => {
-  if (node.type === WorkflowNodeType.Start) {
-    const config = node.config as WorkflowNodeConfigForStart;
-    return {
-      trigger: config.trigger ?? "",
-      triggerCron: config.triggerCron ?? "",
-    };
-  } else {
-    return {
-      trigger: "",
-      triggerCron: "",
-    };
-  }
 };
