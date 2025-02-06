@@ -53,13 +53,11 @@ func (n *deployNode) Run(ctx context.Context) error {
 	}
 
 	// 检测是否可以跳过本次执行
-	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		if certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
-			n.AddOutput(ctx, n.node.Name, "已部署过且证书未更新")
-		} else {
+	if certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
+		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
 			n.AddOutput(ctx, n.node.Name, skipReason)
+			return nil
 		}
-		return nil
 	}
 
 	// 初始化部署器
@@ -80,18 +78,14 @@ func (n *deployNode) Run(ctx context.Context) error {
 	n.AddOutput(ctx, n.node.Name, "部署成功")
 
 	// 保存执行结果
-	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
-	currentOutput := &domain.WorkflowOutput{
+	output := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
 		RunId:      getContextWorkflowRunId(ctx),
 		NodeId:     n.node.Id,
 		Node:       n.node,
 		Succeeded:  true,
 	}
-	if lastOutput != nil {
-		currentOutput.Id = lastOutput.Id
-	}
-	if _, err := n.outputRepo.Save(ctx, currentOutput); err != nil {
+	if _, err := n.outputRepo.Save(ctx, output); err != nil {
 		n.AddOutput(ctx, n.node.Name, "保存部署记录失败", err.Error())
 		return err
 	}

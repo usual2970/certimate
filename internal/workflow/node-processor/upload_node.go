@@ -68,8 +68,7 @@ func (n *uploadNode) Run(ctx context.Context) error {
 	certificate.PopulateFromPEM(nodeConfig.Certificate, nodeConfig.PrivateKey)
 
 	// 保存执行结果
-	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
-	currentOutput := &domain.WorkflowOutput{
+	output := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
 		RunId:      getContextWorkflowRunId(ctx),
 		NodeId:     n.node.Id,
@@ -77,10 +76,7 @@ func (n *uploadNode) Run(ctx context.Context) error {
 		Succeeded:  true,
 		Outputs:    n.node.Outputs,
 	}
-	if lastOutput != nil {
-		currentOutput.Id = lastOutput.Id
-	}
-	if _, err := n.outputRepo.SaveWithCertificate(ctx, currentOutput, certificate); err != nil {
+	if _, err := n.outputRepo.SaveWithCertificate(ctx, output, certificate); err != nil {
 		n.AddOutput(ctx, n.node.Name, "保存上传记录失败", err.Error())
 		return err
 	}

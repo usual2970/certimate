@@ -81,7 +81,7 @@ func (n *applyNode) Run(ctx context.Context) error {
 
 	// 保存执行结果
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
-	currentOutput := &domain.WorkflowOutput{
+	output := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
 		RunId:      getContextWorkflowRunId(ctx),
 		NodeId:     n.node.Id,
@@ -89,10 +89,7 @@ func (n *applyNode) Run(ctx context.Context) error {
 		Succeeded:  true,
 		Outputs:    n.node.Outputs,
 	}
-	if lastOutput != nil {
-		currentOutput.Id = lastOutput.Id
-	}
-	if _, err := n.outputRepo.SaveWithCertificate(ctx, currentOutput, certificate); err != nil {
+	if _, err := n.outputRepo.SaveWithCertificate(ctx, output, certificate); err != nil {
 		n.AddOutput(ctx, n.node.Name, "保存申请记录失败", err.Error())
 		return err
 	}
@@ -127,7 +124,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（到期尚余 %d 天，预计距 %d 天时续期）", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（到期尚余 %d 天，预计不足 %d 天时续期）", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}
