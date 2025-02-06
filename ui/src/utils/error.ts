@@ -7,13 +7,13 @@ export const getErrMsg = (error: unknown): string => {
     return error.message;
   } else if (typeof error === "object" && error != null) {
     if ("message" in error) {
-      return String(error.message);
+      return getErrMsg(error.message);
     } else if ("msg" in error) {
-      return String(error.msg);
+      return getErrMsg(error.msg);
     }
   } else if (typeof error === "string") {
-    return error;
+    return error || "Unknown error";
   }
 
-  return String(error ?? "Unknown error");
+  return "Unknown error";
 };

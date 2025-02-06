@@ -18,11 +18,9 @@ func NewConditionNode(node *domain.WorkflowNode) *conditionNode {
 	}
 }
 
-// 条件节点没有任何操作
-func (c *conditionNode) Run(ctx context.Context) error {
-	c.AddOutput(ctx,
-		c.node.Name,
-		"完成",
-	)
+func (n *conditionNode) Run(ctx context.Context) error {
+	// 此类型节点不需要执行任何操作，直接返回
+	n.AddOutput(ctx, n.node.Name, "完成")
+
 	return nil
 }

@@ -15,11 +15,15 @@
   "certificate.props.validity.expiration": "Expire on {{date}}",
   "certificate.props.validity.filter.expire_soon": "Expire soon",
   "certificate.props.validity.filter.expired": "Expired",
+  "certificate.props.brand": "Brand",
   "certificate.props.source": "Source",
   "certificate.props.source.workflow": "Workflow",
   "certificate.props.source.upload": "Upload",
   "certificate.props.certificate": "Certificate chain",
   "certificate.props.private_key": "Private key",
+  "certificate.props.serial_number": "Serial number",
+  "certificate.props.key_algorithm": "Key algorithm",
+  "certificate.props.issuer": "Issuer",
   "certificate.props.created_at": "Created at",
   "certificate.props.updated_at": "Updated at"
 }

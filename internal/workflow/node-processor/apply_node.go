@@ -3,7 +3,6 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"golang.org/x/exp/maps"
@@ -30,89 +29,79 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	}
 }
 
-// 申请节点根据申请类型执行不同的操作
-func (a *applyNode) Run(ctx context.Context) error {
-	a.AddOutput(ctx, a.node.Name, "开始执行")
+func (n *applyNode) Run(ctx context.Context) error {
+	n.AddOutput(ctx, n.node.Name, "开始执行")
 
 	// 查询上次执行结果
-	lastOutput, err := a.outputRepo.GetByNodeId(ctx, a.node.Id)
+	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		a.AddOutput(ctx, a.node.Name, "查询申请记录失败", err.Error())
+		n.AddOutput(ctx, n.node.Name, "查询申请记录失败", err.Error())
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
-	if skippable, skipReason := a.checkCanSkip(ctx, lastOutput); skippable {
-		a.AddOutput(ctx, a.node.Name, skipReason)
+	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
+		n.AddOutput(ctx, n.node.Name, skipReason)
 		return nil
 	}
 
 	// 初始化申请器
-	applicant, err := applicant.NewWithApplyNode(a.node)
+	applicant, err := applicant.NewWithApplyNode(n.node)
 	if err != nil {
-		a.AddOutput(ctx, a.node.Name, "获取申请对象失败", err.Error())
+		n.AddOutput(ctx, n.node.Name, "获取申请对象失败", err.Error())
 		return err
 	}
 
 	// 申请证书
 	applyResult, err := applicant.Apply()
 	if err != nil {
-		a.AddOutput(ctx, a.node.Name, "申请失败", err.Error())
+		n.AddOutput(ctx, n.node.Name, "申请失败", err.Error())
 		return err
 	}
-	a.AddOutput(ctx, a.node.Name, "申请成功")
+	n.AddOutput(ctx, n.node.Name, "申请成功")
 
 	// 解析证书并生成实体
 	certX509, err := certs.ParseCertificateFromPEM(applyResult.CertificateFullChain)
 	if err != nil {
-		a.AddOutput(ctx, a.node.Name, "解析证书失败", err.Error())
+		n.AddOutput(ctx, n.node.Name, "解析证书失败", err.Error())
 		return err
 	}
 	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
-		SubjectAltNames:   strings.Join(certX509.DNSNames, ";"),
 		Certificate:       applyResult.CertificateFullChain,
 		PrivateKey:        applyResult.PrivateKey,
 		IssuerCertificate: applyResult.IssuerCertificate,
+		ACMEAccountUrl:    applyResult.ACMEAccountUrl,
 		ACMECertUrl:       applyResult.ACMECertUrl,
 		ACMECertStableUrl: applyResult.ACMECertStableUrl,
-		EffectAt:          certX509.NotBefore,
-		ExpireAt:          certX509.NotAfter,
-		WorkflowId:        getContextWorkflowId(ctx),
-		WorkflowNodeId:    a.node.Id,
 	}
+	certificate.PopulateFromX509(certX509)
 
 	// 保存执行结果
 	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	currentOutput := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
-		NodeId:     a.node.Id,
-		Node:       a.node,
+		NodeId:     n.node.Id,
+		Node:       n.node,
 		Succeeded:  true,
-		Outputs:    a.node.Outputs,
+		Outputs:    n.node.Outputs,
 	}
 	if lastOutput != nil {
 		currentOutput.Id = lastOutput.Id
 	}
-	if err := a.outputRepo.Save(ctx, currentOutput, certificate, func(id string) error {
-		if certificate != nil {
-			certificate.WorkflowOutputId = id
-		}
-
-		return nil
-	}); err != nil {
-		a.AddOutput(ctx, a.node.Name, "保存申请记录失败", err.Error())
+	if _, err := n.outputRepo.SaveWithCertificate(ctx, currentOutput, certificate); err != nil {
+		n.AddOutput(ctx, n.node.Name, "保存申请记录失败", err.Error())
 		return err
 	}
-	a.AddOutput(ctx, a.node.Name, "保存申请记录成功")
+	n.AddOutput(ctx, n.node.Name, "保存申请记录成功")
 
 	return nil
 }
 
-func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
-		currentNodeConfig := a.node.GetConfigForApply()
+		currentNodeConfig := n.node.GetConfigForApply()
 		lastNodeConfig := lastOutput.Node.GetConfigForApply()
 		if currentNodeConfig.Domains != lastNodeConfig.Domains {
 			return false, "配置项变化：域名"
@@ -130,7 +119,7 @@ func (a *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			return false, "配置项变化：数字签名算法"
 		}
 
-		lastCertificate, _ := a.certRepo.GetByWorkflowNodeId(ctx, a.node.Id)
+		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
 		renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 		expirationTime := time.Until(lastCertificate.ExpireAt)
 		if lastCertificate != nil && expirationTime > renewalInterval {

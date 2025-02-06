@@ -60,7 +60,7 @@ func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privk
 
 	// 上传新证书
 	// REF: https://developer.qiniu.com/fusion/8593/interface-related-certificate
-	uploadSslCertResp, err := u.sdkClient.UploadSslCert(certName, certX509.Subject.CommonName, certPem, privkeyPem)
+	uploadSslCertResp, err := u.sdkClient.UploadSslCert(context.TODO(), certName, certX509.Subject.CommonName, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadSslCert'")
 	}

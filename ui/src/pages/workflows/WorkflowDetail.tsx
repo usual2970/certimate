@@ -60,13 +60,13 @@ const WorkflowDetail = () => {
   const [allowRun, setAllowRun] = useState(false);
 
   useEffect(() => {
-    setIsRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
+    setIsRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.PENDING || lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
   }, [lastRunStatus]);
 
   useEffect(() => {
     if (!!workflowId && isRunning) {
       subscribeWorkflow(workflowId, (e) => {
-        if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
+        if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
           setIsRunning(false);
           unsubscribeWorkflow(workflowId);
         }
@@ -178,7 +178,7 @@ const WorkflowDetail = () => {
 
         // subscribe before running workflow
         unsubscribeFn = await subscribeWorkflow(workflowId!, (e) => {
-          if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
+          if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
             setIsRunning(false);
             unsubscribeFn?.();
           }

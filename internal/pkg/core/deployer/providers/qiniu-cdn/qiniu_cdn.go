@@ -78,7 +78,7 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 获取域名信息
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
-	getDomainInfoResp, err := d.sdkClient.GetDomainInfo(domain)
+	getDomainInfoResp, err := d.sdkClient.GetDomainInfo(context.TODO(), domain)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDomainInfo'")
 	}
@@ -88,14 +88,14 @@ func (d *QiniuCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 判断域名是否已启用 HTTPS。如果已启用，修改域名证书；否则，启用 HTTPS
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
 	if getDomainInfoResp.Https != nil && getDomainInfoResp.Https.CertID != "" {
-		modifyDomainHttpsConfResp, err := d.sdkClient.ModifyDomainHttpsConf(domain, upres.CertId, getDomainInfoResp.Https.ForceHttps, getDomainInfoResp.Https.Http2Enable)
+		modifyDomainHttpsConfResp, err := d.sdkClient.ModifyDomainHttpsConf(context.TODO(), domain, upres.CertId, getDomainInfoResp.Https.ForceHttps, getDomainInfoResp.Https.Http2Enable)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ModifyDomainHttpsConf'")
 		}
 
 		d.logger.Logt("已修改域名证书", modifyDomainHttpsConfResp)
 	} else {
-		enableDomainHttpsResp, err := d.sdkClient.EnableDomainHttps(domain, upres.CertId, true, true)
+		enableDomainHttpsResp, err := d.sdkClient.EnableDomainHttps(context.TODO(), domain, upres.CertId, true, true)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.EnableDomainHttps'")
 		}

@@ -350,7 +350,7 @@ const WorkflowList = () => {
         dataSource={tableData}
         loading={loading}
         locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : t("workflow.nodata")} />,
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={getErrMsg(loadedError ?? t("workflow.nodata"))} />,
         }}
         pagination={{
           current: page,

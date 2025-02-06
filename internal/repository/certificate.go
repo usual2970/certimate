@@ -79,6 +79,51 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 	return r.castRecordToModel(records[0])
 }
 
+func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Certificate) (*domain.Certificate, error) {
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
+	if err != nil {
+		return certificate, err
+	}
+
+	var record *core.Record
+	if certificate.Id == "" {
+		record = core.NewRecord(collection)
+	} else {
+		record, err = app.GetApp().FindRecordById(collection, certificate.Id)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return certificate, domain.ErrRecordNotFound
+			}
+			return certificate, err
+		}
+	}
+
+	record.Set("source", string(certificate.Source))
+	record.Set("subjectAltNames", certificate.SubjectAltNames)
+	record.Set("serialNumber", certificate.SerialNumber)
+	record.Set("certificate", certificate.Certificate)
+	record.Set("privateKey", certificate.PrivateKey)
+	record.Set("issuer", certificate.Issuer)
+	record.Set("issuerCertificate", certificate.IssuerCertificate)
+	record.Set("keyAlgorithm", string(certificate.KeyAlgorithm))
+	record.Set("effectAt", certificate.EffectAt)
+	record.Set("expireAt", certificate.ExpireAt)
+	record.Set("acmeAccountUrl", certificate.ACMEAccountUrl)
+	record.Set("acmeCertUrl", certificate.ACMECertUrl)
+	record.Set("acmeCertStableUrl", certificate.ACMECertStableUrl)
+	record.Set("workflowId", certificate.WorkflowId)
+	record.Set("workflowNodeId", certificate.WorkflowNodeId)
+	record.Set("workflowOutputId", certificate.WorkflowOutputId)
+	if err := app.GetApp().Save(record); err != nil {
+		return certificate, err
+	}
+
+	certificate.Id = record.Id
+	certificate.CreatedAt = record.GetDateTime("created").Time()
+	certificate.UpdatedAt = record.GetDateTime("updated").Time()
+	return certificate, nil
+}
+
 func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.Certificate, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")
@@ -92,11 +137,15 @@ func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.
 		},
 		Source:            domain.CertificateSourceType(record.GetString("source")),
 		SubjectAltNames:   record.GetString("subjectAltNames"),
+		SerialNumber:      record.GetString("serialNumber"),
 		Certificate:       record.GetString("certificate"),
 		PrivateKey:        record.GetString("privateKey"),
+		Issuer:            record.GetString("issuer"),
 		IssuerCertificate: record.GetString("issuerCertificate"),
+		KeyAlgorithm:      domain.CertificateKeyAlgorithmType(record.GetString("keyAlgorithm")),
 		EffectAt:          record.GetDateTime("effectAt").Time(),
 		ExpireAt:          record.GetDateTime("expireAt").Time(),
+		ACMEAccountUrl:    record.GetString("acmeAccountUrl"),
 		ACMECertUrl:       record.GetString("acmeCertUrl"),
 		ACMECertStableUrl: record.GetString("acmeCertStableUrl"),
 		WorkflowId:        record.GetString("workflowId"),

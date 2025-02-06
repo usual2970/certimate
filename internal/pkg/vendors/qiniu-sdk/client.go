@@ -26,15 +26,15 @@ func NewClient(mac *auth.Credentials) *Client {
 	return &Client{client: &client}
 }
 
-func (c *Client) GetDomainInfo(domain string) (*GetDomainInfoResponse, error) {
+func (c *Client) GetDomainInfo(ctx context.Context, domain string) (*GetDomainInfoResponse, error) {
 	resp := new(GetDomainInfoResponse)
-	if err := c.client.Call(context.Background(), resp, http.MethodGet, c.urlf("domain/%s", domain), nil); err != nil {
+	if err := c.client.Call(ctx, resp, http.MethodGet, c.urlf("domain/%s", domain), nil); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *Client) ModifyDomainHttpsConf(domain, certId string, forceHttps, http2Enable bool) (*ModifyDomainHttpsConfResponse, error) {
+func (c *Client) ModifyDomainHttpsConf(ctx context.Context, domain string, certId string, forceHttps bool, http2Enable bool) (*ModifyDomainHttpsConfResponse, error) {
 	req := &ModifyDomainHttpsConfRequest{
 		DomainInfoHttpsData: DomainInfoHttpsData{
 			CertID:      certId,
@@ -43,13 +43,13 @@ func (c *Client) ModifyDomainHttpsConf(domain, certId string, forceHttps, http2E
 		},
 	}
 	resp := new(ModifyDomainHttpsConfResponse)
-	if err := c.client.CallWithJson(context.Background(), resp, http.MethodPut, c.urlf("domain/%s/httpsconf", domain), nil, req); err != nil {
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPut, c.urlf("domain/%s/httpsconf", domain), nil, req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *Client) EnableDomainHttps(domain, certId string, forceHttps, http2Enable bool) (*EnableDomainHttpsResponse, error) {
+func (c *Client) EnableDomainHttps(ctx context.Context, domain string, certId string, forceHttps bool, http2Enable bool) (*EnableDomainHttpsResponse, error) {
 	req := &EnableDomainHttpsRequest{
 		DomainInfoHttpsData: DomainInfoHttpsData{
 			CertID:      certId,
@@ -58,13 +58,13 @@ func (c *Client) EnableDomainHttps(domain, certId string, forceHttps, http2Enabl
 		},
 	}
 	resp := new(EnableDomainHttpsResponse)
-	if err := c.client.CallWithJson(context.Background(), resp, http.MethodPut, c.urlf("domain/%s/sslize", domain), nil, req); err != nil {
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPut, c.urlf("domain/%s/sslize", domain), nil, req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c *Client) UploadSslCert(name, commonName, certificate, privateKey string) (*UploadSslCertResponse, error) {
+func (c *Client) UploadSslCert(ctx context.Context, name string, commonName string, certificate string, privateKey string) (*UploadSslCertResponse, error) {
 	req := &UploadSslCertRequest{
 		Name:        name,
 		CommonName:  commonName,
@@ -72,7 +72,7 @@ func (c *Client) UploadSslCert(name, commonName, certificate, privateKey string)
 		PrivateKey:  privateKey,
 	}
 	resp := new(UploadSslCertResponse)
-	if err := c.client.CallWithJson(context.Background(), resp, http.MethodPost, c.urlf("sslcert"), nil, req); err != nil {
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPost, c.urlf("sslcert"), nil, req); err != nil {
 		return nil, err
 	}
 	return resp, nil

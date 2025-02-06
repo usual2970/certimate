@@ -65,7 +65,7 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	if workflow.Id == "" {
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflow, workflow.Id)
+		record, err = app.GetApp().FindRecordById(collection, workflow.Id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return workflow, domain.ErrRecordNotFound
@@ -85,7 +85,6 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	record.Set("lastRunId", workflow.LastRunId)
 	record.Set("lastRunStatus", string(workflow.LastRunStatus))
 	record.Set("lastRunTime", workflow.LastRunTime)
-
 	if err := app.GetApp().Save(record); err != nil {
 		return workflow, err
 	}
@@ -96,63 +95,63 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	return workflow, nil
 }
 
-func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) (*domain.WorkflowRun, error) {
+func (r *WorkflowRepository) SaveRun(ctx context.Context, run *domain.WorkflowRun) (*domain.WorkflowRun, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowRun)
 	if err != nil {
-		return workflowRun, err
+		return run, err
 	}
 
-	var workflowRunRecord *core.Record
-	if workflowRun.Id == "" {
-		workflowRunRecord = core.NewRecord(collection)
+	var runRecord *core.Record
+	if run.Id == "" {
+		runRecord = core.NewRecord(collection)
 	} else {
-		workflowRunRecord, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflowRun, workflowRun.Id)
+		runRecord, err = app.GetApp().FindRecordById(collection, run.Id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return workflowRun, err
+				return run, err
 			}
-			workflowRunRecord = core.NewRecord(collection)
+			runRecord = core.NewRecord(collection)
 		}
 	}
 
 	err = app.GetApp().RunInTransaction(func(txApp core.App) error {
-		workflowRunRecord.Set("workflowId", workflowRun.WorkflowId)
-		workflowRunRecord.Set("trigger", string(workflowRun.Trigger))
-		workflowRunRecord.Set("status", string(workflowRun.Status))
-		workflowRunRecord.Set("startedAt", workflowRun.StartedAt)
-		workflowRunRecord.Set("endedAt", workflowRun.EndedAt)
-		workflowRunRecord.Set("logs", workflowRun.Logs)
-		workflowRunRecord.Set("error", workflowRun.Error)
-		err = txApp.Save(workflowRunRecord)
+		runRecord.Set("workflowId", run.WorkflowId)
+		runRecord.Set("trigger", string(run.Trigger))
+		runRecord.Set("status", string(run.Status))
+		runRecord.Set("startedAt", run.StartedAt)
+		runRecord.Set("endedAt", run.EndedAt)
+		runRecord.Set("logs", run.Logs)
+		runRecord.Set("error", run.Error)
+		err = txApp.Save(runRecord)
 		if err != nil {
 			return err
 		}
 
-		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, workflowRun.WorkflowId)
+		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, run.WorkflowId)
 		if err != nil {
 			return err
 		}
 
 		workflowRecord.IgnoreUnchangedFields(true)
-		workflowRecord.Set("lastRunId", workflowRunRecord.Id)
-		workflowRecord.Set("lastRunStatus", workflowRunRecord.GetString("status"))
-		workflowRecord.Set("lastRunTime", workflowRunRecord.GetString("startedAt"))
+		workflowRecord.Set("lastRunId", runRecord.Id)
+		workflowRecord.Set("lastRunStatus", runRecord.GetString("status"))
+		workflowRecord.Set("lastRunTime", runRecord.GetString("startedAt"))
 		err = txApp.Save(workflowRecord)
 		if err != nil {
 			return err
 		}
 
-		workflowRun.Id = workflowRunRecord.Id
-		workflowRun.CreatedAt = workflowRunRecord.GetDateTime("created").Time()
-		workflowRun.UpdatedAt = workflowRunRecord.GetDateTime("updated").Time()
+		run.Id = runRecord.Id
+		run.CreatedAt = runRecord.GetDateTime("created").Time()
+		run.UpdatedAt = runRecord.GetDateTime("updated").Time()
 
 		return nil
 	})
 	if err != nil {
-		return workflowRun, err
+		return run, err
 	}
 
-	return workflowRun, nil
+	return run, nil
 }
 
 func (r *WorkflowRepository) castRecordToModel(record *core.Record) (*domain.Workflow, error) {

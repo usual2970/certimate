@@ -108,6 +108,16 @@ const CertificateList = () => {
       },
     },
     {
+      key: "issuer",
+      title: t("certificate.props.brand"),
+      render: (_, record) => (
+        <Space className="max-w-full" direction="vertical" size={4}>
+          <Typography.Text>{record.issuer}</Typography.Text>
+          <Typography.Text>{record.keyAlgorithm}</Typography.Text>
+        </Space>
+      ),
+    },
+    {
       key: "source",
       title: t("certificate.props.source"),
       ellipsis: true,
@@ -250,7 +260,7 @@ const CertificateList = () => {
         dataSource={tableData}
         loading={loading}
         locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : t("certificate.nodata")} />,
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={getErrMsg(loadedError ?? t("certificate.nodata"))} />,
         }}
         pagination={{
           current: page,

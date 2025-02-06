@@ -18,9 +18,9 @@ func NewStartNode(node *domain.WorkflowNode) *startNode {
 	}
 }
 
-func (s *startNode) Run(ctx context.Context) error {
-	// 开始节点没有任何操作
-	s.AddOutput(ctx, s.node.Name, "完成")
+func (n *startNode) Run(ctx context.Context) error {
+	// 此类型节点不需要执行任何操作，直接返回
+	n.AddOutput(ctx, n.node.Name, "完成")
 
 	return nil
 }
