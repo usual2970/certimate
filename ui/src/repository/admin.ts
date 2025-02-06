@@ -10,7 +10,7 @@ export const getAuthStore = () => {
   return getPocketBase().authStore;
 };
 
-export const save = (data: { email: string } | { password: string }) => {
+export const save = (data: { email: string } | { password: string; passwordConfirm: string }) => {
   return getPocketBase()
     .collection(COLLECTION_NAME)
     .update(getAuthStore().record?.id || "", data);
