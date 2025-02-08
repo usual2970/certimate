@@ -1,4 +1,6 @@
-﻿import { type WorkflowRunModel } from "@/domain/workflowRun";
+﻿import { type RecordSubscription } from "pocketbase";
+
+import { type WorkflowRunModel } from "@/domain/workflowRun";
 
 import { getPocketBase } from "./_pocketbase";
 
@@ -34,4 +36,12 @@ export const list = async (request: ListWorkflowRunsRequest) => {
 
 export const remove = async (record: MaybeModelRecordWithId<WorkflowRunModel>) => {
   return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
+};
+
+export const subscribe = async (id: string, cb: (e: RecordSubscription<WorkflowRunModel>) => void) => {
+  return getPocketBase().collection(COLLECTION_NAME).subscribe(id, cb);
+};
+
+export const unsubscribe = async (id: string) => {
+  return getPocketBase().collection(COLLECTION_NAME).unsubscribe(id);
 };

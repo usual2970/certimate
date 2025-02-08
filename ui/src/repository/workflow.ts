@@ -50,13 +50,9 @@ export const remove = async (record: MaybeModelRecordWithId<WorkflowModel>) => {
 };
 
 export const subscribe = async (id: string, cb: (e: RecordSubscription<WorkflowModel>) => void) => {
-  const pb = getPocketBase();
-
-  return pb.collection("workflow").subscribe(id, cb);
+  return getPocketBase().collection(COLLECTION_NAME).subscribe(id, cb);
 };
 
 export const unsubscribe = async (id: string) => {
-  const pb = getPocketBase();
-
-  return pb.collection("workflow").unsubscribe(id);
+  return getPocketBase().collection(COLLECTION_NAME).unsubscribe(id);
 };

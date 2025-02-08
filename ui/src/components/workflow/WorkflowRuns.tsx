@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
@@ -18,7 +18,12 @@ import { ClientResponseError } from "pocketbase";
 import { cancelRun as cancelWorkflowRun } from "@/api/workflows";
 import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
-import { list as listWorkflowRuns, remove as removeWorkflowRun } from "@/repository/workflowRun";
+import {
+  list as listWorkflowRuns,
+  remove as removeWorkflowRun,
+  subscribe as subscribeWorkflowRun,
+  unsubscribe as unsubscribeWorkflowRun,
+} from "@/repository/workflowRun";
 import { getErrMsg } from "@/utils/error";
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
 
@@ -210,6 +215,27 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       },
     }
   );
+
+  useEffect(() => {
+    const items = tableData.filter((e) => e.status === WORKFLOW_RUN_STATUSES.PENDING || e.status === WORKFLOW_RUN_STATUSES.RUNNING);
+    for (const item of items) {
+      subscribeWorkflowRun(item.id, (cb) => {
+        setTableData((prev) => {
+          const index = prev.findIndex((e) => e.id === item.id);
+          if (index !== -1) {
+            prev[index] = cb.record;
+          }
+          return [...prev];
+        });
+      });
+    }
+
+    return () => {
+      for (const item of items) {
+        unsubscribeWorkflowRun(item.id);
+      }
+    };
+  }, [tableData]);
 
   const handleCancelClick = (workflowRun: WorkflowRunModel) => {
     modalApi.confirm({

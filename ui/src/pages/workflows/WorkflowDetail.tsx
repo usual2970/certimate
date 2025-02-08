@@ -64,8 +64,8 @@ const WorkflowDetail = () => {
 
   useEffect(() => {
     if (!!workflowId && isPendingOrRunning) {
-      subscribeWorkflow(workflowId, (e) => {
-        if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
+      subscribeWorkflow(workflowId, (cb) => {
+        if (cb.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && cb.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
           setIsPendingOrRunning(false);
           unsubscribeWorkflow(workflowId);
         }
