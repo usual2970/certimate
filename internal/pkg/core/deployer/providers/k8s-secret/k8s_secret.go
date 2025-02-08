@@ -131,6 +131,11 @@ func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 			secretPayload.ObjectMeta.Annotations[k] = v
 		}
 	}
+	if secretPayload.Data == nil {
+		secretPayload.Data = make(map[string][]byte)
+	}
+	secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPem)
+	secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPem)
 	secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Update(context.TODO(), secretPayload, k8sMeta.UpdateOptions{})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to update k8s secret")
