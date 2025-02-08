@@ -80,7 +80,6 @@ func (n *applyNode) Process(ctx context.Context) error {
 	certificate.PopulateFromX509(certX509)
 
 	// 保存执行结果
-	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
 	output := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
 		RunId:      getContextWorkflowRunId(ctx),
@@ -124,7 +123,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（到期尚余 %d 天，预计不足 %d 天时续期）", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（尚余 %d 天过期，不足 %d 天时续期）", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

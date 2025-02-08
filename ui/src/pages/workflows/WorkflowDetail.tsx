@@ -42,7 +42,6 @@ const WorkflowDetail = () => {
     useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
   );
   useEffect(() => {
-    // TODO: loading & error
     workflowState.init(workflowId!);
 
     return () => {
@@ -52,7 +51,7 @@ const WorkflowDetail = () => {
 
   const [tabValue, setTabValue] = useState<"orchestration" | "runs">("orchestration");
 
-  const [isRunning, setIsRunning] = useState(false);
+  const [isPendingOrRunning, setIsPendingOrRunning] = useState(false);
   const lastRunStatus = useMemo(() => workflow.lastRunStatus, [workflow]);
 
   const [allowDiscard, setAllowDiscard] = useState(false);
@@ -60,14 +59,14 @@ const WorkflowDetail = () => {
   const [allowRun, setAllowRun] = useState(false);
 
   useEffect(() => {
-    setIsRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.PENDING || lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
+    setIsPendingOrRunning(lastRunStatus == WORKFLOW_RUN_STATUSES.PENDING || lastRunStatus == WORKFLOW_RUN_STATUSES.RUNNING);
   }, [lastRunStatus]);
 
   useEffect(() => {
-    if (!!workflowId && isRunning) {
+    if (!!workflowId && isPendingOrRunning) {
       subscribeWorkflow(workflowId, (e) => {
         if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
-          setIsRunning(false);
+          setIsPendingOrRunning(false);
           unsubscribeWorkflow(workflowId);
         }
       });
@@ -76,15 +75,15 @@ const WorkflowDetail = () => {
         unsubscribeWorkflow(workflowId);
       };
     }
-  }, [workflowId, isRunning]);
+  }, [workflowId, isPendingOrRunning]);
 
   useEffect(() => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
-    setAllowDiscard(!isRunning && hasReleased && hasChanges);
-    setAllowRelease(!isRunning && hasChanges);
+    setAllowDiscard(!isPendingOrRunning && hasReleased && hasChanges);
+    setAllowRelease(!isPendingOrRunning && hasChanges);
     setAllowRun(hasReleased);
-  }, [workflow.content, workflow.draft, workflow.hasDraft, isRunning]);
+  }, [workflow.content, workflow.draft, workflow.hasDraft, isPendingOrRunning]);
 
   const handleEnableChange = async () => {
     if (!workflow.enabled && (!workflow.content || !isAllNodesValidated(workflow.content))) {
@@ -174,12 +173,12 @@ const WorkflowDetail = () => {
       let unsubscribeFn: Awaited<ReturnType<typeof subscribeWorkflow>> | undefined = undefined;
 
       try {
-        setIsRunning(true);
+        setIsPendingOrRunning(true);
 
         // subscribe before running workflow
         unsubscribeFn = await subscribeWorkflow(workflowId!, (e) => {
           if (e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.PENDING && e.record.lastRunStatus !== WORKFLOW_RUN_STATUSES.RUNNING) {
-            setIsRunning(false);
+            setIsPendingOrRunning(false);
             unsubscribeFn?.();
           }
         });
@@ -188,7 +187,7 @@ const WorkflowDetail = () => {
 
         messageApi.info(t("workflow.detail.orchestration.action.run.prompt"));
       } catch (err) {
-        setIsRunning(false);
+        setIsPendingOrRunning(false);
         unsubscribeFn?.();
 
         console.error(err);
@@ -279,7 +278,7 @@ const WorkflowDetail = () => {
               </div>
               <div className="flex justify-end">
                 <Space>
-                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isRunning} type="primary" onClick={handleRunClick}>
+                  <Button disabled={!allowRun} icon={<CaretRightOutlinedIcon />} loading={isPendingOrRunning} type="primary" onClick={handleRunClick}>
                     {t("workflow.detail.orchestration.action.run")}
                   </Button>
 

@@ -5,9 +5,9 @@ import {
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
-  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PauseOutlined as PauseOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
@@ -75,7 +75,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
           return (
-            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+            <Tag icon={<StopOutlinedIcon />} color="warning">
               {t("workflow_run.props.status.canceled")}
             </Tag>
           );

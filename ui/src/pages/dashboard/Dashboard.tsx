@@ -7,10 +7,10 @@ import {
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   LockOutlined as LockOutlinedIcon,
-  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
@@ -89,7 +89,6 @@ const Dashboard = () => {
         const workflow = record.expand?.workflowId;
         return (
           <Typography.Link
-            type="secondary"
             ellipsis
             onClick={() => {
               if (workflow) {
@@ -129,7 +128,7 @@ const Dashboard = () => {
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
           return (
-            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+            <Tag icon={<StopOutlinedIcon />} color="warning">
               {t("workflow_run.props.status.canceled")}
             </Tag>
           );

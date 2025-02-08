@@ -46,6 +46,6 @@ func Register(router *router.Router[*core.RequestEvent]) {
 
 func Unregister() {
 	if workflowSvc != nil {
-		workflowSvc.Stop(context.Background())
+		workflowSvc.Shutdown(context.Background())
 	}
 }

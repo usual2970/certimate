@@ -69,6 +69,13 @@ func (r *WorkflowRunRepository) Save(ctx context.Context, workflowRun *domain.Wo
 		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, workflowRun.WorkflowId)
 		if err != nil {
 			return err
+		} else if workflowRun.Id == workflowRecord.GetString("lastRunId") {
+			workflowRecord.IgnoreUnchangedFields(true)
+			workflowRecord.Set("lastRunStatus", record.GetString("status"))
+			err = txApp.Save(workflowRecord)
+			if err != nil {
+				return err
+			}
 		} else if workflowRecord.GetDateTime("lastRunTime").Time().IsZero() || workflowRun.StartedAt.After(workflowRecord.GetDateTime("lastRunTime").Time()) {
 			workflowRecord.IgnoreUnchangedFields(true)
 			workflowRecord.Set("lastRunId", record.Id)

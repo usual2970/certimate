@@ -4,22 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/domain/dtos"
-	processor "github.com/usual2970/certimate/internal/workflow/processor"
+	"github.com/usual2970/certimate/internal/workflow/dispatcher"
 )
-
-const defaultRoutines = 16
-
-type workflowRunData struct {
-	WorkflowId      string
-	WorkflowContent *domain.WorkflowNode
-	RunTrigger      domain.WorkflowTriggerType
-}
 
 type workflowRepository interface {
 	ListEnabledAuto(ctx context.Context) ([]*domain.Workflow, error)
@@ -33,30 +24,19 @@ type workflowRunRepository interface {
 }
 
 type WorkflowService struct {
-	ch     chan *workflowRunData
-	wg     sync.WaitGroup
-	cancel context.CancelFunc
+	dispatcher *dispatcher.WorkflowDispatcher
 
 	workflowRepo    workflowRepository
 	workflowRunRepo workflowRunRepository
 }
 
 func NewWorkflowService(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository) *WorkflowService {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	srv := &WorkflowService{
-		ch:     make(chan *workflowRunData, 1),
-		cancel: cancel,
+		dispatcher: dispatcher.GetSingletonDispatcher(workflowRepo, workflowRunRepo),
 
 		workflowRepo:    workflowRepo,
 		workflowRunRepo: workflowRunRepo,
 	}
-
-	srv.wg.Add(defaultRoutines)
-	for i := 0; i < defaultRoutines; i++ {
-		go srv.startRun(ctx)
-	}
-
 	return srv
 }
 
@@ -75,7 +55,6 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 			})
 		})
 		if err != nil {
-			app.GetLogger().Error("failed to add schedule", "err", err)
 			return err
 		}
 	}
@@ -86,7 +65,6 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartRunReq) error {
 	workflow, err := s.workflowRepo.GetById(ctx, req.WorkflowId)
 	if err != nil {
-		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
 		return err
 	}
 
@@ -94,69 +72,10 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 		return errors.New("workflow is already pending or running")
 	}
 
-	s.ch <- &workflowRunData{
-		WorkflowId:      workflow.Id,
-		WorkflowContent: workflow.Content,
-		RunTrigger:      req.RunTrigger,
-	}
-
-	return nil
-}
-
-func (s *WorkflowService) CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error {
-	workflow, err := s.workflowRepo.GetById(ctx, req.WorkflowId)
-	if err != nil {
-		app.GetLogger().Error("failed to get workflow", "id", req.WorkflowId, "err", err)
-		return err
-	}
-
-	workflowRun, err := s.workflowRunRepo.GetById(ctx, req.RunId)
-	if err != nil {
-		app.GetLogger().Error("failed to get workflow run", "id", req.RunId, "err", err)
-		return err
-	} else if workflowRun.WorkflowId != workflow.Id {
-		return errors.New("workflow run not found")
-	} else if workflowRun.Status != domain.WorkflowRunStatusTypePending && workflowRun.Status != domain.WorkflowRunStatusTypeRunning {
-		return errors.New("workflow run is not pending or running")
-	}
-
-	// TODO: 取消运行，防止因为某些原因意外挂起（如进程被杀死）导致工作流一直处于 running 状态无法重新运行
-	// workflowRun.Status = domain.WorkflowRunStatusTypeCanceled
-	// workflowRun.EndedAt = time.Now()
-	// if _, err := s.workflowRunRepo.Save(ctx, workflowRun); err != nil {
-	// 	return err
-	// }
-
-	// return nil
-
-	return errors.New("TODO: 尚未实现")
-}
-
-func (s *WorkflowService) Stop(ctx context.Context) {
-	s.cancel()
-	s.wg.Wait()
-}
-
-func (s *WorkflowService) startRun(ctx context.Context) {
-	defer s.wg.Done()
-
-	for {
-		select {
-		case data := <-s.ch:
-			if err := s.startRunWithData(ctx, data); err != nil {
-				app.GetLogger().Error("failed to run workflow", "id", data.WorkflowId, "err", err)
-			}
-		case <-ctx.Done():
-			return
-		}
-	}
-}
-
-func (s *WorkflowService) startRunWithData(ctx context.Context, data *workflowRunData) error {
 	run := &domain.WorkflowRun{
-		WorkflowId: data.WorkflowId,
-		Status:     domain.WorkflowRunStatusTypeRunning,
-		Trigger:    data.RunTrigger,
+		WorkflowId: workflow.Id,
+		Status:     domain.WorkflowRunStatusTypePending,
+		Trigger:    req.RunTrigger,
 		StartedAt:  time.Now(),
 	}
 	if resp, err := s.workflowRunRepo.Save(ctx, run); err != nil {
@@ -165,31 +84,35 @@ func (s *WorkflowService) startRunWithData(ctx context.Context, data *workflowRu
 		run = resp
 	}
 
-	processor := processor.NewWorkflowProcessor(data.WorkflowId, data.WorkflowContent, run.Id)
-	if runErr := processor.Process(ctx); runErr != nil {
-		run.Status = domain.WorkflowRunStatusTypeFailed
-		run.EndedAt = time.Now()
-		run.Logs = processor.GetLogs()
-		run.Error = runErr.Error()
-		if _, err := s.workflowRunRepo.Save(ctx, run); err != nil {
-			app.GetLogger().Error("failed to save workflow run", "err", err)
-		}
+	s.dispatcher.Dispatch(&dispatcher.WorkflowWorkerData{
+		WorkflowId:      workflow.Id,
+		WorkflowContent: workflow.Content,
+		RunId:           run.Id,
+	})
 
-		return fmt.Errorf("failed to run workflow: %w", runErr)
-	}
+	return nil
+}
 
-	run.EndedAt = time.Now()
-	run.Logs = processor.GetLogs()
-	run.Error = domain.WorkflowRunLogs(run.Logs).ErrorString()
-	if run.Error == "" {
-		run.Status = domain.WorkflowRunStatusTypeSucceeded
-	} else {
-		run.Status = domain.WorkflowRunStatusTypeFailed
-	}
-	if _, err := s.workflowRunRepo.Save(ctx, run); err != nil {
-		app.GetLogger().Error("failed to save workflow run", "err", err)
+func (s *WorkflowService) CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error {
+	workflow, err := s.workflowRepo.GetById(ctx, req.WorkflowId)
+	if err != nil {
 		return err
 	}
 
+	workflowRun, err := s.workflowRunRepo.GetById(ctx, req.RunId)
+	if err != nil {
+		return err
+	} else if workflowRun.WorkflowId != workflow.Id {
+		return errors.New("workflow run not found")
+	} else if workflowRun.Status != domain.WorkflowRunStatusTypePending && workflowRun.Status != domain.WorkflowRunStatusTypeRunning {
+		return errors.New("workflow run is not pending or running")
+	}
+
+	s.dispatcher.Cancel(workflowRun.Id)
+
 	return nil
+}
+
+func (s *WorkflowService) Shutdown(ctx context.Context) {
+	s.dispatcher.Shutdown()
 }
