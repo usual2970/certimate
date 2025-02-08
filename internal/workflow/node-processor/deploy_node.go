@@ -53,7 +53,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 	}
 
 	// 检测是否可以跳过本次执行
-	if certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
+	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
 		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
 			n.AddOutput(ctx, n.node.Name, skipReason)
 			return nil
