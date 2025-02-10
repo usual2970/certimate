@@ -23,6 +23,7 @@ var (
 )
 
 func GetSingletonDispatcher(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository) *WorkflowDispatcher {
+	// TODO: 待优化构造过程
 	intanceOnce.Do(func() {
 		instance = newWorkflowDispatcher(workflowRepo, workflowRunRepo)
 	})

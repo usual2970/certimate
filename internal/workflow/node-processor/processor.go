@@ -55,6 +55,7 @@ func (l *nodeLogger) AppendLogRecord(ctx context.Context, level domain.WorkflowR
 	}
 	if len(err) > 0 {
 		record.Error = err[0]
+		l.log.Error = err[0]
 	}
 
 	l.log.Records = append(l.log.Records, record)

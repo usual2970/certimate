@@ -18,6 +18,7 @@
   "workflow_run.props.started_at": "Started at",
   "workflow_run.props.ended_at": "Ended at",
 
+  "workflow_run.logs": "Logs",
   "workflow_run.artifacts": "Artifacts",
 
   "workflow_run_artifact.props.type": "Type",

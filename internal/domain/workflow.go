@@ -55,8 +55,8 @@ type WorkflowNode struct {
 	Inputs  []WorkflowNodeIO `json:"inputs"`
 	Outputs []WorkflowNodeIO `json:"outputs"`
 
-	Next     *WorkflowNode  `json:"next"`
-	Branches []WorkflowNode `json:"branches"`
+	Next     *WorkflowNode  `json:"next,omitempty"`
+	Branches []WorkflowNode `json:"branches,omitempty"`
 
 	Validated bool `json:"validated"`
 }

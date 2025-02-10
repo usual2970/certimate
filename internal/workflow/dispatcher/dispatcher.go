@@ -242,7 +242,7 @@ func (w *WorkflowDispatcher) work(ctx context.Context, data *WorkflowWorkerData)
 	}
 
 	// 执行工作流
-	invoker := newWorkflowInvoker(data)
+	invoker := newWorkflowInvokerWithData(w.workflowRunRepo, data)
 	if runErr := invoker.Invoke(ctx); runErr != nil {
 		if errors.Is(runErr, context.Canceled) {
 			run.Status = domain.WorkflowRunStatusTypeCanceled

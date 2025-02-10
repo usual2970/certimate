@@ -13,18 +13,23 @@ type workflowInvoker struct {
 	workflowContent *domain.WorkflowNode
 	runId           string
 	runLogs         []domain.WorkflowRunLog
+
+	workflowRunRepo workflowRunRepository
 }
 
-func newWorkflowInvoker(data *WorkflowWorkerData) *workflowInvoker {
+func newWorkflowInvokerWithData(workflowRunRepo workflowRunRepository, data *WorkflowWorkerData) *workflowInvoker {
 	if data == nil {
 		panic("worker data is nil")
 	}
 
+	// TODO: 待优化，日志与执行解耦
 	return &workflowInvoker{
 		workflowId:      data.WorkflowId,
 		workflowContent: data.WorkflowContent,
 		runId:           data.RunId,
 		runLogs:         make([]domain.WorkflowRunLog, 0),
+
+		workflowRunRepo: workflowRunRepo,
 	}
 }
 
@@ -70,6 +75,12 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 				log := processor.GetLog(ctx)
 				if log != nil {
 					w.runLogs = append(w.runLogs, *log)
+
+					// TODO: 待优化，把 /pkg/core/* 包下的输出写入到 DEBUG 级别的日志中
+					if run, err := w.workflowRunRepo.GetById(ctx, w.runId); err == nil {
+						run.Logs = w.runLogs
+						w.workflowRunRepo.Save(ctx, run)
+					}
 				}
 				if procErr != nil {
 					break
