@@ -48,6 +48,8 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 
 	scheduler := app.GetScheduler()
 	for _, workflow := range workflows {
+		var errs []error
+
 		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
 			s.StartRun(ctx, &dtos.WorkflowStartRunReq{
 				WorkflowId: workflow.Id,
@@ -55,7 +57,11 @@ func (s *WorkflowService) InitSchedule(ctx context.Context) error {
 			})
 		})
 		if err != nil {
-			return err
+			errs = append(errs, err)
+		}
+
+		if len(errs) > 0 {
+			return errors.Join(errs...)
 		}
 	}
 

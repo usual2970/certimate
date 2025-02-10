@@ -72,7 +72,6 @@ func onWorkflowRecordCreateOrUpdate(ctx context.Context, record *core.Record) er
 		})
 	})
 	if err != nil {
-		app.GetLogger().Error("add cron job failed", "err", err)
 		return fmt.Errorf("add cron job failed: %w", err)
 	}
 

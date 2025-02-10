@@ -24,7 +24,7 @@ func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Wor
 		"enabled={:enabled} && trigger={:trigger}",
 		"-created",
 		0, 0,
-		dbx.Params{"enabled": true, "trigger": domain.WorkflowTriggerTypeAuto},
+		dbx.Params{"enabled": true, "trigger": string(domain.WorkflowTriggerTypeAuto)},
 	)
 	if err != nil {
 		return nil, err

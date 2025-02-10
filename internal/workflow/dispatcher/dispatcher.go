@@ -92,6 +92,7 @@ func (w *WorkflowDispatcher) Dispatch(data *WorkflowWorkerData) {
 	}
 
 	w.enqueueWorker(data)
+
 	select {
 	case w.chWork <- data:
 	default:
@@ -138,6 +139,11 @@ func (w *WorkflowDispatcher) Shutdown() {
 	w.queueMutex.Unlock()
 
 	// 等待所有正在执行的 WorkflowRun 完成
+	w.workerMutex.Lock()
+	for _, worker := range w.workers {
+		worker.Cancel()
+	}
+	w.workerMutex.Unlock()
 	w.wg.Wait()
 	w.workers = make(map[string]*workflowWorker)
 	w.workerIdMap = make(map[string]string)
