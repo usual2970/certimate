@@ -38,6 +38,23 @@ export const list = async (request: ListCertificateRequest) => {
   return pb.collection(COLLECTION_NAME).getList<CertificateModel>(page, perPage, options);
 };
 
+export const listByWorkflowRunId = async (workflowRunId: string) => {
+  const pb = getPocketBase();
+
+  const options: RecordListOptions = {
+    filter: pb.filter("workflowRunId={:workflowRunId}", {
+      workflowRunId: workflowRunId,
+    }),
+    sort: "-created",
+    requestKey: null,
+  };
+  const items = await pb.collection(COLLECTION_NAME).getFullList<CertificateModel>(options);
+  return {
+    totalItems: items.length,
+    items: items,
+  };
+};
+
 export const remove = async (record: MaybeModelRecordWithId<CertificateModel>) => {
   await getPocketBase()
     .collection(COLLECTION_NAME)

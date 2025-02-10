@@ -141,7 +141,7 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
         </Form.Item>
 
         <Form.Item name="certificate" label={t("workflow_node.upload.form.certificate.label")} rules={[formRule]}>
-          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 10 }} placeholder={t("workflow_node.upload.form.certificate.placeholder")} />
+          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 5 }} placeholder={t("workflow_node.upload.form.certificate.placeholder")} />
         </Form.Item>
 
         <Form.Item>
@@ -151,7 +151,7 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
         </Form.Item>
 
         <Form.Item name="privateKey" label={t("workflow_node.upload.form.private_key.label")} rules={[formRule]}>
-          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 10 }} placeholder={t("workflow_node.upload.form.private_key.placeholder")} />
+          <Input.TextArea readOnly autoSize={{ minRows: 5, maxRows: 5 }} placeholder={t("workflow_node.upload.form.private_key.placeholder")} />
         </Form.Item>
 
         <Form.Item>

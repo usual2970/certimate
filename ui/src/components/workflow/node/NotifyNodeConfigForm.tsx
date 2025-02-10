@@ -86,7 +86,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         </Form.Item>
 
         <Form.Item name="message" label={t("workflow_node.notify.form.message.label")} rules={[formRule]}>
-          <Input.TextArea autoSize={{ minRows: 3, maxRows: 10 }} placeholder={t("workflow_node.notify.form.message.placeholder")} />
+          <Input.TextArea autoSize={{ minRows: 3, maxRows: 5 }} placeholder={t("workflow_node.notify.form.message.placeholder")} />
         </Form.Item>
 
         <Form.Item className="mb-0">

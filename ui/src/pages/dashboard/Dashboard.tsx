@@ -15,8 +15,7 @@ import {
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
-import type { TableProps } from "antd";
-import { Button, Card, Col, Divider, Empty, Flex, Grid, Row, Space, Statistic, Table, Tag, Typography, notification, theme } from "antd";
+import { Button, Card, Col, Divider, Empty, Flex, Grid, Row, Space, Statistic, Table, type TableProps, Tag, Typography, notification, theme } from "antd";
 import dayjs from "dayjs";
 import {
   CalendarClock as CalendarClockIcon,
@@ -177,7 +176,7 @@ const Dashboard = () => {
     () => {
       return listWorkflowRuns({
         page: 1,
-        perPage: 5,
+        perPage: 9,
         expand: true,
       });
     },
@@ -285,8 +284,9 @@ const Dashboard = () => {
               emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />,
             }}
             pagination={false}
-            rowKey={(record: WorkflowRunModel) => record.id}
+            rowKey={(record) => record.id}
             scroll={{ x: "max(100%, 960px)" }}
+            size="small"
           />
         </Card>
       </Flex>

@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Typography } from "antd";
 import { produce } from "immer";
 
-import type { WorkflowNodeConfigForUpload } from "@/domain/workflow";
-import { WorkflowNodeType } from "@/domain/workflow";
+import { type WorkflowNodeConfigForUpload, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 

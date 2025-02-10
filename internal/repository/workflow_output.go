@@ -61,7 +61,22 @@ func (r *WorkflowOutputRepository) SaveWithCertificate(ctx context.Context, work
 		workflowOutput.UpdatedAt = record.GetDateTime("updated").Time()
 	}
 
-	if certificate != nil {
+	if certificate == nil {
+		panic("certificate is nil")
+	} else {
+		if certificate.WorkflowId != "" && certificate.WorkflowId != workflowOutput.WorkflowId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow #%s", certificate.Id, workflowOutput.WorkflowId)
+		}
+		if certificate.WorkflowRunId != "" && certificate.WorkflowRunId != workflowOutput.RunId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow run #%s", certificate.Id, workflowOutput.RunId)
+		}
+		if certificate.WorkflowNodeId != "" && certificate.WorkflowNodeId != workflowOutput.NodeId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow node #%s", certificate.Id, workflowOutput.NodeId)
+		}
+		if certificate.WorkflowOutputId != "" && certificate.WorkflowOutputId != workflowOutput.Id {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow output #%s", certificate.Id, workflowOutput.Id)
+		}
+
 		certificate.WorkflowId = workflowOutput.WorkflowId
 		certificate.WorkflowRunId = workflowOutput.RunId
 		certificate.WorkflowNodeId = workflowOutput.NodeId
@@ -143,5 +158,5 @@ func (r *WorkflowOutputRepository) saveRecord(workflowOutput *domain.WorkflowOut
 		return record, err
 	}
 
-	return record, err
+	return record, nil
 }

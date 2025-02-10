@@ -301,7 +301,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
               setPageSize(pageSize);
             },
           }}
-          rowKey={(record: WorkflowRunModel) => record.id}
+          rowKey={(record) => record.id}
           scroll={{ x: "max(100%, 960px)" }}
         />
       </div>

@@ -1,4 +1,4 @@
-import type { WorkflowModel } from "./workflow";
+import { type WorkflowModel } from "./workflow";
 
 export interface WorkflowRunModel extends BaseModel {
   workflowId: string;

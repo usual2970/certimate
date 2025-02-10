@@ -16,5 +16,11 @@
   "workflow_run.props.trigger.auto": "Timing",
   "workflow_run.props.trigger.manual": "Manual",
   "workflow_run.props.started_at": "Started at",
-  "workflow_run.props.ended_at": "Ended at"
+  "workflow_run.props.ended_at": "Ended at",
+
+  "workflow_run.artifacts": "Artifacts",
+
+  "workflow_run_artifact.props.type": "Type",
+  "workflow_run_artifact.props.type.certificate": "Certificate",
+  "workflow_run_artifact.props.name": "Name"
 }
