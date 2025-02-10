@@ -2,10 +2,12 @@ package deployer
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	providerAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	providerAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	providerAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	providerAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
 	providerAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
@@ -42,6 +44,7 @@ import (
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger, error) {
@@ -52,7 +55,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -69,6 +72,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunCASDeploy:
+				deployer, err := providerAliyunCASDeploy.NewWithLogger(&providerAliyunCASDeploy.AliyunCASDeployDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceIds:     slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					ContactIds:      slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
 				}, logger)
 				return deployer, logger, err
 

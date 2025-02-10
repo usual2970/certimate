@@ -176,6 +176,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
  */
 export const DEPLOY_PROVIDERS = Object.freeze({
   ALIYUN_ALB: `${ACCESS_PROVIDERS.ALIYUN}-alb`,
+  ALIYUN_CAS_DEPLOY: `${ACCESS_PROVIDERS.ALIYUN}.cas-deploy`,
   ALIYUN_CDN: `${ACCESS_PROVIDERS.ALIYUN}-cdn`,
   ALIYUN_CLB: `${ACCESS_PROVIDERS.ALIYUN}-clb`,
   ALIYUN_DCDN: `${ACCESS_PROVIDERS.ALIYUN}-dcdn`,
@@ -240,6 +241,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.ALIYUN_NLB, "common.provider.aliyun.nlb"],
     [DEPLOY_PROVIDERS.ALIYUN_WAF, "common.provider.aliyun.waf"],
     [DEPLOY_PROVIDERS.ALIYUN_LIVE, "common.provider.aliyun.live"],
+    [DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY, "common.provider.aliyun.cas-deploy"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_COS, "common.provider.tencentcloud.cos"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CDN, "common.provider.tencentcloud.cdn"],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_ECDN, "common.provider.tencentcloud.ecdn"],

@@ -38,6 +38,7 @@
   "common.provider.acmehttpreq": "Http Request (ACME Proxy)",
   "common.provider.aliyun": "阿里云",
   "common.provider.aliyun.alb": "阿里云 - 应用型负载均衡 ALB",
+  "common.provider.aliyun.cas-deploy": "阿里云 - 通过数字证书管理服务 CAS 创建部署任务",
   "common.provider.aliyun.cdn": "阿里云 - 内容分发网络 CDN",
   "common.provider.aliyun.clb": "阿里云 - 传统型负载均衡 CLB",
   "common.provider.aliyun.dcdn": "阿里云 - 全站加速 DCDN",

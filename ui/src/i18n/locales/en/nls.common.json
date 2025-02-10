@@ -38,6 +38,7 @@
   "common.provider.acmehttpreq": "Http Request (ACME Proxy)",
   "common.provider.aliyun": "Alibaba Cloud",
   "common.provider.aliyun.alb": "Alibaba Cloud - ALB (Application Load Balancer)",
+  "common.provider.aliyun.cas-deploy": "Alibaba Cloud - via CAS (Certificate Management Service) Deployment Job",
   "common.provider.aliyun.cdn": "Alibaba Cloud - CDN (Content Delivery Network)",
   "common.provider.aliyun.clb": "Alibaba Cloud - CLB (Classic Load Balancer)",
   "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN (Dynamic Route for Content Delivery Network)",

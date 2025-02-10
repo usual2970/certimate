@@ -83,6 +83,7 @@ type DeployProviderType string
 */
 const (
 	DeployProviderTypeAliyunALB         = DeployProviderType("aliyun-alb")
+	DeployProviderTypeAliyunCASDeploy   = DeployProviderType("aliyun-cas-deploy")
 	DeployProviderTypeAliyunCDN         = DeployProviderType("aliyun-cdn")
 	DeployProviderTypeAliyunCLB         = DeployProviderType("aliyun-clb")
 	DeployProviderTypeAliyunDCDN        = DeployProviderType("aliyun-dcdn")

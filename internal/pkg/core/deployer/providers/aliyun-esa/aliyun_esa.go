@@ -101,6 +101,7 @@ func (d *AliyunESADeployer) Deploy(ctx context.Context, certPem string, privkeyP
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunEsa.Client, error) {
+	// 接入点一览 https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-endpoint
 	config := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
