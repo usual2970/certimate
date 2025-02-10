@@ -55,6 +55,8 @@
   "common.provider.azure.dns": "Azure - DNS",
   "common.provider.baiducloud": "Baidu Cloud",
   "common.provider.baiducloud.cdn": "Baidu Cloud - CDN (Content Delivery Network)",
+  "common.provider.baotapanel": "BaoTa Panel",
+  "common.provider.baotapanel.site": "BaoTa Panel - Site",
   "common.provider.byteplus": "BytePlus",
   "common.provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
   "common.provider.cloudflare": "Cloudflare",

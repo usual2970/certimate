@@ -130,11 +130,11 @@ func (c *GnameClient) sendRequest(path string, params map[string]any) (*resty.Re
 		SetFormData(data)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("failed to send request: %w", err)
+		return nil, fmt.Errorf("gname: failed to send request: %w", err)
 	}
 
 	if resp.IsError() {
-		return nil, fmt.Errorf("unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("gname: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -148,14 +148,14 @@ func (c *GnameClient) sendRequestWithResult(path string, params map[string]any, 
 
 	jsonResp := make(map[string]any)
 	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
-		return fmt.Errorf("failed to parse response: %w", err)
+		return fmt.Errorf("gname: failed to parse response: %w", err)
 	}
 	if err := maps.Decode(jsonResp, &result); err != nil {
-		return fmt.Errorf("failed to parse response: %w", err)
+		return fmt.Errorf("gname: failed to parse response: %w", err)
 	}
 
 	if result.GetCode() != 1 {
-		return fmt.Errorf("API error: %s", result.GetMsg())
+		return fmt.Errorf("gname api error: %s", result.GetMsg())
 	}
 
 	return nil

@@ -18,6 +18,7 @@ import (
 	providerAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
 	providerAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
+	providerBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
 	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	providerEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
@@ -208,6 +209,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			default:
 				break
 			}
+		}
+
+	case domain.DeployProviderTypeBaotaPanelSite:
+		{
+			access := domain.AccessConfigForBaotaPanel{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			deployer, err := providerBaotaPanelSite.NewWithLogger(&providerBaotaPanelSite.BaotaPanelSiteDeployerConfig{
+				ApiUrl:   access.ApiUrl,
+				ApiKey:   access.ApiKey,
+				SiteName: maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+			}, logger)
+			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeBytePlusCDN:

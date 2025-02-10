@@ -55,6 +55,8 @@
   "common.provider.azure.dns": "Azure - DNS",
   "common.provider.baiducloud": "百度智能云",
   "common.provider.baiducloud.cdn": "百度智能云 - 内容分发网络 CDN",
+  "common.provider.baotapanel": "宝塔面板",
+  "common.provider.baotapanel.site": "宝塔面板 - 网站",
   "common.provider.byteplus": "BytePlus",
   "common.provider.byteplus.cdn": "BytePlus - 内容分发网络 CDN",
   "common.provider.cloudflare": "Cloudflare",

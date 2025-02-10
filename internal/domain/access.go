@@ -54,6 +54,11 @@ type AccessConfigForBaiduCloud struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
+type AccessConfigForBaotaPanel struct {
+	ApiUrl string `json:"apiUrl"`
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForBytePlus struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
