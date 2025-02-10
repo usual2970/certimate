@@ -22,7 +22,7 @@ type deployNode struct {
 func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
 		node:       node,
-		nodeLogger: NewNodeLogger(node),
+		nodeLogger: newNodeLogger(node),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -30,12 +30,12 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 }
 
 func (n *deployNode) Process(ctx context.Context) error {
-	n.AddOutput(ctx, n.node.Name, "开始执行")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "开始执行")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		n.AddOutput(ctx, n.node.Name, "查询部署记录失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "查询部署记录失败", err.Error())
 		return err
 	}
 
@@ -43,19 +43,19 @@ func (n *deployNode) Process(ctx context.Context) error {
 	previousNodeOutputCertificateSource := n.node.GetConfigForDeploy().Certificate
 	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, "#")
 	if len(previousNodeOutputCertificateSourceSlice) != 2 {
-		n.AddOutput(ctx, n.node.Name, "证书来源配置错误", previousNodeOutputCertificateSource)
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "证书来源配置错误", previousNodeOutputCertificateSource)
 		return fmt.Errorf("证书来源配置错误: %s", previousNodeOutputCertificateSource)
 	}
 	certificate, err := n.certRepo.GetByWorkflowNodeId(ctx, previousNodeOutputCertificateSourceSlice[0])
 	if err != nil {
-		n.AddOutput(ctx, n.node.Name, "获取证书失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取证书失败", err.Error())
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
 	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
 		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-			n.AddOutput(ctx, n.node.Name, skipReason)
+			n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, skipReason)
 			return nil
 		}
 	}
@@ -66,16 +66,16 @@ func (n *deployNode) Process(ctx context.Context) error {
 		PrivateKey  string
 	}{Certificate: certificate.Certificate, PrivateKey: certificate.PrivateKey})
 	if err != nil {
-		n.AddOutput(ctx, n.node.Name, "获取部署对象失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取部署对象失败", err.Error())
 		return err
 	}
 
 	// 部署证书
 	if err := deployer.Deploy(ctx); err != nil {
-		n.AddOutput(ctx, n.node.Name, "部署失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "部署失败", err.Error())
 		return err
 	}
-	n.AddOutput(ctx, n.node.Name, "部署成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "部署成功")
 
 	// 保存执行结果
 	output := &domain.WorkflowOutput{
@@ -86,10 +86,10 @@ func (n *deployNode) Process(ctx context.Context) error {
 		Succeeded:  true,
 	}
 	if _, err := n.outputRepo.Save(ctx, output); err != nil {
-		n.AddOutput(ctx, n.node.Name, "保存部署记录失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "保存部署记录失败", err.Error())
 		return err
 	}
-	n.AddOutput(ctx, n.node.Name, "保存部署记录成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "保存部署记录成功")
 
 	return nil
 }

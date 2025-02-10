@@ -39,7 +39,7 @@ const WorkflowRunDetail = ({ data, ...props }: WorkflowRunDetailProps) => {
               <div key={i} className="flex flex-col space-y-2">
                 <div className="font-semibold">{item.nodeName}</div>
                 <div className="flex flex-col space-y-1">
-                  {item.outputs?.map((output, j) => {
+                  {item.records?.map((output, j) => {
                     return (
                       <div key={j} className="flex space-x-2 text-sm" style={{ wordBreak: "break-word" }}>
                         <div className="whitespace-nowrap">[{dayjs(output.time).format("YYYY-MM-DD HH:mm:ss")}]</div>

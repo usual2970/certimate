@@ -10,8 +10,9 @@ import (
 
 type NodeProcessor interface {
 	Process(ctx context.Context) error
+
 	GetLog(ctx context.Context) *domain.WorkflowRunLog
-	AddOutput(ctx context.Context, title, content string, err ...string)
+	AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string)
 }
 
 type nodeLogger struct {
@@ -32,12 +33,12 @@ type settingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
-func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
+func newNodeLogger(node *domain.WorkflowNode) *nodeLogger {
 	return &nodeLogger{
 		log: &domain.WorkflowRunLog{
 			NodeId:   node.Id,
 			NodeName: node.Name,
-			Outputs:  make([]domain.WorkflowRunLogOutput, 0),
+			Records:  make([]domain.WorkflowRunLogRecord, 0),
 		},
 	}
 }
@@ -46,17 +47,17 @@ func (l *nodeLogger) GetLog(ctx context.Context) *domain.WorkflowRunLog {
 	return l.log
 }
 
-func (l *nodeLogger) AddOutput(ctx context.Context, title, content string, err ...string) {
-	output := domain.WorkflowRunLogOutput{
+func (l *nodeLogger) AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string) {
+	record := domain.WorkflowRunLogRecord{
 		Time:    time.Now().UTC().Format(time.RFC3339),
-		Title:   title,
+		Level:   level,
 		Content: content,
 	}
 	if len(err) > 0 {
-		output.Error = err[0]
-		l.log.Error = err[0]
+		record.Error = err[0]
 	}
-	l.log.Outputs = append(l.log.Outputs, output)
+
+	l.log.Records = append(l.log.Records, record)
 }
 
 func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {

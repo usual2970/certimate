@@ -14,13 +14,13 @@ type executeSuccessNode struct {
 func NewExecuteSuccessNode(node *domain.WorkflowNode) *executeSuccessNode {
 	return &executeSuccessNode{
 		node:       node,
-		nodeLogger: NewNodeLogger(node),
+		nodeLogger: newNodeLogger(node),
 	}
 }
 
 func (n *executeSuccessNode) Process(ctx context.Context) error {
 	// 此类型节点不需要执行任何操作，直接返回
-	n.AddOutput(ctx, n.node.Name, "进入执行成功分支")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "进入执行成功分支")
 
 	return nil
 }

@@ -24,7 +24,7 @@ type applyNode struct {
 func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:       node,
-		nodeLogger: NewNodeLogger(node),
+		nodeLogger: newNodeLogger(node),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -32,40 +32,40 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.AddOutput(ctx, n.node.Name, "开始执行")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "进入申请证书节点")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		n.AddOutput(ctx, n.node.Name, "查询申请记录失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "查询申请记录失败", err.Error())
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
 	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.AddOutput(ctx, n.node.Name, skipReason)
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, skipReason)
 		return nil
 	}
 
 	// 初始化申请器
 	applicant, err := applicant.NewWithApplyNode(n.node)
 	if err != nil {
-		n.AddOutput(ctx, n.node.Name, "获取申请对象失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取申请对象失败", err.Error())
 		return err
 	}
 
 	// 申请证书
 	applyResult, err := applicant.Apply()
 	if err != nil {
-		n.AddOutput(ctx, n.node.Name, "申请失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "申请失败", err.Error())
 		return err
 	}
-	n.AddOutput(ctx, n.node.Name, "申请成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "申请成功")
 
 	// 解析证书并生成实体
 	certX509, err := certs.ParseCertificateFromPEM(applyResult.CertificateFullChain)
 	if err != nil {
-		n.AddOutput(ctx, n.node.Name, "解析证书失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "解析证书失败", err.Error())
 		return err
 	}
 	certificate := &domain.Certificate{
@@ -89,10 +89,10 @@ func (n *applyNode) Process(ctx context.Context) error {
 		Outputs:    n.node.Outputs,
 	}
 	if _, err := n.outputRepo.SaveWithCertificate(ctx, output, certificate); err != nil {
-		n.AddOutput(ctx, n.node.Name, "保存申请记录失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "保存申请记录失败", err.Error())
 		return err
 	}
-	n.AddOutput(ctx, n.node.Name, "保存申请记录成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "保存申请记录成功")
 
 	return nil
 }

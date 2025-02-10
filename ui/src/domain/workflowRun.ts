@@ -16,13 +16,13 @@ export interface WorkflowRunModel extends BaseModel {
 export type WorkflowRunLog = {
   nodeId: string;
   nodeName: string;
-  outputs?: WorkflowRunLogOutput[];
+  records?: WorkflowRunLogRecord[];
   error?: string;
 };
 
-export type WorkflowRunLogOutput = {
+export type WorkflowRunLogRecord = {
   time: ISO8601String;
-  title: string;
+  level: string;
   content: string;
   error?: string;
 };
