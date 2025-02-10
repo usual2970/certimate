@@ -227,6 +227,10 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           }
           return [...prev];
         });
+
+        if (cb.record.status !== WORKFLOW_RUN_STATUSES.PENDING && cb.record.status !== WORKFLOW_RUN_STATUSES.RUNNING) {
+          unsubscribeWorkflowRun(item.id);
+        }
       });
     }
 
