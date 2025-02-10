@@ -41,6 +41,7 @@
   "common.provider.aliyun.cdn": "阿里云 - 内容分发网络 CDN",
   "common.provider.aliyun.clb": "阿里云 - 传统型负载均衡 CLB",
   "common.provider.aliyun.dcdn": "阿里云 - 全站加速 DCDN",
+  "common.provider.aliyun.esa": "阿里云 - 边缘安全加速 ESA",
   "common.provider.aliyun.dns": "阿里云 - 云解析 DNS",
   "common.provider.aliyun.live": "阿里云 - 视频直播 Live",
   "common.provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",

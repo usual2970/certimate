@@ -9,6 +9,7 @@ import (
 	providerAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	providerAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
 	providerAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
+	providerAliyunESA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-esa"
 	providerAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
@@ -96,6 +97,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunESA:
+				deployer, err := providerAliyunESA.NewWithLogger(&providerAliyunESA.AliyunESADeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					SiteId:          maps.GetValueAsInt64(options.ProviderDeployConfig, "siteId"),
 				}, logger)
 				return deployer, logger, err
 

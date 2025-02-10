@@ -86,6 +86,7 @@ const (
 	DeployProviderTypeAliyunCDN         = DeployProviderType("aliyun-cdn")
 	DeployProviderTypeAliyunCLB         = DeployProviderType("aliyun-clb")
 	DeployProviderTypeAliyunDCDN        = DeployProviderType("aliyun-dcdn")
+	DeployProviderTypeAliyunESA         = DeployProviderType("aliyun-esa")
 	DeployProviderTypeAliyunLive        = DeployProviderType("aliyun-live")
 	DeployProviderTypeAliyunNLB         = DeployProviderType("aliyun-nlb")
 	DeployProviderTypeAliyunOSS         = DeployProviderType("aliyun-oss")

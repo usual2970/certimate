@@ -42,6 +42,7 @@
   "common.provider.aliyun.clb": "Alibaba Cloud - CLB (Classic Load Balancer)",
   "common.provider.aliyun.dcdn": "Alibaba Cloud - DCDN (Dynamic Route for Content Delivery Network)",
   "common.provider.aliyun.dns": "Alibaba Cloud - DNS (Domain Name Service)",
+  "common.provider.aliyun.esa": "Alibaba Cloud - ESA (Edge Security Acceleration)",
   "common.provider.aliyun.live": "Alibaba Cloud - ApsaraVideo Live",
   "common.provider.aliyun.nlb": "Alibaba Cloud - NLB (Network Load Balancer)",
   "common.provider.aliyun.oss": "Alibaba Cloud - OSS (Object Storage Service)",
