@@ -34,6 +34,7 @@ import (
 	providerTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	providerTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
 	providerUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	providerUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -387,7 +388,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
@@ -447,6 +448,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeTencentCloudSSLDeploy:
+				deployer, err := providerTencentCloudSSLDeploy.NewWithLogger(&providerTencentCloudSSLDeploy.TencentCloudSSLDeployDeployerConfig{
+					SecretId:     access.SecretId,
+					SecretKey:    access.SecretKey,
+					Region:       maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType: maps.GetValueAsString(options.ProviderDeployConfig, "resourceType"),
+					ResourceIds:  slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
 				}, logger)
 				return deployer, logger, err
 

@@ -68,7 +68,7 @@ func TestDeploy(t *testing.T) {
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
-			ResourceType:   provider.DEPLOY_RESOURCE_USE_SSLDEPLOY,
+			ResourceType:   provider.DEPLOY_RESOURCE_VIA_SSLDEPLOY,
 			LoadbalancerId: fLoadbalancerId,
 			ListenerId:     fListenerId,
 			Domain:         fDomain,
