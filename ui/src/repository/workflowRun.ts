@@ -2,9 +2,7 @@
 
 import { type WorkflowRunModel } from "@/domain/workflowRun";
 
-import { getPocketBase } from "./_pocketbase";
-
-const COLLECTION_NAME = "workflow_run";
+import { COLLECTION_NAME_WORKFLOW_RUN, getPocketBase } from "./_pocketbase";
 
 export type ListWorkflowRunsRequest = {
   workflowId?: string;
@@ -25,7 +23,7 @@ export const list = async (request: ListWorkflowRunsRequest) => {
   }
 
   return await getPocketBase()
-    .collection(COLLECTION_NAME)
+    .collection(COLLECTION_NAME_WORKFLOW_RUN)
     .getList<WorkflowRunModel>(page, perPage, {
       filter: getPocketBase().filter(filter, params),
       sort: "-created",
@@ -35,13 +33,13 @@ export const list = async (request: ListWorkflowRunsRequest) => {
 };
 
 export const remove = async (record: MaybeModelRecordWithId<WorkflowRunModel>) => {
-  return await getPocketBase().collection(COLLECTION_NAME).delete(record.id);
+  return await getPocketBase().collection(COLLECTION_NAME_WORKFLOW_RUN).delete(record.id);
 };
 
 export const subscribe = async (id: string, cb: (e: RecordSubscription<WorkflowRunModel>) => void) => {
-  return getPocketBase().collection(COLLECTION_NAME).subscribe(id, cb);
+  return getPocketBase().collection(COLLECTION_NAME_WORKFLOW_RUN).subscribe(id, cb);
 };
 
 export const unsubscribe = async (id: string) => {
-  return getPocketBase().collection(COLLECTION_NAME).unsubscribe(id);
+  return getPocketBase().collection(COLLECTION_NAME_WORKFLOW_RUN).unsubscribe(id);
 };

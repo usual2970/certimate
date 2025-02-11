@@ -2,9 +2,7 @@ import dayjs from "dayjs";
 import { type RecordListOptions } from "pocketbase";
 
 import { type CertificateModel } from "@/domain/certificate";
-import { getPocketBase } from "./_pocketbase";
-
-const COLLECTION_NAME = "certificate";
+import { COLLECTION_NAME_CERTIFICATE, getPocketBase } from "./_pocketbase";
 
 export type ListCertificateRequest = {
   page?: number;
@@ -35,7 +33,7 @@ export const list = async (request: ListCertificateRequest) => {
     });
   }
 
-  return pb.collection(COLLECTION_NAME).getList<CertificateModel>(page, perPage, options);
+  return pb.collection(COLLECTION_NAME_CERTIFICATE).getList<CertificateModel>(page, perPage, options);
 };
 
 export const listByWorkflowRunId = async (workflowRunId: string) => {
@@ -48,7 +46,7 @@ export const listByWorkflowRunId = async (workflowRunId: string) => {
     sort: "-created",
     requestKey: null,
   };
-  const items = await pb.collection(COLLECTION_NAME).getFullList<CertificateModel>(options);
+  const items = await pb.collection(COLLECTION_NAME_CERTIFICATE).getFullList<CertificateModel>(options);
   return {
     totalItems: items.length,
     items: items,
@@ -57,7 +55,7 @@ export const listByWorkflowRunId = async (workflowRunId: string) => {
 
 export const remove = async (record: MaybeModelRecordWithId<CertificateModel>) => {
   await getPocketBase()
-    .collection(COLLECTION_NAME)
+    .collection(COLLECTION_NAME_CERTIFICATE)
     .update<CertificateModel>(record.id!, { deleted: dayjs.utc().format("YYYY-MM-DD HH:mm:ss") });
   return true;
 };

@@ -142,11 +142,11 @@ func (w *WorkflowDispatcher) Shutdown() {
 	w.workerMutex.Lock()
 	for _, worker := range w.workers {
 		worker.Cancel()
+		delete(w.workers, worker.Data.WorkflowId)
+		delete(w.workerIdMap, worker.Data.RunId)
 	}
 	w.workerMutex.Unlock()
 	w.wg.Wait()
-	w.workers = make(map[string]*workflowWorker)
-	w.workerIdMap = make(map[string]string)
 }
 
 func (w *WorkflowDispatcher) enqueueWorker(data *WorkflowWorkerData) {
