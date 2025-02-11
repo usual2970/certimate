@@ -122,6 +122,7 @@ export type WorkflowNodeConfigForStart = {
 export type WorkflowNodeConfigForApply = {
   domains: string;
   contactEmail: string;
+  challengeType: string;
   provider: string;
   providerAccessId: string;
   providerConfig?: Record<string, unknown>;
