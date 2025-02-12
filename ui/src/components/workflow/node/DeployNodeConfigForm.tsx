@@ -16,15 +16,18 @@ import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks
 import { useWorkflowStore } from "@/stores/workflow";
 
 import DeployNodeConfigFormAliyunALBConfig from "./DeployNodeConfigFormAliyunALBConfig";
+import DeployNodeConfigFormAliyunCASDeployConfig from "./DeployNodeConfigFormAliyunCASDeployConfig";
 import DeployNodeConfigFormAliyunCDNConfig from "./DeployNodeConfigFormAliyunCDNConfig";
 import DeployNodeConfigFormAliyunCLBConfig from "./DeployNodeConfigFormAliyunCLBConfig";
 import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDCDNConfig";
+import DeployNodeConfigFormAliyunESAConfig from "./DeployNodeConfigFormAliyunESAConfig";
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
+import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaotaPanelSiteConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
@@ -41,6 +44,7 @@ import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTencentCloudCSSConfig.tsx";
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
+import DeployNodeConfigFormTencentCloudSSLDeployConfig from "./DeployNodeConfigFormTencentCloudSSLDeployConfig";
 import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
@@ -123,12 +127,16 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       switch (fieldProvider) {
         case DEPLOY_PROVIDERS.ALIYUN_ALB:
           return <DeployNodeConfigFormAliyunALBConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY:
+          return <DeployNodeConfigFormAliyunCASDeployConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_CLB:
           return <DeployNodeConfigFormAliyunCLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_CDN:
           return <DeployNodeConfigFormAliyunCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_DCDN:
           return <DeployNodeConfigFormAliyunDCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_ESA:
+          return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_NLB:
@@ -141,6 +149,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.BAOTAPANEL_SITE:
+          return <DeployNodeConfigFormBaotaPanelSiteConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.DOGECLOUD_CDN:
@@ -173,6 +183,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:
+          return <DeployNodeConfigFormTencentCloudSSLDeployConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UCLOUD_UCDN:
           return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UCLOUD_US3:
@@ -261,7 +273,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Show
             when={!!fieldProvider}
-            fallback={<DeployProviderPicker placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+            fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeployProviderSelect

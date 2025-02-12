@@ -1,6 +1,6 @@
-﻿import { memo, useState } from "react";
+﻿import { memo, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Card, Col, Empty, Flex, Input, Row, Typography } from "antd";
+import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography } from "antd";
 
 import Show from "@/components/Show";
 import { applyDNSProvidersMap } from "@/domain/provider";
@@ -8,20 +8,27 @@ import { applyDNSProvidersMap } from "@/domain/provider";
 export type ApplyDNSProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
+  autoFocus?: boolean;
   placeholder?: string;
   onSelect?: (value: string) => void;
 };
 
-const ApplyDNSProviderPicker = ({ className, style, placeholder, onSelect }: ApplyDNSProviderPickerProps) => {
+const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ApplyDNSProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
+  const keywordInputRef = useRef<InputRef>(null);
+  useEffect(() => {
+    if (autoFocus) {
+      setTimeout(() => keywordInputRef.current?.focus(), 1);
+    }
+  }, []);
 
   const providers = Array.from(applyDNSProvidersMap.values());
   const filteredProviders = providers.filter((provider) => {
     if (keyword) {
       const value = keyword.toLowerCase();
-      return provider.type.toLowerCase().includes(value) || provider.name.toLowerCase().includes(value);
+      return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
     }
 
     return true;
@@ -33,7 +40,7 @@ const ApplyDNSProviderPicker = ({ className, style, placeholder, onSelect }: App
 
   return (
     <div className={className} style={style}>
-      <Input.Search placeholder={placeholder} onChange={(e) => setKeyword(e.target.value.trim())} />
+      <Input.Search ref={keywordInputRef} placeholder={placeholder} onChange={(e) => setKeyword(e.target.value.trim())} />
 
       <div className="mt-4">
         <Show when={filteredProviders.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>

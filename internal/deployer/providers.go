@@ -2,19 +2,23 @@ package deployer
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	providerAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	providerAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	providerAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	providerAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
 	providerAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
+	providerAliyunESA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-esa"
 	providerAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	providerAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	providerAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	providerAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
 	providerAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	providerBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
+	providerBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
 	providerBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	providerDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	providerEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
@@ -31,6 +35,7 @@ import (
 	providerTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	providerTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	providerTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	providerTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
 	providerUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	providerUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 	providerVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -41,6 +46,7 @@ import (
 	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+	"github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger, error) {
@@ -51,7 +57,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -68,6 +74,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunCASDeploy:
+				deployer, err := providerAliyunCASDeploy.NewWithLogger(&providerAliyunCASDeploy.AliyunCASDeployDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceIds:     slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					ContactIds:      slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
 				}, logger)
 				return deployer, logger, err
 
@@ -96,6 +112,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeAliyunESA:
+				deployer, err := providerAliyunESA.NewWithLogger(&providerAliyunESA.AliyunESADeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					SiteId:          maps.GetValueAsInt64(options.ProviderDeployConfig, "siteId"),
 				}, logger)
 				return deployer, logger, err
 
@@ -184,6 +209,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			default:
 				break
 			}
+		}
+
+	case domain.DeployProviderTypeBaotaPanelSite:
+		{
+			access := domain.AccessConfigForBaotaPanel{}
+			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			}
+
+			deployer, err := providerBaotaPanelSite.NewWithLogger(&providerBaotaPanelSite.BaotaPanelSiteDeployerConfig{
+				ApiUrl:   access.ApiUrl,
+				ApiKey:   access.ApiKey,
+				SiteName: maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+			}, logger)
+			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeBytePlusCDN:
@@ -364,7 +404,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -424,6 +464,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeTencentCloudSSLDeploy:
+				deployer, err := providerTencentCloudSSLDeploy.NewWithLogger(&providerTencentCloudSSLDeploy.TencentCloudSSLDeployDeployerConfig{
+					SecretId:     access.SecretId,
+					SecretKey:    access.SecretKey,
+					Region:       maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType: maps.GetValueAsString(options.ProviderDeployConfig, "resourceType"),
+					ResourceIds:  slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
 				}, logger)
 				return deployer, logger, err
 
