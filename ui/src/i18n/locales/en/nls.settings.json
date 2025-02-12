@@ -30,7 +30,7 @@
   "settings.notification.push_test.pushed": "Sent",
   "settings.notification.channel.form.bark_server_url.label": "Server URL",
   "settings.notification.channel.form.bark_server_url.placeholder": "Please enter server URL",
-  "settings.notification.channel.form.bark_server_url.tooltip": "For more information, see <a href=\"https://bark.day.app/\" target=\"_blank\">https://bark.day.app/</a><br><br>Leave blank to use the default Bark server.",
+  "settings.notification.channel.form.bark_server_url.tooltip": "For more information, see <a href=\"https://bark.day.app/\" target=\"_blank\">https://bark.day.app/</a><br><br>Leave it blank to use the default Bark server.",
   "settings.notification.channel.form.bark_device_key.label": "Device key",
   "settings.notification.channel.form.bark_device_key.placeholder": "Please enter device key",
   "settings.notification.channel.form.bark_device_key.tooltip": "For more information, see <a href=\"https://bark.day.app/\" target=\"_blank\">https://bark.day.app/</a>",

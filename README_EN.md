@@ -128,9 +128,10 @@ The following hosting providers are supported:
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, Live                      |
 | [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                     |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                            |
-| [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                              |
+| [BaoTa Panel](https://www.bt.cn/)               | Supports deployment to BaoTa Panel sites                                         |
 | [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                          |
 | [AWS](https://aws.amazon.com/)                  | Supports deployment to AWS CloudFront                                            |
+| [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                              |
 | [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                        |
 
 </details>

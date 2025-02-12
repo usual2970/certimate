@@ -96,8 +96,8 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_USE_SSLDEPLOY:
-		if err := d.deployToInstanceUseSsl(ctx, upres.CertId); err != nil {
+	case DEPLOY_RESOURCE_VIA_SSLDEPLOY:
+		if err := d.deployViaSslService(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
@@ -123,7 +123,7 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToInstanceUseSsl(ctx context.Context, cloudCertId string) error {
+func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}

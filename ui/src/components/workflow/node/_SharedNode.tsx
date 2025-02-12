@@ -260,7 +260,7 @@ const SharedNodeConfigDrawer = ({
 
     const oldValues = Object.fromEntries(Object.entries(node.config ?? {}).filter(([_, value]) => value !== null && value !== undefined));
     const newValues = Object.fromEntries(Object.entries(getFormValues()).filter(([_, value]) => value !== null && value !== undefined));
-    const changed = !isEqual(oldValues, newValues);
+    const changed = !isEqual(oldValues, {}) && !isEqual(oldValues, newValues);
 
     const { promise, resolve, reject } = Promise.withResolvers();
     if (changed) {

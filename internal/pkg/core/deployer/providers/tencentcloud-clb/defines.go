@@ -4,7 +4,7 @@ type DeployResourceType string
 
 const (
 	// 资源类型：通过 SSL 服务部署到云资源实例。
-	DEPLOY_RESOURCE_USE_SSLDEPLOY = DeployResourceType("ssl-deploy")
+	DEPLOY_RESOURCE_VIA_SSLDEPLOY = DeployResourceType("ssl-deploy")
 	// 资源类型：部署到指定负载均衡器。
 	DEPLOY_RESOURCE_LOADBALANCER = DeployResourceType("loadbalancer")
 	// 资源类型：部署到指定监听器。
