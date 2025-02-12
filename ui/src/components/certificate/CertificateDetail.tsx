@@ -22,7 +22,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
   const handleDownloadClick = async (format: CertificateFormatType) => {
     try {
       const res = await archiveCertificate(data.id, format);
-      const bstr = atob(res.data);
+      const bstr = atob(res.data.fileBytes);
       const u8arr = Uint8Array.from(bstr, (ch) => ch.charCodeAt(0));
       const blob = new Blob([u8arr], { type: "application/zip" });
       saveAs(blob, `${data.id}-${data.subjectAltNames}.zip`);
@@ -38,11 +38,27 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
 
       <Form layout="vertical">
         <Form.Item label={t("certificate.props.subject_alt_names")}>
-          <Input value={data.subjectAltNames} placeholder="" />
+          <Input value={data.subjectAltNames} variant="filled" placeholder="" />
+        </Form.Item>
+
+        <Form.Item label={t("certificate.props.issuer")}>
+          <Input value={data.issuer} variant="filled" placeholder="" />
         </Form.Item>
 
         <Form.Item label={t("certificate.props.validity")}>
-          <Input value={`${dayjs(data.effectAt).format("YYYY-MM-DD HH:mm:ss")} ~ ${dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}`} placeholder="" />
+          <Input
+            value={`${dayjs(data.effectAt).format("YYYY-MM-DD HH:mm:ss")} ~ ${dayjs(data.expireAt).format("YYYY-MM-DD HH:mm:ss")}`}
+            variant="filled"
+            placeholder=""
+          />
+        </Form.Item>
+
+        <Form.Item label={t("certificate.props.serial_number")}>
+          <Input value={data.serialNumber} variant="filled" placeholder="" />
+        </Form.Item>
+
+        <Form.Item label={t("certificate.props.key_algorithm")}>
+          <Input value={data.keyAlgorithm} variant="filled" placeholder="" />
         </Form.Item>
 
         <Form.Item>
@@ -59,7 +75,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               </CopyToClipboard>
             </Tooltip>
           </div>
-          <Input.TextArea value={data.certificate} rows={10} autoSize={{ maxRows: 10 }} readOnly />
+          <Input.TextArea value={data.certificate} variant="filled" rows={5} autoSize={{ maxRows: 5 }} readOnly />
         </Form.Item>
 
         <Form.Item>
@@ -76,7 +92,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               </CopyToClipboard>
             </Tooltip>
           </div>
-          <Input.TextArea value={data.privateKey} rows={10} autoSize={{ maxRows: 10 }} readOnly />
+          <Input.TextArea value={data.privateKey} variant="filled" rows={5} autoSize={{ maxRows: 5 }} readOnly />
         </Form.Item>
       </Form>
 

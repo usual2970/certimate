@@ -12,16 +12,16 @@ func init() {
 			return err
 		}
 
-		record := core.NewRecord(superusers)
-		record.Set("email", "admin@certimate.fun")
-		record.Set("password", "1234567890")
-		return app.Save(record)
-	}, func(app core.App) error {
 		record, _ := app.FindAuthRecordByEmail(core.CollectionNameSuperusers, "admin@certimate.fun")
 		if record == nil {
-			return nil
+			record := core.NewRecord(superusers)
+			record.Set("email", "admin@certimate.fun")
+			record.Set("password", "1234567890")
+			return app.Save(record)
 		}
 
-		return app.Delete(record)
+		return nil
+	}, func(app core.App) error {
+		return nil
 	})
 }

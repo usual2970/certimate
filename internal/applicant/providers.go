@@ -35,8 +35,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeACMEHttpReq:
 		{
 			access := domain.AccessConfigForACMEHttpReq{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerACMEHttpReq.NewChallengeProvider(&providerACMEHttpReq.ACMEHttpReqApplicantConfig{
@@ -52,8 +52,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeAliyun, domain.ApplyDNSProviderTypeAliyunDNS:
 		{
 			access := domain.AccessConfigForAliyun{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerAliyun.NewChallengeProvider(&providerAliyun.AliyunApplicantConfig{
@@ -68,8 +68,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeAWS, domain.ApplyDNSProviderTypeAWSRoute53:
 		{
 			access := domain.AccessConfigForAWS{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerAWSRoute53.NewChallengeProvider(&providerAWSRoute53.AWSRoute53ApplicantConfig{
@@ -86,8 +86,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeAzureDNS:
 		{
 			access := domain.AccessConfigForAzure{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerAzureDNS.NewChallengeProvider(&providerAzureDNS.AzureDNSApplicantConfig{
@@ -104,8 +104,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeCloudflare:
 		{
 			access := domain.AccessConfigForCloudflare{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerCloudflare.NewChallengeProvider(&providerCloudflare.CloudflareApplicantConfig{
@@ -119,8 +119,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeClouDNS:
 		{
 			access := domain.AccessConfigForClouDNS{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerClouDNS.NewChallengeProvider(&providerClouDNS.ClouDNSApplicantConfig{
@@ -135,8 +135,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeGname:
 		{
 			access := domain.AccessConfigForGname{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerGname.NewChallengeProvider(&providerGname.GnameApplicantConfig{
@@ -151,8 +151,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeGoDaddy:
 		{
 			access := domain.AccessConfigForGoDaddy{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerGoDaddy.NewChallengeProvider(&providerGoDaddy.GoDaddyApplicantConfig{
@@ -167,8 +167,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeHuaweiCloud, domain.ApplyDNSProviderTypeHuaweiCloudDNS:
 		{
 			access := domain.AccessConfigForHuaweiCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerHuaweiCloud.NewChallengeProvider(&providerHuaweiCloud.HuaweiCloudApplicantConfig{
@@ -184,8 +184,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeNameDotCom:
 		{
 			access := domain.AccessConfigForNameDotCom{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerNameDotCom.NewChallengeProvider(&providerNameDotCom.NameDotComApplicantConfig{
@@ -200,8 +200,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeNameSilo:
 		{
 			access := domain.AccessConfigForNameSilo{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerNameSilo.NewChallengeProvider(&providerNameSilo.NameSiloApplicantConfig{
@@ -215,8 +215,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeNS1:
 		{
 			access := domain.AccessConfigForNS1{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerNS1.NewChallengeProvider(&providerNS1.NS1ApplicantConfig{
@@ -230,8 +230,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypePowerDNS:
 		{
 			access := domain.AccessConfigForPowerDNS{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerPowerDNS.NewChallengeProvider(&providerPowerDNS.PowerDNSApplicantConfig{
@@ -246,8 +246,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeRainYun:
 		{
 			access := domain.AccessConfigForRainYun{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerRainYun.NewChallengeProvider(&providerRainYun.RainYunApplicantConfig{
@@ -261,8 +261,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeTencentCloud, domain.ApplyDNSProviderTypeTencentCloudDNS:
 		{
 			access := domain.AccessConfigForTencentCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerTencentCloud.NewChallengeProvider(&providerTencentCloud.TencentCloudApplicantConfig{
@@ -277,8 +277,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeVolcEngine, domain.ApplyDNSProviderTypeVolcEngineDNS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerVolcEngine.NewChallengeProvider(&providerVolcEngine.VolcEngineApplicantConfig{
@@ -293,8 +293,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 	case domain.ApplyDNSProviderTypeWestcn:
 		{
 			access := domain.AccessConfigForWestcn{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			applicant, err := providerWestcn.NewChallengeProvider(&providerWestcn.WestcnApplicantConfig{

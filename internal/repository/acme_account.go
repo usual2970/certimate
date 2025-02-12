@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/go-acme/lego/v4/registration"
@@ -48,18 +51,37 @@ func (r *AcmeAccountRepository) GetByCAAndEmail(ca, email string) (*domain.AcmeA
 	return r.castRecordToModel(record)
 }
 
-func (r *AcmeAccountRepository) Save(ca, email, key string, resource *registration.Resource) error {
+func (r *AcmeAccountRepository) Save(ctx context.Context, acmeAccount *domain.AcmeAccount) (*domain.AcmeAccount, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameAcmeAccount)
 	if err != nil {
-		return err
+		return acmeAccount, err
 	}
 
-	record := core.NewRecord(collection)
-	record.Set("ca", ca)
-	record.Set("email", email)
-	record.Set("key", key)
-	record.Set("resource", resource)
-	return app.GetApp().Save(record)
+	var record *core.Record
+	if acmeAccount.Id == "" {
+		record = core.NewRecord(collection)
+	} else {
+		record, err = app.GetApp().FindRecordById(collection, acmeAccount.Id)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return acmeAccount, domain.ErrRecordNotFound
+			}
+			return acmeAccount, err
+		}
+	}
+
+	record.Set("ca", acmeAccount.CA)
+	record.Set("email", acmeAccount.Email)
+	record.Set("key", acmeAccount.Key)
+	record.Set("resource", acmeAccount.Resource)
+	if err := app.GetApp().Save(record); err != nil {
+		return acmeAccount, err
+	}
+
+	acmeAccount.Id = record.Id
+	acmeAccount.CreatedAt = record.GetDateTime("created").Time()
+	acmeAccount.UpdatedAt = record.GetDateTime("updated").Time()
+	return acmeAccount, nil
 }
 
 func (r *AcmeAccountRepository) castRecordToModel(record *core.Record) (*domain.AcmeAccount, error) {

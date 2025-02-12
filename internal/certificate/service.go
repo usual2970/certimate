@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -30,18 +30,18 @@ type certificateRepository interface {
 }
 
 type CertificateService struct {
-	repo certificateRepository
+	certRepo certificateRepository
 }
 
-func NewCertificateService(repo certificateRepository) *CertificateService {
+func NewCertificateService(certRepo certificateRepository) *CertificateService {
 	return &CertificateService{
-		repo: repo,
+		certRepo: certRepo,
 	}
 }
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
-		certs, err := s.repo.ListExpireSoon(context.Background())
+		certs, err := s.certRepo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
 			return
@@ -59,8 +59,8 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	return nil
 }
 
-func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) ([]byte, error) {
-	certificate, err := s.repo.GetById(ctx, req.CertificateId)
+func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) (*dtos.CertificateArchiveFileResp, error) {
+	certificate, err := s.certRepo.GetById(ctx, req.CertificateId)
 	if err != nil {
 		return nil, err
 	}
@@ -68,6 +68,10 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 	var buf bytes.Buffer
 	zipWriter := zip.NewWriter(&buf)
 	defer zipWriter.Close()
+
+	resp := &dtos.CertificateArchiveFileResp{
+		FileFormat: "zip",
+	}
 
 	switch strings.ToUpper(req.Format) {
 	case "", "PEM":
@@ -97,7 +101,8 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 				return nil, err
 			}
 
-			return buf.Bytes(), nil
+			resp.FileBytes = buf.Bytes()
+			return resp, nil
 		}
 
 	case "PFX":
@@ -134,7 +139,8 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 				return nil, err
 			}
 
-			return buf.Bytes(), nil
+			resp.FileBytes = buf.Bytes()
+			return resp, nil
 		}
 
 	case "JKS":
@@ -171,7 +177,8 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 				return nil, err
 			}
 
-			return buf.Bytes(), nil
+			resp.FileBytes = buf.Bytes()
+			return resp, nil
 		}
 
 	default:
@@ -180,23 +187,28 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 }
 
 func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error) {
-	info, err := certs.ParseCertificateFromPEM(req.Certificate)
+	certX509, err := certs.ParseCertificateFromPEM(req.Certificate)
+	if err != nil {
+		return nil, err
+	} else if time.Now().After(certX509.NotAfter) {
+		return nil, fmt.Errorf("certificate has expired at %s", certX509.NotAfter.UTC().Format(time.RFC3339))
+	}
+
+	return &dtos.CertificateValidateCertificateResp{
+		IsValid: true,
+		Domains: strings.Join(certX509.DNSNames, ";"),
+	}, nil
+}
+
+func (s *CertificateService) ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) (*dtos.CertificateValidatePrivateKeyResp, error) {
+	_, err := certcrypto.ParsePEMPrivateKey([]byte(req.PrivateKey))
 	if err != nil {
 		return nil, err
 	}
 
-	if time.Now().After(info.NotAfter) {
-		return nil, errors.New("证书已过期")
-	}
-
-	return &dtos.CertificateValidateCertificateResp{
-		Domains: strings.Join(info.DNSNames, ";"),
+	return &dtos.CertificateValidatePrivateKeyResp{
+		IsValid: true,
 	}, nil
-}
-
-func (s *CertificateService) ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) error {
-	_, err := certcrypto.ParsePEMPrivateKey([]byte(req.PrivateKey))
-	return err
 }
 
 func buildExpireSoonNotification(certificates []*domain.Certificate) *struct {

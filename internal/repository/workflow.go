@@ -24,7 +24,7 @@ func (r *WorkflowRepository) ListEnabledAuto(ctx context.Context) ([]*domain.Wor
 		"enabled={:enabled} && trigger={:trigger}",
 		"-created",
 		0, 0,
-		dbx.Params{"enabled": true, "trigger": domain.WorkflowTriggerTypeAuto},
+		dbx.Params{"enabled": true, "trigger": string(domain.WorkflowTriggerTypeAuto)},
 	)
 	if err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	if workflow.Id == "" {
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflow, workflow.Id)
+		record, err = app.GetApp().FindRecordById(collection, workflow.Id)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return workflow, domain.ErrRecordNotFound
@@ -85,7 +85,6 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	record.Set("lastRunId", workflow.LastRunId)
 	record.Set("lastRunStatus", string(workflow.LastRunStatus))
 	record.Set("lastRunTime", workflow.LastRunTime)
-
 	if err := app.GetApp().Save(record); err != nil {
 		return workflow, err
 	}
@@ -94,65 +93,6 @@ func (r *WorkflowRepository) Save(ctx context.Context, workflow *domain.Workflow
 	workflow.CreatedAt = record.GetDateTime("created").Time()
 	workflow.UpdatedAt = record.GetDateTime("updated").Time()
 	return workflow, nil
-}
-
-func (r *WorkflowRepository) SaveRun(ctx context.Context, workflowRun *domain.WorkflowRun) (*domain.WorkflowRun, error) {
-	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowRun)
-	if err != nil {
-		return workflowRun, err
-	}
-
-	var workflowRunRecord *core.Record
-	if workflowRun.Id == "" {
-		workflowRunRecord = core.NewRecord(collection)
-	} else {
-		workflowRunRecord, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflowRun, workflowRun.Id)
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return workflowRun, err
-			}
-			workflowRunRecord = core.NewRecord(collection)
-		}
-	}
-
-	err = app.GetApp().RunInTransaction(func(txApp core.App) error {
-		workflowRunRecord.Set("workflowId", workflowRun.WorkflowId)
-		workflowRunRecord.Set("trigger", string(workflowRun.Trigger))
-		workflowRunRecord.Set("status", string(workflowRun.Status))
-		workflowRunRecord.Set("startedAt", workflowRun.StartedAt)
-		workflowRunRecord.Set("endedAt", workflowRun.EndedAt)
-		workflowRunRecord.Set("logs", workflowRun.Logs)
-		workflowRunRecord.Set("error", workflowRun.Error)
-		err = txApp.Save(workflowRunRecord)
-		if err != nil {
-			return err
-		}
-
-		workflowRecord, err := txApp.FindRecordById(domain.CollectionNameWorkflow, workflowRun.WorkflowId)
-		if err != nil {
-			return err
-		}
-
-		workflowRecord.IgnoreUnchangedFields(true)
-		workflowRecord.Set("lastRunId", workflowRunRecord.Id)
-		workflowRecord.Set("lastRunStatus", workflowRunRecord.GetString("status"))
-		workflowRecord.Set("lastRunTime", workflowRunRecord.GetString("startedAt"))
-		err = txApp.Save(workflowRecord)
-		if err != nil {
-			return err
-		}
-
-		workflowRun.Id = workflowRunRecord.Id
-		workflowRun.CreatedAt = workflowRunRecord.GetDateTime("created").Time()
-		workflowRun.UpdatedAt = workflowRunRecord.GetDateTime("updated").Time()
-
-		return nil
-	})
-	if err != nil {
-		return workflowRun, err
-	}
-
-	return workflowRun, nil
 }
 
 func (r *WorkflowRepository) castRecordToModel(record *core.Record) (*domain.Workflow, error) {

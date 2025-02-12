@@ -5,6 +5,7 @@ import dayjsUtc from "dayjs/plugin/utc";
 
 import App from "./App";
 import "./i18n";
+import "./index.css";
 import "./global.css";
 
 dayjs.extend(dayjsUtc);

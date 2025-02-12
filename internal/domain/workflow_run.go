@@ -31,16 +31,25 @@ const (
 type WorkflowRunLog struct {
 	NodeId   string                 `json:"nodeId"`
 	NodeName string                 `json:"nodeName"`
+	Records  []WorkflowRunLogRecord `json:"records"`
 	Error    string                 `json:"error"`
-	Outputs  []WorkflowRunLogOutput `json:"outputs"`
 }
 
-type WorkflowRunLogOutput struct {
-	Time    string `json:"time"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
-	Error   string `json:"error"`
+type WorkflowRunLogRecord struct {
+	Time    string              `json:"time"`
+	Level   WorkflowRunLogLevel `json:"level"`
+	Content string              `json:"content"`
+	Error   string              `json:"error"`
 }
+
+type WorkflowRunLogLevel string
+
+const (
+	WorkflowRunLogLevelDebug WorkflowRunLogLevel = "DEBUG"
+	WorkflowRunLogLevelInfo  WorkflowRunLogLevel = "INFO"
+	WorkflowRunLogLevelWarn  WorkflowRunLogLevel = "WARN"
+	WorkflowRunLogLevelError WorkflowRunLogLevel = "ERROR"
+)
 
 type WorkflowRunLogs []WorkflowRunLog
 

@@ -11,9 +11,9 @@ import (
 )
 
 type certificateService interface {
-	ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) ([]byte, error)
+	ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) (*dtos.CertificateArchiveFileResp, error)
 	ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error)
-	ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) error
+	ValidatePrivateKey(ctx context.Context, req *dtos.CertificateValidatePrivateKeyReq) (*dtos.CertificateValidatePrivateKeyResp, error)
 }
 
 type CertificateHandler struct {
@@ -38,10 +38,10 @@ func (handler *CertificateHandler) archiveFile(e *core.RequestEvent) error {
 		return resp.Err(e, err)
 	}
 
-	if bt, err := handler.service.ArchiveFile(e.Request.Context(), req); err != nil {
+	if res, err := handler.service.ArchiveFile(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	} else {
-		return resp.Ok(e, bt)
+		return resp.Ok(e, res)
 	}
 }
 
@@ -51,10 +51,10 @@ func (handler *CertificateHandler) validateCertificate(e *core.RequestEvent) err
 		return resp.Err(e, err)
 	}
 
-	if rs, err := handler.service.ValidateCertificate(e.Request.Context(), req); err != nil {
+	if res, err := handler.service.ValidateCertificate(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	} else {
-		return resp.Ok(e, rs)
+		return resp.Ok(e, res)
 	}
 }
 
@@ -64,9 +64,9 @@ func (handler *CertificateHandler) validatePrivateKey(e *core.RequestEvent) erro
 		return resp.Err(e, err)
 	}
 
-	if err := handler.service.ValidatePrivateKey(e.Request.Context(), req); err != nil {
+	if res, err := handler.service.ValidatePrivateKey(e.Request.Context(), req); err != nil {
 		return resp.Err(e, err)
 	} else {
-		return resp.Ok(e, nil)
+		return resp.Ok(e, res)
 	}
 }

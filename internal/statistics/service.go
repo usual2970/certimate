@@ -11,15 +11,15 @@ type statisticsRepository interface {
 }
 
 type StatisticsService struct {
-	repo statisticsRepository
+	statRepo statisticsRepository
 }
 
-func NewStatisticsService(repo statisticsRepository) *StatisticsService {
+func NewStatisticsService(statRepo statisticsRepository) *StatisticsService {
 	return &StatisticsService{
-		repo: repo,
+		statRepo: statRepo,
 	}
 }
 
 func (s *StatisticsService) Get(ctx context.Context) (*domain.Statistics, error) {
-	return s.repo.Get(ctx)
+	return s.statRepo.Get(ctx)
 }

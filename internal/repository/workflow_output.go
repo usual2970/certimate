@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
@@ -17,13 +18,13 @@ func NewWorkflowOutputRepository() *WorkflowOutputRepository {
 	return &WorkflowOutputRepository{}
 }
 
-func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error) {
+func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, workflowNodeId string) (*domain.WorkflowOutput, error) {
 	records, err := app.GetApp().FindRecordsByFilter(
 		domain.CollectionNameWorkflowOutput,
 		"nodeId={:nodeId}",
 		"-created",
 		1, 0,
-		dbx.Params{"nodeId": nodeId},
+		dbx.Params{"nodeId": workflowNodeId},
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -34,103 +35,128 @@ func (r *WorkflowOutputRepository) GetByNodeId(ctx context.Context, nodeId strin
 	if len(records) == 0 {
 		return nil, domain.ErrRecordNotFound
 	}
-	record := records[0]
+
+	return r.castRecordToModel(records[0])
+}
+
+func (r *WorkflowOutputRepository) Save(ctx context.Context, workflowOutput *domain.WorkflowOutput) (*domain.WorkflowOutput, error) {
+	record, err := r.saveRecord(workflowOutput)
+	if err != nil {
+		return workflowOutput, err
+	}
+
+	workflowOutput.Id = record.Id
+	workflowOutput.CreatedAt = record.GetDateTime("created").Time()
+	workflowOutput.UpdatedAt = record.GetDateTime("updated").Time()
+	return workflowOutput, nil
+}
+
+func (r *WorkflowOutputRepository) SaveWithCertificate(ctx context.Context, workflowOutput *domain.WorkflowOutput, certificate *domain.Certificate) (*domain.WorkflowOutput, error) {
+	record, err := r.saveRecord(workflowOutput)
+	if err != nil {
+		return workflowOutput, err
+	} else {
+		workflowOutput.Id = record.Id
+		workflowOutput.CreatedAt = record.GetDateTime("created").Time()
+		workflowOutput.UpdatedAt = record.GetDateTime("updated").Time()
+	}
+
+	if certificate == nil {
+		panic("certificate is nil")
+	} else {
+		if certificate.WorkflowId != "" && certificate.WorkflowId != workflowOutput.WorkflowId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow #%s", certificate.Id, workflowOutput.WorkflowId)
+		}
+		if certificate.WorkflowRunId != "" && certificate.WorkflowRunId != workflowOutput.RunId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow run #%s", certificate.Id, workflowOutput.RunId)
+		}
+		if certificate.WorkflowNodeId != "" && certificate.WorkflowNodeId != workflowOutput.NodeId {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow node #%s", certificate.Id, workflowOutput.NodeId)
+		}
+		if certificate.WorkflowOutputId != "" && certificate.WorkflowOutputId != workflowOutput.Id {
+			return workflowOutput, fmt.Errorf("certificate #%s is not belong to workflow output #%s", certificate.Id, workflowOutput.Id)
+		}
+
+		certificate.WorkflowId = workflowOutput.WorkflowId
+		certificate.WorkflowRunId = workflowOutput.RunId
+		certificate.WorkflowNodeId = workflowOutput.NodeId
+		certificate.WorkflowOutputId = workflowOutput.Id
+		certificate, err := NewCertificateRepository().Save(ctx, certificate)
+		if err != nil {
+			return workflowOutput, err
+		}
+
+		// 写入证书 ID 到工作流输出结果中
+		for i, item := range workflowOutput.Outputs {
+			if item.Name == string(domain.WorkflowNodeIONameCertificate) {
+				workflowOutput.Outputs[i].Value = certificate.Id
+				break
+			}
+		}
+		record.Set("outputs", workflowOutput.Outputs)
+		if err := app.GetApp().Save(record); err != nil {
+			return workflowOutput, err
+		}
+	}
+
+	return workflowOutput, err
+}
+
+func (r *WorkflowOutputRepository) castRecordToModel(record *core.Record) (*domain.WorkflowOutput, error) {
+	if record == nil {
+		return nil, fmt.Errorf("record is nil")
+	}
 
 	node := &domain.WorkflowNode{}
 	if err := record.UnmarshalJSONField("node", node); err != nil {
-		return nil, errors.New("failed to unmarshal node")
+		return nil, err
 	}
 
 	outputs := make([]domain.WorkflowNodeIO, 0)
 	if err := record.UnmarshalJSONField("outputs", &outputs); err != nil {
-		return nil, errors.New("failed to unmarshal output")
+		return nil, err
 	}
 
-	rs := &domain.WorkflowOutput{
+	workflowOutput := &domain.WorkflowOutput{
 		Meta: domain.Meta{
 			Id:        record.Id,
 			CreatedAt: record.GetDateTime("created").Time(),
 			UpdatedAt: record.GetDateTime("updated").Time(),
 		},
 		WorkflowId: record.GetString("workflowId"),
+		RunId:      record.GetString("runId"),
 		NodeId:     record.GetString("nodeId"),
 		Node:       node,
 		Outputs:    outputs,
 		Succeeded:  record.GetBool("succeeded"),
 	}
-
-	return rs, nil
+	return workflowOutput, nil
 }
 
-// 保存节点输出
-func (r *WorkflowOutputRepository) Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error {
-	var record *core.Record
-	var err error
+func (r *WorkflowOutputRepository) saveRecord(workflowOutput *domain.WorkflowOutput) (*core.Record, error) {
+	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
+	if err != nil {
+		return nil, err
+	}
 
-	if output.Id == "" {
-		collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameWorkflowOutput)
-		if err != nil {
-			return err
-		}
+	var record *core.Record
+	if workflowOutput.Id == "" {
 		record = core.NewRecord(collection)
 	} else {
-		record, err = app.GetApp().FindRecordById(domain.CollectionNameWorkflowOutput, output.Id)
+		record, err = app.GetApp().FindRecordById(collection, workflowOutput.Id)
 		if err != nil {
-			return err
+			return record, err
 		}
 	}
-	record.Set("workflowId", output.WorkflowId)
-	record.Set("nodeId", output.NodeId)
-	record.Set("node", output.Node)
-	record.Set("outputs", output.Outputs)
-	record.Set("succeeded", output.Succeeded)
-
+	record.Set("workflowId", workflowOutput.WorkflowId)
+	record.Set("runId", workflowOutput.RunId)
+	record.Set("nodeId", workflowOutput.NodeId)
+	record.Set("node", workflowOutput.Node)
+	record.Set("outputs", workflowOutput.Outputs)
+	record.Set("succeeded", workflowOutput.Succeeded)
 	if err := app.GetApp().Save(record); err != nil {
-		return err
+		return record, err
 	}
 
-	if cb != nil && certificate != nil {
-		if err := cb(record.Id); err != nil {
-			return err
-		}
-
-		certCollection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
-		if err != nil {
-			return err
-		}
-
-		certRecord := core.NewRecord(certCollection)
-		certRecord.Set("source", string(certificate.Source))
-		certRecord.Set("subjectAltNames", certificate.SubjectAltNames)
-		certRecord.Set("certificate", certificate.Certificate)
-		certRecord.Set("privateKey", certificate.PrivateKey)
-		certRecord.Set("issuerCertificate", certificate.IssuerCertificate)
-		certRecord.Set("effectAt", certificate.EffectAt)
-		certRecord.Set("expireAt", certificate.ExpireAt)
-		certRecord.Set("acmeCertUrl", certificate.ACMECertUrl)
-		certRecord.Set("acmeCertStableUrl", certificate.ACMECertStableUrl)
-		certRecord.Set("workflowId", certificate.WorkflowId)
-		certRecord.Set("workflowNodeId", certificate.WorkflowNodeId)
-		certRecord.Set("workflowOutputId", certificate.WorkflowOutputId)
-
-		if err := app.GetApp().Save(certRecord); err != nil {
-			return err
-		}
-
-		// 更新 certificate
-		for i, item := range output.Outputs {
-			if item.Name == string(domain.WorkflowNodeIONameCertificate) {
-				output.Outputs[i].Value = certRecord.Id
-				break
-			}
-		}
-
-		record.Set("outputs", output.Outputs)
-
-		if err := app.GetApp().Save(record); err != nil {
-			return err
-		}
-
-	}
-	return nil
+	return record, nil
 }

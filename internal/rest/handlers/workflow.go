@@ -13,7 +13,7 @@ import (
 type workflowService interface {
 	StartRun(ctx context.Context, req *dtos.WorkflowStartRunReq) error
 	CancelRun(ctx context.Context, req *dtos.WorkflowCancelRunReq) error
-	Stop(ctx context.Context)
+	Shutdown(ctx context.Context)
 }
 
 type WorkflowHandler struct {

@@ -12,96 +12,92 @@ import (
 )
 
 type deployNode struct {
-	node       *domain.WorkflowNode
+	node *domain.WorkflowNode
+	*nodeLogger
+
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
-	*nodeLogger
 }
 
 func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
 		node:       node,
-		nodeLogger: NewNodeLogger(node),
-		outputRepo: repository.NewWorkflowOutputRepository(),
+		nodeLogger: newNodeLogger(node),
+
 		certRepo:   repository.NewCertificateRepository(),
+		outputRepo: repository.NewWorkflowOutputRepository(),
 	}
 }
 
-func (d *deployNode) Run(ctx context.Context) error {
-	d.AddOutput(ctx, d.node.Name, "开始执行")
+func (n *deployNode) Process(ctx context.Context) error {
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "开始执行")
 
 	// 查询上次执行结果
-	lastOutput, err := d.outputRepo.GetByNodeId(ctx, d.node.Id)
+	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		d.AddOutput(ctx, d.node.Name, "查询部署记录失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "查询部署记录失败", err.Error())
 		return err
 	}
 
 	// 获取前序节点输出证书
-	previousNodeOutputCertificateSource := d.node.GetConfigForDeploy().Certificate
+	previousNodeOutputCertificateSource := n.node.GetConfigForDeploy().Certificate
 	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, "#")
 	if len(previousNodeOutputCertificateSourceSlice) != 2 {
-		d.AddOutput(ctx, d.node.Name, "证书来源配置错误", previousNodeOutputCertificateSource)
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "证书来源配置错误", previousNodeOutputCertificateSource)
 		return fmt.Errorf("证书来源配置错误: %s", previousNodeOutputCertificateSource)
 	}
-	certificate, err := d.certRepo.GetByWorkflowNodeId(ctx, previousNodeOutputCertificateSourceSlice[0])
+	certificate, err := n.certRepo.GetByWorkflowNodeId(ctx, previousNodeOutputCertificateSourceSlice[0])
 	if err != nil {
-		d.AddOutput(ctx, d.node.Name, "获取证书失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取证书失败", err.Error())
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
-	if skippable, skipReason := d.checkCanSkip(ctx, lastOutput); skippable {
-		if certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
-			d.AddOutput(ctx, d.node.Name, "已部署过且证书未更新")
-		} else {
-			d.AddOutput(ctx, d.node.Name, skipReason)
+	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
+		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
+			n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, skipReason)
+			return nil
 		}
-		return nil
 	}
 
 	// 初始化部署器
-	deploy, err := deployer.NewWithDeployNode(d.node, struct {
+	deployer, err := deployer.NewWithDeployNode(n.node, struct {
 		Certificate string
 		PrivateKey  string
 	}{Certificate: certificate.Certificate, PrivateKey: certificate.PrivateKey})
 	if err != nil {
-		d.AddOutput(ctx, d.node.Name, "获取部署对象失败", err.Error())
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取部署对象失败", err.Error())
 		return err
 	}
 
 	// 部署证书
-	if err := deploy.Deploy(ctx); err != nil {
-		d.AddOutput(ctx, d.node.Name, "部署失败", err.Error())
+	if err := deployer.Deploy(ctx); err != nil {
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "部署失败", err.Error())
 		return err
 	}
-	d.AddOutput(ctx, d.node.Name, "部署成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "部署成功")
 
 	// 保存执行结果
-	// TODO: 先保持一个节点始终只有一个输出，后续增加版本控制
-	currentOutput := &domain.WorkflowOutput{
-		Meta:       domain.Meta{},
+	output := &domain.WorkflowOutput{
 		WorkflowId: getContextWorkflowId(ctx),
-		NodeId:     d.node.Id,
-		Node:       d.node,
+		RunId:      getContextWorkflowRunId(ctx),
+		NodeId:     n.node.Id,
+		Node:       n.node,
 		Succeeded:  true,
 	}
-	if lastOutput != nil {
-		currentOutput.Id = lastOutput.Id
-	}
-	if err := d.outputRepo.Save(ctx, currentOutput, nil, nil); err != nil {
-		d.AddOutput(ctx, d.node.Name, "保存部署记录失败", err.Error())
+	if _, err := n.outputRepo.Save(ctx, output); err != nil {
+		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "保存部署记录失败", err.Error())
 		return err
 	}
-	d.AddOutput(ctx, d.node.Name, "保存部署记录成功")
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "保存部署记录成功")
 
 	return nil
 }
 
-func (d *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次部署时的关键配置（即影响证书部署的）参数是否一致
-		currentNodeConfig := d.node.GetConfigForDeploy()
+		currentNodeConfig := n.node.GetConfigForDeploy()
 		lastNodeConfig := lastOutput.Node.GetConfigForDeploy()
 		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
 			return false, "配置项变化：主机提供商授权"

@@ -183,7 +183,7 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 	return defaultValue
 }
 
-// 将字典解码为指定类型的结构体。
+// 将字典填充到指定类型的结构体。
 // 与 [json.Unmarshal] 类似，但传入的是一个 [map[string]interface{}] 对象而非 JSON 格式的字符串。
 //
 // 入参：
@@ -191,8 +191,8 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 //   - output: 结构体指针。
 //
 // 出参：
-//   - 错误信息。如果解码失败，则返回错误信息。
-func Decode(dict map[string]any, output any) error {
+//   - 错误信息。如果填充失败，则返回错误信息。
+func Populate(dict map[string]any, output any) error {
 	config := &mapstructure.DecoderConfig{
 		Metadata:         nil,
 		Result:           output,
@@ -206,4 +206,9 @@ func Decode(dict map[string]any, output any) error {
 	}
 
 	return decoder.Decode(dict)
+}
+
+// Deprecated: Use [Populate] instead.
+func Decode(dict map[string]any, output any) error {
+	return Populate(dict, output)
 }

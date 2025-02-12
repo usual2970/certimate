@@ -34,7 +34,7 @@ const SettingsPassword = () => {
     onSubmit: async (values) => {
       try {
         await authWithPassword(getAuthStore().record!.email, values.oldPassword);
-        await saveAdmin({ password: values.newPassword });
+        await saveAdmin({ password: values.newPassword, passwordConfirm: values.confirmPassword });
 
         messageApi.success(t("common.text.operation_succeeded"));
 

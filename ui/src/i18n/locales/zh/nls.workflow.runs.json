@@ -16,5 +16,12 @@
   "workflow_run.props.trigger.auto": "定时执行",
   "workflow_run.props.trigger.manual": "手动执行",
   "workflow_run.props.started_at": "开始时间",
-  "workflow_run.props.ended_at": "完成时间"
+  "workflow_run.props.ended_at": "完成时间",
+
+  "workflow_run.logs": "日志",
+  "workflow_run.artifacts": "输出产物",
+
+  "workflow_run_artifact.props.type": "类型",
+  "workflow_run_artifact.props.type.certificate": "证书",
+  "workflow_run_artifact.props.name": "名称"
 }

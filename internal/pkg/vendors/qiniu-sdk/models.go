@@ -13,7 +13,7 @@ type UploadSslCertRequest struct {
 }
 
 type UploadSslCertResponse struct {
-	*BaseResponse
+	BaseResponse
 	CertID string `json:"certID"`
 }
 
