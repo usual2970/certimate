@@ -259,12 +259,12 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
             onChange={handleInputChange}
           />
         </div>
-        <Button.Group size={size}>
+        <Space.Compact size={size}>
           {removeBtn}
           {upBtn}
           {downBtn}
           {addBtn}
-        </Button.Group>
+        </Space.Compact>
       </div>
     );
   }

@@ -78,7 +78,7 @@ const AccessList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <AccessEditModal
             data={record}
             preset="edit"
@@ -109,7 +109,7 @@ const AccessList = () => {
               }}
             />
           </Tooltip>
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];

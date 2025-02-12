@@ -107,7 +107,7 @@ func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 		}
 
 		if currentNodeConfig.SkipOnLastSucceeded {
-			return true, "已部署过证书"
+			return true, "已部署过证书，跳过此次部署"
 		}
 	}
 

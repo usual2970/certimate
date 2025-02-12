@@ -203,7 +203,7 @@ const WorkflowList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <Tooltip title={t("workflow.action.edit")}>
             <Button
               color="primary"
@@ -226,7 +226,7 @@ const WorkflowList = () => {
               }}
             />
           </Tooltip>
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];

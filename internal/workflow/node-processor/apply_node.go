@@ -123,7 +123,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（尚余 %d 天过期，不足 %d 天时续期）", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（尚余 %d 天过期，不足 %d 天时续期），跳过此次申请", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

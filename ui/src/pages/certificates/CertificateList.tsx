@@ -169,7 +169,7 @@ const CertificateList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <CertificateDetailDrawer
             data={record}
             trigger={
@@ -182,7 +182,7 @@ const CertificateList = () => {
           <Tooltip title={t("certificate.action.delete")}>
             <Button color="danger" icon={<DeleteOutlinedIcon />} variant="text" onClick={() => handleDeleteClick(record)} />
           </Tooltip>
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];
