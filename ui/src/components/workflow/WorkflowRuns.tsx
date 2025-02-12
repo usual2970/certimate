@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
-  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PauseOutlined as PauseOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
@@ -18,7 +18,12 @@ import { ClientResponseError } from "pocketbase";
 import { cancelRun as cancelWorkflowRun } from "@/api/workflows";
 import { WORKFLOW_TRIGGERS } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
-import { list as listWorkflowRuns, remove as removeWorkflowRun } from "@/repository/workflowRun";
+import {
+  list as listWorkflowRuns,
+  remove as removeWorkflowRun,
+  subscribe as subscribeWorkflowRun,
+  unsubscribe as unsubscribeWorkflowRun,
+} from "@/repository/workflowRun";
 import { getErrMsg } from "@/utils/error";
 import WorkflowRunDetailDrawer from "./WorkflowRunDetailDrawer";
 
@@ -75,7 +80,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
           return (
-            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+            <Tag icon={<StopOutlinedIcon />} color="warning">
               {t("workflow_run.props.status.canceled")}
             </Tag>
           );
@@ -211,6 +216,31 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
     }
   );
 
+  useEffect(() => {
+    const items = tableData.filter((e) => e.status === WORKFLOW_RUN_STATUSES.PENDING || e.status === WORKFLOW_RUN_STATUSES.RUNNING);
+    for (const item of items) {
+      subscribeWorkflowRun(item.id, (cb) => {
+        setTableData((prev) => {
+          const index = prev.findIndex((e) => e.id === item.id);
+          if (index !== -1) {
+            prev[index] = cb.record;
+          }
+          return [...prev];
+        });
+
+        if (cb.record.status !== WORKFLOW_RUN_STATUSES.PENDING && cb.record.status !== WORKFLOW_RUN_STATUSES.RUNNING) {
+          unsubscribeWorkflowRun(item.id);
+        }
+      });
+    }
+
+    return () => {
+      for (const item of items) {
+        unsubscribeWorkflowRun(item.id);
+      }
+    };
+  }, [tableData]);
+
   const handleCancelClick = (workflowRun: WorkflowRunModel) => {
     modalApi.confirm({
       title: t("workflow_run.action.cancel"),
@@ -275,7 +305,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
               setPageSize(pageSize);
             },
           }}
-          rowKey={(record: WorkflowRunModel) => record.id}
+          rowKey={(record) => record.id}
           scroll={{ x: "max(100%, 960px)" }}
         />
       </div>

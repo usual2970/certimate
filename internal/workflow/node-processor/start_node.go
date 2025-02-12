@@ -14,13 +14,13 @@ type startNode struct {
 func NewStartNode(node *domain.WorkflowNode) *startNode {
 	return &startNode{
 		node:       node,
-		nodeLogger: NewNodeLogger(node),
+		nodeLogger: newNodeLogger(node),
 	}
 }
 
-func (s *startNode) Run(ctx context.Context) error {
-	// 开始节点没有任何操作
-	s.AddOutput(ctx, s.node.Name, "完成")
+func (n *startNode) Process(ctx context.Context) error {
+	// 此类型节点不需要执行任何操作，直接返回
+	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "进入开始节点")
 
 	return nil
 }

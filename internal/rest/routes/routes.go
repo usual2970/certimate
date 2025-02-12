@@ -27,13 +27,14 @@ func Register(router *router.Router[*core.RequestEvent]) {
 	certificateSvc = certificate.NewCertificateService(certificateRepo)
 
 	workflowRepo := repository.NewWorkflowRepository()
-	workflowSvc = workflow.NewWorkflowService(workflowRepo)
+	workflowRunRepo := repository.NewWorkflowRunRepository()
+	workflowSvc = workflow.NewWorkflowService(workflowRepo, workflowRunRepo)
 
 	statisticsRepo := repository.NewStatisticsRepository()
 	statisticsSvc = statistics.NewStatisticsService(statisticsRepo)
 
-	notifyRepo := repository.NewSettingsRepository()
-	notifySvc = notify.NewNotifyService(notifyRepo)
+	settingsRepo := repository.NewSettingsRepository()
+	notifySvc = notify.NewNotifyService(settingsRepo)
 
 	group := router.Group("/api")
 	group.Bind(apis.RequireSuperuserAuth())
@@ -45,6 +46,6 @@ func Register(router *router.Router[*core.RequestEvent]) {
 
 func Unregister() {
 	if workflowSvc != nil {
-		workflowSvc.Stop(context.Background())
+		workflowSvc.Shutdown(context.Background())
 	}
 }

@@ -7,16 +7,15 @@ import {
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   LockOutlined as LockOutlinedIcon,
-  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
-import type { TableProps } from "antd";
-import { Button, Card, Col, Divider, Empty, Flex, Grid, Row, Space, Statistic, Table, Tag, Typography, notification, theme } from "antd";
+import { Button, Card, Col, Divider, Empty, Flex, Grid, Row, Space, Statistic, Table, type TableProps, Tag, Typography, notification, theme } from "antd";
 import dayjs from "dayjs";
 import {
   CalendarClock as CalendarClockIcon,
@@ -89,7 +88,6 @@ const Dashboard = () => {
         const workflow = record.expand?.workflowId;
         return (
           <Typography.Link
-            type="secondary"
             ellipsis
             onClick={() => {
               if (workflow) {
@@ -129,7 +127,7 @@ const Dashboard = () => {
           );
         } else if (record.status === WORKFLOW_RUN_STATUSES.CANCELED) {
           return (
-            <Tag icon={<PauseCircleOutlinedIcon />} color="warning">
+            <Tag icon={<StopOutlinedIcon />} color="warning">
               {t("workflow_run.props.status.canceled")}
             </Tag>
           );
@@ -178,7 +176,7 @@ const Dashboard = () => {
     () => {
       return listWorkflowRuns({
         page: 1,
-        perPage: 5,
+        perPage: 9,
         expand: true,
       });
     },
@@ -286,8 +284,9 @@ const Dashboard = () => {
               emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />,
             }}
             pagination={false}
-            rowKey={(record: WorkflowRunModel) => record.id}
+            rowKey={(record) => record.id}
             scroll={{ x: "max(100%, 960px)" }}
+            size="small"
           />
         </Card>
       </Flex>

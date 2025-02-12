@@ -15,11 +15,15 @@
   "certificate.props.validity.expiration": "{{date}} 到期",
   "certificate.props.validity.filter.expire_soon": "即将到期",
   "certificate.props.validity.filter.expired": "已到期",
+  "certificate.props.brand": "证书品牌",
   "certificate.props.source": "来源",
   "certificate.props.source.workflow": "工作流",
   "certificate.props.source.upload": "用户上传",
   "certificate.props.certificate": "证书内容",
   "certificate.props.private_key": "私钥内容",
+  "certificate.props.serial_number": "证书序列号",
+  "certificate.props.key_algorithm": "证书算法",
+  "certificate.props.issuer": "颁发者",
   "certificate.props.created_at": "创建时间",
   "certificate.props.updated_at": "更新时间"
 }

@@ -18,7 +18,8 @@ import (
 	"github.com/usual2970/certimate/internal/scheduler"
 	"github.com/usual2970/certimate/internal/workflow"
 	"github.com/usual2970/certimate/ui"
-	//_ "github.com/usual2970/certimate/migrations"
+
+	_ "github.com/usual2970/certimate/migrations"
 )
 
 func main() {

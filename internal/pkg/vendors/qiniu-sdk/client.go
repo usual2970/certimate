@@ -1,48 +1,40 @@
 ﻿package qiniusdk
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
 	"github.com/qiniu/go-sdk/v7/auth"
+	"github.com/qiniu/go-sdk/v7/client"
 )
 
 const qiniuHost = "https://api.qiniu.com"
 
 type Client struct {
-	mac *auth.Credentials
+	client *client.Client
 }
 
 func NewClient(mac *auth.Credentials) *Client {
 	if mac == nil {
 		mac = auth.Default()
 	}
-	return &Client{mac: mac}
+
+	client := client.DefaultClient
+	client.Transport = newTransport(mac, nil)
+	return &Client{client: &client}
 }
 
-func (c *Client) GetDomainInfo(domain string) (*GetDomainInfoResponse, error) {
-	respBytes, err := c.sendReq(http.MethodGet, fmt.Sprintf("domain/%s", domain), nil)
-	if err != nil {
+func (c *Client) GetDomainInfo(ctx context.Context, domain string) (*GetDomainInfoResponse, error) {
+	resp := new(GetDomainInfoResponse)
+	if err := c.client.Call(ctx, resp, http.MethodGet, c.urlf("domain/%s", domain), nil); err != nil {
 		return nil, err
 	}
-
-	resp := &GetDomainInfoResponse{}
-	err = json.Unmarshal(respBytes, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("code: %d, error: %s", *resp.Code, *resp.Error)
-	}
-
 	return resp, nil
 }
 
-func (c *Client) ModifyDomainHttpsConf(domain, certId string, forceHttps, http2Enable bool) (*ModifyDomainHttpsConfResponse, error) {
+func (c *Client) ModifyDomainHttpsConf(ctx context.Context, domain string, certId string, forceHttps bool, http2Enable bool) (*ModifyDomainHttpsConfResponse, error) {
 	req := &ModifyDomainHttpsConfRequest{
 		DomainInfoHttpsData: DomainInfoHttpsData{
 			CertID:      certId,
@@ -50,30 +42,14 @@ func (c *Client) ModifyDomainHttpsConf(domain, certId string, forceHttps, http2E
 			Http2Enable: http2Enable,
 		},
 	}
-
-	reqBytes, err := json.Marshal(req)
-	if err != nil {
+	resp := new(ModifyDomainHttpsConfResponse)
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPut, c.urlf("domain/%s/httpsconf", domain), nil, req); err != nil {
 		return nil, err
 	}
-
-	respBytes, err := c.sendReq(http.MethodPut, fmt.Sprintf("domain/%s/httpsconf", domain), bytes.NewReader(reqBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &ModifyDomainHttpsConfResponse{}
-	err = json.Unmarshal(respBytes, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("code: %d, error: %s", *resp.Code, *resp.Error)
-	}
-
 	return resp, nil
 }
 
-func (c *Client) EnableDomainHttps(domain, certId string, forceHttps, http2Enable bool) (*EnableDomainHttpsResponse, error) {
+func (c *Client) EnableDomainHttps(ctx context.Context, domain string, certId string, forceHttps bool, http2Enable bool) (*EnableDomainHttpsResponse, error) {
 	req := &EnableDomainHttpsRequest{
 		DomainInfoHttpsData: DomainInfoHttpsData{
 			CertID:      certId,
@@ -81,83 +57,29 @@ func (c *Client) EnableDomainHttps(domain, certId string, forceHttps, http2Enabl
 			Http2Enable: http2Enable,
 		},
 	}
-
-	reqBytes, err := json.Marshal(req)
-	if err != nil {
+	resp := new(EnableDomainHttpsResponse)
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPut, c.urlf("domain/%s/sslize", domain), nil, req); err != nil {
 		return nil, err
 	}
-
-	respBytes, err := c.sendReq(http.MethodPut, fmt.Sprintf("domain/%s/sslize", domain), bytes.NewReader(reqBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &EnableDomainHttpsResponse{}
-	err = json.Unmarshal(respBytes, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("code: %d, error: %s", *resp.Code, *resp.Error)
-	}
-
 	return resp, nil
 }
 
-func (c *Client) UploadSslCert(name, commonName, certificate, privateKey string) (*UploadSslCertResponse, error) {
+func (c *Client) UploadSslCert(ctx context.Context, name string, commonName string, certificate string, privateKey string) (*UploadSslCertResponse, error) {
 	req := &UploadSslCertRequest{
 		Name:        name,
 		CommonName:  commonName,
 		Certificate: certificate,
 		PrivateKey:  privateKey,
 	}
-
-	reqBytes, err := json.Marshal(req)
-	if err != nil {
+	resp := new(UploadSslCertResponse)
+	if err := c.client.CallWithJson(ctx, resp, http.MethodPost, c.urlf("sslcert"), nil, req); err != nil {
 		return nil, err
 	}
-
-	respBytes, err := c.sendReq(http.MethodPost, "sslcert", bytes.NewReader(reqBytes))
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &UploadSslCertResponse{}
-	err = json.Unmarshal(respBytes, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("qiniu api error, code: %d, error: %s", *resp.Code, *resp.Error)
-	}
-
 	return resp, nil
 }
 
-func (c *Client) sendReq(method string, path string, body io.Reader) ([]byte, error) {
+func (c *Client) urlf(pathf string, pathargs ...any) string {
+	path := fmt.Sprintf(pathf, pathargs...)
 	path = strings.TrimPrefix(path, "/")
-
-	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", qiniuHost, path), body)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Content-Type", "application/json")
-
-	if err := c.mac.AddToken(auth.TokenQBox, req); err != nil {
-		return nil, err
-	}
-
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	r, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
+	return qiniuHost + "/" + path
 }

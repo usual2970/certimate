@@ -56,6 +56,7 @@ const MULTIPLE_INPUT_DELIMITER = ";";
 
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
   return {
+    challengeType: "dns-01",
     keyAlgorithm: "RSA2048",
     skipBeforeExpiryDays: 20,
   };
@@ -74,6 +75,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           .every((e) => validDomainName(e, { allowWildcard: true }));
       }, t("common.errmsg.domain_invalid")),
       contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email(t("common.errmsg.email_invalid")),
+      challengeType: z.string().nullish(),
       provider: z.string({ message: t("workflow_node.apply.form.provider.placeholder") }).nonempty(t("workflow_node.apply.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.apply.form.provider_access.placeholder") })
@@ -233,6 +235,16 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.contact_email.tooltip") }}></span>}
           >
             <EmailInput placeholder={t("workflow_node.apply.form.contact_email.placeholder")} />
+          </Form.Item>
+
+          <Form.Item name="challengeType" label={t("workflow_node.apply.form.challenge_type.label")} rules={[formRule]} hidden>
+            <Select
+              options={["DNS-01"].map((e) => ({
+                label: e,
+                value: e.toLowerCase(),
+              }))}
+              placeholder={t("workflow_node.apply.form.challenge_type.placeholder")}
+            />
           </Form.Item>
 
           <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden rules={[formRule]}>

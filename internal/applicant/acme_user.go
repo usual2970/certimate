@@ -1,6 +1,7 @@
 ﻿package applicant
 
 import (
+	"context"
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/elliptic"
@@ -110,14 +111,11 @@ func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderCon
 			Kid:                  sslProviderConfig.Config.GoogleTrustServices.EabKid,
 			HmacEncoded:          sslProviderConfig.Config.GoogleTrustServices.EabHmacKey,
 		})
-
 	case sslProviderLetsEncrypt, sslProviderLetsEncryptStaging:
 		reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
-
 	default:
 		err = fmt.Errorf("unsupported ssl provider: %s", sslProviderConfig.Provider)
 	}
-
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +127,12 @@ func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderCon
 		return resp.Resource, nil
 	}
 
-	if err := repo.Save(sslProviderConfig.Provider, user.GetEmail(), user.getPrivateKeyPEM(), reg); err != nil {
+	if _, err := repo.Save(context.Background(), &domain.AcmeAccount{
+		CA:       sslProviderConfig.Provider,
+		Email:    user.GetEmail(),
+		Key:      user.getPrivateKeyPEM(),
+		Resource: reg,
+	}); err != nil {
 		return nil, fmt.Errorf("failed to save registration: %w", err)
 	}
 

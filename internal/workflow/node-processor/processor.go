@@ -9,9 +9,10 @@ import (
 )
 
 type NodeProcessor interface {
-	Run(ctx context.Context) error
-	Log(ctx context.Context) *domain.WorkflowRunLog
-	AddOutput(ctx context.Context, title, content string, err ...string)
+	Process(ctx context.Context) error
+
+	GetLog(ctx context.Context) *domain.WorkflowRunLog
+	AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string)
 }
 
 type nodeLogger struct {
@@ -23,39 +24,41 @@ type certificateRepository interface {
 }
 
 type workflowOutputRepository interface {
-	GetByNodeId(ctx context.Context, nodeId string) (*domain.WorkflowOutput, error)
-	Save(ctx context.Context, output *domain.WorkflowOutput, certificate *domain.Certificate, cb func(id string) error) error
+	GetByNodeId(ctx context.Context, workflowNodeId string) (*domain.WorkflowOutput, error)
+	Save(ctx context.Context, workflowOutput *domain.WorkflowOutput) (*domain.WorkflowOutput, error)
+	SaveWithCertificate(ctx context.Context, workflowOutput *domain.WorkflowOutput, certificate *domain.Certificate) (*domain.WorkflowOutput, error)
 }
 
 type settingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
-func NewNodeLogger(node *domain.WorkflowNode) *nodeLogger {
+func newNodeLogger(node *domain.WorkflowNode) *nodeLogger {
 	return &nodeLogger{
 		log: &domain.WorkflowRunLog{
 			NodeId:   node.Id,
 			NodeName: node.Name,
-			Outputs:  make([]domain.WorkflowRunLogOutput, 0),
+			Records:  make([]domain.WorkflowRunLogRecord, 0),
 		},
 	}
 }
 
-func (l *nodeLogger) Log(ctx context.Context) *domain.WorkflowRunLog {
+func (l *nodeLogger) GetLog(ctx context.Context) *domain.WorkflowRunLog {
 	return l.log
 }
 
-func (l *nodeLogger) AddOutput(ctx context.Context, title, content string, err ...string) {
-	output := domain.WorkflowRunLogOutput{
+func (l *nodeLogger) AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string) {
+	record := domain.WorkflowRunLogRecord{
 		Time:    time.Now().UTC().Format(time.RFC3339),
-		Title:   title,
+		Level:   level,
 		Content: content,
 	}
 	if len(err) > 0 {
-		output.Error = err[0]
+		record.Error = err[0]
 		l.log.Error = err[0]
 	}
-	l.log.Outputs = append(l.log.Outputs, output)
+
+	l.log.Records = append(l.log.Records, record)
 }
 
 func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
@@ -82,4 +85,8 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 
 func getContextWorkflowId(ctx context.Context) string {
 	return ctx.Value("workflow_id").(string)
+}
+
+func getContextWorkflowRunId(ctx context.Context) string {
+	return ctx.Value("workflow_run_id").(string)
 }

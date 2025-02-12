@@ -173,8 +173,6 @@ func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) erro
 		_, err := d.client.ModifyDomainResolution(request)
 		return err
 	}
-
-	return nil
 }
 
 func (d *DNSProvider) removeDNSRecord(domain, subDomain, value string) error {

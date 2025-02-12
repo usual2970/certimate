@@ -7,8 +7,8 @@ import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
-  PauseCircleOutlined as PauseCircleOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 
@@ -170,7 +170,7 @@ const WorkflowList = () => {
         } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.FAILED) {
           icon = <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />;
         } else if (record.lastRunStatus === WORKFLOW_RUN_STATUSES.CANCELED) {
-          icon = <PauseCircleOutlinedIcon style={{ color: themeToken.colorWarning }} />;
+          icon = <StopOutlinedIcon style={{ color: themeToken.colorWarning }} />;
         }
 
         return (
@@ -350,7 +350,7 @@ const WorkflowList = () => {
         dataSource={tableData}
         loading={loading}
         locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={loadedError ? getErrMsg(loadedError) : t("workflow.nodata")} />,
+          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={getErrMsg(loadedError ?? t("workflow.nodata"))} />,
         }}
         pagination={{
           current: page,
@@ -366,7 +366,7 @@ const WorkflowList = () => {
             setPageSize(pageSize);
           },
         }}
-        rowKey={(record: WorkflowModel) => record.id}
+        rowKey={(record) => record.id}
         scroll={{ x: "max(100%, 960px)" }}
       />
     </div>

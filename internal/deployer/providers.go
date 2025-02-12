@@ -54,8 +54,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -146,8 +146,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeAWSCloudFront:
 		{
 			access := domain.AccessConfigForAWS{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -168,8 +168,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeBaiduCloudCDN:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -189,8 +189,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeBytePlusCDN:
 		{
 			access := domain.AccessConfigForBytePlus{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -210,8 +210,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeDogeCloudCDN:
 		{
 			access := domain.AccessConfigForDogeCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerDogeCDN.NewWithLogger(&providerDogeCDN.DogeCloudCDNDeployerConfig{
@@ -225,8 +225,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeEdgioApplications:
 		{
 			access := domain.AccessConfigForEdgio{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerEdgioApplications.NewWithLogger(&providerEdgioApplications.EdgioApplicationsDeployerConfig{
@@ -240,8 +240,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB:
 		{
 			access := domain.AccessConfigForHuaweiCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -291,8 +291,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeKubernetesSecret:
 		{
 			access := domain.AccessConfigForKubernetes{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerK8sSecret.NewWithLogger(&providerK8sSecret.K8sSecretDeployerConfig{
@@ -309,8 +309,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuPili:
 		{
 			access := domain.AccessConfigForQiniu{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -339,8 +339,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeSSH:
 		{
 			access := domain.AccessConfigForSSH{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerSSH.NewWithLogger(&providerSSH.SshDeployerConfig{
@@ -367,8 +367,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO:
 		{
 			access := domain.AccessConfigForTencentCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -435,8 +435,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeUCloudUCDN, domain.DeployProviderTypeUCloudUS3:
 		{
 			access := domain.AccessConfigForUCloud{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -468,8 +468,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
@@ -525,8 +525,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeWebhook:
 		{
 			access := domain.AccessConfigForWebhook{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerWebhook.NewWithLogger(&providerWebhook.WebhookDeployerConfig{

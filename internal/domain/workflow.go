@@ -55,8 +55,8 @@ type WorkflowNode struct {
 	Inputs  []WorkflowNodeIO `json:"inputs"`
 	Outputs []WorkflowNodeIO `json:"outputs"`
 
-	Next     *WorkflowNode  `json:"next"`
-	Branches []WorkflowNode `json:"branches"`
+	Next     *WorkflowNode  `json:"next,omitempty"`
+	Branches []WorkflowNode `json:"branches,omitempty"`
 
 	Validated bool `json:"validated"`
 }
@@ -64,6 +64,7 @@ type WorkflowNode struct {
 type WorkflowNodeConfigForApply struct {
 	Domains               string         `json:"domains"`               // 域名列表，以半角逗号分隔
 	ContactEmail          string         `json:"contactEmail"`          // 联系邮箱
+	ChallengeType         string         `json:"challengeType"`         // TODO: 验证方式。目前仅支持 dns-01
 	Provider              string         `json:"provider"`              // DNS 提供商
 	ProviderAccessId      string         `json:"providerAccessId"`      // DNS 提供商授权记录 ID
 	ProviderConfig        map[string]any `json:"providerConfig"`        // DNS 提供商额外配置
