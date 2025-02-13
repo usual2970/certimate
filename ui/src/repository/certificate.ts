@@ -1,55 +1,51 @@
 import dayjs from "dayjs";
-import { type RecordListOptions } from "pocketbase";
 
 import { type CertificateModel } from "@/domain/certificate";
 import { COLLECTION_NAME_CERTIFICATE, getPocketBase } from "./_pocketbase";
 
 export type ListCertificateRequest = {
+  keyword?: string;
+  state?: "expireSoon" | "expired";
   page?: number;
   perPage?: number;
-  state?: "expireSoon" | "expired";
 };
 
 export const list = async (request: ListCertificateRequest) => {
   const pb = getPocketBase();
 
-  const page = request.page || 1;
-  const perPage = request.perPage || 10;
-
-  const options: RecordListOptions = {
-    expand: "workflowId",
-    filter: "deleted=null",
-    sort: "-created",
-    requestKey: null,
-  };
-
+  const filters: string[] = ["deleted=null"];
+  if (request.keyword) {
+    filters.push(pb.filter("(subjectAltNames~{:keyword} || serialNumber={:keyword})", { keyword: request.keyword }));
+  }
   if (request.state === "expireSoon") {
-    options.filter = pb.filter("expireAt<{:expiredAt} && deleted=null", {
-      expiredAt: dayjs().add(20, "d").toDate(),
-    });
+    filters.push(pb.filter("expireAt<{:expiredAt}", { expiredAt: dayjs().add(20, "d").toDate() }));
   } else if (request.state === "expired") {
-    options.filter = pb.filter("expireAt<={:expiredAt} && deleted=null", {
-      expiredAt: new Date(),
-    });
+    filters.push(pb.filter("expireAt<={:expiredAt}", { expiredAt: new Date() }));
   }
 
-  return pb.collection(COLLECTION_NAME_CERTIFICATE).getList<CertificateModel>(page, perPage, options);
+  const page = request.page || 1;
+  const perPage = request.perPage || 10;
+  return pb.collection(COLLECTION_NAME_CERTIFICATE).getList<CertificateModel>(page, perPage, {
+    expand: "workflowId",
+    filter: filters.join(" && "),
+    sort: "-created",
+    requestKey: null,
+  });
 };
 
 export const listByWorkflowRunId = async (workflowRunId: string) => {
   const pb = getPocketBase();
 
-  const options: RecordListOptions = {
-    filter: pb.filter("workflowRunId={:workflowRunId}", {
-      workflowRunId: workflowRunId,
-    }),
+  const list = await pb.collection(COLLECTION_NAME_CERTIFICATE).getFullList<CertificateModel>({
+    batch: 65535,
+    filter: pb.filter("workflowRunId={:workflowRunId}", { workflowRunId: workflowRunId }),
     sort: "-created",
     requestKey: null,
-  };
-  const items = await pb.collection(COLLECTION_NAME_CERTIFICATE).getFullList<CertificateModel>(options);
+  });
+
   return {
-    totalItems: items.length,
-    items: items,
+    totalItems: list.length,
+    items: list,
   };
 };
 

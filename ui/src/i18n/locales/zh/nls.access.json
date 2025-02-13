@@ -3,6 +3,8 @@
 
   "access.nodata": "暂无授权信息，请先新建授权",
 
+  "access.search.placeholder": "按授权名称搜索……",
+
   "access.action.add": "新建授权",
   "access.action.edit": "编辑授权",
   "access.action.duplicate": "复制授权",

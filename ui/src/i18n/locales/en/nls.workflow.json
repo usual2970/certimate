@@ -3,6 +3,8 @@
 
   "workflow.nodata": "No workflows. Please create a workflow to generate certificates! 😀",
 
+  "workflow.search.placeholder": "Search by workflow name ...",
+
   "workflow.action.create": "Create workflow",
   "workflow.action.edit": "Edit workflow",
   "workflow.action.delete": "Delete workflow",

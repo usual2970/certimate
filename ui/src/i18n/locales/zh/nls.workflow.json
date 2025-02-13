@@ -3,6 +3,8 @@
 
   "workflow.nodata": "暂无工作流，请先新建工作流",
 
+  "workflow.search.placeholder": "按工作流名称搜索……",
+
   "workflow.action.create": "新建工作流",
   "workflow.action.edit": "编辑工作流",
   "workflow.action.delete": "删除工作流",

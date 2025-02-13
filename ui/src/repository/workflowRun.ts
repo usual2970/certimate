@@ -12,24 +12,21 @@ export type ListWorkflowRunsRequest = {
 };
 
 export const list = async (request: ListWorkflowRunsRequest) => {
-  const page = request.page || 1;
-  const perPage = request.perPage || 10;
+  const pb = getPocketBase();
 
-  let filter = "";
-  const params: Record<string, string> = {};
+  const filters: string[] = [];
   if (request.workflowId) {
-    filter = `workflowId={:workflowId}`;
-    params.workflowId = request.workflowId;
+    filters.push(pb.filter("workflowId={:workflowId}", { workflowId: request.workflowId }));
   }
 
-  return await getPocketBase()
-    .collection(COLLECTION_NAME_WORKFLOW_RUN)
-    .getList<WorkflowRunModel>(page, perPage, {
-      filter: getPocketBase().filter(filter, params),
-      sort: "-created",
-      requestKey: null,
-      expand: request.expand ? "workflowId" : undefined,
-    });
+  const page = request.page || 1;
+  const perPage = request.perPage || 10;
+  return await pb.collection(COLLECTION_NAME_WORKFLOW_RUN).getList<WorkflowRunModel>(page, perPage, {
+    filter: filters.join(" && "),
+    sort: "-created",
+    requestKey: null,
+    expand: request.expand ? "workflowId" : undefined,
+  });
 };
 
 export const remove = async (record: MaybeModelRecordWithId<WorkflowRunModel>) => {
