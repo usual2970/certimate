@@ -99,7 +99,7 @@ func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]
 		if result.GetMsg() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {
-			return fmt.Errorf("baota api error: %s", result.GetMsg())
+			return fmt.Errorf("baota api error: %s", *result.GetMsg())
 		}
 	}
 

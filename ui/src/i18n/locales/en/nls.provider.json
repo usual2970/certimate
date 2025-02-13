@@ -1,40 +1,4 @@
 ﻿{
-  "common.button.add": "Add",
-  "common.button.cancel": "Cancel",
-  "common.button.copy": "Copy",
-  "common.button.delete": "Delete",
-  "common.button.edit": "Edit",
-  "common.button.more": "More",
-  "common.button.ok": "Ok",
-  "common.button.reset": "Reset",
-  "common.button.save": "Save",
-  "common.button.submit": "Submit",
-
-  "common.text.copied": "Copied",
-  "common.text.nodata": "No data available",
-  "common.text.operation_confirm": "Operation confirm",
-  "common.text.operation_succeeded": "Operation succeeded",
-  "common.text.operation_failed": "Operation failed",
-  "common.text.request_error": "Request error",
-
-  "common.menu.theme": "Change theme",
-  "common.menu.locale": "Change language",
-  "common.menu.settings": "Settings",
-  "common.menu.logout": "Log-out",
-  "common.menu.document": "Document",
-
-  "common.theme.light": "Light",
-  "common.theme.dark": "Dark",
-  "common.theme.system": "System",
-
-  "common.errmsg.string_max": "Please enter no more than {{max}} characters",
-  "common.errmsg.email_invalid": "Please enter a valid email address",
-  "common.errmsg.domain_invalid": "Please enter a valid domain name",
-  "common.errmsg.host_invalid": "Please enter a valid domain name or IP address",
-  "common.errmsg.port_invalid": "Please enter a valid port",
-  "common.errmsg.ip_invalid": "Please enter a valid IP address",
-  "common.errmsg.url_invalid": "Please enter a valid URL",
-
   "provider.acmehttpreq": "Http Request (ACME Proxy)",
   "provider.aliyun": "Alibaba Cloud",
   "provider.aliyun.alb": "Alibaba Cloud - ALB (Application Load Balancer)",
@@ -103,14 +67,5 @@
   "provider.volcengine.live": "Volcengine - Live",
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
   "provider.webhook": "Webhook",
-  "provider.westcn": "West.cn",
-
-  "common.notifier.bark": "Bark",
-  "common.notifier.dingtalk": "DingTalk",
-  "common.notifier.email": "Email",
-  "common.notifier.lark": "Lark",
-  "common.notifier.serverchan": "ServerChan",
-  "common.notifier.telegram": "Telegram",
-  "common.notifier.webhook": "Webhook",
-  "common.notifier.wecom": "WeCom"
+  "provider.westcn": "West.cn"
 }
