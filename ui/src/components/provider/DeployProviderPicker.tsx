@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Tabs, Tooltip, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { DEPLOY_CATEGORIES, type DeployProvider, deployProvidersMap } from "@/domain/provider";
+import { DEPLOY_CATEGORIES, deployProvidersMap } from "@/domain/provider";
 
 export type DeployProviderPickerProps = {
   className?: string;
