@@ -41,13 +41,13 @@ func NewCertificateService(certRepo certificateRepository) *CertificateService {
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
 	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
-		certs, err := s.certRepo.ListExpireSoon(context.Background())
+		certificates, err := s.certRepo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
 			return
 		}
 
-		notification := buildExpireSoonNotification(certs)
+		notification := buildExpireSoonNotification(certificates)
 		if notification == nil {
 			return
 		}

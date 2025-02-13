@@ -1,12 +1,116 @@
 package migrations
 
 import (
+	x509 "crypto/x509"
+	"log/slog"
+	"strings"
+
 	"github.com/pocketbase/pocketbase/core"
 	m "github.com/pocketbase/pocketbase/migrations"
+
+	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
 func init() {
 	m.Register(func(app core.App) error {
+		slog.Info("[CERTIMATE] migration: ready ...")
+
+		// backup collection records
+		collectionRecords := make([]*core.Record, 0)
+		collections, err := app.FindAllCollections(core.CollectionTypeBase)
+		if err != nil {
+			return err
+		} else {
+			for _, collection := range collections {
+				switch collection.Name {
+				case "acme_accounts", "access", "certificate", "workflow", "settings":
+					{
+						records, err := app.FindAllRecords(collection)
+						if err != nil {
+							return err
+						}
+						collectionRecords = append(collectionRecords, records...)
+
+						slog.Info("[CERTIMATE] migration: collection '" + collection.Name + "' backed up")
+
+						if collection.Name == "access" {
+							collection.Fields.RemoveByName("usage")
+
+							for i, field := range collection.Fields {
+								if field.GetName() == "provider" {
+									collection.Fields.AddMarshaledJSONAt(i+1, []byte(`{
+                    "hidden": false,
+                    "id": "hwy7m03o",
+                    "maxSelect": 1,
+                    "name": "provider",
+                    "presentable": false,
+                    "required": false,
+                    "system": false,
+                    "type": "select",
+                    "values": [
+                      "1panel",
+                      "acmehttpreq",
+                      "akamai",
+                      "aliyun",
+                      "aws",
+                      "azure",
+                      "baiducloud",
+                      "baishan",
+                      "baotapanel",
+                      "byteplus",
+                      "cachefly",
+                      "cdnfly",
+                      "cloudflare",
+                      "cloudns",
+                      "cmcccloud",
+                      "ctcccloud",
+                      "cucccloud",
+                      "dogecloud",
+                      "edgio",
+                      "fastly",
+                      "gname",
+                      "gcore",
+                      "godaddy",
+                      "goedge",
+                      "huaweicloud",
+                      "k8s",
+                      "local",
+                      "namedotcom",
+                      "namesilo",
+                      "ns1",
+                      "powerdns",
+                      "qiniu",
+                      "rainyun",
+                      "safeline",
+                      "ssh",
+                      "tencentcloud",
+                      "ucloud",
+                      "volcengine",
+                      "webhook",
+                      "westcn"
+                    ]
+                  }`))
+								}
+							}
+
+							err := app.Save(collection)
+							if err != nil {
+								return err
+							}
+						}
+					}
+
+				case "domains", "deployments", "access_groups":
+					{
+						app.Delete(collection)
+
+						slog.Info("[CERTIMATE] migration: collection '" + collection.Name + "' truncated")
+					}
+				}
+			}
+		}
+
+		// migrate
 		jsonData := `[
 			{
 				"createRule": null,
@@ -50,27 +154,46 @@ func init() {
 						"system": false,
 						"type": "select",
 						"values": [
+							"1panel",
 							"acmehttpreq",
+							"akamai",
 							"aliyun",
 							"aws",
 							"azure",
 							"baiducloud",
+							"baishan",
+							"baotapanel",
 							"byteplus",
+							"cachefly",
+							"cdnfly",
 							"cloudflare",
+							"cloudns",
+							"cmcccloud",
+							"ctcccloud",
+							"cucccloud",
 							"dogecloud",
+							"edgio",
+							"fastly",
+							"gname",
+							"gcore",
 							"godaddy",
+							"goedge",
 							"huaweicloud",
 							"k8s",
 							"local",
 							"namedotcom",
 							"namesilo",
+							"ns1",
 							"powerdns",
 							"qiniu",
+							"rainyun",
+							"safeline",
 							"ssh",
 							"tencentcloud",
 							"ucloud",
 							"volcengine",
-							"webhook"
+							"webhook",
+							"westcn"
 						]
 					},
 					{
@@ -82,21 +205,6 @@ func init() {
 						"required": false,
 						"system": false,
 						"type": "json"
-					},
-					{
-						"hidden": false,
-						"id": "hsxcnlvd",
-						"maxSelect": 1,
-						"name": "usage",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "select",
-						"values": [
-							"apply",
-							"deploy",
-							"all"
-						]
 					},
 					{
 						"hidden": false,
@@ -132,7 +240,8 @@ func init() {
 				],
 				"id": "4yzbv8urny5ja1e",
 				"indexes": [
-					"CREATE INDEX ` + "`" + `idx_wkoST0j` + "`" + ` ON ` + "`" + `access` + "`" + ` (` + "`" + `name` + "`" + `)"
+					"CREATE INDEX ` + "`" + `idx_wkoST0j` + "`" + ` ON ` + "`" + `access` + "`" + ` (` + "`" + `name` + "`" + `)",
+					"CREATE INDEX ` + "`" + `idx_frh0JT1Aqx` + "`" + ` ON ` + "`" + `access` + "`" + ` (` + "`" + `provider` + "`" + `)"
 				],
 				"listRule": null,
 				"name": "access",
@@ -450,7 +559,8 @@ func init() {
 							"pending",
 							"running",
 							"succeeded",
-							"failed"
+							"failed",
+							"canceled"
 						]
 					},
 					{
@@ -513,13 +623,26 @@ func init() {
 						"type": "text"
 					},
 					{
-						"cascadeDelete": false,
+						"cascadeDelete": true,
 						"collectionId": "tovyif5ax6j62ur",
 						"hidden": false,
 						"id": "jka88auc",
 						"maxSelect": 1,
 						"minSelect": 0,
 						"name": "workflowId",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": true,
+						"collectionId": "qjp8lygssgwyqyz",
+						"hidden": false,
+						"id": "relation821863227",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "runId",
 						"presentable": false,
 						"required": false,
 						"system": false,
@@ -590,7 +713,10 @@ func init() {
 					}
 				],
 				"id": "bqnxb95f2cooowp",
-				"indexes": [],
+				"indexes": [
+					"CREATE INDEX ` + "`" + `idx_BYoQPsz4my` + "`" + ` ON ` + "`" + `workflow_output` + "`" + ` (` + "`" + `workflowId` + "`" + `)",
+					"CREATE INDEX ` + "`" + `idx_O9zxLETuxJ` + "`" + ` ON ` + "`" + `workflow_output` + "`" + ` (` + "`" + `runId` + "`" + `)"
+				],
 				"listRule": null,
 				"name": "workflow_output",
 				"system": false,
@@ -647,6 +773,20 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
+						"id": "text2069360702",
+						"max": 0,
+						"min": 0,
+						"name": "serialNumber",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
 						"id": "plmambpz",
 						"max": 0,
 						"min": 0,
@@ -675,10 +815,38 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
+						"id": "text2910474005",
+						"max": 0,
+						"min": 0,
+						"name": "issuer",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
 						"id": "agt7n5bb",
 						"max": 0,
 						"min": 0,
 						"name": "issuerCertificate",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text4164403445",
+						"max": 0,
+						"min": 0,
+						"name": "keyAlgorithm",
 						"pattern": "",
 						"presentable": false,
 						"primaryKey": false,
@@ -707,6 +875,20 @@ func init() {
 						"required": false,
 						"system": false,
 						"type": "date"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text2045248758",
+						"max": 0,
+						"min": 0,
+						"name": "acmeAccountUrl",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
 					},
 					{
 						"exceptDomains": null,
@@ -738,6 +920,19 @@ func init() {
 						"maxSelect": 1,
 						"minSelect": 0,
 						"name": "workflowId",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"cascadeDelete": false,
+						"collectionId": "qjp8lygssgwyqyz",
+						"hidden": false,
+						"id": "relation3917999135",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "workflowRunId",
 						"presentable": false,
 						"required": false,
 						"system": false,
@@ -803,7 +998,11 @@ func init() {
 					}
 				],
 				"id": "4szxr9x43tpj6np",
-				"indexes": [],
+				"indexes": [
+					"CREATE INDEX ` + "`" + `idx_Jx8TXzDCmw` + "`" + ` ON ` + "`" + `certificate` + "`" + ` (` + "`" + `workflowId` + "`" + `)",
+					"CREATE INDEX ` + "`" + `idx_kcKpgAZapk` + "`" + ` ON ` + "`" + `certificate` + "`" + ` (` + "`" + `workflowNodeId` + "`" + `)",
+					"CREATE INDEX ` + "`" + `idx_2cRXqNDyyp` + "`" + ` ON ` + "`" + `certificate` + "`" + ` (` + "`" + `workflowRunId` + "`" + `)"
+				],
 				"listRule": null,
 				"name": "certificate",
 				"system": false,
@@ -830,7 +1029,7 @@ func init() {
 						"type": "text"
 					},
 					{
-						"cascadeDelete": false,
+						"cascadeDelete": true,
 						"collectionId": "tovyif5ax6j62ur",
 						"hidden": false,
 						"id": "m8xfsyyy",
@@ -855,7 +1054,8 @@ func init() {
 							"pending",
 							"running",
 							"succeeded",
-							"failed"
+							"failed",
+							"canceled"
 						]
 					},
 					{
@@ -1517,8 +1717,84 @@ func init() {
 				"viewRule": "@request.auth.id != '' && recordRef = @request.auth.id && collectionRef = @request.auth.collectionId"
 			}
 		]`
+		err = app.ImportCollectionsByMarshaledJSON([]byte(jsonData), false)
+		if err != nil {
+			return err
+		}
 
-		return app.ImportCollectionsByMarshaledJSON([]byte(jsonData), false)
+		slog.Info("[CERTIMATE] migration: collections imported")
+
+		// restore records
+		for _, record := range collectionRecords {
+			changed := false
+
+			switch record.Collection().Name {
+			case "access":
+				{
+					if record.GetString("provider") == "tencent" {
+						record.Set("provider", "tencentcloud")
+						changed = true
+					} else if record.GetString("provider") == "pdns" {
+						record.Set("provider", "powerdns")
+						changed = true
+					} else if record.GetString("provider") == "httpreq" {
+						record.Set("provider", "acmehttpreq")
+						changed = true
+					}
+				}
+
+			case "certificate":
+				{
+					if record.GetString("issuer") == "" {
+						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						if cert != nil {
+							record.Set("issuer", strings.Join(cert.Issuer.Organization, ";"))
+							changed = true
+						}
+					}
+					if record.GetString("serialNumber") == "" {
+						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						if cert != nil {
+							record.Set("serialNumber", strings.ToUpper(cert.SerialNumber.Text(16)))
+							changed = true
+						}
+					}
+					if record.GetString("keyAlgorithm") == "" {
+						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						if cert != nil {
+							switch cert.SignatureAlgorithm {
+							case x509.SHA256WithRSA, x509.SHA256WithRSAPSS:
+								record.Set("keyAlgorithm", "RSA2048")
+							case x509.SHA384WithRSA, x509.SHA384WithRSAPSS:
+								record.Set("keyAlgorithm", "RSA3072")
+							case x509.SHA512WithRSA, x509.SHA512WithRSAPSS:
+								record.Set("keyAlgorithm", "RSA4096")
+							case x509.ECDSAWithSHA256:
+								record.Set("keyAlgorithm", "EC256")
+							case x509.ECDSAWithSHA384:
+								record.Set("keyAlgorithm", "EC384")
+							case x509.ECDSAWithSHA512:
+								record.Set("keyAlgorithm", "EC512")
+							}
+							changed = true
+						}
+					}
+				}
+			}
+
+			if changed {
+				err = app.Save(record)
+				if err != nil {
+					return err
+				}
+
+				slog.Info("[CERTIMATE] migration: collection '" + record.Collection().Name + "' record #" + record.Id + " updated")
+			}
+		}
+
+		slog.Info("[CERTIMATE] migration: done")
+
+		return nil
 	}, func(app core.App) error {
 		return nil
 	})
