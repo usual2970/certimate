@@ -67,5 +67,13 @@
   "provider.volcengine.live": "火山引擎 - 视频直播 Live",
   "provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
   "provider.webhook": "Webhook",
-  "provider.westcn": "西部数码"
+  "provider.westcn": "西部数码",
+
+  "provider.category.all": "全部",
+  "provider.category.cdn": "CDN",
+  "provider.category.storage": "存储",
+  "provider.category.loadbalance": "负载均衡",
+  "provider.category.firewall": "防火墙",
+  "provider.category.live": "直播",
+  "provider.category.other": "其他"
 }

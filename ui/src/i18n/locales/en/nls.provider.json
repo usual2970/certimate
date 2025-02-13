@@ -67,5 +67,13 @@
   "provider.volcengine.live": "Volcengine - Live",
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
   "provider.webhook": "Webhook",
-  "provider.westcn": "West.cn"
+  "provider.westcn": "West.cn",
+
+  "provider.category.all": "All",
+  "provider.category.cdn": "CDN",
+  "provider.category.storage": "Storage",
+  "provider.category.loadbalance": "Load Balance",
+  "provider.category.firewall": "Firewall",
+  "provider.category.live": "Live",
+  "provider.category.other": "Other"
 }
