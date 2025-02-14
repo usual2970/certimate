@@ -301,7 +301,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                       }
                       afterSubmit={(record) => {
                         const provider = accessProvidersMap.get(record.provider);
-                        if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
+                        if (provider?.usages?.includes(ACCESS_USAGES.DEPLOY)) {
                           formInst.setFieldValue("providerAccessId", record.id);
                         }
                       }}
@@ -318,7 +318,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     }
 
                     const provider = accessProvidersMap.get(record.provider);
-                    return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
+                    return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
                   }}
                 />
               </Form.Item>

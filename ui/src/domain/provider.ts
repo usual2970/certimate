@@ -37,7 +37,6 @@ export const ACCESS_PROVIDERS = Object.freeze({
 export type AccessProviderType = (typeof ACCESS_PROVIDERS)[keyof typeof ACCESS_PROVIDERS];
 
 export const ACCESS_USAGES = Object.freeze({
-  ALL: "all",
   APPLY: "apply",
   DEPLOY: "deploy",
 } as const);
@@ -48,7 +47,7 @@ export type AccessProvider = {
   type: AccessProviderType;
   name: string;
   icon: string;
-  usage: AccessUsageType;
+  usages: AccessUsageType[];
 };
 
 export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProvider> = new Map(
@@ -57,41 +56,41 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
    NOTICE: The following order determines the order displayed at the frontend.
   */
   [
-    [ACCESS_PROVIDERS.LOCAL, "provider.local", "/imgs/providers/local.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.SSH, "provider.ssh", "/imgs/providers/ssh.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.WEBHOOK, "provider.webhook", "/imgs/providers/webhook.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.KUBERNETES, "provider.kubernetes", "/imgs/providers/kubernetes.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.ALIYUN, "provider.aliyun", "/imgs/providers/aliyun.svg", ACCESS_USAGES.ALL],
-    [ACCESS_PROVIDERS.TENCENTCLOUD, "provider.tencentcloud", "/imgs/providers/tencentcloud.svg", ACCESS_USAGES.ALL],
-    [ACCESS_PROVIDERS.HUAWEICLOUD, "provider.huaweicloud", "/imgs/providers/huaweicloud.svg", ACCESS_USAGES.ALL],
-    [ACCESS_PROVIDERS.VOLCENGINE, "provider.volcengine", "/imgs/providers/volcengine.svg", ACCESS_USAGES.ALL],
-    [ACCESS_PROVIDERS.AWS, "provider.aws", "/imgs/providers/aws.svg", ACCESS_USAGES.ALL],
-    [ACCESS_PROVIDERS.BAIDUCLOUD, "provider.baiducloud", "/imgs/providers/baiducloud.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", ACCESS_USAGES.DEPLOY],
-    [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.GNAME, "provider.gname", "/imgs/providers/gname.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.GODADDY, "provider.godaddy", "/imgs/providers/godaddy.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.NAMEDOTCOM, "provider.namedotcom", "/imgs/providers/namedotcom.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.NAMESILO, "provider.namesilo", "/imgs/providers/namesilo.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.NS1, "provider.ns1", "/imgs/providers/ns1.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.RAINYUN, "provider.rainyun", "/imgs/providers/rainyun.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.WESTCN, "provider.westcn", "/imgs/providers/westcn.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.POWERDNS, "provider.powerdns", "/imgs/providers/powerdns.svg", ACCESS_USAGES.APPLY],
-    [ACCESS_PROVIDERS.ACMEHTTPREQ, "provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", ACCESS_USAGES.APPLY],
-  ].map(([type, name, icon, usage]) => [
-    type,
+    [ACCESS_PROVIDERS.LOCAL, "provider.local", "/imgs/providers/local.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.SSH, "provider.ssh", "/imgs/providers/ssh.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.WEBHOOK, "provider.webhook", "/imgs/providers/webhook.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.KUBERNETES, "provider.kubernetes", "/imgs/providers/kubernetes.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.ALIYUN, "provider.aliyun", "/imgs/providers/aliyun.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.TENCENTCLOUD, "provider.tencentcloud", "/imgs/providers/tencentcloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.HUAWEICLOUD, "provider.huaweicloud", "/imgs/providers/huaweicloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.VOLCENGINE, "provider.volcengine", "/imgs/providers/volcengine.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.AWS, "provider.aws", "/imgs/providers/aws.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.BAIDUCLOUD, "provider.baiducloud", "/imgs/providers/baiducloud.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.GNAME, "provider.gname", "/imgs/providers/gname.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.GODADDY, "provider.godaddy", "/imgs/providers/godaddy.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.NAMEDOTCOM, "provider.namedotcom", "/imgs/providers/namedotcom.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.NAMESILO, "provider.namesilo", "/imgs/providers/namesilo.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.NS1, "provider.ns1", "/imgs/providers/ns1.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.RAINYUN, "provider.rainyun", "/imgs/providers/rainyun.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.WESTCN, "provider.westcn", "/imgs/providers/westcn.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.POWERDNS, "provider.powerdns", "/imgs/providers/powerdns.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.ACMEHTTPREQ, "provider.acmehttpreq", "/imgs/providers/acmehttpreq.svg", [ACCESS_USAGES.APPLY]],
+  ].map((e) => [
+    e[0] as string,
     {
-      type: type as AccessProviderType,
-      name: name,
-      icon: icon,
-      usage: usage as AccessUsageType,
+      type: e[0] as AccessProviderType,
+      name: e[1] as string,
+      icon: e[2] as string,
+      usages: e[3] as AccessUsageType[],
     },
   ])
 );
