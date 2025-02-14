@@ -90,5 +90,6 @@
   "provider.category.loadbalance": "Load Balance",
   "provider.category.firewall": "Firewall",
   "provider.category.live": "Live",
+  "provider.category.website": "Website",
   "provider.category.other": "Other"
 }

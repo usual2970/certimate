@@ -90,5 +90,6 @@
   "provider.category.loadbalance": "负载均衡",
   "provider.category.firewall": "防火墙",
   "provider.category.live": "直播",
+  "provider.category.website": "网站",
   "provider.category.other": "其他"
 }

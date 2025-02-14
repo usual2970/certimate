@@ -64,6 +64,7 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
               DEPLOY_CATEGORIES.LOADBALANCE,
               DEPLOY_CATEGORIES.FIREWALL,
               DEPLOY_CATEGORIES.LIVE,
+              DEPLOY_CATEGORIES.WEBSITE,
               DEPLOY_CATEGORIES.OTHER,
             ].map((key) => ({
               key: key,
