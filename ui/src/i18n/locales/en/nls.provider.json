@@ -79,6 +79,7 @@
   "provider.volcengine.clb": "Volcengine - CLB (Cloud Load Balancer)",
   "provider.volcengine.dcdn": "Volcengine - DCDN (Dynamic Content Delivery Network)",
   "provider.volcengine.dns": "Volcengine - DNS (Domain Name Service)",
+  "provider.volcengine.imagex": "Volcengine - ImageX",
   "provider.volcengine.live": "Volcengine - Live",
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
   "provider.webhook": "Webhook",

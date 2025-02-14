@@ -40,7 +40,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1096
 	github.com/ucloud/ucloud-sdk-go v0.22.31
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.9
-	github.com/volcengine/volc-sdk-golang v1.0.194
+	github.com/volcengine/volc-sdk-golang v1.0.195
 	github.com/volcengine/volcengine-go-sdk v1.0.180
 	golang.org/x/crypto v0.33.0
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
@@ -62,6 +62,7 @@ require (
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.48.1 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect

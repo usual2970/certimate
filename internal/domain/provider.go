@@ -130,6 +130,7 @@ const (
 	DeployProviderTypeVolcEngineCDN         = DeployProviderType("volcengine-cdn")
 	DeployProviderTypeVolcEngineCLB         = DeployProviderType("volcengine-clb")
 	DeployProviderTypeVolcEngineDCDN        = DeployProviderType("volcengine-dcdn")
+	DeployProviderTypeVolcEngineImageX      = DeployProviderType("volcengine-imagex")
 	DeployProviderTypeVolcEngineLive        = DeployProviderType("volcengine-live")
 	DeployProviderTypeVolcEngineTOS         = DeployProviderType("volcengine-tos")
 	DeployProviderTypeWebhook               = DeployProviderType("webhook")

@@ -1,4 +1,4 @@
-﻿package volcenginetos_test
+﻿package volcengineimagex_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-imagex"
 )
 
 var (
@@ -17,33 +17,33 @@ var (
 	fAccessKeyId     string
 	fAccessKeySecret string
 	fRegion          string
-	fBucket          string
+	fServiceId       string
 	fDomain          string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINETOS_"
+	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.StringVar(&fBucket, argsPrefix+"BUCKET", "", "")
+	flag.StringVar(&fServiceId, argsPrefix+"SERVICEID", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./volcengine_tos_test.go -args \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_REGION="cn-beijing" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_BUCKET="your-tos-bucket" \
-	--CERTIMATE_DEPLOYER_VOLCENGINETOS_DOMAIN="example.com"
+	go test -v ./volcengine_imagex_test.go -args \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_REGION="cn-north-1" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_SERVICEID="your-service-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEIMAGEX_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -56,15 +56,15 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("REGION: %v", fRegion),
-			fmt.Sprintf("BUCKET: %v", fBucket),
+			fmt.Sprintf("SERVICEID: %v", fServiceId),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.VolcEngineTOSDeployerConfig{
+		deployer, err := provider.New(&provider.VolcEngineImageXDeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			Bucket:          fBucket,
+			ServiceId:       fServiceId,
 			Domain:          fDomain,
 		})
 		if err != nil {
