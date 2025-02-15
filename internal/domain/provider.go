@@ -107,6 +107,7 @@ const (
 	DeployProviderTypeAliyunWAF             = DeployProviderType("aliyun-waf")
 	DeployProviderTypeAWSCloudFront         = DeployProviderType("aws-cloudfront")
 	DeployProviderTypeBaiduCloudCDN         = DeployProviderType("baiducloud-cdn")
+	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")
 	DeployProviderTypeBaotaPanelSite        = DeployProviderType("baotapanel-site")
 	DeployProviderTypeBytePlusCDN           = DeployProviderType("byteplus-cdn")
 	DeployProviderTypeDogeCloudCDN          = DeployProviderType("dogecloud-cdn")

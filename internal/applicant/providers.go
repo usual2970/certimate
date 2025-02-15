@@ -6,23 +6,23 @@ import (
 	"github.com/go-acme/lego/v4/challenge"
 
 	"github.com/usual2970/certimate/internal/domain"
-	providerACMEHttpReq "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/acmehttpreq"
-	providerAliyun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aliyun"
-	providerAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
-	providerAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
-	providerCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
-	providerClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
-	providerGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
-	providerGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
-	providerHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
-	providerNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
-	providerNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
-	providerNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
-	providerPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
-	providerRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
-	providerTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
-	providerVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
-	providerWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
+	pACMEHttpReq "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/acmehttpreq"
+	pAliyun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aliyun"
+	pAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
+	pAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
+	pCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
+	pClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
+	pGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
+	pGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
+	pHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
+	pNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
+	pNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
+	pNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
+	pPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
+	pRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
+	pTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
+	pVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
+	pWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
@@ -39,7 +39,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerACMEHttpReq.NewChallengeProvider(&providerACMEHttpReq.ACMEHttpReqApplicantConfig{
+			applicant, err := pACMEHttpReq.NewChallengeProvider(&pACMEHttpReq.ACMEHttpReqApplicantConfig{
 				Endpoint:              access.Endpoint,
 				Mode:                  access.Mode,
 				Username:              access.Username,
@@ -56,7 +56,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerAliyun.NewChallengeProvider(&providerAliyun.AliyunApplicantConfig{
+			applicant, err := pAliyun.NewChallengeProvider(&pAliyun.AliyunApplicantConfig{
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -72,7 +72,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerAWSRoute53.NewChallengeProvider(&providerAWSRoute53.AWSRoute53ApplicantConfig{
+			applicant, err := pAWSRoute53.NewChallengeProvider(&pAWSRoute53.AWSRoute53ApplicantConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
 				Region:                maps.GetValueAsString(options.ProviderApplyConfig, "region"),
@@ -90,7 +90,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerAzureDNS.NewChallengeProvider(&providerAzureDNS.AzureDNSApplicantConfig{
+			applicant, err := pAzureDNS.NewChallengeProvider(&pAzureDNS.AzureDNSApplicantConfig{
 				TenantId:              access.TenantId,
 				ClientId:              access.ClientId,
 				ClientSecret:          access.ClientSecret,
@@ -108,7 +108,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerCloudflare.NewChallengeProvider(&providerCloudflare.CloudflareApplicantConfig{
+			applicant, err := pCloudflare.NewChallengeProvider(&pCloudflare.CloudflareApplicantConfig{
 				DnsApiToken:           access.DnsApiToken,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
@@ -123,7 +123,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerClouDNS.NewChallengeProvider(&providerClouDNS.ClouDNSApplicantConfig{
+			applicant, err := pClouDNS.NewChallengeProvider(&pClouDNS.ClouDNSApplicantConfig{
 				AuthId:                access.AuthId,
 				AuthPassword:          access.AuthPassword,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -139,7 +139,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerGname.NewChallengeProvider(&providerGname.GnameApplicantConfig{
+			applicant, err := pGname.NewChallengeProvider(&pGname.GnameApplicantConfig{
 				AppId:                 access.AppId,
 				AppKey:                access.AppKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -155,7 +155,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerGoDaddy.NewChallengeProvider(&providerGoDaddy.GoDaddyApplicantConfig{
+			applicant, err := pGoDaddy.NewChallengeProvider(&pGoDaddy.GoDaddyApplicantConfig{
 				ApiKey:                access.ApiKey,
 				ApiSecret:             access.ApiSecret,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -171,7 +171,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerHuaweiCloud.NewChallengeProvider(&providerHuaweiCloud.HuaweiCloudApplicantConfig{
+			applicant, err := pHuaweiCloud.NewChallengeProvider(&pHuaweiCloud.HuaweiCloudApplicantConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
 				Region:                maps.GetValueAsString(options.ProviderApplyConfig, "region"),
@@ -188,7 +188,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerNameDotCom.NewChallengeProvider(&providerNameDotCom.NameDotComApplicantConfig{
+			applicant, err := pNameDotCom.NewChallengeProvider(&pNameDotCom.NameDotComApplicantConfig{
 				Username:              access.Username,
 				ApiToken:              access.ApiToken,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -204,7 +204,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerNameSilo.NewChallengeProvider(&providerNameSilo.NameSiloApplicantConfig{
+			applicant, err := pNameSilo.NewChallengeProvider(&pNameSilo.NameSiloApplicantConfig{
 				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
@@ -219,7 +219,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerNS1.NewChallengeProvider(&providerNS1.NS1ApplicantConfig{
+			applicant, err := pNS1.NewChallengeProvider(&pNS1.NS1ApplicantConfig{
 				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
@@ -234,7 +234,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerPowerDNS.NewChallengeProvider(&providerPowerDNS.PowerDNSApplicantConfig{
+			applicant, err := pPowerDNS.NewChallengeProvider(&pPowerDNS.PowerDNSApplicantConfig{
 				ApiUrl:                access.ApiUrl,
 				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -250,7 +250,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerRainYun.NewChallengeProvider(&providerRainYun.RainYunApplicantConfig{
+			applicant, err := pRainYun.NewChallengeProvider(&pRainYun.RainYunApplicantConfig{
 				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
@@ -265,7 +265,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerTencentCloud.NewChallengeProvider(&providerTencentCloud.TencentCloudApplicantConfig{
+			applicant, err := pTencentCloud.NewChallengeProvider(&pTencentCloud.TencentCloudApplicantConfig{
 				SecretId:              access.SecretId,
 				SecretKey:             access.SecretKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -281,7 +281,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerVolcEngine.NewChallengeProvider(&providerVolcEngine.VolcEngineApplicantConfig{
+			applicant, err := pVolcEngine.NewChallengeProvider(&pVolcEngine.VolcEngineApplicantConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
@@ -297,7 +297,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := providerWestcn.NewChallengeProvider(&providerWestcn.WestcnApplicantConfig{
+			applicant, err := pWestcn.NewChallengeProvider(&pWestcn.WestcnApplicantConfig{
 				Username:              access.Username,
 				ApiPassword:           access.ApiPassword,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,

@@ -59,18 +59,18 @@ func (d *BaotaPanelSiteDeployer) Deploy(ctx context.Context, certPem string, pri
 	}
 
 	// 设置站点 SSL 证书
-	setSiteSSLReq := &btsdk.SetSiteSSLRequest{
-		SiteName: d.config.SiteName,
-		Type:     "1",
-		Key:      privkeyPem,
-		Csr:      certPem,
+	siteSetSSLReq := &btsdk.SiteSetSSLRequest{
+		SiteName:    d.config.SiteName,
+		Type:        "1",
+		PrivateKey:  privkeyPem,
+		Certificate: certPem,
 	}
-	setSiteSSLResp, err := d.sdkClient.SetSiteSSL(setSiteSSLReq)
+	siteSetSSLResp, err := d.sdkClient.SiteSetSSL(siteSetSSLReq)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SetSiteSSL'")
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SiteSetSSL'")
+	} else {
+		d.logger.Logt("已设置站点 SSL 证书", siteSetSSLResp)
 	}
-
-	d.logger.Logt("已设置站点 SSL 证书", setSiteSSLResp)
 
 	return &deployer.DeployResult{}, nil
 }
