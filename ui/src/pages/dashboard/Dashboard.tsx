@@ -165,9 +165,9 @@ const Dashboard = () => {
       align: "end",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <WorkflowRunDetailDrawer data={record} trigger={<Button color="primary" icon={<SelectOutlinedIcon />} variant="text" />} />
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];

@@ -282,7 +282,7 @@ const WorkflowDetail = () => {
                     {t("workflow.detail.orchestration.action.run")}
                   </Button>
 
-                  <Button.Group>
+                  <Space.Compact>
                     <Button color="primary" disabled={!allowRelease} variant="outlined" onClick={handleReleaseClick}>
                       {t("workflow.detail.orchestration.action.release")}
                     </Button>
@@ -303,7 +303,7 @@ const WorkflowDetail = () => {
                     >
                       <Button color="primary" disabled={!allowDiscard} icon={<EllipsisOutlinedIcon />} variant="outlined" />
                     </Dropdown>
-                  </Button.Group>
+                  </Space.Compact>
                 </Space>
               </div>
             </div>

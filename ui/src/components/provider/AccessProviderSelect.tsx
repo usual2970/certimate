@@ -29,19 +29,13 @@ const AccessProviderSelect = (props: AccessProviderSelectProps) => {
           </Typography.Text>
         </Space>
         <div>
-          {provider?.usage === ACCESS_USAGES.APPLY && (
+          {provider?.usages?.includes(ACCESS_USAGES.APPLY) && (
             <>
               <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
             </>
           )}
-          {provider?.usage === ACCESS_USAGES.DEPLOY && (
+          {provider?.usages?.includes(ACCESS_USAGES.DEPLOY) && (
             <>
-              <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
-            </>
-          )}
-          {provider?.usage === ACCESS_USAGES.ALL && (
-            <>
-              <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
               <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
             </>
           )}

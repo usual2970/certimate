@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"log"
+	"log/slog"
 	"os"
 	"strings"
 	_ "time/tzdata"
@@ -56,15 +56,13 @@ func main() {
 
 	app.OnTerminate().BindFunc(func(e *core.TerminateEvent) error {
 		routes.Unregister()
-
-		log.Println("Exit!")
-
+		slog.Info("[CERTIMATE] Exit!")
 		return e.Next()
 	})
 
-	log.Printf("Visit the website: http://%s", flagHttp)
+	slog.Info("[CERTIMATE] Visit the website: http://" + flagHttp)
 
 	if err := app.Start(); err != nil {
-		log.Fatal(err)
+		slog.Error("[CERTIMATE] Start failed.", "err", err)
 	}
 }

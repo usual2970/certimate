@@ -12,7 +12,6 @@ type Access struct {
 	Name      string     `json:"name" db:"name"`
 	Provider  string     `json:"provider" db:"provider"`
 	Config    string     `json:"config" db:"config"`
-	Usage     string     `json:"usage" db:"usage"`
 	DeletedAt *time.Time `json:"deleted" db:"deleted"`
 }
 

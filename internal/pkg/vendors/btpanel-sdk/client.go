@@ -91,7 +91,7 @@ func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]
 	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
 		return fmt.Errorf("baota: failed to parse response: %w", err)
 	}
-	if err := maps.Decode(jsonResp, &result); err != nil {
+	if err := maps.Populate(jsonResp, &result); err != nil {
 		return fmt.Errorf("baota: failed to parse response: %w", err)
 	}
 
@@ -99,7 +99,7 @@ func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]
 		if result.GetMsg() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {
-			return fmt.Errorf("baota api error: %s", result.GetMsg())
+			return fmt.Errorf("baota api error: %s", *result.GetMsg())
 		}
 	}
 

@@ -1,30 +1,33 @@
-import { type RecordListOptions, type RecordSubscription } from "pocketbase";
+import { type RecordSubscription } from "pocketbase";
 
 import { type WorkflowModel } from "@/domain/workflow";
 import { COLLECTION_NAME_WORKFLOW, getPocketBase } from "./_pocketbase";
 
 export type ListWorkflowRequest = {
+  keyword?: string;
+  enabled?: boolean;
   page?: number;
   perPage?: number;
-  enabled?: boolean;
 };
 
 export const list = async (request: ListWorkflowRequest) => {
   const pb = getPocketBase();
 
-  const page = request.page || 1;
-  const perPage = request.perPage || 10;
-
-  const options: RecordListOptions = {
-    sort: "-created",
-    requestKey: null,
-  };
-
+  const filters: string[] = [];
+  if (request.keyword) {
+    filters.push(pb.filter("name~{:keyword}", { keyword: request.keyword }));
+  }
   if (request.enabled != null) {
-    options.filter = pb.filter("enabled={:enabled}", { enabled: request.enabled });
+    filters.push(pb.filter("enabled={:enabled}", { enabled: request.enabled }));
   }
 
-  return await pb.collection(COLLECTION_NAME_WORKFLOW).getList<WorkflowModel>(page, perPage, options);
+  const page = request.page || 1;
+  const perPage = request.perPage || 10;
+  return await pb.collection(COLLECTION_NAME_WORKFLOW).getList<WorkflowModel>(page, perPage, {
+    filter: filters.join(" && "),
+    sort: "-created",
+    requestKey: null,
+  });
 };
 
 export const get = async (id: string) => {

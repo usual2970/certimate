@@ -11,7 +11,7 @@ import {
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Empty, Modal, Table, type TableProps, Tag, Tooltip, notification } from "antd";
+import { Button, Empty, Modal, Space, Table, type TableProps, Tag, Tooltip, notification } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -140,7 +140,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
           record.status === WORKFLOW_RUN_STATUSES.CANCELED;
 
         return (
-          <Button.Group>
+          <Space.Compact>
             <WorkflowRunDetailDrawer
               data={record}
               trigger={
@@ -174,7 +174,7 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
                 }}
               />
             </Tooltip>
-          </Button.Group>
+          </Space.Compact>
         );
       },
     },

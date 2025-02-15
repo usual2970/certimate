@@ -279,7 +279,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                     }
                     afterSubmit={(record) => {
                       const provider = accessProvidersMap.get(record.provider);
-                      if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage) {
+                      if (provider?.usages?.includes(ACCESS_USAGES.APPLY)) {
                         formInst.setFieldValue("providerAccessId", record.id);
                       }
                     }}
@@ -292,7 +292,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
                 filter={(record) => {
                   const provider = accessProvidersMap.get(record.provider);
-                  return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
+                  return !!provider?.usages?.includes(ACCESS_USAGES.APPLY);
                 }}
                 onChange={handleProviderAccessSelect}
               />

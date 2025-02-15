@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Alert, Button, Divider, Empty, Table, type TableProps, Tooltip, Typography, notification } from "antd";
+import { Alert, Button, Divider, Empty, Space, Table, type TableProps, Tooltip, Typography, notification } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -101,7 +101,7 @@ const WorkflowRunArtifacts = ({ runId }: { runId: string }) => {
       align: "end",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <CertificateDetailDrawer
             data={record}
             trigger={
@@ -110,7 +110,7 @@ const WorkflowRunArtifacts = ({ runId }: { runId: string }) => {
               </Tooltip>
             }
           />
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];

@@ -307,7 +307,7 @@ const SharedNodeConfigDrawer = ({
         loading={loading}
         open={open}
         title={<div className="max-w-[480px] truncate">{node.name}</div>}
-        width={640}
+        width={720}
         onClose={handleClose}
       >
         {children}

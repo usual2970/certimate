@@ -9,19 +9,30 @@ type AccessProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	AccessProviderType1Panel       = AccessProviderType("1panel") // 1Panel（预留）
 	AccessProviderTypeACMEHttpReq  = AccessProviderType("acmehttpreq")
+	AccessProviderTypeAkamai       = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun       = AccessProviderType("aliyun")
 	AccessProviderTypeAWS          = AccessProviderType("aws")
 	AccessProviderTypeAzure        = AccessProviderType("azure")
 	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
+	AccessProviderTypeBaishan      = AccessProviderType("baishan") // 白山云（预留）
 	AccessProviderTypeBaotaPanel   = AccessProviderType("baotapanel")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
+	AccessProviderTypeCacheFly     = AccessProviderType("cachefly") // CacheFly（预留）
+	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly")   // Cdnly（预留）
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
+	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud") // 移动云（预留）
+	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
+	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
+	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
 	AccessProviderTypeGname        = AccessProviderType("gname")
+	AccessProviderTypeGcore        = AccessProviderType("gcore") // Gcore（预留）
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
+	AccessProviderTypeGoEdge       = AccessProviderType("goedge") // GoEdge（预留）
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
 	AccessProviderTypeLocal        = AccessProviderType("local")
@@ -31,6 +42,7 @@ const (
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
 	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
+	AccessProviderTypeSafeLine     = AccessProviderType("safeline") // 雷池（预留）
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")

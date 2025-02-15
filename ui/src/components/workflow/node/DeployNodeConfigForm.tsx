@@ -212,7 +212,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     const handleProviderSelect = (value: string) => {
       if (fieldProvider === value) return;
 
-      // TODO: 暂时不支持切换部署目标，需后端调整，否则之前若存在部署结果输出就不会再部署
       // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
       if (initialValues?.provider === value) {
         formInst.resetFields();
@@ -276,13 +275,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-              <DeployProviderSelect
-                allowClear
-                disabled={!!initialValues?.provider}
-                placeholder={t("workflow_node.deploy.form.provider.placeholder")}
-                showSearch
-                onSelect={handleProviderSelect}
-              />
+              <DeployProviderSelect allowClear placeholder={t("workflow_node.deploy.form.provider.placeholder")} showSearch onSelect={handleProviderSelect} />
             </Form.Item>
 
             <Form.Item className="mb-0">
@@ -308,7 +301,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                       }
                       afterSubmit={(record) => {
                         const provider = accessProvidersMap.get(record.provider);
-                        if (ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.DEPLOY === provider?.usage) {
+                        if (provider?.usages?.includes(ACCESS_USAGES.DEPLOY)) {
                           formInst.setFieldValue("providerAccessId", record.id);
                         }
                       }}
@@ -325,7 +318,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     }
 
                     const provider = accessProvidersMap.get(record.provider);
-                    return ACCESS_USAGES.ALL === provider?.usage || ACCESS_USAGES.APPLY === provider?.usage;
+                    return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
                   }}
                 />
               </Form.Item>

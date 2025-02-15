@@ -3,6 +3,8 @@
 
   "access.nodata": "No accesses. Please create an authorization first.",
 
+  "access.search.placeholder": "Search by access name ...",
+
   "access.action.add": "Create authorization",
   "access.action.edit": "Edit authorization",
   "access.action.duplicate": "Duplicate authorization",

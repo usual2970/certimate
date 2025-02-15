@@ -24,7 +24,7 @@ export const useAccessesStore = create<AccessesState>((set) => {
     loadedAtOnce: false,
 
     fetchAccesses: async () => {
-      fetcher ??= listAccess();
+      fetcher ??= listAccess().then((res) => res.items);
 
       try {
         set({ loading: true });

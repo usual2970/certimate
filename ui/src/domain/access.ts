@@ -1,5 +1,3 @@
-import { type AccessUsageType } from "./provider";
-
 export interface AccessModel extends BaseModel {
   name: string;
   provider: string;
@@ -36,7 +34,6 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForWebhook
       | AccessConfigForWestcn
     );
-  usage: AccessUsageType;
 }
 
 // #region AccessConfig

@@ -35,7 +35,7 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
         loading={loading}
         placement="right"
         title={`Certificate #${data?.id}`}
-        width={640}
+        width={720}
         onClose={() => setOpen(false)}
       >
         <Show when={!!data}>

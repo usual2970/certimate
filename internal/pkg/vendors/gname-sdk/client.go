@@ -150,7 +150,7 @@ func (c *GnameClient) sendRequestWithResult(path string, params map[string]any, 
 	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
 		return fmt.Errorf("gname: failed to parse response: %w", err)
 	}
-	if err := maps.Decode(jsonResp, &result); err != nil {
+	if err := maps.Populate(jsonResp, &result); err != nil {
 		return fmt.Errorf("gname: failed to parse response: %w", err)
 	}
 

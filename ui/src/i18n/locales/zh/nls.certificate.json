@@ -3,6 +3,8 @@
 
   "certificate.nodata": "暂无证书，新建一个工作流去生成证书吧～ 😀",
 
+  "certificate.search.placeholder": "按证书名称或序列号搜索……",
+
   "certificate.action.view": "查看证书",
   "certificate.action.delete": "删除证书",
   "certificate.action.delete.confirm": "确定要删除此证书吗？",

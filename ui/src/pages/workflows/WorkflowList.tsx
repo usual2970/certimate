@@ -8,6 +8,7 @@ import {
   DeleteOutlined as DeleteOutlinedIcon,
   EditOutlined as EditOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
+  ReloadOutlined as ReloadOutlinedIcon,
   StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -16,8 +17,11 @@ import { PageHeader } from "@ant-design/pro-components";
 import { useRequest } from "ahooks";
 import {
   Button,
+  Card,
   Divider,
   Empty,
+  Flex,
+  Input,
   Menu,
   type MenuProps,
   Modal,
@@ -203,7 +207,7 @@ const WorkflowList = () => {
       fixed: "right",
       width: 120,
       render: (_, record) => (
-        <Button.Group>
+        <Space.Compact>
           <Tooltip title={t("workflow.action.edit")}>
             <Button
               color="primary"
@@ -226,7 +230,7 @@ const WorkflowList = () => {
               }}
             />
           </Tooltip>
-        </Button.Group>
+        </Space.Compact>
       ),
     },
   ];
@@ -235,6 +239,7 @@ const WorkflowList = () => {
 
   const [filters, setFilters] = useState<Record<string, unknown>>(() => {
     return {
+      keyword: searchParams.get("keyword"),
       state: searchParams.get("state"),
     };
   });
@@ -249,9 +254,10 @@ const WorkflowList = () => {
   } = useRequest(
     () => {
       return listWorkflow({
+        keyword: filters["keyword"] as string,
+        enabled: (filters["state"] as string) === "enabled" ? true : (filters["state"] as string) === "disabled" ? false : undefined,
         page: page,
         perPage: pageSize,
-        enabled: (filters["state"] as string) === "enabled" ? true : (filters["state"] as string) === "disabled" ? false : undefined,
       });
     },
     {
@@ -273,8 +279,18 @@ const WorkflowList = () => {
     }
   );
 
+  const handleSearch = (value: string) => {
+    setFilters((prev) => ({ ...prev, keyword: value.trim() }));
+  };
+
   const handleCreateClick = () => {
     navigate("/workflows/new");
+  };
+
+  const handleReloadClick = () => {
+    if (loading) return;
+
+    refreshData();
   };
 
   const handleEnabledChange = async (workflow: WorkflowModel) => {
@@ -345,30 +361,43 @@ const WorkflowList = () => {
         ]}
       />
 
-      <Table<WorkflowModel>
-        columns={tableColumns}
-        dataSource={tableData}
-        loading={loading}
-        locale={{
-          emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={getErrMsg(loadedError ?? t("workflow.nodata"))} />,
-        }}
-        pagination={{
-          current: page,
-          pageSize: pageSize,
-          total: tableTotal,
-          showSizeChanger: true,
-          onChange: (page: number, pageSize: number) => {
-            setPage(page);
-            setPageSize(pageSize);
-          },
-          onShowSizeChange: (page: number, pageSize: number) => {
-            setPage(page);
-            setPageSize(pageSize);
-          },
-        }}
-        rowKey={(record) => record.id}
-        scroll={{ x: "max(100%, 960px)" }}
-      />
+      <Card size="small">
+        <div className="mb-4">
+          <Flex gap="small">
+            <div className="flex-1">
+              <Input.Search allowClear defaultValue={filters["keyword"] as string} placeholder={t("workflow.search.placeholder")} onSearch={handleSearch} />
+            </div>
+            <div>
+              <Button icon={<ReloadOutlinedIcon spin={loading} />} onClick={handleReloadClick} />
+            </div>
+          </Flex>
+        </div>
+
+        <Table<WorkflowModel>
+          columns={tableColumns}
+          dataSource={tableData}
+          loading={loading}
+          locale={{
+            emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={getErrMsg(loadedError ?? t("workflow.nodata"))} />,
+          }}
+          pagination={{
+            current: page,
+            pageSize: pageSize,
+            total: tableTotal,
+            showSizeChanger: true,
+            onChange: (page: number, pageSize: number) => {
+              setPage(page);
+              setPageSize(pageSize);
+            },
+            onShowSizeChange: (page: number, pageSize: number) => {
+              setPage(page);
+              setPageSize(pageSize);
+            },
+          }}
+          rowKey={(record) => record.id}
+          scroll={{ x: "max(100%, 960px)" }}
+        />
+      </Card>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
         loading={loading}
         placement="right"
         title={`WorkflowRun #${data?.id}`}
-        width={640}
+        width={720}
         onClose={() => setOpen(false)}
       >
         <Show when={!!data}>

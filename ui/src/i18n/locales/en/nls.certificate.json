@@ -3,6 +3,8 @@
 
   "certificate.nodata": "No certificates. Please create a workflow to generate certificates! 😀",
 
+  "certificate.search.placeholder": "Search by certificate name or serial number ...",
+
   "certificate.action.view": "View certificate",
   "certificate.action.delete": "Delete certificate",
   "certificate.action.delete.confirm": "Are you sure to delete this certificate?",

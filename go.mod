@@ -6,44 +6,44 @@ toolchain go1.23.2
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0
-	github.com/alibabacloud-go/alb-20200616/v2 v2.2.6
+	github.com/alibabacloud-go/alb-20200616/v2 v2.2.7
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.4
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10
-	github.com/alibabacloud-go/esa-20240910/v2 v2.12.0
+	github.com/alibabacloud-go/esa-20240910/v2 v2.13.0
 	github.com/alibabacloud-go/live-20161101 v1.1.1
 	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.10
 	github.com/alibabacloud-go/tea v1.2.2
 	github.com/alibabacloud-go/waf-openapi-20211001/v5 v5.0.4
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
-	github.com/aws/aws-sdk-go-v2/service/acm v1.30.13
-	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.5
-	github.com/baidubce/bce-sdk-go v0.9.214
-	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.40
+	github.com/aws/aws-sdk-go-v2/service/acm v1.30.18
+	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.10
+	github.com/baidubce/bce-sdk-go v0.9.216
+	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.41
 	github.com/go-acme/lego/v4 v4.21.0
-	github.com/go-resty/resty/v2 v2.16.4
+	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.132
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.135
 	github.com/nikoksr/notify v1.3.0
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/pkg/sftp v1.13.7
 	github.com/pocketbase/dbx v1.11.0
-	github.com/pocketbase/pocketbase v0.25.0
+	github.com/pocketbase/pocketbase v0.25.4
 	github.com/povsister/scp v0.0.0-20240802064259-28781e87b246
 	github.com/qiniu/go-sdk/v7 v7.25.2
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1084
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1084
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1084
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1084
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1084
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1084
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1096
 	github.com/ucloud/ucloud-sdk-go v0.22.31
-	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.8
-	github.com/volcengine/volc-sdk-golang v1.0.193
-	github.com/volcengine/volcengine-go-sdk v1.0.178
-	golang.org/x/crypto v0.32.0
-	golang.org/x/exp v0.0.0-20250128182459-e0ece0dbea4c
+	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.9
+	github.com/volcengine/volc-sdk-golang v1.0.194
+	github.com/volcengine/volcengine-go-sdk v1.0.180
+	golang.org/x/crypto v0.33.0
+	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 	k8s.io/api v0.32.1
 	k8s.io/apimachinery v0.32.1
 	k8s.io/client-go v0.32.1
@@ -120,24 +120,24 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.83 // indirect
 	github.com/aliyun/credentials-go v1.4.3 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/aws/aws-sdk-go-v2 v1.36.0
+	github.com/aws/aws-sdk-go-v2 v1.36.1
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.8 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.29.5
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.58
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.27 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.28 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.17.58 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.31 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.31 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.32 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.32 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.2 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.31 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.32 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.5.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.12 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.12 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.6.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.13 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.13 // indirect
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.75.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.24.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.13 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.24.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.14 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.14 // indirect
 	github.com/aws/smithy-go v1.22.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/clbanning/mxj/v2 v2.7.0 // indirect
@@ -180,20 +180,20 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	gocloud.dev v0.40.0 // indirect
 	golang.org/x/image v0.24.0 // indirect
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
+	golang.org/x/mod v0.23.0 // indirect
+	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
 	golang.org/x/sync v0.11.0
 	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.9.0
-	golang.org/x/tools v0.29.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
-	google.golang.org/api v0.219.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250204164813-702378808489 // indirect
+	google.golang.org/api v0.220.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250207221924-e9438ea467c6 // indirect
 	google.golang.org/grpc v1.70.0 // indirect
-	google.golang.org/protobuf v1.36.4 // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.61.11 // indirect

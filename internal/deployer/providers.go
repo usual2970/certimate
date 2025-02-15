@@ -214,8 +214,8 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 	case domain.DeployProviderTypeBaotaPanelSite:
 		{
 			access := domain.AccessConfigForBaotaPanel{}
-			if err := maps.Decode(options.ProviderAccessConfig, &access); err != nil {
-				return nil, nil, fmt.Errorf("failed to decode provider access config: %w", err)
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			deployer, err := providerBaotaPanelSite.NewWithLogger(&providerBaotaPanelSite.BaotaPanelSiteDeployerConfig{

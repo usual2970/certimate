@@ -4,7 +4,6 @@ import { useControllableValue } from "ahooks";
 import { Modal, notification } from "antd";
 
 import { type AccessModel } from "@/domain/access";
-import { accessProvidersMap } from "@/domain/provider";
 import { useTriggerElement, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
@@ -50,7 +49,6 @@ const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props
 
     try {
       let values: AccessModel = formRef.current!.getFieldsValue();
-      values.usage = accessProvidersMap.get(values.provider)!.usage;
 
       if (preset === "add") {
         if (data?.id) {
