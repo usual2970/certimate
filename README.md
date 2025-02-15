@@ -126,7 +126,7 @@ make local.run
 | [腾讯云](https://cloud.tencent.com/)    | 可部署到腾讯云 COS、CDN、ECDN、EdgeOne、CLB、CSS 等服务                  |
 | [百度智能云](https://cloud.baidu.com/)  | 可部署到百度智能云 CDN 等服务                                            |
 | [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB 等服务                                           |
-| [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、Live 等服务                        |
+| [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、ImageX、Live 等服务                |
 | [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN、直播云等服务                                         |
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                                       |
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                          |

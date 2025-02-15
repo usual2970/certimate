@@ -50,6 +50,7 @@ import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
+import DeployNodeConfigFormVolcEngineImageXConfig from "./DeployNodeConfigFormVolcEngineImageXConfig.tsx";
 import DeployNodeConfigFormVolcEngineLiveConfig from "./DeployNodeConfigFormVolcEngineLiveConfig.tsx";
 import DeployNodeConfigFormVolcEngineTOSConfig from "./DeployNodeConfigFormVolcEngineTOSConfig.tsx";
 import DeployNodeConfigFormWebhookConfig from "./DeployNodeConfigFormWebhookConfig.tsx";
@@ -195,6 +196,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormVolcEngineCLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_DCDN:
           return <DeployNodeConfigFormVolcEngineDCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_IMAGEX:
+          return <DeployNodeConfigFormVolcEngineImageXConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_LIVE:
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_TOS:
