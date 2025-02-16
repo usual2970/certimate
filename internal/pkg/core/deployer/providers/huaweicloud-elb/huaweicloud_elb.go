@@ -31,15 +31,15 @@ type HuaweiCloudELBDeployerConfig struct {
 	// 华为云区域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 证书 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_CERTIFICATE] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_CERTIFICATE] 时必填。
 	CertificateId string `json:"certificateId,omitempty"`
 	// 负载均衡器 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER] 时必填。
 	LoadbalancerId string `json:"loadbalancerId,omitempty"`
 	// 负载均衡监听 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
 }
 
@@ -98,17 +98,17 @@ func (d *HuaweiCloudELBDeployer) Deploy(ctx context.Context, certPem string, pri
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_CERTIFICATE:
+	case RESOURCE_TYPE_CERTIFICATE:
 		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LOADBALANCER:
+	case RESOURCE_TYPE_LOADBALANCER:
 		if err := d.deployToLoadbalancer(ctx, certPem, privkeyPem); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, certPem, privkeyPem); err != nil {
 			return nil, err
 		}

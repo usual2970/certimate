@@ -24,7 +24,7 @@ require (
 	github.com/go-acme/lego/v4 v4.21.0
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.135
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.136
 	github.com/nikoksr/notify v1.3.0
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/pkg/sftp v1.13.7

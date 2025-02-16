@@ -24,15 +24,15 @@ type AliyunCLBDeployerConfig struct {
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 负载均衡实例 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_LISTENER] 时必填。
 	LoadbalancerId string `json:"loadbalancerId,omitempty"`
 	// 负载均衡监听端口。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerPort int32 `json:"listenerPort,omitempty"`
 	// SNI 域名（支持泛域名）。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER] 时选填。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_LISTENER] 时选填。
 	Domain string `json:"domain,omitempty"`
 }
 
@@ -91,12 +91,12 @@ func (d *AliyunCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_LOADBALANCER:
+	case RESOURCE_TYPE_LOADBALANCER:
 		if err := d.deployToLoadbalancer(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, upres.CertId); err != nil {
 			return nil, err
 		}

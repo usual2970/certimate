@@ -112,7 +112,7 @@ func (u *AliyunCASUploader) Upload(ctx context.Context, certPem string, privkeyP
 		if listUserCertificateOrderResp.Body.CertificateOrderList == nil || len(listUserCertificateOrderResp.Body.CertificateOrderList) < int(listUserCertificateOrderLimit) {
 			break
 		} else {
-			listUserCertificateOrderPage += 1
+			listUserCertificateOrderPage++
 		}
 	}
 

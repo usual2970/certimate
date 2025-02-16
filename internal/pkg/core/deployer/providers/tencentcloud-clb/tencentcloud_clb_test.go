@@ -68,7 +68,7 @@ func TestDeploy(t *testing.T) {
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
-			ResourceType:   provider.DEPLOY_RESOURCE_VIA_SSLDEPLOY,
+			ResourceType:   provider.RESOURCE_TYPE_VIA_SSLDEPLOY,
 			LoadbalancerId: fLoadbalancerId,
 			ListenerId:     fListenerId,
 			Domain:         fDomain,
@@ -104,7 +104,7 @@ func TestDeploy(t *testing.T) {
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
-			ResourceType:   provider.DEPLOY_RESOURCE_LOADBALANCER,
+			ResourceType:   provider.RESOURCE_TYPE_LOADBALANCER,
 			LoadbalancerId: fLoadbalancerId,
 		})
 		if err != nil {
@@ -139,7 +139,7 @@ func TestDeploy(t *testing.T) {
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
-			ResourceType:   provider.DEPLOY_RESOURCE_LISTENER,
+			ResourceType:   provider.RESOURCE_TYPE_LISTENER,
 			LoadbalancerId: fLoadbalancerId,
 			ListenerId:     fListenerId,
 		})
@@ -176,7 +176,7 @@ func TestDeploy(t *testing.T) {
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
-			ResourceType:   provider.DEPLOY_RESOURCE_RULEDOMAIN,
+			ResourceType:   provider.RESOURCE_TYPE_RULEDOMAIN,
 			LoadbalancerId: fLoadbalancerId,
 			ListenerId:     fListenerId,
 			Domain:         fDomain,

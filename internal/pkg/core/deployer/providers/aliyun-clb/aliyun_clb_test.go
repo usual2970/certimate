@@ -67,7 +67,7 @@ func TestDeploy(t *testing.T) {
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			ResourceType:    provider.DEPLOY_RESOURCE_LOADBALANCER,
+			ResourceType:    provider.RESOURCE_TYPE_LOADBALANCER,
 			LoadbalancerId:  fLoadbalancerId,
 			Domain:          fDomain,
 		})
@@ -103,7 +103,7 @@ func TestDeploy(t *testing.T) {
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			ResourceType:    provider.DEPLOY_RESOURCE_LISTENER,
+			ResourceType:    provider.RESOURCE_TYPE_LISTENER,
 			LoadbalancerId:  fLoadbalancerId,
 			ListenerPort:    int32(fListenerPort),
 			Domain:          fDomain,

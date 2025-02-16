@@ -24,9 +24,9 @@ type VolcEngineCLBDeployerConfig struct {
 	// 火山引擎地域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 负载均衡监听器 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
 }
 
@@ -85,7 +85,7 @@ func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, priv
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
