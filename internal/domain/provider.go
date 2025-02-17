@@ -42,7 +42,7 @@ const (
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
 	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
-	AccessProviderTypeSafeLine     = AccessProviderType("safeline") // 雷池（预留）
+	AccessProviderTypeSafeLine     = AccessProviderType("safeline")
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
@@ -119,6 +119,7 @@ const (
 	DeployProviderTypeLocal                 = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")
 	DeployProviderTypeQiniuPili             = DeployProviderType("qiniu-pili")
+	DeployProviderTypeSafeLine              = DeployProviderType("safeline")
 	DeployProviderTypeSSH                   = DeployProviderType("ssh")
 	DeployProviderTypeTencentCloudCDN       = DeployProviderType("tencentcloud-cdn")
 	DeployProviderTypeTencentCloudCLB       = DeployProviderType("tencentcloud-clb")

@@ -47,12 +47,18 @@ const AccessProviderSelect = (props: AccessProviderSelectProps) => {
   return (
     <Select
       {...props}
+      filterOption={(inputValue, option) => {
+        if (!option) return false;
+
+        const value = inputValue.toLowerCase();
+        return option.value.toLowerCase().includes(value) || option.label.toLowerCase().includes(value);
+      }}
       labelRender={({ label, value }) => {
-        if (label) {
-          return renderOption(value as string);
+        if (!label) {
+          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
         }
 
-        return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+        return renderOption(value as string);
       }}
       options={options}
       optionFilterProp={undefined}

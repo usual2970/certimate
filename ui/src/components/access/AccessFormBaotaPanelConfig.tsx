@@ -17,7 +17,7 @@ export type AccessFormBaotaPanelConfigProps = {
 
 const initFormModel = (): AccessFormBaotaPanelConfigFieldValues => {
   return {
-    apiUrl: "",
+    apiUrl: "http://<your-ipaddr>:8888/",
     apiKey: "",
   };
 };

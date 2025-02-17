@@ -130,6 +130,7 @@ make local.run
 | [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN、直播云等服务                                         |
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                                       |
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                          |
+| [雷池](https://waf-ce.chaitin.cn/)      | 可部署到雷池 WAF                                                         |
 | [宝塔面板](https://www.bt.cn/)          | 可部署到宝塔面板                                                         |
 | [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront 等服务                                           |
 | [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                             |

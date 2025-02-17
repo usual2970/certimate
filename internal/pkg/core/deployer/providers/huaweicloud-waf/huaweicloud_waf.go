@@ -89,9 +89,9 @@ func (d *HuaweiCloudWAFDeployer) Deploy(ctx context.Context, certPem string, pri
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Logt("certificate file uploaded", upres)
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {

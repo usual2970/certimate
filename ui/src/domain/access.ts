@@ -27,6 +27,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForPowerDNS
       | AccessConfigForQiniu
       | AccessConfigForRainYun
+      | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
@@ -141,6 +142,11 @@ export type AccessConfigForQiniu = {
 
 export type AccessConfigForRainYun = {
   apiKey: string;
+};
+
+export type AccessConfigForSafeLine = {
+  apiUrl: string;
+  apiToken: string;
 };
 
 export type AccessConfigForSSH = {

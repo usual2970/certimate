@@ -39,6 +39,7 @@ import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKu
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
+import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudCLBConfig from "./DeployNodeConfigFormTencentCloudCLBConfig.tsx";
@@ -104,7 +105,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         .nonempty(t("workflow_node.deploy.form.provider_access.placeholder"))
         .refine(() => !!formInst.getFieldValue("provider"), t("workflow_node.deploy.form.provider.placeholder")),
       providerConfig: z.any(),
-      skipOnLastSucceeded: z.boolean(),
+      skipOnLastSucceeded: z.boolean().nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -177,6 +178,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_PILI:
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.SAFELINE:
+          return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SSH:
           return <DeployNodeConfigFormSSHConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_CDN:

@@ -130,6 +130,11 @@ type AccessConfigForRainYun struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForSafeLine struct {
+	ApiUrl   string `json:"apiUrl"`
+	ApiToken string `json:"apiToken"`
+}
+
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`

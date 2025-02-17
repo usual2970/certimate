@@ -10,8 +10,6 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-
-	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 type GnameClient struct {
@@ -131,9 +129,7 @@ func (c *GnameClient) sendRequest(path string, params map[string]any) (*resty.Re
 	resp, err := req.Post(url)
 	if err != nil {
 		return nil, fmt.Errorf("gname: failed to send request: %w", err)
-	}
-
-	if resp.IsError() {
+	} else if resp.IsError() {
 		return nil, fmt.Errorf("gname: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
@@ -146,11 +142,7 @@ func (c *GnameClient) sendRequestWithResult(path string, params map[string]any, 
 		return err
 	}
 
-	jsonResp := make(map[string]any)
-	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
-		return fmt.Errorf("gname: failed to parse response: %w", err)
-	}
-	if err := maps.Populate(jsonResp, &result); err != nil {
+	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("gname: failed to parse response: %w", err)
 	}
 

@@ -5,6 +5,19 @@ type BaseResponse interface {
 	GetMsg() string
 }
 
+type baseResponse struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+func (r *baseResponse) GetCode() int {
+	return r.Code
+}
+
+func (r *baseResponse) GetMsg() string {
+	return r.Msg
+}
+
 type AddDomainResolutionRequest struct {
 	ZoneName    string `json:"ym"`
 	RecordType  string `json:"lx"`
@@ -15,17 +28,8 @@ type AddDomainResolutionRequest struct {
 }
 
 type AddDomainResolutionResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data int    `json:"data"`
-}
-
-func (r *AddDomainResolutionResponse) GetCode() int {
-	return r.Code
-}
-
-func (r *AddDomainResolutionResponse) GetMsg() string {
-	return r.Msg
+	baseResponse
+	Data int `json:"data"`
 }
 
 type ModifyDomainResolutionRequest struct {
@@ -39,16 +43,7 @@ type ModifyDomainResolutionRequest struct {
 }
 
 type ModifyDomainResolutionResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-}
-
-func (r *ModifyDomainResolutionResponse) GetCode() int {
-	return r.Code
-}
-
-func (r *ModifyDomainResolutionResponse) GetMsg() string {
-	return r.Msg
+	baseResponse
 }
 
 type DeleteDomainResolutionRequest struct {
@@ -57,16 +52,7 @@ type DeleteDomainResolutionRequest struct {
 }
 
 type DeleteDomainResolutionResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-}
-
-func (r *DeleteDomainResolutionResponse) GetCode() int {
-	return r.Code
-}
-
-func (r *DeleteDomainResolutionResponse) GetMsg() string {
-	return r.Msg
+	baseResponse
 }
 
 type ListDomainResolutionRequest struct {
@@ -76,8 +62,7 @@ type ListDomainResolutionRequest struct {
 }
 
 type ListDomainResolutionResponse struct {
-	Code     int                 `json:"code"`
-	Msg      string              `json:"msg"`
+	baseResponse
 	Count    int                 `json:"count"`
 	Data     []*ResolutionRecord `json:"data"`
 	Page     int                 `json:"page"`
@@ -91,12 +76,4 @@ type ResolutionRecord struct {
 	RecordName  string `json:"zjt"`
 	RecordValue string `json:"jxz"`
 	MX          int    `json:"mx"`
-}
-
-func (r *ListDomainResolutionResponse) GetCode() int {
-	return r.Code
-}
-
-func (r *ListDomainResolutionResponse) GetMsg() string {
-	return r.Msg
 }

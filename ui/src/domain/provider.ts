@@ -26,6 +26,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   POWERDNS: "powerdns",
   QINIU: "qiniu",
   RAINYUN: "rainyun",
+  SAFELINE: "safeline",
   SSH: "ssh",
   TENCENTCLOUD: "tencentcloud",
   UCLOUD: "ucloud",
@@ -70,6 +71,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.SAFELINE, "provider.safeline", "/imgs/providers/safeline.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", [ACCESS_USAGES.APPLY]],
@@ -200,6 +202,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   LOCAL: `${ACCESS_PROVIDERS.LOCAL}`,
   QINIU_CDN: `${ACCESS_PROVIDERS.QINIU}-cdn`,
   QINIU_PILI: `${ACCESS_PROVIDERS.QINIU}-pili`,
+  SAFELINE: `${ACCESS_PROVIDERS.SAFELINE}`,
   SSH: `${ACCESS_PROVIDERS.SSH}`,
   TENCENTCLOUD_CDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-cdn`,
   TENCENTCLOUD_CLB: `${ACCESS_PROVIDERS.TENCENTCLOUD}-clb`,
@@ -291,6 +294,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE, "provider.baotapanel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.EDGIO_APPLICATIONS, "provider.edgio.applications", DEPLOY_CATEGORIES.WEBSITE],
+    [DEPLOY_PROVIDERS.SAFELINE, "provider.safeline", DEPLOY_CATEGORIES.FIREWALL],
   ].map(([type, name, category]) => [
     type,
     {

@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-
-	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 type BaoTaPanelClient struct {
@@ -113,11 +111,7 @@ func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]
 		return err
 	}
 
-	jsonResp := make(map[string]any)
-	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
-		return fmt.Errorf("baota: failed to parse response: %w", err)
-	}
-	if err := maps.Populate(jsonResp, &result); err != nil {
+	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("baota: failed to parse response: %w", err)
 	}
 

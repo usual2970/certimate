@@ -30,7 +30,8 @@ import (
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
-	providerSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
+	pSafeLine "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/safeline"
+	pSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	pTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
 	pTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
 	pTencentCloudCOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
@@ -405,6 +406,22 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			}
 		}
 
+	case domain.DeployProviderTypeSafeLine:
+		{
+			access := domain.AccessConfigForSafeLine{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pSafeLine.NewWithLogger(&pSafeLine.SafeLineDeployerConfig{
+				ApiUrl:        access.ApiUrl,
+				ApiToken:      access.ApiToken,
+				ResourceType:  pSafeLine.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+				CertificateId: maps.GetValueAsInt32(options.ProviderDeployConfig, "certificateId"),
+			}, logger)
+			return deployer, logger, err
+		}
+
 	case domain.DeployProviderTypeSSH:
 		{
 			access := domain.AccessConfigForSSH{}
@@ -412,7 +429,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := providerSSH.NewWithLogger(&providerSSH.SshDeployerConfig{
+			deployer, err := pSSH.NewWithLogger(&pSSH.SshDeployerConfig{
 				SshHost:          access.Host,
 				SshPort:          access.Port,
 				SshUsername:      access.Username,
@@ -422,7 +439,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				UseSCP:           maps.GetValueAsBool(options.ProviderDeployConfig, "useSCP"),
 				PreCommand:       maps.GetValueAsString(options.ProviderDeployConfig, "preCommand"),
 				PostCommand:      maps.GetValueAsString(options.ProviderDeployConfig, "postCommand"),
-				OutputFormat:     providerSSH.OutputFormatType(maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "format", string(providerSSH.OUTPUT_FORMAT_PEM))),
+				OutputFormat:     pSSH.OutputFormatType(maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
 				OutputCertPath:   maps.GetValueAsString(options.ProviderDeployConfig, "certPath"),
 				OutputKeyPath:    maps.GetValueAsString(options.ProviderDeployConfig, "keyPath"),
 				PfxPassword:      maps.GetValueAsString(options.ProviderDeployConfig, "pfxPassword"),
