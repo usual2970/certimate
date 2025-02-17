@@ -86,6 +86,10 @@ type AccessConfigForEdgio struct {
 	ClientSecret string `json:"clientSecret"`
 }
 
+type AccessConfigForGcore struct {
+	ApiToken  string `json:"apiToken"`
+}
+
 type AccessConfigForGname struct {
 	AppId  string `json:"appId"`
 	AppKey string `json:"appKey"`

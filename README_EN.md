@@ -95,6 +95,7 @@ The following DNS providers are supported:
 | [Azure DNS](https://azure.microsoft.com/)                    |                                       |
 | [CloudFlare](https://www.cloudflare.com/)                    |                                       |
 | [ClouDNS](https://www.cloudns.net//)                         |                                       |
+| [Gcore](https://gcore.com/)                                  |                                       |
 | [GNAME](https://www.gname.com/)                              |                                       |
 | [GoDaddy](https://www.godaddy.com/)                          |                                       |
 | [Name.com](https://www.name.com/)                            |                                       |

@@ -30,7 +30,7 @@ const (
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
 	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
 	AccessProviderTypeGname        = AccessProviderType("gname")
-	AccessProviderTypeGcore        = AccessProviderType("gcore") // Gcore（预留）
+	AccessProviderTypeGcore        = AccessProviderType("gcore")
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
 	AccessProviderTypeGoEdge       = AccessProviderType("goedge") // GoEdge（预留）
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
@@ -69,6 +69,7 @@ const (
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
+	ApplyDNSProviderTypeGcore           = ApplyDNSProviderType("gcore")
 	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
