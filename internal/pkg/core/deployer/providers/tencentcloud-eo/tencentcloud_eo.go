@@ -1,4 +1,4 @@
-﻿package tencentcloudeteo
+﻿package tencentcloudeo
 
 import (
 	"context"

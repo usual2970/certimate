@@ -829,6 +829,8 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1096/go.mod h1
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1084/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1096 h1:DMokC7T0UF8wMfT1kD+mX3M+hc2C06gmFvQ9gsfRPmI=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1096/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1099 h1:4fQ53ORk6Eayw1H2kg43PoBnUuhGR6WRG6rtec/i3oI=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1099/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1084 h1:kwctN0WQYt8/iKP+iRCTCwdzEMIXsXklbRIib5rjeQ8=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1084/go.mod h1:qE67ApiBzeRvzeDsV+GxyIDbVIDemsKpHXllQATz/Vw=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1096 h1:h9FP40Ycg45egJlZcjbLyc4IUeFoq+wSpR43sHMALtM=
@@ -837,6 +839,8 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1096 h1:7ZmPus
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1096/go.mod h1:aMpGcDskqqhXtfMaeo2egO61tgh/zt07L1ohSPwmjWk=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1096 h1:N62IFKL1ZRNQ7WPLNn8x9eYnwM4lOUIVY3buW6kbGtg=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1096/go.mod h1:4PZRRpZp+jvYBUbUajsoZREnk7sJXMnPAiGB4IX8IkM=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf v1.0.1099 h1:kD+8RKF0uJCr7VaurAUA11NNAoln0HaagMCgQV6EnUw=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf v1.0.1099/go.mod h1:ellbjD8eHKHS4ixscLdiPJI8QoFIk0YNEgaDjxXMECM=
 github.com/tjfoc/gmsm v1.3.2/go.mod h1:HaUcFuY0auTiaHB9MHFGCPx5IaLhTUd2atbCFBQXn9w=
 github.com/tjfoc/gmsm v1.4.1 h1:aMe1GlZb+0bLjn+cKTPEvvn9oUEBlJitaZiiBwsbgho=
 github.com/tjfoc/gmsm v1.4.1/go.mod h1:j4INPkHWMrhJb38G+J6W4Tw0AbuN8Thu3PbdVYhVcTE=

@@ -1,4 +1,4 @@
-﻿package tencentcloudcos_test
+﻿package tencentcloudwaf_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
 )
 
 var (
@@ -17,33 +17,36 @@ var (
 	fSecretId      string
 	fSecretKey     string
 	fRegion        string
-	fBucket        string
 	fDomain        string
+	fDomainId      string
+	fInstanceId    string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_"
+	argsPrefix := "CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fSecretId, argsPrefix+"SECRETID", "", "")
 	flag.StringVar(&fSecretKey, argsPrefix+"SECRETKEY", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.StringVar(&fBucket, argsPrefix+"BUCKET", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
+	flag.StringVar(&fDomainId, argsPrefix+"DOMAINID", "", "")
+	flag.StringVar(&fInstanceId, argsPrefix+"INSTANCEID", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./tencentcloud_cos_test.go -args \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_SECRETID="your-secret-id" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_REGION="ap-guangzhou" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_BUCKET="your-cos-bucket" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDCOS_DOMAIN="example.com"
+	go test -v ./tencentcloud_waf_test.go -args \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_SECRETID="your-secret-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_SECRETKEY="your-secret-key" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_REGION="ap-guangzhou" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_DOMAIN="example.com" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_DOMAINID="your-domain-id" \
+	--CERTIMATE_DEPLOYER_TENCENTCLOUDWAF_INSTANCEID="your-instance-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -56,16 +59,17 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("SECRETID: %v", fSecretId),
 			fmt.Sprintf("SECRETKEY: %v", fSecretKey),
 			fmt.Sprintf("REGION: %v", fRegion),
-			fmt.Sprintf("BUCKET: %v", fBucket),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
+			fmt.Sprintf("INSTANCEID: %v", fInstanceId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCOSDeployerConfig{
-			SecretId:  fSecretId,
-			SecretKey: fSecretKey,
-			Region:    fRegion,
-			Bucket:    fBucket,
-			Domain:    fDomain,
+		deployer, err := provider.New(&provider.TencentCloudWAFDeployerConfig{
+			SecretId:   fSecretId,
+			SecretKey:  fSecretKey,
+			Region:     fRegion,
+			Domain:     fDomain,
+			DomainId:   fDomainId,
+			InstanceId: fInstanceId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

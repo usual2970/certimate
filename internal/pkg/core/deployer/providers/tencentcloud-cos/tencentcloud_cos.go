@@ -1,4 +1,4 @@
-﻿package tencentcloudcdn
+﻿package tencentcloudcos
 
 import (
 	"context"

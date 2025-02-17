@@ -127,6 +127,7 @@ const (
 	DeployProviderTypeTencentCloudECDN      = DeployProviderType("tencentcloud-ecdn")
 	DeployProviderTypeTencentCloudEO        = DeployProviderType("tencentcloud-eo")
 	DeployProviderTypeTencentCloudSSLDeploy = DeployProviderType("tencentcloud-ssldeploy")
+	DeployProviderTypeTencentCloudWAF       = DeployProviderType("tencentcloud-waf")
 	DeployProviderTypeUCloudUCDN            = DeployProviderType("ucloud-ucdn")
 	DeployProviderTypeUCloudUS3             = DeployProviderType("ucloud-us3")
 	DeployProviderTypeVolcEngineCDN         = DeployProviderType("volcengine-cdn")

@@ -73,6 +73,7 @@
   "provider.tencentcloud.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "provider.tencentcloud.eo": "腾讯云 - 边缘安全加速平台 EdgeOne",
   "provider.tencentcloud.ssl_deploy": "腾讯云 - 通过 SSL 证书服务创建部署任务",
+  "provider.tencentcloud.waf": "腾讯云 - Web 应用防火墙 WAF",
   "provider.ucloud": "优刻得",
   "provider.ucloud.ucdn": "优刻得 - 内容分发 UCDN",
   "provider.ucloud.us3": "优刻得 - 对象存储 US3",

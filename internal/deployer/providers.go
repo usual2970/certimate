@@ -38,6 +38,7 @@ import (
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
+	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
 	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -432,7 +433,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -502,6 +503,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					Region:       maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					ResourceType: maps.GetValueAsString(options.ProviderDeployConfig, "resourceType"),
 					ResourceIds:  slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeTencentCloudWAF:
+				deployer, err := pTencentCloudWAF.NewWithLogger(&pTencentCloudWAF.TencentCloudWAFDeployerConfig{
+					SecretId:   access.SecretId,
+					SecretKey:  access.SecretKey,
+					Domain:     maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+					DomainId:   maps.GetValueAsString(options.ProviderDeployConfig, "domainId"),
+					InstanceId: maps.GetValueAsString(options.ProviderDeployConfig, "instanceId"),
 				}, logger)
 				return deployer, logger, err
 
