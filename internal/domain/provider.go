@@ -114,6 +114,7 @@ const (
 	DeployProviderTypeBytePlusCDN           = DeployProviderType("byteplus-cdn")
 	DeployProviderTypeDogeCloudCDN          = DeployProviderType("dogecloud-cdn")
 	DeployProviderTypeEdgioApplications     = DeployProviderType("edgio-applications")
+	DeployProviderTypeGcoreCDN              = DeployProviderType("gcore-cdn")
 	DeployProviderTypeHuaweiCloudCDN        = DeployProviderType("huaweicloud-cdn")
 	DeployProviderTypeHuaweiCloudELB        = DeployProviderType("huaweicloud-elb")
 	DeployProviderTypeHuaweiCloudWAF        = DeployProviderType("huaweicloud-waf")

@@ -10,7 +10,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/dogecloud"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/dogecloud"
 	dogesdk "github.com/usual2970/certimate/internal/pkg/vendors/dogecloud-sdk"
 )
 
@@ -47,7 +47,7 @@ func NewWithLogger(config *DogeCloudCDNDeployerConfig, logger logger.Logger) (*D
 
 	client := dogesdk.NewClient(config.AccessKey, config.SecretKey)
 
-	uploader, err := uploaderp.New(&uploaderp.DogeCloudUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.DogeCloudUploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

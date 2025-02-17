@@ -11,7 +11,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 	qiniusdk "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
 )
 
@@ -48,7 +48,7 @@ func NewWithLogger(config *QiniuCDNDeployerConfig, logger logger.Logger) (*Qiniu
 
 	client := qiniusdk.NewClient(auth.New(config.AccessKey, config.SecretKey))
 
-	uploader, err := uploaderp.New(&uploaderp.QiniuSSLCertUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.QiniuSSLCertUploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

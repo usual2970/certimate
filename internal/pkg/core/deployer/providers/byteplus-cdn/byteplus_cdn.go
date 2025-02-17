@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
 )
 
 type BytePlusCDNDeployerConfig struct {
@@ -50,7 +50,7 @@ func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*By
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
-	uploader, err := uploaderp.New(&uploaderp.ByteplusCDNUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.ByteplusCDNUploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

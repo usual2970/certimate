@@ -14,7 +14,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
 )
 
 type AWSCloudFrontDeployerConfig struct {
@@ -55,7 +55,7 @@ func NewWithLogger(config *AWSCloudFrontDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.AWSCertificateManagerUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.AWSCertificateManagerUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		SecretAccessKey: config.SecretAccessKey,
 		Region:          config.Region,

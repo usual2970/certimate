@@ -15,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
 type AliyunCASDeployDeployerConfig struct {
@@ -178,7 +178,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 }
 
 func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
-	uploader, err := uploaderp.New(&uploaderp.AliyunCASUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.AliyunCASUploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          region,

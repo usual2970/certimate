@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
 )
 
 type UCloudUCDNDeployerConfig struct {
@@ -54,7 +54,7 @@ func NewWithLogger(config *UCloudUCDNDeployerConfig, logger logger.Logger) (*UCl
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.UCloudUSSLUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.UCloudUSSLUploaderConfig{
 		PrivateKey: config.PrivateKey,
 		PublicKey:  config.PublicKey,
 		ProjectId:  config.ProjectId,

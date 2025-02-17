@@ -33,6 +33,7 @@ import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaot
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
+import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
 import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaweiCloudELBConfig";
 import DeployNodeConfigFormHuaweiCloudWAFConfig from "./DeployNodeConfigFormHuaweiCloudWAFConfig";
@@ -167,6 +168,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.EDGIO_APPLICATIONS:
           return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.GCORE_CDN:
+          return <DeployNodeConfigFormGcoreCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_CDN:
           return <DeployNodeConfigFormHuaweiCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_ELB:
@@ -237,7 +240,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         const oldValues = formInst.getFieldsValue();
         const newValues: Record<string, unknown> = {};
         for (const key in oldValues) {
-          if (key === "provider" || key === "providerAccessId" || key === "certificate") {
+          if (key === "provider" || key === "providerAccessId" || key === "certificate" || key === "skipOnLastSucceeded") {
             newValues[key] = oldValues[key];
           } else {
             newValues[key] = undefined;

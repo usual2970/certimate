@@ -24,6 +24,7 @@ import (
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
+	pGcoreCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/gcore-cdn"
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	pHuaweiCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-waf"
@@ -315,6 +316,26 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 				EnvironmentId: maps.GetValueAsString(options.ProviderDeployConfig, "environmentId"),
 			}, logger)
 			return deployer, logger, err
+		}
+
+	case domain.DeployProviderTypeGcoreCDN:
+		{
+			access := domain.AccessConfigForGcore{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeGcoreCDN:
+				deployer, err := pGcoreCDN.NewWithLogger(&pGcoreCDN.GcoreCDNDeployerConfig{
+					ApiToken:   access.ApiToken,
+					ResourceId: maps.GetValueAsInt64(options.ProviderDeployConfig, "resourceId"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB, domain.DeployProviderTypeHuaweiCloudWAF:

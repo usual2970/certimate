@@ -134,9 +134,10 @@ make local.run
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                          |
 | [雷池](https://waf-ce.chaitin.cn/)      | 可部署到雷池 WAF                                                         |
 | [宝塔面板](https://www.bt.cn/)          | 可部署到宝塔面板                                                         |
-| [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront 等服务                                           |
-| [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN 等服务                                             |
-| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications 等服务                                       |
+| [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront                                                  |
+| [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN                                                    |
+| [Edgio](https://edg.io/)                | 可部署到 Edgio Applications                                              |
+| [Gcore](https://gcore.com/)             | 可部署到 Gcore CDN                                                       |
 
 </details>
 

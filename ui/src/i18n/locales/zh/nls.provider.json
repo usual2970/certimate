@@ -42,6 +42,7 @@
   "provider.edgio.applications": "Edgio - Applications",
   "provider.fastly": "Fastly",
   "provider.gcore": "Gcore",
+  "provider.gcore.cdn": "Gcore - 内容分发网络 CDN",
   "provider.gname": "GNAME",
   "provider.godaddy": "GoDaddy",
   "provider.goedge": "GoEdge",

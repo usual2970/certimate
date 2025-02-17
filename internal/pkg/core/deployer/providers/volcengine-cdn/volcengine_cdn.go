@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
 )
 
 type VolcEngineCDNDeployerConfig struct {
@@ -50,7 +50,7 @@ func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := uploaderp.New(&uploaderp.VolcEngineCDNUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.VolcEngineCDNUploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})

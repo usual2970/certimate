@@ -10,7 +10,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 )
 
 type QiniuPiliDeployerConfig struct {
@@ -48,7 +48,7 @@ func NewWithLogger(config *QiniuPiliDeployerConfig, logger logger.Logger) (*Qini
 
 	manager := pili.NewManager(pili.ManagerConfig{AccessKey: config.AccessKey, SecretKey: config.SecretKey})
 
-	uploader, err := uploaderp.New(&uploaderp.QiniuSSLCertUploaderConfig{
+	uploader, err := uploadersp.New(&uploadersp.QiniuSSLCertUploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})
