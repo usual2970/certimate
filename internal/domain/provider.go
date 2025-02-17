@@ -16,7 +16,7 @@ const (
 	AccessProviderTypeAWS          = AccessProviderType("aws")
 	AccessProviderTypeAzure        = AccessProviderType("azure")
 	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
-	AccessProviderTypeBaishan      = AccessProviderType("baishan") // 白山云（预留）
+	AccessProviderTypeBaishan      = AccessProviderType("baishan")
 	AccessProviderTypeBaotaPanel   = AccessProviderType("baotapanel")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
 	AccessProviderTypeCacheFly     = AccessProviderType("cachefly") // CacheFly（预留）
@@ -107,6 +107,7 @@ const (
 	DeployProviderTypeAliyunWAF             = DeployProviderType("aliyun-waf")
 	DeployProviderTypeAWSCloudFront         = DeployProviderType("aws-cloudfront")
 	DeployProviderTypeBaiduCloudCDN         = DeployProviderType("baiducloud-cdn")
+	DeployProviderTypeBaishanCDN            = DeployProviderType("baishan-cdn")
 	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")
 	DeployProviderTypeBaotaPanelSite        = DeployProviderType("baotapanel-site")
 	DeployProviderTypeBytePlusCDN           = DeployProviderType("byteplus-cdn")

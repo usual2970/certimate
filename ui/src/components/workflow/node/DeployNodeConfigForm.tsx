@@ -27,6 +27,7 @@ import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSS
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
+import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanCDNConfig";
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
 import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaotaPanelSiteConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
@@ -154,6 +155,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.BAISHAN_CDN:
+          return <DeployNodeConfigFormBaishanCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE:
           return <DeployNodeConfigFormBaotaPanelConsoleConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAOTAPANEL_SITE:

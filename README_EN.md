@@ -127,6 +127,7 @@ The following hosting providers are supported:
 | [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB, WAF                                |
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, ImageX, Live              |
 | [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                     |
+| [Baishan Cloud](https://intl.baishancloud.com/) | Supports deployment to Baishan Cloud CDN                                         |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                            |
 | [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                          |
 | [SafeLine](https://waf.chaitin.com/)            | Supports deployment to SafeLine WAF                                              |

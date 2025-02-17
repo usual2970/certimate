@@ -11,6 +11,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForAWS
       | AccessConfigForAzure
       | AccessConfigForBaiduCloud
+      | AccessConfigForBaishan
       | AccessConfigForBaotaPanel
       | AccessConfigForBytePlus
       | AccessConfigForCloudflare
@@ -65,6 +66,10 @@ export type AccessConfigForAzure = {
 export type AccessConfigForBaiduCloud = {
   accessKeyId: string;
   secretAccessKey: string;
+};
+
+export type AccessConfigForBaishan = {
+  apiToken: string;
 };
 
 export type AccessConfigForBaotaPanel = {

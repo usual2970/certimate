@@ -1,34 +1,18 @@
 package safelinesdk
 
-type BaseResponse interface {
-	GetErrCode() *string
-	GetErrMsg() *string
-}
+import (
+	"encoding/json"
+)
 
-type baseResponse struct {
-	ErrCode *string `json:"err,omitempty"`
-	ErrMsg  *string `json:"msg,omitempty"`
-}
+func (c *Client) UpdateCertificate(req *UpdateCertificateRequest) (*UpdateCertificateResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
 
-func (r *baseResponse) GetErrCode() *string {
-	return r.ErrCode
-}
-
-func (r *baseResponse) GetErrMsg() *string {
-	return r.ErrMsg
-}
-
-type UpdateCertificateRequest struct {
-	Id     int32                              `json:"id"`
-	Type   int32                              `json:"type"`
-	Manual *UpdateCertificateRequestBodyManul `json:"manual"`
-}
-
-type UpdateCertificateRequestBodyManul struct {
-	Crt string `json:"crt"`
-	Key string `json:"key"`
-}
-
-type UpdateCertificateResponse struct {
-	baseResponse
+	result := UpdateCertificateResponse{}
+	err := c.sendRequestWithResult("/api/open/cert", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }

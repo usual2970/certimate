@@ -23,7 +23,7 @@ type BaotaPanelConsoleDeployerConfig struct {
 type BaotaPanelConsoleDeployer struct {
 	config    *BaotaPanelConsoleDeployerConfig
 	logger    logger.Logger
-	sdkClient *btsdk.BaoTaPanelClient
+	sdkClient *btsdk.Client
 }
 
 var _ deployer.Deployer = (*BaotaPanelConsoleDeployer)(nil)
@@ -81,7 +81,7 @@ func (d *BaotaPanelConsoleDeployer) Deploy(ctx context.Context, certPem string, 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string) (*btsdk.BaoTaPanelClient, error) {
-	client := btsdk.NewBaoTaPanelClient(apiUrl, apiKey)
+func createSdkClient(apiUrl, apiKey string) (*btsdk.Client, error) {
+	client := btsdk.NewClient(apiUrl, apiKey)
 	return client, nil
 }

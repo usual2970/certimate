@@ -1,48 +1,44 @@
 package btpanelsdk
 
-type BaseResponse interface {
-	GetStatus() *bool
-	GetMsg() *string
+import (
+	"encoding/json"
+)
+
+func (c *Client) ConfigSavePanelSSL(req *ConfigSavePanelSSLRequest) (*ConfigSavePanelSSLResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := ConfigSavePanelSSLResponse{}
+	err := c.sendRequestWithResult("/config?action=SavePanelSSL", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-type baseResponse struct {
-	Status *bool   `json:"status,omitempty"`
-	Msg    *string `json:"msg,omitempty"`
+func (c *Client) SiteSetSSL(req *SiteSetSSLRequest) (*SiteSetSSLResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := SiteSetSSLResponse{}
+	err := c.sendRequestWithResult("/site?action=SetSSL", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-func (r *baseResponse) GetStatus() *bool {
-	return r.Status
-}
+func (c *Client) SystemServiceAdmin(req *SystemServiceAdminRequest) (*SystemServiceAdminResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
 
-func (r *baseResponse) GetMsg() *string {
-	return r.Msg
-}
-
-type ConfigSavePanelSSLRequest struct {
-	PrivateKey  string `json:"privateKey"`
-	Certificate string `json:"certPem"`
-}
-
-type ConfigSavePanelSSLResponse struct {
-	baseResponse
-}
-
-type SiteSetSSLRequest struct {
-	Type        string `json:"type"`
-	SiteName    string `json:"siteName"`
-	PrivateKey  string `json:"key"`
-	Certificate string `json:"csr"`
-}
-
-type SiteSetSSLResponse struct {
-	baseResponse
-}
-
-type SystemServiceAdminRequest struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
-type SystemServiceAdminResponse struct {
-	baseResponse
+	result := SystemServiceAdminResponse{}
+	err := c.sendRequestWithResult("/system?action=ServiceAdmin", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }

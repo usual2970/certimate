@@ -1,79 +1,57 @@
 package gnamesdk
 
-type BaseResponse interface {
-	GetCode() int
-	GetMsg() string
+import (
+	"encoding/json"
+)
+
+func (c *Client) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomainResolutionResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := AddDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/add", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-type baseResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
+func (c *Client) ModifyDomainResolution(req *ModifyDomainResolutionRequest) (*ModifyDomainResolutionResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := ModifyDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/edit", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-func (r *baseResponse) GetCode() int {
-	return r.Code
+func (c *Client) DeleteDomainResolution(req *DeleteDomainResolutionRequest) (*DeleteDomainResolutionResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := DeleteDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/delete", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }
 
-func (r *baseResponse) GetMsg() string {
-	return r.Msg
-}
+func (c *Client) ListDomainResolution(req *ListDomainResolutionRequest) (*ListDomainResolutionResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
 
-type AddDomainResolutionRequest struct {
-	ZoneName    string `json:"ym"`
-	RecordType  string `json:"lx"`
-	RecordName  string `json:"zj"`
-	RecordValue string `json:"jlz"`
-	MX          int    `json:"mx"`
-	TTL         int    `json:"ttl"`
-}
-
-type AddDomainResolutionResponse struct {
-	baseResponse
-	Data int `json:"data"`
-}
-
-type ModifyDomainResolutionRequest struct {
-	ID          string `json:"jxid"`
-	ZoneName    string `json:"ym"`
-	RecordType  string `json:"lx"`
-	RecordName  string `json:"zj"`
-	RecordValue string `json:"jlz"`
-	MX          int    `json:"mx"`
-	TTL         int    `json:"ttl"`
-}
-
-type ModifyDomainResolutionResponse struct {
-	baseResponse
-}
-
-type DeleteDomainResolutionRequest struct {
-	ZoneName string `json:"ym"`
-	RecordID string `json:"jxid"`
-}
-
-type DeleteDomainResolutionResponse struct {
-	baseResponse
-}
-
-type ListDomainResolutionRequest struct {
-	ZoneName string `json:"ym"`
-	Page     *int   `json:"page,omitempty"`
-	PageSize *int   `json:"limit,omitempty"`
-}
-
-type ListDomainResolutionResponse struct {
-	baseResponse
-	Count    int                 `json:"count"`
-	Data     []*ResolutionRecord `json:"data"`
-	Page     int                 `json:"page"`
-	PageSize int                 `json:"pagesize"`
-}
-
-type ResolutionRecord struct {
-	ID          string `json:"id"`
-	ZoneName    string `json:"ym"`
-	RecordType  string `json:"lx"`
-	RecordName  string `json:"zjt"`
-	RecordValue string `json:"jxz"`
-	MX          int    `json:"mx"`
+	result := ListDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/list", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
 }

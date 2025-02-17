@@ -12,80 +12,28 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type GnameClient struct {
+type Client struct {
 	appId  string
 	appKey string
 	client *resty.Client
 }
 
-func NewGnameClient(appId, appKey string) *GnameClient {
+func NewClient(appId, appKey string) *Client {
 	client := resty.New()
 
-	return &GnameClient{
+	return &Client{
 		appId:  appId,
 		appKey: appKey,
 		client: client,
 	}
 }
 
-func (c *GnameClient) WithTimeout(timeout time.Duration) *GnameClient {
+func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *GnameClient) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := AddDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/add", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *GnameClient) ModifyDomainResolution(req *ModifyDomainResolutionRequest) (*ModifyDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := ModifyDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/edit", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *GnameClient) DeleteDomainResolution(req *DeleteDomainResolutionRequest) (*DeleteDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := DeleteDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/delete", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *GnameClient) ListDomainResolution(req *ListDomainResolutionRequest) (*ListDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := ListDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/list", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *GnameClient) generateSignature(params map[string]string) string {
+func (c *Client) generateSignature(params map[string]string) string {
 	// Step 1: Sort parameters by ASCII order
 	var keys []string
 	for k := range params {
@@ -109,7 +57,7 @@ func (c *GnameClient) generateSignature(params map[string]string) string {
 	return strings.ToUpper(fmt.Sprintf("%x", hash))
 }
 
-func (c *GnameClient) sendRequest(path string, params map[string]any) (*resty.Response, error) {
+func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
 	if params == nil {
 		params = make(map[string]any)
 	}
@@ -136,7 +84,7 @@ func (c *GnameClient) sendRequest(path string, params map[string]any) (*resty.Re
 	return resp, nil
 }
 
-func (c *GnameClient) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err

@@ -16,14 +16,14 @@ type BaotaPanelSiteDeployerConfig struct {
 	ApiUrl string `json:"apiUrl"`
 	// 宝塔面板接口密钥。
 	ApiKey string `json:"apiKey"`
-	// 站点名称
+	// 站点名称。
 	SiteName string `json:"siteName"`
 }
 
 type BaotaPanelSiteDeployer struct {
 	config    *BaotaPanelSiteDeployerConfig
 	logger    logger.Logger
-	sdkClient *btsdk.BaoTaPanelClient
+	sdkClient *btsdk.Client
 }
 
 var _ deployer.Deployer = (*BaotaPanelSiteDeployer)(nil)
@@ -75,7 +75,7 @@ func (d *BaotaPanelSiteDeployer) Deploy(ctx context.Context, certPem string, pri
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string) (*btsdk.BaoTaPanelClient, error) {
-	client := btsdk.NewBaoTaPanelClient(apiUrl, apiKey)
+func createSdkClient(apiUrl, apiKey string) (*btsdk.Client, error) {
+	client := btsdk.NewClient(apiUrl, apiKey)
 	return client, nil
 }

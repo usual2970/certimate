@@ -27,7 +27,7 @@ type SafeLineDeployerConfig struct {
 type SafeLineDeployer struct {
 	config    *SafeLineDeployerConfig
 	logger    logger.Logger
-	sdkClient *safelinesdk.SafeLineClient
+	sdkClient *safelinesdk.Client
 }
 
 var _ deployer.Deployer = (*SafeLineDeployer)(nil)
@@ -96,7 +96,7 @@ func (d *SafeLineDeployer) deployToCertificate(ctx context.Context, certPem stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiToken string) (*safelinesdk.SafeLineClient, error) {
-	client := safelinesdk.NewSafeLineClient(apiUrl, apiToken)
+func createSdkClient(apiUrl, apiToken string) (*safelinesdk.Client, error) {
+	client := safelinesdk.NewClient(apiUrl, apiToken)
 	return client, nil
 }

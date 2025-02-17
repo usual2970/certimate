@@ -9,41 +9,28 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type SafeLineClient struct {
+type Client struct {
 	apiHost  string
 	apiToken string
 	client   *resty.Client
 }
 
-func NewSafeLineClient(apiHost, apiToken string) *SafeLineClient {
+func NewClient(apiHost, apiToken string) *Client {
 	client := resty.New()
 
-	return &SafeLineClient{
+	return &Client{
 		apiHost:  apiHost,
 		apiToken: apiToken,
 		client:   client,
 	}
 }
 
-func (c *SafeLineClient) WithTimeout(timeout time.Duration) *SafeLineClient {
+func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *SafeLineClient) UpdateCertificate(req *UpdateCertificateRequest) (*UpdateCertificateResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := UpdateCertificateResponse{}
-	err := c.sendRequestWithResult("/api/open/cert", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *SafeLineClient) sendRequest(path string, params map[string]any) (*resty.Response, error) {
+func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
 	if params == nil {
 		params = make(map[string]any)
 	}
@@ -65,7 +52,7 @@ func (c *SafeLineClient) sendRequest(path string, params map[string]any) (*resty
 	return resp, nil
 }
 
-func (c *SafeLineClient) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err

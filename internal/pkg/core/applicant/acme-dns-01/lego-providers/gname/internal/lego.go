@@ -37,7 +37,7 @@ type Config struct {
 }
 
 type DNSProvider struct {
-	client *gnamesdk.GnameClient
+	client *gnamesdk.Client
 	config *Config
 }
 
@@ -68,7 +68,7 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 		return nil, errors.New("gname: the configuration of the DNS provider is nil")
 	}
 
-	client := gnamesdk.NewGnameClient(config.AppID, config.AppKey).
+	client := gnamesdk.NewClient(config.AppID, config.AppKey).
 		WithTimeout(config.HTTPTimeout)
 
 	return &DNSProvider{

@@ -18,6 +18,7 @@ import (
 	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	pBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
+	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
@@ -208,6 +209,26 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				}, logger)
+				return deployer, logger, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeBaishanCDN:
+		{
+			access := domain.AccessConfigForBaishan{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeBaishanCDN:
+				deployer, err := pBaishanCDN.NewWithLogger(&pBaishanCDN.BaishanCDNDeployerConfig{
+					ApiToken: access.ApiToken,
+					Domain:   maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 

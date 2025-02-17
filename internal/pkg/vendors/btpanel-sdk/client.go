@@ -11,67 +11,28 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type BaoTaPanelClient struct {
+type Client struct {
 	apiHost string
 	apiKey  string
 	client  *resty.Client
 }
 
-func NewBaoTaPanelClient(apiHost, apiKey string) *BaoTaPanelClient {
+func NewClient(apiHost, apiKey string) *Client {
 	client := resty.New()
 
-	return &BaoTaPanelClient{
+	return &Client{
 		apiHost: apiHost,
 		apiKey:  apiKey,
 		client:  client,
 	}
 }
 
-func (c *BaoTaPanelClient) WithTimeout(timeout time.Duration) *BaoTaPanelClient {
+func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *BaoTaPanelClient) ConfigSavePanelSSL(req *ConfigSavePanelSSLRequest) (*ConfigSavePanelSSLResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := ConfigSavePanelSSLResponse{}
-	err := c.sendRequestWithResult("/config?action=SavePanelSSL", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *BaoTaPanelClient) SiteSetSSL(req *SiteSetSSLRequest) (*SiteSetSSLResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := SiteSetSSLResponse{}
-	err := c.sendRequestWithResult("/site?action=SetSSL", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *BaoTaPanelClient) SystemServiceAdmin(req *SystemServiceAdminRequest) (*SystemServiceAdminResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := SystemServiceAdminResponse{}
-	err := c.sendRequestWithResult("/system?action=ServiceAdmin", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *BaoTaPanelClient) generateSignature(timestamp string) string {
+func (c *Client) generateSignature(timestamp string) string {
 	keyMd5 := md5.Sum([]byte(c.apiKey))
 	keyMd5Hex := strings.ToLower(hex.EncodeToString(keyMd5[:]))
 
@@ -80,7 +41,7 @@ func (c *BaoTaPanelClient) generateSignature(timestamp string) string {
 	return signMd5Hex
 }
 
-func (c *BaoTaPanelClient) sendRequest(path string, params map[string]any) (*resty.Response, error) {
+func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
 	if params == nil {
 		params = make(map[string]any)
 	}
@@ -105,7 +66,7 @@ func (c *BaoTaPanelClient) sendRequest(path string, params map[string]any) (*res
 	return resp, nil
 }
 
-func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err

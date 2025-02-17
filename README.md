@@ -128,6 +128,7 @@ make local.run
 | [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB、WAF 等服务                                      |
 | [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、ImageX、Live 等服务                |
 | [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN、直播云等服务                                         |
+| [白山云](https://www.baishan.com/)      | 可部署到白山云 CDN                                                       |
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                                       |
 | [优刻得](https://www.ucloud.cn/)        | 可部署到优刻得 US3、UCDN 等服务                                          |
 | [雷池](https://waf-ce.chaitin.cn/)      | 可部署到雷池 WAF                                                         |

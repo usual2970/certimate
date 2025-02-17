@@ -65,6 +65,8 @@
   "access.form.baiducloud_secret_access_key.label": "百度智能云 SecretAccessKey",
   "access.form.baiducloud_secret_access_key.placeholder": "请输入百度智能云 SecretAccessKey",
   "access.form.baiducloud_secret_access_key.tooltip": "这是什么？请参阅 <a href=\"https://cloud.baidu.com/doc/Reference/s/jjwvz2e3p\" target=\"_blank\">https://cloud.baidu.com/doc/Reference/s/jjwvz2e3p</a>",
+  "access.form.baishan_api_token.label": "白山云 API Token",
+  "access.form.baishan_api_token.placeholder": "请输入白山云 API Token",
   "access.form.baotapanel_api_url.label": "宝塔面板 URL",
   "access.form.baotapanel_api_url.placeholder": "请输入宝塔面板 URL",
   "access.form.baotapanel_api_url.tooltip": "这是什么？请参阅 <a href=\"https://www.bt.cn/bbs/thread-20376-1-1.html\" target=\"_blank\">https://www.bt.cn/bbs/thread-20376-1-1.html</a>",
