@@ -50,6 +50,7 @@
   "provider.huaweicloud.cdn": "Huawei Cloud - CDN (Content Delivery Network)",
   "provider.huaweicloud.dns": "Huawei Cloud - DNS (Domain Name Service)",
   "provider.huaweicloud.elb": "Huawei Cloud - ELB (Elastic Load Balance)",
+  "provider.huaweicloud.waf": "Huawei Cloud - WAF (Web Application Firewall)",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.local": "Local deployment",

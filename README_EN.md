@@ -124,7 +124,7 @@ The following hosting providers are supported:
 | [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), WAF, Live |
 | [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, CSS           |
 | [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                        |
-| [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB                                     |
+| [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB, WAF                                |
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, ImageX, Live              |
 | [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                     |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                            |

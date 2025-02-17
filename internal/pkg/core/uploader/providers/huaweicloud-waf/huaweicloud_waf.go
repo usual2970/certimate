@@ -7,6 +7,10 @@ import (
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
+	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
+	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 	hcWaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
 	hcWafModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
 	hcWafRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
@@ -64,11 +68,11 @@ func (u *HuaweiCloudWAFUploader) Upload(ctx context.Context, certPem string, pri
 	// REF: https://support.huaweicloud.com/api-waf/ListCertificates.html
 	// REF: https://support.huaweicloud.com/api-waf/ShowCertificate.html
 	listCertificatesPage := int32(1)
-	listCertificatesLimit := int32(100)
+	listCertificatesPageSize := int32(100)
 	for {
 		listCertificatesReq := &hcWafModel.ListCertificatesRequest{
 			Page:     hwsdk.Int32Ptr(listCertificatesPage),
-			Pagesize: hwsdk.Int32Ptr(listCertificatesLimit),
+			Pagesize: hwsdk.Int32Ptr(listCertificatesPageSize),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		if err != nil {
@@ -107,7 +111,7 @@ func (u *HuaweiCloudWAFUploader) Upload(ctx context.Context, certPem string, pri
 			}
 		}
 
-		if listCertificatesResp.Items == nil || len(*listCertificatesResp.Items) < int(listCertificatesLimit) {
+		if listCertificatesResp.Items == nil || len(*listCertificatesResp.Items) < int(listCertificatesPageSize) {
 			break
 		} else {
 			listCertificatesPage++
@@ -141,9 +145,15 @@ func (u *HuaweiCloudWAFUploader) Upload(ctx context.Context, certPem string, pri
 }
 
 func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafClient, error) {
+	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
+	if err != nil {
+		return nil, err
+	}
+
 	auth, err := basic.NewCredentialsBuilder().
 		WithAk(accessKeyId).
 		WithSk(secretAccessKey).
+		WithProjectId(projectId).
 		SafeBuild()
 	if err != nil {
 		return nil, err
@@ -164,4 +174,41 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafCli
 
 	client := hcWaf.NewWafClient(hcClient)
 	return client, nil
+}
+
+func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error) {
+	auth, err := global.NewCredentialsBuilder().
+		WithAk(accessKeyId).
+		WithSk(secretAccessKey).
+		SafeBuild()
+	if err != nil {
+		return "", err
+	}
+
+	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	if err != nil {
+		return "", err
+	}
+
+	hcClient, err := hcIam.IamClientBuilder().
+		WithRegion(hcRegion).
+		WithCredential(auth).
+		SafeBuild()
+	if err != nil {
+		return "", err
+	}
+
+	client := hcIam.NewIamClient(hcClient)
+
+	request := &hcIamModel.KeystoneListProjectsRequest{
+		Name: &region,
+	}
+	response, err := client.KeystoneListProjects(request)
+	if err != nil {
+		return "", err
+	} else if response.Projects == nil || len(*response.Projects) == 0 {
+		return "", errors.New("no project found")
+	}
+
+	return (*response.Projects)[0].Id, nil
 }

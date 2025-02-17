@@ -83,9 +83,9 @@ func (d *VolcEngineImageXDeployer) Deploy(ctx context.Context, certPem string, p
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Logt("certificate file uploaded", upres)
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 获取域名配置
 	// REF: https://www.volcengine.com/docs/508/9366

@@ -25,6 +25,7 @@ import (
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
+	pHuaweiCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-waf"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
@@ -72,7 +73,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:    pAliyunALB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:    pAliyunALB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
@@ -102,7 +103,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:    pAliyunCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:    pAliyunCLB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerPort:    maps.GetValueOrDefaultAsInt32(options.ProviderDeployConfig, "listenerPort", 443),
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
@@ -140,7 +141,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:    pAliyunNLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:    pAliyunNLB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
@@ -293,7 +294,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			return deployer, logger, err
 		}
 
-	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB:
+	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB, domain.DeployProviderTypeHuaweiCloudWAF:
 		{
 			access := domain.AccessConfigForHuaweiCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -315,10 +316,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:    pHuaweiCloudELB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:    pHuaweiCloudELB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					CertificateId:   maps.GetValueAsString(options.ProviderDeployConfig, "certificateId"),
 					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+				}, logger)
+				return deployer, logger, err
+
+			case domain.DeployProviderTypeHuaweiCloudWAF:
+				deployer, err := pHuaweiCloudWAF.NewWithLogger(&pHuaweiCloudWAF.HuaweiCloudWAFDeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ResourceType:    pHuaweiCloudWAF.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					CertificateId:   maps.GetValueAsString(options.ProviderDeployConfig, "certificateId"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				}, logger)
 				return deployer, logger, err
 
@@ -441,7 +453,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
 					Region:         maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:   pTencentCloudCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:   pTencentCloudCLB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId: maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:     maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 					Domain:         maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
@@ -552,7 +564,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
-					ResourceType:    pVolcEngineCLB.DeployResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					ResourceType:    pVolcEngineCLB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
 				}, logger)
 				return deployer, logger, err

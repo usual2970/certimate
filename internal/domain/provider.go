@@ -114,6 +114,7 @@ const (
 	DeployProviderTypeEdgioApplications     = DeployProviderType("edgio-applications")
 	DeployProviderTypeHuaweiCloudCDN        = DeployProviderType("huaweicloud-cdn")
 	DeployProviderTypeHuaweiCloudELB        = DeployProviderType("huaweicloud-elb")
+	DeployProviderTypeHuaweiCloudWAF        = DeployProviderType("huaweicloud-waf")
 	DeployProviderTypeKubernetesSecret      = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal                 = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")

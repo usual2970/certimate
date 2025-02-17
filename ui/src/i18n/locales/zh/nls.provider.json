@@ -50,6 +50,7 @@
   "provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "provider.huaweicloud.dns": "华为云 - 云解析 DNS",
   "provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
+  "provider.huaweicloud.waf": "华为云 - Web 应用防火墙 WAF",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.local": "本地部署",

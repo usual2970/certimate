@@ -34,6 +34,7 @@ import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCl
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
 import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaweiCloudELBConfig";
+import DeployNodeConfigFormHuaweiCloudWAFConfig from "./DeployNodeConfigFormHuaweiCloudWAFConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
@@ -165,6 +166,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormHuaweiCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_ELB:
           return <DeployNodeConfigFormHuaweiCloudELBConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.HUAWEICLOUD_WAF:
+          return <DeployNodeConfigFormHuaweiCloudWAFConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.KUBERNETES_SECRET:
           return <DeployNodeConfigFormKubernetesSecretConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.LOCAL:
