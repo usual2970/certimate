@@ -16,33 +16,25 @@ import (
 	gcoresdk "github.com/usual2970/certimate/internal/pkg/vendors/gcore-sdk/common"
 )
 
-type GcoreCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// Gcore API Token。
 	ApiToken string `json:"apiToken"`
 	// CDN 资源 ID。
 	ResourceId int64 `json:"resourceId"`
 }
 
-type GcoreCDNDeployer struct {
-	config      *GcoreCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *gresources.Service
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*GcoreCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *GcoreCDNDeployerConfig) (*GcoreCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *GcoreCDNDeployerConfig, logger logger.Logger) (*GcoreCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -57,15 +49,20 @@ func NewWithLogger(config *GcoreCDNDeployerConfig, logger logger.Logger) (*Gcore
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &GcoreCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *GcoreCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.ResourceId == 0 {
 		return nil, errors.New("config `resourceId` is required")
 	}

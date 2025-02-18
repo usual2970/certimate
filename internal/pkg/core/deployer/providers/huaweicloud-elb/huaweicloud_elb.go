@@ -23,7 +23,7 @@ import (
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
-type HuaweiCloudELBDeployerConfig struct {
+type DeployerConfig struct {
 	// 华为云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
@@ -43,26 +43,18 @@ type HuaweiCloudELBDeployerConfig struct {
 	ListenerId string `json:"listenerId,omitempty"`
 }
 
-type HuaweiCloudELBDeployer struct {
-	config      *HuaweiCloudELBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *hcElb.ElbClient
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*HuaweiCloudELBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *HuaweiCloudELBDeployerConfig) (*HuaweiCloudELBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger logger.Logger) (*HuaweiCloudELBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
@@ -79,15 +71,20 @@ func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &HuaweiCloudELBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *HuaweiCloudELBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -120,7 +117,7 @@ func (d *HuaweiCloudELBDeployer) Deploy(ctx context.Context, certPem string, pri
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}
@@ -146,7 +143,7 @@ func (d *HuaweiCloudELBDeployer) deployToCertificate(ctx context.Context, certPe
 	return nil
 }
 
-func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -223,7 +220,7 @@ func (d *HuaweiCloudELBDeployer) deployToLoadbalancer(ctx context.Context, certP
 	return nil
 }
 
-func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}
@@ -244,7 +241,7 @@ func (d *HuaweiCloudELBDeployer) deployToListener(ctx context.Context, certPem s
 	return nil
 }
 
-func (d *HuaweiCloudELBDeployer) modifyListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
+func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowListener.html
 	showListenerReq := &hcElbModel.ShowListenerRequest{

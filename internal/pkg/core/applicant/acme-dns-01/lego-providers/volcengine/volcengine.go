@@ -7,14 +7,14 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/volcengine"
 )
 
-type VolcEngineApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	AccessKeyId           string `json:"accessKeyId"`
 	SecretAccessKey       string `json:"secretAccessKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *VolcEngineApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

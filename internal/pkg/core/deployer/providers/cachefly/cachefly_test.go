@@ -44,7 +44,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("APITOKEN: %v", fApiToken),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.CacheFlyDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiToken: fApiToken,
 		})
 		if err != nil {

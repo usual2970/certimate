@@ -14,7 +14,7 @@ import (
 	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
 )
 
-type BaotaPanelSiteDeployerConfig struct {
+type DeployerConfig struct {
 	// 宝塔面板地址。
 	ApiUrl string `json:"apiUrl"`
 	// 宝塔面板接口密钥。
@@ -27,25 +27,17 @@ type BaotaPanelSiteDeployerConfig struct {
 	SiteNames []string `json:"siteNames,omitempty"`
 }
 
-type BaotaPanelSiteDeployer struct {
-	config    *BaotaPanelSiteDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *btsdk.Client
 }
 
-var _ deployer.Deployer = (*BaotaPanelSiteDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *BaotaPanelSiteDeployerConfig) (*BaotaPanelSiteDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *BaotaPanelSiteDeployerConfig, logger logger.Logger) (*BaotaPanelSiteDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
@@ -53,14 +45,19 @@ func NewWithLogger(config *BaotaPanelSiteDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &BaotaPanelSiteDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *BaotaPanelSiteDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	switch d.config.SiteType {
 	case "php":
 		{

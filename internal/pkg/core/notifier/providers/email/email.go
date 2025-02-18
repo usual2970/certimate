@@ -11,7 +11,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type EmailNotifierConfig struct {
+type NotifierConfig struct {
 	// SMTP 服务器地址。
 	SmtpHost string `json:"smtpHost"`
 	// SMTP 服务器端口。
@@ -29,23 +29,23 @@ type EmailNotifierConfig struct {
 	ReceiverAddress string `json:"receiverAddress"`
 }
 
-type EmailNotifier struct {
-	config *EmailNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*EmailNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *EmailNotifierConfig) (*EmailNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &EmailNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *EmailNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	var smtpAuth smtp.Auth
 	if n.config.Username != "" || n.config.Password != "" {
 		smtpAuth = smtp.PlainAuth("", n.config.Username, n.config.Password, n.config.SmtpHost)

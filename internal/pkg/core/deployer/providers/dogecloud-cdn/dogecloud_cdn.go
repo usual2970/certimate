@@ -13,7 +13,7 @@ import (
 	dogesdk "github.com/usual2970/certimate/internal/pkg/vendors/dogecloud-sdk"
 )
 
-type DogeCloudCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 多吉云 AccessKey。
 	AccessKey string `json:"accessKey"`
 	// 多吉云 SecretKey。
@@ -22,26 +22,18 @@ type DogeCloudCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type DogeCloudCDNDeployer struct {
-	config      *DogeCloudCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *dogesdk.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*DogeCloudCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *DogeCloudCDNDeployerConfig) (*DogeCloudCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *DogeCloudCDNDeployerConfig, logger logger.Logger) (*DogeCloudCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client := dogesdk.NewClient(config.AccessKey, config.SecretKey)
@@ -54,15 +46,19 @@ func NewWithLogger(config *DogeCloudCDNDeployerConfig, logger logger.Logger) (*D
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &DogeCloudCDNDeployer{
-		logger:      logger,
-		config:      config,
+	return &DeployerProvider{
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DogeCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

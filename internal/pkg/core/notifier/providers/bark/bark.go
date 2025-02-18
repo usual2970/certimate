@@ -9,7 +9,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type BarkNotifierConfig struct {
+type NotifierConfig struct {
 	// Bark 服务地址。
 	// 零值时默认使用官方服务器。
 	ServerUrl string `json:"serverUrl"`
@@ -17,23 +17,23 @@ type BarkNotifierConfig struct {
 	DeviceKey string `json:"deviceKey"`
 }
 
-type BarkNotifier struct {
-	config *BarkNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*BarkNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *BarkNotifierConfig) (*BarkNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &BarkNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *BarkNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	var srv notify.Notifier
 	if n.config.ServerUrl == "" {
 		srv = bark.New(n.config.DeviceKey)

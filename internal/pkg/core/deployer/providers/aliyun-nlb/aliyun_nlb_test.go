@@ -59,7 +59,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("LOADBALANCERID: %v", fLoadbalancerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.AliyunNLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
@@ -94,7 +94,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.AliyunNLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,

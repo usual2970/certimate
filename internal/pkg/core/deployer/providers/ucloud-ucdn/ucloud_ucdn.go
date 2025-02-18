@@ -16,7 +16,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
 )
 
-type UCloudUCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 优刻得 API 私钥。
 	PrivateKey string `json:"privateKey"`
 	// 优刻得 API 公钥。
@@ -27,26 +27,18 @@ type UCloudUCDNDeployerConfig struct {
 	DomainId string `json:"domainId"`
 }
 
-type UCloudUCDNDeployer struct {
-	config      *UCloudUCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *uCdn.UCDNClient
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*UCloudUCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *UCloudUCDNDeployerConfig) (*UCloudUCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *UCloudUCDNDeployerConfig, logger logger.Logger) (*UCloudUCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey)
@@ -63,15 +55,20 @@ func NewWithLogger(config *UCloudUCDNDeployerConfig, logger logger.Logger) (*UCl
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &UCloudUCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *UCloudUCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 USSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

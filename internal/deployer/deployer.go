@@ -42,7 +42,7 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 		return nil, fmt.Errorf("failed to unmarshal access config: %w", err)
 	}
 
-	deployer, logger, err := createDeployer(&deployerOptions{
+	deployer, err := createDeployer(&deployerOptions{
 		Provider:             domain.DeployProviderType(nodeConfig.Provider),
 		ProviderAccessConfig: accessConfig,
 		ProviderDeployConfig: nodeConfig.ProviderConfig,
@@ -52,7 +52,7 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	}
 
 	return &proxyDeployer{
-		logger:            logger,
+		logger:            logger.NewNilLogger(),
 		deployer:          deployer,
 		deployCertificate: certdata.Certificate,
 		deployPrivateKey:  certdata.PrivateKey,

@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("CERTIFICATEID: %v", fCertificateId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.SafeLineDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:        fApiUrl,
 			ApiToken:      fApiToken,
 			ResourceType:  provider.ResourceType("certificate"),

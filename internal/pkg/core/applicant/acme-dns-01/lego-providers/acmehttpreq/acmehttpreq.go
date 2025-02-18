@@ -8,7 +8,7 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/httpreq"
 )
 
-type ACMEHttpReqApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	Endpoint              string `json:"endpoint"`
 	Mode                  string `json:"mode"`
 	Username              string `json:"username"`
@@ -16,7 +16,7 @@ type ACMEHttpReqApplicantConfig struct {
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 }
 
-func NewChallengeProvider(config *ACMEHttpReqApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

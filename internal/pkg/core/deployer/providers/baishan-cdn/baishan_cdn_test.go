@@ -48,7 +48,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.BaishanCDNDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiToken: fApiToken,
 			Domain:   fDomain,
 		})

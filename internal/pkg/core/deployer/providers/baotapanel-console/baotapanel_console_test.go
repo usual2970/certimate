@@ -48,7 +48,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.BaotaPanelConsoleDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl: fApiUrl,
 			ApiKey: fApiKey,
 		})

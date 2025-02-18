@@ -14,32 +14,24 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type WebhookDeployerConfig struct {
+type DeployerConfig struct {
 	// Webhook URL。
 	WebhookUrl string `json:"webhookUrl"`
 	// Webhook 回调数据（JSON 格式）。
 	WebhookData string `json:"webhookData,omitempty"`
 }
 
-type WebhookDeployer struct {
-	config     *WebhookDeployerConfig
+type DeployerProvider struct {
+	config     *DeployerConfig
 	logger     logger.Logger
 	httpClient *resty.Client
 }
 
-var _ deployer.Deployer = (*WebhookDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *WebhookDeployerConfig) (*WebhookDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*WebhookDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client := resty.New().
@@ -47,14 +39,19 @@ func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*Webhoo
 		SetRetryCount(3).
 		SetRetryWaitTime(5 * time.Second)
 
-	return &WebhookDeployer{
+	return &DeployerProvider{
 		config:     config,
-		logger:     logger,
+		logger:     logger.NewNilLogger(),
 		httpClient: client,
 	}, nil
 }
 
-func (d *WebhookDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to parse x509")

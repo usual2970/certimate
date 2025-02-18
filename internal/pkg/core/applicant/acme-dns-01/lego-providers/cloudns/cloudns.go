@@ -7,14 +7,14 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/cloudns"
 )
 
-type ClouDNSApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	AuthId                string `json:"authId"`
 	AuthPassword          string `json:"authPassword"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *ClouDNSApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

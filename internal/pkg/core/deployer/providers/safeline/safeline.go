@@ -13,7 +13,7 @@ import (
 	safelinesdk "github.com/usual2970/certimate/internal/pkg/vendors/safeline-sdk"
 )
 
-type SafeLineDeployerConfig struct {
+type DeployerConfig struct {
 	// 雷池 URL。
 	ApiUrl string `json:"apiUrl"`
 	// 雷池 API Token。
@@ -25,25 +25,17 @@ type SafeLineDeployerConfig struct {
 	CertificateId int32 `json:"certificateId,omitempty"`
 }
 
-type SafeLineDeployer struct {
-	config    *SafeLineDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *safelinesdk.Client
 }
 
-var _ deployer.Deployer = (*SafeLineDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *SafeLineDeployerConfig) (*SafeLineDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *SafeLineDeployerConfig, logger logger.Logger) (*SafeLineDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiToken)
@@ -51,14 +43,19 @@ func NewWithLogger(config *SafeLineDeployerConfig, logger logger.Logger) (*SafeL
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	return &SafeLineDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *SafeLineDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:
@@ -73,7 +70,7 @@ func (d *SafeLineDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *SafeLineDeployer) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.CertificateId == 0 {
 		return errors.New("config `certificateId` is required")
 	}

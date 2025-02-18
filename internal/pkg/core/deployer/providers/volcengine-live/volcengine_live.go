@@ -16,7 +16,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
 )
 
-type VolcEngineLiveDeployerConfig struct {
+type DeployerConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -25,26 +25,18 @@ type VolcEngineLiveDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type VolcEngineLiveDeployer struct {
-	config      *VolcEngineLiveDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *veLive.Live
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*VolcEngineLiveDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *VolcEngineLiveDeployerConfig) (*VolcEngineLiveDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (*VolcEngineLiveDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client := veLive.NewInstance()
@@ -59,15 +51,20 @@ func NewWithLogger(config *VolcEngineLiveDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &VolcEngineLiveDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *VolcEngineLiveDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 Live
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

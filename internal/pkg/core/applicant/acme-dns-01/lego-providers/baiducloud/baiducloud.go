@@ -8,14 +8,14 @@ import (
 	internal "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/baiducloud/internal"
 )
 
-type BaiduCloudApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	AccessKeyId           string `json:"accessKeyId"`
 	SecretAccessKey       string `json:"secretAccessKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *BaiduCloudApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

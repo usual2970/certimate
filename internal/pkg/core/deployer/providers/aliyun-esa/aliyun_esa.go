@@ -18,7 +18,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
-type AliyunESADeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -29,26 +29,18 @@ type AliyunESADeployerConfig struct {
 	SiteId int64 `json:"siteId"`
 }
 
-type AliyunESADeployer struct {
-	config      *AliyunESADeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *aliyunEsa.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AliyunESADeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunESADeployerConfig) (*AliyunESADeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunESADeployerConfig, logger logger.Logger) (*AliyunESADeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -61,15 +53,20 @@ func NewWithLogger(config *AliyunESADeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AliyunESADeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AliyunESADeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.SiteId == 0 {
 		return nil, errors.New("config `siteId` is required")
 	}

@@ -17,7 +17,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -26,31 +26,23 @@ type TencentCloudCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type TencentCloudCDNDeployer struct {
-	config      *TencentCloudCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
 	ssl *tcSsl.Client
 	cdn *tcCdn.Client
 }
 
-func New(config *TencentCloudCDNDeployerConfig) (*TencentCloudCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *TencentCloudCDNDeployerConfig, logger logger.Logger) (*TencentCloudCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey)
@@ -66,15 +58,20 @@ func NewWithLogger(config *TencentCloudCDNDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *TencentCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -134,7 +131,7 @@ func (d *TencentCloudCDNDeployer) Deploy(ctx context.Context, certPem string, pr
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *TencentCloudCDNDeployer) getDomainsByCertificateId(cloudCertId string) ([]string, error) {
+func (d *DeployerProvider) getDomainsByCertificateId(cloudCertId string) ([]string, error) {
 	// 获取证书中的可用域名
 	// REF: https://cloud.tencent.com/document/product/228/42491
 	describeCertDomainsReq := tcCdn.NewDescribeCertDomainsRequest()
@@ -155,7 +152,7 @@ func (d *TencentCloudCDNDeployer) getDomainsByCertificateId(cloudCertId string) 
 	return domains, nil
 }
 
-func (d *TencentCloudCDNDeployer) getDeployedDomainsByCertificateId(cloudCertId string) ([]string, error) {
+func (d *DeployerProvider) getDeployedDomainsByCertificateId(cloudCertId string) ([]string, error) {
 	// 根据证书查询关联 CDN 域名
 	// REF: https://cloud.tencent.com/document/product/400/62674
 	describeDeployedResourcesReq := tcSsl.NewDescribeDeployedResourcesRequest()

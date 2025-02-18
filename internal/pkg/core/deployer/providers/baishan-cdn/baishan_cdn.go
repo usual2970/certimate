@@ -13,32 +13,24 @@ import (
 	bssdk "github.com/usual2970/certimate/internal/pkg/vendors/baishan-sdk"
 )
 
-type BaishanCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 白山云 API Token。
 	ApiToken string `json:"apiToken"`
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
-type BaishanCDNDeployer struct {
-	config    *BaishanCDNDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *bssdk.Client
 }
 
-var _ deployer.Deployer = (*BaishanCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *BaishanCDNDeployerConfig) (*BaishanCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *BaishanCDNDeployerConfig, logger logger.Logger) (*BaishanCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -46,14 +38,19 @@ func NewWithLogger(config *BaishanCDNDeployerConfig, logger logger.Logger) (*Bai
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &BaishanCDNDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *BaishanCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.Domain == "" {
 		return nil, errors.New("config `domain` is required")
 	}

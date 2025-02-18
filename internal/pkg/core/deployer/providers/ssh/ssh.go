@@ -17,7 +17,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type SshDeployerConfig struct {
+type DeployerConfig struct {
 	// SSH 主机。
 	// 零值时默认为 "localhost"。
 	SshHost string `json:"sshHost,omitempty"`
@@ -58,33 +58,30 @@ type SshDeployerConfig struct {
 	JksStorepass string `json:"jksStorepass,omitempty"`
 }
 
-type SshDeployer struct {
-	config *SshDeployerConfig
+type DeployerProvider struct {
+	config *DeployerConfig
 	logger logger.Logger
 }
 
-var _ deployer.Deployer = (*SshDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *SshDeployerConfig) (*SshDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *SshDeployerConfig, logger logger.Logger) (*SshDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	if logger == nil {
-		panic("logger is nil")
-	}
-
-	return &SshDeployer{
-		logger: logger,
+	return &DeployerProvider{
 		config: config,
+		logger: logger.NewNilLogger(),
 	}, nil
 }
 
-func (d *SshDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 连接
 	client, err := createSshClient(
 		d.config.SshHost,

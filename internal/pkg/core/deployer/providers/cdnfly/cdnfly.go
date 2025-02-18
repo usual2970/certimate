@@ -15,7 +15,7 @@ import (
 	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cdnfly-sdk"
 )
 
-type CdnflyDeployerConfig struct {
+type DeployerConfig struct {
 	// Cdnfly 地址。
 	ApiUrl string `json:"apiUrl"`
 	// Cdnfly 用户端 API Key。
@@ -32,25 +32,17 @@ type CdnflyDeployerConfig struct {
 	CertificateId string `json:"certificateId,omitempty"`
 }
 
-type CdnflyDeployer struct {
-	config    *CdnflyDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *cfsdk.Client
 }
 
-var _ deployer.Deployer = (*CdnflyDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *CdnflyDeployerConfig) (*CdnflyDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *CdnflyDeployerConfig, logger logger.Logger) (*CdnflyDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.ApiSecret)
@@ -58,14 +50,19 @@ func NewWithLogger(config *CdnflyDeployerConfig, logger logger.Logger) (*CdnflyD
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &CdnflyDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *CdnflyDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_SITE:
@@ -85,7 +82,7 @@ func (d *CdnflyDeployer) Deploy(ctx context.Context, certPem string, privkeyPem 
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *CdnflyDeployer) deployToSite(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.SiteId == "" {
 		return errors.New("config `siteId` is required")
 	}
@@ -138,7 +135,7 @@ func (d *CdnflyDeployer) deployToSite(ctx context.Context, certPem string, privk
 	return nil
 }
 
-func (d *CdnflyDeployer) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}

@@ -8,30 +8,30 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type DingTalkNotifierConfig struct {
+type NotifierConfig struct {
 	// 钉钉机器人的 Token。
 	AccessToken string `json:"accessToken"`
 	// 钉钉机器人的 Secret。
 	Secret string `json:"secret"`
 }
 
-type DingTalkNotifier struct {
-	config *DingTalkNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*DingTalkNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *DingTalkNotifierConfig) (*DingTalkNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &DingTalkNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *DingTalkNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv := dingding.New(&dingding.Config{
 		Token:  n.config.AccessToken,
 		Secret: n.config.Secret,

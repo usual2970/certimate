@@ -23,7 +23,7 @@ import (
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
-type HuaweiCloudWAFDeployerConfig struct {
+type DeployerConfig struct {
 	// 华为云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
@@ -40,26 +40,18 @@ type HuaweiCloudWAFDeployerConfig struct {
 	Domain string `json:"domain,omitempty"`
 }
 
-type HuaweiCloudWAFDeployer struct {
-	config      *HuaweiCloudWAFDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *hcWaf.WafClient
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*HuaweiCloudWAFDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *HuaweiCloudWAFDeployerConfig) (*HuaweiCloudWAFDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *HuaweiCloudWAFDeployerConfig, logger logger.Logger) (*HuaweiCloudWAFDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
@@ -76,15 +68,20 @@ func NewWithLogger(config *HuaweiCloudWAFDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &HuaweiCloudWAFDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *HuaweiCloudWAFDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 WAF
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -117,7 +114,7 @@ func (d *HuaweiCloudWAFDeployer) Deploy(ctx context.Context, certPem string, pri
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *HuaweiCloudWAFDeployer) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}
@@ -154,7 +151,7 @@ func (d *HuaweiCloudWAFDeployer) deployToCertificate(ctx context.Context, certPe
 	return nil
 }
 
-func (d *HuaweiCloudWAFDeployer) deployToCloudServer(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.Domain == "" {
 		return errors.New("config `domain` is required")
 	}
@@ -221,7 +218,7 @@ func (d *HuaweiCloudWAFDeployer) deployToCloudServer(ctx context.Context, certPe
 	return nil
 }
 
-func (d *HuaweiCloudWAFDeployer) deployToPremiumHost(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem string, privkeyPem string) error {
 	if d.config.Domain == "" {
 		return errors.New("config `domain` is required")
 	}

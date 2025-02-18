@@ -16,7 +16,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
 
-type VolcEngineCLBDeployerConfig struct {
+type DeployerConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -30,26 +30,18 @@ type VolcEngineCLBDeployerConfig struct {
 	ListenerId string `json:"listenerId,omitempty"`
 }
 
-type VolcEngineCLBDeployer struct {
-	config      *VolcEngineCLBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *veClb.CLB
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*VolcEngineCLBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *VolcEngineCLBDeployerConfig) (*VolcEngineCLBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*VolcEngineCLBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -66,15 +58,19 @@ func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &VolcEngineCLBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到证书中心
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -97,7 +93,7 @@ func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, priv
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *VolcEngineCLBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}

@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INSTANCEID: %v", fInstanceId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.AliyunWAFDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,

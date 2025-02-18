@@ -8,28 +8,28 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type WebhookNotifierConfig struct {
+type NotifierConfig struct {
 	// Webhook URL。
 	Url string `json:"url"`
 }
 
-type WebhookNotifier struct {
-	config *WebhookNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*WebhookNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *WebhookNotifierConfig) (*WebhookNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &WebhookNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *WebhookNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv := http.New()
 
 	srv.AddReceiversURLs(n.config.Url)

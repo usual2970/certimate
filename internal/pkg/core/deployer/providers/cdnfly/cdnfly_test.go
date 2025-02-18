@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("CERTIFICATEID: %v", fCertificateId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.CdnflyDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:        fApiUrl,
 			ApiKey:        fApiKey,
 			ApiSecret:     fApiSecret,

@@ -63,7 +63,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INSTANCEID: %v", fInstanceId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudWAFDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:   fSecretId,
 			SecretKey:  fSecretKey,
 			Region:     fRegion,

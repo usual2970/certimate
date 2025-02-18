@@ -8,30 +8,30 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type TelegramNotifierConfig struct {
+type NotifierConfig struct {
 	// Telegram API Token。
 	ApiToken string `json:"apiToken"`
 	// Telegram Chat ID。
 	ChatId int64 `json:"chatId"`
 }
 
-type TelegramNotifier struct {
-	config *TelegramNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*TelegramNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *TelegramNotifierConfig) (*TelegramNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &TelegramNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *TelegramNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv, err := telegram.New(n.config.ApiToken)
 	if err != nil {
 		return nil, err

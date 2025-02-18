@@ -7,7 +7,7 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/route53"
 )
 
-type AWSRoute53ApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	AccessKeyId           string `json:"accessKeyId"`
 	SecretAccessKey       string `json:"secretAccessKey"`
 	Region                string `json:"region"`
@@ -16,7 +16,7 @@ type AWSRoute53ApplicantConfig struct {
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *AWSRoute53ApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

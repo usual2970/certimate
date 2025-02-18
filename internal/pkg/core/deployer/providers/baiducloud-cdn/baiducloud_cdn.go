@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
-type BaiduCloudCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 百度智能云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 百度智能云 SecretAccessKey。
@@ -22,25 +22,17 @@ type BaiduCloudCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type BaiduCloudCDNDeployer struct {
-	config    *BaiduCloudCDNDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *bceCdn.Client
 }
 
-var _ deployer.Deployer = (*BaiduCloudCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *BaiduCloudCDNDeployerConfig) (*BaiduCloudCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *BaiduCloudCDNDeployerConfig, logger logger.Logger) (*BaiduCloudCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey)
@@ -48,14 +40,19 @@ func NewWithLogger(config *BaiduCloudCDNDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &BaiduCloudCDNDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *BaiduCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 修改域名证书
 	// REF: https://cloud.baidu.com/doc/CDN/s/qjzuz2hp8
 	putCertResp, err := d.sdkClient.PutCert(

@@ -9,28 +9,28 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type WeComNotifierConfig struct {
+type NotifierConfig struct {
 	// 企业微信机器人 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
 }
 
-type WeComNotifier struct {
-	config *WeComNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*WeComNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *WeComNotifierConfig) (*WeComNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &WeComNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *WeComNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv := notifyHttp.New()
 
 	srv.AddReceivers(&notifyHttp.Webhook{

@@ -23,19 +23,19 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 	*/
 	switch channel {
 	case domain.NotifyChannelTypeBark:
-		return pBark.New(&pBark.BarkNotifierConfig{
+		return pBark.NewNotifier(&pBark.NotifierConfig{
 			DeviceKey: maps.GetValueAsString(channelConfig, "deviceKey"),
 			ServerUrl: maps.GetValueAsString(channelConfig, "serverUrl"),
 		})
 
 	case domain.NotifyChannelTypeDingTalk:
-		return pDingTalk.New(&pDingTalk.DingTalkNotifierConfig{
+		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
 			AccessToken: maps.GetValueAsString(channelConfig, "accessToken"),
 			Secret:      maps.GetValueAsString(channelConfig, "secret"),
 		})
 
 	case domain.NotifyChannelTypeEmail:
-		return pEmail.New(&pEmail.EmailNotifierConfig{
+		return pEmail.NewNotifier(&pEmail.NotifierConfig{
 			SmtpHost:        maps.GetValueAsString(channelConfig, "smtpHost"),
 			SmtpPort:        maps.GetValueAsInt32(channelConfig, "smtpPort"),
 			SmtpTLS:         maps.GetValueOrDefaultAsBool(channelConfig, "smtpTLS", true),
@@ -46,28 +46,28 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 		})
 
 	case domain.NotifyChannelTypeLark:
-		return pLark.New(&pLark.LarkNotifierConfig{
+		return pLark.NewNotifier(&pLark.NotifierConfig{
 			WebhookUrl: maps.GetValueAsString(channelConfig, "webhookUrl"),
 		})
 
 	case domain.NotifyChannelTypeServerChan:
-		return pServerChan.New(&pServerChan.ServerChanNotifierConfig{
+		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
 			Url: maps.GetValueAsString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeTelegram:
-		return pTelegram.New(&pTelegram.TelegramNotifierConfig{
+		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
 			ApiToken: maps.GetValueAsString(channelConfig, "apiToken"),
 			ChatId:   maps.GetValueAsInt64(channelConfig, "chatId"),
 		})
 
 	case domain.NotifyChannelTypeWebhook:
-		return pWebhook.New(&pWebhook.WebhookNotifierConfig{
+		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
 			Url: maps.GetValueAsString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeWeCom:
-		return pWeCom.New(&pWeCom.WeComNotifierConfig{
+		return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
 			WebhookUrl: maps.GetValueAsString(channelConfig, "webhookUrl"),
 		})
 	}

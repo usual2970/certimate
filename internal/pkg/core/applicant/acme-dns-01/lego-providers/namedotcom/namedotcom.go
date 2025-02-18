@@ -7,14 +7,14 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/namedotcom"
 )
 
-type NameDotComApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	Username              string `json:"username"`
 	ApiToken              string `json:"apiToken"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *NameDotComApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

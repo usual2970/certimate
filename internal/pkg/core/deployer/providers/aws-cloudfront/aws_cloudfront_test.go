@@ -56,11 +56,11 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DISTRIBUTIONID: %v", fDistribuitionId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.AWSCloudFrontDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			SecretAccessKey: fSecretAccessKey,
 			Region:          fRegion,
-			DistribuitionId: fDistribuitionId,
+			DistributionId:  fDistribuitionId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

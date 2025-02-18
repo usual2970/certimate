@@ -38,7 +38,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("URL: %v", fUrl),
 		}, "\n"))
 
-		notifier, err := provider.New(&provider.ServerChanNotifierConfig{
+		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			Url: fUrl,
 		})
 		if err != nil {

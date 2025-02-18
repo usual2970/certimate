@@ -8,28 +8,28 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type LarkNotifierConfig struct {
+type NotifierConfig struct {
 	// 飞书机器人 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
 }
 
-type LarkNotifier struct {
-	config *LarkNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*LarkNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *LarkNotifierConfig) (*LarkNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &LarkNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *LarkNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv := lark.NewWebhookService(n.config.WebhookUrl)
 
 	err = srv.Send(ctx, subject, message)

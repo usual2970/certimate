@@ -17,7 +17,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
-type AliyunWAFDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -28,26 +28,18 @@ type AliyunWAFDeployerConfig struct {
 	InstanceId string `json:"instanceId"`
 }
 
-type AliyunWAFDeployer struct {
-	config      *AliyunWAFDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *aliyunWaf.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AliyunWAFDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunWAFDeployerConfig) (*AliyunWAFDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunWAFDeployerConfig, logger logger.Logger) (*AliyunWAFDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -60,15 +52,20 @@ func NewWithLogger(config *AliyunWAFDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AliyunWAFDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AliyunWAFDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.InstanceId == "" {
 		return nil, errors.New("config `instanceId` is required")
 	}

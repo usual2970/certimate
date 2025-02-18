@@ -7,13 +7,13 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/gcore"
 )
 
-type GcoreApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	ApiToken              string `json:"apiToken"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *GcoreApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

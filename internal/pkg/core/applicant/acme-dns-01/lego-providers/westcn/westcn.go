@@ -7,14 +7,14 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/westcn"
 )
 
-type WestcnApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	Username              string `json:"username"`
 	ApiPassword           string `json:"apiPassword"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *WestcnApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

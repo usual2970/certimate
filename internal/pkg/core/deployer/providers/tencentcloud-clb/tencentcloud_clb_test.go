@@ -64,7 +64,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
@@ -100,7 +100,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("LOADBALANCERID: %v", fLoadbalancerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
@@ -135,7 +135,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,
@@ -172,7 +172,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:       fSecretId,
 			SecretKey:      fSecretKey,
 			Region:         fRegion,

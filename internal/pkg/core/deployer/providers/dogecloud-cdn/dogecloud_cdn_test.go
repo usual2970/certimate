@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.DogeCloudCDNDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKey: fAccessKey,
 			SecretKey: fSecretKey,
 			Domain:    fDomain,

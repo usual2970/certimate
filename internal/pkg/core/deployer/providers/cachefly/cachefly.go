@@ -11,30 +11,22 @@ import (
 	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cachefly-sdk"
 )
 
-type CacheFlyDeployerConfig struct {
+type DeployerConfig struct {
 	// CacheFly API Token。
 	ApiToken string `json:"apiToken"`
 }
 
-type CacheFlyDeployer struct {
-	config    *CacheFlyDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *cfsdk.Client
 }
 
-var _ deployer.Deployer = (*CacheFlyDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *CacheFlyDeployerConfig) (*CacheFlyDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *CacheFlyDeployerConfig, logger logger.Logger) (*CacheFlyDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -42,14 +34,19 @@ func NewWithLogger(config *CacheFlyDeployerConfig, logger logger.Logger) (*Cache
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &CacheFlyDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *CacheFlyDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书
 	createCertificateReq := &cfsdk.CreateCertificateRequest{
 		Certificate:    certPem,

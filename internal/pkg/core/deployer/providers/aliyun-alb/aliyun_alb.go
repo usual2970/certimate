@@ -21,7 +21,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
-type AliyunALBDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -41,31 +41,23 @@ type AliyunALBDeployerConfig struct {
 	Domain string `json:"domain,omitempty"`
 }
 
-type AliyunALBDeployer struct {
-	config      *AliyunALBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AliyunALBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
 	alb *aliyunAlb.Client
 	cas *aliyunCas.Client
 }
 
-func New(config *AliyunALBDeployerConfig) (*AliyunALBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*AliyunALBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -78,15 +70,20 @@ func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AliyunALBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CAS
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -114,7 +111,7 @@ func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -213,7 +210,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 	return nil
 }
 
-func (d *AliyunALBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}
@@ -226,7 +223,7 @@ func (d *AliyunALBDeployer) deployToListener(ctx context.Context, cloudCertId st
 	return nil
 }
 
-func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
+func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getlistenerattribute
 	getListenerAttributeReq := &aliyunAlb.GetListenerAttributeRequest{

@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.VolcEngineCLBDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,

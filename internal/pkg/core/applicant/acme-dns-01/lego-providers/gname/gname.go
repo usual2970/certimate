@@ -8,14 +8,14 @@ import (
 	internal "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname/internal"
 )
 
-type GnameApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	AppId                 string `json:"appId"`
 	AppKey                string `json:"appKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *GnameApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
 		panic("config is nil")
 	}

@@ -48,7 +48,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("RESOURCEID: %v", fResourceId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.GcoreCDNDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiToken:   fApiToken,
 			ResourceId: fResourceId,
 		})

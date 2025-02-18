@@ -15,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
-type AliyunCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -24,25 +24,17 @@ type AliyunCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type AliyunCDNDeployer struct {
-	config    *AliyunCDNDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *aliyunCdn.Client
 }
 
-var _ deployer.Deployer = (*AliyunCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunCDNDeployerConfig) (*AliyunCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*AliyunCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret)
@@ -50,14 +42,19 @@ func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &AliyunCDNDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *AliyunCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// "*.example.com" → ".example.com"，适配阿里云 CDN 要求的泛域名格式
 	domain := strings.TrimPrefix(d.config.Domain, "*")
 

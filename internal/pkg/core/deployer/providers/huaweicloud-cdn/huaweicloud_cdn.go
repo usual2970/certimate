@@ -16,7 +16,7 @@ import (
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
-type HuaweiCloudCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 华为云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
@@ -27,26 +27,18 @@ type HuaweiCloudCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type HuaweiCloudCDNDeployer struct {
-	config      *HuaweiCloudCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *hcCdn.CdnClient
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*HuaweiCloudCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *HuaweiCloudCDNDeployerConfig) (*HuaweiCloudCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger logger.Logger) (*HuaweiCloudCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(
@@ -66,15 +58,20 @@ func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger logger.Logger) (
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &HuaweiCloudCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *HuaweiCloudCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

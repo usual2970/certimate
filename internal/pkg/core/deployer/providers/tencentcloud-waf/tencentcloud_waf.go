@@ -15,7 +15,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudWAFDeployerConfig struct {
+type DeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -30,26 +30,18 @@ type TencentCloudWAFDeployerConfig struct {
 	InstanceId string `json:"instanceId"`
 }
 
-type TencentCloudWAFDeployer struct {
-	config      *TencentCloudWAFDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *tcWaf.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudWAFDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *TencentCloudWAFDeployerConfig) (*TencentCloudWAFDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *TencentCloudWAFDeployerConfig, logger logger.Logger) (*TencentCloudWAFDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.SecretId, config.SecretKey, config.Region)
@@ -65,15 +57,20 @@ func NewWithLogger(config *TencentCloudWAFDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudWAFDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *TencentCloudWAFDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.Domain == "" {
 		return nil, errors.New("config `domain` is required")
 	}

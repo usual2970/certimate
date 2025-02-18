@@ -17,7 +17,7 @@ import (
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudCLBDeployerConfig struct {
+type DeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -37,31 +37,23 @@ type TencentCloudCLBDeployerConfig struct {
 	Domain string `json:"domain,omitempty"`
 }
 
-type TencentCloudCLBDeployer struct {
-	config      *TencentCloudCLBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudCLBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
 	ssl *tcSsl.Client
 	clb *tcClb.Client
 }
 
-func New(config *TencentCloudCLBDeployerConfig) (*TencentCloudCLBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) (*TencentCloudCLBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey, config.Region)
@@ -77,15 +69,20 @@ func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudCLBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -123,7 +120,7 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -154,7 +151,7 @@ func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloud
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -201,7 +198,7 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -217,7 +214,7 @@ func (d *TencentCloudCLBDeployer) deployToListener(ctx context.Context, cloudCer
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToRuleDomain(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToRuleDomain(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -248,7 +245,7 @@ func (d *TencentCloudCLBDeployer) deployToRuleDomain(ctx context.Context, cloudC
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) modifyListenerCertificate(ctx context.Context, cloudLoadbalancerId, cloudListenerId, cloudCertId string) error {
+func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudLoadbalancerId, cloudListenerId, cloudCertId string) error {
 	// 查询监听器列表
 	// REF: https://cloud.tencent.com/document/api/214/30686
 	describeListenersReq := tcClb.NewDescribeListenersRequest()

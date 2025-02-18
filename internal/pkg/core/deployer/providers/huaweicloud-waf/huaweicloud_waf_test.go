@@ -59,7 +59,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("RESOURCETYPE: %v", fResourceType),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.HuaweiCloudWAFDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			SecretAccessKey: fSecretAccessKey,
 			Region:          fRegion,

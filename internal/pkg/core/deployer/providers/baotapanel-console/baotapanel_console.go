@@ -12,7 +12,7 @@ import (
 	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
 )
 
-type BaotaPanelConsoleDeployerConfig struct {
+type DeployerConfig struct {
 	// 宝塔面板地址。
 	ApiUrl string `json:"apiUrl"`
 	// 宝塔面板接口密钥。
@@ -21,25 +21,17 @@ type BaotaPanelConsoleDeployerConfig struct {
 	AutoRestart bool `json:"autoRestart"`
 }
 
-type BaotaPanelConsoleDeployer struct {
-	config    *BaotaPanelConsoleDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *btsdk.Client
 }
 
-var _ deployer.Deployer = (*BaotaPanelConsoleDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *BaotaPanelConsoleDeployerConfig) (*BaotaPanelConsoleDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *BaotaPanelConsoleDeployerConfig, logger logger.Logger) (*BaotaPanelConsoleDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
-	}
-
-	if logger == nil {
-		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
@@ -47,14 +39,19 @@ func NewWithLogger(config *BaotaPanelConsoleDeployerConfig, logger logger.Logger
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &BaotaPanelConsoleDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *BaotaPanelConsoleDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
 	configSavePanelSSLReq := &btsdk.ConfigSavePanelSSLRequest{
 		PrivateKey:  privkeyPem,
