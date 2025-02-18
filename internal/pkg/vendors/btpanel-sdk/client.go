@@ -74,10 +74,10 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("baota api error: failed to parse response: %w", err)
 	} else if errstatus := result.GetStatus(); errstatus != nil && !*errstatus {
-		if result.GetMsg() == nil {
+		if result.GetMessage() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {
-			return fmt.Errorf("baota api error: %s", *result.GetMsg())
+			return fmt.Errorf("baota api error: %s", *result.GetMessage())
 		}
 	}
 

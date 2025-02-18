@@ -42,3 +42,29 @@ func (c *Client) SystemServiceAdmin(req *SystemServiceAdminRequest) (*SystemServ
 	}
 	return &result, nil
 }
+
+func (c *Client) SSLCertSaveCert(req *SSLCertSaveCertRequest) (*SSLCertSaveCertResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := SSLCertSaveCertResponse{}
+	err := c.sendRequestWithResult("/ssl/cert/save_cert", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func (c *Client) SSLSetBatchCertToSite(req *SSLSetBatchCertToSiteRequest) (*SSLSetBatchCertToSiteResponse, error) {
+	params := make(map[string]any)
+	jsonData, _ := json.Marshal(req)
+	json.Unmarshal(jsonData, &params)
+
+	result := SSLSetBatchCertToSiteResponse{}
+	err := c.sendRequestWithResult("/ssl?action=SetBatchCertToSite", params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}

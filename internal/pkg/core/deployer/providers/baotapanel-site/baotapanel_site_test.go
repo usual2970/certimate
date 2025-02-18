@@ -16,6 +16,7 @@ var (
 	fInputKeyPath  string
 	fApiUrl        string
 	fApiKey        string
+	fSiteType      string
 	fSiteName      string
 )
 
@@ -26,6 +27,7 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
+	flag.StringVar(&fSiteType, argsPrefix+"SITETYPE", "", "")
 	flag.StringVar(&fSiteName, argsPrefix+"SITENAME", "", "")
 }
 
@@ -37,6 +39,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIURL="http://127.0.0.1:8888" \
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIKEY="your-api-key" \
+	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITETYPE="php" \
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITENAME="your-site-name"
 */
 func TestDeploy(t *testing.T) {
@@ -49,6 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
+			fmt.Sprintf("SITETYPE: %v", fSiteType),
 			fmt.Sprintf("SITENAME: %v", fSiteName),
 		}, "\n"))
 

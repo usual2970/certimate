@@ -70,6 +70,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
     const formSchema = z.object({
       domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
+        if (!v) return false;
         return String(v)
           .split(MULTIPLE_INPUT_DELIMITER)
           .every((e) => validDomainName(e, { allowWildcard: true }));

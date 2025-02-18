@@ -258,9 +258,11 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 
 			case domain.DeployProviderTypeBaotaPanelSite:
 				deployer, err := pBaotaPanelSite.NewWithLogger(&pBaotaPanelSite.BaotaPanelSiteDeployerConfig{
-					ApiUrl:   access.ApiUrl,
-					ApiKey:   access.ApiKey,
-					SiteName: maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+					ApiUrl:    access.ApiUrl,
+					ApiKey:    access.ApiKey,
+					SiteType:  maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "siteType", "other"),
+					SiteName:  maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+					SiteNames: slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
 				}, logger)
 				return deployer, logger, err
 

@@ -44,6 +44,7 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
       .nonempty(t("workflow_node.deploy.form.aliyun_cas_deploy_region.placeholder"))
       .trim(),
     resourceIds: z.string({ message: t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.placeholder") }).refine((v) => {
+      if (!v) return false;
       return String(v)
         .split(MULTIPLE_INPUT_DELIMITER)
         .every((e) => /^[1-9]\d*$/.test(e));
