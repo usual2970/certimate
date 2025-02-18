@@ -135,6 +135,7 @@ The following hosting providers are supported:
 | [BaoTa Panel](https://www.bt.cn/)               | Supports deployment to BaoTa Panel sites                                         |
 | [AWS](https://aws.amazon.com/)                  | Supports deployment to AWS CloudFront                                            |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                              |
+| [CacheFly](https://www.cachefly.com/)           | Supports deployment to CacheFly CDN                                              |
 | [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                        |
 | [Gcore](https://gcore.com/)                     | Supports deployment to Gcore CDN                                                 |
 

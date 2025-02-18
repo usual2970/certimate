@@ -17,6 +17,7 @@ import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBaishanConfig from "./AccessFormBaishanConfig";
 import AccessFormBaotaPanelConfig from "./AccessFormBaotaPanelConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
+import AccessFormCacheFlyConfig from "./AccessFormCacheFlyConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
@@ -109,6 +110,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormBaotaPanelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BYTEPLUS:
         return <AccessFormBytePlusConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.CACHEFLY:
+        return <AccessFormCacheFlyConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CLOUDFLARE:
         return <AccessFormCloudflareConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CLOUDNS:

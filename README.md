@@ -136,6 +136,7 @@ make local.run
 | [宝塔面板](https://www.bt.cn/)          | 可部署到宝塔面板                                                         |
 | [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront                                                  |
 | [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN                                                    |
+| [CacheFly](https://www.cachefly.com/)   | 可部署到 CacheFly CDN                                                    |
 | [Edgio](https://edg.io/)                | 可部署到 Edgio Applications                                              |
 | [Gcore](https://gcore.com/)             | 可部署到 Gcore CDN                                                       |
 

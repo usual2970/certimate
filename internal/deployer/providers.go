@@ -22,6 +22,7 @@ import (
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
+	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pGcoreCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/gcore-cdn"
@@ -286,6 +287,19 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, logger.Logger,
 			default:
 				break
 			}
+		}
+
+	case domain.DeployProviderTypeCacheFly:
+		{
+			access := domain.AccessConfigForCacheFly{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pCacheFly.NewWithLogger(&pCacheFly.CacheFlyDeployerConfig{
+				ApiToken: access.ApiToken,
+			}, logger)
+			return deployer, logger, err
 		}
 
 	case domain.DeployProviderTypeDogeCloudCDN:

@@ -67,6 +67,10 @@ type AccessConfigForBytePlus struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForCacheFly struct {
+	ApiToken string `json:"apiToken"`
+}
+
 type AccessConfigForCloudflare struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }
@@ -87,7 +91,7 @@ type AccessConfigForEdgio struct {
 }
 
 type AccessConfigForGcore struct {
-	ApiToken  string `json:"apiToken"`
+	ApiToken string `json:"apiToken"`
 }
 
 type AccessConfigForGname struct {

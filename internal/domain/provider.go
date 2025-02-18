@@ -19,8 +19,8 @@ const (
 	AccessProviderTypeBaishan      = AccessProviderType("baishan")
 	AccessProviderTypeBaotaPanel   = AccessProviderType("baotapanel")
 	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
-	AccessProviderTypeCacheFly     = AccessProviderType("cachefly") // CacheFly（预留）
-	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly")   // Cdnly（预留）
+	AccessProviderTypeCacheFly     = AccessProviderType("cachefly")
+	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly") // Cdnly（预留）
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
 	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud") // 移动云（预留）
@@ -112,6 +112,7 @@ const (
 	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")
 	DeployProviderTypeBaotaPanelSite        = DeployProviderType("baotapanel-site")
 	DeployProviderTypeBytePlusCDN           = DeployProviderType("byteplus-cdn")
+	DeployProviderTypeCacheFly              = DeployProviderType("cachefly")
 	DeployProviderTypeDogeCloudCDN          = DeployProviderType("dogecloud-cdn")
 	DeployProviderTypeEdgioApplications     = DeployProviderType("edgio-applications")
 	DeployProviderTypeGcoreCDN              = DeployProviderType("gcore-cdn")

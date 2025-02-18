@@ -61,7 +61,7 @@ func (d *BaotaPanelSiteDeployer) Deploy(ctx context.Context, certPem string, pri
 	// 设置站点 SSL 证书
 	siteSetSSLReq := &btsdk.SiteSetSSLRequest{
 		SiteName:    d.config.SiteName,
-		Type:        "1",
+		Type:        "0",
 		PrivateKey:  privkeyPem,
 		Certificate: certPem,
 	}

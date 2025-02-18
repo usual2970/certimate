@@ -76,9 +76,9 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 		SetFormData(data)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("gname: failed to send request: %w", err)
+		return nil, fmt.Errorf("gname api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("gname: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("gname api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -91,11 +91,9 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("gname: failed to parse response: %w", err)
-	}
-
-	if result.GetCode() != 1 {
-		return fmt.Errorf("gname api error: %s", result.GetMsg())
+		return fmt.Errorf("gname api error: failed to parse response: %w", err)
+	} else if result.GetCode() != 1 {
+		return fmt.Errorf("gname api error: %d - %s", result.GetCode(), result.GetMsg())
 	}
 
 	return nil

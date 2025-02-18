@@ -56,11 +56,9 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 		SetBody(params)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("baota: failed to send request: %w", err)
-	}
-
-	if resp.IsError() {
-		return nil, fmt.Errorf("baota: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("baota api error: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("baota api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -73,10 +71,8 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("baota: failed to parse response: %w", err)
-	}
-
-	if result.GetStatus() != nil && !*result.GetStatus() {
+		return fmt.Errorf("baota api error: failed to parse response: %w", err)
+	} else if result.GetStatus() != nil && !*result.GetStatus() {
 		if result.GetMsg() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {

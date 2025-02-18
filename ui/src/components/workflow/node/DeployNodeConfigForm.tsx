@@ -104,8 +104,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
-        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder"))
-        .refine(() => !!formInst.getFieldValue("provider"), t("workflow_node.deploy.form.provider.placeholder")),
+        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
       providerConfig: z.any(),
       skipOnLastSucceeded: z.boolean().nullish(),
     });
@@ -246,7 +245,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             newValues[key] = undefined;
           }
         }
-        (formInst as FormInstance).setFieldsValue(newValues);
+        formInst.setFieldsValue(newValues);
 
         if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
@@ -296,7 +295,13 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-              <DeployProviderSelect allowClear placeholder={t("workflow_node.deploy.form.provider.placeholder")} showSearch onSelect={handleProviderSelect} />
+              <DeployProviderSelect
+                allowClear
+                disabled
+                placeholder={t("workflow_node.deploy.form.provider.placeholder")}
+                showSearch
+                onSelect={handleProviderSelect}
+              />
             </Form.Item>
 
             <Form.Item className="mb-0">
@@ -378,7 +383,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           </Show>
         </Form>
 
-        <Show when={!!fieldProvider}>
+        <Show when={!!nestedFormEl}>
           <Divider className="my-1">
             <Typography.Text className="text-xs font-normal" type="secondary">
               {t("workflow_node.deploy.form.params_config.label")}
@@ -386,7 +391,9 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           </Divider>
 
           {nestedFormEl}
+        </Show>
 
+        <Show when={!!fieldProvider}>
           <Divider className="my-1">
             <Typography.Text className="text-xs font-normal" type="secondary">
               {t("workflow_node.deploy.form.strategy_config.label")}

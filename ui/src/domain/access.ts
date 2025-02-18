@@ -14,6 +14,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBaishan
       | AccessConfigForBaotaPanel
       | AccessConfigForBytePlus
+      | AccessConfigForCacheFly
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
       | AccessConfigForDogeCloud
@@ -81,6 +82,10 @@ export type AccessConfigForBaotaPanel = {
 export type AccessConfigForBytePlus = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForCacheFly = {
+  apiToken: string;
 };
 
 export type AccessConfigForCloudflare = {

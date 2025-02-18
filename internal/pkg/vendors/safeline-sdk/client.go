@@ -42,11 +42,9 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 		SetBody(params)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("safeline: failed to send request: %w", err)
-	}
-
-	if resp.IsError() {
-		return nil, fmt.Errorf("safeline: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("safeline api error: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("safeline api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -59,14 +57,12 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("safeline: failed to parse response: %w", err)
-	}
-
-	if result.GetErrCode() != nil && *result.GetErrCode() != "" {
+		return fmt.Errorf("safeline api error: failed to parse response: %w", err)
+	} else if result.GetErrCode() != nil && *result.GetErrCode() != "" {
 		if result.GetErrMsg() == nil {
 			return fmt.Errorf("safeline api error: %s", *result.GetErrCode())
 		} else {
-			return fmt.Errorf("safeline api error: %s, %s", *result.GetErrCode(), *result.GetErrMsg())
+			return fmt.Errorf("safeline api error: %s - %s", *result.GetErrCode(), *result.GetErrMsg())
 		}
 	}
 

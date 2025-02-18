@@ -36,12 +36,10 @@ type GetDomainConfigRequest struct {
 
 type GetDomainConfigResponse struct {
 	baseResponse
-	Data []*GetDomainConfigResponseData `json:"data"`
-}
-
-type GetDomainConfigResponseData struct {
-	Domain string        `json:"domain"`
-	Config *DomainConfig `json:"config"`
+	Data []*struct {
+		Domain string        `json:"domain"`
+		Config *DomainConfig `json:"config"`
+	} `json:"data"`
 }
 
 type SetDomainConfigRequest struct {
@@ -51,11 +49,9 @@ type SetDomainConfigRequest struct {
 
 type SetDomainConfigResponse struct {
 	baseResponse
-	Data *SetDomainConfigResponseData `json:"data"`
-}
-
-type SetDomainConfigResponseData struct {
-	Config *DomainConfig `json:"config"`
+	Data *struct {
+		Config *DomainConfig `json:"config"`
+	} `json:"data"`
 }
 
 type DomainCertificate struct {
