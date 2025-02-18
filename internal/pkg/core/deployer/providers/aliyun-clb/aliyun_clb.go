@@ -51,11 +51,11 @@ func New(config *AliyunCLBDeployerConfig) (*AliyunCLBDeployer, error) {
 
 func NewWithLogger(config *AliyunCLBDeployerConfig, logger logger.Logger) (*AliyunCLBDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)

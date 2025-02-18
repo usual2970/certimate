@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -37,7 +36,7 @@ var _ uploader.Uploader = (*AliyunSLBUploader)(nil)
 
 func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

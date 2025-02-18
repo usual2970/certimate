@@ -38,7 +38,7 @@ var _ uploader.Uploader = (*UCloudUSSLUploader)(nil)
 
 func New(config *UCloudUSSLUploaderConfig) (*UCloudUSSLUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey)

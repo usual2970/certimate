@@ -3,7 +3,6 @@ package ssh
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -72,11 +71,11 @@ func New(config *SshDeployerConfig) (*SshDeployer, error) {
 
 func NewWithLogger(config *SshDeployerConfig, logger logger.Logger) (*SshDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	return &SshDeployer{

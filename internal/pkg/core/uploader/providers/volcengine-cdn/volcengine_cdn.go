@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -34,7 +33,7 @@ var _ uploader.Uploader = (*VolcEngineCDNUploader)(nil)
 
 func New(config *VolcEngineCDNUploaderConfig) (*VolcEngineCDNUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := veCdn.NewInstance()

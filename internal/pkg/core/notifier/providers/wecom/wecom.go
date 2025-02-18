@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	notifyHttp "github.com/nikoksr/notify/service/http"
@@ -23,7 +22,7 @@ var _ notifier.Notifier = (*WeComNotifier)(nil)
 
 func New(config *WeComNotifierConfig) (*WeComNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &WeComNotifier{

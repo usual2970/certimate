@@ -58,11 +58,11 @@ func New(config *HuaweiCloudELBDeployerConfig) (*HuaweiCloudELBDeployer, error) 
 
 func NewWithLogger(config *HuaweiCloudELBDeployerConfig, logger logger.Logger) (*HuaweiCloudELBDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)

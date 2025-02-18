@@ -30,11 +30,11 @@ func New(config *CacheFlyDeployerConfig) (*CacheFlyDeployer, error) {
 
 func NewWithLogger(config *CacheFlyDeployerConfig, logger logger.Logger) (*CacheFlyDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -66,6 +66,10 @@ func (d *CacheFlyDeployer) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(apiToken string) (*cfsdk.Client, error) {
+	if apiToken == "" {
+		return nil, errors.New("invalid cachefly api token")
+	}
+
 	client := cfsdk.NewClient(apiToken)
 	return client, nil
 }

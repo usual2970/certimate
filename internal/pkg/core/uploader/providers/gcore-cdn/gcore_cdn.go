@@ -28,7 +28,7 @@ var _ uploader.Uploader = (*GcoreCDNUploader)(nil)
 
 func New(config *GcoreCDNUploaderConfig) (*GcoreCDNUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -70,6 +70,10 @@ func (u *GcoreCDNUploader) Upload(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(apiToken string) (*gsslcerts.Service, error) {
+	if apiToken == "" {
+		return nil, errors.New("invalid gcore api token")
+	}
+
 	requester := gprovider.NewClient(
 		gcoresdk.BASE_URL,
 		gprovider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),

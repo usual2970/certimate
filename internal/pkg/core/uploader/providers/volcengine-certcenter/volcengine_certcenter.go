@@ -2,7 +2,6 @@ package volcenginecertcenter
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
@@ -30,7 +29,7 @@ var _ uploader.Uploader = (*VolcEngineCertCenterUploader)(nil)
 
 func New(config *VolcEngineCertCenterUploaderConfig) (*VolcEngineCertCenterUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)

@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -39,11 +38,11 @@ func New(config *AliyunCDNDeployerConfig) (*AliyunCDNDeployer, error) {
 
 func NewWithLogger(config *AliyunCDNDeployerConfig, logger logger.Logger) (*AliyunCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret)

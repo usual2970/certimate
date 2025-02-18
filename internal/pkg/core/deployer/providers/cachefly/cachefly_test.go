@@ -31,7 +31,7 @@ Shell command to run this test:
 	go test -v ./cachefly_test.go -args \
 	--CERTIMATE_DEPLOYER_CACHEFLY_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_CACHEFLY_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_CACHEFLY_APITOKEN="your-baota-panel-key"
+	--CERTIMATE_DEPLOYER_CACHEFLY_APITOKEN="your-api-token"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

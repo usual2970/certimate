@@ -1,7 +1,6 @@
 ﻿package acmehttpreq
 
 import (
-	"errors"
 	"net/url"
 	"time"
 
@@ -19,7 +18,7 @@ type ACMEHttpReqApplicantConfig struct {
 
 func NewChallengeProvider(config *ACMEHttpReqApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	endpoint, _ := url.Parse(config.Endpoint)

@@ -5,7 +5,7 @@ import { z } from "zod";
 
 type DeployNodeConfigFormAliyunESAConfigFieldValues = Nullish<{
   region: string;
-  siteId: string;
+  siteId: string | number;
 }>;
 
 export type DeployNodeConfigFormAliyunESAConfigProps = {
@@ -34,10 +34,9 @@ const DeployNodeConfigFormAliyunESAConfig = ({
       .string({ message: t("workflow_node.deploy.form.aliyun_esa_region.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aliyun_esa_region.placeholder"))
       .trim(),
-    siteId: z
-      .string({ message: t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder") })
-      .regex(/^[1-9]\d*$/, t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder"))
-      .trim(),
+    siteId: z.union([z.string(), z.number()]).refine((v) => {
+      return /^\d+$/.test(v + "") && +v > 0;
+    }, t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -69,7 +68,7 @@ const DeployNodeConfigFormAliyunESAConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_esa_site_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder")} />
+        <Input type="number" placeholder={t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder")} />
       </Form.Item>
     </Form>
   );

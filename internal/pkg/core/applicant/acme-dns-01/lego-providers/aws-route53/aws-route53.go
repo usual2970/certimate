@@ -1,7 +1,6 @@
 package awsroute53
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -19,7 +18,7 @@ type AWSRoute53ApplicantConfig struct {
 
 func NewChallengeProvider(config *AWSRoute53ApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := route53.NewDefaultConfig()

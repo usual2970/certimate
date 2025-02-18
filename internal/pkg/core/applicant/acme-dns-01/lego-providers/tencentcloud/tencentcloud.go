@@ -1,7 +1,6 @@
 package tencentcloud
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -17,7 +16,7 @@ type TencentCloudApplicantConfig struct {
 
 func NewChallengeProvider(config *TencentCloudApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := tencentcloud.NewDefaultConfig()

@@ -39,11 +39,11 @@ func New(config *VolcEngineCDNDeployerConfig) (*VolcEngineCDNDeployer, error) {
 
 func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*VolcEngineCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client := veCdn.NewInstance()

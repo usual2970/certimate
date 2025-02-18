@@ -30,11 +30,9 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params map[string]any) (*resty.Response, error) {
-	url := "https://api.cachefly.com/api/2.5" + path
-
 	req := c.client.R()
 	req.Method = method
-	req.URL = url
+	req.URL = "https://api.cachefly.com/api/2.5" + path
 	req = req.SetHeader("x-cf-authorization", "Bearer "+c.apiToken)
 	if strings.EqualFold(method, http.MethodGet) {
 		data := make(map[string]string)

@@ -42,11 +42,11 @@ func New(config *VolcEngineImageXDeployerConfig) (*VolcEngineImageXDeployer, err
 
 func NewWithLogger(config *VolcEngineImageXDeployerConfig, logger logger.Logger) (*VolcEngineImageXDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)

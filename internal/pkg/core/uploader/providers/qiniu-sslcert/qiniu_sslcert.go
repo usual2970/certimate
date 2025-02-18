@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -30,7 +29,7 @@ var _ uploader.Uploader = (*QiniuSSLCertUploader)(nil)
 
 func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

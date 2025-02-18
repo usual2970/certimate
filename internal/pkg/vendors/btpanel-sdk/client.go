@@ -14,14 +14,15 @@ import (
 type Client struct {
 	apiHost string
 	apiKey  string
-	client  *resty.Client
+
+	client *resty.Client
 }
 
 func NewClient(apiHost, apiKey string) *Client {
 	client := resty.New()
 
 	return &Client{
-		apiHost: apiHost,
+		apiHost: strings.TrimRight(apiHost, "/"),
 		apiKey:  apiKey,
 		client:  client,
 	}
@@ -50,7 +51,7 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 	params["request_time"] = timestamp
 	params["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
 
-	url := strings.TrimRight(c.apiHost, "/") + path
+	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(params)
@@ -72,7 +73,7 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("baota api error: failed to parse response: %w", err)
-	} else if result.GetStatus() != nil && !*result.GetStatus() {
+	} else if errstatus := result.GetStatus(); errstatus != nil && !*errstatus {
 		if result.GetMsg() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {

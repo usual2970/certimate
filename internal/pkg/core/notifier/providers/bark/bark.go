@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/nikoksr/notify"
 	"github.com/nikoksr/notify/service/bark"
@@ -26,7 +25,7 @@ var _ notifier.Notifier = (*BarkNotifier)(nil)
 
 func New(config *BarkNotifierConfig) (*BarkNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &BarkNotifier{

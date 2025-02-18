@@ -7,7 +7,7 @@ import Show from "@/components/Show";
 
 type DeployNodeConfigFormSafeLineConfigFieldValues = Nullish<{
   resourceType: string;
-  certificateId?: string;
+  certificateId?: string | number;
 }>;
 
 export type DeployNodeConfigFormSafeLineConfigProps = {
@@ -34,19 +34,10 @@ const DeployNodeConfigFormSafeLineConfig = ({ form: formInst, formName, disabled
     resourceType: z.literal(RESOURCE_TYPE_CERTIFICATE, {
       message: t("workflow_node.deploy.form.safeline_resource_type.placeholder"),
     }),
-    region: z
-      .string({ message: t("workflow_node.deploy.form.safeline_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.safeline_region.placeholder"))
-      .trim(),
-    certificateId: z
-      .string()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
-      .nullish()
-      .refine((v) => {
-        if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;
-        return /^\d+$/.test(v!);
-      }, t("workflow_node.deploy.form.safeline_certificate_id.placeholder")),
+    certificateId: z.union([z.string(), z.number().int()]).refine((v) => {
+      if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;
+      return /^\d+$/.test(v + "") && +v > 0;
+    }, t("workflow_node.deploy.form.safeline_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -75,7 +66,7 @@ const DeployNodeConfigFormSafeLineConfig = ({ form: formInst, formName, disabled
 
       <Show when={fieldResourceType === RESOURCE_TYPE_CERTIFICATE}>
         <Form.Item name="certificateId" label={t("workflow_node.deploy.form.safeline_certificate_id.label")} rules={[formRule]}>
-          <Input placeholder={t("workflow_node.deploy.form.safeline_certificate_id.placeholder")} />
+          <Input type="number" placeholder={t("workflow_node.deploy.form.safeline_certificate_id.placeholder")} />
         </Form.Item>
       </Show>
     </Form>

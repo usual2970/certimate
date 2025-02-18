@@ -71,6 +71,12 @@ type AccessConfigForCacheFly struct {
 	ApiToken string `json:"apiToken"`
 }
 
+type AccessConfigForCdnfly struct {
+	ApiUrl    string `json:"apiUrl"`
+	ApiKey    string `json:"apiKey"`
+	ApiSecret string `json:"apiSecret"`
+}
+
 type AccessConfigForCloudflare struct {
 	DnsApiToken string `json:"dnsApiToken"`
 }

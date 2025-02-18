@@ -2,7 +2,6 @@ package volcenginelive
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -31,7 +30,7 @@ var _ uploader.Uploader = (*VolcEngineLiveUploader)(nil)
 
 func New(config *VolcEngineLiveUploaderConfig) (*VolcEngineLiveUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := veLive.NewInstance()

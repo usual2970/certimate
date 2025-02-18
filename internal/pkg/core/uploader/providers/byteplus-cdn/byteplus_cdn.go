@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -33,7 +32,7 @@ var _ uploader.Uploader = (*ByteplusCDNUploader)(nil)
 
 func New(config *ByteplusCDNUploaderConfig) (*ByteplusCDNUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := bpCdn.NewInstance()

@@ -15,6 +15,7 @@ import (
 type Client struct {
 	appId  string
 	appKey string
+
 	client *resty.Client
 }
 
@@ -92,8 +93,8 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("gname api error: failed to parse response: %w", err)
-	} else if result.GetCode() != 1 {
-		return fmt.Errorf("gname api error: %d - %s", result.GetCode(), result.GetMsg())
+	} else if errcode := result.GetCode(); errcode != 1 {
+		return fmt.Errorf("gname api error: %d - %s", errcode, result.GetMsg())
 	}
 
 	return nil

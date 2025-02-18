@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/nikoksr/notify/service/dingding"
 
@@ -24,7 +23,7 @@ var _ notifier.Notifier = (*DingTalkNotifier)(nil)
 
 func New(config *DingTalkNotifierConfig) (*DingTalkNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &DingTalkNotifier{

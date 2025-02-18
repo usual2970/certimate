@@ -39,7 +39,7 @@ var _ uploader.Uploader = (*HuaweiCloudELBUploader)(nil)
 
 func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

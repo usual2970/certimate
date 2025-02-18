@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 
 	xerrors "github.com/pkg/errors"
 
@@ -38,11 +39,11 @@ func New(config *SafeLineDeployerConfig) (*SafeLineDeployer, error) {
 
 func NewWithLogger(config *SafeLineDeployerConfig, logger logger.Logger) (*SafeLineDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiToken)
@@ -97,6 +98,14 @@ func (d *SafeLineDeployer) deployToCertificate(ctx context.Context, certPem stri
 }
 
 func createSdkClient(apiUrl, apiToken string) (*safelinesdk.Client, error) {
+	if _, err := url.Parse(apiUrl); err != nil {
+		return nil, errors.New("invalid safeline api url")
+	}
+
+	if apiToken == "" {
+		return nil, errors.New("invalid safeline api token")
+	}
+
 	client := safelinesdk.NewClient(apiUrl, apiToken)
 	return client, nil
 }

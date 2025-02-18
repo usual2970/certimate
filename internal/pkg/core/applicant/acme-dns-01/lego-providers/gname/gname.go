@@ -1,7 +1,6 @@
 package gname
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -18,7 +17,7 @@ type GnameApplicantConfig struct {
 
 func NewChallengeProvider(config *GnameApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := internal.NewDefaultConfig()

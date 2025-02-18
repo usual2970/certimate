@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/nikoksr/notify/service/lark"
 
@@ -22,7 +21,7 @@ var _ notifier.Notifier = (*LarkNotifier)(nil)
 
 func New(config *LarkNotifierConfig) (*LarkNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &LarkNotifier{

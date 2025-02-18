@@ -39,11 +39,11 @@ func New(config *AliyunOSSDeployerConfig) (*AliyunOSSDeployer, error) {
 
 func NewWithLogger(config *AliyunOSSDeployerConfig, logger logger.Logger) (*AliyunOSSDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)

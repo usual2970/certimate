@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
 	hcCdn "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/cdn/v2"
@@ -43,11 +42,11 @@ func New(config *HuaweiCloudCDNDeployerConfig) (*HuaweiCloudCDNDeployer, error) 
 
 func NewWithLogger(config *HuaweiCloudCDNDeployerConfig, logger logger.Logger) (*HuaweiCloudCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(

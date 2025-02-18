@@ -1,7 +1,6 @@
 package gcore
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -16,7 +15,7 @@ type GcoreApplicantConfig struct {
 
 func NewChallengeProvider(config *GcoreApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := gcore.NewDefaultConfig()

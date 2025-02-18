@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/pili"
@@ -39,11 +38,11 @@ func New(config *QiniuPiliDeployerConfig) (*QiniuPiliDeployer, error) {
 
 func NewWithLogger(config *QiniuPiliDeployerConfig, logger logger.Logger) (*QiniuPiliDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	manager := pili.NewManager(pili.ManagerConfig{AccessKey: config.AccessKey, SecretKey: config.SecretKey})

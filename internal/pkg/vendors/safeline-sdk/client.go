@@ -12,14 +12,15 @@ import (
 type Client struct {
 	apiHost  string
 	apiToken string
-	client   *resty.Client
+
+	client *resty.Client
 }
 
 func NewClient(apiHost, apiToken string) *Client {
 	client := resty.New()
 
 	return &Client{
-		apiHost:  apiHost,
+		apiHost:  strings.TrimRight(apiHost, "/"),
 		apiToken: apiToken,
 		client:   client,
 	}
@@ -35,7 +36,7 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 		params = make(map[string]any)
 	}
 
-	url := strings.TrimRight(c.apiHost, "/") + path
+	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
 		SetHeader("X-SLCE-API-TOKEN", c.apiToken).
@@ -58,11 +59,11 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("safeline api error: failed to parse response: %w", err)
-	} else if result.GetErrCode() != nil && *result.GetErrCode() != "" {
+	} else if errcode := result.GetErrCode(); errcode != nil && *errcode != "" {
 		if result.GetErrMsg() == nil {
-			return fmt.Errorf("safeline api error: %s", *result.GetErrCode())
+			return fmt.Errorf("safeline api error: %s", *errcode)
 		} else {
-			return fmt.Errorf("safeline api error: %s - %s", *result.GetErrCode(), *result.GetErrMsg())
+			return fmt.Errorf("safeline api error: %s - %s", *errcode, *result.GetErrMsg())
 		}
 	}
 

@@ -39,11 +39,11 @@ func New(config *BytePlusCDNDeployerConfig) (*BytePlusCDNDeployer, error) {
 
 func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*BytePlusCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client := bpCdn.NewInstance()

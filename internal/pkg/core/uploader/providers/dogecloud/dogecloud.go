@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -28,7 +27,7 @@ var _ uploader.Uploader = (*DogeCloudUploader)(nil)
 
 func New(config *DogeCloudUploaderConfig) (*DogeCloudUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

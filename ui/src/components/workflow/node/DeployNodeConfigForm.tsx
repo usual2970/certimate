@@ -31,6 +31,7 @@ import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanC
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
 import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaotaPanelSiteConfig";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
+import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
 import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNConfig";
@@ -163,6 +164,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormBaotaPanelSiteConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.CDNFLY:
+          return <DeployNodeConfigFormCdnflyConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.DOGECLOUD_CDN:
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.EDGIO_APPLICATIONS:
@@ -297,7 +300,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeployProviderSelect
                 allowClear
-                disabled
+                disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
                 showSearch
                 onSelect={handleProviderSelect}

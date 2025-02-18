@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -39,11 +38,11 @@ func New(config *TencentCloudCSSDeployerConfig) (*TencentCloudCSSDeployer, error
 
 func NewWithLogger(config *TencentCloudCSSDeployerConfig, logger logger.Logger) (*TencentCloudCSSDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.SecretId, config.SecretKey)

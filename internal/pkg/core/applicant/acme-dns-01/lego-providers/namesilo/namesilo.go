@@ -1,7 +1,6 @@
 package namesilo
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -16,7 +15,7 @@ type NameSiloApplicantConfig struct {
 
 func NewChallengeProvider(config *NameSiloApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := namesilo.NewDefaultConfig()

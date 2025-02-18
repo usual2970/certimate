@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -28,7 +27,7 @@ var _ uploader.Uploader = (*TencentCloudSSLUploader)(nil)
 
 func New(config *TencentCloudSSLUploaderConfig) (*TencentCloudSSLUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

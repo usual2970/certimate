@@ -33,8 +33,8 @@ Shell command to run this test:
 	go test -v ./baotapanel_console_test.go -args \
 	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIURL="your-baota-panel-url" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIKEY="your-baota-panel-key"
+	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIKEY="your-api-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

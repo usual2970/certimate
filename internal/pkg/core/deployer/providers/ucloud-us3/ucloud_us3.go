@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	usdk "github.com/ucloud/ucloud-sdk-go/ucloud"
@@ -45,11 +44,11 @@ func New(config *UCloudUS3DeployerConfig) (*UCloudUS3Deployer, error) {
 
 func NewWithLogger(config *UCloudUS3DeployerConfig, logger logger.Logger) (*UCloudUS3Deployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey, config.Region)

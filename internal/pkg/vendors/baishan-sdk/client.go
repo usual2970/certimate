@@ -30,11 +30,9 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params map[string]any) (*resty.Response, error) {
-	url := "https://cdn.api.baishan.com" + path
-
 	req := c.client.R()
 	req.Method = method
-	req.URL = url
+	req.URL = "https://cdn.api.baishan.com" + path
 	if strings.EqualFold(method, http.MethodGet) {
 		data := make(map[string]string)
 		for k, v := range params {
@@ -68,8 +66,8 @@ func (c *Client) sendRequestWithResult(method string, path string, params map[st
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("baishan api error: failed to parse response: %w", err)
-	} else if result.GetCode() != 0 {
-		return fmt.Errorf("baishan api error: %d - %s", result.GetCode(), result.GetMessage())
+	} else if errcode := result.GetCode(); errcode != 0 {
+		return fmt.Errorf("baishan api error: %d - %s", errcode, result.GetMessage())
 	}
 
 	return nil

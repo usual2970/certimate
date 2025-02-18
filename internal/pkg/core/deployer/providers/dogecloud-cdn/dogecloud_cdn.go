@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"strconv"
 
 	xerrors "github.com/pkg/errors"
@@ -38,11 +37,11 @@ func New(config *DogeCloudCDNDeployerConfig) (*DogeCloudCDNDeployer, error) {
 
 func NewWithLogger(config *DogeCloudCDNDeployerConfig, logger logger.Logger) (*DogeCloudCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client := dogesdk.NewClient(config.AccessKey, config.SecretKey)

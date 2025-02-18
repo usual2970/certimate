@@ -35,8 +35,8 @@ Shell command to run this test:
 	go test -v ./safeline_test.go -args \
 	--CERTIMATE_DEPLOYER_SAFELINE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_SAFELINE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_SAFELINE_APIURL="your-safeline-url" \
-	--CERTIMATE_DEPLOYER_SAFELINE_APITOKEN="your-safeline-api-token" \
+	--CERTIMATE_DEPLOYER_SAFELINE_APIURL="http://127.0.0.1:9443" \
+	--CERTIMATE_DEPLOYER_SAFELINE_APITOKEN="your-api-token" \
 	--CERTIMATE_DEPLOYER_SAFELINE_CERTIFICATEID="your-cerficiate-id"
 */
 func TestDeploy(t *testing.T) {

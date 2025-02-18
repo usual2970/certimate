@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/nikoksr/notify/service/telegram"
 
@@ -24,7 +23,7 @@ var _ notifier.Notifier = (*TelegramNotifier)(nil)
 
 func New(config *TelegramNotifierConfig) (*TelegramNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &TelegramNotifier{

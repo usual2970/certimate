@@ -136,6 +136,7 @@ The following hosting providers are supported:
 | [AWS](https://aws.amazon.com/)                  | Supports deployment to AWS CloudFront                                            |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                              |
 | [CacheFly](https://www.cachefly.com/)           | Supports deployment to CacheFly CDN                                              |
+| [Cdnfly](https://www.cdnfly.cn/)                | Supports deployment to Cdnfly CDN                                                |
 | [Edgio](https://edg.io/)                        | Supports deployment to Edgio Applications                                        |
 | [Gcore](https://gcore.com/)                     | Supports deployment to Gcore CDN                                                 |
 

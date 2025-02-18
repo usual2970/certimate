@@ -137,6 +137,7 @@ make local.run
 | [AWS](https://aws.amazon.com/)          | 可部署到 AWS CloudFront                                                  |
 | [BytePlus](https://www.byteplus.com/)   | 可部署到 BytePlus CDN                                                    |
 | [CacheFly](https://www.cachefly.com/)   | 可部署到 CacheFly CDN                                                    |
+| [Cdnfly](https://www.cdnfly.cn/)        | 可部署到 Cdnfly CDN                                                      |
 | [Edgio](https://edg.io/)                | 可部署到 Edgio Applications                                              |
 | [Gcore](https://gcore.com/)             | 可部署到 Gcore CDN                                                       |
 

@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 
@@ -36,11 +35,11 @@ func New(config *EdgioApplicationsDeployerConfig) (*EdgioApplicationsDeployer, e
 
 func NewWithLogger(config *EdgioApplicationsDeployerConfig, logger logger.Logger) (*EdgioApplicationsDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ClientId, config.ClientSecret)

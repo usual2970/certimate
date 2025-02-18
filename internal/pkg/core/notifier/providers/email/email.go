@@ -3,7 +3,6 @@
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"net/smtp"
 
@@ -38,7 +37,7 @@ var _ notifier.Notifier = (*EmailNotifier)(nil)
 
 func New(config *EmailNotifierConfig) (*EmailNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &EmailNotifier{

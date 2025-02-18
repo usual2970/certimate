@@ -1,7 +1,6 @@
 package volcengine
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -17,7 +16,7 @@ type VolcEngineApplicantConfig struct {
 
 func NewChallengeProvider(config *VolcEngineApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := volcengine.NewDefaultConfig()

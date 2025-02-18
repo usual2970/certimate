@@ -34,11 +34,11 @@ func New(config *BaishanCDNDeployerConfig) (*BaishanCDNDeployer, error) {
 
 func NewWithLogger(config *BaishanCDNDeployerConfig, logger logger.Logger) (*BaishanCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiToken)
@@ -111,6 +111,10 @@ func (d *BaishanCDNDeployer) Deploy(ctx context.Context, certPem string, privkey
 }
 
 func createSdkClient(apiToken string) (*bssdk.Client, error) {
+	if apiToken == "" {
+		return nil, errors.New("invalid baishan api token")
+	}
+
 	client := bssdk.NewClient(apiToken)
 	return client, nil
 }

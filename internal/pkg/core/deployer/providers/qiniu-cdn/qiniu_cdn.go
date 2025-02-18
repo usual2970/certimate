@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	xerrors "github.com/pkg/errors"
@@ -39,11 +38,11 @@ func New(config *QiniuCDNDeployerConfig) (*QiniuCDNDeployer, error) {
 
 func NewWithLogger(config *QiniuCDNDeployerConfig, logger logger.Logger) (*QiniuCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client := qiniusdk.NewClient(auth.New(config.AccessKey, config.SecretKey))

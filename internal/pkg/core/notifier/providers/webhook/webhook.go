@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	"github.com/nikoksr/notify/service/http"
 
@@ -22,7 +21,7 @@ var _ notifier.Notifier = (*WebhookNotifier)(nil)
 
 func New(config *WebhookNotifierConfig) (*WebhookNotifier, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	return &WebhookNotifier{

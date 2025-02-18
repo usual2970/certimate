@@ -1,7 +1,6 @@
 package azuredns
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -22,7 +21,7 @@ type AzureDNSApplicantConfig struct {
 
 func NewChallengeProvider(config *AzureDNSApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := azuredns.NewDefaultConfig()

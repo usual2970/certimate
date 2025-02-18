@@ -61,11 +61,11 @@ func New(config *AliyunALBDeployerConfig) (*AliyunALBDeployer, error) {
 
 func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*AliyunALBDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)

@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -34,7 +33,7 @@ var _ uploader.Uploader = (*AliyunCASUploader)(nil)
 
 func New(config *AliyunCASUploaderConfig) (*AliyunCASUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

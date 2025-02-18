@@ -39,7 +39,7 @@ var _ uploader.Uploader = (*HuaweiCloudWAFUploader)(nil)
 
 func New(config *HuaweiCloudWAFUploaderConfig) (*HuaweiCloudWAFUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(

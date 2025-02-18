@@ -55,11 +55,11 @@ func New(config *HuaweiCloudWAFDeployerConfig) (*HuaweiCloudWAFDeployer, error) 
 
 func NewWithLogger(config *HuaweiCloudWAFDeployerConfig, logger logger.Logger) (*HuaweiCloudWAFDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)

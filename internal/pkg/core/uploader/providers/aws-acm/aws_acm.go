@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -34,7 +33,7 @@ var _ uploader.Uploader = (*AWSCertificateManagerUploader)(nil)
 
 func New(config *AWSCertificateManagerUploaderConfig) (*AWSCertificateManagerUploader, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)

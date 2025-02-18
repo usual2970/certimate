@@ -3,7 +3,6 @@ package webhook
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"strings"
 	"time"
 
@@ -36,11 +35,11 @@ func New(config *WebhookDeployerConfig) (*WebhookDeployer, error) {
 
 func NewWithLogger(config *WebhookDeployerConfig, logger logger.Logger) (*WebhookDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client := resty.New().

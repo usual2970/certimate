@@ -1,7 +1,6 @@
 package namesilo
 
 import (
-	"errors"
 	"net/url"
 	"time"
 
@@ -18,7 +17,7 @@ type PowerDNSApplicantConfig struct {
 
 func NewChallengeProvider(config *PowerDNSApplicantConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	host, _ := url.Parse(config.ApiUrl)

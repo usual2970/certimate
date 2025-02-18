@@ -57,11 +57,11 @@ func New(config *TencentCloudCLBDeployerConfig) (*TencentCloudCLBDeployer, error
 
 func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) (*TencentCloudCLBDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey, config.Region)

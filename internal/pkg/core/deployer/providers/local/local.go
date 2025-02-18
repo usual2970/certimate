@@ -3,7 +3,6 @@ package local
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"os/exec"
 	"runtime"
@@ -57,11 +56,11 @@ func New(config *LocalDeployerConfig) (*LocalDeployer, error) {
 
 func NewWithLogger(config *LocalDeployerConfig, logger logger.Logger) (*LocalDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	return &LocalDeployer{

@@ -3,6 +3,7 @@
 import (
 	"context"
 	"errors"
+	"net/url"
 
 	xerrors "github.com/pkg/errors"
 
@@ -34,11 +35,11 @@ func New(config *BaotaPanelConsoleDeployerConfig) (*BaotaPanelConsoleDeployer, e
 
 func NewWithLogger(config *BaotaPanelConsoleDeployerConfig, logger logger.Logger) (*BaotaPanelConsoleDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
@@ -82,6 +83,14 @@ func (d *BaotaPanelConsoleDeployer) Deploy(ctx context.Context, certPem string, 
 }
 
 func createSdkClient(apiUrl, apiKey string) (*btsdk.Client, error) {
+	if _, err := url.Parse(apiUrl); err != nil {
+		return nil, errors.New("invalid baota api url")
+	}
+
+	if apiKey == "" {
+		return nil, errors.New("invalid baota api key")
+	}
+
 	client := btsdk.NewClient(apiUrl, apiKey)
 	return client, nil
 }

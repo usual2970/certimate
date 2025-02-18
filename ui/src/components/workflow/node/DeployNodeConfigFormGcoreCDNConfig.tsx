@@ -4,7 +4,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 type DeployNodeConfigFormGcoreCDNConfigFieldValues = Nullish<{
-  resourceId?: string;
+  resourceId?: string | number;
 }>;
 
 export type DeployNodeConfigFormGcoreCDNConfigProps = {
@@ -25,9 +25,9 @@ const DeployNodeConfigFormGcoreCDNConfig = ({ form: formInst, formName, disabled
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    resourceId: z
-      .string({ message: t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder") })
-      .regex(/^\d+$/, t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder")),
+    resourceId: z.union([z.string(), z.number()]).refine((v) => {
+      return /^\d+$/.test(v + "") && +v > 0;
+    }, t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -50,7 +50,7 @@ const DeployNodeConfigFormGcoreCDNConfig = ({ form: formInst, formName, disabled
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.gcore_cdn_resource_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.gcore_cdn_resource_id.placeholder")} />
+        <Input type="number" placeholder={t("workflow_node.deploy.form.gcore_cdn_resource_id.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"strings"
 
 	xerrors "github.com/pkg/errors"
@@ -47,11 +46,11 @@ func New(config *TencentCloudCDNDeployerConfig) (*TencentCloudCDNDeployer, error
 
 func NewWithLogger(config *TencentCloudCDNDeployerConfig, logger logger.Logger) (*TencentCloudCDNDeployer, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("logger is nil")
 	}
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey)
