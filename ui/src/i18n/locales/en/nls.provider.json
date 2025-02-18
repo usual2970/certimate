@@ -22,6 +22,7 @@
   "provider.azure.dns": "Azure - DNS",
   "provider.baiducloud": "Baidu Cloud",
   "provider.baiducloud.cdn": "Baidu Cloud - CDN (Content Delivery Network)",
+  "provider.baiducloud.dns": "Baidu Cloud - DNS (Domain Name Service)",
   "provider.baishan": "Baishan",
   "provider.baishan.cdn": "Baishan - CDN (Content Delivery Network)",
   "provider.baotapanel": "BaoTa Panel",

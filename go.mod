@@ -19,7 +19,7 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/aws/aws-sdk-go-v2/service/acm v1.30.18
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.10
-	github.com/baidubce/bce-sdk-go v0.9.216
+	github.com/baidubce/bce-sdk-go v0.9.217
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.41
 	github.com/go-acme/lego/v4 v4.21.0
 	github.com/go-resty/resty/v2 v2.16.5

@@ -67,6 +67,8 @@ const (
 	ApplyDNSProviderTypeAWS             = ApplyDNSProviderType("aws") // 兼容旧值，等同于 [ApplyDNSProviderTypeAWSRoute53]
 	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
+	ApplyDNSProviderTypeBaiduCloud      = ApplyDNSProviderType("baiducloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeBaiduCloudDNS]
+	ApplyDNSProviderTypeBaiduCloudDNS   = ApplyDNSProviderType("baiducloud-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
 	ApplyDNSProviderTypeGcore           = ApplyDNSProviderType("gcore")

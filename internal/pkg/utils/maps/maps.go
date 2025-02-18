@@ -207,8 +207,3 @@ func Populate(dict map[string]any, output any) error {
 
 	return decoder.Decode(dict)
 }
-
-// Deprecated: Use [Populate] instead.
-func Decode(dict map[string]any, output any) error {
-	return Populate(dict, output)
-}

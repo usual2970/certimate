@@ -67,11 +67,11 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.KUBERNETES, "provider.kubernetes", "/imgs/providers/kubernetes.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.ALIYUN, "provider.aliyun", "/imgs/providers/aliyun.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.TENCENTCLOUD, "provider.tencentcloud", "/imgs/providers/tencentcloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.BAIDUCLOUD, "provider.baiducloud", "/imgs/providers/baiducloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.HUAWEICLOUD, "provider.huaweicloud", "/imgs/providers/huaweicloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.VOLCENGINE, "provider.volcengine", "/imgs/providers/volcengine.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.AWS, "provider.aws", "/imgs/providers/aws.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.GCORE, "provider.gcore", "/imgs/providers/gcore.png", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
-    [ACCESS_PROVIDERS.BAIDUCLOUD, "provider.baiducloud", "/imgs/providers/baiducloud.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BAISHAN, "provider.baishan", "/imgs/providers/baishan.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.png", [ACCESS_USAGES.DEPLOY]],
@@ -118,6 +118,8 @@ export const APPLY_DNS_PROVIDERS = Object.freeze({
   AWS: `${ACCESS_PROVIDERS.AWS}`, // 兼容旧值，等同于 `AWS_ROUTE53`
   AWS_ROUTE53: `${ACCESS_PROVIDERS.AWS}-route53`,
   AZURE_DNS: `${ACCESS_PROVIDERS.AZURE}-dns`,
+  BAIDUCLOUD: `${ACCESS_PROVIDERS.BAIDUCLOUD}`, // 兼容旧值，等同于 `BAIDUCLOUD_DNS`
+  BAIDUCLOUD_DNS: `${ACCESS_PROVIDERS.BAIDUCLOUD}-dns`,
   CLOUDFLARE: `${ACCESS_PROVIDERS.CLOUDFLARE}`,
   CLOUDNS: `${ACCESS_PROVIDERS.CLOUDNS}`,
   GCORE: `${ACCESS_PROVIDERS.GCORE}`,
@@ -154,6 +156,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
   [
     [APPLY_DNS_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
     [APPLY_DNS_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
+    [APPLY_DNS_PROVIDERS.BAIDUCLOUD_DNS, "provider.baiducloud.dns"],
     [APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS, "provider.huaweicloud.dns"],
     [APPLY_DNS_PROVIDERS.VOLCENGINE_DNS, "provider.volcengine.dns"],
     [APPLY_DNS_PROVIDERS.AWS_ROUTE53, "provider.aws.route53"],

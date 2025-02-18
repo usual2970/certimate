@@ -89,6 +89,7 @@ The following DNS providers are supported:
 | :----------------------------------------------------------- | :------------------------------------ |
 | [Alibaba Cloud](https://www.alibabacloud.com/)               |                                       |
 | [Tencent Cloud](https://www.tencentcloud.com/)               |                                       |
+| [Baidu AI Cloud](https://intl.cloud.baidu.com/)              |                                       |
 | [Huawei Cloud](https://www.huaweicloud.com/)                 |                                       |
 | [Volcengine](https://www.volcengine.com/)                    |                                       |
 | [AWS Route53](https://aws.amazon.com/route53/)               |                                       |

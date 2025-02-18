@@ -90,6 +90,7 @@ make local.run
 | :----------------------------------------------------------------- | :-------------------------------------- |
 | [阿里云](https://www.aliyun.com/)                                  |                                         |
 | [腾讯云](https://cloud.tencent.com/)                               |                                         |
+| [百度智能云](https://cloud.baidu.com/)                             |                                         |
 | [华为云](https://www.huaweicloud.com/)                             |                                         |
 | [火山引擎](https://www.volcengine.com/)                            |                                         |
 | [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
