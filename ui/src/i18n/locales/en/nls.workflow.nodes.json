@@ -46,6 +46,8 @@
   "workflow_node.apply.form.huaweicloud_dns_region.label": "Huawei Cloud DNS region",
   "workflow_node.apply.form.huaweicloud_dns_region.placeholder": "Please enter Huawei Cloud DNS region (e.g. cn-north-1)",
   "workflow_node.apply.form.huaweicloud_dns_region.tooltip": "For more information, see <a href=\"https://console-intl.huaweicloud.com/apiexplorer/#/endpoint?locale=en-us\" target=\"_blank\">https://console-intl.huaweicloud.com/apiexplorer/#/endpoint</a>",
+  "workflow_node.apply.form.jdcloud_dns_region_id.label": "JD Cloud DNS region ID",
+  "workflow_node.apply.form.jdcloud_dns_region_id.placeholder": "Please enter JD Cloud DNS region ID (e.g. cn-north-1)",
   "workflow_node.apply.form.advanced_config.label": "Advanced settings",
   "workflow_node.apply.form.key_algorithm.label": "Certificate key algorithm",
   "workflow_node.apply.form.key_algorithm.placeholder": "Please select certificate key algorithm",

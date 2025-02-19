@@ -115,11 +115,16 @@ type AccessConfigForHuaweiCloud struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
-type AccessConfigForLocal struct{}
+type AccessConfigForJDCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
 
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
 }
+
+type AccessConfigForLocal struct{}
 
 type AccessConfigForNameDotCom struct {
 	Username string `json:"username"`

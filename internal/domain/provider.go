@@ -34,7 +34,7 @@ const (
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
 	AccessProviderTypeGoEdge       = AccessProviderType("goedge") // GoEdge（预留）
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
-	AccessProviderTypeJDCloud      = AccessProviderType("jdcloud") // 京东云（预留）
+	AccessProviderTypeJDCloud      = AccessProviderType("jdcloud")
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
 	AccessProviderTypeLocal        = AccessProviderType("local")
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
@@ -68,6 +68,7 @@ const (
 	ApplyDNSProviderTypeAliyunDNS       = ApplyDNSProviderType("aliyun-dns")
 	ApplyDNSProviderTypeAWS             = ApplyDNSProviderType("aws") // 兼容旧值，等同于 [ApplyDNSProviderTypeAWSRoute53]
 	ApplyDNSProviderTypeAWSRoute53      = ApplyDNSProviderType("aws-route53")
+	ApplyDNSProviderTypeAzure           = ApplyDNSProviderType("azure") // 兼容旧值，等同于 [ApplyDNSProviderTypeAzure]
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeBaiduCloud      = ApplyDNSProviderType("baiducloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeBaiduCloudDNS]
 	ApplyDNSProviderTypeBaiduCloudDNS   = ApplyDNSProviderType("baiducloud-dns")
@@ -78,6 +79,8 @@ const (
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
 	ApplyDNSProviderTypeHuaweiCloud     = ApplyDNSProviderType("huaweicloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeHuaweiCloudDNS]
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")
+	ApplyDNSProviderTypeJDCloud         = ApplyDNSProviderType("jdcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeJDCloudDNS]
+	ApplyDNSProviderTypeJDCloudDNS      = ApplyDNSProviderType("jdcloud-dns")
 	ApplyDNSProviderTypeNameDotCom      = ApplyDNSProviderType("namedotcom")
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
 	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")

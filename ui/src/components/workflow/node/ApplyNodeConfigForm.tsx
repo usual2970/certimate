@@ -35,6 +35,7 @@ import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/val
 
 import ApplyNodeConfigFormAWSRoute53Config from "./ApplyNodeConfigFormAWSRoute53Config";
 import ApplyNodeConfigFormHuaweiCloudDNSConfig from "./ApplyNodeConfigFormHuaweiCloudDNSConfig";
+import ApplyNodeConfigFormJDCloudDNSConfig from "./ApplyNodeConfigFormJDCloudDNSConfig";
 
 type ApplyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForApply>;
 
@@ -145,6 +146,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         case APPLY_DNS_PROVIDERS.HUAWEICLOUD:
         case APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS:
           return <ApplyNodeConfigFormHuaweiCloudDNSConfig {...nestedFormProps} />;
+        case APPLY_DNS_PROVIDERS.JDCLOUD:
+        case APPLY_DNS_PROVIDERS.JDCLOUD_DNS:
+          return <ApplyNodeConfigFormJDCloudDNSConfig {...nestedFormProps} />;
       }
     }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
 

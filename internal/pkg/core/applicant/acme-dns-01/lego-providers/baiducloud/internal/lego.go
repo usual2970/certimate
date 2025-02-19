@@ -184,10 +184,10 @@ func (d *DNSProvider) removeDNSRecord(domain, subDomain, value string) error {
 
 	if record == nil {
 		return nil
+	} else {
+		err = d.client.DeleteRecord(domain, record.Id, d.generateClientToken())
+		return err
 	}
-
-	err = d.client.DeleteRecord(domain, record.Id, d.generateClientToken())
-	return err
 }
 
 func (d *DNSProvider) generateClientToken() string {

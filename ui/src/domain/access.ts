@@ -24,6 +24,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForGname
       | AccessConfigForGoDaddy
       | AccessConfigForHuaweiCloud
+      | AccessConfigForJDCloud
       | AccessConfigForKubernetes
       | AccessConfigForLocal
       | AccessConfigForNameDotCom
@@ -131,6 +132,11 @@ export type AccessConfigForGoDaddy = {
 export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
+};
+
+export type AccessConfigForJDCloud = {
+  accessKeyId: string;
+  accessKeySecret: string;
 };
 
 export type AccessConfigForKubernetes = {

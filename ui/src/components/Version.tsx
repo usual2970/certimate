@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { ReadOutlined as ReadOutlinedIcon } from "@ant-design/icons";
 import { Badge, Divider, Space, Typography } from "antd";

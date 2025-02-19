@@ -93,6 +93,7 @@ make local.run
 | [百度智能云](https://cloud.baidu.com/)                             |                                         |
 | [华为云](https://www.huaweicloud.com/)                             |                                         |
 | [火山引擎](https://www.volcengine.com/)                            |                                         |
+| [京东云](https://www.jdcloud.com/)                                 |                                         |
 | [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
 | [Azure](https://azure.microsoft.com/)                              |                                         |
 | [CloudFlare](https://www.cloudflare.com/)                          |                                         |

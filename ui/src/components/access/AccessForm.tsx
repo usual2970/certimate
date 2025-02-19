@@ -27,6 +27,7 @@ import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
 import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
+import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLocalConfig from "./AccessFormLocalConfig";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
@@ -131,6 +132,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormEdgioConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.JDCLOUD:
+        return <AccessFormJDCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.KUBERNETES:
         return <AccessFormKubernetesConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.LOCAL:

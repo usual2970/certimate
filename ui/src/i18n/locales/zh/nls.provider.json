@@ -53,6 +53,8 @@
   "provider.huaweicloud.dns": "华为云 - 云解析 DNS",
   "provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
   "provider.huaweicloud.waf": "华为云 - Web 应用防火墙 WAF",
+  "provider.jdcloud": "京东云",
+  "provider.jdcloud.dns": "京东云 - 云解析 DNS",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.local": "本地部署",

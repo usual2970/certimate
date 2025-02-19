@@ -92,6 +92,7 @@ The following DNS providers are supported:
 | [Baidu AI Cloud](https://intl.cloud.baidu.com/)              |                                       |
 | [Huawei Cloud](https://www.huaweicloud.com/)                 |                                       |
 | [Volcengine](https://www.volcengine.com/)                    |                                       |
+| [JD Cloud](https://www.jdcloud.com/)                         |                                       |
 | [AWS Route53](https://aws.amazon.com/route53/)               |                                       |
 | [Azure DNS](https://azure.microsoft.com/)                    |                                       |
 | [CloudFlare](https://www.cloudflare.com/)                    |                                       |
