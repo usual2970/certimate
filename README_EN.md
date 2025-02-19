@@ -129,6 +129,7 @@ The following hosting providers are supported:
 | [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                        |
 | [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB, WAF                                |
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, ImageX, Live              |
+| [JD Cloud](https://www.jdcloud.com/)            | Supports deployment to JD Cloud CDN                                              |
 | [Qiniu Cloud](https://www.qiniu.com/)           | Supports deployment to Qiniu Cloud CDN, Pili                                     |
 | [Baishan Cloud](https://intl.baishancloud.com/) | Supports deployment to Baishan Cloud CDN                                         |
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                            |

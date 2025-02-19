@@ -51,7 +51,12 @@ const ApplyNodeConfigFormJDCloudDNSConfig = ({
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="regionId" label={t("workflow_node.apply.form.jdcloud_dns_region_id_id.label")} rules={[formRule]}>
+      <Form.Item
+        name="regionId"
+        label={t("workflow_node.apply.form.jdcloud_dns_region_id.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.jdcloud_dns_region_id.tooltip") }}></span>}
+      >
         <Input placeholder={t("workflow_node.apply.form.jdcloud_dns_region_id.placeholder")} />
       </Form.Item>
     </Form>

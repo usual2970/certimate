@@ -30,6 +30,7 @@ import (
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	pHuaweiCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-waf"
+	pJDCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-cdn"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
@@ -406,6 +407,27 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					ResourceType:    pHuaweiCloudWAF.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
 					CertificateId:   maps.GetValueAsString(options.ProviderDeployConfig, "certificateId"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeJDCloudCDN:
+		{
+			access := domain.AccessConfigForJDCloud{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeJDCloudCDN:
+				deployer, err := pJDCloudCDN.NewDeployer(&pJDCloudCDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
