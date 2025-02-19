@@ -42,19 +42,25 @@ func (c *Client) generateSignature(timestamp string) string {
 	return signMd5Hex
 }
 
-func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
-	if params == nil {
-		params = make(map[string]any)
-	}
-
+func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
 	timestamp := time.Now().Unix()
-	params["request_time"] = timestamp
-	params["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
+
+	data := make(map[string]any)
+	if params != nil {
+		temp := make(map[string]any)
+		jsonData, _ := json.Marshal(params)
+		json.Unmarshal(jsonData, &temp)
+		for k, v := range temp {
+			data[k] = v
+		}
+	}
+	data["request_time"] = timestamp
+	data["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
 
 	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(params)
+		SetBody(data)
 	resp, err := req.Post(url)
 	if err != nil {
 		return nil, fmt.Errorf("baota api error: failed to send request: %w", err)
@@ -65,7 +71,7 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err

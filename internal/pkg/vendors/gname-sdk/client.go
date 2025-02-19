@@ -58,14 +58,15 @@ func (c *Client) generateSignature(params map[string]string) string {
 	return strings.ToUpper(fmt.Sprintf("%x", hash))
 }
 
-func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
-	if params == nil {
-		params = make(map[string]any)
-	}
-
+func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
 	data := make(map[string]string)
-	for k, v := range params {
-		data[k] = fmt.Sprintf("%v", v)
+	if params != nil {
+		temp := make(map[string]any)
+		jsonData, _ := json.Marshal(params)
+		json.Unmarshal(jsonData, &temp)
+		for k, v := range temp {
+			data[k] = fmt.Sprintf("%v", v)
+		}
 	}
 	data["appid"] = c.appId
 	data["gntime"] = fmt.Sprintf("%d", time.Now().Unix())
@@ -85,7 +86,7 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err
@@ -94,7 +95,7 @@ func (c *Client) sendRequestWithResult(path string, params map[string]any, resul
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("gname api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 1 {
-		return fmt.Errorf("gname api error: %d - %s", errcode, result.GetMsg())
+		return fmt.Errorf("gname api error: %d - %s", errcode, result.GetMessage())
 	}
 
 	return nil

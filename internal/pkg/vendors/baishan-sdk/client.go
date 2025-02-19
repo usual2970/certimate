@@ -29,17 +29,23 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	return c
 }
 
-func (c *Client) sendRequest(method string, path string, params map[string]any) (*resty.Response, error) {
+func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
 	req := c.client.R()
 	req.Method = method
 	req.URL = "https://cdn.api.baishan.com" + path
 	if strings.EqualFold(method, http.MethodGet) {
-		data := make(map[string]string)
-		for k, v := range params {
-			data[k] = fmt.Sprintf("%v", v)
+		qs := make(map[string]string)
+		if params != nil {
+			temp := make(map[string]any)
+			jsonData, _ := json.Marshal(params)
+			json.Unmarshal(jsonData, &temp)
+			for k, v := range temp {
+				qs[k] = fmt.Sprintf("%v", v)
+			}
 		}
+
 		req = req.
-			SetQueryParams(data).
+			SetQueryParams(qs).
 			SetQueryParam("token", c.apiToken)
 	} else {
 		req = req.
@@ -58,7 +64,7 @@ func (c *Client) sendRequest(method string, path string, params map[string]any) 
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(method, path, params)
 	if err != nil {
 		return err

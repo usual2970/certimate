@@ -34,6 +34,7 @@ const (
 	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
 	AccessProviderTypeGoEdge       = AccessProviderType("goedge") // GoEdge（预留）
 	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
+	AccessProviderTypeJDCloud      = AccessProviderType("jdcloud") // 京东云（预留）
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
 	AccessProviderTypeLocal        = AccessProviderType("local")
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
@@ -41,6 +42,7 @@ const (
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
+	AccessProviderTypeQingCloud    = AccessProviderType("qingcloud") // 青云（预留）
 	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
 	AccessProviderTypeSafeLine     = AccessProviderType("safeline")
 	AccessProviderTypeSSH          = AccessProviderType("ssh")

@@ -2,20 +2,20 @@ package gnamesdk
 
 type BaseResponse interface {
 	GetCode() int
-	GetMsg() string
+	GetMessage() string
 }
 
 type baseResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
 }
 
 func (r *baseResponse) GetCode() int {
 	return r.Code
 }
 
-func (r *baseResponse) GetMsg() string {
-	return r.Msg
+func (r *baseResponse) GetMessage() string {
+	return r.Message
 }
 
 type AddDomainResolutionRequest struct {

@@ -57,9 +57,11 @@ func TestDeploy(t *testing.T) {
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:   fApiUrl,
-			ApiKey:   fApiKey,
-			SiteName: fSiteName,
+			ApiUrl:    fApiUrl,
+			ApiKey:    fApiKey,
+			SiteType:  fSiteType,
+			SiteName:  fSiteName,
+			SiteNames: []string{fSiteName},
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

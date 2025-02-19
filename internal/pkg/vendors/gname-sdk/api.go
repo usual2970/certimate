@@ -1,16 +1,8 @@
 package gnamesdk
 
-import (
-	"encoding/json"
-)
-
 func (c *Client) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
 	result := AddDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/add", params, &result)
+	err := c.sendRequestWithResult("/api/resolution/add", req, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -18,40 +10,28 @@ func (c *Client) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomai
 }
 
 func (c *Client) ModifyDomainResolution(req *ModifyDomainResolutionRequest) (*ModifyDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := ModifyDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/edit", params, &result)
+	resp := ModifyDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/edit", req, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+	return &resp, nil
 }
 
 func (c *Client) DeleteDomainResolution(req *DeleteDomainResolutionRequest) (*DeleteDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := DeleteDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/delete", params, &result)
+	resp := DeleteDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/delete", req, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+	return &resp, nil
 }
 
 func (c *Client) ListDomainResolution(req *ListDomainResolutionRequest) (*ListDomainResolutionResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := ListDomainResolutionResponse{}
-	err := c.sendRequestWithResult("/api/resolution/list", params, &result)
+	resp := ListDomainResolutionResponse{}
+	err := c.sendRequestWithResult("/api/resolution/list", req, &resp)
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+	return &resp, nil
 }

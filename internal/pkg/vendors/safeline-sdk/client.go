@@ -31,11 +31,7 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	return c
 }
 
-func (c *Client) sendRequest(path string, params map[string]any) (*resty.Response, error) {
-	if params == nil {
-		params = make(map[string]any)
-	}
-
+func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
 	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
@@ -51,7 +47,7 @@ func (c *Client) sendRequest(path string, params map[string]any) (*resty.Respons
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err
