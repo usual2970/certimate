@@ -42,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploadersp.New(&uploadersp.GcoreCDNUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		ApiToken: config.ApiToken,
 	})
 	if err != nil {

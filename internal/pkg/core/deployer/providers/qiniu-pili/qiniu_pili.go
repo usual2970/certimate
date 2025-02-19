@@ -39,7 +39,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	manager := pili.NewManager(pili.ManagerConfig{AccessKey: config.AccessKey, SecretKey: config.SecretKey})
 
-	uploader, err := uploadersp.New(&uploadersp.QiniuSSLCertUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

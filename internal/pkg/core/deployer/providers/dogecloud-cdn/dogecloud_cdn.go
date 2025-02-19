@@ -38,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client := dogesdk.NewClient(config.AccessKey, config.SecretKey)
 
-	uploader, err := uploadersp.New(&uploadersp.DogeCloudUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

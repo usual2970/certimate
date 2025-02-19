@@ -42,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := uploadersp.New(&uploadersp.VolcEngineCDNUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})

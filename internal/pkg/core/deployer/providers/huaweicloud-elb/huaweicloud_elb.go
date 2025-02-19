@@ -62,7 +62,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploadersp.New(&uploadersp.HuaweiCloudELBUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		SecretAccessKey: config.SecretAccessKey,
 		Region:          config.Region,

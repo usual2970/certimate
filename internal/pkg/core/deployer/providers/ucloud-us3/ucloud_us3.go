@@ -48,7 +48,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploadersp.New(&uploadersp.UCloudUSSLUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		PrivateKey: config.PrivateKey,
 		PublicKey:  config.PublicKey,
 		ProjectId:  config.ProjectId,

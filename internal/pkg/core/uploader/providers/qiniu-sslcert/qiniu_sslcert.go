@@ -13,21 +13,21 @@ import (
 	qiniuEx "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
 )
 
-type QiniuSSLCertUploaderConfig struct {
+type UploaderConfig struct {
 	// 七牛云 AccessKey。
 	AccessKey string `json:"accessKey"`
 	// 七牛云 SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 
-type QiniuSSLCertUploader struct {
-	config    *QiniuSSLCertUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *qiniuEx.Client
 }
 
-var _ uploader.Uploader = (*QiniuSSLCertUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
@@ -40,13 +40,13 @@ func New(config *QiniuSSLCertUploaderConfig) (*QiniuSSLCertUploader, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &QiniuSSLCertUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *QiniuSSLCertUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

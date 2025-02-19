@@ -42,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
-	uploader, err := uploadersp.New(&uploadersp.ByteplusCDNUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})

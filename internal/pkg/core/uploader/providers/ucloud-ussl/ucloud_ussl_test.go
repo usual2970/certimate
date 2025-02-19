@@ -49,7 +49,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("PUBLICKEY: %v", fPublicKey),
 		}, "\n"))
 
-		uploader, err := provider.New(&provider.UCloudUSSLUploaderConfig{
+		uploader, err := provider.NewUploader(&provider.UploaderConfig{
 			PrivateKey: fPrivateKey,
 			PublicKey:  fPublicKey,
 		})

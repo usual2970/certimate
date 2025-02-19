@@ -11,7 +11,7 @@ import (
 	vesdkCc "github.com/usual2970/certimate/internal/pkg/vendors/volcengine-sdk/certcenter"
 )
 
-type VolcEngineCertCenterUploaderConfig struct {
+type UploaderConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -20,14 +20,14 @@ type VolcEngineCertCenterUploaderConfig struct {
 	Region string `json:"region"`
 }
 
-type VolcEngineCertCenterUploader struct {
-	config    *VolcEngineCertCenterUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *vesdkCc.CertCenter
 }
 
-var _ uploader.Uploader = (*VolcEngineCertCenterUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *VolcEngineCertCenterUploaderConfig) (*VolcEngineCertCenterUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
@@ -37,13 +37,13 @@ func New(config *VolcEngineCertCenterUploaderConfig) (*VolcEngineCertCenterUploa
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &VolcEngineCertCenterUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *VolcEngineCertCenterUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 上传证书
 	// REF: https://www.volcengine.com/docs/6638/1365580
 	importCertificateReq := &vesdkCc.ImportCertificateInput{

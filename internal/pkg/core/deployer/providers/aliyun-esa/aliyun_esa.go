@@ -126,7 +126,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 		}
 	}
 
-	uploader, err := uploadersp.New(&uploadersp.AliyunCASUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          casRegion,

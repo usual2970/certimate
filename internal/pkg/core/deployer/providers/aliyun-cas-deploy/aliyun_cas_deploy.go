@@ -175,7 +175,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 }
 
 func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
-	uploader, err := uploadersp.New(&uploadersp.AliyunCASUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          region,
