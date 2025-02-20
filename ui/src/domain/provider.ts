@@ -16,6 +16,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   CDNFLY: "cdnfly",
   CLOUDFLARE: "cloudflare",
   CLOUDNS: "cloudns",
+  CMCCCLOUD: "cmcccloud",
   DOGECLOUD: "dogecloud",
   GCORE: "gcore",
   GNAME: "gname",
@@ -74,6 +75,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.JDCLOUD, "provider.jdcloud", "/imgs/providers/jdcloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.AWS, "provider.aws", "/imgs/providers/aws.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.GCORE, "provider.gcore", "/imgs/providers/gcore.png", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+
     [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BAISHAN, "provider.baishan", "/imgs/providers/baishan.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.png", [ACCESS_USAGES.DEPLOY]],
@@ -84,6 +86,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.CACHEFLY, "provider.cachefly", "/imgs/providers/cachefly.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.DEPLOY]],
+
     [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.png", [ACCESS_USAGES.APPLY]],
@@ -92,6 +95,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.NAMEDOTCOM, "provider.namedotcom", "/imgs/providers/namedotcom.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.NAMESILO, "provider.namesilo", "/imgs/providers/namesilo.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.NS1, "provider.ns1", "/imgs/providers/ns1.svg", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.CMCCCLOUD, "provider.cmcccloud", "/imgs/providers/cmcccloud.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.RAINYUN, "provider.rainyun", "/imgs/providers/rainyun.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.WESTCN, "provider.westcn", "/imgs/providers/westcn.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.POWERDNS, "provider.powerdns", "/imgs/providers/powerdns.svg", [ACCESS_USAGES.APPLY]],

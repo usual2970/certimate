@@ -23,7 +23,7 @@ const (
 	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly")
 	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
-	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud") // 移动云（预留）
+	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud")
 	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
@@ -74,6 +74,7 @@ const (
 	ApplyDNSProviderTypeBaiduCloudDNS   = ApplyDNSProviderType("baiducloud-dns")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
+	ApplyDNSProviderTypeCMCCCloud       = ApplyDNSProviderType("cmcccloud")
 	ApplyDNSProviderTypeGcore           = ApplyDNSProviderType("gcore")
 	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")

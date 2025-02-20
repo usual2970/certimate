@@ -13,6 +13,7 @@ import (
 	pBaiduCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/baiducloud"
 	pCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
 	pClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
+	pCMCCCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cmcccloud"
 	pGcore "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gcore"
 	pGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
 	pGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
@@ -145,6 +146,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pClouDNS.NewChallengeProvider(&pClouDNS.ChallengeProviderConfig{
 				AuthId:                access.AuthId,
 				AuthPassword:          access.AuthPassword,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeCMCCCloud:
+		{
+			access := domain.AccessConfigForCMCCCloud{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pCMCCCloud.NewChallengeProvider(&pCMCCCloud.ChallengeProviderConfig{
+				AccessKeyId:           access.AccessKeyId,
+				AccessKeySecret:       access.AccessKeySecret,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

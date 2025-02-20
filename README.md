@@ -104,6 +104,7 @@ make local.run
 | [Name.com](https://www.name.com/)                                  |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |
 | [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
+| [移动云](https://ecloud.10086.cn/)                                 |                                         |
 | [雨云](https://www.rainyun.com/)                                   |                                         |
 | [西部数码](https://www.west.cn/)                                   |                                         |
 | [PowerDNS](https://www.powerdns.com/)                              |                                         |

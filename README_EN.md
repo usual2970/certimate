@@ -103,6 +103,7 @@ The following DNS providers are supported:
 | [Name.com](https://www.name.com/)                            |                                       |
 | [NameSilo](https://www.namesilo.com/)                        |                                       |
 | [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
+| [CMCC Cloud](https://ecloud.10086.cn/)                       |                                       |
 | [Rain Yun](https://www.rainyun.com/)                         |                                       |
 | [West.cn](https://www.west.cn/)                              |                                       |
 | [PowerDNS](https://www.powerdns.com/)                        |                                       |

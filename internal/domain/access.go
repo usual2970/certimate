@@ -86,6 +86,11 @@ type AccessConfigForClouDNS struct {
 	AuthPassword string `json:"authPassword"`
 }
 
+type AccessConfigForCMCCCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
+
 type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

@@ -18,6 +18,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCdnfly
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
+      | AccessConfigForCMCCCloud
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
       | AccessConfigForGcore
@@ -103,6 +104,11 @@ export type AccessConfigForCloudflare = {
 export type AccessConfigForClouDNS = {
   authId: string;
   authPassword: string;
+};
+
+export type AccessConfigForCMCCCloud = {
+  accessKeyId: string;
+  accessKeySecret: string;
 };
 
 export type AccessConfigForDogeCloud = {
