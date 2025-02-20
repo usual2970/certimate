@@ -211,8 +211,6 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 修改监听配置
 		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
-		//
-		// 注意修改监听配置要放在修改扩展域名之后
 		setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
 			RegionId:            tea.String(d.config.Region),
 			LoadBalancerId:      tea.String(cloudLoadbalancerId),
@@ -226,7 +224,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		d.logger.Logt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
 	} else {
-		// 指定 SNI，需部署到扩展域名（支持泛域名）
+		// 指定 SNI，需部署到扩展域名
 
 		// 查询扩展域名
 		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions

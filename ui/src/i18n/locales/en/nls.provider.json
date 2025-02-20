@@ -54,6 +54,7 @@
   "provider.huaweicloud.elb": "Huawei Cloud - ELB (Elastic Load Balance)",
   "provider.huaweicloud.waf": "Huawei Cloud - WAF (Web Application Firewall)",
   "provider.jdcloud": "JD Cloud",
+  "provider.jdcloud.alb": "JD Cloud - ALB (Application Load Balancer)",
   "provider.jdcloud.cdn": "JD Cloud - CDN (Content Delivery Network)",
   "provider.jdcloud.dns": "JD Cloud - DNS",
   "provider.jdcloud.live": "JD Cloud - Live Video",

@@ -130,7 +130,7 @@ make local.run
 | [百度智能云](https://cloud.baidu.com/)  | 可部署到百度智能云 CDN 等服务                                            |
 | [华为云](https://www.huaweicloud.com/)  | 可部署到华为云 CDN、ELB、WAF 等服务                                      |
 | [火山引擎](https://www.volcengine.com/) | 可部署到火山引擎 TOS、CDN、DCDN、CLB、ImageX、Live 等服务                |
-| [京东云](https://www.jdcloud.com/)      | 可部署到京东云 CDN、视频直播等服务                                       |
+| [京东云](https://www.jdcloud.com/)      | 可部署到京东云 CDN、ALB、视频直播等服务                                  |
 | [七牛云](https://www.qiniu.com/)        | 可部署到七牛云 CDN、直播云等服务                                         |
 | [白山云](https://www.baishan.com/)      | 可部署到白山云 CDN                                                       |
 | [多吉云](https://www.dogecloud.com/)    | 可部署到多吉云 CDN                                                       |

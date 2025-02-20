@@ -138,7 +138,7 @@ func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId 
 		// 未指定 SNI，只需部署到监听器
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s", d.config.LoadbalancerId, d.config.ListenerId)})
 	} else {
-		// 指定 SNI，需部署到域名（支持泛域名）
+		// 指定 SNI，需部署到域名
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", d.config.LoadbalancerId, d.config.ListenerId, d.config.Domain)})
 	}
 	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)

@@ -38,6 +38,7 @@ import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNCo
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
 import DeployNodeConfigFormHuaweiCloudELBConfig from "./DeployNodeConfigFormHuaweiCloudELBConfig";
 import DeployNodeConfigFormHuaweiCloudWAFConfig from "./DeployNodeConfigFormHuaweiCloudWAFConfig";
+import DeployNodeConfigFormJDCloudALBConfig from "./DeployNodeConfigFormJDCloudALBConfig";
 import DeployNodeConfigFormJDCloudCDNConfig from "./DeployNodeConfigFormJDCloudCDNConfig";
 import DeployNodeConfigFormJDCloudLiveConfig from "./DeployNodeConfigFormJDCloudLiveConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
@@ -180,6 +181,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormHuaweiCloudELBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.HUAWEICLOUD_WAF:
           return <DeployNodeConfigFormHuaweiCloudWAFConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.JDCLOUD_ALB:
+          return <DeployNodeConfigFormJDCloudALBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.JDCLOUD_CDN:
           return <DeployNodeConfigFormJDCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.JDCLOUD_LIVE:

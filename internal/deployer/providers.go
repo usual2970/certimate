@@ -30,6 +30,7 @@ import (
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	pHuaweiCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-waf"
+	pJDCloudALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-alb"
 	pJDCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-cdn"
 	pJDCloudLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-live"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
@@ -417,7 +418,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeJDCloudCDN, domain.DeployProviderTypeJDCloudLive:
+	case domain.DeployProviderTypeJDCloudALB, domain.DeployProviderTypeJDCloudCDN, domain.DeployProviderTypeJDCloudLive:
 		{
 			access := domain.AccessConfigForJDCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -425,6 +426,17 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
+			case domain.DeployProviderTypeJDCloudALB:
+				deployer, err := pJDCloudALB.NewDeployer(&pJDCloudALB.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					RegionId:        maps.GetValueAsString(options.ProviderDeployConfig, "regionId"),
+					ResourceType:    pJDCloudALB.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maps.GetValueAsString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:      maps.GetValueAsString(options.ProviderDeployConfig, "listenerId"),
+				})
+				return deployer, err
+
 			case domain.DeployProviderTypeJDCloudCDN:
 				deployer, err := pJDCloudCDN.NewDeployer(&pJDCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,

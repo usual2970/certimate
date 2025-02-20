@@ -254,7 +254,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
 	} else {
-		// 指定 SNI，需部署到扩展域名（支持泛域名）
+		// 指定 SNI，需部署到扩展域名
 
 		// 查询监听证书列表
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
