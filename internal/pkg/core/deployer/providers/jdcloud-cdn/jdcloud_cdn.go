@@ -10,6 +10,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
+	"github.com/usual2970/certimate/internal/pkg/core/uploader"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/jdcloud-ssl"
 )
 
 type DeployerConfig struct {
@@ -22,9 +24,10 @@ type DeployerConfig struct {
 }
 
 type DeployerProvider struct {
-	config    *DeployerConfig
-	logger    logger.Logger
-	sdkClient *jdCdnClient.CdnClient
+	config      *DeployerConfig
+	logger      logger.Logger
+	sdkClient   *jdCdnClient.CdnClient
+	sslUploader uploader.Uploader
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -39,10 +42,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
+		AccessKeyId:     config.AccessKeyId,
+		AccessKeySecret: config.AccessKeySecret,
+	})
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+	}
+
 	return &DeployerProvider{
-		config:    config,
-		logger:    logger.NewNilLogger(),
-		sdkClient: client,
+		config:      config,
+		logger:      logger.NewNilLogger(),
+		sdkClient:   client,
+		sslUploader: uploader,
 	}, nil
 }
 
@@ -62,14 +74,22 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		d.logger.Logt("已查询到域名配置信息", queryDomainConfigResp)
 	}
 
+	// 上传证书到 SSL
+	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Logt("certificate file uploaded", upres)
+	}
+
 	// 设置通讯协议
 	// REF: https://docs.jdcloud.com/cn/cdn/api/sethttptype
 	setHttpTypeReq := jdCdnApi.NewSetHttpTypeRequest(d.config.Domain)
 	setHttpTypeReq.SetHttpType("https")
-	setHttpTypeReq.SetCertFrom("default")
 	setHttpTypeReq.SetCertificate(certPem)
 	setHttpTypeReq.SetRsaKey(privkeyPem)
-	setHttpTypeReq.SetSyncToSsl(false)
+	setHttpTypeReq.SetCertFrom("ssl")
+	setHttpTypeReq.SetSslCertId(upres.CertId)
 	setHttpTypeReq.SetJumpType(queryDomainConfigResp.Result.HttpsJumpType)
 	setHttpTypeResp, err := d.sdkClient.SetHttpType(setHttpTypeReq)
 	if err != nil {
