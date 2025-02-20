@@ -56,6 +56,7 @@
   "provider.jdcloud": "京东云",
   "provider.jdcloud.cdn": "京东云 - 内容分发网络 CDN",
   "provider.jdcloud.dns": "京东云 - 云解析 DNS",
+  "provider.jdcloud.live": "京东云 - 视频直播",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.local": "本地部署",

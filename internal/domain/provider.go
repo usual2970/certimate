@@ -128,6 +128,7 @@ const (
 	DeployProviderTypeHuaweiCloudELB        = DeployProviderType("huaweicloud-elb")
 	DeployProviderTypeHuaweiCloudWAF        = DeployProviderType("huaweicloud-waf")
 	DeployProviderTypeJDCloudCDN            = DeployProviderType("jdcloud-cdn")
+	DeployProviderTypeJDCloudLive           = DeployProviderType("jdcloud-live")
 	DeployProviderTypeKubernetesSecret      = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal                 = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")

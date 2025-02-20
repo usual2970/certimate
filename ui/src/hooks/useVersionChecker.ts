@@ -3,7 +3,7 @@
 import { version } from "@/domain/version";
 
 export type UseVersionCheckerReturns = {
-  data: boolean;
+  hasNewVersion: boolean;
   check: () => void;
 };
 
@@ -62,7 +62,7 @@ const useVersionChecker = () => {
   );
 
   return {
-    data: !!data,
+    hasNewVersion: !!data,
     check: refresh,
   };
 };

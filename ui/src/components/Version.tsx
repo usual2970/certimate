@@ -14,7 +14,7 @@ export type VersionProps = {
 const Version = ({ className, style }: VersionProps) => {
   const { t } = useTranslation();
 
-  const { data: hasNewVersions } = useVersionChecker();
+  const { hasNewVersion } = useVersionChecker();
 
   return (
     <Space className={className} style={style} size={4}>
@@ -27,7 +27,7 @@ const Version = ({ className, style }: VersionProps) => {
 
       <Divider type="vertical" />
 
-      <Badge styles={{ indicator: { transform: "scale(0.75) translate(50%, -50%)" } }} count={hasNewVersions ? "NEW" : 0}>
+      <Badge styles={{ indicator: { transform: "scale(0.75) translate(50%, -50%)" } }} count={hasNewVersion ? "NEW" : undefined}>
         <Typography.Link type="secondary" href="https://github.com/usual2970/certimate/releases" target="_blank">
           {version}
         </Typography.Link>

@@ -29,7 +29,7 @@ type AddDomainResolutionRequest struct {
 
 type AddDomainResolutionResponse struct {
 	baseResponse
-	Data int `json:"data"`
+	Data string `json:"data"`
 }
 
 type ModifyDomainResolutionRequest struct {

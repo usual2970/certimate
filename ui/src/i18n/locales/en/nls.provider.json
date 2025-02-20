@@ -56,6 +56,7 @@
   "provider.jdcloud": "JD Cloud",
   "provider.jdcloud.cdn": "JD Cloud - CDN (Content Delivery Network)",
   "provider.jdcloud.dns": "JD Cloud - DNS",
+  "provider.jdcloud.live": "JD Cloud - Live Video",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.local": "Local deployment",
