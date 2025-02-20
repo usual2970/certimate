@@ -55,6 +55,7 @@ import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
 import DeployNodeConfigFormTencentCloudSSLDeployConfig from "./DeployNodeConfigFormTencentCloudSSLDeployConfig";
+import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTencentCloudVODConfig";
 import DeployNodeConfigFormTencentCloudWAFConfig from "./DeployNodeConfigFormTencentCloudWAFConfig";
 import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
@@ -216,6 +217,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:
           return <DeployNodeConfigFormTencentCloudSSLDeployConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.TENCENTCLOUD_VOD:
+          return <DeployNodeConfigFormTencentCloudVODConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_WAF:
           return <DeployNodeConfigFormTencentCloudWAFConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UCLOUD_UCDN:

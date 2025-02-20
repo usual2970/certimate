@@ -81,6 +81,7 @@
   "provider.tencentcloud.ecdn": "Tencent Cloud - ECDN (Enterprise Content Delivery Network)",
   "provider.tencentcloud.eo": "Tencent Cloud - EdgeOne",
   "provider.tencentcloud.ssl_deploy": "Tencent Cloud - via SSL Certificate Service Deployment Job",
+  "provider.tencentcloud.vod": "Tencent Cloud - VOD (Video on Demand)",
   "provider.tencentcloud.waf": "Tencent Cloud - WAF (Web Application Firewall)",
   "provider.ucloud": "UCloud",
   "provider.ucloud.ucdn": "UCloud - UCDN (UCloud Content Delivery Network)",
@@ -99,9 +100,9 @@
   "provider.category.all": "All",
   "provider.category.cdn": "CDN",
   "provider.category.storage": "Storage",
-  "provider.category.loadbalance": "Load Balance",
+  "provider.category.loadbalance": "Loadbalance",
   "provider.category.firewall": "Firewall",
-  "provider.category.live": "Live",
+  "provider.category.av": "Audio/Video",
   "provider.category.website": "Website",
   "provider.category.other": "Other"
 }

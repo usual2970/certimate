@@ -47,6 +47,7 @@ import (
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
+	pTencentCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-vod"
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
 	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
@@ -577,7 +578,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudWAF:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -647,6 +648,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					Region:       maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					ResourceType: maps.GetValueAsString(options.ProviderDeployConfig, "resourceType"),
 					ResourceIds:  slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeTencentCloudVOD:
+				deployer, err := pTencentCloudVOD.NewDeployer(&pTencentCloudVOD.DeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
+					SubAppId:  maps.GetValueAsInt64(options.ProviderDeployConfig, "subAppId"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
 

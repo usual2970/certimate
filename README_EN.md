@@ -125,7 +125,7 @@ The following hosting providers are supported:
 | Webhook                                         | Supports deployment to Webhook                                                        |
 | [Kubernetes](https://kubernetes.io/)            | Supports deployment to Kubernetes Secret                                              |
 | [Alibaba Cloud](https://www.alibabacloud.com/)  | Supports deployment to Alibaba Cloud OSS, CDN, DCDN, SLB(CLB/ALB/NLB), WAF, Live, VOD |
-| [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, WAF, CSS           |
+| [Tencent Cloud](https://www.tencentcloud.com/)  | Supports deployment to Tencent Cloud COS, CDN, ECDN, EdgeOne, CLB, WAF, CSS, VOD      |
 | [Baidu AI Cloud](https://intl.cloud.baidu.com/) | Supports deployment to Baidu AI CLoud CDN                                             |
 | [Huawei Cloud](https://www.huaweicloud.com/)    | Supports deployment to Huawei Cloud CDN, ELB, WAF                                     |
 | [Volcengine](https://www.volcengine.com/)       | Supports deployment to Volcengine TOS, CDN, DCDN, CLB, ImageX, Live                   |

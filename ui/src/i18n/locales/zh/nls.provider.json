@@ -81,6 +81,7 @@
   "provider.tencentcloud.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "provider.tencentcloud.eo": "腾讯云 - 边缘安全加速平台 EdgeOne",
   "provider.tencentcloud.ssl_deploy": "腾讯云 - 通过 SSL 证书服务创建部署任务",
+  "provider.tencentcloud.vod": "腾讯云 - 云点播 VOD",
   "provider.tencentcloud.waf": "腾讯云 - Web 应用防火墙 WAF",
   "provider.ucloud": "优刻得",
   "provider.ucloud.ucdn": "优刻得 - 内容分发 UCDN",
@@ -101,7 +102,7 @@
   "provider.category.storage": "存储",
   "provider.category.loadbalance": "负载均衡",
   "provider.category.firewall": "防火墙",
-  "provider.category.live": "直播",
+  "provider.category.av": "音视频",
   "provider.category.website": "网站",
   "provider.category.other": "其他"
 }
