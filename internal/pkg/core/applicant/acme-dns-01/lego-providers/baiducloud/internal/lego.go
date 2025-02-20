@@ -87,17 +87,17 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	zoneName, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
+	authZone, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
 	if err != nil {
 		return fmt.Errorf("baiducloud: %w", err)
 	}
 
-	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, zoneName)
+	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, authZone)
 	if err != nil {
 		return fmt.Errorf("baiducloud: %w", err)
 	}
 
-	if err := d.addOrUpdateDNSRecord(domain, subDomain, info.Value); err != nil {
+	if err := d.addOrUpdateDNSRecord(dns01.UnFqdn(authZone), subDomain, info.Value); err != nil {
 		return fmt.Errorf("baiducloud: %w", err)
 	}
 
@@ -105,10 +105,19 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 }
 
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, value := dns01.GetRecord(domain, keyAuth)
-	subDomain := dns01.UnFqdn(fqdn)
+	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	if err := d.removeDNSRecord(domain, subDomain, value); err != nil {
+	authZone, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
+	if err != nil {
+		return fmt.Errorf("baiducloud: %w", err)
+	}
+
+	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, authZone)
+	if err != nil {
+		return fmt.Errorf("baiducloud: %w", err)
+	}
+
+	if err := d.removeDNSRecord(dns01.UnFqdn(authZone), subDomain); err != nil {
 		return fmt.Errorf("baiducloud: %w", err)
 	}
 
@@ -119,16 +128,16 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSRecord(domain, subDomain string) (*bceDns.Record, error) {
+func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*bceDns.Record, error) {
 	pageMarker := ""
 	pageSize := 1000
 	for {
 		request := &bceDns.ListRecordRequest{}
-		request.Rr = domain
+		request.Rr = zoneName
 		request.Marker = pageMarker
 		request.MaxKeys = pageSize
 
-		response, err := d.client.ListRecord(domain, request)
+		response, err := d.client.ListRecord(zoneName, request)
 		if err != nil {
 			return nil, err
 		}
@@ -149,8 +158,8 @@ func (d *DNSProvider) getDNSRecord(domain, subDomain string) (*bceDns.Record, er
 	return nil, nil
 }
 
-func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) error {
-	record, err := d.getDNSRecord(domain, subDomain)
+func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) error {
+	record, err := d.getDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
@@ -162,7 +171,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) erro
 			Value: value,
 			Ttl:   &d.config.TTL,
 		}
-		err := d.client.CreateRecord(domain, request, d.generateClientToken())
+		err := d.client.CreateRecord(zoneName, request, d.generateClientToken())
 		return err
 	} else {
 		request := &bceDns.UpdateRecordRequest{
@@ -171,13 +180,13 @@ func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) erro
 			Value: value,
 			Ttl:   &d.config.TTL,
 		}
-		err := d.client.UpdateRecord(domain, record.Id, request, d.generateClientToken())
+		err := d.client.UpdateRecord(zoneName, record.Id, request, d.generateClientToken())
 		return err
 	}
 }
 
-func (d *DNSProvider) removeDNSRecord(domain, subDomain, value string) error {
-	record, err := d.getDNSRecord(domain, subDomain)
+func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
+	record, err := d.getDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
@@ -185,7 +194,7 @@ func (d *DNSProvider) removeDNSRecord(domain, subDomain, value string) error {
 	if record == nil {
 		return nil
 	} else {
-		err = d.client.DeleteRecord(domain, record.Id, d.generateClientToken())
+		err = d.client.DeleteRecord(zoneName, record.Id, d.generateClientToken())
 		return err
 	}
 }

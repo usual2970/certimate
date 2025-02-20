@@ -88,17 +88,17 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	zoneName, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
+	authZone, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
 	if err != nil {
 		return fmt.Errorf("jdcloud: %w", err)
 	}
 
-	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, zoneName)
+	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, authZone)
 	if err != nil {
 		return fmt.Errorf("jdcloud: %w", err)
 	}
 
-	if err := d.addOrUpdateDNSRecord(domain, subDomain, info.Value); err != nil {
+	if err := d.addOrUpdateDNSRecord(dns01.UnFqdn(authZone), subDomain, info.Value); err != nil {
 		return fmt.Errorf("jdcloud: %w", err)
 	}
 
@@ -106,10 +106,19 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 }
 
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
-	fqdn, value := dns01.GetRecord(domain, keyAuth)
-	subDomain := dns01.UnFqdn(fqdn)
+	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	if err := d.removeDNSRecord(domain, subDomain, value); err != nil {
+	authZone, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
+	if err != nil {
+		return fmt.Errorf("jdcloud: %w", err)
+	}
+
+	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, authZone)
+	if err != nil {
+		return fmt.Errorf("jdcloud: %w", err)
+	}
+
+	if err := d.removeDNSRecord(dns01.UnFqdn(authZone), subDomain); err != nil {
 		return fmt.Errorf("jdcloud: %w", err)
 	}
 
@@ -151,8 +160,8 @@ func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) 
 	return nil, fmt.Errorf("jdcloud: zone %s not found", domain)
 }
 
-func (d *DNSProvider) getDNSZoneAndRecord(domain, subDomain string) (*jdDnsModel.DomainInfo, *jdDnsModel.RRInfo, error) {
-	zone, err := d.getDNSZone(domain)
+func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsModel.DomainInfo, *jdDnsModel.RRInfo, error) {
+	zone, err := d.getDNSZone(zoneName)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -186,8 +195,8 @@ func (d *DNSProvider) getDNSZoneAndRecord(domain, subDomain string) (*jdDnsModel
 	return nil, nil, nil
 }
 
-func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) error {
-	zone, record, err := d.getDNSZoneAndRecord(domain, subDomain)
+func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) error {
+	zone, record, err := d.getDNSZoneAndRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
@@ -213,8 +222,8 @@ func (d *DNSProvider) addOrUpdateDNSRecord(domain, subDomain, value string) erro
 	}
 }
 
-func (d *DNSProvider) removeDNSRecord(domain, subDomain, value string) error {
-	zone, record, err := d.getDNSZoneAndRecord(domain, subDomain)
+func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
+	zone, record, err := d.getDNSZoneAndRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
