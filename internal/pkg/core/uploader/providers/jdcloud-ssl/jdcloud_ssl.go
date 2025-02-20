@@ -67,9 +67,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	describeCertsPageSize := 100
 	for {
 		describeCertsReq := jdSslApi.NewDescribeCertsRequest()
-		describeCertsReq.DomainName = &certX509.Subject.CommonName
-		describeCertsReq.PageNumber = &describeCertsPageNumber
-		describeCertsReq.PageSize = &describeCertsPageSize
+		describeCertsReq.SetDomainName(certX509.Subject.CommonName)
+		describeCertsReq.SetPageNumber(describeCertsPageNumber)
+		describeCertsReq.SetPageSize(describeCertsPageSize)
 		describeCertsResp, err := u.sdkClient.DescribeCerts(describeCertsReq)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DescribeCerts'")

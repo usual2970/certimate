@@ -34,6 +34,7 @@ import (
 	pJDCloudALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-alb"
 	pJDCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-cdn"
 	pJDCloudLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-live"
+	pJDCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-vod"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
@@ -429,7 +430,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeJDCloudALB, domain.DeployProviderTypeJDCloudCDN, domain.DeployProviderTypeJDCloudLive:
+	case domain.DeployProviderTypeJDCloudALB, domain.DeployProviderTypeJDCloudCDN, domain.DeployProviderTypeJDCloudLive, domain.DeployProviderTypeJDCloudVOD:
 		{
 			access := domain.AccessConfigForJDCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -458,6 +459,14 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 
 			case domain.DeployProviderTypeJDCloudLive:
 				deployer, err := pJDCloudLive.NewDeployer(&pJDCloudLive.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeJDCloudVOD:
+				deployer, err := pJDCloudVOD.NewDeployer(&pJDCloudVOD.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),

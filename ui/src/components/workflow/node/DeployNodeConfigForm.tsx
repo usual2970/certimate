@@ -42,6 +42,7 @@ import DeployNodeConfigFormHuaweiCloudWAFConfig from "./DeployNodeConfigFormHuaw
 import DeployNodeConfigFormJDCloudALBConfig from "./DeployNodeConfigFormJDCloudALBConfig";
 import DeployNodeConfigFormJDCloudCDNConfig from "./DeployNodeConfigFormJDCloudCDNConfig";
 import DeployNodeConfigFormJDCloudLiveConfig from "./DeployNodeConfigFormJDCloudLiveConfig";
+import DeployNodeConfigFormJDCloudVODConfig from "./DeployNodeConfigFormJDCloudVODConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
@@ -191,6 +192,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormJDCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.JDCLOUD_LIVE:
           return <DeployNodeConfigFormJDCloudLiveConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.JDCLOUD_VOD:
+          return <DeployNodeConfigFormJDCloudVODConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.KUBERNETES_SECRET:
           return <DeployNodeConfigFormKubernetesSecretConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.LOCAL:

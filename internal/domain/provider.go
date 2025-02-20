@@ -131,6 +131,7 @@ const (
 	DeployProviderTypeJDCloudALB            = DeployProviderType("jdcloud-alb")
 	DeployProviderTypeJDCloudCDN            = DeployProviderType("jdcloud-cdn")
 	DeployProviderTypeJDCloudLive           = DeployProviderType("jdcloud-live")
+	DeployProviderTypeJDCloudVOD            = DeployProviderType("jdcloud-vod")
 	DeployProviderTypeKubernetesSecret      = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal                 = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")
