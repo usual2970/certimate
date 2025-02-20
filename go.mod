@@ -62,7 +62,11 @@ require (
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
+	github.com/alibabacloud-go/tea-rpc v1.1.3 // indirect
+	github.com/alibabacloud-go/tea-rpc-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
+	github.com/alibabacloud-go/vod-20170321 v1.0.1 // indirect
+	github.com/alibabacloud-go/vod-20170321/v4 v4.6.1 // indirect
 	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.48.1 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect

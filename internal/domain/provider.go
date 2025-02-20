@@ -112,6 +112,7 @@ const (
 	DeployProviderTypeAliyunLive            = DeployProviderType("aliyun-live")
 	DeployProviderTypeAliyunNLB             = DeployProviderType("aliyun-nlb")
 	DeployProviderTypeAliyunOSS             = DeployProviderType("aliyun-oss")
+	DeployProviderTypeAliyunVOD             = DeployProviderType("aliyun-vod")
 	DeployProviderTypeAliyunWAF             = DeployProviderType("aliyun-waf")
 	DeployProviderTypeAWSCloudFront         = DeployProviderType("aws-cloudfront")
 	DeployProviderTypeBaiduCloudCDN         = DeployProviderType("baiducloud-cdn")

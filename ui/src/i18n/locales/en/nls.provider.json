@@ -12,6 +12,7 @@
   "provider.aliyun.live": "Alibaba Cloud - ApsaraVideo Live",
   "provider.aliyun.nlb": "Alibaba Cloud - NLB (Network Load Balancer)",
   "provider.aliyun.oss": "Alibaba Cloud - OSS (Object Storage Service)",
+  "provider.aliyun.vod": "Alibaba Cloud - ApsaraVideo VOD (Video on Demand)",
   "provider.aliyun.waf": "Alibaba Cloud - WAF (Web Application Firewall)",
   "provider.akamai": "Akamai",
   "provider.akamai.cdn": "Akamai - CDN (Content Delivery Network)",

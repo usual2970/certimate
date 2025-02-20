@@ -12,6 +12,7 @@
   "provider.aliyun.live": "阿里云 - 视频直播 Live",
   "provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",
   "provider.aliyun.oss": "阿里云 - 对象存储 OSS",
+  "provider.aliyun.vod": "阿里云 - 视频点播 VOD",
   "provider.aliyun.waf": "阿里云 - Web 应用防火墙 WAF",
   "provider.akamai": "Akamai",
   "provider.akamai.cdn": "Akamai - 内容分发网络 CDN",
