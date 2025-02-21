@@ -132,7 +132,7 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 
 func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) {
 	pageNumber := 1
-	pageSize := 100
+	pageSize := 10
 	for {
 		request := jdDnsApi.NewDescribeDomainsRequest(d.config.RegionId, pageNumber, pageSize)
 		request.SetDomainName(domain)
@@ -165,9 +165,9 @@ func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsMod
 	}
 
 	pageNumber := 1
-	pageSize := 100
+	pageSize := 10
 	for {
-		request := jdDnsApi.NewDescribeResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", &zone.Id))
+		request := jdDnsApi.NewDescribeResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id))
 		request.SetSearch(subDomain)
 		request.SetPageNumber(pageNumber)
 		request.SetPageSize(pageSize)
@@ -190,7 +190,7 @@ func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsMod
 		pageNumber++
 	}
 
-	return nil, nil, nil
+	return zone, nil, nil
 }
 
 func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) error {
@@ -200,20 +200,22 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 	}
 
 	if record == nil {
-		request := jdDnsApi.NewCreateResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", &zone.Id), &jdDnsModel.AddRR{
+		request := jdDnsApi.NewCreateResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), &jdDnsModel.AddRR{
 			Type:       "TXT",
 			HostRecord: subDomain,
 			HostValue:  value,
 			Ttl:        int(d.config.TTL),
+			ViewValue:  -1,
 		})
 		_, err := d.client.CreateResourceRecord(request)
 		return err
 	} else {
-		request := jdDnsApi.NewModifyResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", &zone.Id), fmt.Sprintf("%d", &record.Id), &jdDnsModel.UpdateRR{
+		request := jdDnsApi.NewModifyResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id), &jdDnsModel.UpdateRR{
 			Type:       "TXT",
 			HostRecord: subDomain,
 			HostValue:  value,
 			Ttl:        int(d.config.TTL),
+			ViewValue:  -1,
 		})
 		_, err := d.client.ModifyResourceRecord(request)
 		return err
@@ -229,8 +231,8 @@ func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
 	if record == nil {
 		return nil
 	} else {
-		req := jdDnsApi.NewDeleteResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", &zone.Id), fmt.Sprintf("%d", &record.Id))
-		_, err = d.client.DeleteResourceRecord(req)
+		request := jdDnsApi.NewDeleteResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id))
+		_, err = d.client.DeleteResourceRecord(request)
 		return err
 	}
 }

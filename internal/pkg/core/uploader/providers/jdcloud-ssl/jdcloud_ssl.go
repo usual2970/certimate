@@ -64,7 +64,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 遍历查看证书列表，避免重复上传
 	// REF: https://docs.jdcloud.com/cn/ssl-certificate/api/describecerts
 	describeCertsPageNumber := 1
-	describeCertsPageSize := 100
+	describeCertsPageSize := 10
 	for {
 		describeCertsReq := jdSslApi.NewDescribeCertsRequest()
 		describeCertsReq.SetDomainName(certX509.Subject.CommonName)
