@@ -118,5 +118,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func createSdkClient(accessKeyId, accessKeySecret string) (*jdVodClient.VodClient, error) {
 	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
 	client := jdVodClient.NewVodClient(clientCredentials)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 	return client, nil
 }

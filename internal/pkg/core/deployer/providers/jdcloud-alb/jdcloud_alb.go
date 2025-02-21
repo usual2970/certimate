@@ -247,5 +247,6 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 func createSdkClient(accessKeyId, accessKeySecret string) (*jdLbClient.LbClient, error) {
 	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
 	client := jdLbClient.NewLbClient(clientCredentials)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 	return client, nil
 }

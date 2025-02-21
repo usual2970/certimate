@@ -70,5 +70,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func createSdkClient(accessKeyId, accessKeySecret string) (*jdLiveClient.LiveClient, error) {
 	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
 	client := jdLiveClient.NewLiveClient(clientCredentials)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 	return client, nil
 }

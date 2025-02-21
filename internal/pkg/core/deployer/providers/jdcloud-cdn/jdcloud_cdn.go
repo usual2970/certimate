@@ -104,5 +104,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func createSdkClient(accessKeyId, accessKeySecret string) (*jdCdnClient.CdnClient, error) {
 	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
 	client := jdCdnClient.NewCdnClient(clientCredentials)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 	return client, nil
 }

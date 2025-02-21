@@ -74,10 +74,11 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 	}
 
 	clientCredentials := jdCore.NewCredentials(config.AccessKeyID, config.AccessKeySecret)
-	clientConfig := jdCore.NewConfig()
-	clientConfig.SetTimeout(config.HTTPTimeout)
 	client := jdDnsClient.NewDomainserviceClient(clientCredentials)
+	clientConfig := &client.Config
+	clientConfig.SetTimeout(config.HTTPTimeout)
 	client.SetConfig(clientConfig)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 
 	return &DNSProvider{
 		client: client,
@@ -133,11 +134,8 @@ func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) 
 	pageNumber := 1
 	pageSize := 100
 	for {
-		request := &jdDnsApi.DescribeDomainsRequest{}
-		request.RegionId = d.config.RegionId
-		request.DomainName = &domain
-		request.PageNumber = pageNumber
-		request.PageSize = pageSize
+		request := jdDnsApi.NewDescribeDomainsRequest(d.config.RegionId, pageNumber, pageSize)
+		request.SetDomainName(domain)
 
 		response, err := d.client.DescribeDomains(request)
 		if err != nil {
@@ -170,9 +168,9 @@ func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsMod
 	pageSize := 100
 	for {
 		request := jdDnsApi.NewDescribeResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", &zone.Id))
-		request.Search = &subDomain
-		request.PageNumber = &pageNumber
-		request.PageSize = &pageSize
+		request.SetSearch(subDomain)
+		request.SetPageNumber(pageNumber)
+		request.SetPageSize(pageSize)
 
 		response, err := d.client.DescribeResourceRecord(request)
 		if err != nil {

@@ -134,5 +134,6 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 func createSdkClient(accessKeyId, accessKeySecret string) (*jdSslClient.SslClient, error) {
 	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
 	client := jdSslClient.NewSslClient(clientCredentials)
+	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
 	return client, nil
 }
