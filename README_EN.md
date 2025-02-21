@@ -101,6 +101,7 @@ The following DNS providers are supported:
 | [GNAME](https://www.gname.com/)                              |                                       |
 | [GoDaddy](https://www.godaddy.com/)                          |                                       |
 | [Name.com](https://www.name.com/)                            |                                       |
+| [Namecheap](https://www.namecheap.com/)                      |                                       |
 | [NameSilo](https://www.namesilo.com/)                        |                                       |
 | [IBM NS1 Connect](https://www.ibm.com/products/ns1-connect/) |                                       |
 | [CMCC Cloud](https://ecloud.10086.cn/)                       |                                       |

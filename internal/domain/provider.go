@@ -26,6 +26,7 @@ const (
 	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud")
 	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
+	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")     // DNS.LA（预留）
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
 	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
@@ -37,6 +38,7 @@ const (
 	AccessProviderTypeJDCloud      = AccessProviderType("jdcloud")
 	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
 	AccessProviderTypeLocal        = AccessProviderType("local")
+	AccessProviderTypeNamecheap    = AccessProviderType("namecheap")
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
 	AccessProviderTypeNameSilo     = AccessProviderType("namesilo")
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
@@ -82,6 +84,7 @@ const (
 	ApplyDNSProviderTypeHuaweiCloudDNS  = ApplyDNSProviderType("huaweicloud-dns")
 	ApplyDNSProviderTypeJDCloud         = ApplyDNSProviderType("jdcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeJDCloudDNS]
 	ApplyDNSProviderTypeJDCloudDNS      = ApplyDNSProviderType("jdcloud-dns")
+	ApplyDNSProviderTypeNamecheap       = ApplyDNSProviderType("namecheap")
 	ApplyDNSProviderTypeNameDotCom      = ApplyDNSProviderType("namedotcom")
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
 	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")

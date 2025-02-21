@@ -19,6 +19,7 @@ import (
 	pGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
 	pHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
 	pJDCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/jdcloud"
+	pNamecheap "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namecheap"
 	pNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
 	pNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
 	pNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
@@ -243,6 +244,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
 				RegionId:              maps.GetValueAsString(options.ProviderApplyConfig, "region_id"),
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeNamecheap:
+		{
+			access := domain.AccessConfigForNamecheap{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pNamecheap.NewChallengeProvider(&pNamecheap.ChallengeProviderConfig{
+				Username:              access.Username,
+				ApiKey:              access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

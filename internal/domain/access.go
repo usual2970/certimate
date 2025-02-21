@@ -131,6 +131,11 @@ type AccessConfigForKubernetes struct {
 
 type AccessConfigForLocal struct{}
 
+type AccessConfigForNamecheap struct {
+	Username string `json:"username"`
+	ApiKey   string `json:"apiKey"`
+}
+
 type AccessConfigForNameDotCom struct {
 	Username string `json:"username"`
 	ApiToken string `json:"apiToken"`

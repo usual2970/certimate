@@ -28,6 +28,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
       | AccessConfigForLocal
+      | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
       | AccessConfigForPowerDNS
@@ -150,6 +151,11 @@ export type AccessConfigForKubernetes = {
 };
 
 export type AccessConfigForLocal = NonNullable<unknown>;
+
+export type AccessConfigForNamecheap = {
+  username: string;
+  apiKey: string;
+};
 
 export type AccessConfigForNameDotCom = {
   username: string;

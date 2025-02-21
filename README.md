@@ -102,6 +102,7 @@ make local.run
 | [GNAME](https://www.gname.com/)                                    |                                         |
 | [GoDaddy](https://www.godaddy.com/)                                |                                         |
 | [Name.com](https://www.name.com/)                                  |                                         |
+| [Namecheap](https://www.namecheap.com/)                            |                                         |
 | [NameSilo](https://www.namesilo.com/)                              |                                         |
 | [IBM NS1 Connect](https://www.ibm.com/cn-zh/products/ns1-connect/) |                                         |
 | [移动云](https://ecloud.10086.cn/)                                 |                                         |

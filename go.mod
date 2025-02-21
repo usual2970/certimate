@@ -21,7 +21,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.10
 	github.com/baidubce/bce-sdk-go v0.9.217
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.41
-	github.com/go-acme/lego/v4 v4.21.0
+	github.com/go-acme/lego/v4 v4.22.2
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-viper/mapstructure/v2 v2.2.1
 	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.136
@@ -215,4 +215,5 @@ require (
 )
 
 replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkcore@v1.0.0
+
 replace gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkclouddns@v1.0.1
