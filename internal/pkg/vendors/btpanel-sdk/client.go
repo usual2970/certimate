@@ -48,10 +48,12 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	data := make(map[string]any)
 	if params != nil {
 		temp := make(map[string]any)
-		jsonData, _ := json.Marshal(params)
-		json.Unmarshal(jsonData, &temp)
+		jsonb, _ := json.Marshal(params)
+		json.Unmarshal(jsonb, &temp)
 		for k, v := range temp {
-			data[k] = v
+			if v != nil {
+				data[k] = v
+			}
 		}
 	}
 	data["request_time"] = timestamp

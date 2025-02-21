@@ -62,10 +62,12 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	data := make(map[string]string)
 	if params != nil {
 		temp := make(map[string]any)
-		jsonData, _ := json.Marshal(params)
-		json.Unmarshal(jsonData, &temp)
+		jsonb, _ := json.Marshal(params)
+		json.Unmarshal(jsonb, &temp)
 		for k, v := range temp {
-			data[k] = fmt.Sprintf("%v", v)
+			if v != nil {
+				data[k] = fmt.Sprintf("%v", v)
+			}
 		}
 	}
 	data["appid"] = c.appId

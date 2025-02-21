@@ -39,10 +39,12 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 		qs := make(map[string]string)
 		if params != nil {
 			temp := make(map[string]any)
-			jsonData, _ := json.Marshal(params)
-			json.Unmarshal(jsonData, &temp)
+			jsonb, _ := json.Marshal(params)
+			json.Unmarshal(jsonb, &temp)
 			for k, v := range temp {
-				qs[k] = fmt.Sprintf("%v", v)
+				if v != nil {
+					qs[k] = fmt.Sprintf("%v", v)
+				}
 			}
 		}
 

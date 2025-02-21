@@ -35,8 +35,8 @@ func (l *DefaultLogger) Logt(tag string, data ...any) {
 				reflect.Float32, reflect.Float64:
 				s = fmt.Sprintf("%v", v)
 			default:
-				jsonData, _ := json.Marshal(v)
-				s = string(jsonData)
+				jbytes, _ := json.Marshal(v)
+				s = string(jbytes)
 			}
 		}
 
