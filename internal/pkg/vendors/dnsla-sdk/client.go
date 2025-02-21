@@ -1,4 +1,4 @@
-package cacheflysdk
+package dnslasdk
 
 import (
 	"encoding/json"
@@ -11,17 +11,19 @@ import (
 )
 
 type Client struct {
-	apiToken string
+	apiId     string
+	apiSecret string
 
 	client *resty.Client
 }
 
-func NewClient(apiToken string) *Client {
+func NewClient(apiId, apiSecret string) *Client {
 	client := resty.New()
 
 	return &Client{
-		apiToken: apiToken,
-		client:   client,
+		apiId:     apiId,
+		apiSecret: apiSecret,
+		client:    client,
 	}
 }
 
@@ -31,10 +33,9 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R()
+	req := c.client.R().SetBasicAuth(c.apiId, c.apiSecret)
 	req.Method = method
-	req.URL = "https://api.cachefly.com/api/2.5" + path
-	req = req.SetHeader("x-cf-authorization", "Bearer "+c.apiToken)
+	req.URL = "https://api.dns.la/api" + path
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -55,9 +56,9 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 	resp, err := req.Send()
 	if err != nil {
-		return nil, fmt.Errorf("cachefly api error: failed to send request: %w", err)
+		return nil, fmt.Errorf("dnsla api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("cachefly api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("dnsla api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -70,7 +71,9 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("cachefly api error: failed to parse response: %w", err)
+		return fmt.Errorf("dnsla api error: failed to parse response: %w", err)
+	} else if errcode := result.GetCode(); errcode/100 != 2 {
+		return fmt.Errorf("dnsla api error: %d - %s", errcode, result.GetMessage())
 	}
 
 	return nil

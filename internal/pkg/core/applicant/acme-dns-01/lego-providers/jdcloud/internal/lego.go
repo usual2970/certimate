@@ -130,12 +130,12 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) {
+func (d *DNSProvider) getDNSZone(zoneName string) (*jdDnsModel.DomainInfo, error) {
 	pageNumber := 1
 	pageSize := 10
 	for {
 		request := jdDnsApi.NewDescribeDomainsRequest(d.config.RegionId, pageNumber, pageSize)
-		request.SetDomainName(domain)
+		request.SetDomainName(zoneName)
 
 		response, err := d.client.DescribeDomains(request)
 		if err != nil {
@@ -143,7 +143,7 @@ func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) 
 		}
 
 		for _, item := range response.Result.DataList {
-			if item.DomainName == domain {
+			if item.DomainName == zoneName {
 				return &item, nil
 			}
 		}
@@ -155,7 +155,7 @@ func (d *DNSProvider) getDNSZone(domain string) (*jdDnsModel.DomainInfo, error) 
 		pageNumber++
 	}
 
-	return nil, fmt.Errorf("jdcloud: zone %s not found", domain)
+	return nil, fmt.Errorf("jdcloud: zone %s not found", zoneName)
 }
 
 func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsModel.DomainInfo, *jdDnsModel.RRInfo, error) {

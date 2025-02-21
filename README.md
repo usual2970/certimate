@@ -97,7 +97,8 @@ make local.run
 | [AWS Route53](https://aws.amazon.com/route53/)                     |                                         |
 | [Azure](https://azure.microsoft.com/)                              |                                         |
 | [CloudFlare](https://www.cloudflare.com/)                          |                                         |
-| [ClouDNS](https://www.cloudns.net//)                               |                                         |
+| [ClouDNS](https://www.cloudns.net/)                                |                                         |
+| [DNS.LA](https://www.dns.la/)                                      |                                         |
 | [Gcore](https://gcore.com/)                                        |                                         |
 | [GNAME](https://www.gname.com/)                                    |                                         |
 | [GoDaddy](https://www.godaddy.com/)                                |                                         |

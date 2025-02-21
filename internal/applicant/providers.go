@@ -14,6 +14,7 @@ import (
 	pCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
 	pClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
 	pCMCCCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cmcccloud"
+	pDNSLA "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/dnsla"
 	pGcore "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gcore"
 	pGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
 	pGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
@@ -169,6 +170,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			return applicant, err
 		}
 
+	case domain.ApplyDNSProviderTypeDNSLA:
+		{
+			access := domain.AccessConfigForDNSLA{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pDNSLA.NewChallengeProvider(&pDNSLA.ChallengeProviderConfig{
+				ApiId:                 access.ApiId,
+				ApiSecret:             access.ApiSecret,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
 	case domain.ApplyDNSProviderTypeGcore:
 		{
 			access := domain.AccessConfigForGcore{}
@@ -259,7 +276,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 
 			applicant, err := pNamecheap.NewChallengeProvider(&pNamecheap.ChallengeProviderConfig{
 				Username:              access.Username,
-				ApiKey:              access.ApiKey,
+				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

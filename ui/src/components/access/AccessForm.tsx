@@ -22,6 +22,7 @@ import AccessFormCdnflyConfig from "./AccessFormCdnflyConfig";
 import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
+import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
@@ -124,6 +125,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormClouDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CMCCCLOUD:
         return <AccessFormCMCCCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DNSLA:
+        return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GCORE:

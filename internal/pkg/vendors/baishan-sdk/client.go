@@ -12,7 +12,8 @@ import (
 
 type Client struct {
 	apiToken string
-	client   *resty.Client
+
+	client *resty.Client
 }
 
 func NewClient(apiToken string) *Client {

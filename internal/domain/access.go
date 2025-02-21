@@ -91,6 +91,11 @@ type AccessConfigForCMCCCloud struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
+type AccessConfigForDNSLA struct {
+	ApiId     string `json:"apiId"`
+	ApiSecret string `json:"apiSecret"`
+}
+
 type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
