@@ -133,7 +133,7 @@ func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*bceDns.Record, 
 	pageSize := 1000
 	for {
 		request := &bceDns.ListRecordRequest{}
-		request.Rr = zoneName
+		request.Rr = subDomain
 		request.Marker = pageMarker
 		request.MaxKeys = pageSize
 
