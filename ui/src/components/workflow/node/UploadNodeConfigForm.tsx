@@ -40,11 +40,11 @@ const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNode
       certificate: z
         .string({ message: t("workflow_node.upload.form.certificate.placeholder") })
         .min(1, t("workflow_node.upload.form.certificate.placeholder"))
-        .max(5120, t("common.errmsg.string_max", { max: 5120 })),
+        .max(20480, t("common.errmsg.string_max", { max: 20480 })),
       privateKey: z
         .string({ message: t("workflow_node.upload.form.private_key.placeholder") })
         .min(1, t("workflow_node.upload.form.private_key.placeholder"))
-        .max(5120, t("common.errmsg.string_max", { max: 5120 })),
+        .max(20480, t("common.errmsg.string_max", { max: 20480 })),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
