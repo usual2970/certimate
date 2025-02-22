@@ -44,7 +44,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("CHATID: %v", fChartId),
 		}, "\n"))
 
-		notifier, err := provider.New(&provider.TelegramNotifierConfig{
+		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			ApiToken: fApiToken,
 			ChatId:   fChartId,
 		})

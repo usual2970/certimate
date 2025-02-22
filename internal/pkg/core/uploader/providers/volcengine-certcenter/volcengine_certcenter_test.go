@@ -49,7 +49,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 		}, "\n"))
 
-		uploader, err := provider.New(&provider.VolcEngineCertCenterUploaderConfig{
+		uploader, err := provider.NewUploader(&provider.UploaderConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 		})

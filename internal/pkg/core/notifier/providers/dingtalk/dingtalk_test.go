@@ -43,7 +43,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("SECRET: %v", fSecret),
 		}, "\n"))
 
-		notifier, err := provider.New(&provider.DingTalkNotifierConfig{
+		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			AccessToken: fAccessToken,
 			Secret:      fSecret,
 		})

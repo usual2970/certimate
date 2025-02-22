@@ -13,10 +13,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
 
-type VolcEngineCLBDeployerConfig struct {
+type DeployerConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -24,32 +24,24 @@ type VolcEngineCLBDeployerConfig struct {
 	// 火山引擎地域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 负载均衡监听器 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
 }
 
-type VolcEngineCLBDeployer struct {
-	config      *VolcEngineCLBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *veClb.CLB
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*VolcEngineCLBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *VolcEngineCLBDeployerConfig) (*VolcEngineCLBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*VolcEngineCLBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -57,7 +49,7 @@ func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.VolcEngineCertCenterUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          config.Region,
@@ -66,15 +58,19 @@ func NewWithLogger(config *VolcEngineCLBDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &VolcEngineCLBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到证书中心
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -85,7 +81,7 @@ func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, priv
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
@@ -97,7 +93,7 @@ func (d *VolcEngineCLBDeployer) Deploy(ctx context.Context, certPem string, priv
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *VolcEngineCLBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}

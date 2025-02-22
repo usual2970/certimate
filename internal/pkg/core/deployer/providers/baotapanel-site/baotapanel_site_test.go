@@ -16,6 +16,7 @@ var (
 	fInputKeyPath  string
 	fApiUrl        string
 	fApiKey        string
+	fSiteType      string
 	fSiteName      string
 )
 
@@ -26,6 +27,7 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
+	flag.StringVar(&fSiteType, argsPrefix+"SITETYPE", "", "")
 	flag.StringVar(&fSiteName, argsPrefix+"SITENAME", "", "")
 }
 
@@ -35,9 +37,10 @@ Shell command to run this test:
 	go test -v ./baotapanel_site_test.go -args \
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIURL="your-baota-panel-url" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIKEY="your-baota-panel-key" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITENAME="your-baota-site-name"
+	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIKEY="your-api-key" \
+	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITETYPE="php" \
+	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITENAME="your-site-name"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -49,13 +52,16 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
+			fmt.Sprintf("SITETYPE: %v", fSiteType),
 			fmt.Sprintf("SITENAME: %v", fSiteName),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.BaotaPanelSiteDeployerConfig{
-			ApiUrl:   fApiUrl,
-			ApiKey:   fApiKey,
-			SiteName: fSiteName,
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
+			ApiUrl:    fApiUrl,
+			ApiKey:    fApiKey,
+			SiteType:  fSiteType,
+			SiteName:  fSiteName,
+			SiteNames: []string{fSiteName},
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

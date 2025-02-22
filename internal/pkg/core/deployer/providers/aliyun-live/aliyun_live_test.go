@@ -16,6 +16,7 @@ var (
 	fInputKeyPath    string
 	fAccessKeyId     string
 	fAccessKeySecret string
+	fRegion          string
 	fDomain          string
 )
 
@@ -26,6 +27,7 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
+	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
@@ -37,6 +39,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNLIVE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNLIVE_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNLIVE_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_ALIYUNLIVE_REGION="cn-hangzhou" \
 	--CERTIMATE_DEPLOYER_ALIYUNLIVE_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
@@ -49,12 +52,14 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
+			fmt.Sprintf("REGION: %v", fRegion),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.AliyunLiveDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
+			Region:          fRegion,
 			Domain:          fDomain,
 		})
 		if err != nil {

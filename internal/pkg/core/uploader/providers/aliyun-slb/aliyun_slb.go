@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -19,7 +18,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type AliyunSLBUploaderConfig struct {
+type UploaderConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -28,16 +27,16 @@ type AliyunSLBUploaderConfig struct {
 	Region string `json:"region"`
 }
 
-type AliyunSLBUploader struct {
-	config    *AliyunSLBUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *aliyunSlb.Client
 }
 
-var _ uploader.Uploader = (*AliyunSLBUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(
@@ -49,13 +48,13 @@ func New(config *AliyunSLBUploaderConfig) (*AliyunSLBUploader, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &AliyunSLBUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *AliyunSLBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

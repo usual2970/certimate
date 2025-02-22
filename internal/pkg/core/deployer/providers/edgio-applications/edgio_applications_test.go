@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ENVIRONMENTID: %v", fEnvironmentId),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.EdgioApplicationsDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ClientId:      fClientId,
 			ClientSecret:  fClientSecret,
 			EnvironmentId: fEnvironmentId,

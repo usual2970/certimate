@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -17,36 +16,36 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type ByteplusCDNUploaderConfig struct {
+type UploaderConfig struct {
 	// BytePlus AccessKey。
 	AccessKey string `json:"accessKey"`
 	// BytePlus SecretKey。
 	SecretKey string `json:"secretKey"`
 }
 
-type ByteplusCDNUploader struct {
-	config    *ByteplusCDNUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *bpCdn.CDN
 }
 
-var _ uploader.Uploader = (*ByteplusCDNUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *ByteplusCDNUploaderConfig) (*ByteplusCDNUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := bpCdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
-	return &ByteplusCDNUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *ByteplusCDNUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

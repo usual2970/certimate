@@ -12,10 +12,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
 )
 
-type BytePlusCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// BytePlus AccessKey。
 	AccessKey string `json:"accessKey"`
 	// BytePlus SecretKey。
@@ -24,33 +24,25 @@ type BytePlusCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type BytePlusCDNDeployer struct {
-	config      *BytePlusCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *bpCdn.CDN
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*BytePlusCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *BytePlusCDNDeployerConfig) (*BytePlusCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*BytePlusCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client := bpCdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
-	uploader, err := uploaderp.New(&uploaderp.ByteplusCDNUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})
@@ -58,15 +50,20 @@ func NewWithLogger(config *BytePlusCDNDeployerConfig, logger logger.Logger) (*By
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &BytePlusCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *BytePlusCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

@@ -21,7 +21,7 @@ import (
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
-type HuaweiCloudELBUploaderConfig struct {
+type UploaderConfig struct {
 	// 华为云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
@@ -30,16 +30,16 @@ type HuaweiCloudELBUploaderConfig struct {
 	Region string `json:"region"`
 }
 
-type HuaweiCloudELBUploader struct {
-	config    *HuaweiCloudELBUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *hcElb.ElbClient
 }
 
-var _ uploader.Uploader = (*HuaweiCloudELBUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(
@@ -51,13 +51,13 @@ func New(config *HuaweiCloudELBUploaderConfig) (*HuaweiCloudELBUploader, error) 
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &HuaweiCloudELBUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *HuaweiCloudELBUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -12,10 +11,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudCSSDeployerConfig struct {
+type DeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -24,26 +23,18 @@ type TencentCloudCSSDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type TencentCloudCSSDeployer struct {
-	config      *TencentCloudCSSDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *tcLive.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudCSSDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *TencentCloudCSSDeployerConfig) (*TencentCloudCSSDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *TencentCloudCSSDeployerConfig, logger logger.Logger) (*TencentCloudCSSDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.SecretId, config.SecretKey)
@@ -51,7 +42,7 @@ func NewWithLogger(config *TencentCloudCSSDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.TencentCloudSSLUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		SecretId:  config.SecretId,
 		SecretKey: config.SecretKey,
 	})
@@ -59,15 +50,20 @@ func NewWithLogger(config *TencentCloudCSSDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudCSSDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *TencentCloudCSSDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

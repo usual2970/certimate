@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
-type AliyunOSSDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -25,25 +25,17 @@ type AliyunOSSDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type AliyunOSSDeployer struct {
-	config    *AliyunOSSDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *oss.Client
 }
 
-var _ deployer.Deployer = (*AliyunOSSDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunOSSDeployerConfig) (*AliyunOSSDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunOSSDeployerConfig, logger logger.Logger) (*AliyunOSSDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -51,14 +43,19 @@ func NewWithLogger(config *AliyunOSSDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &AliyunOSSDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *AliyunOSSDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.Bucket == "" {
 		return nil, errors.New("config `bucket` is required")
 	}

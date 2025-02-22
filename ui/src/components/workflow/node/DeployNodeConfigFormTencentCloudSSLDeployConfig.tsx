@@ -48,6 +48,7 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
       .nonempty(t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder"))
       .trim(),
     resourceIds: z.string({ message: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.placeholder") }).refine((v) => {
+      if (!v) return false;
       return String(v)
         .split(MULTIPLE_INPUT_DELIMITER)
         .every((e) => /^[A-Za-z0-9._-]+$/.test(e));

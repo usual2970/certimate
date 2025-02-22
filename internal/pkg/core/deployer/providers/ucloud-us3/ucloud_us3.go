@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	usdk "github.com/ucloud/ucloud-sdk-go/ucloud"
@@ -11,11 +10,11 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
 	usdkFile "github.com/usual2970/certimate/internal/pkg/vendors/ucloud-sdk/ufile"
 )
 
-type UCloudUS3DeployerConfig struct {
+type DeployerConfig struct {
 	// 优刻得 API 私钥。
 	PrivateKey string `json:"privateKey"`
 	// 优刻得 API 公钥。
@@ -30,26 +29,18 @@ type UCloudUS3DeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type UCloudUS3Deployer struct {
-	config      *UCloudUS3DeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *usdkFile.UFileClient
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*UCloudUS3Deployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *UCloudUS3DeployerConfig) (*UCloudUS3Deployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *UCloudUS3DeployerConfig, logger logger.Logger) (*UCloudUS3Deployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey, config.Region)
@@ -57,7 +48,7 @@ func NewWithLogger(config *UCloudUS3DeployerConfig, logger logger.Logger) (*UClo
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.UCloudUSSLUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		PrivateKey: config.PrivateKey,
 		PublicKey:  config.PublicKey,
 		ProjectId:  config.ProjectId,
@@ -66,15 +57,20 @@ func NewWithLogger(config *UCloudUS3DeployerConfig, logger logger.Logger) (*UClo
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &UCloudUS3Deployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *UCloudUS3Deployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 USSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

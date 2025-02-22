@@ -3,7 +3,6 @@ package local
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"os/exec"
 	"runtime"
@@ -16,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/files"
 )
 
-type LocalDeployerConfig struct {
+type DeployerConfig struct {
 	// Shell 执行环境。
 	// 零值时默认根据操作系统决定。
 	ShellEnv ShellEnvType `json:"shellEnv,omitempty"`
@@ -44,33 +43,30 @@ type LocalDeployerConfig struct {
 	JksStorepass string `json:"jksStorepass,omitempty"`
 }
 
-type LocalDeployer struct {
-	config *LocalDeployerConfig
+type DeployerProvider struct {
+	config *DeployerConfig
 	logger logger.Logger
 }
 
-var _ deployer.Deployer = (*LocalDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *LocalDeployerConfig) (*LocalDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *LocalDeployerConfig, logger logger.Logger) (*LocalDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
-	if logger == nil {
-		return nil, errors.New("logger is nil")
-	}
-
-	return &LocalDeployer{
-		logger: logger,
+	return &DeployerProvider{
 		config: config,
+		logger: logger.NewNilLogger(),
 	}, nil
 }
 
-func (d *LocalDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 执行前置命令
 	if d.config.PreCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PreCommand)

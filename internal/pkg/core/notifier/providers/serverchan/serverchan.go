@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	notifyHttp "github.com/nikoksr/notify/service/http"
@@ -10,28 +9,28 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
-type ServerChanNotifierConfig struct {
+type NotifierConfig struct {
 	// ServerChan 服务地址。
 	Url string `json:"url"`
 }
 
-type ServerChanNotifier struct {
-	config *ServerChanNotifierConfig
+type NotifierProvider struct {
+	config *NotifierConfig
 }
 
-var _ notifier.Notifier = (*ServerChanNotifier)(nil)
+var _ notifier.Notifier = (*NotifierProvider)(nil)
 
-func New(config *ServerChanNotifierConfig) (*ServerChanNotifier, error) {
+func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
-	return &ServerChanNotifier{
+	return &NotifierProvider{
 		config: config,
 	}, nil
 }
 
-func (n *ServerChanNotifier) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	srv := notifyHttp.New()
 
 	srv.AddReceivers(&notifyHttp.Webhook{

@@ -20,7 +20,7 @@ import (
 	usdkSsl "github.com/usual2970/certimate/internal/pkg/vendors/ucloud-sdk/ussl"
 )
 
-type UCloudUSSLUploaderConfig struct {
+type UploaderConfig struct {
 	// 优刻得 API 私钥。
 	PrivateKey string `json:"privateKey"`
 	// 优刻得 API 公钥。
@@ -29,16 +29,16 @@ type UCloudUSSLUploaderConfig struct {
 	ProjectId string `json:"projectId,omitempty"`
 }
 
-type UCloudUSSLUploader struct {
-	config    *UCloudUSSLUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *usdkSsl.USSLClient
 }
 
-var _ uploader.Uploader = (*UCloudUSSLUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *UCloudUSSLUploaderConfig) (*UCloudUSSLUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey)
@@ -46,13 +46,13 @@ func New(config *UCloudUSSLUploaderConfig) (*UCloudUSSLUploader, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &UCloudUSSLUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *UCloudUSSLUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 生成新证书名（需符合优刻得命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
@@ -92,7 +92,7 @@ func (u *UCloudUSSLUploader) Upload(ctx context.Context, certPem string, privkey
 	}, nil
 }
 
-func (u *UCloudUSSLUploader) getExistCert(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getExistCert(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

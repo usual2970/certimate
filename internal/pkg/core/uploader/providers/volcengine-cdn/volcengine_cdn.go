@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -18,36 +17,36 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type VolcEngineCDNUploaderConfig struct {
+type UploaderConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
-type VolcEngineCDNUploader struct {
-	config    *VolcEngineCDNUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *veCdn.CDN
 }
 
-var _ uploader.Uploader = (*VolcEngineCDNUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *VolcEngineCDNUploaderConfig) (*VolcEngineCDNUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := veCdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
-	return &VolcEngineCDNUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *VolcEngineCDNUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

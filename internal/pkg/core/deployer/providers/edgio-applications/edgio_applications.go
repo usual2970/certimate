@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 
@@ -13,7 +12,7 @@ import (
 	edgsdkDtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
 
-type EdgioApplicationsDeployerConfig struct {
+type DeployerConfig struct {
 	// Edgio ClientId。
 	ClientId string `json:"clientId"`
 	// Edgio ClientSecret。
@@ -22,25 +21,17 @@ type EdgioApplicationsDeployerConfig struct {
 	EnvironmentId string `json:"environmentId"`
 }
 
-type EdgioApplicationsDeployer struct {
-	config    *EdgioApplicationsDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *edgsdk.EdgioClient
 }
 
-var _ deployer.Deployer = (*EdgioApplicationsDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *EdgioApplicationsDeployerConfig) (*EdgioApplicationsDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *EdgioApplicationsDeployerConfig, logger logger.Logger) (*EdgioApplicationsDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.ClientId, config.ClientSecret)
@@ -48,14 +39,19 @@ func NewWithLogger(config *EdgioApplicationsDeployerConfig, logger logger.Logger
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &EdgioApplicationsDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *EdgioApplicationsDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 提取 Edgio 所需的服务端证书和中间证书内容
 	privateCertPem, intermediateCertPem, err := certs.ExtractCertificatesFromPEM(certPem)
 	if err != nil {

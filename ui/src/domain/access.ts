@@ -11,22 +11,31 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForAWS
       | AccessConfigForAzure
       | AccessConfigForBaiduCloud
+      | AccessConfigForBaishan
       | AccessConfigForBaotaPanel
       | AccessConfigForBytePlus
+      | AccessConfigForCacheFly
+      | AccessConfigForCdnfly
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
+      | AccessConfigForCMCCCloud
+      | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForEdgio
+      | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
       | AccessConfigForHuaweiCloud
+      | AccessConfigForJDCloud
       | AccessConfigForKubernetes
       | AccessConfigForLocal
+      | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
       | AccessConfigForPowerDNS
       | AccessConfigForQiniu
       | AccessConfigForRainYun
+      | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
@@ -66,6 +75,10 @@ export type AccessConfigForBaiduCloud = {
   secretAccessKey: string;
 };
 
+export type AccessConfigForBaishan = {
+  apiToken: string;
+};
+
 export type AccessConfigForBaotaPanel = {
   apiUrl: string;
   apiKey: string;
@@ -74,6 +87,16 @@ export type AccessConfigForBaotaPanel = {
 export type AccessConfigForBytePlus = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForCacheFly = {
+  apiToken: string;
+};
+
+export type AccessConfigForCdnfly = {
+  apiUrl: string;
+  apiKey: string;
+  apiSecret: string;
 };
 
 export type AccessConfigForCloudflare = {
@@ -85,6 +108,16 @@ export type AccessConfigForClouDNS = {
   authPassword: string;
 };
 
+export type AccessConfigForCMCCCloud = {
+  accessKeyId: string;
+  accessKeySecret: string;
+};
+
+export type AccessConfigForDNSLA = {
+  apiId: string;
+  apiSecret: string;
+};
+
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
@@ -93,6 +126,10 @@ export type AccessConfigForDogeCloud = {
 export type AccessConfigForEdgio = {
   clientId: string;
   clientSecret: string;
+};
+
+export type AccessConfigForGcore = {
+  apiToken: string;
 };
 
 export type AccessConfigForGname = {
@@ -110,11 +147,21 @@ export type AccessConfigForHuaweiCloud = {
   secretAccessKey: string;
 };
 
+export type AccessConfigForJDCloud = {
+  accessKeyId: string;
+  accessKeySecret: string;
+};
+
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
 };
 
 export type AccessConfigForLocal = NonNullable<unknown>;
+
+export type AccessConfigForNamecheap = {
+  username: string;
+  apiKey: string;
+};
 
 export type AccessConfigForNameDotCom = {
   username: string;
@@ -141,6 +188,11 @@ export type AccessConfigForQiniu = {
 
 export type AccessConfigForRainYun = {
   apiKey: string;
+};
+
+export type AccessConfigForSafeLine = {
+  apiUrl: string;
+  apiToken: string;
 };
 
 export type AccessConfigForSSH = {

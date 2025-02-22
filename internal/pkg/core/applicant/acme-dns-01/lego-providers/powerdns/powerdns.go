@@ -1,7 +1,6 @@
 package namesilo
 
 import (
-	"errors"
 	"net/url"
 	"time"
 
@@ -9,16 +8,16 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/pdns"
 )
 
-type PowerDNSApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	ApiUrl                string `json:"apiUrl"`
 	ApiKey                string `json:"apiKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *PowerDNSApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	host, _ := url.Parse(config.ApiUrl)

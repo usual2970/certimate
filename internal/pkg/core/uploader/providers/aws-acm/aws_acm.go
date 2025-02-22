@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -16,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type AWSCertificateManagerUploaderConfig struct {
+type UploaderConfig struct {
 	// AWS AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// AWS SecretAccessKey。
@@ -25,16 +24,16 @@ type AWSCertificateManagerUploaderConfig struct {
 	Region string `json:"region"`
 }
 
-type AWSCertificateManagerUploader struct {
-	config    *AWSCertificateManagerUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *awsAcm.Client
 }
 
-var _ uploader.Uploader = (*AWSCertificateManagerUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *AWSCertificateManagerUploaderConfig) (*AWSCertificateManagerUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
@@ -42,13 +41,13 @@ func New(config *AWSCertificateManagerUploaderConfig) (*AWSCertificateManagerUpl
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &AWSCertificateManagerUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *AWSCertificateManagerUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

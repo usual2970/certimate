@@ -1,26 +1,46 @@
 package btpanelsdk
 
-type BaseResponse interface {
-	GetStatus() *bool
-	GetMsg() *string
+func (c *Client) ConfigSavePanelSSL(req *ConfigSavePanelSSLRequest) (*ConfigSavePanelSSLResponse, error) {
+	resp := ConfigSavePanelSSLResponse{}
+	err := c.sendRequestWithResult("/config?action=SavePanelSSL", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
-type SetSiteSSLRequest struct {
-	Type     string `json:"type"`
-	SiteName string `json:"siteName"`
-	Key      string `json:"key"`
-	Csr      string `json:"csr"`
+func (c *Client) SiteSetSSL(req *SiteSetSSLRequest) (*SiteSetSSLResponse, error) {
+	resp := SiteSetSSLResponse{}
+	err := c.sendRequestWithResult("/site?action=SetSSL", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
-type SetSiteSSLResponse struct {
-	Status *bool   `json:"status,omitempty"`
-	Msg    *string `json:"msg,omitempty"`
+func (c *Client) SystemServiceAdmin(req *SystemServiceAdminRequest) (*SystemServiceAdminResponse, error) {
+	resp := SystemServiceAdminResponse{}
+	err := c.sendRequestWithResult("/system?action=ServiceAdmin", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
-func (r *SetSiteSSLResponse) GetStatus() *bool {
-	return r.Status
+func (c *Client) SSLCertSaveCert(req *SSLCertSaveCertRequest) (*SSLCertSaveCertResponse, error) {
+	resp := SSLCertSaveCertResponse{}
+	err := c.sendRequestWithResult("/ssl/cert/save_cert", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
-func (r *SetSiteSSLResponse) GetMsg() *string {
-	return r.Msg
+func (c *Client) SSLSetBatchCertToSite(req *SSLSetBatchCertToSiteRequest) (*SSLSetBatchCertToSiteResponse, error) {
+	resp := SSLSetBatchCertToSiteResponse{}
+	err := c.sendRequestWithResult("/ssl?action=SetBatchCertToSite", req, &resp)
+	if err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }

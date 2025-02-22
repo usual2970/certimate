@@ -17,7 +17,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type K8sSecretDeployerConfig struct {
+type DeployerConfig struct {
 	// kubeconfig 文件内容。
 	KubeConfig string `json:"kubeConfig,omitempty"`
 	// Kubernetes 命名空间。
@@ -32,33 +32,30 @@ type K8sSecretDeployerConfig struct {
 	SecretDataKeyForKey string `json:"secretDataKeyForKey,omitempty"`
 }
 
-type K8sSecretDeployer struct {
-	config *K8sSecretDeployerConfig
+type DeployerProvider struct {
+	config *DeployerConfig
 	logger logger.Logger
 }
 
-var _ deployer.Deployer = (*K8sSecretDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *K8sSecretDeployerConfig) (*K8sSecretDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *K8sSecretDeployerConfig, logger logger.Logger) (*K8sSecretDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
-	if logger == nil {
-		return nil, errors.New("logger is nil")
-	}
-
-	return &K8sSecretDeployer{
-		logger: logger,
+	return &DeployerProvider{
+		logger: logger.NewNilLogger(),
 		config: config,
 	}, nil
 }
 
-func (d *K8sSecretDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.Namespace == "" {
 		return nil, errors.New("config `namespace` is required")
 	}

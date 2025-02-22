@@ -15,10 +15,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
-type AliyunCASDeployDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -32,26 +32,18 @@ type AliyunCASDeployDeployerConfig struct {
 	ContactIds []string `json:"contactIds"`
 }
 
-type AliyunCASDeployDeployer struct {
-	config      *AliyunCASDeployDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *aliyunCas.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AliyunCASDeployDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunCASDeployDeployerConfig) (*AliyunCASDeployDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunCASDeployDeployerConfig, logger logger.Logger) (*AliyunCASDeployDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -64,15 +56,20 @@ func NewWithLogger(config *AliyunCASDeployDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AliyunCASDeployDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AliyunCASDeployDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if len(d.config.ResourceIds) == 0 {
 		return nil, errors.New("config `resourceIds` is required")
 	}
@@ -178,7 +175,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 }
 
 func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
-	uploader, err := uploaderp.New(&uploaderp.AliyunCASUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          region,

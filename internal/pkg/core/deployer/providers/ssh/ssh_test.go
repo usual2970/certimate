@@ -64,7 +64,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("OUTPUTKEYPATH: %v", fOutputKeyPath),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.SshDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SshHost:        fSshHost,
 			SshPort:        int32(fSshPort),
 			SshUsername:    fSshUsername,

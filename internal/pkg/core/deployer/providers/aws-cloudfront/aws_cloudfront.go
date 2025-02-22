@@ -14,10 +14,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
 )
 
-type AWSCloudFrontDeployerConfig struct {
+type DeployerConfig struct {
 	// AWS AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// AWS SecretAccessKey。
@@ -28,26 +28,18 @@ type AWSCloudFrontDeployerConfig struct {
 	DistributionId string `json:"distributionId"`
 }
 
-type AWSCloudFrontDeployer struct {
-	config      *AWSCloudFrontDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *awsCf.Client
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AWSCloudFrontDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AWSCloudFrontDeployerConfig) (*AWSCloudFrontDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AWSCloudFrontDeployerConfig, logger logger.Logger) (*AWSCloudFrontDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
@@ -55,7 +47,7 @@ func NewWithLogger(config *AWSCloudFrontDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.AWSCertificateManagerUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		SecretAccessKey: config.SecretAccessKey,
 		Region:          config.Region,
@@ -64,15 +56,20 @@ func NewWithLogger(config *AWSCloudFrontDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AWSCloudFrontDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AWSCloudFrontDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.DistributionId == "" {
 		return nil, errors.New("config `distribuitionId` is required")
 	}

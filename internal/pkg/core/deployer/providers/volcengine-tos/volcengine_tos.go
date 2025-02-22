@@ -11,10 +11,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
 
-type VolcEngineTOSDeployerConfig struct {
+type DeployerConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -27,26 +27,18 @@ type VolcEngineTOSDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type VolcEngineTOSDeployer struct {
-	config      *VolcEngineTOSDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *veTos.ClientV2
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*VolcEngineTOSDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *VolcEngineTOSDeployerConfig) (*VolcEngineTOSDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *VolcEngineTOSDeployerConfig, logger logger.Logger) (*VolcEngineTOSDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -54,7 +46,7 @@ func NewWithLogger(config *VolcEngineTOSDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.VolcEngineCertCenterUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 		Region:          config.Region,
@@ -63,15 +55,20 @@ func NewWithLogger(config *VolcEngineTOSDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &VolcEngineTOSDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *VolcEngineTOSDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	if d.config.Bucket == "" {
 		return nil, errors.New("config `bucket` is required")
 	}

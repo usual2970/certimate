@@ -2,7 +2,6 @@ package volcenginelive
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -15,36 +14,36 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
-type VolcEngineLiveUploaderConfig struct {
+type UploaderConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
-type VolcEngineLiveUploader struct {
-	config    *VolcEngineLiveUploaderConfig
+type UploaderProvider struct {
+	config    *UploaderConfig
 	sdkClient *veLive.Live
 }
 
-var _ uploader.Uploader = (*VolcEngineLiveUploader)(nil)
+var _ uploader.Uploader = (*UploaderProvider)(nil)
 
-func New(config *VolcEngineLiveUploaderConfig) (*VolcEngineLiveUploader, error) {
+func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	client := veLive.NewInstance()
 	client.SetAccessKey(config.AccessKeyId)
 	client.SetSecretKey(config.AccessKeySecret)
 
-	return &VolcEngineLiveUploader{
+	return &UploaderProvider{
 		config:    config,
 		sdkClient: client,
 	}, nil
 }
 
-func (u *VolcEngineLiveUploader) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certs.ParseCertificateFromPEM(certPem)
 	if err != nil {

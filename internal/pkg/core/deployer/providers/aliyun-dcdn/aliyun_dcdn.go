@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -16,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
-type AliyunDCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -25,25 +24,17 @@ type AliyunDCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type AliyunDCDNDeployer struct {
-	config    *AliyunDCDNDeployerConfig
+type DeployerProvider struct {
+	config    *DeployerConfig
 	logger    logger.Logger
 	sdkClient *aliyunDcdn.Client
 }
 
-var _ deployer.Deployer = (*AliyunDCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *AliyunDCDNDeployerConfig) (*AliyunDCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunDCDNDeployerConfig, logger logger.Logger) (*AliyunDCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret)
@@ -51,14 +42,19 @@ func NewWithLogger(config *AliyunDCDNDeployerConfig, logger logger.Logger) (*Ali
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	return &AliyunDCDNDeployer{
-		logger:    logger,
+	return &DeployerProvider{
 		config:    config,
+		logger:    logger.NewNilLogger(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *AliyunDCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// "*.example.com" → ".example.com"，适配阿里云 DCDN 要求的泛域名格式
 	domain := strings.TrimPrefix(d.config.Domain, "*")
 

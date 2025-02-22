@@ -1,4 +1,4 @@
-﻿package tencentcloudeteo_test
+﻿package tencentcloudeo_test
 
 import (
 	"context"
@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudEODeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:  fSecretId,
 			SecretKey: fSecretKey,
 			ZoneId:    fZoneId,

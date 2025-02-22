@@ -5,14 +5,14 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	providerBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
-	providerDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
-	providerEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
-	providerLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
-	providerServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
-	providerTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
-	providerWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
-	providerWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
+	pBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
+	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
+	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
+	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
+	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
+	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
+	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
 	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
@@ -23,19 +23,19 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 	*/
 	switch channel {
 	case domain.NotifyChannelTypeBark:
-		return providerBark.New(&providerBark.BarkNotifierConfig{
+		return pBark.NewNotifier(&pBark.NotifierConfig{
 			DeviceKey: maps.GetValueAsString(channelConfig, "deviceKey"),
 			ServerUrl: maps.GetValueAsString(channelConfig, "serverUrl"),
 		})
 
 	case domain.NotifyChannelTypeDingTalk:
-		return providerDingTalk.New(&providerDingTalk.DingTalkNotifierConfig{
+		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
 			AccessToken: maps.GetValueAsString(channelConfig, "accessToken"),
 			Secret:      maps.GetValueAsString(channelConfig, "secret"),
 		})
 
 	case domain.NotifyChannelTypeEmail:
-		return providerEmail.New(&providerEmail.EmailNotifierConfig{
+		return pEmail.NewNotifier(&pEmail.NotifierConfig{
 			SmtpHost:        maps.GetValueAsString(channelConfig, "smtpHost"),
 			SmtpPort:        maps.GetValueAsInt32(channelConfig, "smtpPort"),
 			SmtpTLS:         maps.GetValueOrDefaultAsBool(channelConfig, "smtpTLS", true),
@@ -46,28 +46,28 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 		})
 
 	case domain.NotifyChannelTypeLark:
-		return providerLark.New(&providerLark.LarkNotifierConfig{
+		return pLark.NewNotifier(&pLark.NotifierConfig{
 			WebhookUrl: maps.GetValueAsString(channelConfig, "webhookUrl"),
 		})
 
 	case domain.NotifyChannelTypeServerChan:
-		return providerServerChan.New(&providerServerChan.ServerChanNotifierConfig{
+		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
 			Url: maps.GetValueAsString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeTelegram:
-		return providerTelegram.New(&providerTelegram.TelegramNotifierConfig{
+		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
 			ApiToken: maps.GetValueAsString(channelConfig, "apiToken"),
 			ChatId:   maps.GetValueAsInt64(channelConfig, "chatId"),
 		})
 
 	case domain.NotifyChannelTypeWebhook:
-		return providerWebhook.New(&providerWebhook.WebhookNotifierConfig{
+		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
 			Url: maps.GetValueAsString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeWeCom:
-		return providerWeCom.New(&providerWeCom.WeComNotifierConfig{
+		return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
 			WebhookUrl: maps.GetValueAsString(channelConfig, "webhookUrl"),
 		})
 	}

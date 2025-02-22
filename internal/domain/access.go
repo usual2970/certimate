@@ -53,6 +53,10 @@ type AccessConfigForBaiduCloud struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
+type AccessConfigForBaishan struct {
+	ApiToken string `json:"apiToken"`
+}
+
 type AccessConfigForBaotaPanel struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`
@@ -61,6 +65,16 @@ type AccessConfigForBaotaPanel struct {
 type AccessConfigForBytePlus struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
+}
+
+type AccessConfigForCacheFly struct {
+	ApiToken string `json:"apiToken"`
+}
+
+type AccessConfigForCdnfly struct {
+	ApiUrl    string `json:"apiUrl"`
+	ApiKey    string `json:"apiKey"`
+	ApiSecret string `json:"apiSecret"`
 }
 
 type AccessConfigForCloudflare struct {
@@ -72,6 +86,16 @@ type AccessConfigForClouDNS struct {
 	AuthPassword string `json:"authPassword"`
 }
 
+type AccessConfigForCMCCCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
+
+type AccessConfigForDNSLA struct {
+	ApiId     string `json:"apiId"`
+	ApiSecret string `json:"apiSecret"`
+}
+
 type AccessConfigForDogeCloud struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`
@@ -80,6 +104,10 @@ type AccessConfigForDogeCloud struct {
 type AccessConfigForEdgio struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
+}
+
+type AccessConfigForGcore struct {
+	ApiToken string `json:"apiToken"`
 }
 
 type AccessConfigForGname struct {
@@ -97,10 +125,20 @@ type AccessConfigForHuaweiCloud struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
-type AccessConfigForLocal struct{}
+type AccessConfigForJDCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
 
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
+}
+
+type AccessConfigForLocal struct{}
+
+type AccessConfigForNamecheap struct {
+	Username string `json:"username"`
+	ApiKey   string `json:"apiKey"`
 }
 
 type AccessConfigForNameDotCom struct {
@@ -128,6 +166,11 @@ type AccessConfigForQiniu struct {
 
 type AccessConfigForRainYun struct {
 	ApiKey string `json:"apiKey"`
+}
+
+type AccessConfigForSafeLine struct {
+	ApiUrl   string `json:"apiUrl"`
+	ApiToken string `json:"apiToken"`
 }
 
 type AccessConfigForSSH struct {

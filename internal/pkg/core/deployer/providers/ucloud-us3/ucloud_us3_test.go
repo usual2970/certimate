@@ -60,7 +60,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.UCloudUS3DeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			PrivateKey: fPrivateKey,
 			PublicKey:  fPublicKey,
 			Region:     fRegion,

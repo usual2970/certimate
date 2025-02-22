@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCDNDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:  fSecretId,
 			SecretKey: fSecretKey,
 			Domain:    fDomain,

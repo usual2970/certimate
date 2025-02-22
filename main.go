@@ -29,6 +29,11 @@ func main() {
 	var flagDir string
 	flag.StringVar(&flagHttp, "http", "127.0.0.1:8090", "HTTP server address")
 	flag.StringVar(&flagDir, "dir", "/pb_data/database", "Pocketbase data directory")
+	if len(os.Args) < 2 {
+		slog.Error("[CERTIMATE] missing exec args")
+		os.Exit(1)
+		return
+	}
 	_ = flag.CommandLine.Parse(os.Args[2:]) // skip the first two arguments: "main.go serve"
 
 	migratecmd.MustRegister(app, app.RootCmd, migratecmd.Config{

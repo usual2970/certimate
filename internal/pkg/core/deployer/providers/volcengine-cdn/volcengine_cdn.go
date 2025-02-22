@@ -12,10 +12,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-cdn"
 )
 
-type VolcEngineCDNDeployerConfig struct {
+type DeployerConfig struct {
 	// 火山引擎 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 火山引擎 AccessKeySecret。
@@ -24,33 +24,25 @@ type VolcEngineCDNDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type VolcEngineCDNDeployer struct {
-	config      *VolcEngineCDNDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *veCdn.CDN
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*VolcEngineCDNDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *VolcEngineCDNDeployerConfig) (*VolcEngineCDNDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*VolcEngineCDNDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	client := veCdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
-	uploader, err := uploaderp.New(&uploaderp.VolcEngineCDNUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     config.AccessKeyId,
 		AccessKeySecret: config.AccessKeySecret,
 	})
@@ -58,15 +50,20 @@ func NewWithLogger(config *VolcEngineCDNDeployerConfig, logger logger.Logger) (*
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &VolcEngineCDNDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *VolcEngineCDNDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

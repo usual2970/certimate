@@ -14,10 +14,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
 
-type TencentCloudCLBDeployerConfig struct {
+type DeployerConfig struct {
 	// 腾讯云 SecretId。
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
@@ -25,43 +25,35 @@ type TencentCloudCLBDeployerConfig struct {
 	// 腾讯云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 负载均衡器 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_SSLDEPLOY]、[DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_RULEDOMAIN] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_SSLDEPLOY]、[RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_RULEDOMAIN] 时必填。
 	LoadbalancerId string `json:"loadbalancerId,omitempty"`
 	// 负载均衡监听 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_SSLDEPLOY]、[DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER]、[DEPLOY_RESOURCE_RULEDOMAIN] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_SSLDEPLOY]、[RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_LISTENER]、[RESOURCE_TYPE_RULEDOMAIN] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
 	// SNI 域名或七层转发规则域名（支持泛域名）。
-	// 部署资源类型为 [DEPLOY_RESOURCE_SSLDEPLOY] 时选填；部署资源类型为 [DEPLOY_RESOURCE_RULEDOMAIN] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_SSLDEPLOY] 时选填；部署资源类型为 [RESOURCE_TYPE_RULEDOMAIN] 时必填。
 	Domain string `json:"domain,omitempty"`
 }
 
-type TencentCloudCLBDeployer struct {
-	config      *TencentCloudCLBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*TencentCloudCLBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
 	ssl *tcSsl.Client
 	clb *tcClb.Client
 }
 
-func New(config *TencentCloudCLBDeployerConfig) (*TencentCloudCLBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) (*TencentCloudCLBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey, config.Region)
@@ -69,7 +61,7 @@ func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create sdk clients")
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.TencentCloudSSLUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		SecretId:  config.SecretId,
 		SecretKey: config.SecretKey,
 	})
@@ -77,15 +69,20 @@ func NewWithLogger(config *TencentCloudCLBDeployerConfig, logger logger.Logger) 
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &TencentCloudCLBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -96,22 +93,22 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_VIA_SSLDEPLOY:
+	case RESOURCE_TYPE_VIA_SSLDEPLOY:
 		if err := d.deployViaSslService(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LOADBALANCER:
+	case RESOURCE_TYPE_LOADBALANCER:
 		if err := d.deployToLoadbalancer(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_RULEDOMAIN:
+	case RESOURCE_TYPE_RULEDOMAIN:
 		if err := d.deployToRuleDomain(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
@@ -123,7 +120,7 @@ func (d *TencentCloudCLBDeployer) Deploy(ctx context.Context, certPem string, pr
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -141,7 +138,7 @@ func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloud
 		// 未指定 SNI，只需部署到监听器
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s", d.config.LoadbalancerId, d.config.ListenerId)})
 	} else {
-		// 指定 SNI，需部署到域名（支持泛域名）
+		// 指定 SNI，需部署到域名
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", d.config.LoadbalancerId, d.config.ListenerId, d.config.Domain)})
 	}
 	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
@@ -154,7 +151,7 @@ func (d *TencentCloudCLBDeployer) deployViaSslService(ctx context.Context, cloud
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -201,7 +198,7 @@ func (d *TencentCloudCLBDeployer) deployToLoadbalancer(ctx context.Context, clou
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -217,7 +214,7 @@ func (d *TencentCloudCLBDeployer) deployToListener(ctx context.Context, cloudCer
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) deployToRuleDomain(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToRuleDomain(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -248,7 +245,7 @@ func (d *TencentCloudCLBDeployer) deployToRuleDomain(ctx context.Context, cloudC
 	return nil
 }
 
-func (d *TencentCloudCLBDeployer) modifyListenerCertificate(ctx context.Context, cloudLoadbalancerId, cloudListenerId, cloudCertId string) error {
+func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudLoadbalancerId, cloudListenerId, cloudCertId string) error {
 	// 查询监听器列表
 	// REF: https://cloud.tencent.com/document/api/214/30686
 	describeListenersReq := tcClb.NewDescribeListenersRequest()

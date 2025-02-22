@@ -18,10 +18,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
 
-type AliyunALBDeployerConfig struct {
+type DeployerConfig struct {
 	// 阿里云 AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
@@ -29,43 +29,35 @@ type AliyunALBDeployerConfig struct {
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
-	ResourceType DeployResourceType `json:"resourceType"`
+	ResourceType ResourceType `json:"resourceType"`
 	// 负载均衡实例 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER] 时必填。
 	LoadbalancerId string `json:"loadbalancerId,omitempty"`
 	// 负载均衡监听 ID。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LISTENER] 时必填。
+	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
 	// SNI 域名（支持泛域名）。
-	// 部署资源类型为 [DEPLOY_RESOURCE_LOADBALANCER]、[DEPLOY_RESOURCE_LISTENER] 时选填。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_LISTENER] 时选填。
 	Domain string `json:"domain,omitempty"`
 }
 
-type AliyunALBDeployer struct {
-	config      *AliyunALBDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*AliyunALBDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
 	alb *aliyunAlb.Client
 	cas *aliyunCas.Client
 }
 
-func New(config *AliyunALBDeployerConfig) (*AliyunALBDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*AliyunALBDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)
@@ -78,15 +70,20 @@ func NewWithLogger(config *AliyunALBDeployerConfig, logger logger.Logger) (*Aliy
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &AliyunALBDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CAS
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -97,12 +94,12 @@ func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
-	case DEPLOY_RESOURCE_LOADBALANCER:
+	case RESOURCE_TYPE_LOADBALANCER:
 		if err := d.deployToLoadbalancer(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
 
-	case DEPLOY_RESOURCE_LISTENER:
+	case RESOURCE_TYPE_LISTENER:
 		if err := d.deployToListener(ctx, upres.CertId); err != nil {
 			return nil, err
 		}
@@ -114,7 +111,7 @@ func (d *AliyunALBDeployer) Deploy(ctx context.Context, certPem string, privkeyP
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -213,7 +210,7 @@ func (d *AliyunALBDeployer) deployToLoadbalancer(ctx context.Context, cloudCertI
 	return nil
 }
 
-func (d *AliyunALBDeployer) deployToListener(ctx context.Context, cloudCertId string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}
@@ -226,7 +223,7 @@ func (d *AliyunALBDeployer) deployToListener(ctx context.Context, cloudCertId st
 	return nil
 }
 
-func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
+func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getlistenerattribute
 	getListenerAttributeReq := &aliyunAlb.GetListenerAttributeRequest{
@@ -257,7 +254,7 @@ func (d *AliyunALBDeployer) updateListenerCertificate(ctx context.Context, cloud
 
 		d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
 	} else {
-		// 指定 SNI，需部署到扩展域名（支持泛域名）
+		// 指定 SNI，需部署到扩展域名
 
 		// 查询监听证书列表
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
@@ -445,7 +442,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 		}
 	}
 
-	uploader, err := uploaderp.New(&uploaderp.AliyunCASUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
 		Region:          casRegion,

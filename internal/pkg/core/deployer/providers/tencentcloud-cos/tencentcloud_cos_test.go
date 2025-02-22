@@ -1,4 +1,4 @@
-﻿package tencentcloudcdn_test
+﻿package tencentcloudcos_test
 
 import (
 	"context"
@@ -60,7 +60,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.TencentCloudCOSDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:  fSecretId,
 			SecretKey: fSecretKey,
 			Region:    fRegion,

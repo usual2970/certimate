@@ -2,7 +2,6 @@
 
 import (
 	"context"
-	"errors"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/pili"
@@ -10,10 +9,10 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploaderp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 )
 
-type QiniuPiliDeployerConfig struct {
+type DeployerConfig struct {
 	// 七牛云 AccessKey。
 	AccessKey string `json:"accessKey"`
 	// 七牛云 SecretKey。
@@ -24,31 +23,23 @@ type QiniuPiliDeployerConfig struct {
 	Domain string `json:"domain"`
 }
 
-type QiniuPiliDeployer struct {
-	config      *QiniuPiliDeployerConfig
+type DeployerProvider struct {
+	config      *DeployerConfig
 	logger      logger.Logger
 	sdkClient   *pili.Manager
 	sslUploader uploader.Uploader
 }
 
-var _ deployer.Deployer = (*QiniuPiliDeployer)(nil)
+var _ deployer.Deployer = (*DeployerProvider)(nil)
 
-func New(config *QiniuPiliDeployerConfig) (*QiniuPiliDeployer, error) {
-	return NewWithLogger(config, logger.NewNilLogger())
-}
-
-func NewWithLogger(config *QiniuPiliDeployerConfig, logger logger.Logger) (*QiniuPiliDeployer, error) {
+func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
-	}
-
-	if logger == nil {
-		return nil, errors.New("logger is nil")
+		panic("config is nil")
 	}
 
 	manager := pili.NewManager(pili.ManagerConfig{AccessKey: config.AccessKey, SecretKey: config.SecretKey})
 
-	uploader, err := uploaderp.New(&uploaderp.QiniuSSLCertUploaderConfig{
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
 		SecretKey: config.SecretKey,
 	})
@@ -56,15 +47,20 @@ func NewWithLogger(config *QiniuPiliDeployerConfig, logger logger.Logger) (*Qini
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
 
-	return &QiniuPiliDeployer{
-		logger:      logger,
+	return &DeployerProvider{
 		config:      config,
+		logger:      logger.NewNilLogger(),
 		sdkClient:   manager,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *QiniuPiliDeployer) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
+	d.logger = logger
+	return d
+}
+
+func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {

@@ -1,23 +1,22 @@
 package godaddy
 
 import (
-	"errors"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/providers/dns/godaddy"
 )
 
-type GoDaddyApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	ApiKey                string `json:"apiKey"`
 	ApiSecret             string `json:"apiSecret"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *GoDaddyApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := godaddy.NewDefaultConfig()

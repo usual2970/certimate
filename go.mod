@@ -19,12 +19,12 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/aws/aws-sdk-go-v2/service/acm v1.30.18
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.44.10
-	github.com/baidubce/bce-sdk-go v0.9.216
+	github.com/baidubce/bce-sdk-go v0.9.217
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.41
-	github.com/go-acme/lego/v4 v4.21.0
+	github.com/go-acme/lego/v4 v4.22.2
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/go-viper/mapstructure/v2 v2.2.1
-	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.135
+	github.com/huaweicloud/huaweicloud-sdk-go-v3 v0.1.136
 	github.com/nikoksr/notify v1.3.0
 	github.com/pavlo-v-chernykh/keystore-go/v4 v4.5.0
 	github.com/pkg/sftp v1.13.7
@@ -34,13 +34,13 @@ require (
 	github.com/qiniu/go-sdk/v7 v7.25.2
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1096
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1096
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1096
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1102
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1096
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1096
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1096
 	github.com/ucloud/ucloud-sdk-go v0.22.31
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.7.9
-	github.com/volcengine/volc-sdk-golang v1.0.194
+	github.com/volcengine/volc-sdk-golang v1.0.195
 	github.com/volcengine/volcengine-go-sdk v1.0.180
 	golang.org/x/crypto v0.33.0
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
@@ -57,11 +57,17 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns v1.3.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.2 // indirect
+	github.com/G-Core/gcorelabscdn-go v1.0.26 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
+	github.com/alibabacloud-go/tea-rpc v1.1.3 // indirect
+	github.com/alibabacloud-go/tea-rpc-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
+	github.com/alibabacloud-go/vod-20170321 v1.0.1 // indirect
+	github.com/alibabacloud-go/vod-20170321/v4 v4.6.1 // indirect
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.48.1 // indirect
 	github.com/blinkbean/dingtalk v1.1.3 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
@@ -75,12 +81,14 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.16.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
+	github.com/gofrs/uuid v4.4.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/jdcloud-api/jdcloud-sdk-go v1.62.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
@@ -94,7 +102,11 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod v1.0.1102 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf v1.0.1099 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
+	gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 // indirect
+	gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.17.2 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
@@ -201,3 +213,7 @@ require (
 	modernc.org/memory v1.8.2 // indirect
 	modernc.org/sqlite v1.34.5 // indirect
 )
+
+replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkcore@v1.0.0
+
+replace gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkclouddns@v1.0.1

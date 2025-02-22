@@ -1,7 +1,6 @@
 package azuredns
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -11,7 +10,7 @@ import (
 	"github.com/go-acme/lego/v4/providers/dns/azuredns"
 )
 
-type AzureDNSApplicantConfig struct {
+type ChallengeProviderConfig struct {
 	TenantId              string `json:"tenantId"`
 	ClientId              string `json:"clientId"`
 	ClientSecret          string `json:"clientSecret"`
@@ -20,9 +19,9 @@ type AzureDNSApplicantConfig struct {
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
 
-func NewChallengeProvider(config *AzureDNSApplicantConfig) (challenge.Provider, error) {
+func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
 	if config == nil {
-		return nil, errors.New("config is nil")
+		panic("config is nil")
 	}
 
 	providerConfig := azuredns.NewDefaultConfig()

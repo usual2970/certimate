@@ -9,45 +9,31 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-
-	"github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
-type BaoTaPanelClient struct {
+type Client struct {
 	apiHost string
 	apiKey  string
-	client  *resty.Client
+
+	client *resty.Client
 }
 
-func NewBaoTaPanelClient(apiHost, apiKey string) *BaoTaPanelClient {
+func NewClient(apiHost, apiKey string) *Client {
 	client := resty.New()
 
-	return &BaoTaPanelClient{
-		apiHost: apiHost,
+	return &Client{
+		apiHost: strings.TrimRight(apiHost, "/"),
 		apiKey:  apiKey,
 		client:  client,
 	}
 }
 
-func (c *BaoTaPanelClient) WithTimeout(timeout time.Duration) *BaoTaPanelClient {
+func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *BaoTaPanelClient) SetSiteSSL(req *SetSiteSSLRequest) (*SetSiteSSLResponse, error) {
-	params := make(map[string]any)
-	jsonData, _ := json.Marshal(req)
-	json.Unmarshal(jsonData, &params)
-
-	result := SetSiteSSLResponse{}
-	err := c.sendRequestWithResult("/site?action=SetSSL", params, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-func (c *BaoTaPanelClient) generateSignature(timestamp string) string {
+func (c *Client) generateSignature(timestamp string) string {
 	keyMd5 := md5.Sum([]byte(c.apiKey))
 	keyMd5Hex := strings.ToLower(hex.EncodeToString(keyMd5[:]))
 
@@ -56,50 +42,50 @@ func (c *BaoTaPanelClient) generateSignature(timestamp string) string {
 	return signMd5Hex
 }
 
-func (c *BaoTaPanelClient) sendRequest(path string, params map[string]any) (*resty.Response, error) {
-	if params == nil {
-		params = make(map[string]any)
-	}
-
+func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
 	timestamp := time.Now().Unix()
-	params["request_time"] = timestamp
-	params["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
 
-	url := strings.TrimRight(c.apiHost, "/") + path
+	data := make(map[string]any)
+	if params != nil {
+		temp := make(map[string]any)
+		jsonb, _ := json.Marshal(params)
+		json.Unmarshal(jsonb, &temp)
+		for k, v := range temp {
+			if v != nil {
+				data[k] = v
+			}
+		}
+	}
+	data["request_time"] = timestamp
+	data["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
+
+	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
-		SetBody(params)
+		SetBody(data)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("baota: failed to send request: %w", err)
-	}
-
-	if resp.IsError() {
-		return nil, fmt.Errorf("baota: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("baota api error: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("baota api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
 }
 
-func (c *BaoTaPanelClient) sendRequestWithResult(path string, params map[string]any, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
 		return err
 	}
 
-	jsonResp := make(map[string]any)
-	if err := json.Unmarshal(resp.Body(), &jsonResp); err != nil {
-		return fmt.Errorf("baota: failed to parse response: %w", err)
-	}
-	if err := maps.Populate(jsonResp, &result); err != nil {
-		return fmt.Errorf("baota: failed to parse response: %w", err)
-	}
-
-	if result.GetStatus() != nil && !*result.GetStatus() {
-		if result.GetMsg() == nil {
+	if err := json.Unmarshal(resp.Body(), &result); err != nil {
+		return fmt.Errorf("baota api error: failed to parse response: %w", err)
+	} else if errstatus := result.GetStatus(); errstatus != nil && !*errstatus {
+		if result.GetMessage() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {
-			return fmt.Errorf("baota api error: %s", *result.GetMsg())
+			return fmt.Errorf("baota api error: %s", *result.GetMessage())
 		}
 	}
 

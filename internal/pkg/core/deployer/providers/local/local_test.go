@@ -72,7 +72,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("POSTCOMMAND: %v", fPostCommand),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.LocalDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			OutputFormat:   provider.OUTPUT_FORMAT_PEM,
 			OutputCertPath: fOutputCertPath + ".pem",
 			OutputKeyPath:  fOutputKeyPath + ".pem",
@@ -123,7 +123,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("PFXPASSWORD: %v", fPfxPassword),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.LocalDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			OutputFormat:   provider.OUTPUT_FORMAT_PFX,
 			OutputCertPath: fOutputCertPath + ".pfx",
 			PfxPassword:    fPfxPassword,
@@ -164,7 +164,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("JKSSTOREPASS: %v", fJksStorepass),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.LocalDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			OutputFormat:   provider.OUTPUT_FORMAT_JKS,
 			OutputCertPath: fOutputCertPath + ".jks",
 			JksAlias:       fJksAlias,

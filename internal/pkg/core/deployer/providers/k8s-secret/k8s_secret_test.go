@@ -56,7 +56,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("SECRETDATAKEYFORKEY: %v", fSecretDataKeyForKey),
 		}, "\n"))
 
-		deployer, err := provider.New(&provider.K8sSecretDeployerConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			Namespace:           fNamespace,
 			SecretName:          fSecretName,
 			SecretDataKeyForCrt: fSecretDataKeyForCrt,
