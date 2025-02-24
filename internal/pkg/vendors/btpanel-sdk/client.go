@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 	"time"
 
@@ -45,24 +46,36 @@ func (c *Client) generateSignature(timestamp string) string {
 func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
 	timestamp := time.Now().Unix()
 
-	data := make(map[string]any)
+	data := make(map[string]string)
 	if params != nil {
 		temp := make(map[string]any)
 		jsonb, _ := json.Marshal(params)
 		json.Unmarshal(jsonb, &temp)
 		for k, v := range temp {
 			if v != nil {
-				data[k] = v
+				switch reflect.Indirect(reflect.ValueOf(v)).Kind() {
+				case reflect.String:
+					data[k] = v.(string)
+				case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+					data[k] = fmt.Sprintf("%v", v)
+				default:
+					if t, ok := v.(time.Time); ok {
+						data[k] = t.Format(time.RFC3339)
+					} else {
+						jbytes, _ := json.Marshal(v)
+						data[k] = string(jbytes)
+					}
+				}
 			}
 		}
 	}
-	data["request_time"] = timestamp
+	data["request_time"] = fmt.Sprintf("%d", timestamp)
 	data["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
 
 	url := c.apiHost + path
 	req := c.client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(data)
+		SetHeader("Content-Type", "application/x-www-form-urlencoded").
+		SetFormData(data)
 	resp, err := req.Post(url)
 	if err != nil {
 		return nil, fmt.Errorf("baota api error: failed to send request: %w", err)
