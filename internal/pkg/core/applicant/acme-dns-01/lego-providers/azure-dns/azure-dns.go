@@ -28,7 +28,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	providerConfig.ClientID = config.ClientId
 	providerConfig.ClientSecret = config.ClientSecret
 	if config.CloudName != "" {
-		env, err := azcommon.GetEnvironmentConfiguration(config.CloudName)
+		env, err := azcommon.GetCloudEnvironmentConfiguration(config.CloudName)
 		if err != nil {
 			return nil, err
 		}

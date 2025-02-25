@@ -34,7 +34,7 @@ func IsEnvironmentChina(env string) bool {
 	}
 }
 
-func GetEnvironmentConfiguration(env string) (cloud.Configuration, error) {
+func GetCloudEnvironmentConfiguration(env string) (cloud.Configuration, error) {
 	if IsEnvironmentPublic(env) {
 		return cloud.AzurePublic, nil
 	} else if IsEnvironmentGovernment(env) {

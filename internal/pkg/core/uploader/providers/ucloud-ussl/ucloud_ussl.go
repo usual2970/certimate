@@ -121,8 +121,8 @@ func (u *UploaderProvider) getExistCert(ctx context.Context, certPem string) (re
 
 		if getCertificateListResp.CertificateList != nil {
 			for _, certInfo := range getCertificateListResp.CertificateList {
-				// 优刻得未提供可唯一标识证书的字段，只能通过多个字段尝试匹配来判断是否为同一证书
-				// 先分别匹配证书的域名、品牌、有效期，再匹配签名算法
+				// 优刻得未提供可唯一标识证书的字段，只能通过多个字段尝试对比来判断是否为同一证书
+				// 先分别对比证书的多域名、品牌、有效期，再对比签名算法
 
 				if len(certX509.DNSNames) == 0 || certInfo.Domains != strings.Join(certX509.DNSNames, ",") {
 					continue
