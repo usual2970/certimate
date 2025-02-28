@@ -2,14 +2,13 @@
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	aws "github.com/aws/aws-sdk-go-v2/aws"
 	awsCfg "github.com/aws/aws-sdk-go-v2/config"
 	awsCred "github.com/aws/aws-sdk-go-v2/credentials"
 	awsAcm "github.com/aws/aws-sdk-go-v2/service/acm"
 	xerrors "github.com/pkg/errors"
+	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
@@ -54,13 +53,74 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		return nil, err
 	}
 
-	// 生成 AWS 所需的服务端证书和证书链参数
+	// 生成 AWS 业务参数
 	scertPem, _ := certs.ConvertCertificateToPEM(certX509)
 	bcertPem := certPem
 
-	// 生成新证书名（需符合 AWS 命名规则）
-	var certId, certName string
-	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
+	// 获取证书列表，避免重复上传
+	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListCertificates.html
+	listCertificatesNextToken := new(string)
+	listCertificatesMaxItems := int32(1000)
+	for {
+		listCertificatesReq := &awsAcm.ListCertificatesInput{
+			NextToken: listCertificatesNextToken,
+			MaxItems:  aws.Int32(listCertificatesMaxItems),
+		}
+		listCertificatesResp, err := u.sdkClient.ListCertificates(context.TODO(), listCertificatesReq)
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ListCertificates'")
+		}
+
+		for _, certSummary := range listCertificatesResp.CertificateSummaryList {
+			// 先对比证书有效期
+			if certSummary.NotBefore == nil || !certSummary.NotBefore.Equal(certX509.NotBefore) {
+				continue
+			}
+			if certSummary.NotAfter == nil || !certSummary.NotAfter.Equal(certX509.NotAfter) {
+				continue
+			}
+
+			// 再对比证书多域名
+			if !slices.Equal(certX509.DNSNames, certSummary.SubjectAlternativeNameSummaries) {
+				continue
+			}
+
+			// 最后对比证书内容
+			// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListTagsForCertificate.html
+			getCertificateReq := &awsAcm.GetCertificateInput{
+				CertificateArn: certSummary.CertificateArn,
+			}
+			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), getCertificateReq)
+			if err != nil {
+				return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.GetCertificate'")
+			} else {
+				oldCertPem := aws.ToString(getCertificateResp.CertificateChain)
+				if oldCertPem == "" {
+					oldCertPem = aws.ToString(getCertificateResp.Certificate)
+				}
+
+				oldCertX509, err := certs.ParseCertificateFromPEM(oldCertPem)
+				if err != nil {
+					continue
+				}
+
+				if !certs.EqualCertificate(certX509, oldCertX509) {
+					continue
+				}
+			}
+
+			// 如果以上信息都一致，则视为已存在相同证书，直接返回
+			return &uploader.UploadResult{
+				CertId: *certSummary.CertificateArn,
+			}, nil
+		}
+
+		if listCertificatesResp.NextToken == nil || len(listCertificatesResp.CertificateSummaryList) < int(listCertificatesMaxItems) {
+			break
+		} else {
+			listCertificatesNextToken = listCertificatesResp.NextToken
+		}
+	}
 
 	// 导入证书
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ImportCertificate.html
@@ -74,10 +134,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ImportCertificate'")
 	}
 
-	certId = *importCertificateResp.CertificateArn
 	return &uploader.UploadResult{
-		CertId:   certId,
-		CertName: certName,
+		CertId: *importCertificateResp.CertificateArn,
 	}, nil
 }
 

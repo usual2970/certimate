@@ -76,31 +76,31 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		}
 
 		for _, certDetail := range describeCertsResp.Result.CertListDetails {
-			// 先尝试匹配 CN
+			// 先对比证书通用名称
 			if !strings.EqualFold(certX509.Subject.CommonName, certDetail.CommonName) {
 				continue
 			}
 
-			// 再尝试匹配 SAN
+			// 再对比证书多域名
 			if !slices.Equal(certX509.DNSNames, certDetail.DnsNames) {
 				continue
 			}
 
-			// 再尝试匹配证书有效期
+			// 再对比证书有效期
 			oldCertNotBefore, _ := time.Parse(time.RFC3339, certDetail.StartTime)
 			oldCertNotAfter, _ := time.Parse(time.RFC3339, certDetail.EndTime)
 			if !certX509.NotBefore.Equal(oldCertNotBefore) || !certX509.NotAfter.Equal(oldCertNotAfter) {
 				continue
 			}
 
-			// 最后尝试匹配私钥摘要
+			// 最后对比私钥摘要
 			newKeyDigest := sha256.Sum256([]byte(privkeyPem))
 			newKeyDigestHex := hex.EncodeToString(newKeyDigest[:])
 			if !strings.EqualFold(newKeyDigestHex, certDetail.Digest) {
 				continue
 			}
 
-			// 如果以上都匹配，则视为已存在相同证书，直接返回已有的证书信息
+			// 如果以上信息都一致，则视为已存在相同证书，直接返回
 			return &uploader.UploadResult{
 				CertId:   certDetail.CertId,
 				CertName: certDetail.CertName,

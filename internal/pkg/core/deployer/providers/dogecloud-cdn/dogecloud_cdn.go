@@ -47,6 +47,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	return &DeployerProvider{
+		config:      config,
 		logger:      logger.NewNilLogger(),
 		sdkClient:   client,
 		sslUploader: uploader,

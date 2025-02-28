@@ -138,7 +138,7 @@ The following hosting providers are supported:
 | [Doge Cloud](https://www.dogecloud.com/)        | Supports deployment to Doge Cloud CDN                                                 |
 | [UCloud](https://www.ucloud-global.com/)        | Supports deployment to UCloud US3, UCDN                                               |
 | [SafeLine](https://waf.chaitin.com/)            | Supports deployment to SafeLine WAF                                                   |
-| [BaoTa Panel](https://www.bt.cn/)               | Supports deployment to BaoTa Panel sites                                              |
+| [aaPanel](https://www.aapanel.com/)             | Supports deployment to aaPanel (aka BaoTaPanel) sites                                 |
 | [AWS](https://aws.amazon.com/)                  | Supports deployment to AWS CloudFront                                                 |
 | [BytePlus](https://www.byteplus.com/)           | Supports deployment to BytePlus CDN                                                   |
 | [CacheFly](https://www.cachefly.com/)           | Supports deployment to CacheFly CDN                                                   |
