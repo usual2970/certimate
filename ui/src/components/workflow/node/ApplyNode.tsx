@@ -56,7 +56,7 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
       const newNode = produce(node, (draft) => {
         draft.config = {
           ...newValues,
-          challengeType: newValues.challengeType || "dns-01", // 默认使用 DNS-01 认证
+          challengeType: newValues.challengeType || "dns-01", // 默认使用 DNS-01 质询
         };
         draft.validated = true;
       });
