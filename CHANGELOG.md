@@ -1,8 +1,1 @@
-## v0.0.3
-
-- 解决一些 bug
-- 添加 README.md
-
-## v0.0.1
-
-- Initial release
+A full changelog of past releases is available on [GitHub Releases](https://github.com/usual2970/certimate/releases) page.
