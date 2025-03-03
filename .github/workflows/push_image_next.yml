@@ -1,15 +1,16 @@
-name: Next Docker Image CI
+name: Docker Image CI (preview versions)
 
 on:
   push:
     tags:
-      - "*-alpha*"
+      - "v[0-9]*-alpha*"
+      - "v[0-9]*-beta*"
   workflow_dispatch:
     inputs:
       tag:
         description: "Tag version to be used for Docker image"
         required: true
-        default: "v0.1.9"
+        default: "next"
 
 jobs:
   build-and-push:
@@ -39,14 +40,12 @@ jobs:
 
       - name: Log in to DOCKERHUB
         uses: docker/login-action@v3
-
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Log in to ALIYUNCS
         uses: docker/login-action@v3
-
         with:
           registry: registry.cn-shanghai.aliyuncs.com
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -60,4 +59,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-

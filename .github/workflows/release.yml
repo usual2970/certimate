@@ -1,9 +1,9 @@
-name: basebuild
+name: Base Build
 
 on:
   push:
     tags:
-      - "*"
+      - "v[0-9]*"
 
 jobs:
   goreleaser:
@@ -22,9 +22,9 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: ">=1.22.5"
+          go-version: ">=1.23.0"
 
-      - name: Build Admin dashboard UI
+      - name: Build WebUI
         run: npm --prefix=./ui ci && npm --prefix=./ui run build
 
       - name: Run GoReleaser
