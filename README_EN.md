@@ -16,11 +16,6 @@
 
 </div>
 
-> [!WARNING]
-> The current branch is `next`, which is the development branch for v0.3.x. It is currently unstable and should not be used in production environments.
->
-> To access the previous versions, please switch to the `main` branch.
-
 ---
 
 ## 🚩 Introduction
@@ -60,7 +55,7 @@ Download the archived package of precompiled binary files directly from [GitHub 
 
 Visit `http://127.0.0.1:8090` in your browser.
 
-Initial administrator account:
+Default administrator account:
 
 - Username: `admin@certimate.fun`
 - Password: `1234567890`
@@ -69,7 +64,7 @@ Work with Certimate right now. Or read other content in the documentation to lea
 
 ## 📄 Documentation
 
-Please visit [docs.certimate.me](https://docs.certimate.me/en/).
+Please visit the documentation site [docs.certimate.me](https://docs.certimate.me/en/).
 
 Related articles:
 

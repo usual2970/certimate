@@ -16,11 +16,6 @@
 
 </div>
 
-> [!WARNING]
-> 当前分支为 `next`，是 v0.3.x 的开发分支，目前还没有稳定，请勿在生产环境中使用。
->
-> 如需访问之前的版本，请切换至 `main` 分支。
-
 ---
 
 ## 🚩 项目简介
@@ -69,9 +64,9 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 如何使用 Docker 或其他部署方式请参考文档。
 
-## 📄 技术文档
+## 📄 使用手册
 
-请访问 [docs.certimate.me](https://docs.certimate.me/) 以阅读技术文档。
+请访问文档站 [docs.certimate.me](https://docs.certimate.me/) 以阅读使用手册。
 
 相关文章：
 
