@@ -13,8 +13,7 @@ const NotifyChannelEditFormBarkFields = () => {
       .nullish(),
     deviceKey: z
       .string({ message: t("settings.notification.channel.form.bark_device_key.placeholder") })
-      .min(1, t("settings.notification.channel.form.bark_device_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
+      .nonempty(t("settings.notification.channel.form.bark_device_key.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
