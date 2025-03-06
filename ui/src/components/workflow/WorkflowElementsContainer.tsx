@@ -14,6 +14,10 @@ export type WorkflowElementsProps = {
 const WorkflowElementsContainer = ({ className, style, disabled }: WorkflowElementsProps) => {
   const [scale, setScale] = useState(1);
 
+  const MIN_SCALE = 0.2;
+  const MAX_SCALE = 2;
+  const STEP_SCALE = 0.05;
+
   return (
     <div className={mergeCls("relative size-full overflow-hidden", className)} style={style}>
       <div className="size-full overflow-auto">
@@ -28,9 +32,9 @@ const WorkflowElementsContainer = ({ className, style, disabled }: WorkflowEleme
 
       <Card className="absolute bottom-4 right-6 z-[2] rounded-lg p-2 shadow-lg" styles={{ body: { padding: 0 } }}>
         <div className="flex items-center gap-2">
-          <Button icon={<MinusOutlinedIcon />} disabled={scale <= 0.5} onClick={() => setScale((s) => Math.max(0.5, s - 0.1))} />
+          <Button icon={<MinusOutlinedIcon />} disabled={scale <= MIN_SCALE} onClick={() => setScale((s) => Math.max(MIN_SCALE, s - STEP_SCALE))} />
           <Typography.Text className="min-w-[3em] text-center">{Math.round(scale * 100)}%</Typography.Text>
-          <Button icon={<PlusOutlinedIcon />} disabled={scale >= 2} onClick={() => setScale((s) => Math.min(2, s + 0.1))} />
+          <Button icon={<PlusOutlinedIcon />} disabled={scale >= MAX_SCALE} onClick={() => setScale((s) => Math.min(MAX_SCALE, s + STEP_SCALE))} />
           <Button icon={<ExpandOutlinedIcon />} onClick={() => setScale(1)} />
         </div>
       </Card>
