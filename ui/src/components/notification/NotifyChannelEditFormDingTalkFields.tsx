@@ -14,7 +14,7 @@ const NotifyChannelEditFormDingTalkFields = () => {
     secret: z
       .string({ message: t("settings.notification.channel.form.dingtalk_secret.placeholder") })
       .min(1, t("settings.notification.channel.form.dingtalk_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(128, t("common.errmsg.string_max", { max: 128 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
