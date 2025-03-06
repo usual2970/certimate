@@ -270,7 +270,16 @@ export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
     let current = draft;
     while (current) {
       if (current.id === targetNode.id) {
-        Object.assign(current, targetNode);
+        // Object.assign(current, targetNode);
+        // TODO: 暂时这么处理，避免 #485 #489，后续再优化
+        current.type = targetNode.type;
+        current.name = targetNode.name;
+        current.config = targetNode.config;
+        current.inputs = targetNode.inputs;
+        current.outputs = targetNode.outputs;
+        current.next = targetNode.next;
+        current.branches = targetNode.branches;
+        current.validated = targetNode.validated;
         break;
       }
 
