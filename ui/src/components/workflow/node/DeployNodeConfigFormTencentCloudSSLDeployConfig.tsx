@@ -81,6 +81,15 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
       </Form.Item>
 
       <Form.Item
+        name="resourceType"
+        label={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.tooltip") }}></span>}
+      >
+        <Input placeholder={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
         label={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.label")}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.tooltip") }}></span>}
       >
