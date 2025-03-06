@@ -258,12 +258,13 @@ const SharedNodeConfigDrawer = ({
   const handleClose = () => {
     if (pending) return;
 
-    const oldValues = Object.fromEntries(Object.entries(node.config ?? {}).filter(([_, value]) => value !== null && value !== undefined));
-    const newValues = Object.fromEntries(Object.entries(getFormValues()).filter(([_, value]) => value !== null && value !== undefined));
+    const oldValues = JSON.parse(JSON.stringify(node.config ?? {}));
+    const newValues = JSON.parse(JSON.stringify(getFormValues()));
     const changed = !isEqual(oldValues, {}) && !isEqual(oldValues, newValues);
 
     const { promise, resolve, reject } = Promise.withResolvers();
     if (changed) {
+      console.log(oldValues, newValues);
       modalApi.confirm({
         title: t("common.text.operation_confirm"),
         content: t("workflow_node.unsaved_changes.confirm"),

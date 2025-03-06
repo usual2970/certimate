@@ -9,12 +9,10 @@ const NotifyChannelEditFormDingTalkFields = () => {
   const formSchema = z.object({
     accessToken: z
       .string({ message: t("settings.notification.channel.form.dingtalk_access_token.placeholder") })
-      .min(1, t("settings.notification.channel.form.dingtalk_access_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
+      .nonempty(t("settings.notification.channel.form.dingtalk_access_token.placeholder")),
     secret: z
       .string({ message: t("settings.notification.channel.form.dingtalk_secret.placeholder") })
-      .min(1, t("settings.notification.channel.form.dingtalk_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .nonempty(t("settings.notification.channel.form.dingtalk_secret.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
