@@ -24,6 +24,11 @@ func (a *Access) UnmarshalConfigToMap() (map[string]any, error) {
 	return config, nil
 }
 
+type AccessConfigFor1Panel struct {
+	ApiUrl string `json:"apiUrl"`
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForACMEHttpReq struct {
 	Endpoint string `json:"endpoint"`
 	Mode     string `json:"mode,omitempty"`

@@ -6,6 +6,7 @@ export interface AccessModel extends BaseModel {
     NOTICE: If you add new type, please keep ASCII order.
   */ Record<string, unknown> &
     (
+      | AccessConfigFor1Panel
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
       | AccessConfigForAWS
@@ -46,6 +47,11 @@ export interface AccessModel extends BaseModel {
 }
 
 // #region AccessConfig
+export type AccessConfigFor1Panel = {
+  apiUrl: string;
+  apiKey: string;
+};
+
 export type AccessConfigForACMEHttpReq = {
   endpoint: string;
   mode?: string;

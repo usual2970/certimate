@@ -1,4 +1,4 @@
-﻿package baotapanelconsole_test
+﻿package onepanelconsole_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_1PANELCONSOLE_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -30,11 +30,11 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./baotapanel_console_test.go -args \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIKEY="your-api-key"
+	go test -v ./1panel_console_test.go -args \
+	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIURL="http://127.0.0.1:20410" \
+	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIKEY="your-api-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

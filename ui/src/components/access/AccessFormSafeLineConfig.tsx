@@ -17,7 +17,7 @@ export type AccessFormSafeLineConfigProps = {
 
 const initFormModel = (): AccessFormSafeLineConfigFieldValues => {
   return {
-    apiUrl: "http://<your-ipaddr>:9443/",
+    apiUrl: "http://<your-host-addr>:9443/",
     apiToken: "",
   };
 };

@@ -4,6 +4,7 @@
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const ACCESS_PROVIDERS = Object.freeze({
+  ["1PANEL"]: "1panel",
   ACMEHTTPREQ: "acmehttpreq",
   ALIYUN: "aliyun",
   AWS: "aws",
@@ -84,6 +85,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.SAFELINE, "provider.safeline", "/imgs/providers/safeline.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS["1PANEL"], "provider.1panel", "/imgs/providers/1panel.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.CACHEFLY, "provider.cachefly", "/imgs/providers/cachefly.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.DEPLOY]],
@@ -211,6 +213,8 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const DEPLOY_PROVIDERS = Object.freeze({
+  ["1PANEL_CONSOLE"]: `${ACCESS_PROVIDERS["1PANEL"]}-console`,
+  ["1PANEL_SITE"]: `${ACCESS_PROVIDERS["1PANEL"]}-site`,
   ALIYUN_ALB: `${ACCESS_PROVIDERS.ALIYUN}-alb`,
   ALIYUN_CAS_DEPLOY: `${ACCESS_PROVIDERS.ALIYUN}-casdeploy`,
   ALIYUN_CDN: `${ACCESS_PROVIDERS.ALIYUN}-cdn`,
@@ -345,6 +349,8 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.CDNFLY, "provider.cdnfly", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.EDGIO_APPLICATIONS, "provider.edgio.applications", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.GCORE_CDN, "provider.gcore.cdn", DEPLOY_CATEGORIES.CDN],
+    [DEPLOY_PROVIDERS["1PANEL_SITE"], "provider.1panel.site", DEPLOY_CATEGORIES.WEBSITE],
+    [DEPLOY_PROVIDERS["1PANEL_CONSOLE"], "provider.1panel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE, "provider.baotapanel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.SAFELINE, "provider.safeline", DEPLOY_CATEGORIES.FIREWALL],

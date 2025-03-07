@@ -17,7 +17,7 @@ export type AccessFormPowerDNSConfigProps = {
 
 const initFormModel = (): AccessFormPowerDNSConfigFieldValues => {
   return {
-    apiUrl: "http://<your-ipaddr>:8082/",
+    apiUrl: "http://<your-host-addr>:8082/",
     apiKey: "",
   };
 };

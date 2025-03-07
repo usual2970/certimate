@@ -17,7 +17,7 @@ export type AccessFormCdnflyConfigProps = {
 
 const initFormModel = (): AccessFormCdnflyConfigFieldValues => {
   return {
-    apiUrl: "http://<your-ipaddr>:88/",
+    apiUrl: "http://<your-host-addr>:88/",
     apiKey: "",
     apiSecret: "",
   };

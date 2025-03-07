@@ -1,5 +1,7 @@
 ﻿{
   "provider.1panel": "1Panel",
+  "provider.1panel.console": "1Panel - Console",
+  "provider.1panel.site": "1Panel - Website",
   "provider.acmehttpreq": "Http Request (ACME Proxy)",
   "provider.aliyun": "Alibaba Cloud",
   "provider.aliyun.alb": "Alibaba Cloud - ALB (Application Load Balancer)",
@@ -28,7 +30,7 @@
   "provider.baishan.cdn": "Baishan - CDN (Content Delivery Network)",
   "provider.baotapanel": "aaPanel (aka BaoTaPanel)",
   "provider.baotapanel.console": "aaPanel (aka BaoTaPanel) - Console",
-  "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Site",
+  "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Website",
   "provider.byteplus": "BytePlus",
   "provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
   "provider.cachefly": "CacheFly",

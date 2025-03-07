@@ -6,6 +6,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
+	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
 	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
 	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
@@ -69,6 +71,35 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
+	case domain.DeployProviderType1PanelConsole, domain.DeployProviderType1PanelSite:
+		{
+			access := domain.AccessConfigFor1Panel{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderType1PanelConsole:
+				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
+					ApiUrl:      access.ApiUrl,
+					ApiKey:      access.ApiKey,
+					AutoRestart: maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderType1PanelSite:
+				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
+					ApiUrl:    access.ApiUrl,
+					ApiKey:    access.ApiKey,
+					WebsiteId: maps.GetValueAsInt64(options.ProviderDeployConfig, "websiteId"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
 	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
