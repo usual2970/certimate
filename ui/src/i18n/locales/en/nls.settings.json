@@ -16,7 +16,7 @@
   "settings.password.form.password.errmsg.not_matched": "Passwords do not match",
 
   "settings.notification.tab": "Notification",
-  "settings.notification.template.card.title": "Template",
+  "settings.notification.template.card.title": "Certificate expiration notification template",
   "settings.notification.template.form.subject.label": "Subject",
   "settings.notification.template.form.subject.placeholder": "Please enter notification subject",
   "settings.notification.template.form.subject.extra": "Supported variables (${COUNT}: number of expiring soon)",
