@@ -98,8 +98,8 @@ const NotifyChannels = ({ className, classNames, style, styles }: NotifyChannels
               <Switch
                 defaultChecked={channels[channel.type]?.enabled as boolean}
                 disabled={channels[channel.type] == null}
-                checkedChildren={t("settings.notification.channel.enabled.on")}
-                unCheckedChildren={t("settings.notification.channel.enabled.off")}
+                checkedChildren={t("settings.notification.channel.switch.on")}
+                unCheckedChildren={t("settings.notification.channel.switch.off")}
                 onChange={(checked) => handleSwitchChange(channel.type, checked)}
               />
             </div>

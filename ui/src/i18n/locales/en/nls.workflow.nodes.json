@@ -533,8 +533,8 @@
   "workflow_node.deploy.form.skip_on_last_succeeded.label": "Repeated deployment",
   "workflow_node.deploy.form.skip_on_last_succeeded.prefix": "If the last deployment was successful, ",
   "workflow_node.deploy.form.skip_on_last_succeeded.suffix": " to re-deploy.",
-  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.on": "skip",
-  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.off": "not skip",
+  "workflow_node.deploy.form.skip_on_last_succeeded.switch.on": "skip",
+  "workflow_node.deploy.form.skip_on_last_succeeded.switch.off": "not skip",
 
   "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",

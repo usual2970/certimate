@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/url"
@@ -19,6 +20,8 @@ type DeployerConfig struct {
 	ApiUrl string `json:"apiUrl"`
 	// 宝塔面板接口密钥。
 	ApiKey string `json:"apiKey"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 	// 站点类型。
 	SiteType string `json:"siteType"`
 	// 站点名称（单个）。
@@ -40,7 +43,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
+	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
@@ -122,7 +125,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string) (*btsdk.Client, error) {
+func createSdkClient(apiUrl, apiKey string, allowInsecure bool) (*btsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid baota api url")
 	}
@@ -132,5 +135,9 @@ func createSdkClient(apiUrl, apiKey string) (*btsdk.Client, error) {
 	}
 
 	client := btsdk.NewClient(apiUrl, apiKey)
+	if allowInsecure {
+		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+	}
+
 	return client, nil
 }

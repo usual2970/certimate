@@ -2,8 +2,10 @@
 
 import (
 	"context"
+	"crypto/tls"
+	"net/http"
 
-	"github.com/nikoksr/notify/service/http"
+	webhook "github.com/nikoksr/notify/service/http"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
@@ -11,6 +13,8 @@ import (
 type NotifierConfig struct {
 	// Webhook URL。
 	Url string `json:"url"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 }
 
 type NotifierProvider struct {
@@ -30,9 +34,15 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := http.New()
-
+	srv := webhook.New()
 	srv.AddReceiversURLs(n.config.Url)
+
+	if n.config.AllowInsecureConnections {
+		tlsConfig := &tls.Config{InsecureSkipVerify: true}
+		transport := &http.Transport{TLSClientConfig: tlsConfig}
+		client := &http.Client{Transport: transport}
+		srv.WithClient(client)
+	}
 
 	err = srv.Send(ctx, subject, message)
 	if err != nil {

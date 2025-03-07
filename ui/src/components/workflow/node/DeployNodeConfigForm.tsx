@@ -433,8 +433,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.prefix")}</div>
                 <Form.Item name="skipOnLastSucceeded" noStyle rules={[formRule]}>
                   <Switch
-                    checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.on")}
-                    unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.off")}
+                    checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.switch.on")}
+                    unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.switch.off")}
                   />
                 </Form.Item>
                 <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.suffix")}</div>

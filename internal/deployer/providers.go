@@ -81,17 +81,19 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderType1PanelConsole:
 				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
-					ApiUrl:      access.ApiUrl,
-					ApiKey:      access.ApiKey,
-					AutoRestart: maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					AutoRestart:              maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
 				})
 				return deployer, err
 
 			case domain.DeployProviderType1PanelSite:
 				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
-					ApiUrl:    access.ApiUrl,
-					ApiKey:    access.ApiKey,
-					WebsiteId: maps.GetValueAsInt64(options.ProviderDeployConfig, "websiteId"),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					WebsiteId:                maps.GetValueAsInt64(options.ProviderDeployConfig, "websiteId"),
 				})
 				return deployer, err
 
@@ -293,19 +295,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderTypeBaotaPanelConsole:
 				deployer, err := pBaotaPanelConsole.NewDeployer(&pBaotaPanelConsole.DeployerConfig{
-					ApiUrl:      access.ApiUrl,
-					ApiKey:      access.ApiKey,
-					AutoRestart: maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					AutoRestart:              maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
 				})
 				return deployer, err
 
 			case domain.DeployProviderTypeBaotaPanelSite:
 				deployer, err := pBaotaPanelSite.NewDeployer(&pBaotaPanelSite.DeployerConfig{
-					ApiUrl:    access.ApiUrl,
-					ApiKey:    access.ApiKey,
-					SiteType:  maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "siteType", "other"),
-					SiteName:  maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
-					SiteNames: slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					SiteType:                 maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "siteType", "other"),
+					SiteName:                 maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+					SiteNames:                slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -582,10 +586,11 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			deployer, err := pSafeLine.NewDeployer(&pSafeLine.DeployerConfig{
-				ApiUrl:        access.ApiUrl,
-				ApiToken:      access.ApiToken,
-				ResourceType:  pSafeLine.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
-				CertificateId: maps.GetValueAsInt32(options.ProviderDeployConfig, "certificateId"),
+				ApiUrl:                   access.ApiUrl,
+				ApiToken:                 access.ApiToken,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pSafeLine.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+				CertificateId:            maps.GetValueAsInt32(options.ProviderDeployConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -823,8 +828,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			deployer, err := pWebhook.NewDeployer(&pWebhook.DeployerConfig{
-				WebhookUrl:  access.Url,
-				WebhookData: maps.GetValueAsString(options.ProviderDeployConfig, "webhookData"),
+				WebhookUrl:               access.Url,
+				WebhookData:              maps.GetValueAsString(options.ProviderDeployConfig, "webhookData"),
+				AllowInsecureConnections: access.AllowInsecureConnections,
 			})
 			return deployer, err
 		}

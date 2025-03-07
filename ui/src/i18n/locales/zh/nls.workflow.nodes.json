@@ -533,8 +533,8 @@
   "workflow_node.deploy.form.skip_on_last_succeeded.label": "重复部署",
   "workflow_node.deploy.form.skip_on_last_succeeded.prefix": "当上次部署已成功时",
   "workflow_node.deploy.form.skip_on_last_succeeded.suffix": "重新部署。",
-  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.on": "跳过",
-  "workflow_node.deploy.form.skip_on_last_succeeded.enabled.off": "不跳过",
+  "workflow_node.deploy.form.skip_on_last_succeeded.switch.on": "跳过",
+  "workflow_node.deploy.form.skip_on_last_succeeded.switch.off": "不跳过",
 
   "workflow_node.notify.label": "通知",
   "workflow_node.notify.form.subject.label": "通知主题",

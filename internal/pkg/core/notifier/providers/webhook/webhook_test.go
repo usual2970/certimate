@@ -39,7 +39,8 @@ func TestNotify(t *testing.T) {
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
-			Url: fUrl,
+			Url:                      fUrl,
+			AllowInsecureConnections: true,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

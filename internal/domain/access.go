@@ -25,8 +25,9 @@ func (a *Access) UnmarshalConfigToMap() (map[string]any, error) {
 }
 
 type AccessConfigFor1Panel struct {
-	ApiUrl string `json:"apiUrl"`
-	ApiKey string `json:"apiKey"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForACMEHttpReq struct {
@@ -63,8 +64,9 @@ type AccessConfigForBaishan struct {
 }
 
 type AccessConfigForBaotaPanel struct {
-	ApiUrl string `json:"apiUrl"`
-	ApiKey string `json:"apiKey"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForBytePlus struct {
@@ -174,8 +176,9 @@ type AccessConfigForRainYun struct {
 }
 
 type AccessConfigForSafeLine struct {
-	ApiUrl   string `json:"apiUrl"`
-	ApiToken string `json:"apiToken"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiToken                 string `json:"apiToken"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForSSH struct {
@@ -204,7 +207,8 @@ type AccessConfigForVolcEngine struct {
 }
 
 type AccessConfigForWebhook struct {
-	Url string `json:"url"`
+	Url                      string `json:"url"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForWestcn struct {

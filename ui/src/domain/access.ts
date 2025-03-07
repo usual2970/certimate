@@ -50,6 +50,7 @@ export interface AccessModel extends BaseModel {
 export type AccessConfigFor1Panel = {
   apiUrl: string;
   apiKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForACMEHttpReq = {
@@ -88,6 +89,7 @@ export type AccessConfigForBaishan = {
 export type AccessConfigForBaotaPanel = {
   apiUrl: string;
   apiKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForBytePlus = {
@@ -199,6 +201,7 @@ export type AccessConfigForRainYun = {
 export type AccessConfigForSafeLine = {
   apiUrl: string;
   apiToken: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForSSH = {
@@ -228,6 +231,7 @@ export type AccessConfigForVolcEngine = {
 
 export type AccessConfigForWebhook = {
   url: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForWestcn = {

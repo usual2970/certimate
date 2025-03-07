@@ -35,7 +35,7 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	return c
 }
 
-func (c *Client) WithTlsConfig(config *tls.Config) *Client {
+func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 	c.client.SetTLSClientConfig(config)
 	return c
 }

@@ -63,7 +63,8 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 
 	case domain.NotifyChannelTypeWebhook:
 		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
-			Url: maps.GetValueAsString(channelConfig, "url"),
+			Url:                      maps.GetValueAsString(channelConfig, "url"),
+			AllowInsecureConnections: maps.GetValueAsBool(channelConfig, "allowInsecureConnections"),
 		})
 
 	case domain.NotifyChannelTypeWeCom:
