@@ -39,7 +39,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNWAF_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNWAF_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNWAF_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_ALIYUNOSS_REGION="cn-hangzhou" \
+	--CERTIMATE_DEPLOYER_ALIYUNWAF_REGION="cn-hangzhou" \
 	--CERTIMATE_DEPLOYER_ALIYUNWAF_INSTANCEID="your-waf-instance-id"
 */
 func TestDeploy(t *testing.T) {

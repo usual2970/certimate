@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net/url"
@@ -18,6 +19,8 @@ type DeployerConfig struct {
 	ApiUrl string `json:"apiUrl"`
 	// 雷池 API Token。
 	ApiToken string `json:"apiToken"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 	// 部署资源类型。
 	ResourceType ResourceType `json:"resourceType"`
 	// 证书 ID。
@@ -38,9 +41,9 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiToken)
+	client, err := createSdkClient(config.ApiUrl, config.ApiToken, config.AllowInsecureConnections)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &DeployerProvider{
@@ -94,7 +97,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiToken string) (*safelinesdk.Client, error) {
+func createSdkClient(apiUrl, apiToken string, allowInsecure bool) (*safelinesdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid safeline api url")
 	}
@@ -104,5 +107,9 @@ func createSdkClient(apiUrl, apiToken string) (*safelinesdk.Client, error) {
 	}
 
 	client := safelinesdk.NewClient(apiUrl, apiToken)
+	if allowInsecure {
+		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+	}
+
 	return client, nil
 }

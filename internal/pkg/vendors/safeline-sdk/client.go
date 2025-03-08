@@ -1,6 +1,7 @@
 package safelinesdk
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -28,6 +29,11 @@ func NewClient(apiHost, apiToken string) *Client {
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
+	return c
+}
+
+func (c *Client) WithTLSConfig(config *tls.Config) *Client {
+	c.client.SetTLSClientConfig(config)
 	return c
 }
 

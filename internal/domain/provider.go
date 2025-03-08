@@ -9,7 +9,7 @@ type AccessProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	AccessProviderType1Panel       = AccessProviderType("1panel") // 1Panel（预留）
+	AccessProviderType1Panel       = AccessProviderType("1panel")
 	AccessProviderTypeACMEHttpReq  = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAkamai       = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun       = AccessProviderType("aliyun")
@@ -108,12 +108,15 @@ type DeployProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	DeployProviderType1PanelConsole         = DeployProviderType("1panel-console")
+	DeployProviderType1PanelSite            = DeployProviderType("1panel-site")
 	DeployProviderTypeAliyunALB             = DeployProviderType("aliyun-alb")
 	DeployProviderTypeAliyunCASDeploy       = DeployProviderType("aliyun-casdeploy")
 	DeployProviderTypeAliyunCDN             = DeployProviderType("aliyun-cdn")
 	DeployProviderTypeAliyunCLB             = DeployProviderType("aliyun-clb")
 	DeployProviderTypeAliyunDCDN            = DeployProviderType("aliyun-dcdn")
 	DeployProviderTypeAliyunESA             = DeployProviderType("aliyun-esa")
+	DeployProviderTypeAliyunFC              = DeployProviderType("aliyun-fc")
 	DeployProviderTypeAliyunLive            = DeployProviderType("aliyun-live")
 	DeployProviderTypeAliyunNLB             = DeployProviderType("aliyun-nlb")
 	DeployProviderTypeAliyunOSS             = DeployProviderType("aliyun-oss")
@@ -149,6 +152,7 @@ const (
 	DeployProviderTypeTencentCloudCSS       = DeployProviderType("tencentcloud-css")
 	DeployProviderTypeTencentCloudECDN      = DeployProviderType("tencentcloud-ecdn")
 	DeployProviderTypeTencentCloudEO        = DeployProviderType("tencentcloud-eo")
+	DeployProviderTypeTencentCloudSCF       = DeployProviderType("tencentcloud-scf")
 	DeployProviderTypeTencentCloudSSLDeploy = DeployProviderType("tencentcloud-ssldeploy")
 	DeployProviderTypeTencentCloudVOD       = DeployProviderType("tencentcloud-vod")
 	DeployProviderTypeTencentCloudWAF       = DeployProviderType("tencentcloud-waf")

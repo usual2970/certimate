@@ -110,6 +110,9 @@ github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk5
 github.com/alex-ant/gomath v0.0.0-20160516115720-89013a210a82/go.mod h1:nLnM0KdK1CmygvjpDUO6m1TjSsiQtL61juhNsvV/JVI=
 github.com/alibabacloud-go/alb-20200616/v2 v2.2.8 h1:/6+1AqIiENG3u6RmEYWEQ/YZv3YgdFZkE6Xd9RZM6n0=
 github.com/alibabacloud-go/alb-20200616/v2 v2.2.8/go.mod h1:jU/K+GVb5b0vjiDpkf6E0dH77tsi1jTLGWm4ouCiRxk=
+github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.6/go.mod h1:H0RPHXHP/ICfEQrKzQcCqXI15jcV4zaDPCOAmh3U9O8=
+github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7 h1:RDatRb9RG39HjkevgzTeiVoDDaamoB+12GHNairp3Ag=
+github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7/go.mod h1:H0RPHXHP/ICfEQrKzQcCqXI15jcV4zaDPCOAmh3U9O8=
 github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6 h1:eIf+iGJxdU4U9ypaUfbtOWCsZSbTb8AUHvyPrxu6mAA=
 github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6/go.mod h1:4EUIoxs/do24zMOGGqYVWgw0s9NtiylnJglOeEB5UJo=
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4/go.mod h1:sCavSAvdzOjul4cEqeVtvlSaSScfNsTQ+46HwlTL1hc=
@@ -126,6 +129,7 @@ github.com/alibabacloud-go/darabonba-encode-util v0.0.2/go.mod h1:JiW9higWHYXm7F
 github.com/alibabacloud-go/darabonba-map v0.0.2 h1:qvPnGB4+dJbJIxOOfawxzF3hzMnIpjmafa0qOTp6udc=
 github.com/alibabacloud-go/darabonba-map v0.0.2/go.mod h1:28AJaX8FOE/ym8OUFWga+MtEzBunJwQGceGQlvaPGPc=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.0/go.mod h1:5JHVmnHvGzR2wNdgaW1zDLQG8kOC4Uec8ubkMogW7OQ=
+github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.1/go.mod h1:5JHVmnHvGzR2wNdgaW1zDLQG8kOC4Uec8ubkMogW7OQ=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.2/go.mod h1:5JHVmnHvGzR2wNdgaW1zDLQG8kOC4Uec8ubkMogW7OQ=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.5/go.mod h1:kUe8JqFmoVU7lfBauaDD5taFaW7mBI+xVsyHutYtabg=
 github.com/alibabacloud-go/darabonba-openapi/v2 v2.0.10/go.mod h1:26a14FGhZVELuz2cc2AolvW4RHmIO3/HRwsdHhaIPDE=
@@ -146,6 +150,12 @@ github.com/alibabacloud-go/endpoint-util v1.1.1 h1:ZkBv2/jnghxtU0p+upSU0GGzW1VL9
 github.com/alibabacloud-go/endpoint-util v1.1.1/go.mod h1:O5FuCALmCKs2Ff7JFJMudHs0I5EBgecXXxZRyswlEjE=
 github.com/alibabacloud-go/esa-20240910/v2 v2.22.1 h1:Wmvb90nS6IxJjVe+fUWv7jtXFrJttSh/WkFQ2HIsQmQ=
 github.com/alibabacloud-go/esa-20240910/v2 v2.22.1/go.mod h1:P1w/+i7dE2xSXVHJznEOVImlLtqqrzUJQQk2AsyBJ6o=
+github.com/alibabacloud-go/fc-20230330/v4 v4.1.7 h1:rQvPfzPaouL/WGNgMDMCplA4wDscmVFff7aLCUkjv4g=
+github.com/alibabacloud-go/fc-20230330/v4 v4.1.7/go.mod h1:ssEfKO6MskPtq7QaQnyiOHGWLXOZcl7a8YIf8u56DGc=
+github.com/alibabacloud-go/fc-open-20210406 v1.1.14 h1:avhpcxvdwexER2S1buxgnYoEq+/rWX3iMCgP3EZZz+E=
+github.com/alibabacloud-go/fc-open-20210406 v1.1.14/go.mod h1:M3vmom/tsiVbnIBBZshm8JBXcniX9Ryek3NFX2Q95dg=
+github.com/alibabacloud-go/fc-open-20210406/v2 v2.0.12 h1:A3D8Mp6qf8DfR6Dt5MpS8aDVaWfS4N85T5CvGUvgrjM=
+github.com/alibabacloud-go/fc-open-20210406/v2 v2.0.12/go.mod h1:F5c0E5UB3k8v6neTtw3FBcJ1YCNFzVoL1JPRHTe33u4=
 github.com/alibabacloud-go/live-20161101 v1.1.1 h1:rUGfA8RHmCMtQ5M3yMSyRde+yRXWqVecmiXBU3XrGJ8=
 github.com/alibabacloud-go/live-20161101 v1.1.1/go.mod h1:g84w6qeAodT0/IHdc0tEed2a8PyhQhYl7TAj3jGl4A4=
 github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3 h1:LtyUVlgBEKyzWgQJurzXM6MXCt84sQr9cE5OKqYymko=
@@ -847,6 +857,8 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1084 h1:kwc
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1084/go.mod h1:qE67ApiBzeRvzeDsV+GxyIDbVIDemsKpHXllQATz/Vw=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1115 h1:qy05kto0yI5AG6u0+BHwfUK9jJUJ92081ee+wvSkpk8=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1115/go.mod h1:BSeUvwz3WO7BbTan1OKC0+NDeiULVZVovrd93qCtWJM=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.1115 h1:Qi7VWmJ0AQxEMlwKpbWfnsLA5QdNxekdcLJTBVdO85U=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.1115/go.mod h1:P16nIMvmpSY+arTc2m2HyJmrYQP6CFnr48glz0+abyw=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1115 h1:xAMIp4en0Wm4FAS4zo5ZXeYT4FMXms68Fc2COP4J/TM=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1115/go.mod h1:3zCzHke2XQMBm6T2PIdnfTCXGxykV4uTTdRStpUdS0g=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.1115 h1:3Xz/q/m9gl++KtPkrgaXvFCXjM1y9QmAbpG8qfLUm9M=

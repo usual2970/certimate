@@ -2,6 +2,7 @@ package btpanelsdk
 
 import (
 	"crypto/md5"
+	"crypto/tls"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -31,6 +32,11 @@ func NewClient(apiHost, apiKey string) *Client {
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
+	return c
+}
+
+func (c *Client) WithTLSConfig(config *tls.Config) *Client {
+	c.client.SetTLSClientConfig(config)
 	return c
 }
 

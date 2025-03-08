@@ -386,7 +386,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 }
 
 func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients, error) {
-	// 接入点一览 https://www.alibabacloud.com/help/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-albEndpoint
+	// 接入点一览 https://api.aliyun.com/product/Alb
 	var albEndpoint string
 	switch region {
 	case "cn-hangzhou-finance":
@@ -405,7 +405,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		return nil, err
 	}
 
-	// 接入点一览 https://help.aliyun.com/zh/ssl-certificate/developer-reference/endpoints
+	// 接入点一览 https://api.aliyun.com/product/cas
 	var casEndpoint string
 	if !strings.HasPrefix(region, "cn-") {
 		casEndpoint = "cas.ap-southeast-1.aliyuncs.com"

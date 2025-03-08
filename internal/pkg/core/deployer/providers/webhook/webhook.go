@@ -2,6 +2,7 @@ package webhook
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"strings"
 	"time"
@@ -19,6 +20,8 @@ type DeployerConfig struct {
 	WebhookUrl string `json:"webhookUrl"`
 	// Webhook 回调数据（JSON 格式）。
 	WebhookData string `json:"webhookData,omitempty"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 }
 
 type DeployerProvider struct {
@@ -38,6 +41,9 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SetTimeout(30 * time.Second).
 		SetRetryCount(3).
 		SetRetryWaitTime(5 * time.Second)
+	if config.AllowInsecureConnections {
+		client.SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true})
+	}
 
 	return &DeployerProvider{
 		config:     config,

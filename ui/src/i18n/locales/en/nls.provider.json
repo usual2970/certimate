@@ -1,5 +1,7 @@
 ﻿{
   "provider.1panel": "1Panel",
+  "provider.1panel.console": "1Panel - Console",
+  "provider.1panel.site": "1Panel - Website",
   "provider.acmehttpreq": "Http Request (ACME Proxy)",
   "provider.aliyun": "Alibaba Cloud",
   "provider.aliyun.alb": "Alibaba Cloud - ALB (Application Load Balancer)",
@@ -9,6 +11,7 @@
   "provider.aliyun.dcdn": "Alibaba Cloud - DCDN (Dynamic Route for Content Delivery Network)",
   "provider.aliyun.dns": "Alibaba Cloud - DNS (Domain Name Service)",
   "provider.aliyun.esa": "Alibaba Cloud - ESA (Edge Security Acceleration)",
+  "provider.aliyun.fc": "Alibaba Cloud - FC (Function Compute)",
   "provider.aliyun.live": "Alibaba Cloud - ApsaraVideo Live",
   "provider.aliyun.nlb": "Alibaba Cloud - NLB (Network Load Balancer)",
   "provider.aliyun.oss": "Alibaba Cloud - OSS (Object Storage Service)",
@@ -28,7 +31,7 @@
   "provider.baishan.cdn": "Baishan - CDN (Content Delivery Network)",
   "provider.baotapanel": "aaPanel (aka BaoTaPanel)",
   "provider.baotapanel.console": "aaPanel (aka BaoTaPanel) - Console",
-  "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Site",
+  "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Website",
   "provider.byteplus": "BytePlus",
   "provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
   "provider.cachefly": "CacheFly",
@@ -83,6 +86,7 @@
   "provider.tencentcloud.dns": "Tencent Cloud - DNS (Domain Name Service)",
   "provider.tencentcloud.ecdn": "Tencent Cloud - ECDN (Enterprise Content Delivery Network)",
   "provider.tencentcloud.eo": "Tencent Cloud - EdgeOne",
+  "provider.tencentcloud.scf": "Tencent Cloud - SCF (Serverless Cloud Function)",
   "provider.tencentcloud.ssl_deploy": "Tencent Cloud - via SSL Certificate Service Deployment Job",
   "provider.tencentcloud.vod": "Tencent Cloud - VOD (Video on Demand)",
   "provider.tencentcloud.waf": "Tencent Cloud - WAF (Web Application Firewall)",
@@ -106,6 +110,7 @@
   "provider.category.loadbalance": "Loadbalance",
   "provider.category.firewall": "Firewall",
   "provider.category.av": "Audio/Video",
+  "provider.category.serverless": "Serverless",
   "provider.category.website": "Website",
   "provider.category.other": "Other"
 }

@@ -76,7 +76,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	uploadNormalCertificateResp, err := u.sdkClient.UploadNormalCertificate(uploadNormalCertificateReq)
 	if err != nil {
 		if uploadNormalCertificateResp != nil && uploadNormalCertificateResp.GetRetCode() == 80035 {
-			return u.getExistCert(ctx, certPem)
+			if res, err := u.getExistCert(ctx, certPem); err != nil {
+				return nil, err
+			} else if res == nil {
+				return nil, errors.New("no certificate found")
+			} else {
+				return res, nil
+			}
 		}
 
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ussl.UploadNormalCertificate'")
@@ -205,7 +211,7 @@ func (u *UploaderProvider) getExistCert(ctx context.Context, certPem string) (re
 		}
 	}
 
-	return nil, errors.New("no certificate found")
+	return nil, nil
 }
 
 func createSdkClient(privateKey, publicKey string) (*usdkSsl.USSLClient, error) {

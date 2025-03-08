@@ -39,7 +39,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNESA_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_ALIYUNESA_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNESA_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_ALIYUNOSS_REGION="cn-hangzhou" \
+	--CERTIMATE_DEPLOYER_ALIYUNESA_REGION="cn-hangzhou" \
 	--CERTIMATE_DEPLOYER_ALIYUNESA_SITEID="your-esa-site-id"
 */
 func TestDeploy(t *testing.T) {

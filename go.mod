@@ -66,6 +66,10 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns v1.3.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.3 // indirect
+	github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7 // indirect
+	github.com/alibabacloud-go/fc-20230330/v4 v4.1.7 // indirect
+	github.com/alibabacloud-go/fc-open-20210406 v1.1.14 // indirect
+	github.com/alibabacloud-go/fc-open-20210406/v2 v2.0.12 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
@@ -105,6 +109,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.1115 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.mongodb.org/mongo-driver v1.17.2 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect

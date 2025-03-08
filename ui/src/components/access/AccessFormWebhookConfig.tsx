@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Form, type FormInstance, Input, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -26,6 +26,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
 
   const formSchema = z.object({
     url: z.string({ message: t("access.form.webhook_url.placeholder") }).url(t("common.errmsg.url_invalid")),
+    allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -44,6 +45,18 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
     >
       <Form.Item name="url" label={t("access.form.webhook_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.webhook_url.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="allowInsecureConnections"
+        label={t("access.form.webhook_allow_insecure_conns.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.webhook_allow_insecure_conns.tooltip") }}></span>}
+      >
+        <Switch
+          checkedChildren={t("access.form.webhook_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.webhook_allow_insecure_conns.switch.off")}
+        />
       </Form.Item>
     </Form>
   );

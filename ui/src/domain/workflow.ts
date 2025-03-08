@@ -196,6 +196,9 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
     current.next = newNode(WorkflowNodeType.Deploy, {});
 
     current = current.next;
+    current.next = newNode(WorkflowNodeType.ExecuteResultBranch, {});
+
+    current = current.next!.branches![1];
     current.next = newNode(WorkflowNodeType.Notify, {});
   }
 
