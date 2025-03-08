@@ -9,6 +9,7 @@ import { type AccessModel } from "@/domain/access";
 import { ACCESS_PROVIDERS } from "@/domain/provider";
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
+import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
 import AccessFormAWSConfig from "./AccessFormAWSConfig";
@@ -99,6 +100,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       NOTICE: If you add new child component, please keep ASCII order.
      */
     switch (fieldProvider) {
+      case ACCESS_PROVIDERS["1PANEL"]:
+        return <AccessForm1PanelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessFormACMEHttpReqConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:

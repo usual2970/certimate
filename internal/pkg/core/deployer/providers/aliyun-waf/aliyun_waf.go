@@ -111,7 +111,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunWaf.Client, error) {
-	// 接入点一览：https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-endpoint
+	// 接入点一览：https://api.aliyun.com/product/waf-openapi
 	config := &aliyunOpen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),

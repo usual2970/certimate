@@ -6,12 +6,15 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
+	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
 	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
 	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	pAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
 	pAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
 	pAliyunESA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-esa"
+	pAliyunFC "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-fc"
 	pAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	pAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
@@ -47,6 +50,7 @@ import (
 	pTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	pTencentCloudSCF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-scf"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
 	pTencentCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-vod"
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
@@ -69,7 +73,38 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderType1PanelConsole, domain.DeployProviderType1PanelSite:
+		{
+			access := domain.AccessConfigFor1Panel{}
+			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderType1PanelConsole:
+				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					AutoRestart:              maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderType1PanelSite:
+				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					WebsiteId:                maps.GetValueAsInt64(options.ProviderDeployConfig, "websiteId"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -133,6 +168,16 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					SiteId:          maps.GetValueAsInt64(options.ProviderDeployConfig, "siteId"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeAliyunFC:
+				deployer, err := pAliyunFC.NewDeployer(&pAliyunFC.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
+					ServiceVersion:  maps.GetValueAsString(options.ProviderDeployConfig, "serviceVersion"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
 
@@ -262,19 +307,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderTypeBaotaPanelConsole:
 				deployer, err := pBaotaPanelConsole.NewDeployer(&pBaotaPanelConsole.DeployerConfig{
-					ApiUrl:      access.ApiUrl,
-					ApiKey:      access.ApiKey,
-					AutoRestart: maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					AutoRestart:              maps.GetValueAsBool(options.ProviderDeployConfig, "autoRestart"),
 				})
 				return deployer, err
 
 			case domain.DeployProviderTypeBaotaPanelSite:
 				deployer, err := pBaotaPanelSite.NewDeployer(&pBaotaPanelSite.DeployerConfig{
-					ApiUrl:    access.ApiUrl,
-					ApiKey:    access.ApiKey,
-					SiteType:  maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "siteType", "other"),
-					SiteName:  maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
-					SiteNames: slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					SiteType:                 maps.GetValueOrDefaultAsString(options.ProviderDeployConfig, "siteType", "other"),
+					SiteName:                 maps.GetValueAsString(options.ProviderDeployConfig, "siteName"),
+					SiteNames:                slices.Filter(strings.Split(maps.GetValueAsString(options.ProviderDeployConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -551,10 +598,11 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			deployer, err := pSafeLine.NewDeployer(&pSafeLine.DeployerConfig{
-				ApiUrl:        access.ApiUrl,
-				ApiToken:      access.ApiToken,
-				ResourceType:  pSafeLine.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
-				CertificateId: maps.GetValueAsInt32(options.ProviderDeployConfig, "certificateId"),
+				ApiUrl:                   access.ApiUrl,
+				ApiToken:                 access.ApiToken,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pSafeLine.ResourceType(maps.GetValueAsString(options.ProviderDeployConfig, "resourceType")),
+				CertificateId:            maps.GetValueAsInt32(options.ProviderDeployConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -587,7 +635,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSCF, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -646,6 +694,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeTencentCloudSCF:
+				deployer, err := pTencentCloudSCF.NewDeployer(&pTencentCloudSCF.DeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
+					Region:    maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
@@ -792,8 +849,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			deployer, err := pWebhook.NewDeployer(&pWebhook.DeployerConfig{
-				WebhookUrl:  access.Url,
-				WebhookData: maps.GetValueAsString(options.ProviderDeployConfig, "webhookData"),
+				WebhookUrl:               access.Url,
+				WebhookData:              maps.GetValueAsString(options.ProviderDeployConfig, "webhookData"),
+				AllowInsecureConnections: access.AllowInsecureConnections,
 			})
 			return deployer, err
 		}

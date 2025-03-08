@@ -81,7 +81,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*oss.Client, error) {
-	// 接入点一览 https://help.aliyun.com/zh/oss/user-guide/regions-and-endpoints
+	// 接入点一览 https://api.aliyun.com/product/Oss
 	var endpoint string
 	switch region {
 	case "":

@@ -16,7 +16,6 @@ var (
 	fInputKeyPath  string
 	fSecretId      string
 	fSecretKey     string
-	fRegion        string
 	fDomain        string
 	fSubAppId      int64
 	fInstanceId    string
@@ -29,7 +28,6 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fSecretId, argsPrefix+"SECRETID", "", "")
 	flag.StringVar(&fSecretKey, argsPrefix+"SECRETKEY", "", "")
-	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 	flag.Int64Var(&fSubAppId, argsPrefix+"SUBAPPID", 0, "")
 	flag.StringVar(&fInstanceId, argsPrefix+"INSTANCEID", "", "")
@@ -43,7 +41,6 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_SECRETID="your-secret-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_REGION="ap-guangzhou" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_SUBAPPID="your-app-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDVOD_DOMAIN="example.com"
 */
@@ -57,7 +54,6 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("SECRETID: %v", fSecretId),
 			fmt.Sprintf("SECRETKEY: %v", fSecretKey),
-			fmt.Sprintf("REGION: %v", fRegion),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 			fmt.Sprintf("INSTANCEID: %v", fInstanceId),
 		}, "\n"))
@@ -65,7 +61,6 @@ func TestDeploy(t *testing.T) {
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			SecretId:  fSecretId,
 			SecretKey: fSecretKey,
-			Region:    fRegion,
 			SubAppId:  fSubAppId,
 			Domain:    fDomain,
 		})

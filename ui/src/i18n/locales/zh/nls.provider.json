@@ -1,5 +1,7 @@
 ﻿{
   "provider.1panel": "1Panel",
+  "provider.1panel.console": "1Panel - 面板",
+  "provider.1panel.site": "1Panel - 网站",
   "provider.acmehttpreq": "Http Request (ACME Proxy)",
   "provider.aliyun": "阿里云",
   "provider.aliyun.alb": "阿里云 - 应用型负载均衡 ALB",
@@ -8,6 +10,7 @@
   "provider.aliyun.clb": "阿里云 - 传统型负载均衡 CLB",
   "provider.aliyun.dcdn": "阿里云 - 全站加速 DCDN",
   "provider.aliyun.esa": "阿里云 - 边缘安全加速 ESA",
+  "provider.aliyun.fc": "阿里云 - 函数计算 FC",
   "provider.aliyun.dns": "阿里云 - 云解析 DNS",
   "provider.aliyun.live": "阿里云 - 视频直播 Live",
   "provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",
@@ -83,6 +86,7 @@
   "provider.tencentcloud.dns": "腾讯云 - 云解析 DNS",
   "provider.tencentcloud.ecdn": "腾讯云 - 全站加速网络 ECDN",
   "provider.tencentcloud.eo": "腾讯云 - 边缘安全加速平台 EdgeOne",
+  "provider.tencentcloud.scf": "腾讯云 - 云函数 SCF",
   "provider.tencentcloud.ssl_deploy": "腾讯云 - 通过 SSL 证书服务创建部署任务",
   "provider.tencentcloud.vod": "腾讯云 - 云点播 VOD",
   "provider.tencentcloud.waf": "腾讯云 - Web 应用防火墙 WAF",
@@ -106,6 +110,7 @@
   "provider.category.loadbalance": "负载均衡",
   "provider.category.firewall": "防火墙",
   "provider.category.av": "音视频",
-  "provider.category.website": "网站",
+  "provider.category.serverless": "Serverless",
+  "provider.category.website": "网站托管",
   "provider.category.other": "其他"
 }

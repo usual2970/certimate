@@ -41,7 +41,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.SecretId, config.SecretKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{

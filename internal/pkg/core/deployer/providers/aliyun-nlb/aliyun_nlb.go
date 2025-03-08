@@ -211,7 +211,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunNlb.Client, error) {
-	// 接入点一览 https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-endpoint
+	// 接入点一览 https://api.aliyun.com/product/Nlb
 	var endpoint string
 	switch region {
 	default:

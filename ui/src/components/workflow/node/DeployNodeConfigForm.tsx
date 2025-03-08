@@ -15,12 +15,15 @@ import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/wo
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
+import DeployNodeConfigForm1PanelConsoleConfig from "./DeployNodeConfigForm1PanelConsoleConfig";
+import DeployNodeConfigForm1PanelSiteConfig from "./DeployNodeConfigForm1PanelSiteConfig";
 import DeployNodeConfigFormAliyunALBConfig from "./DeployNodeConfigFormAliyunALBConfig";
 import DeployNodeConfigFormAliyunCASDeployConfig from "./DeployNodeConfigFormAliyunCASDeployConfig";
 import DeployNodeConfigFormAliyunCDNConfig from "./DeployNodeConfigFormAliyunCDNConfig";
 import DeployNodeConfigFormAliyunCLBConfig from "./DeployNodeConfigFormAliyunCLBConfig";
 import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDCDNConfig";
 import DeployNodeConfigFormAliyunESAConfig from "./DeployNodeConfigFormAliyunESAConfig";
+import DeployNodeConfigFormAliyunFCConfig from "./DeployNodeConfigFormAliyunFCConfig";
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
@@ -55,6 +58,7 @@ import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTencentCloudCSSConfig.tsx";
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
+import DeployNodeConfigFormTencentCloudSCFConfig from "./DeployNodeConfigFormTencentCloudSCFConfig";
 import DeployNodeConfigFormTencentCloudSSLDeployConfig from "./DeployNodeConfigFormTencentCloudSSLDeployConfig";
 import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTencentCloudVODConfig";
 import DeployNodeConfigFormTencentCloudWAFConfig from "./DeployNodeConfigFormTencentCloudWAFConfig";
@@ -138,6 +142,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
+        case DEPLOY_PROVIDERS["1PANEL_CONSOLE"]:
+          return <DeployNodeConfigForm1PanelConsoleConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS["1PANEL_SITE"]:
+          return <DeployNodeConfigForm1PanelSiteConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_ALB:
           return <DeployNodeConfigFormAliyunALBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY:
@@ -150,6 +158,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunDCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_ESA:
           return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_FC:
+          return <DeployNodeConfigFormAliyunFCConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_NLB:
@@ -218,6 +228,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.TENCENTCLOUD_SCF:
+          return <DeployNodeConfigFormTencentCloudSCFConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:
           return <DeployNodeConfigFormTencentCloudSSLDeployConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.TENCENTCLOUD_VOD:
@@ -427,8 +439,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.prefix")}</div>
                 <Form.Item name="skipOnLastSucceeded" noStyle rules={[formRule]}>
                   <Switch
-                    checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.on")}
-                    unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.enabled.off")}
+                    checkedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.switch.on")}
+                    unCheckedChildren={t("workflow_node.deploy.form.skip_on_last_succeeded.switch.off")}
                   />
                 </Form.Item>
                 <div>{t("workflow_node.deploy.form.skip_on_last_succeeded.suffix")}</div>

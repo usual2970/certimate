@@ -6,6 +6,7 @@ export interface AccessModel extends BaseModel {
     NOTICE: If you add new type, please keep ASCII order.
   */ Record<string, unknown> &
     (
+      | AccessConfigFor1Panel
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
       | AccessConfigForAWS
@@ -46,6 +47,12 @@ export interface AccessModel extends BaseModel {
 }
 
 // #region AccessConfig
+export type AccessConfigFor1Panel = {
+  apiUrl: string;
+  apiKey: string;
+  allowInsecureConnections?: boolean;
+};
+
 export type AccessConfigForACMEHttpReq = {
   endpoint: string;
   mode?: string;
@@ -82,6 +89,7 @@ export type AccessConfigForBaishan = {
 export type AccessConfigForBaotaPanel = {
   apiUrl: string;
   apiKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForBytePlus = {
@@ -193,6 +201,7 @@ export type AccessConfigForRainYun = {
 export type AccessConfigForSafeLine = {
   apiUrl: string;
   apiToken: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForSSH = {
@@ -222,6 +231,7 @@ export type AccessConfigForVolcEngine = {
 
 export type AccessConfigForWebhook = {
   url: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForWestcn = {

@@ -21,7 +21,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 		Total int `db:"total"`
 	}{}
 	if err := app.GetDB().
-		NewQuery("SELECT COUNT(*) AS total FROM certificate").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE deleted = ''").
 		One(&certTotal); err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 		Total int `db:"total"`
 	}{}
 	if err := app.GetDB().
-		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt > DATETIME('now') and expireAt < DATETIME('now', '+20 days')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt > DATETIME('now') and expireAt < DATETIME('now', '+20 days') AND deleted = ''").
 		One(&certExpireSoonTotal); err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (r *StatisticsRepository) Get(ctx context.Context) (*domain.Statistics, err
 		Total int `db:"total"`
 	}{}
 	if err := app.GetDB().
-		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt < DATETIME('now')").
+		NewQuery("SELECT COUNT(*) AS total FROM certificate WHERE expireAt < DATETIME('now') AND deleted = ''").
 		One(&certExpiredTotal); err != nil {
 		return nil, err
 	}

@@ -7,7 +7,7 @@ import {
   type WorkflowNodeConfigForStart,
   addBranch,
   addNode,
-  getWorkflowOutputBeforeId,
+  getOutputBeforeNodeId,
   removeBranch,
   removeNode,
   updateNode,
@@ -244,6 +244,6 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   },
 
   getWorkflowOuptutBeforeId: (nodeId: string, type: string) => {
-    return getWorkflowOutputBeforeId(get().workflow.draft as WorkflowNode, nodeId, type);
+    return getOutputBeforeNodeId(get().workflow.draft as WorkflowNode, nodeId, type);
   },
 }));

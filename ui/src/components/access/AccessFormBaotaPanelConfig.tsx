@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Form, type FormInstance, Input, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ export type AccessFormBaotaPanelConfigProps = {
 
 const initFormModel = (): AccessFormBaotaPanelConfigFieldValues => {
   return {
-    apiUrl: "http://<your-ipaddr>:8888/",
+    apiUrl: "http://<your-host-addr>:8888/",
     apiKey: "",
   };
 };
@@ -32,6 +32,7 @@ const AccessFormBaotaPanelConfig = ({ form: formInst, formName, disabled, initia
       .min(1, t("access.form.baotapanel_api_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
+    allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -64,6 +65,18 @@ const AccessFormBaotaPanelConfig = ({ form: formInst, formName, disabled, initia
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.baotapanel_api_key.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.baotapanel_api_key.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="allowInsecureConnections"
+        label={t("access.form.baotapanel_allow_insecure_conns.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.baotapanel_allow_insecure_conns.tooltip") }}></span>}
+      >
+        <Switch
+          checkedChildren={t("access.form.baotapanel_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.baotapanel_allow_insecure_conns.switch.off")}
+        />
       </Form.Item>
     </Form>
   );

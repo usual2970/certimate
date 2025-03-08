@@ -4,6 +4,7 @@
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const ACCESS_PROVIDERS = Object.freeze({
+  ["1PANEL"]: "1panel",
   ACMEHTTPREQ: "acmehttpreq",
   ALIYUN: "aliyun",
   AWS: "aws",
@@ -84,6 +85,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.SAFELINE, "provider.safeline", "/imgs/providers/safeline.svg", [ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS["1PANEL"], "provider.1panel", "/imgs/providers/1panel.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.CACHEFLY, "provider.cachefly", "/imgs/providers/cachefly.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.DEPLOY]],
@@ -211,12 +213,15 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const DEPLOY_PROVIDERS = Object.freeze({
+  ["1PANEL_CONSOLE"]: `${ACCESS_PROVIDERS["1PANEL"]}-console`,
+  ["1PANEL_SITE"]: `${ACCESS_PROVIDERS["1PANEL"]}-site`,
   ALIYUN_ALB: `${ACCESS_PROVIDERS.ALIYUN}-alb`,
   ALIYUN_CAS_DEPLOY: `${ACCESS_PROVIDERS.ALIYUN}-casdeploy`,
   ALIYUN_CDN: `${ACCESS_PROVIDERS.ALIYUN}-cdn`,
   ALIYUN_CLB: `${ACCESS_PROVIDERS.ALIYUN}-clb`,
   ALIYUN_DCDN: `${ACCESS_PROVIDERS.ALIYUN}-dcdn`,
   ALIYUN_ESA: `${ACCESS_PROVIDERS.ALIYUN}-esa`,
+  ALIYUN_FC: `${ACCESS_PROVIDERS.ALIYUN}-fc`,
   ALIYUN_LIVE: `${ACCESS_PROVIDERS.ALIYUN}-live`,
   ALIYUN_NLB: `${ACCESS_PROVIDERS.ALIYUN}-nlb`,
   ALIYUN_OSS: `${ACCESS_PROVIDERS.ALIYUN}-oss`,
@@ -252,6 +257,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_CSS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-css`,
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
+  TENCENTCLOUD_SCF: `${ACCESS_PROVIDERS.TENCENTCLOUD}-scf`,
   TENCENTCLOUD_SSL_DEPLOY: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ssldeploy`,
   TENCENTCLOUD_VOD: `${ACCESS_PROVIDERS.TENCENTCLOUD}-vod`,
   TENCENTCLOUD_WAF: `${ACCESS_PROVIDERS.TENCENTCLOUD}-waf`,
@@ -275,6 +281,7 @@ export const DEPLOY_CATEGORIES = Object.freeze({
   LOADBALANCE: "loadbalance",
   FIREWALL: "firewall",
   AV: "av",
+  SERVERLESS: "serverless",
   WEBSITE: "website",
   OTHER: "other",
 } as const);
@@ -309,6 +316,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.ALIYUN_WAF, "provider.aliyun.waf", DEPLOY_CATEGORIES.FIREWALL],
     [DEPLOY_PROVIDERS.ALIYUN_LIVE, "provider.aliyun.live", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.ALIYUN_VOD, "provider.aliyun.vod", DEPLOY_CATEGORIES.AV],
+    [DEPLOY_PROVIDERS.ALIYUN_FC, "provider.aliyun.fc", DEPLOY_CATEGORIES.SERVERLESS],
     [DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY, "provider.aliyun.cas_deploy", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_COS, "provider.tencentcloud.cos", DEPLOY_CATEGORIES.STORAGE],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CDN, "provider.tencentcloud.cdn", DEPLOY_CATEGORIES.CDN],
@@ -318,6 +326,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.TENCENTCLOUD_WAF, "provider.tencentcloud.waf", DEPLOY_CATEGORIES.FIREWALL],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CSS, "provider.tencentcloud.css", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_VOD, "provider.tencentcloud.vod", DEPLOY_CATEGORIES.AV],
+    [DEPLOY_PROVIDERS.TENCENTCLOUD_SCF, "provider.tencentcloud.scf", DEPLOY_CATEGORIES.SERVERLESS],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY, "provider.tencentcloud.ssl_deploy", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_CDN, "provider.huaweicloud.cdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_ELB, "provider.huaweicloud.elb", DEPLOY_CATEGORIES.LOADBALANCE],
@@ -345,6 +354,8 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.CDNFLY, "provider.cdnfly", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.EDGIO_APPLICATIONS, "provider.edgio.applications", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.GCORE_CDN, "provider.gcore.cdn", DEPLOY_CATEGORIES.CDN],
+    [DEPLOY_PROVIDERS["1PANEL_SITE"], "provider.1panel.site", DEPLOY_CATEGORIES.WEBSITE],
+    [DEPLOY_PROVIDERS["1PANEL_CONSOLE"], "provider.1panel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE, "provider.baotapanel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.SAFELINE, "provider.safeline", DEPLOY_CATEGORIES.FIREWALL],
