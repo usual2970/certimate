@@ -1,4 +1,4 @@
-﻿package tencentcloudvod
+﻿package tencentcloudscf
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcVod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod/v20180717"
+	tcScf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/logger"
@@ -19,16 +19,16 @@ type DeployerConfig struct {
 	SecretId string `json:"secretId"`
 	// 腾讯云 SecretKey。
 	SecretKey string `json:"secretKey"`
-	// 点播应用 ID。
-	SubAppId int64 `json:"subAppId"`
-	// 点播加速域名（不支持泛域名）。
+	// 腾讯云地域。
+	Region string `json:"region"`
+	// 自定义域名（不支持泛域名）。
 	Domain string `json:"domain"`
 }
 
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      logger.Logger
-	sdkClient   *tcVod.Client
+	sdkClient   *tcScf.Client
 	sslUploader uploader.Uploader
 }
 
@@ -39,7 +39,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.SecretId, config.SecretKey)
+	client, err := createSdkClient(config.SecretId, config.SecretKey, config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
@@ -66,6 +66,17 @@ func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+	// 查看云函数自定义域名详情
+	// REF: https://cloud.tencent.com/document/product/583/111924
+	getCustomDomainReq := tcScf.NewGetCustomDomainRequest()
+	getCustomDomainReq.Domain = common.StringPtr(d.config.Domain)
+	getCustomDomainResp, err := d.sdkClient.GetCustomDomain(getCustomDomainReq)
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.GetCustomDomain'")
+	} else {
+		d.logger.Logt("已查看云函数自定义域名详情", getCustomDomainResp.Response)
+	}
+
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
@@ -74,28 +85,27 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		d.logger.Logt("certificate file uploaded", upres)
 	}
 
-	// 设置点播域名 HTTPS 证书
-	// REF: https://cloud.tencent.com/document/api/266/102015
-	setVodDomainCertificateReq := tcVod.NewSetVodDomainCertificateRequest()
-	setVodDomainCertificateReq.Domain = common.StringPtr(d.config.Domain)
-	setVodDomainCertificateReq.Operation = common.StringPtr("Set")
-	setVodDomainCertificateReq.CertID = common.StringPtr(upres.CertId)
-	if d.config.SubAppId != 0 {
-		setVodDomainCertificateReq.SubAppId = common.Uint64Ptr(uint64(d.config.SubAppId))
+	// 更新云函数自定义域名
+	// REF: https://cloud.tencent.com/document/product/583/111922
+	updateCustomDomainReq := tcScf.NewUpdateCustomDomainRequest()
+	updateCustomDomainReq.Domain = common.StringPtr(d.config.Domain)
+	updateCustomDomainReq.CertConfig = &tcScf.CertConf{
+		CertificateId: common.StringPtr(upres.CertId),
 	}
-	setVodDomainCertificateResp, err := d.sdkClient.SetVodDomainCertificate(setVodDomainCertificateReq)
+	updateCustomDomainReq.Protocol = getCustomDomainResp.Response.Protocol
+	updateCustomDomainResp, err := d.sdkClient.UpdateCustomDomain(updateCustomDomainReq)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'vod.SetVodDomainCertificate'")
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.UpdateCustomDomain'")
 	} else {
-		d.logger.Logt("已设置点播域名 HTTPS 证书", setVodDomainCertificateResp.Response)
+		d.logger.Logt("已设置点播域名 HTTPS 证书", updateCustomDomainResp.Response)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey string) (*tcVod.Client, error) {
+func createSdkClient(secretId, secretKey, region string) (*tcScf.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
-	client, err := tcVod.NewClient(credential, "", profile.NewClientProfile())
+	client, err := tcScf.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

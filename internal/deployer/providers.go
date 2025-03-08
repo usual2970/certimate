@@ -50,6 +50,7 @@ import (
 	pTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	pTencentCloudSCF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-scf"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
 	pTencentCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-vod"
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
@@ -634,7 +635,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSCF, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maps.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -693,6 +694,15 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 					ZoneId:    maps.GetValueAsString(options.ProviderDeployConfig, "zoneId"),
+					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeTencentCloudSCF:
+				deployer, err := pTencentCloudSCF.NewDeployer(&pTencentCloudSCF.DeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
+					Region:    maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					Domain:    maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err

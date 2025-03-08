@@ -110,6 +110,7 @@
   "provider.category.loadbalance": "负载均衡",
   "provider.category.firewall": "防火墙",
   "provider.category.av": "音视频",
-  "provider.category.website": "网站",
+  "provider.category.serverless": "Serverless",
+  "provider.category.website": "网站托管",
   "provider.category.other": "其他"
 }

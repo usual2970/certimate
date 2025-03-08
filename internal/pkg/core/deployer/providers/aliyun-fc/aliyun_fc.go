@@ -102,11 +102,8 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 				Certificate: tea.String(certPem),
 				PrivateKey:  tea.String(privkeyPem),
 			},
-			Protocol:    getCustomDomainResp.Body.Protocol,
-			AuthConfig:  getCustomDomainResp.Body.AuthConfig,
-			RouteConfig: getCustomDomainResp.Body.RouteConfig,
-			TlsConfig:   getCustomDomainResp.Body.TlsConfig,
-			WafConfig:   getCustomDomainResp.Body.WafConfig,
+			Protocol:  getCustomDomainResp.Body.Protocol,
+			TlsConfig: getCustomDomainResp.Body.TlsConfig,
 		},
 	}
 	updateCustomDomainResp, err := d.sdkClients.fc3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
@@ -137,10 +134,8 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 			Certificate: tea.String(certPem),
 			PrivateKey:  tea.String(privkeyPem),
 		},
-		Protocol:    getCustomDomainResp.Body.Protocol,
-		RouteConfig: getCustomDomainResp.Body.RouteConfig,
-		TlsConfig:   getCustomDomainResp.Body.TlsConfig,
-		WafConfig:   getCustomDomainResp.Body.WafConfig,
+		Protocol:  getCustomDomainResp.Body.Protocol,
+		TlsConfig: getCustomDomainResp.Body.TlsConfig,
 	}
 	updateCustomDomainResp, err := d.sdkClients.fc2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	if err != nil {
