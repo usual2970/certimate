@@ -68,15 +68,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	if d.config.AutoRestart {
-		// 重启面板
+		// 重启面板（无需关心响应，因为宝塔重启时会断开连接产生 error）
 		systemServiceAdminReq := &btsdk.SystemServiceAdminRequest{
 			Name: "nginx",
 			Type: "restart",
 		}
-		_, err := d.sdkClient.SystemServiceAdmin(systemServiceAdminReq)
-		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SystemServiceAdmin'")
-		}
+		d.sdkClient.SystemServiceAdmin(systemServiceAdminReq)
 	}
 
 	return &deployer.DeployResult{}, nil
