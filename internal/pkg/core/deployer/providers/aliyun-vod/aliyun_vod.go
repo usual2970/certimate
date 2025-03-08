@@ -77,7 +77,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunVod.Client, error) {
-	// 接入点一览 https://help.aliyun.com/zh/vod/developer-reference/api-vod-2017-03-21-endpoint
+	// 接入点一览 https://api.aliyun.com/product/vod
 	endpoint := fmt.Sprintf("vod.%s.aliyuncs.com", region)
 
 	config := &aliyunOpen.Config{

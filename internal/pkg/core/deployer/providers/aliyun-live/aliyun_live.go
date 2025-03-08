@@ -81,7 +81,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunLive.Client, error) {
-	// 接入点一览 https://help.aliyun.com/zh/live/developer-reference/api-live-2016-11-01-endpoint
+	// 接入点一览 https://api.aliyun.com/product/live
 	var endpoint string
 	switch region {
 	case

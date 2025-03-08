@@ -1,4 +1,4 @@
-﻿package aliyunwaf_test
+﻿package aliyunfc_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-fc"
 )
 
 var (
@@ -17,30 +17,30 @@ var (
 	fAccessKeyId     string
 	fAccessKeySecret string
 	fRegion          string
-	fInstanceId      string
+	fSiteId          int64
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_ALIYUNWAF_"
+	argsPrefix := "CERTIMATE_DEPLOYER_ALIYUNFC_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.StringVar(&fInstanceId, argsPrefix+"INSTANCEID", "", "")
+	flag.Int64Var(&fSiteId, argsPrefix+"SITEID", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./aliyun_waf_test.go -args \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_REGION="cn-hangzhou" \
-	--CERTIMATE_DEPLOYER_ALIYUNWAF_INSTANCEID="your-waf-instance-id"
+	go test -v ./aliyun_fc_test.go -args \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_REGION="cn-hangzhou" \
+	--CERTIMATE_DEPLOYER_ALIYUNFC_SITEID="your-fc-site-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -53,14 +53,14 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("REGION: %v", fRegion),
-			fmt.Sprintf("INSTANCEID: %v", fInstanceId),
+			fmt.Sprintf("SITEID: %v", fSiteId),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			InstanceId:      fInstanceId,
+			SiteId:          fSiteId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

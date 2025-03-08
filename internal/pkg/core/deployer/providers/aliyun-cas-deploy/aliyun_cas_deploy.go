@@ -151,7 +151,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}
 
-	// 接入点一览 https://help.aliyun.com/zh/ssl-certificate/developer-reference/endpoints
+	// 接入点一览 https://api.aliyun.com/product/cas
 	var endpoint string
 	switch region {
 	case "cn-hangzhou":
