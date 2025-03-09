@@ -436,11 +436,6 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
       return true;
     }
 
-    // 如果当前节点是 ExecuteFailure，清除 ExecuteResultBranch 节点前一个节点的输出
-    if (current.type === WorkflowNodeType.ExecuteFailure) {
-      output.splice(output.length - 1);
-    }
-
     if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => io.type === type)) {
       output.push({
         ...current,
@@ -449,14 +444,23 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
     }
 
     if (isBranchLike(current)) {
-      const currentLength = output.length;
+      let currentLength = output.length;
+      const latestOutput = output.length > 0 ? output[output.length - 1] : null;
       for (const branch of current.branches!) {
+        if (branch.type === WorkflowNodeType.ExecuteFailure) {
+          output.splice(output.length - 1);
+          currentLength -= 1;
+        }
         if (traverse(branch, output)) {
           return true;
         }
         // 如果当前分支没有输出，清空之前的输出
         if (output.length > currentLength) {
           output.splice(currentLength);
+        }
+        if (latestOutput && branch.type === WorkflowNodeType.ExecuteFailure) {
+          output.push(latestOutput);
+          currentLength += 1;
         }
       }
     }
