@@ -460,6 +460,7 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
         }
         if (latestOutput && branch.type === WorkflowNodeType.ExecuteFailure) {
           output.push(latestOutput);
+          currentLength += 1;
         }
       }
     }
