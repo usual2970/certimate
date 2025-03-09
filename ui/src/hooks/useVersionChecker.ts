@@ -4,7 +4,7 @@ import { version } from "@/domain/version";
 
 export type UseVersionCheckerReturns = {
   hasNewVersion: boolean;
-  check: () => void;
+  checkNewVersion: () => void;
 };
 
 const extractSemver = (vers: string) => {
@@ -48,7 +48,7 @@ const useVersionChecker = () => {
       }
 
       const nIdx = releases.findIndex((e: any) => compareVersions(e.name, version) !== -1);
-      if (cIdx >= nIdx) {
+      if (cIdx !== -1 && cIdx <= nIdx) {
         return false;
       }
 
@@ -63,7 +63,7 @@ const useVersionChecker = () => {
 
   return {
     hasNewVersion: !!data,
-    check: refresh,
+    checkNewVersion: refresh,
   };
 };
 
