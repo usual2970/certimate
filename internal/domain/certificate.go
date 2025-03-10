@@ -1,7 +1,10 @@
 package domain
 
 import (
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/x509"
+	"fmt"
 	"strings"
 	"time"
 
@@ -39,19 +42,58 @@ func (c *Certificate) PopulateFromX509(certX509 *x509.Certificate) *Certificate 
 	c.EffectAt = certX509.NotBefore
 	c.ExpireAt = certX509.NotAfter
 
-	switch certX509.SignatureAlgorithm {
-	case x509.SHA256WithRSA, x509.SHA256WithRSAPSS:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA2048
-	case x509.SHA384WithRSA, x509.SHA384WithRSAPSS:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA3072
-	case x509.SHA512WithRSA, x509.SHA512WithRSAPSS:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA4096
-	case x509.ECDSAWithSHA256:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC256
-	case x509.ECDSAWithSHA384:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC384
-	case x509.ECDSAWithSHA512:
-		c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC512
+	switch certX509.PublicKeyAlgorithm {
+	case x509.RSA:
+		{
+			len := 0
+			if pubkey, ok := certX509.PublicKey.(*rsa.PublicKey); ok {
+				len = pubkey.N.BitLen()
+			}
+
+			switch len {
+			case 0:
+				c.KeyAlgorithm = CertificateKeyAlgorithmType("RSA")
+			case 2048:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA2048
+			case 3072:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA3072
+			case 4096:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA4096
+			case 8192:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeRSA8192
+			default:
+				c.KeyAlgorithm = CertificateKeyAlgorithmType(fmt.Sprintf("RSA%d", len))
+			}
+		}
+
+	case x509.ECDSA:
+		{
+			len := 0
+			if pubkey, ok := certX509.PublicKey.(*ecdsa.PublicKey); ok {
+				if pubkey.Curve != nil && pubkey.Curve.Params() != nil {
+					len = pubkey.Curve.Params().BitSize
+				}
+			}
+
+			switch len {
+			case 0:
+				c.KeyAlgorithm = CertificateKeyAlgorithmType("EC")
+			case 256:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC256
+			case 384:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC384
+			case 521:
+				c.KeyAlgorithm = CertificateKeyAlgorithmTypeEC512
+			default:
+				c.KeyAlgorithm = CertificateKeyAlgorithmType(fmt.Sprintf("EC%d", len))
+			}
+		}
+
+	case x509.Ed25519:
+		{
+			c.KeyAlgorithm = CertificateKeyAlgorithmType("ED25519")
+		}
+
 	default:
 		c.KeyAlgorithm = CertificateKeyAlgorithmType("")
 	}
