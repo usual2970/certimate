@@ -16,7 +16,9 @@ export type DeployNodeConfigForm1PanelConsoleConfigProps = {
 };
 
 const initFormModel = (): DeployNodeConfigForm1PanelConsoleConfigFieldValues => {
-  return {};
+  return {
+    autoRestart: true,
+  };
 };
 
 const DeployNodeConfigForm1PanelConsoleConfig = ({

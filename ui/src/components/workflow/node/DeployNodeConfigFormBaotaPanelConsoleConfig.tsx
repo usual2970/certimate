@@ -16,7 +16,9 @@ export type DeployNodeConfigFormBaotaPanelConsoleConfigProps = {
 };
 
 const initFormModel = (): DeployNodeConfigFormBaotaPanelConsoleConfigFieldValues => {
-  return {};
+  return {
+    autoRestart: true,
+  };
 };
 
 const DeployNodeConfigFormBaotaPanelConsoleConfig = ({

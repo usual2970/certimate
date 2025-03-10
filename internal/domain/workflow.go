@@ -62,14 +62,14 @@ type WorkflowNode struct {
 }
 
 type WorkflowNodeConfigForApply struct {
-	Domains               string         `json:"domains"`               // 域名列表，以半角逗号分隔
+	Domains               string         `json:"domains"`               // 域名列表，以半角分号分隔
 	ContactEmail          string         `json:"contactEmail"`          // 联系邮箱
 	ChallengeType         string         `json:"challengeType"`         // TODO: 验证方式。目前仅支持 dns-01
 	Provider              string         `json:"provider"`              // DNS 提供商
 	ProviderAccessId      string         `json:"providerAccessId"`      // DNS 提供商授权记录 ID
 	ProviderConfig        map[string]any `json:"providerConfig"`        // DNS 提供商额外配置
 	KeyAlgorithm          string         `json:"keyAlgorithm"`          // 密钥算法
-	Nameservers           string         `json:"nameservers"`           // DNS 服务器列表，以半角逗号分隔
+	Nameservers           string         `json:"nameservers"`           // DNS 服务器列表，以半角分号分隔
 	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（零值取决于提供商的默认值）
 	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（零值取决于提供商的默认值）
 	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否关闭 CNAME 跟随
