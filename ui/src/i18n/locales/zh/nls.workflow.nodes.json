@@ -361,6 +361,7 @@
   "workflow_node.deploy.form.local_preset_scripts.option.reload_nginx.label": "POSIX Bash - 重启 nginx 进程",
   "workflow_node.deploy.form.local_preset_scripts.option.binding_iis.label": "PowerShell - 导入并绑定到 IIS（需管理员权限）",
   "workflow_node.deploy.form.local_preset_scripts.option.binding_netsh.label": "PowerShell - 导入并绑定到 netsh（需管理员权限）",
+  "workflow_node.deploy.form.local_preset_scripts.option.binding_rdp.label": "PowerShell - 导入并绑定到 远程桌面连接（需管理员权限）",
   "workflow_node.deploy.form.qiniu_cdn_domain.label": "七牛云 CDN 加速域名",
   "workflow_node.deploy.form.qiniu_cdn_domain.placeholder": "请输入七牛云 CDN 加速域名（支持泛域名）",
   "workflow_node.deploy.form.qiniu_cdn_domain.tooltip": "这是什么？请参阅 <a href=\"https://portal.qiniu.com/cdn\" target=\"_blank\">https://portal.qiniu.com/cdn</a>",

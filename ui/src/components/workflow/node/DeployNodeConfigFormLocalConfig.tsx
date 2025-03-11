@@ -208,6 +208,26 @@ Remove-Item -Path "$pfxPath" -Force
           );
         }
         break;
+      case "binding_rdp":
+        {
+          formInst.setFieldValue("shellEnv", "powershell");
+          formInst.setFieldValue(
+            "postCommand",
+            `# 请将以下变量替换为实际值
+$pfxPath = "<your-pfx-path>" # PFX 文件路径
+$pfxPassword = "<your-pfx-password>" # PFX 密码
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 绑定到 RDP
+$rdpCertPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp"
+Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thumbprint"
+            `.trim()
+          );
+        }
+        break;
     }
   };
 
@@ -340,6 +360,11 @@ Remove-Item -Path "$pfxPath" -Force
                       key: "binding_netsh",
                       label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_netsh.label"),
                       onClick: () => handlePresetScriptClick("binding_netsh"),
+                    },
+                    {
+                      key: "binding_rdp",
+                      label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_rdp.label"),
+                      onClick: () => handlePresetScriptClick("binding_rdp"),
                     },
                   ],
                 }}
