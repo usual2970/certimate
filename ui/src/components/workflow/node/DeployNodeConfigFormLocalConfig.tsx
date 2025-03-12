@@ -138,14 +138,14 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
     switch (key) {
       case "reload_nginx":
         {
-          formInst.setFieldValue("shellEnv", "sh");
+          formInst.setFieldValue("shellEnv", SHELLENV_SH);
           formInst.setFieldValue("postCommand", "sudo service nginx reload");
         }
         break;
 
       case "binding_iis":
         {
-          formInst.setFieldValue("shellEnv", "powershell");
+          formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
@@ -182,7 +182,7 @@ Remove-Item -Path "$pfxPath" -Force
 
       case "binding_netsh":
         {
-          formInst.setFieldValue("shellEnv", "powershell");
+          formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
@@ -210,7 +210,7 @@ Remove-Item -Path "$pfxPath" -Force
         break;
       case "binding_rdp":
         {
-          formInst.setFieldValue("shellEnv", "powershell");
+          formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
