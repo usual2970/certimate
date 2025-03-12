@@ -71,6 +71,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 相关文章：
 
+- [使用 CNAME 实现 DNS-01 challenge](https://docs.certimate.me/blog/cname)
 - [v0.3.0：第二个不向后兼容的大版本](https://docs.certimate.me/blog/v0.3.0)
 - [v0.2.0：第一个不向后兼容的大版本](https://docs.certimate.me/blog/v0.2.0)
 - [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
