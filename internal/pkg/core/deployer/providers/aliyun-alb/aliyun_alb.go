@@ -297,7 +297,9 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 			var errs []error
 
 			for _, listenerCertificate := range listenerCertificates {
-				if *listenerCertificate.CertificateId == cloudCertId {
+				// 监听证书 ID 格式：${证书 ID}-${地域}
+				certificateId := strings.Split(*listenerCertificate.CertificateId, "-")[0]
+				if certificateId == cloudCertId {
 					certificateIsAssociated = true
 					continue
 				}
@@ -306,14 +308,14 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					continue
 				}
 
-				listenerCertificateId, err := strconv.ParseInt(*listenerCertificate.CertificateId, 10, 64)
+				certificateIdAsInt64, err := strconv.ParseInt(certificateId, 10, 64)
 				if err != nil {
 					errs = append(errs, err)
 					continue
 				}
 
 				getUserCertificateDetailReq := &aliyunCas.GetUserCertificateDetailRequest{
-					CertId: tea.Int64(listenerCertificateId),
+					CertId: tea.Int64(certificateIdAsInt64),
 				}
 				getUserCertificateDetailResp, err := d.sdkClients.cas.GetUserCertificateDetail(getUserCertificateDetailReq)
 				if err != nil {
@@ -332,7 +334,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					continue
 				}
 
-				certificateIdsExpired = append(certificateIdsExpired, *listenerCertificate.CertificateId)
+				certificateIdsExpired = append(certificateIdsExpired, certificateId)
 			}
 
 			if len(errs) > 0 {

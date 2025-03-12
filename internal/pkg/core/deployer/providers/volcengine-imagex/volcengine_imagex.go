@@ -104,18 +104,21 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			ServiceID: d.config.ServiceId,
 		},
 		UpdateHTTPSBody: &veImageX.UpdateHTTPSBody{
-			Domain: getDomainConfigResp.Result.Domain,
+			Domain: d.config.Domain,
 			HTTPS: &veImageX.UpdateHTTPSBodyHTTPS{
-				CertID:              upres.CertId,
-				EnableHTTP2:         getDomainConfigResp.Result.HTTPSConfig.EnableHTTP2,
-				EnableHTTPS:         getDomainConfigResp.Result.HTTPSConfig.EnableHTTPS,
-				EnableOcsp:          getDomainConfigResp.Result.HTTPSConfig.EnableOcsp,
-				TLSVersions:         getDomainConfigResp.Result.HTTPSConfig.TLSVersions,
-				EnableForceRedirect: getDomainConfigResp.Result.HTTPSConfig.EnableForceRedirect,
-				ForceRedirectType:   getDomainConfigResp.Result.HTTPSConfig.ForceRedirectType,
-				ForceRedirectCode:   getDomainConfigResp.Result.HTTPSConfig.ForceRedirectCode,
+				CertID:      upres.CertId,
+				EnableHTTPS: true,
 			},
 		},
+	}
+	if getDomainConfigResp.Result != nil && getDomainConfigResp.Result.HTTPSConfig != nil {
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.EnableHTTPS = getDomainConfigResp.Result.HTTPSConfig.EnableHTTPS
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.EnableHTTP2 = getDomainConfigResp.Result.HTTPSConfig.EnableHTTP2
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.EnableOcsp = getDomainConfigResp.Result.HTTPSConfig.EnableOcsp
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.TLSVersions = getDomainConfigResp.Result.HTTPSConfig.TLSVersions
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.EnableForceRedirect = getDomainConfigResp.Result.HTTPSConfig.EnableForceRedirect
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.ForceRedirectType = getDomainConfigResp.Result.HTTPSConfig.ForceRedirectType
+		updateHttpsReq.UpdateHTTPSBody.HTTPS.ForceRedirectCode = getDomainConfigResp.Result.HTTPSConfig.ForceRedirectCode
 	}
 	updateHttpsResp, err := d.sdkClient.UpdateHTTPS(context.TODO(), updateHttpsReq)
 	if err != nil {
