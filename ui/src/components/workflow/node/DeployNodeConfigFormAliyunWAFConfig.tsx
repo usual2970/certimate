@@ -3,9 +3,12 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { validDomainName } from "@/utils/validators";
+
 type DeployNodeConfigFormAliyunWAFConfigFieldValues = Nullish<{
   region: string;
   instanceId: string;
+  domain?: string;
 }>;
 
 export type DeployNodeConfigFormAliyunWAFConfigProps = {
@@ -39,6 +42,12 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
       .nonempty(t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
+    domain: z
+      .string()
+      .nullish()
+      .refine((v) => {
+        return !v || validDomainName(v!, { allowWildcard: true });
+      }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -71,6 +80,15 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_waf_instance_id.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="domain"
+        label={t("workflow_node.deploy.form.aliyun_waf_domain.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_waf_domain.tooltip") }}></span>}
+      >
+        <Input placeholder={t("workflow_node.deploy.form.aliyun_waf_domain.placeholder")} />
       </Form.Item>
     </Form>
   );

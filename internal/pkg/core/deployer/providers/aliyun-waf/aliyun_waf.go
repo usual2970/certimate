@@ -24,8 +24,10 @@ type DeployerConfig struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 	// 阿里云地域。
 	Region string `json:"region"`
-	// 阿里云 WAF 实例 ID。
+	// WAF 实例 ID。
 	InstanceId string `json:"instanceId"`
+	// 接入域名（支持泛域名）。
+	Domain string `json:"domain,omitempty"`
 }
 
 type DeployerProvider struct {
@@ -74,38 +76,87 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Logt("certificate file uploaded", upres)
 	}
 
-	d.logger.Logt("certificate file uploaded", upres)
+	if d.config.Domain == "" {
+		// 未指定接入域名，只需替换默认证书即可
 
-	// 查询默认 SSL/TLS 设置
-	// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedefaulthttps
-	describeDefaultHttpsReq := &aliyunWaf.DescribeDefaultHttpsRequest{
-		InstanceId: tea.String(d.config.InstanceId),
-		RegionId:   tea.String(d.config.Region),
-	}
-	describeDefaultHttpsResp, err := d.sdkClient.DescribeDefaultHttps(describeDefaultHttpsReq)
-	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDefaultHttps'")
-	}
+		// 查询默认 SSL/TLS 设置
+		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedefaulthttps
+		describeDefaultHttpsReq := &aliyunWaf.DescribeDefaultHttpsRequest{
+			InstanceId: tea.String(d.config.InstanceId),
+			RegionId:   tea.String(d.config.Region),
+		}
+		describeDefaultHttpsResp, err := d.sdkClient.DescribeDefaultHttps(describeDefaultHttpsReq)
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDefaultHttps'")
+		} else {
+			d.logger.Logt("已查询到默认 SSL/TLS 设置", describeDefaultHttpsResp)
+		}
 
-	d.logger.Logt("已查询到默认 SSL/TLS 设置", describeDefaultHttpsResp)
+		// 修改默认 SSL/TLS 设置
+		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydefaulthttps
+		modifyDefaultHttpsReq := &aliyunWaf.ModifyDefaultHttpsRequest{
+			InstanceId:  tea.String(d.config.InstanceId),
+			RegionId:    tea.String(d.config.Region),
+			CertId:      tea.String(upres.CertId),
+			TLSVersion:  tea.String("tlsv1"),
+			EnableTLSv3: tea.Bool(false),
+		}
+		if describeDefaultHttpsResp.Body != nil && describeDefaultHttpsResp.Body.DefaultHttps != nil {
+			modifyDefaultHttpsReq.TLSVersion = describeDefaultHttpsResp.Body.DefaultHttps.TLSVersion
+			modifyDefaultHttpsReq.EnableTLSv3 = describeDefaultHttpsResp.Body.DefaultHttps.EnableTLSv3
+		}
+		modifyDefaultHttpsResp, err := d.sdkClient.ModifyDefaultHttps(modifyDefaultHttpsReq)
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDefaultHttps'")
+		} else {
+			d.logger.Logt("已修改默认 SSL/TLS 设置", modifyDefaultHttpsResp)
+		}
+	} else {
+		// 指定接入域名
 
-	// 修改默认 SSL/TLS 设置
-	// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydefaulthttps
-	modifyDefaultHttpsReq := &aliyunWaf.ModifyDefaultHttpsRequest{
-		InstanceId:  tea.String(d.config.InstanceId),
-		RegionId:    tea.String(d.config.Region),
-		CertId:      tea.String(upres.CertId),
-		TLSVersion:  describeDefaultHttpsResp.Body.DefaultHttps.TLSVersion,
-		EnableTLSv3: describeDefaultHttpsResp.Body.DefaultHttps.EnableTLSv3,
-	}
-	modifyDefaultHttpsResp, err := d.sdkClient.ModifyDefaultHttps(modifyDefaultHttpsReq)
-	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDefaultHttps'")
-	}
+		// 查询 CNAME 接入详情
+		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedomaindetail
+		describeDomainDetailReq := &aliyunWaf.DescribeDomainDetailRequest{
+			InstanceId: tea.String(d.config.InstanceId),
+			RegionId:   tea.String(d.config.Region),
+			Domain:     tea.String(d.config.Domain),
+		}
+		describeDomainDetailResp, err := d.sdkClient.DescribeDomainDetail(describeDomainDetailReq)
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDomainDetail'")
+		} else {
+			d.logger.Logt("已查询到 CNAME 接入详情", describeDomainDetailResp)
+		}
 
-	d.logger.Logt("已修改默认 SSL/TLS 设置", modifyDefaultHttpsResp)
+		// 修改 CNAME 接入资源
+		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydomain
+		modifyDomainReq := &aliyunWaf.ModifyDomainRequest{
+			InstanceId: tea.String(d.config.InstanceId),
+			RegionId:   tea.String(d.config.Region),
+			Domain:     tea.String(d.config.Domain),
+			Listen: &aliyunWaf.ModifyDomainRequestListen{
+				CertId:      tea.String(upres.CertId),
+				TLSVersion:  tea.String("tlsv1"),
+				EnableTLSv3: tea.Bool(false),
+			},
+			Redirect: &aliyunWaf.ModifyDomainRequestRedirect{},
+		}
+		if describeDomainDetailResp.Body != nil && describeDomainDetailResp.Body.Listen != nil {
+			modifyDomainReq.Listen.TLSVersion = describeDomainDetailResp.Body.Listen.TLSVersion
+			modifyDomainReq.Listen.EnableTLSv3 = describeDomainDetailResp.Body.Listen.EnableTLSv3
+			modifyDomainReq.Listen.FocusHttps = describeDomainDetailResp.Body.Listen.FocusHttps
+		}
+		modifyDomainResp, err := d.sdkClient.ModifyDomain(modifyDomainReq)
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDomain'")
+		} else {
+			d.logger.Logt("已修改 CNAME 接入资源", modifyDomainResp)
+		}
+	}
 
 	return &deployer.DeployResult{}, nil
 }

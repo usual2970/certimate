@@ -226,6 +226,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maps.GetValueAsString(options.ProviderDeployConfig, "region"),
 					InstanceId:      maps.GetValueAsString(options.ProviderDeployConfig, "instanceId"),
+					Domain:          maps.GetValueAsString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
 
