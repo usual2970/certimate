@@ -31,7 +31,7 @@ const WorkflowElements = ({ className, style, disabled }: WorkflowElementsProps)
 
   return (
     <div className={className} style={style}>
-      <div className="flex flex-col items-center overflow-auto">{elements}</div>
+      <div className="flex w-max min-w-full flex-col items-center">{elements}</div>
     </div>
   );
 };
