@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { FormOutlined as FormOutlinedIcon } from "@ant-design/icons";
-import { Alert, Button, Form, type FormInstance, Input, Space } from "antd";
+import { Alert, AutoComplete, Button, Form, type FormInstance, Input, Space } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -51,7 +51,7 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
       if (!v) return false;
       return String(v)
         .split(MULTIPLE_INPUT_DELIMITER)
-        .every((e) => /^[A-Za-z0-9._-]+$/.test(e));
+        .every((e) => /^[A-Za-z0-9*._-]+$/.test(e));
     }, t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -86,7 +86,11 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder")} />
+        <AutoComplete
+          options={["apigateway", "cdn", "clb", "cos", "ddos", "lighthouse", "live", "tcb", "teo", "tke", "tse", "vod", "waf"].map((value) => ({ value }))}
+          placeholder={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder")}
+          filterOption={(inputValue, option) => option!.value.toLowerCase().includes(inputValue.toLowerCase())}
+        />
       </Form.Item>
 
       <Form.Item
@@ -131,7 +135,7 @@ const ResourceIdsModalInput = memo(({ value, trigger, onChange }: { value?: stri
 
   const formSchema = z.object({
     resourceIds: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || /^[A-Za-z0-9._-]+$/.test(e));
+      return v.every((e) => !e?.trim() || /^[A-Za-z0-9*._-]+$/.test(e));
     }, t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
