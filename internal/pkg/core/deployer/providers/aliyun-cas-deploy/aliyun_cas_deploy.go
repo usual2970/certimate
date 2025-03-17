@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
@@ -34,7 +34,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *aliyunCas.Client
 	sslUploader uploader.Uploader
 }
@@ -58,14 +58,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -78,9 +83,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	contactIds := d.config.ContactIds
 	if len(contactIds) == 0 {
@@ -90,6 +95,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		listContactReq.ShowSize = tea.Int32(1)
 		listContactReq.CurrentPage = tea.Int32(1)
 		listContactResp, err := d.sdkClient.ListContact(listContactReq)
+		d.logger.Debug("sdk request 'cas.ListContact'", slog.Any("request", listContactReq), slog.Any("response", listContactResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.ListContact'")
 		}
@@ -109,11 +115,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		ContactIds:  tea.String(strings.Join(contactIds, ",")),
 	}
 	createDeploymentJobResp, err := d.sdkClient.CreateDeploymentJob(createDeploymentJobReq)
+	d.logger.Debug("sdk request 'cas.CreateDeploymentJob'", slog.Any("request", createDeploymentJobReq), slog.Any("response", createDeploymentJobResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.CreateDeploymentJob'")
 	}
-
-	d.logger.Logt("已创建部署任务", createDeploymentJobResp)
 
 	// 循环获取部署任务详情，等待任务状态变更
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-describedeploymentjob
@@ -126,20 +131,20 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			JobId: createDeploymentJobResp.Body.JobId,
 		}
 		describeDeploymentJobResp, err := d.sdkClient.DescribeDeploymentJob(describeDeploymentJobReq)
+		d.logger.Debug("sdk request 'cas.DescribeDeploymentJob'", slog.Any("request", describeDeploymentJobReq), slog.Any("response", describeDeploymentJobResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.DescribeDeploymentJob'")
 		}
 
 		if describeDeploymentJobResp.Body.Status == nil || *describeDeploymentJobResp.Body.Status == "editing" {
-			return nil, errors.New("部署任务状态异常")
+			return nil, errors.New("unexpected deployment job status")
 		}
 
 		if *describeDeploymentJobResp.Body.Status == "success" || *describeDeploymentJobResp.Body.Status == "error" {
-			d.logger.Logt("已获取部署任务详情", describeDeploymentJobResp)
 			break
 		}
 
-		d.logger.Logt("部署任务未完成 ...")
+		d.logger.Info("waiting for deployment job completion ...")
 		time.Sleep(time.Second * 5)
 	}
 

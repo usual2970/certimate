@@ -1,16 +1,16 @@
-package local
+﻿package local
 
 import (
 	"bytes"
 	"context"
 	"fmt"
+	"log/slog"
 	"os/exec"
 	"runtime"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 	"github.com/usual2970/certimate/internal/pkg/utils/files"
 )
@@ -45,7 +45,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config *DeployerConfig
-	logger logger.Logger
+	logger *slog.Logger
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -57,12 +57,16 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config: config,
-		logger: logger.NewNilLogger(),
+		logger: slog.Default(),
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -70,11 +74,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 执行前置命令
 	if d.config.PreCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PreCommand)
+		d.logger.Debug("run pre-command", slog.String("stdout", stdout), slog.String("stderr", stderr))
 		if err != nil {
 			return nil, xerrors.Wrapf(err, "failed to execute pre-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
-
-		d.logger.Logt("pre-command executed", stdout)
 	}
 
 	// 写入证书和私钥文件
@@ -83,42 +86,36 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		if err := files.WriteString(d.config.OutputCertPath, certPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
-
-		d.logger.Logt("certificate file saved")
+		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 		if err := files.WriteString(d.config.OutputKeyPath, privkeyPem); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save private key file")
 		}
-
-		d.logger.Logt("private key file saved")
+		d.logger.Info("ssl private key file saved", slog.String("path", d.config.OutputKeyPath))
 
 	case OUTPUT_FORMAT_PFX:
 		pfxData, err := certs.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
-
-		d.logger.Logt("certificate transformed to PFX")
+		d.logger.Info("ssl certificate transformed to pfx")
 
 		if err := files.Write(d.config.OutputCertPath, pfxData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
-
-		d.logger.Logt("certificate file saved")
+		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 	case OUTPUT_FORMAT_JKS:
 		jksData, err := certs.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}
-
-		d.logger.Logt("certificate transformed to JKS")
+		d.logger.Info("ssl certificate transformed to jks")
 
 		if err := files.Write(d.config.OutputCertPath, jksData); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
-
-		d.logger.Logt("certificate file uploaded")
+		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 	default:
 		return nil, fmt.Errorf("unsupported output format: %s", d.config.OutputFormat)
@@ -127,11 +124,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 执行后置命令
 	if d.config.PostCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PostCommand)
+		d.logger.Debug("run post-command", slog.String("stdout", stdout), slog.String("stderr", stderr))
 		if err != nil {
 			return nil, xerrors.Wrapf(err, "failed to execute post-command, stdout: %s, stderr: %s", stdout, stderr)
 		}
-
-		d.logger.Logt("post-command executed", stdout)
 	}
 
 	return &deployer.DeployResult{}, nil

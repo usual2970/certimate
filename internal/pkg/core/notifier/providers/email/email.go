@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"log/slog"
 	"net/smtp"
 
 	"github.com/domodwyer/mailyak/v3"
@@ -31,6 +32,7 @@ type NotifierConfig struct {
 
 type NotifierProvider struct {
 	config *NotifierConfig
+	logger *slog.Logger
 }
 
 var _ notifier.Notifier = (*NotifierProvider)(nil)
@@ -43,6 +45,15 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	return &NotifierProvider{
 		config: config,
 	}, nil
+}
+
+func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
+	if logger == nil {
+		n.logger = slog.Default()
+	} else {
+		n.logger = logger
+	}
+	return n
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {

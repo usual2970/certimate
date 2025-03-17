@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"log/slog"
 	"strings"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/utils/certs"
 )
 
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config     *DeployerConfig
-	logger     logger.Logger
+	logger     *slog.Logger
 	httpClient *resty.Client
 }
 
@@ -47,13 +47,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:     config,
-		logger:     logger.NewNilLogger(),
+		logger:     slog.Default(),
 		httpClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -86,18 +90,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
 	}
 
-	d.logger.Logt("Webhook request sent", resp.String())
+	d.logger.Debug("webhook responded", slog.Any("response", resp.String()))
 
 	return &deployer.DeployResult{}, nil
 }
 
 func replaceJsonValueRecursively(data interface{}, oldStr, newStr string) interface{} {
 	switch v := data.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, val := range v {
 			v[k] = replaceJsonValueRecursively(val, oldStr, newStr)
 		}
-	case []interface{}:
+	case []any:
 		for i, val := range v {
 			v[i] = replaceJsonValueRecursively(val, oldStr, newStr)
 		}

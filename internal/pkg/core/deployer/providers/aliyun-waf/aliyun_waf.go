@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -12,7 +13,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
@@ -32,7 +32,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *aliyunWaf.Client
 	sslUploader uploader.Uploader
 }
@@ -56,14 +56,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -77,7 +82,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	if d.config.Domain == "" {
@@ -90,10 +95,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			RegionId:   tea.String(d.config.Region),
 		}
 		describeDefaultHttpsResp, err := d.sdkClient.DescribeDefaultHttps(describeDefaultHttpsReq)
+		d.logger.Debug("sdk request 'waf.DescribeDefaultHttps'", slog.Any("request", describeDefaultHttpsReq), slog.Any("response", describeDefaultHttpsResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDefaultHttps'")
-		} else {
-			d.logger.Logt("已查询到默认 SSL/TLS 设置", describeDefaultHttpsResp)
 		}
 
 		// 修改默认 SSL/TLS 设置
@@ -110,10 +114,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			modifyDefaultHttpsReq.EnableTLSv3 = describeDefaultHttpsResp.Body.DefaultHttps.EnableTLSv3
 		}
 		modifyDefaultHttpsResp, err := d.sdkClient.ModifyDefaultHttps(modifyDefaultHttpsReq)
+		d.logger.Debug("sdk request 'waf.ModifyDefaultHttps'", slog.Any("request", modifyDefaultHttpsReq), slog.Any("response", modifyDefaultHttpsResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDefaultHttps'")
-		} else {
-			d.logger.Logt("已修改默认 SSL/TLS 设置", modifyDefaultHttpsResp)
 		}
 	} else {
 		// 指定接入域名
@@ -126,10 +129,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			Domain:     tea.String(d.config.Domain),
 		}
 		describeDomainDetailResp, err := d.sdkClient.DescribeDomainDetail(describeDomainDetailReq)
+		d.logger.Debug("sdk request 'waf.DescribeDomainDetail'", slog.Any("request", describeDomainDetailReq), slog.Any("response", describeDomainDetailResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDomainDetail'")
-		} else {
-			d.logger.Logt("已查询到 CNAME 接入详情", describeDomainDetailResp)
 		}
 
 		// 修改 CNAME 接入资源
@@ -143,18 +145,25 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				TLSVersion:  tea.String("tlsv1"),
 				EnableTLSv3: tea.Bool(false),
 			},
-			Redirect: &aliyunWaf.ModifyDomainRequestRedirect{},
+			Redirect: &aliyunWaf.ModifyDomainRequestRedirect{
+				Loadbalance: tea.String("iphash"),
+			},
 		}
 		if describeDomainDetailResp.Body != nil && describeDomainDetailResp.Body.Listen != nil {
 			modifyDomainReq.Listen.TLSVersion = describeDomainDetailResp.Body.Listen.TLSVersion
 			modifyDomainReq.Listen.EnableTLSv3 = describeDomainDetailResp.Body.Listen.EnableTLSv3
 			modifyDomainReq.Listen.FocusHttps = describeDomainDetailResp.Body.Listen.FocusHttps
 		}
+		if describeDomainDetailResp.Body != nil && describeDomainDetailResp.Body.Redirect != nil {
+			modifyDomainReq.Redirect.Loadbalance = describeDomainDetailResp.Body.Redirect.Loadbalance
+			modifyDomainReq.Redirect.FocusHttpBackend = describeDomainDetailResp.Body.Redirect.FocusHttpBackend
+			modifyDomainReq.Redirect.SniEnabled = describeDomainDetailResp.Body.Redirect.SniEnabled
+			modifyDomainReq.Redirect.SniHost = describeDomainDetailResp.Body.Redirect.SniHost
+		}
 		modifyDomainResp, err := d.sdkClient.ModifyDomain(modifyDomainReq)
+		d.logger.Debug("sdk request 'waf.ModifyDomain'", slog.Any("request", modifyDomainReq), slog.Any("response", modifyDomainResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDomain'")
-		} else {
-			d.logger.Logt("已修改 CNAME 接入资源", modifyDomainResp)
 		}
 	}
 

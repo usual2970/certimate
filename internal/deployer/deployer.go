@@ -3,10 +3,10 @@ package deployer
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -52,7 +52,7 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	}
 
 	return &proxyDeployer{
-		logger:            logger.NewNilLogger(),
+		logger:            slog.Default(),
 		deployer:          deployer,
 		deployCertificate: certdata.Certificate,
 		deployPrivateKey:  certdata.PrivateKey,
@@ -61,7 +61,7 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 
 // TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
 type proxyDeployer struct {
-	logger            logger.Logger
+	logger            *slog.Logger
 	deployer          deployer.Deployer
 	deployCertificate string
 	deployPrivateKey  string

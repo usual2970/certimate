@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"time"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cdnfly-sdk"
 )
 
@@ -34,7 +34,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *cfsdk.Client
 }
 
@@ -52,13 +52,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -93,10 +97,9 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, pri
 		Id: d.config.SiteId,
 	}
 	getSiteResp, err := d.sdkClient.GetSite(getSiteReq)
+	d.logger.Debug("sdk request 'cdnfly.GetSite'", slog.Any("request", getSiteReq), slog.Any("response", getSiteResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.GetSite'")
-	} else {
-		d.logger.Logt("已获取网站详情", getSiteResp)
 	}
 
 	// 添加单个证书
@@ -108,10 +111,9 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, pri
 		Key:  privkeyPem,
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
+	d.logger.Debug("sdk request 'cdnfly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.CreateCertificate'")
-	} else {
-		d.logger.Logt("已添加证书", createCertificateResp)
 	}
 
 	// 修改单个网站
@@ -126,10 +128,9 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, pri
 		HttpsListen: &updateSiteHttpsListen,
 	}
 	updateSiteResp, err := d.sdkClient.UpdateSite(updateSiteReq)
+	d.logger.Debug("sdk request 'cdnfly.UpdateSite'", slog.Any("request", updateSiteReq), slog.Any("response", updateSiteResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.UpdateSite'")
-	} else {
-		d.logger.Logt("已修改网站", updateSiteResp)
 	}
 
 	return nil
@@ -150,10 +151,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		Key:  &privkeyPem,
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
+	d.logger.Debug("sdk request 'cdnfly.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.UpdateCertificate'")
-	} else {
-		d.logger.Logt("已修改证书", updateCertificateResp)
 	}
 
 	return nil

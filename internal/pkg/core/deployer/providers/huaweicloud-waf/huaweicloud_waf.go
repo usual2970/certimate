@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
@@ -17,7 +18,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-waf"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
@@ -42,7 +42,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *hcWaf.WafClient
 	sslUploader uploader.Uploader
 }
@@ -70,14 +70,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -87,7 +92,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 根据部署资源类型决定部署方式
@@ -125,10 +130,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		CertificateId: d.config.CertificateId,
 	}
 	showCertificateResp, err := d.sdkClient.ShowCertificate(showCertificateReq)
+	d.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'waf.ShowCertificate'")
-	} else {
-		d.logger.Logt("已获取 WAF 证书", showCertificateResp)
 	}
 
 	// 更新证书
@@ -142,10 +146,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
+	d.logger.Debug("sdk request 'waf.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdateCertificate'")
-	} else {
-		d.logger.Logt("已更新 WAF 证书", updateCertificateResp)
 	}
 
 	return nil
@@ -161,7 +164,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 遍历查询云模式防护域名列表，获取防护域名 ID
@@ -176,6 +179,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 			Pagesize: hwsdk.Int32Ptr(listHostPageSize),
 		}
 		listHostResp, err := d.sdkClient.ListHost(listHostReq)
+		d.logger.Debug("sdk request 'waf.ListHost'", slog.Any("request", listHostReq), slog.Any("response", listHostResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ListHost'")
 		}
@@ -209,10 +213,9 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 		},
 	}
 	updateHostResp, err := d.sdkClient.UpdateHost(updateHostReq)
+	d.logger.Debug("sdk request 'waf.UpdateHost'", slog.Any("request", updateHostReq), slog.Any("response", updateHostResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdateHost'")
-	} else {
-		d.logger.Logt("已更新云模式防护域名的配置", updateHostResp)
 	}
 
 	return nil
@@ -228,7 +231,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 遍历查询独享模式域名列表，获取防护域名 ID
@@ -243,6 +246,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 			Pagesize: hwsdk.StringPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
 		}
 		listPremiumHostResp, err := d.sdkClient.ListPremiumHost(listPremiumHostReq)
+		d.logger.Debug("sdk request 'waf.ListPremiumHost'", slog.Any("request", listPremiumHostReq), slog.Any("response", listPremiumHostResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ListPremiumHost'")
 		}
@@ -276,10 +280,9 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 		},
 	}
 	updatePremiumHostResp, err := d.sdkClient.UpdatePremiumHost(updatePremiumHostReq)
+	d.logger.Debug("sdk request 'waf.UpdatePremiumHost'", slog.Any("request", updatePremiumHostReq), slog.Any("response", updatePremiumHostResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdatePremiumHost'")
-	} else {
-		d.logger.Logt("已修改独享模式域名配置", updatePremiumHostResp)
 	}
 
 	return nil

@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"log/slog"
 	"strings"
 
 	xerrors "github.com/pkg/errors"
@@ -12,7 +13,6 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -28,7 +28,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
@@ -60,14 +60,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -76,9 +81,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 获取待部署的 CDN 实例
 	// 如果是泛域名，根据证书匹配 CDN 实例
@@ -111,8 +116,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	if len(instanceIds) == 0 {
-		d.logger.Logt("已部署过或没有要部署的 CDN 实例")
+		d.logger.Info("no cdn instances to deploy")
 	} else {
+		d.logger.Info("found cdn instances to deploy", slog.Any("instanceIds", instanceIds))
+
 		// 证书部署到 CDN 实例
 		// REF: https://cloud.tencent.com/document/product/400/91667
 		deployCertificateInstanceReq := tcSsl.NewDeployCertificateInstanceRequest()
@@ -121,11 +128,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		deployCertificateInstanceReq.Status = common.Int64Ptr(1)
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(instanceIds)
 		deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
+		d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 		}
-
-		d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -138,6 +144,7 @@ func (d *DeployerProvider) getDomainsByCertificateId(cloudCertId string) ([]stri
 	describeCertDomainsReq.CertId = common.StringPtr(cloudCertId)
 	describeCertDomainsReq.Product = common.StringPtr("cdn")
 	describeCertDomainsResp, err := d.sdkClients.cdn.DescribeCertDomains(describeCertDomainsReq)
+	d.logger.Debug("sdk request 'cdn.DescribeCertDomains'", slog.Any("request", describeCertDomainsReq), slog.Any("response", describeCertDomainsResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeCertDomains'")
 	}
@@ -159,6 +166,7 @@ func (d *DeployerProvider) getDeployedDomainsByCertificateId(cloudCertId string)
 	describeDeployedResourcesReq.CertificateIds = common.StringPtrs([]string{cloudCertId})
 	describeDeployedResourcesReq.ResourceType = common.StringPtr("cdn")
 	describeDeployedResourcesResp, err := d.sdkClients.ssl.DescribeDeployedResources(describeDeployedResourcesReq)
+	d.logger.Debug("sdk request 'cdn.DescribeDeployedResources'", slog.Any("request", describeDeployedResourcesReq), slog.Any("response", describeDeployedResourcesResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeDeployedResources'")
 	}

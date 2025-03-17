@@ -4,13 +4,13 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"log/slog"
 	"net/url"
 	"strconv"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/1panel-ssl"
 	opsdk "github.com/usual2970/certimate/internal/pkg/vendors/1panel-sdk"
@@ -29,7 +29,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *opsdk.Client
 	sslUploader uploader.Uploader
 }
@@ -56,14 +56,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -73,10 +78,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		WebsiteID: d.config.WebsiteId,
 	}
 	getHttpsConfResp, err := d.sdkClient.GetHttpsConf(getHttpsConfReq)
+	d.logger.Debug("sdk request '1panel.GetHttpsConf'", slog.Any("request", getHttpsConfReq), slog.Any("response", getHttpsConfResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request '1panel.GetHttpsConf'")
-	} else {
-		d.logger.Logt("已获取网站 HTTPS 配置", getHttpsConfResp)
 	}
 
 	// 上传证书到面板
@@ -84,7 +88,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 修改网站 HTTPS 配置
@@ -100,10 +104,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		Hsts:         getHttpsConfResp.Data.Hsts,
 	}
 	updateHttpsConfResp, err := d.sdkClient.UpdateHttpsConf(updateHttpsConfReq)
+	d.logger.Debug("sdk request '1panel.UpdateHttpsConf'", slog.Any("request", updateHttpsConfReq), slog.Any("response", updateHttpsConfResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request '1panel.UpdateHttpsConf'")
-	} else {
-		d.logger.Logt("已获取网站 HTTPS 配置", updateHttpsConfResp)
 	}
 
 	return &deployer.DeployResult{}, nil

@@ -2,11 +2,12 @@
 
 import (
 	"context"
+	"log/slog"
 
 	aws "github.com/aws/aws-sdk-go-v2/aws"
-	awsCfg "github.com/aws/aws-sdk-go-v2/config"
-	awsCred "github.com/aws/aws-sdk-go-v2/credentials"
-	awsAcm "github.com/aws/aws-sdk-go-v2/service/acm"
+	awscfg "github.com/aws/aws-sdk-go-v2/config"
+	awscred "github.com/aws/aws-sdk-go-v2/credentials"
+	awsacm "github.com/aws/aws-sdk-go-v2/service/acm"
 	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
@@ -25,7 +26,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *awsAcm.Client
+	logger    *slog.Logger
+	sdkClient *awsacm.Client
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -42,8 +44,18 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
+}
+
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
 }
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
@@ -62,11 +74,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	listCertificatesNextToken := new(string)
 	listCertificatesMaxItems := int32(1000)
 	for {
-		listCertificatesReq := &awsAcm.ListCertificatesInput{
+		listCertificatesReq := &awsacm.ListCertificatesInput{
 			NextToken: listCertificatesNextToken,
 			MaxItems:  aws.Int32(listCertificatesMaxItems),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(context.TODO(), listCertificatesReq)
+		u.logger.Debug("sdk request 'acm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ListCertificates'")
 		}
@@ -87,7 +100,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 			// 最后对比证书内容
 			// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListTagsForCertificate.html
-			getCertificateReq := &awsAcm.GetCertificateInput{
+			getCertificateReq := &awsacm.GetCertificateInput{
 				CertificateArn: certSummary.CertificateArn,
 			}
 			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), getCertificateReq)
@@ -110,6 +123,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 			}
 
 			// 如果以上信息都一致，则视为已存在相同证书，直接返回
+			u.logger.Info("ssl certificate already exists")
 			return &uploader.UploadResult{
 				CertId: *certSummary.CertificateArn,
 			}, nil
@@ -124,12 +138,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 导入证书
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ImportCertificate.html
-	importCertificateReq := &awsAcm.ImportCertificateInput{
+	importCertificateReq := &awsacm.ImportCertificateInput{
 		Certificate:      ([]byte)(scertPem),
 		CertificateChain: ([]byte)(bcertPem),
 		PrivateKey:       ([]byte)(privkeyPem),
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), importCertificateReq)
+	u.logger.Debug("sdk request 'acm.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ImportCertificate'")
 	}
@@ -139,15 +154,15 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*awsAcm.Client, error) {
-	cfg, err := awsCfg.LoadDefaultConfig(context.TODO())
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*awsacm.Client, error) {
+	cfg, err := awscfg.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return nil, err
 	}
 
-	client := awsAcm.NewFromConfig(cfg, func(o *awsAcm.Options) {
+	client := awsacm.NewFromConfig(cfg, func(o *awsacm.Options) {
 		o.Region = region
-		o.Credentials = aws.NewCredentialsCache(awsCred.NewStaticCredentialsProvider(accessKeyId, secretAccessKey, ""))
+		o.Credentials = aws.NewCredentialsCache(awscred.NewStaticCredentialsProvider(accessKeyId, secretAccessKey, ""))
 	})
 	return client, nil
 }

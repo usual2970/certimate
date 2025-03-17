@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"log/slog"
 
 	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdLiveApi "github.com/jdcloud-api/jdcloud-sdk-go/services/live/apis"
@@ -9,7 +10,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type DeployerConfig struct {
@@ -23,7 +23,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *jdLiveClient.LiveClient
 }
 
@@ -41,13 +41,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -58,10 +62,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	setLiveDomainCertificateReq.SetCert(certPem)
 	setLiveDomainCertificateReq.SetKey(privkeyPem)
 	setLiveDomainCertificateResp, err := d.sdkClient.SetLiveDomainCertificate(setLiveDomainCertificateReq)
+	d.logger.Debug("sdk request 'live.SetLiveDomainCertificate'", slog.Any("request", setLiveDomainCertificateReq), slog.Any("response", setLiveDomainCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'live.SetLiveDomainCertificate'")
-	} else {
-		d.logger.Logt("已设置直播证书", setLiveDomainCertificateResp)
 	}
 
 	return &deployer.DeployResult{}, nil

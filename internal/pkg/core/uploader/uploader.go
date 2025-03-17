@@ -1,11 +1,16 @@
 ﻿package uploader
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 // 表示定义证书上传器的抽象类型接口。
 // 云服务商通常会提供 SSL 证书管理服务，可供用户集中管理证书。
 // 注意与 `Deployer` 区分，“上传”通常为“部署”的前置操作。
 type Uploader interface {
+	WithLogger(logger *slog.Logger) Uploader
+
 	// 上传证书。
 	//
 	// 入参：

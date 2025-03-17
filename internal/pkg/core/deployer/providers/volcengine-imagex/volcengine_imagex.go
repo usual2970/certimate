@@ -3,13 +3,13 @@
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 	veBase "github.com/volcengine/volc-sdk-golang/base"
 	veImageX "github.com/volcengine/volc-sdk-golang/service/imagex/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
@@ -29,7 +29,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *veImageX.Imagex
 	sslUploader uploader.Uploader
 }
@@ -57,14 +57,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -81,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 获取域名配置
@@ -91,10 +96,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		DomainName: d.config.Domain,
 	}
 	getDomainConfigResp, err := d.sdkClient.GetDomainConfig(context.TODO(), getDomainConfigReq)
+	d.logger.Debug("sdk request 'imagex.GetDomainConfig'", slog.Any("request", getDomainConfigReq), slog.Any("response", getDomainConfigResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'imagex.GetDomainConfig'")
-	} else {
-		d.logger.Logt("已获取域名配置", getDomainConfigResp)
 	}
 
 	// 更新 HTTPS 配置
@@ -121,10 +125,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		updateHttpsReq.UpdateHTTPSBody.HTTPS.ForceRedirectCode = getDomainConfigResp.Result.HTTPSConfig.ForceRedirectCode
 	}
 	updateHttpsResp, err := d.sdkClient.UpdateHTTPS(context.TODO(), updateHttpsReq)
+	d.logger.Debug("sdk request 'imagex.UpdateHttps'", slog.Any("request", updateHttpsReq), slog.Any("response", updateHttpsResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'imagex.UpdateHttps'")
-	} else {
-		d.logger.Logt("已更新 HTTPS 配置", updateHttpsResp)
 	}
 
 	return &deployer.DeployResult{}, nil

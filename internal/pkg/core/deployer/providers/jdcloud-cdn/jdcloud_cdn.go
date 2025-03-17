@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"log/slog"
 
 	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdCdnApi "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/apis"
@@ -9,7 +10,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/jdcloud-ssl"
 )
@@ -25,7 +25,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *jdCdnClient.CdnClient
 	sslUploader uploader.Uploader
 }
@@ -52,14 +52,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -68,10 +73,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.jdcloud.com/cn/cdn/api/querydomainconfig
 	queryDomainConfigReq := jdCdnApi.NewQueryDomainConfigRequest(d.config.Domain)
 	queryDomainConfigResp, err := d.sdkClient.QueryDomainConfig(queryDomainConfigReq)
+	d.logger.Debug("sdk request 'cdn.QueryDomainConfig'", slog.Any("request", queryDomainConfigReq), slog.Any("response", queryDomainConfigResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.QueryDomainConfig'")
-	} else {
-		d.logger.Logt("已查询到域名配置信息", queryDomainConfigResp)
 	}
 
 	// 上传证书到 SSL
@@ -79,7 +83,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 设置通讯协议
@@ -92,10 +96,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	setHttpTypeReq.SetSslCertId(upres.CertId)
 	setHttpTypeReq.SetJumpType(queryDomainConfigResp.Result.HttpsJumpType)
 	setHttpTypeResp, err := d.sdkClient.SetHttpType(setHttpTypeReq)
+	d.logger.Debug("sdk request 'cdn.QueryDomainConfig'", slog.Any("request", setHttpTypeReq), slog.Any("response", setHttpTypeResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.SetHttpType'")
-	} else {
-		d.logger.Logt("已设置通讯协议", setHttpTypeResp)
 	}
 
 	return &deployer.DeployResult{}, nil

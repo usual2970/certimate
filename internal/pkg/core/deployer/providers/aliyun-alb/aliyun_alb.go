@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -16,7 +17,6 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
@@ -43,7 +43,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
@@ -72,14 +72,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -88,9 +93,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -122,11 +127,10 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClients.alb.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
+	d.logger.Debug("sdk request 'alb.GetLoadBalancerAttribute'", slog.Any("request", getLoadBalancerAttributeReq), slog.Any("response", getLoadBalancerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetLoadBalancerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 ALB 负载均衡实例", getLoadBalancerAttributeResp)
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
@@ -141,6 +145,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			ListenerProtocol: tea.String("HTTPS"),
 		}
 		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
+		d.logger.Debug("sdk request 'alb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
@@ -157,8 +162,6 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			listListenersToken = listListenersResp.Body.NextToken
 		}
 	}
-
-	d.logger.Logt("已查询到 ALB 负载均衡实例下的全部 HTTPS 监听", listenerIds)
 
 	// 查询 QUIC 监听列表
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
@@ -171,6 +174,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			ListenerProtocol: tea.String("QUIC"),
 		}
 		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
+		d.logger.Debug("sdk request 'alb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
 		}
@@ -188,13 +192,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		}
 	}
 
-	d.logger.Logt("已查询到 ALB 负载均衡实例下的全部 QUIC 监听", listenerIds)
-
 	// 遍历更新监听证书
 	if len(listenerIds) == 0 {
-		return errors.New("listener not found")
+		d.logger.Info("no alb listeners to deploy")
 	} else {
 		var errs []error
+		d.logger.Info("found https/quic listeners to deploy", slog.Any("listenerIds", listenerIds))
 
 		for _, listenerId := range listenerIds {
 			if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
@@ -230,11 +233,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		ListenerId: tea.String(cloudListenerId),
 	}
 	getListenerAttributeResp, err := d.sdkClients.alb.GetListenerAttribute(getListenerAttributeReq)
+	d.logger.Debug("sdk request 'alb.GetListenerAttribute'", slog.Any("request", getListenerAttributeReq), slog.Any("response", getListenerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetListenerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 ALB 监听配置", getListenerAttributeResp)
 
 	if d.config.Domain == "" {
 		// 未指定 SNI，只需部署到监听器
@@ -248,11 +250,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 			}},
 		}
 		updateListenerAttributeResp, err := d.sdkClients.alb.UpdateListenerAttribute(updateListenerAttributeReq)
+		d.logger.Debug("sdk request 'alb.UpdateListenerAttribute'", slog.Any("request", updateListenerAttributeReq), slog.Any("response", updateListenerAttributeResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
 		}
-
-		d.logger.Logt("已更新 ALB 监听配置", updateListenerAttributeResp)
 	} else {
 		// 指定 SNI，需部署到扩展域名
 
@@ -269,6 +270,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				CertificateType: tea.String("Server"),
 			}
 			listListenerCertificatesResp, err := d.sdkClients.alb.ListListenerCertificates(listListenerCertificatesReq)
+			d.logger.Debug("sdk request 'alb.ListListenerCertificates'", slog.Any("request", listListenerCertificatesReq), slog.Any("response", listListenerCertificatesResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListenerCertificates'")
 			}
@@ -286,14 +288,13 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 			}
 		}
 
-		d.logger.Logt("已查询到 ALB 监听下全部证书", listenerCertificates)
-
 		// 遍历查询监听证书，并找出需要解除关联的证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
 		// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-getusercertificatedetail
 		certificateIsAssociated := false
 		certificateIdsExpired := make([]string, 0)
 		if len(listenerCertificates) > 0 {
+			d.logger.Info("found listener certificates to deploy", slog.Any("listenerCertificates", listenerCertificates))
 			var errs []error
 
 			for _, listenerCertificate := range listenerCertificates {
@@ -318,6 +319,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					CertId: tea.Int64(certificateIdAsInt64),
 				}
 				getUserCertificateDetailResp, err := d.sdkClients.cas.GetUserCertificateDetail(getUserCertificateDetailReq)
+				d.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
 				if err != nil {
 					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'"))
 					continue
@@ -354,11 +356,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				},
 			}
 			associateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.AssociateAdditionalCertificatesWithListener(associateAdditionalCertificatesFromListenerReq)
+			d.logger.Debug("sdk request 'alb.AssociateAdditionalCertificatesWithListener'", slog.Any("request", associateAdditionalCertificatesFromListenerReq), slog.Any("response", associateAdditionalCertificatesFromListenerResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.AssociateAdditionalCertificatesWithListener'")
 			}
-
-			d.logger.Logt("已关联 ALB 监听和扩展证书", associateAdditionalCertificatesFromListenerResp)
 		}
 
 		// 解除关联监听和扩展证书
@@ -376,11 +377,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				Certificates: dissociateAdditionalCertificates,
 			}
 			dissociateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.DissociateAdditionalCertificatesFromListener(dissociateAdditionalCertificatesFromListenerReq)
+			d.logger.Debug("sdk request 'alb.DissociateAdditionalCertificatesFromListener'", slog.Any("request", dissociateAdditionalCertificatesFromListenerReq), slog.Any("response", dissociateAdditionalCertificatesFromListenerResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.DissociateAdditionalCertificatesFromListener'")
 			}
-
-			d.logger.Logt("已解除关联 ALB 监听和扩展证书", dissociateAdditionalCertificatesFromListenerResp)
 		}
 	}
 

@@ -17,7 +17,7 @@ var (
 	fAccessKeyId     string
 	fAccessKeySecret string
 	fRegion          string
-	fSiteId          int64
+	fDomain          string
 )
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.Int64Var(&fSiteId, argsPrefix+"SITEID", "", "")
+	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 
 /*
@@ -40,7 +40,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNFC_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNFC_ACCESSKEYSECRET="your-access-key-secret" \
 	--CERTIMATE_DEPLOYER_ALIYUNFC_REGION="cn-hangzhou" \
-	--CERTIMATE_DEPLOYER_ALIYUNFC_SITEID="your-fc-site-id"
+	--CERTIMATE_DEPLOYER_ALIYUNFC_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -53,14 +53,14 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("REGION: %v", fRegion),
-			fmt.Sprintf("SITEID: %v", fSiteId),
+			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
 			Region:          fRegion,
-			SiteId:          fSiteId,
+			Domain:          fDomain,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

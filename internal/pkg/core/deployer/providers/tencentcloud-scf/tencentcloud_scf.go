@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -9,7 +10,6 @@ import (
 	tcScf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -27,7 +27,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *tcScf.Client
 	sslUploader uploader.Uploader
 }
@@ -54,14 +54,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -71,10 +76,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	getCustomDomainReq := tcScf.NewGetCustomDomainRequest()
 	getCustomDomainReq.Domain = common.StringPtr(d.config.Domain)
 	getCustomDomainResp, err := d.sdkClient.GetCustomDomain(getCustomDomainReq)
+	d.logger.Debug("sdk request 'scf.GetCustomDomain'", slog.Any("request", getCustomDomainReq), slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.GetCustomDomain'")
-	} else {
-		d.logger.Logt("已查看云函数自定义域名详情", getCustomDomainResp.Response)
 	}
 
 	// 上传证书到 SSL
@@ -82,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 更新云函数自定义域名
@@ -94,10 +98,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 	updateCustomDomainReq.Protocol = getCustomDomainResp.Response.Protocol
 	updateCustomDomainResp, err := d.sdkClient.UpdateCustomDomain(updateCustomDomainReq)
+	d.logger.Debug("sdk request 'scf.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.UpdateCustomDomain'")
-	} else {
-		d.logger.Logt("已设置点播域名 HTTPS 证书", updateCustomDomainResp.Response)
 	}
 
 	return &deployer.DeployResult{}, nil

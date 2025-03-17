@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.Int64Var(&fSiteId, argsPrefix+"SITEID", "", "")
+	flag.Int64Var(&fSiteId, argsPrefix+"SITEID", 0, "")
 }
 
 /*

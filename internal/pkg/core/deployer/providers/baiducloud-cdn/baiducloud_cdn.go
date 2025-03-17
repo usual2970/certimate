@@ -3,6 +3,7 @@
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	bceCdn "github.com/baidubce/bce-sdk-go/services/cdn"
@@ -10,7 +11,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type DeployerConfig struct {
@@ -24,7 +24,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *bceCdn.Client
 }
 
@@ -42,13 +42,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -64,11 +68,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		},
 		"ON",
 	)
+	d.logger.Debug("sdk request 'cdn.PutCert'", slog.String("request.domain", d.config.Domain), slog.Any("response", putCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.PutCert'")
 	}
-
-	d.logger.Logt("已修改域名证书", putCertResp)
 
 	return &deployer.DeployResult{}, nil
 }

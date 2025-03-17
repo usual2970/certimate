@@ -5,12 +5,12 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/url"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	safelinesdk "github.com/usual2970/certimate/internal/pkg/vendors/safeline-sdk"
 )
 
@@ -30,7 +30,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *safelinesdk.Client
 }
 
@@ -48,13 +48,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -88,10 +92,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
+	d.logger.Debug("sdk request 'safeline.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'safeline.UpdateCertificate'")
-	} else {
-		d.logger.Logt("已更新证书", updateCertificateResp)
 	}
 
 	return nil

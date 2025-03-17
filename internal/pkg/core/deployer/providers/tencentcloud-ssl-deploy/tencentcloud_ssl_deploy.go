@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	xerrors "github.com/pkg/errors"
@@ -12,7 +13,6 @@ import (
 	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -32,7 +32,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *tcSsl.Client
 	sslUploader uploader.Uploader
 }
@@ -59,14 +59,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -82,9 +87,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 证书部署到云资源实例列表
 	// REF: https://cloud.tencent.com/document/product/400/91667
@@ -94,13 +99,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(d.config.ResourceIds)
 	deployCertificateInstanceReq.Status = common.Int64Ptr(1)
 	deployCertificateInstanceResp, err := d.sdkClient.DeployCertificateInstance(deployCertificateInstanceReq)
+	d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 	} else if deployCertificateInstanceResp.Response == nil || deployCertificateInstanceResp.Response.DeployRecordId == nil {
 		return nil, errors.New("failed to create deploy record")
 	}
-
-	d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 
 	// 循环获取部署任务详情，等待任务状态变更
 	// REF: https://cloud.tencent.com.cn/document/api/400/91658
@@ -113,12 +117,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		describeHostDeployRecordDetailReq.DeployRecordId = common.StringPtr(fmt.Sprintf("%d", *deployCertificateInstanceResp.Response.DeployRecordId))
 		describeHostDeployRecordDetailReq.Limit = common.Uint64Ptr(100)
 		describeHostDeployRecordDetailResp, err := d.sdkClient.DescribeHostDeployRecordDetail(describeHostDeployRecordDetailReq)
+		d.logger.Debug("sdk request 'ssl.DescribeHostDeployRecordDetail'", slog.Any("request", describeHostDeployRecordDetailReq), slog.Any("response", describeHostDeployRecordDetailResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DescribeHostDeployRecordDetail'")
 		}
 
 		if describeHostDeployRecordDetailResp.Response.TotalCount == nil {
-			return nil, errors.New("部署任务状态异常")
+			return nil, errors.New("unexpected deployment job status")
 		} else {
 			acc := int64(0)
 			if describeHostDeployRecordDetailResp.Response.SuccessTotalCount != nil {
@@ -129,12 +134,11 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			}
 
 			if acc == *describeHostDeployRecordDetailResp.Response.TotalCount {
-				d.logger.Logt("已获取部署任务详情", describeHostDeployRecordDetailResp)
 				break
 			}
 		}
 
-		d.logger.Logt("部署任务未完成 ...")
+		d.logger.Info("waiting for deployment job completion ...")
 		time.Sleep(time.Second * 5)
 	}
 

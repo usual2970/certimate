@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type DeployerConfig struct {
@@ -27,7 +27,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *oss.Client
 }
 
@@ -45,13 +45,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -65,14 +69,16 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 为存储空间绑定自定义域名
 	// REF: https://help.aliyun.com/zh/oss/developer-reference/putcname
-	err := d.sdkClient.PutBucketCnameWithCertificate(d.config.Bucket, oss.PutBucketCname{
+	putBucketCnameWithCertificateReq := oss.PutBucketCname{
 		Cname: d.config.Domain,
 		CertificateConfiguration: &oss.CertificateConfiguration{
 			Certificate: certPem,
 			PrivateKey:  privkeyPem,
 			Force:       true,
 		},
-	})
+	}
+	err := d.sdkClient.PutBucketCnameWithCertificate(d.config.Bucket, putBucketCnameWithCertificateReq)
+	d.logger.Debug("sdk request 'oss.PutBucketCnameWithCertificate'", slog.Any("bucket", d.config.Bucket), slog.Any("request", putBucketCnameWithCertificateReq))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'oss.PutBucketCnameWithCertificate'")
 	}

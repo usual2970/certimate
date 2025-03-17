@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
@@ -11,7 +12,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-slb"
 )
@@ -38,7 +38,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *aliyunSlb.Client
 	sslUploader uploader.Uploader
 }
@@ -66,14 +66,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -82,9 +87,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -117,11 +122,10 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
 	describeLoadBalancerAttributeResp, err := d.sdkClient.DescribeLoadBalancerAttribute(describeLoadBalancerAttributeReq)
+	d.logger.Debug("sdk request 'slb.DescribeLoadBalancerAttribute'", slog.Any("request", describeLoadBalancerAttributeReq), slog.Any("response", describeLoadBalancerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 CLB 负载均衡实例", describeLoadBalancerAttributeResp)
 
 	// 查询 HTTPS 监听列表
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerlisteners
@@ -137,6 +141,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			ListenerProtocol: tea.String("https"),
 		}
 		describeLoadBalancerListenersResp, err := d.sdkClient.DescribeLoadBalancerListeners(describeLoadBalancerListenersReq)
+		d.logger.Debug("sdk request 'slb.DescribeLoadBalancerListeners'", slog.Any("request", describeLoadBalancerListenersReq), slog.Any("response", describeLoadBalancerListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerListeners'")
 		}
@@ -154,12 +159,11 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		}
 	}
 
-	d.logger.Logt("已查询到 CLB 负载均衡实例下的全部 HTTPS 监听", listenerPorts)
-
 	// 遍历更新监听证书
 	if len(listenerPorts) == 0 {
-		return errors.New("listener not found")
+		d.logger.Info("no clb listeners to deploy")
 	} else {
+		d.logger.Info("found https listeners to deploy", slog.Any("listenerPorts", listenerPorts))
 		var errs []error
 
 		for _, listenerPort := range listenerPorts {
@@ -200,11 +204,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		ListenerPort:   tea.Int32(cloudListenerPort),
 	}
 	describeLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.DescribeLoadBalancerHTTPSListenerAttribute(describeLoadBalancerHTTPSListenerAttributeReq)
+	d.logger.Debug("sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute'", slog.Any("request", describeLoadBalancerHTTPSListenerAttributeReq), slog.Any("response", describeLoadBalancerHTTPSListenerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeLoadBalancerHTTPSListenerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 CLB HTTPS 监听配置", describeLoadBalancerHTTPSListenerAttributeResp)
 
 	if d.config.Domain == "" {
 		// 未指定 SNI，只需部署到监听器
@@ -218,11 +221,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 			ServerCertificateId: tea.String(cloudCertId),
 		}
 		setLoadBalancerHTTPSListenerAttributeResp, err := d.sdkClient.SetLoadBalancerHTTPSListenerAttribute(setLoadBalancerHTTPSListenerAttributeReq)
+		d.logger.Debug("sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'", slog.Any("request", setLoadBalancerHTTPSListenerAttributeReq), slog.Any("response", setLoadBalancerHTTPSListenerAttributeResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'slb.SetLoadBalancerHTTPSListenerAttribute'")
 		}
-
-		d.logger.Logt("已更新 CLB HTTPS 监听配置", setLoadBalancerHTTPSListenerAttributeResp)
 	} else {
 		// 指定 SNI，需部署到扩展域名
 
@@ -234,11 +236,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 			ListenerPort:   tea.Int32(cloudListenerPort),
 		}
 		describeDomainExtensionsResp, err := d.sdkClient.DescribeDomainExtensions(describeDomainExtensionsReq)
+		d.logger.Debug("sdk request 'slb.DescribeDomainExtensions'", slog.Any("request", describeDomainExtensionsReq), slog.Any("response", describeDomainExtensionsResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeDomainExtensions'")
 		}
-
-		d.logger.Logt("已查询到 CLB 扩展域名", describeDomainExtensionsResp)
 
 		// 遍历修改扩展域名
 		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setdomainextensionattribute
@@ -256,12 +257,11 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					ServerCertificateId: tea.String(cloudCertId),
 				}
 				setDomainExtensionAttributeResp, err := d.sdkClient.SetDomainExtensionAttribute(setDomainExtensionAttributeReq)
+				d.logger.Debug("sdk request 'slb.SetDomainExtensionAttribute'", slog.Any("request", setDomainExtensionAttributeReq), slog.Any("response", setDomainExtensionAttributeResp))
 				if err != nil {
 					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'slb.SetDomainExtensionAttribute'"))
 					continue
 				}
-
-				d.logger.Logt("已修改 CLB 扩展域名", setDomainExtensionAttributeResp)
 			}
 
 			if len(errs) > 0 {

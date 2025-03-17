@@ -3,6 +3,7 @@
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -12,7 +13,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type DeployerConfig struct {
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *jdVodClient.VodClient
 }
 
@@ -44,13 +44,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -65,6 +69,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		listDomainsReq.SetPageNumber(1)
 		listDomainsReq.SetPageSize(100)
 		listDomainsResp, err := d.sdkClient.ListDomains(listDomainsReq)
+		d.logger.Debug("sdk request 'vod.ListDomains'", slog.Any("request", listDomainsReq), slog.Any("response", listDomainsResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'vod.ListDomains'")
 		}
@@ -90,10 +95,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.jdcloud.com/cn/video-on-demand/api/gethttpssl
 	getHttpSslReq := jdVodApi.NewGetHttpSslRequest(domainId)
 	getHttpSslResp, err := d.sdkClient.GetHttpSsl(getHttpSslReq)
+	d.logger.Debug("sdk request 'vod.GetHttpSsl'", slog.Any("request", getHttpSslReq), slog.Any("response", getHttpSslResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'vod.GetHttpSsl'")
-	} else {
-		d.logger.Logt("已查询到域名 SSL 配置", getHttpSslResp)
 	}
 
 	// 设置域名 SSL 配置
@@ -106,10 +110,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	setHttpSslReq.SetJumpType(getHttpSslResp.Result.JumpType)
 	setHttpSslReq.SetEnabled(true)
 	setHttpSslResp, err := d.sdkClient.SetHttpSsl(setHttpSslReq)
+	d.logger.Debug("sdk request 'vod.SetHttpSsl'", slog.Any("request", setHttpSslReq), slog.Any("response", setHttpSslResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'vod.SetHttpSsl'")
-	} else {
-		d.logger.Logt("已设置域名 SSL 配置", setHttpSslResp)
 	}
 
 	return &deployer.DeployResult{}, nil
