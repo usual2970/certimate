@@ -184,7 +184,7 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 }
 
 // 将字典填充到指定类型的结构体。
-// 与 [json.Unmarshal] 类似，但传入的是一个 [map[string]interface{}] 对象而非 JSON 格式的字符串。
+// 与 [json.Unmarshal] 类似，但传入的是一个 [map[string]any] 对象而非 JSON 格式的字符串。
 //
 // 入参：
 //   - dict: 字典。

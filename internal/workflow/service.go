@@ -32,7 +32,7 @@ type WorkflowService struct {
 
 func NewWorkflowService(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository) *WorkflowService {
 	srv := &WorkflowService{
-		dispatcher: dispatcher.GetSingletonDispatcher(workflowRepo, workflowRunRepo),
+		dispatcher: dispatcher.GetSingletonDispatcher(),
 
 		workflowRepo:    workflowRepo,
 		workflowRunRepo: workflowRunRepo,
@@ -83,6 +83,7 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 		Status:     domain.WorkflowRunStatusTypePending,
 		Trigger:    req.RunTrigger,
 		StartedAt:  time.Now(),
+		Detail:     workflow.Content,
 	}
 	if resp, err := s.workflowRunRepo.Save(ctx, run); err != nil {
 		return err
@@ -91,8 +92,8 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 	}
 
 	s.dispatcher.Dispatch(&dispatcher.WorkflowWorkerData{
-		WorkflowId:      workflow.Id,
-		WorkflowContent: workflow.Content,
+		WorkflowId:      run.WorkflowId,
+		WorkflowContent: run.Detail,
 		RunId:           run.Id,
 	})
 

@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/repository"
 )
 
 type workflowRepository interface {
@@ -17,15 +18,18 @@ type workflowRunRepository interface {
 	Save(ctx context.Context, workflowRun *domain.WorkflowRun) (*domain.WorkflowRun, error)
 }
 
+type workflowLogRepository interface {
+	Save(ctx context.Context, workflowLog *domain.WorkflowLog) (*domain.WorkflowLog, error)
+}
+
 var (
 	instance    *WorkflowDispatcher
 	intanceOnce sync.Once
 )
 
-func GetSingletonDispatcher(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository) *WorkflowDispatcher {
-	// TODO: 待优化构造过程
+func GetSingletonDispatcher() *WorkflowDispatcher {
 	intanceOnce.Do(func() {
-		instance = newWorkflowDispatcher(workflowRepo, workflowRunRepo)
+		instance = newWorkflowDispatcher(repository.NewWorkflowRepository(), repository.NewWorkflowRunRepository(), repository.NewWorkflowLogRepository())
 	})
 
 	return instance

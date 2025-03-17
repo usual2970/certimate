@@ -8,19 +8,19 @@ import (
 
 type executeSuccessNode struct {
 	node *domain.WorkflowNode
-	*nodeLogger
+	*nodeProcessor
 }
 
 func NewExecuteSuccessNode(node *domain.WorkflowNode) *executeSuccessNode {
 	return &executeSuccessNode{
-		node:       node,
-		nodeLogger: newNodeLogger(node),
+		node:          node,
+		nodeProcessor: newNodeProcessor(node),
 	}
 }
 
 func (n *executeSuccessNode) Process(ctx context.Context) error {
 	// 此类型节点不需要执行任何操作，直接返回
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "进入执行成功分支")
+	n.logger.Info("the previous node execution was succeeded")
 
 	return nil
 }

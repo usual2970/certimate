@@ -11,6 +11,8 @@ import (
 )
 
 type Deployer interface {
+	SetLogger(*slog.Logger)
+
 	Deploy(ctx context.Context) error
 }
 
@@ -65,6 +67,14 @@ type proxyDeployer struct {
 	deployer          deployer.Deployer
 	deployCertificate string
 	deployPrivateKey  string
+}
+
+func (d *proxyDeployer) SetLogger(logger *slog.Logger) {
+	if logger == nil {
+		panic("logger is nil")
+	}
+
+	d.logger = logger
 }
 
 func (d *proxyDeployer) Deploy(ctx context.Context) error {

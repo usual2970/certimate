@@ -24,10 +24,14 @@ type HookHandler struct {
 	attrs   []slog.Attr
 }
 
-func NewHookHandler(options HookHandlerOptions) *HookHandler {
+func NewHookHandler(opts *HookHandlerOptions) *HookHandler {
+	if opts == nil {
+		opts = &HookHandlerOptions{}
+	}
+
 	h := &HookHandler{
 		mutex:   &sync.Mutex{},
-		options: &options,
+		options: opts,
 	}
 
 	if h.options.WriteFunc == nil {
