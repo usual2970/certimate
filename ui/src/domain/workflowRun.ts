@@ -6,26 +6,11 @@ export interface WorkflowRunModel extends BaseModel {
   trigger: string;
   startedAt: ISO8601String;
   endedAt: ISO8601String;
-  logs?: WorkflowRunLog[];
   error?: string;
   expand?: {
-    workflowId?: WorkflowModel;
+    workflowId?: WorkflowModel; // TODO: ugly, maybe to use an alias?
   };
 }
-
-export type WorkflowRunLog = {
-  nodeId: string;
-  nodeName: string;
-  records?: WorkflowRunLogRecord[];
-  error?: string;
-};
-
-export type WorkflowRunLogRecord = {
-  time: ISO8601String;
-  level: string;
-  content: string;
-  error?: string;
-};
 
 export const WORKFLOW_RUN_STATUSES = Object.freeze({
   PENDING: "pending",

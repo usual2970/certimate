@@ -275,7 +275,7 @@ const Dashboard = () => {
             </Button>
           </Space>
         </Card>
-        <Card className="flex-1" title={t("dashboard.latest_workflow_run")}>
+        <Card className="flex-1" title={t("dashboard.latest_workflow_runs")}>
           <Table<WorkflowRunModel>
             columns={tableColumns}
             dataSource={tableData}

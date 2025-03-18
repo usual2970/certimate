@@ -41,7 +41,7 @@ import { ClientResponseError } from "pocketbase";
 
 import { WORKFLOW_TRIGGERS, type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
-import { list as listWorkflow, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
+import { list as listWorkflows, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
 const WorkflowList = () => {
@@ -253,7 +253,7 @@ const WorkflowList = () => {
     run: refreshData,
   } = useRequest(
     () => {
-      return listWorkflow({
+      return listWorkflows({
         keyword: filters["keyword"] as string,
         enabled: (filters["state"] as string) === "enabled" ? true : (filters["state"] as string) === "disabled" ? false : undefined,
         page: page,

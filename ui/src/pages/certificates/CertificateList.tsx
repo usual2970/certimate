@@ -28,7 +28,7 @@ import { ClientResponseError } from "pocketbase";
 
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import { CERTIFICATE_SOURCES, type CertificateModel } from "@/domain/certificate";
-import { type ListCertificateRequest, list as listCertificate, remove as removeCertificate } from "@/repository/certificate";
+import { list as listCertificates, type ListRequest as listCertificatesRequest, remove as removeCertificate } from "@/repository/certificate";
 import { getErrMsg } from "@/utils/error";
 
 const CertificateList = () => {
@@ -223,9 +223,9 @@ const CertificateList = () => {
     run: refreshData,
   } = useRequest(
     () => {
-      return listCertificate({
+      return listCertificates({
         keyword: filters["keyword"] as string,
-        state: filters["state"] as ListCertificateRequest["state"],
+        state: filters["state"] as listCertificatesRequest["state"],
         page: page,
         perPage: pageSize,
       });

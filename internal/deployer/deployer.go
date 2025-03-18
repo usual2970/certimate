@@ -54,7 +54,6 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	}
 
 	return &proxyDeployer{
-		logger:            slog.Default(),
 		deployer:          deployer,
 		deployCertificate: certdata.Certificate,
 		deployPrivateKey:  certdata.PrivateKey,
@@ -63,7 +62,6 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 
 // TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
 type proxyDeployer struct {
-	logger            *slog.Logger
 	deployer          deployer.Deployer
 	deployCertificate string
 	deployPrivateKey  string
@@ -74,7 +72,7 @@ func (d *proxyDeployer) SetLogger(logger *slog.Logger) {
 		panic("logger is nil")
 	}
 
-	d.logger = logger
+	d.deployer.WithLogger(logger)
 }
 
 func (d *proxyDeployer) Deploy(ctx context.Context) error {

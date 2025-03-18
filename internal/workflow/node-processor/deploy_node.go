@@ -92,7 +92,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 		return err
 	}
 
-	n.logger.Info("apply completed")
+	n.logger.Info("deploy completed")
 
 	return nil
 }
