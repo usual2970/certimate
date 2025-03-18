@@ -59,7 +59,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://portal.baishancloud.com/track/document/api/1/1065
 	getDomainConfigReq := &bssdk.GetDomainConfigRequest{
 		Domains: d.config.Domain,
-		Config:  "https",
+		Config:  []string{"https"},
 	}
 	getDomainConfigResp, err := d.sdkClient.GetDomainConfig(getDomainConfigReq)
 	if err != nil {
