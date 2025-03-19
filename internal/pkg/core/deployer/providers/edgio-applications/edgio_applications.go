@@ -7,7 +7,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	edgsdk "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7"
 	edgsdkDtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
@@ -57,7 +57,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 提取 Edgio 所需的服务端证书和中间证书内容
-	privateCertPem, intermediateCertPem, err := certs.ExtractCertificatesFromPEM(certPem)
+	privateCertPem, intermediateCertPem, err := certutil.ExtractCertificatesFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}

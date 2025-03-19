@@ -10,7 +10,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	qiniusdk "github.com/usual2970/certimate/internal/pkg/vendors/qiniu-sdk"
 )
 
@@ -57,7 +57,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}

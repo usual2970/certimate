@@ -15,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/notify"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -109,7 +109,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const pfxPassword = "certimate"
 
-			certPFX, err := certs.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
+			certPFX, err := certutil.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -147,7 +147,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const jksPassword = "certimate"
 
-			certJKS, err := certs.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
+			certJKS, err := certutil.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -187,7 +187,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 }
 
 func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error) {
-	certX509, err := certs.ParseCertificateFromPEM(req.Certificate)
+	certX509, err := certutil.ParseCertificateFromPEM(req.Certificate)
 	if err != nil {
 		return nil, err
 	} else if time.Now().After(certX509.NotAfter) {

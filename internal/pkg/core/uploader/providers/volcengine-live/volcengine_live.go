@@ -12,7 +12,7 @@ import (
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 type UploaderConfig struct {
@@ -57,7 +57,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -88,12 +88,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 			if certificate == certPem {
 				isSameCert = true
 			} else {
-				oldCertX509, err := certs.ParseCertificateFromPEM(certificate)
+				oldCertX509, err := certutil.ParseCertificateFromPEM(certificate)
 				if err != nil {
 					continue
 				}
 
-				isSameCert = certs.EqualCertificate(certX509, oldCertX509)
+				isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
 			}
 
 			// 如果已存在相同证书，直接返回

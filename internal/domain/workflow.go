@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
 )
 
 const CollectionNameWorkflow = "workflow"
@@ -97,19 +97,19 @@ type WorkflowNodeConfigForNotify struct {
 	Message string `json:"message"` // 通知内容
 }
 
-func (n *WorkflowNode) getConfigValueAsString(key string) string {
-	return maps.GetValueAsString(n.Config, key)
+func (n *WorkflowNode) getConfigString(key string) string {
+	return maputil.GetString(n.Config, key)
 }
 
-func (n *WorkflowNode) getConfigValueAsBool(key string) bool {
-	return maps.GetValueAsBool(n.Config, key)
+func (n *WorkflowNode) getConfigBool(key string) bool {
+	return maputil.GetBool(n.Config, key)
 }
 
-func (n *WorkflowNode) getConfigValueAsInt32(key string) int32 {
-	return maps.GetValueAsInt32(n.Config, key)
+func (n *WorkflowNode) getConfigInt32(key string) int32 {
+	return maputil.GetInt32(n.Config, key)
 }
 
-func (n *WorkflowNode) getConfigValueAsMap(key string) map[string]any {
+func (n *WorkflowNode) getConfigMap(key string) map[string]any {
 	if val, ok := n.Config[key]; ok {
 		if result, ok := val.(map[string]any); ok {
 			return result
@@ -120,50 +120,50 @@ func (n *WorkflowNode) getConfigValueAsMap(key string) map[string]any {
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
-	skipBeforeExpiryDays := n.getConfigValueAsInt32("skipBeforeExpiryDays")
+	skipBeforeExpiryDays := n.getConfigInt32("skipBeforeExpiryDays")
 	if skipBeforeExpiryDays == 0 {
 		skipBeforeExpiryDays = 30
 	}
 
 	return WorkflowNodeConfigForApply{
-		Domains:               n.getConfigValueAsString("domains"),
-		ContactEmail:          n.getConfigValueAsString("contactEmail"),
-		Provider:              n.getConfigValueAsString("provider"),
-		ProviderAccessId:      n.getConfigValueAsString("providerAccessId"),
-		ProviderConfig:        n.getConfigValueAsMap("providerConfig"),
-		KeyAlgorithm:          n.getConfigValueAsString("keyAlgorithm"),
-		Nameservers:           n.getConfigValueAsString("nameservers"),
-		DnsPropagationTimeout: n.getConfigValueAsInt32("dnsPropagationTimeout"),
-		DnsTTL:                n.getConfigValueAsInt32("dnsTTL"),
-		DisableFollowCNAME:    n.getConfigValueAsBool("disableFollowCNAME"),
-		DisableARI:            n.getConfigValueAsBool("disableARI"),
+		Domains:               n.getConfigString("domains"),
+		ContactEmail:          n.getConfigString("contactEmail"),
+		Provider:              n.getConfigString("provider"),
+		ProviderAccessId:      n.getConfigString("providerAccessId"),
+		ProviderConfig:        n.getConfigMap("providerConfig"),
+		KeyAlgorithm:          n.getConfigString("keyAlgorithm"),
+		Nameservers:           n.getConfigString("nameservers"),
+		DnsPropagationTimeout: n.getConfigInt32("dnsPropagationTimeout"),
+		DnsTTL:                n.getConfigInt32("dnsTTL"),
+		DisableFollowCNAME:    n.getConfigBool("disableFollowCNAME"),
+		DisableARI:            n.getConfigBool("disableARI"),
 		SkipBeforeExpiryDays:  skipBeforeExpiryDays,
 	}
 }
 
 func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
 	return WorkflowNodeConfigForUpload{
-		Certificate: n.getConfigValueAsString("certificate"),
-		PrivateKey:  n.getConfigValueAsString("privateKey"),
-		Domains:     n.getConfigValueAsString("domains"),
+		Certificate: n.getConfigString("certificate"),
+		PrivateKey:  n.getConfigString("privateKey"),
+		Domains:     n.getConfigString("domains"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
-		Certificate:         n.getConfigValueAsString("certificate"),
-		Provider:            n.getConfigValueAsString("provider"),
-		ProviderAccessId:    n.getConfigValueAsString("providerAccessId"),
-		ProviderConfig:      n.getConfigValueAsMap("providerConfig"),
-		SkipOnLastSucceeded: n.getConfigValueAsBool("skipOnLastSucceeded"),
+		Certificate:         n.getConfigString("certificate"),
+		Provider:            n.getConfigString("provider"),
+		ProviderAccessId:    n.getConfigString("providerAccessId"),
+		ProviderConfig:      n.getConfigMap("providerConfig"),
+		SkipOnLastSucceeded: n.getConfigBool("skipOnLastSucceeded"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	return WorkflowNodeConfigForNotify{
-		Channel: n.getConfigValueAsString("channel"),
-		Subject: n.getConfigValueAsString("subject"),
-		Message: n.getConfigValueAsString("message"),
+		Channel: n.getConfigString("channel"),
+		Subject: n.getConfigString("subject"),
+		Message: n.getConfigString("message"),
 	}
 }
 

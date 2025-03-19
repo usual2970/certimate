@@ -13,7 +13,7 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -40,7 +40,7 @@ func newAcmeUser(ca, email string) (*acmeUser, error) {
 			return nil, err
 		}
 
-		keyPEM, err := certs.ConvertECPrivateKeyToPEM(key)
+		keyPEM, err := certutil.ConvertECPrivateKeyToPEM(key)
 		if err != nil {
 			return nil, err
 		}
@@ -64,7 +64,7 @@ func (u acmeUser) GetRegistration() *registration.Resource {
 }
 
 func (u *acmeUser) GetPrivateKey() crypto.PrivateKey {
-	rs, _ := certs.ParseECPrivateKeyFromPEM(u.privkey)
+	rs, _ := certutil.ParseECPrivateKeyFromPEM(u.privkey)
 	return rs
 }
 

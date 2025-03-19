@@ -18,7 +18,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
-	uslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -58,12 +58,12 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 
 	nodeConfig := node.GetConfigForApply()
 	options := &applicantOptions{
-		Domains:               uslices.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		Domains:               sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
 		ContactEmail:          nodeConfig.ContactEmail,
 		Provider:              domain.ApplyDNSProviderType(nodeConfig.Provider),
 		ProviderApplyConfig:   nodeConfig.ProviderConfig,
 		KeyAlgorithm:          nodeConfig.KeyAlgorithm,
-		Nameservers:           uslices.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		Nameservers:           sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
 		DnsPropagationTimeout: nodeConfig.DnsPropagationTimeout,
 		DnsTTL:                nodeConfig.DnsTTL,
 		DisableFollowCNAME:    nodeConfig.DisableFollowCNAME,

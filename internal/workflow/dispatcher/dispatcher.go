@@ -11,7 +11,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/slices"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 )
 
 var maxWorkers = 16
@@ -118,7 +118,7 @@ func (d *WorkflowDispatcher) Cancel(runId string) {
 
 	// 移除排队中的 WorkflowRun
 	d.queueMutex.Lock()
-	d.queue = slices.Filter(d.queue, func(d *WorkflowWorkerData) bool {
+	d.queue = sliceutil.Filter(d.queue, func(d *WorkflowWorkerData) bool {
 		return d.RunId != runId
 	})
 	d.queueMutex.Unlock()

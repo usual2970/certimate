@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 const CollectionNameCertificate = "certificate"
@@ -105,10 +105,10 @@ func (c *Certificate) PopulateFromPEM(certPEM, privkeyPEM string) *Certificate {
 	c.Certificate = certPEM
 	c.PrivateKey = privkeyPEM
 
-	_, issuerCertPEM, _ := certs.ExtractCertificatesFromPEM(certPEM)
+	_, issuerCertPEM, _ := certutil.ExtractCertificatesFromPEM(certPEM)
 	c.IssuerCertificate = issuerCertPEM
 
-	certX509, _ := certs.ParseCertificateFromPEM(certPEM)
+	certX509, _ := certutil.ParseCertificateFromPEM(certPEM)
 	if certX509 != nil {
 		c.PopulateFromX509(certX509)
 	}

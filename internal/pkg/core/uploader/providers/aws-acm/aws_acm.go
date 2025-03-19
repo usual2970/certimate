@@ -12,7 +12,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 type UploaderConfig struct {
@@ -60,13 +60,13 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
 
 	// 生成 AWS 业务参数
-	scertPem, _ := certs.ConvertCertificateToPEM(certX509)
+	scertPem, _ := certutil.ConvertCertificateToPEM(certX509)
 	bcertPem := certPem
 
 	// 获取证书列表，避免重复上传
@@ -112,12 +112,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 					oldCertPem = aws.ToString(getCertificateResp.Certificate)
 				}
 
-				oldCertX509, err := certs.ParseCertificateFromPEM(oldCertPem)
+				oldCertX509, err := certutil.ParseCertificateFromPEM(oldCertPem)
 				if err != nil {
 					continue
 				}
 
-				if !certs.EqualCertificate(certX509, oldCertX509) {
+				if !certutil.EqualCertificate(certX509, oldCertX509) {
 					continue
 				}
 			}

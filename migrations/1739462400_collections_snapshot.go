@@ -7,8 +7,7 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 	m "github.com/pocketbase/pocketbase/migrations"
-
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 func init() {
@@ -1754,21 +1753,21 @@ func init() {
 			case "certificate":
 				{
 					if record.GetString("issuer") == "" {
-						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						cert, _ := certutil.ParseCertificateFromPEM(record.GetString("certificate"))
 						if cert != nil {
 							record.Set("issuer", strings.Join(cert.Issuer.Organization, ";"))
 							changed = true
 						}
 					}
 					if record.GetString("serialNumber") == "" {
-						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						cert, _ := certutil.ParseCertificateFromPEM(record.GetString("certificate"))
 						if cert != nil {
 							record.Set("serialNumber", strings.ToUpper(cert.SerialNumber.Text(16)))
 							changed = true
 						}
 					}
 					if record.GetString("keyAlgorithm") == "" {
-						cert, _ := certs.ParseCertificateFromPEM(record.GetString("certificate"))
+						cert, _ := certutil.ParseCertificateFromPEM(record.GetString("certificate"))
 						if cert != nil {
 							switch cert.SignatureAlgorithm {
 							case x509.SHA256WithRSA, x509.SHA256WithRSAPSS:

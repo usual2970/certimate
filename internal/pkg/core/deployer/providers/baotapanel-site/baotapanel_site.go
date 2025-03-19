@@ -11,7 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/slices"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
 )
 
@@ -105,7 +105,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 			// 设置站点证书
 			sslSetBatchCertToSiteReq := &btsdk.SSLSetBatchCertToSiteRequest{
-				BatchInfo: slices.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
+				BatchInfo: sliceutil.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
 					return &btsdk.SSLSetBatchCertToSiteRequestBatchInfo{
 						SiteName: siteName,
 						SSLHash:  sslCertSaveCertResp.SSLHash,
