@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
@@ -94,6 +95,29 @@ func (r *WorkflowRunRepository) Save(ctx context.Context, workflowRun *domain.Wo
 	}
 
 	return workflowRun, nil
+}
+
+func (r *WorkflowRunRepository) DeleteWhere(ctx context.Context, exprs ...dbx.Expression) (int, error) {
+	records, err := app.GetApp().FindAllRecords(domain.CollectionNameWorkflowRun, exprs...)
+	if err != nil {
+		return 0, nil
+	}
+
+	var ret int
+	var errs []error
+	for _, record := range records {
+		if err := app.GetApp().Delete(record); err != nil {
+			errs = append(errs, err)
+		} else {
+			ret++
+		}
+	}
+
+	if len(errs) > 0 {
+		return ret, errors.Join(errs...)
+	}
+
+	return ret, nil
 }
 
 func (r *WorkflowRunRepository) castRecordToModel(record *core.Record) (*domain.WorkflowRun, error) {

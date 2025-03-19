@@ -85,7 +85,7 @@
   "workflow_node.deploy.form.provider_access.placeholder": "请选择主机提供商授权",
   "workflow_node.deploy.form.provider_access.tooltip": "用于部署证书，注意与申请阶段所需的 DNS 提供商相区分。",
   "workflow_node.deploy.form.provider_access.button": "新建",
-  "workflow_node.deploy.form.provider_access.guide_for_local": "小贴士：由于表单限制，你同样需要为本地部署选择一个授权 —— 即使它是空白的。<br>请注意：如果你使用 Docker 安装 Certimate，“本地部署”将会部署到容器内而非宿主机上。",
+  "workflow_node.deploy.form.provider_access.guide_for_local": "小贴士：由于表单限制，你同样需要为本地部署选择一个授权 —— 即使它是空白的。<br>请注意，如果你使用 Docker 安装 Certimate，“本地部署”将会部署到容器内而非宿主机上。",
   "workflow_node.deploy.form.certificate.label": "待部署证书",
   "workflow_node.deploy.form.certificate.placeholder": "请选择待部署证书",
   "workflow_node.deploy.form.certificate.tooltip": "待部署证书来自之前的申请阶段。如果选项为空请先确保前序节点配置正确。",

@@ -71,7 +71,7 @@
   "settings.notification.channel.form.wecom_webhook_url.placeholder": "请输入机器人 Webhook 地址",
   "settings.notification.channel.form.wecom_webhook_url.tooltip": "这是什么？请参阅 <a href=\"https://open.work.weixin.qq.com/help2/pc/18401#%E5%85%AD%E3%80%81%E7%BE%A4%E6%9C%BA%E5%99%A8%E4%BA%BAWebhook%E5%9C%B0%E5%9D%80\" target=\"_blank\">https://open.work.weixin.qq.com/help2/pc/18401</a>",
 
-  "settings.sslprovider.tab": "证书颁发机构（CA）",
+  "settings.sslprovider.tab": "证书颁发机构",
   "settings.sslprovider.form.provider.label": "ACME 服务商",
   "settings.sslprovider.form.provider.option.letsencrypt.label": "Let's Encrypt",
   "settings.sslprovider.form.provider.option.letsencrypt_staging.label": "Let's Encrypt 测试环境",
@@ -90,5 +90,15 @@
   "settings.sslprovider.form.gts_eab_kid.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
   "settings.sslprovider.form.gts_eab_hmac_key.label": "EAB HMAC Key",
   "settings.sslprovider.form.gts_eab_hmac_key.placeholder": "请输入 EAB HMAC Key",
-  "settings.sslprovider.form.gts_eab_hmac_key.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>"
+  "settings.sslprovider.form.gts_eab_hmac_key.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
+
+  "settings.persistence.tab": "数据持久化",
+  "settings.persistence.form.workflow_runs_max_days.label": "工作流执行历史保留天数",
+  "settings.persistence.form.workflow_runs_max_days.placeholder": "请输入执行历史保留天数",
+  "settings.persistence.form.workflow_runs_max_days.unit": "天",
+  "settings.persistence.form.workflow_runs_max_days.extra": "设置为 <b>0</b> 表示永久保留，不会自动清理。建议设置为 <b>180</b> 天以上。",
+  "settings.persistence.form.expired_certificates_max_days.label": "证书过期后保留天数",
+  "settings.persistence.form.expired_certificates_max_days.placeholder": "请输入过期证书保留天数",
+  "settings.persistence.form.expired_certificates_max_days.unit": "天",
+  "settings.persistence.form.expired_certificates_max_days.extra": "设置为 <b>0</b> 表示永久保留，不会自动清理。"
 }

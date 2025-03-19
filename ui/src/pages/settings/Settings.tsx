@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   ApiOutlined as ApiOutlinedIcon,
+  DatabaseOutlined as DatabaseOutlinedIcon,
   LockOutlined as LockOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   UserOutlined as UserOutlinedIcon,
@@ -66,6 +67,15 @@ const Settings = () => {
               <Space>
                 <ApiOutlinedIcon />
                 <label>{t("settings.sslprovider.tab")}</label>
+              </Space>
+            ),
+          },
+          {
+            key: "persistence",
+            label: (
+              <Space>
+                <DatabaseOutlinedIcon />
+                <label>{t("settings.persistence.tab")}</label>
               </Space>
             ),
           },

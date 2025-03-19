@@ -65,7 +65,7 @@ func onWorkflowRecordCreateOrUpdate(ctx context.Context, record *core.Record) er
 
 	// 反之，重新添加定时任务
 	err := scheduler.Add(fmt.Sprintf("workflow#%s", workflowId), record.GetString("triggerCron"), func() {
-		workflowSrv := NewWorkflowService(repository.NewWorkflowRepository(), repository.NewWorkflowRunRepository())
+		workflowSrv := NewWorkflowService(repository.NewWorkflowRepository(), repository.NewWorkflowRunRepository(), repository.NewSettingsRepository())
 		workflowSrv.StartRun(ctx, &dtos.WorkflowStartRunReq{
 			WorkflowId: workflowId,
 			RunTrigger: domain.WorkflowTriggerTypeAuto,

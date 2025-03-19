@@ -176,7 +176,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
-					ServiceVersion:  maputil.GetString(options.ProviderDeployConfig, "serviceVersion"),
+					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderDeployConfig, "serviceVersion", "3.0"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err

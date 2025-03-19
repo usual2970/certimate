@@ -23,7 +23,6 @@ type DeployerConfig struct {
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
-	// 零值时默认为 "3.0"。
 	ServiceVersion string `json:"serviceVersion"`
 	// 自定义域名（不支持泛域名）。
 	Domain string `json:"domain"`
@@ -70,7 +69,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	switch d.config.ServiceVersion {
-	case "", "3.0":
+	case "3.0":
 		if err := d.deployToFC3(ctx, certPem, privkeyPem); err != nil {
 			return nil, err
 		}
