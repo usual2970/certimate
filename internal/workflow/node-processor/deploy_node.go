@@ -55,7 +55,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 	// 检测是否可以跳过本次执行
 	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
 		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-			n.logger.Warn(fmt.Sprintf("skip this deployment, because %s", skipReason))
+			n.logger.Info(fmt.Sprintf("skip this deployment, because %s", skipReason))
 			return nil
 		} else if skipReason != "" {
 			n.logger.Info(fmt.Sprintf("continue to deploy, because %s", skipReason))

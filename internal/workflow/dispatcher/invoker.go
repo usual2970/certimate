@@ -80,6 +80,7 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 						log.RunId = w.runId
 						log.NodeId = current.Id
 						log.NodeName = current.Name
+						log.Timestamp = record.Time.UnixMilli()
 						log.Level = record.Level.String()
 						log.Message = record.Message
 						log.Data = record.Data

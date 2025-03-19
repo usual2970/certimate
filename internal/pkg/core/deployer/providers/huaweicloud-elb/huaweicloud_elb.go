@@ -90,14 +90,6 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
-	// 上传证书到 SCM
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
-	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
-	} else {
-		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
-	}
-
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:

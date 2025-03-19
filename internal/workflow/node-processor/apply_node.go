@@ -42,7 +42,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 
 	// 检测是否可以跳过本次执行
 	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.logger.Warn(fmt.Sprintf("skip this application, because %s", skipReason))
+		n.logger.Info(fmt.Sprintf("skip this application, because %s", skipReason))
 		return nil
 	} else if skipReason != "" {
 		n.logger.Info(fmt.Sprintf("continue to apply, because %s", skipReason))
@@ -124,7 +124,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("the certificate has already been issued (expires in %dD, next renewal in %dD)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

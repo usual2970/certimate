@@ -40,7 +40,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 
 	// 检测是否可以跳过本次执行
 	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.logger.Warn(fmt.Sprintf("skip this upload, because %s", skipReason))
+		n.logger.Info(fmt.Sprintf("skip this upload, because %s", skipReason))
 		return nil
 	} else if skipReason != "" {
 		n.logger.Info(fmt.Sprintf("continue to upload, because %s", skipReason))

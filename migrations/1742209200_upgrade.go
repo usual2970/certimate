@@ -3,6 +3,7 @@ package migrations
 import (
 	"encoding/json"
 	"strings"
+	"time"
 
 	"github.com/pocketbase/pocketbase/core"
 	m "github.com/pocketbase/pocketbase/migrations"
@@ -85,6 +86,18 @@ func init() {
 						"required": false,
 						"system": false,
 						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "number2782324286",
+						"max": null,
+						"min": null,
+						"name": "timestamp",
+						"onlyInt": false,
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "number"
 					},
 					{
 						"autogeneratePattern": "",
@@ -192,13 +205,15 @@ func init() {
 				for _, log := range logs {
 					for _, logRecord := range log.Records {
 						record := core.NewRecord(collection)
+						createdAt, _ := time.Parse(time.RFC3339, logRecord.Time)
 						record.Set("workflowId", workflowRun.Get("workflowId"))
 						record.Set("runId", workflowRun.Get("id"))
 						record.Set("nodeId", log.NodeId)
 						record.Set("nodeName", log.NodeName)
+						record.Set("timestamp", createdAt.UnixMilli())
 						record.Set("level", logRecord.Level)
 						record.Set("message", strings.TrimSpace(logRecord.Content+" "+logRecord.Error))
-						record.Set("created", log.Records)
+						record.Set("created", createdAt)
 						if err := app.Save(record); err != nil {
 							return err
 						}

@@ -10,8 +10,6 @@ import AddNode from "./AddNode";
 import WorkflowElement from "../WorkflowElement";
 import { type SharedNodeProps } from "./_SharedNode";
 
-const { useToken } = theme;
-
 export type BrandNodeProps = SharedNodeProps;
 
 const BranchNode = ({ node, disabled }: BrandNodeProps) => {
@@ -19,7 +17,7 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
 
   const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
 
-  const token = useToken();
+  const { token: themeToken } = theme.useToken();
 
   const renderBranch = (node: WorkflowNode, branchNodeId?: string, branchIndex?: number) => {
     const elements: JSX.Element[] = [];
@@ -38,7 +36,7 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
       <div
         className="relative flex gap-x-16 before:absolute before:inset-x-[128px] before:top-0 before:h-[2px] before:bg-stone-200 before:content-[''] after:absolute after:inset-x-[128px] after:bottom-0 after:h-[2px] after:bg-stone-200 after:content-['']"
         style={{
-          backgroundColor: token.token.colorBgContainer,
+          backgroundColor: themeToken.colorBgContainer,
         }}
       >
         <Button
@@ -64,13 +62,13 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
                 <div
                   className="absolute -left-px -top-1 h-2 w-1/2"
                   style={{
-                    backgroundColor: token.token.colorBgContainer,
+                    backgroundColor: themeToken.colorBgContainer,
                   }}
                 ></div>
                 <div
                   className="absolute -bottom-1 -left-px z-50 h-2 w-1/2"
                   style={{
-                    backgroundColor: token.token.colorBgContainer,
+                    backgroundColor: themeToken.colorBgContainer,
                   }}
                 ></div>
               </>
@@ -80,13 +78,13 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
                 <div
                   className="absolute -right-px -top-1 h-2 w-1/2"
                   style={{
-                    backgroundColor: token.token.colorBgContainer,
+                    backgroundColor: themeToken.colorBgContainer,
                   }}
                 ></div>
                 <div
                   className="absolute -bottom-1 -right-px z-50 h-2 w-1/2"
                   style={{
-                    backgroundColor: token.token.colorBgContainer,
+                    backgroundColor: themeToken.colorBgContainer,
                   }}
                 ></div>
               </>

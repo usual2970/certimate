@@ -8,8 +8,9 @@ type WorkflowLog struct {
 	Meta
 	WorkflowId string         `json:"workflowId" db:"workflowId"`
 	RunId      string         `json:"workflorunIdwId" db:"runId"`
-	NodeId     string         `json:"nodeId"`
-	NodeName   string         `json:"nodeName"`
+	NodeId     string         `json:"nodeId" db:"nodeId"`
+	NodeName   string         `json:"nodeName" db:"nodeName"`
+	Timestamp  int64          `json:"timestamp" db:"timestamp"` // 毫秒级时间戳
 	Level      string         `json:"level" db:"level"`
 	Message    string         `json:"message" db:"message"`
 	Data       map[string]any `json:"data" db:"data"`

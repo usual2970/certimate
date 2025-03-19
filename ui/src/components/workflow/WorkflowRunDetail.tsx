@@ -1,8 +1,34 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { RightOutlined as RightOutlinedIcon, SelectOutlined as SelectOutlinedIcon } from "@ant-design/icons";
+import {
+  CheckCircleOutlined as CheckCircleOutlinedIcon,
+  CheckOutlined as CheckOutlinedIcon,
+  ClockCircleOutlined as ClockCircleOutlinedIcon,
+  CloseCircleOutlined as CloseCircleOutlinedIcon,
+  RightOutlined as RightOutlinedIcon,
+  SelectOutlined as SelectOutlinedIcon,
+  SettingOutlined as SettingOutlinedIcon,
+  StopOutlined as StopOutlinedIcon,
+  SyncOutlined as SyncOutlinedIcon,
+} from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Alert, Button, Collapse, Divider, Empty, Skeleton, Space, Spin, Table, type TableProps, Tooltip, Typography, notification } from "antd";
+import {
+  Button,
+  Collapse,
+  Divider,
+  Dropdown,
+  Empty,
+  Flex,
+  Skeleton,
+  Space,
+  Spin,
+  Table,
+  type TableProps,
+  Tooltip,
+  Typography,
+  notification,
+  theme,
+} from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -23,25 +49,14 @@ export type WorkflowRunDetailProps = {
 };
 
 const WorkflowRunDetail = ({ data, ...props }: WorkflowRunDetailProps) => {
-  const { t } = useTranslation();
-
   return (
     <div {...props}>
-      <Show when={data.status === WORKFLOW_RUN_STATUSES.SUCCEEDED}>
-        <Alert showIcon type="success" message={<Typography.Text type="success">{t("workflow_run.props.status.succeeded")}</Typography.Text>} />
-      </Show>
-
-      <Show when={data.status === WORKFLOW_RUN_STATUSES.FAILED}>
-        <Alert showIcon type="error" message={<Typography.Text type="danger">{t("workflow_run.props.status.failed")}</Typography.Text>} />
-      </Show>
-
-      <div className="my-4">
+      <Show when={!!data}>
         <WorkflowRunLogs runId={data.id} runStatus={data.status} />
-      </div>
+      </Show>
 
-      <Show when={data.status === WORKFLOW_RUN_STATUSES.SUCCEEDED}>
+      <Show when={!!data && data.status === WORKFLOW_RUN_STATUSES.SUCCEEDED}>
         <Divider />
-
         <WorkflowRunArtifacts runId={data.id} />
       </Show>
     </div>
@@ -51,9 +66,10 @@ const WorkflowRunDetail = ({ data, ...props }: WorkflowRunDetailProps) => {
 const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: string }) => {
   const { t } = useTranslation();
 
-  type Log = Pick<WorkflowLogModel, "level" | "message" | "data" | "created">;
-  type LogGroup = { id: string; name: string; records: Log[] };
+  const { token: themeToken } = theme.useToken();
 
+  type Log = Pick<WorkflowLogModel, "timestamp" | "level" | "message" | "data">;
+  type LogGroup = { id: string; name: string; records: Log[] };
   const [listData, setListData] = useState<LogGroup[]>([]);
   const { loading } = useRequest(
     () => {
@@ -61,13 +77,12 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
     },
     {
       refreshDeps: [runId, runStatus],
-      pollingInterval: runStatus === WORKFLOW_RUN_STATUSES.PENDING || runStatus === WORKFLOW_RUN_STATUSES.RUNNING ? 5000 : 0,
+      pollingInterval: runStatus === WORKFLOW_RUN_STATUSES.PENDING || runStatus === WORKFLOW_RUN_STATUSES.RUNNING ? 3000 : 0,
       pollingWhenHidden: false,
       throttleWait: 500,
-      onBefore: () => {
-        setListData([]);
-      },
       onSuccess: (res) => {
+        if (res.items.length === listData.flatMap((e) => e.records).length) return;
+
         setListData(
           res.items.reduce((acc, e) => {
             let group = acc.at(-1);
@@ -75,7 +90,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
               group = { id: e.nodeId, name: e.nodeName, records: [] };
               acc.push(group);
             }
-            group.records.push({ level: e.level, message: e.message, data: e.data, created: e.created });
+            group.records.push({ timestamp: e.timestamp, level: e.level, message: e.message, data: e.data });
             return acc;
           }, [] as LogGroup[])
         );
@@ -92,7 +107,52 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
     }
   );
 
-  const renderLogRecord = (record: Log) => {
+  const [showTimestamp, setShowTimestamp] = useState(true);
+  const [showWhitespace, setShowWhitespace] = useState(true);
+
+  const renderBadge = () => {
+    switch (runStatus) {
+      case WORKFLOW_RUN_STATUSES.PENDING:
+        return (
+          <Flex gap="small">
+            <ClockCircleOutlinedIcon />
+            {t("workflow_run.props.status.pending")}
+          </Flex>
+        );
+      case WORKFLOW_RUN_STATUSES.RUNNING:
+        return (
+          <Flex gap="small" style={{ color: themeToken.colorInfo }}>
+            <SyncOutlinedIcon spin />
+            {t("workflow_run.props.status.running")}
+          </Flex>
+        );
+      case WORKFLOW_RUN_STATUSES.SUCCEEDED:
+        return (
+          <Flex gap="small" style={{ color: themeToken.colorSuccess }}>
+            <CheckCircleOutlinedIcon />
+            {t("workflow_run.props.status.succeeded")}
+          </Flex>
+        );
+      case WORKFLOW_RUN_STATUSES.FAILED:
+        return (
+          <Flex gap="small" style={{ color: themeToken.colorError }}>
+            <CloseCircleOutlinedIcon />
+            {t("workflow_run.props.status.failed")}
+          </Flex>
+        );
+      case WORKFLOW_RUN_STATUSES.CANCELED:
+        return (
+          <Flex gap="small" style={{ color: themeToken.colorWarning }}>
+            <StopOutlinedIcon />
+            {t("workflow_run.props.status.canceled")}
+          </Flex>
+        );
+    }
+
+    return <></>;
+  };
+
+  const renderRecord = (record: Log) => {
     let message = <>{record.message}</>;
     if (record.data != null && Object.keys(record.data).length > 0) {
       message = (
@@ -100,8 +160,8 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
           <summary>{record.message}</summary>
           {Object.entries(record.data).map(([key, value]) => (
             <div key={key} className="flex space-x-2 " style={{ wordBreak: "break-word" }}>
-              <div>{key}:</div>
-              <div>{JSON.stringify(value)}</div>
+              <div className="whitespace-nowrap">{key}:</div>
+              <div className={!showWhitespace ? "whitespace-pre-line" : ""}>{JSON.stringify(value)}</div>
             </div>
           ))}
         </details>
@@ -110,13 +170,14 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
 
     return (
       <div className="flex space-x-2 text-xs" style={{ wordBreak: "break-word" }}>
-        <div className="whitespace-nowrap text-stone-400">[{dayjs(record.created).format("YYYY-MM-DD HH:mm:ss")}]</div>
+        {showTimestamp ? <div className="whitespace-nowrap text-stone-400">[{dayjs(record.timestamp).format("YYYY-MM-DD HH:mm:ss")}]</div> : <></>}
         <div
           className={mergeCls(
             "font-mono",
             record.level === "DEBUG" ? "text-stone-400" : "",
             record.level === "WARN" ? "text-yellow-600" : "",
-            record.level === "ERROR" ? "text-red-600" : ""
+            record.level === "ERROR" ? "text-red-600" : "",
+            !showWhitespace ? "whitespace-pre-line" : ""
           )}
         >
           {message}
@@ -129,6 +190,35 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
     <>
       <Typography.Title level={5}>{t("workflow_run.logs")}</Typography.Title>
       <div className="rounded-md bg-black text-stone-200">
+        <div className="flex items-center gap-2 p-4">
+          <div className="grow overflow-hidden">{renderBadge()}</div>
+          <div>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: "show-timestamp",
+                    label: t("workflow_run.logs.menu.show_timestamps"),
+                    icon: <CheckOutlinedIcon className={showTimestamp ? "visible" : "invisible"} />,
+                    onClick: () => setShowTimestamp(!showTimestamp),
+                  },
+                  {
+                    key: "show-whitespace",
+                    label: t("workflow_run.logs.menu.show_whitespaces"),
+                    icon: <CheckOutlinedIcon className={showWhitespace ? "visible" : "invisible"} />,
+                    onClick: () => setShowWhitespace(!showWhitespace),
+                  },
+                ],
+              }}
+              trigger={["click"]}
+            >
+              <Button icon={<SettingOutlinedIcon />} ghost />
+            </Dropdown>
+          </div>
+        </div>
+
+        <Divider className="my-0 bg-stone-800" />
+
         <Show
           when={!loading || listData.length > 0}
           fallback={
@@ -137,7 +227,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
             </Spin>
           }
         >
-          <div className=" py-2">
+          <div className="py-2">
             <Collapse
               style={{ color: "inherit" }}
               bordered={false}
@@ -155,7 +245,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
                     header: { color: "inherit" },
                   },
                   label: group.name,
-                  children: <div className="flex flex-col space-y-1">{group.records.map((record) => renderLogRecord(record))}</div>,
+                  children: <div className="flex flex-col space-y-1">{group.records.map((record) => renderRecord(record))}</div>,
                 };
               })}
             />
@@ -221,9 +311,6 @@ const WorkflowRunArtifacts = ({ runId }: { runId: string }) => {
     },
     {
       refreshDeps: [runId],
-      onBefore: () => {
-        setTableData([]);
-      },
       onSuccess: (res) => {
         setTableData(res.items);
       },

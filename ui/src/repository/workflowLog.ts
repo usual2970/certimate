@@ -8,7 +8,7 @@ export const listByWorkflowRunId = async (workflowRunId: string) => {
   const list = await pb.collection(COLLECTION_NAME_WORKFLOW_LOG).getFullList<WorkflowLogModel>({
     batch: 65535,
     filter: pb.filter("runId={:runId}", { runId: workflowRunId }),
-    // sort: "created",
+    sort: "timestamp",
     requestKey: null,
   });
 
