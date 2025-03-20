@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -69,7 +70,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 上传新证书
 	// REF: https://developer.qiniu.com/fusion/8593/interface-related-certificate
 	uploadSslCertResp, err := u.sdkClient.UploadSslCert(context.TODO(), certName, certX509.Subject.CommonName, certPem, privkeyPem)
-	u.logger.Debug("sdk request 'ssl.UploadCertificate'", slog.Any("response", uploadSslCertResp))
+	u.logger.Debug("sdk request 'cdn.UploadSslCert'", slog.Any("response", uploadSslCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadSslCert'")
 	}
@@ -82,6 +83,14 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(accessKey, secretKey string) (*qiniusdk.Client, error) {
+	if secretKey == "" {
+		return nil, errors.New("invalid qiniu access key")
+	}
+
+	if secretKey == "" {
+		return nil, errors.New("invalid qiniu secret key")
+	}
+
 	credential := auth.New(accessKey, secretKey)
 	client := qiniusdk.NewClient(credential)
 	return client, nil
