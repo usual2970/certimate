@@ -9,6 +9,7 @@ import (
 	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
 	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
 	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	pAliyunCAS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas"
 	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
 	pAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
@@ -20,7 +21,9 @@ import (
 	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	pAliyunVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-vod"
 	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
+	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
+	pAzureKeyVault "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/azure-keyvault"
 	pBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
@@ -51,6 +54,7 @@ import (
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
 	pTencentCloudSCF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-scf"
+	pTencentCloudSSL "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
 	pTencentCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-vod"
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
@@ -105,7 +109,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -122,6 +126,14 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maputil.GetString(options.ProviderDeployConfig, "listenerId"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeAliyunCAS:
+				deployer, err := pAliyunCAS.NewDeployer(&pAliyunCAS.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 				})
 				return deployer, err
 
@@ -237,7 +249,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeAWSCloudFront:
+	case domain.DeployProviderTypeAWSACM, domain.DeployProviderTypeAWSCloudFront:
 		{
 			access := domain.AccessConfigForAWS{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -245,12 +257,43 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
+			case domain.DeployProviderTypeAWSACM:
+				deployer, err := pAWSACM.NewDeployer(&pAWSACM.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+				})
+				return deployer, err
+
 			case domain.DeployProviderTypeAWSCloudFront:
 				deployer, err := pAWSCloudFront.NewDeployer(&pAWSCloudFront.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 					DistributionId:  maputil.GetString(options.ProviderDeployConfig, "distributionId"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeAzureKeyVault:
+		{
+			access := domain.AccessConfigForAzure{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeAzureKeyVault:
+				deployer, err := pAzureKeyVault.NewDeployer(&pAzureKeyVault.DeployerConfig{
+					TenantId:     access.TenantId,
+					ClientId:     access.ClientId,
+					ClientSecret: access.ClientSecret,
+					CloudName:    access.CloudName,
+					KeyVaultName: maputil.GetString(options.ProviderDeployConfig, "keyvaultName"),
 				})
 				return deployer, err
 
@@ -638,7 +681,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSCF, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
+	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSCF, domain.DeployProviderTypeTencentCloudSSL, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -707,6 +750,13 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					SecretKey: access.SecretKey,
 					Region:    maputil.GetString(options.ProviderDeployConfig, "region"),
 					Domain:    maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeTencentCloudSSL:
+				deployer, err := pTencentCloudSSL.NewDeployer(&pTencentCloudSSL.DeployerConfig{
+					SecretId:  access.SecretId,
+					SecretKey: access.SecretKey,
 				})
 				return deployer, err
 

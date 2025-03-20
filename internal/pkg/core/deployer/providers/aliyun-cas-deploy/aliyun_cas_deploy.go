@@ -51,7 +51,11 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
+		AccessKeyId:     config.AccessKeyId,
+		AccessKeySecret: config.AccessKeySecret,
+		Region:          config.Region,
+	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
 	}
@@ -177,13 +181,4 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 	}
 
 	return client, nil
-}
-
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
-	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     accessKeyId,
-		AccessKeySecret: accessKeySecret,
-		Region:          region,
-	})
-	return uploader, err
 }

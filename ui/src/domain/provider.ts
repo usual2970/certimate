@@ -63,9 +63,9 @@ export type AccessProvider = {
 
 export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProvider> = new Map(
   /*
-   注意：此处的顺序决定显示在前端的顺序。
-   NOTICE: The following order determines the order displayed at the frontend.
-  */
+     注意：此处的顺序决定显示在前端的顺序。
+     NOTICE: The following order determines the order displayed at the frontend.
+    */
   [
     [ACCESS_PROVIDERS.LOCAL, "provider.local", "/imgs/providers/local.svg", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.SSH, "provider.ssh", "/imgs/providers/ssh.svg", [ACCESS_USAGES.DEPLOY]],
@@ -78,6 +78,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.VOLCENGINE, "provider.volcengine", "/imgs/providers/volcengine.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.JDCLOUD, "provider.jdcloud", "/imgs/providers/jdcloud.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.AWS, "provider.aws", "/imgs/providers/aws.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
+    [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.GCORE, "provider.gcore", "/imgs/providers/gcore.png", [ACCESS_USAGES.APPLY, ACCESS_USAGES.DEPLOY]],
 
     [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.DEPLOY]],
@@ -93,7 +94,6 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.DEPLOY]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.DEPLOY]],
 
-    [ACCESS_PROVIDERS.AZURE, "provider.azure", "/imgs/providers/azure.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.png", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.DNSLA, "provider.dnsla", "/imgs/providers/dnsla.svg", [ACCESS_USAGES.APPLY]],
@@ -122,9 +122,9 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
 
 // #region ApplyProvider
 /*
-  注意：如果追加新的常量值，请保持以 ASCII 排序。
-  NOTICE: If you add new constant, please keep ASCII order.
- */
+    注意：如果追加新的常量值，请保持以 ASCII 排序。
+    NOTICE: If you add new constant, please keep ASCII order.
+   */
 export const APPLY_DNS_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
   ALIYUN: `${ACCESS_PROVIDERS.ALIYUN}`, // 兼容旧值，等同于 `ALIYUN_DNS`
@@ -170,9 +170,9 @@ export type ApplyDNSProvider = {
 
 export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyDNSProvider> = new Map(
   /*
-   注意：此处的顺序决定显示在前端的顺序。
-   NOTICE: The following order determines the order displayed at the frontend.
-  */
+     注意：此处的顺序决定显示在前端的顺序。
+     NOTICE: The following order determines the order displayed at the frontend.
+    */
   [
     [APPLY_DNS_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
     [APPLY_DNS_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
@@ -211,13 +211,14 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
 
 // #region DeployProvider
 /*
-  注意：如果追加新的常量值，请保持以 ASCII 排序。
-  NOTICE: If you add new constant, please keep ASCII order.
- */
+    注意：如果追加新的常量值，请保持以 ASCII 排序。
+    NOTICE: If you add new constant, please keep ASCII order.
+   */
 export const DEPLOY_PROVIDERS = Object.freeze({
   ["1PANEL_CONSOLE"]: `${ACCESS_PROVIDERS["1PANEL"]}-console`,
   ["1PANEL_SITE"]: `${ACCESS_PROVIDERS["1PANEL"]}-site`,
   ALIYUN_ALB: `${ACCESS_PROVIDERS.ALIYUN}-alb`,
+  ALIYUN_CAS: `${ACCESS_PROVIDERS.ALIYUN}-cas`,
   ALIYUN_CAS_DEPLOY: `${ACCESS_PROVIDERS.ALIYUN}-casdeploy`,
   ALIYUN_CDN: `${ACCESS_PROVIDERS.ALIYUN}-cdn`,
   ALIYUN_CLB: `${ACCESS_PROVIDERS.ALIYUN}-clb`,
@@ -229,7 +230,9 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   ALIYUN_OSS: `${ACCESS_PROVIDERS.ALIYUN}-oss`,
   ALIYUN_VOD: `${ACCESS_PROVIDERS.ALIYUN}-vod`,
   ALIYUN_WAF: `${ACCESS_PROVIDERS.ALIYUN}-waf`,
+  AWS_ACM: `${ACCESS_PROVIDERS.AWS}-acm`,
   AWS_CLOUDFRONT: `${ACCESS_PROVIDERS.AWS}-cloudfront`,
+  AZURE_KEYVAULT: `${ACCESS_PROVIDERS.AZURE}-keyvault`,
   BAIDUCLOUD_CDN: `${ACCESS_PROVIDERS.BAIDUCLOUD}-cdn`,
   BAISHAN_CDN: `${ACCESS_PROVIDERS.BAISHAN}-cdn`,
   BAOTAPANEL_CONSOLE: `${ACCESS_PROVIDERS.BAOTAPANEL}-console`,
@@ -261,6 +264,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   TENCENTCLOUD_ECDN: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ecdn`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
   TENCENTCLOUD_SCF: `${ACCESS_PROVIDERS.TENCENTCLOUD}-scf`,
+  TENCENTCLOUD_SSL: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ssl`,
   TENCENTCLOUD_SSL_DEPLOY: `${ACCESS_PROVIDERS.TENCENTCLOUD}-ssldeploy`,
   TENCENTCLOUD_VOD: `${ACCESS_PROVIDERS.TENCENTCLOUD}-vod`,
   TENCENTCLOUD_WAF: `${ACCESS_PROVIDERS.TENCENTCLOUD}-waf`,
@@ -303,9 +307,9 @@ export type DeployProvider = {
 
 export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProvider> = new Map(
   /*
-   注意：此处的顺序决定显示在前端的顺序。
-   NOTICE: The following order determines the order displayed at the frontend.
-  */
+     注意：此处的顺序决定显示在前端的顺序。
+     NOTICE: The following order determines the order displayed at the frontend.
+    */
   [
     [DEPLOY_PROVIDERS.LOCAL, "provider.local", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.SSH, "provider.ssh", DEPLOY_CATEGORIES.OTHER],
@@ -322,6 +326,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.ALIYUN_LIVE, "provider.aliyun.live", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.ALIYUN_VOD, "provider.aliyun.vod", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.ALIYUN_FC, "provider.aliyun.fc", DEPLOY_CATEGORIES.SERVERLESS],
+    [DEPLOY_PROVIDERS.ALIYUN_CAS, "provider.aliyun.cas", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY, "provider.aliyun.cas_deploy", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_COS, "provider.tencentcloud.cos", DEPLOY_CATEGORIES.STORAGE],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CDN, "provider.tencentcloud.cdn", DEPLOY_CATEGORIES.CDN],
@@ -332,6 +337,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.TENCENTCLOUD_CSS, "provider.tencentcloud.css", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_VOD, "provider.tencentcloud.vod", DEPLOY_CATEGORIES.AV],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_SCF, "provider.tencentcloud.scf", DEPLOY_CATEGORIES.SERVERLESS],
+    [DEPLOY_PROVIDERS.TENCENTCLOUD_SSL, "provider.tencentcloud.ssl", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY, "provider.tencentcloud.ssl_deploy", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_CDN, "provider.huaweicloud.cdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.HUAWEICLOUD_ELB, "provider.huaweicloud.elb", DEPLOY_CATEGORIES.LOADBALANCE],
@@ -358,6 +364,8 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.UCLOUD_US3, "provider.ucloud.us3", DEPLOY_CATEGORIES.STORAGE],
     [DEPLOY_PROVIDERS.UCLOUD_UCDN, "provider.ucloud.ucdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.AWS_CLOUDFRONT, "provider.aws.cloudfront", DEPLOY_CATEGORIES.CDN],
+    [DEPLOY_PROVIDERS.AWS_ACM, "provider.aws.acm", DEPLOY_CATEGORIES.OTHER],
+    [DEPLOY_PROVIDERS.AZURE_KEYVAULT, "provider.azure.keyvault", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.CACHEFLY, "provider.cachefly", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.CDNFLY, "provider.cdnfly", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.EDGIO_APPLICATIONS, "provider.edgio.applications", DEPLOY_CATEGORIES.WEBSITE],
