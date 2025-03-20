@@ -87,17 +87,17 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 判断域名是否已启用 HTTPS。如果已启用，修改域名证书；否则，启用 HTTPS
 	// REF: https://developer.qiniu.com/fusion/4246/the-domain-name
-	if getDomainInfoResp.Https != nil && getDomainInfoResp.Https.CertID != "" {
-		modifyDomainHttpsConfResp, err := d.sdkClient.ModifyDomainHttpsConf(context.TODO(), domain, upres.CertId, getDomainInfoResp.Https.ForceHttps, getDomainInfoResp.Https.Http2Enable)
-		d.logger.Debug("sdk request 'cdn.ModifyDomainHttpsConf'", slog.String("request.domain", domain), slog.String("request.certId", upres.CertId), slog.Any("response", modifyDomainHttpsConfResp))
-		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ModifyDomainHttpsConf'")
-		}
-	} else {
+	if getDomainInfoResp.Https == nil || getDomainInfoResp.Https.CertID == "" {
 		enableDomainHttpsResp, err := d.sdkClient.EnableDomainHttps(context.TODO(), domain, upres.CertId, true, true)
 		d.logger.Debug("sdk request 'cdn.EnableDomainHttps'", slog.String("request.domain", domain), slog.String("request.certId", upres.CertId), slog.Any("response", enableDomainHttpsResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.EnableDomainHttps'")
+		}
+	} else if getDomainInfoResp.Https.CertID != upres.CertId {
+		modifyDomainHttpsConfResp, err := d.sdkClient.ModifyDomainHttpsConf(context.TODO(), domain, upres.CertId, getDomainInfoResp.Https.ForceHttps, getDomainInfoResp.Https.Http2Enable)
+		d.logger.Debug("sdk request 'cdn.ModifyDomainHttpsConf'", slog.String("request.domain", domain), slog.String("request.certId", upres.CertId), slog.Any("response", modifyDomainHttpsConfResp))
+		if err != nil {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ModifyDomainHttpsConf'")
 		}
 	}
 

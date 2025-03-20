@@ -108,6 +108,10 @@ type AccessConfigForDogeCloud struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForDynv6 struct {
+	HttpToken string `json:"httpToken"`
+}
+
 type AccessConfigForEdgio struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
@@ -199,6 +203,11 @@ type AccessConfigForUCloud struct {
 	PrivateKey string `json:"privateKey"`
 	PublicKey  string `json:"publicKey"`
 	ProjectId  string `json:"projectId,omitempty"`
+}
+
+type AccessConfigForUpyun struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type AccessConfigForVolcEngine struct {

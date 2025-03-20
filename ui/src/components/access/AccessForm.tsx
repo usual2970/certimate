@@ -25,6 +25,7 @@ import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
 import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
+import AccessFormDynv6Config from "./AccessFormDynv6Config";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
 import AccessFormGnameConfig from "./AccessFormGnameConfig";
@@ -44,6 +45,7 @@ import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
+import AccessFormUpyunConfig from "./AccessFormUpyunConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
 import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
@@ -132,6 +134,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DYNV6:
+        return <AccessFormDynv6Config {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GCORE:
         return <AccessFormGcoreConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GNAME:
@@ -170,6 +174,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormTencentCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.UCLOUD:
         return <AccessFormUCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.UPYUN:
+        return <AccessFormUpyunConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.VOLCENGINE:
         return <AccessFormVolcEngineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:

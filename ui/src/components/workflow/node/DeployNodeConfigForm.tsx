@@ -18,6 +18,7 @@ import { useWorkflowStore } from "@/stores/workflow";
 import DeployNodeConfigForm1PanelConsoleConfig from "./DeployNodeConfigForm1PanelConsoleConfig";
 import DeployNodeConfigForm1PanelSiteConfig from "./DeployNodeConfigForm1PanelSiteConfig";
 import DeployNodeConfigFormAliyunALBConfig from "./DeployNodeConfigFormAliyunALBConfig";
+import DeployNodeConfigFormAliyunCASConfig from "./DeployNodeConfigFormAliyunCASConfig";
 import DeployNodeConfigFormAliyunCASDeployConfig from "./DeployNodeConfigFormAliyunCASDeployConfig";
 import DeployNodeConfigFormAliyunCDNConfig from "./DeployNodeConfigFormAliyunCDNConfig";
 import DeployNodeConfigFormAliyunCLBConfig from "./DeployNodeConfigFormAliyunCLBConfig";
@@ -29,7 +30,9 @@ import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLB
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
 import DeployNodeConfigFormAliyunVODConfig from "./DeployNodeConfigFormAliyunVODConfig";
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
+import DeployNodeConfigFormAWSACMConfig from "./DeployNodeConfigFormAWSACMConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
+import DeployNodeConfigFormAzureKeyVaultConfig from "./DeployNodeConfigFormAzureKeyVaultConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
 import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanCDNConfig";
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
@@ -49,6 +52,7 @@ import DeployNodeConfigFormJDCloudVODConfig from "./DeployNodeConfigFormJDCloudV
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
+import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
@@ -64,6 +68,8 @@ import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudWAFConfig from "./DeployNodeConfigFormTencentCloudWAFConfig";
 import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
+import DeployNodeConfigFormUpyunCDNConfig from "./DeployNodeConfigFormUpyunCDNConfig.tsx";
+import DeployNodeConfigFormUpyunFileConfig from "./DeployNodeConfigFormUpyunFileConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
@@ -148,6 +154,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigForm1PanelSiteConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_ALB:
           return <DeployNodeConfigFormAliyunALBConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.ALIYUN_CAS:
+          return <DeployNodeConfigFormAliyunCASConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY:
           return <DeployNodeConfigFormAliyunCASDeployConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_CLB:
@@ -170,8 +178,12 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunVODConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.ALIYUN_WAF:
           return <DeployNodeConfigFormAliyunWAFConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.AWS_ACM:
+          return <DeployNodeConfigFormAWSACMConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.AWS_CLOUDFRONT:
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.AZURE_KEYVAULT:
+          return <DeployNodeConfigFormAzureKeyVaultConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAISHAN_CDN:
@@ -210,6 +222,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_CDN:
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.QINIU_KODO:
+          return <DeployNodeConfigFormQiniuKodoConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_PILI:
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SAFELINE:
@@ -240,6 +254,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UCLOUD_US3:
           return <DeployNodeConfigFormUCloudUS3Config {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UPYUN_CDN:
+          return <DeployNodeConfigFormUpyunCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UPYUN_FILE:
+          return <DeployNodeConfigFormUpyunFileConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CLB:

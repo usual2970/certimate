@@ -22,6 +22,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCMCCCloud
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
+      | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForGcore
       | AccessConfigForGname
@@ -40,6 +41,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForSSH
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
+      | AccessConfigForUpyun
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
       | AccessConfigForWestcn
@@ -129,6 +131,10 @@ export type AccessConfigForDNSLA = {
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForDynv6 = {
+  httpToken: string;
 };
 
 export type AccessConfigForEdgio = {
@@ -222,6 +228,11 @@ export type AccessConfigForUCloud = {
   privateKey: string;
   publicKey: string;
   projectId?: string;
+};
+
+export type AccessConfigForUpyun = {
+  username: string;
+  password: string;
 };
 
 export type AccessConfigForVolcEngine = {

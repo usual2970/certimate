@@ -127,7 +127,23 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
     }
   };
 
-  const handlePresetScriptClick = (key: string) => {
+  const handlePresetPreScriptClick = (key: string) => {
+    switch (key) {
+      case "backup_files":
+        {
+          formInst.setFieldValue(
+            "preCommand",
+            `# 请将以下路径替换为实际值
+cp "${formInst.getFieldValue("certPath")}" "${formInst.getFieldValue("certPath")}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("keyPath")}" "${formInst.getFieldValue("keyPath")}.bak" 2>/dev/null || :
+            `.trim()
+          );
+        }
+        break;
+    }
+  };
+
+  const handlePresetPostScriptClick = (key: string) => {
     switch (key) {
       case "reload_nginx":
         {
@@ -228,8 +244,36 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
         <Select options={[{ value: t("workflow_node.deploy.form.ssh_shell_env.value") }]} value={t("workflow_node.deploy.form.ssh_shell_env.value")} />
       </Form.Item>
 
-      <Form.Item name="preCommand" label={t("workflow_node.deploy.form.ssh_pre_command.label")} rules={[formRule]}>
-        <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")} />
+      <Form.Item className="mb-0">
+        <label className="mb-1 block">
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="max-w-full grow truncate">
+              <span>{t("workflow_node.deploy.form.ssh_pre_command.label")}</span>
+            </div>
+            <div className="text-right">
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "backup_files",
+                      label: t("workflow_node.deploy.form.ssh_preset_scripts.option.backup_files.label"),
+                      onClick: () => handlePresetPreScriptClick("backup_files"),
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Button size="small" type="link">
+                  {t("workflow_node.deploy.form.ssh_preset_scripts.button")}
+                  <DownOutlinedIcon />
+                </Button>
+              </Dropdown>
+            </div>
+          </div>
+        </label>
+        <Form.Item name="preCommand" rules={[formRule]}>
+          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")} />
+        </Form.Item>
       </Form.Item>
 
       <Form.Item className="mb-0">
@@ -245,7 +289,7 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
                     {
                       key: "reload_nginx",
                       label: t("workflow_node.deploy.form.ssh_preset_scripts.option.reload_nginx.label"),
-                      onClick: () => handlePresetScriptClick("reload_nginx"),
+                      onClick: () => handlePresetPostScriptClick("reload_nginx"),
                     },
                   ],
                 }}

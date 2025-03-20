@@ -55,6 +55,15 @@ const DeployNodeConfigFormAliyunFCConfig = ({ form: formInst, formName, disabled
       name={formName}
       onValuesChange={handleFormChange}
     >
+      <Form.Item
+        name="region"
+        label={t("workflow_node.deploy.form.aliyun_fc_region.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_fc_region.tooltip") }}></span>}
+      >
+        <Input placeholder={t("workflow_node.deploy.form.aliyun_fc_region.placeholder")} />
+      </Form.Item>
+
       <Form.Item name="serviceVersion" label={t("workflow_node.deploy.form.aliyun_fc_service_version.label")} rules={[formRule]}>
         <Select placeholder={t("workflow_node.deploy.form.aliyun_fc_service_version.placeholder")}>
           <Select.Option key="2.0" value="2.0">
@@ -64,15 +73,6 @@ const DeployNodeConfigFormAliyunFCConfig = ({ form: formInst, formName, disabled
             3.0
           </Select.Option>
         </Select>
-      </Form.Item>
-
-      <Form.Item
-        name="region"
-        label={t("workflow_node.deploy.form.aliyun_fc_region.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_fc_region.tooltip") }}></span>}
-      >
-        <Input placeholder={t("workflow_node.deploy.form.aliyun_fc_region.placeholder")} />
       </Form.Item>
 
       <Form.Item

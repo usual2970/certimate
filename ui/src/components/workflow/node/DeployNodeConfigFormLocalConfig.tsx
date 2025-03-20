@@ -134,7 +134,24 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
     }
   };
 
-  const handlePresetScriptClick = (key: string) => {
+  const handlePresetPreScriptClick = (key: string) => {
+    switch (key) {
+      case "backup_files":
+        {
+          formInst.setFieldValue("shellEnv", SHELLENV_SH);
+          formInst.setFieldValue(
+            "preCommand",
+            `# 请将以下路径替换为实际值
+cp "${formInst.getFieldValue("certPath")}" "${formInst.getFieldValue("certPath")}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("keyPath")}" "${formInst.getFieldValue("keyPath")}.bak" 2>/dev/null || :
+            `.trim()
+          );
+        }
+        break;
+    }
+  };
+
+  const handlePresetPostScriptClick = (key: string) => {
     switch (key) {
       case "reload_nginx":
         {
@@ -149,8 +166,8 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "<your-pfx-path>" # PFX 文件路径
-$pfxPassword = "<your-pfx-password>" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
 $siteName = "<your-site-name>" # IIS 网站名称
 $domain = "<your-domain-name>" # 域名
 $ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
@@ -186,8 +203,8 @@ Remove-Item -Path "$pfxPath" -Force
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "<your-pfx-path>" # PFX 文件路径
-$pfxPassword = "<your-pfx-password>" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
 $ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
 $port = "<your-binding-port>"  # 绑定端口
 
@@ -208,14 +225,15 @@ Remove-Item -Path "$pfxPath" -Force
           );
         }
         break;
+
       case "binding_rdp":
         {
           formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "<your-pfx-path>" # PFX 文件路径
-$pfxPassword = "<your-pfx-password>" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
 
 # 导入证书到本地计算机的个人存储区
 $cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
@@ -332,8 +350,36 @@ Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thum
         </Select>
       </Form.Item>
 
-      <Form.Item name="preCommand" label={t("workflow_node.deploy.form.local_pre_command.label")} rules={[formRule]}>
-        <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.local_pre_command.placeholder")} />
+      <Form.Item className="mb-0">
+        <label className="mb-1 block">
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="max-w-full grow truncate">
+              <span>{t("workflow_node.deploy.form.local_pre_command.label")}</span>
+            </div>
+            <div className="text-right">
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "backup_files",
+                      label: t("workflow_node.deploy.form.local_preset_scripts.option.backup_files.label"),
+                      onClick: () => handlePresetPreScriptClick("backup_files"),
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Button size="small" type="link">
+                  {t("workflow_node.deploy.form.local_preset_scripts.button")}
+                  <DownOutlinedIcon />
+                </Button>
+              </Dropdown>
+            </div>
+          </div>
+        </label>
+        <Form.Item name="preCommand" rules={[formRule]}>
+          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.local_pre_command.placeholder")} />
+        </Form.Item>
       </Form.Item>
 
       <Form.Item className="mb-0">
@@ -349,22 +395,22 @@ Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thum
                     {
                       key: "reload_nginx",
                       label: t("workflow_node.deploy.form.local_preset_scripts.option.reload_nginx.label"),
-                      onClick: () => handlePresetScriptClick("reload_nginx"),
+                      onClick: () => handlePresetPostScriptClick("reload_nginx"),
                     },
                     {
                       key: "binding_iis",
                       label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_iis.label"),
-                      onClick: () => handlePresetScriptClick("binding_iis"),
+                      onClick: () => handlePresetPostScriptClick("binding_iis"),
                     },
                     {
                       key: "binding_netsh",
                       label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_netsh.label"),
-                      onClick: () => handlePresetScriptClick("binding_netsh"),
+                      onClick: () => handlePresetPostScriptClick("binding_netsh"),
                     },
                     {
                       key: "binding_rdp",
                       label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_rdp.label"),
-                      onClick: () => handlePresetScriptClick("binding_rdp"),
+                      onClick: () => handlePresetPostScriptClick("binding_rdp"),
                     },
                   ],
                 }}
