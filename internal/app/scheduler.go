@@ -3,6 +3,7 @@ package app
 import (
 	"sync"
 	"time"
+	_ "time/tzdata"
 
 	"github.com/pocketbase/pocketbase/tools/cron"
 )

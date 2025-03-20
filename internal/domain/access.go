@@ -201,6 +201,11 @@ type AccessConfigForUCloud struct {
 	ProjectId  string `json:"projectId,omitempty"`
 }
 
+type AccessConfigForUpyun struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type AccessConfigForVolcEngine struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`

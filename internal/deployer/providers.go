@@ -56,6 +56,7 @@ import (
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
 	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
+	pUpyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/upyun-cdn"
 	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	pVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	pVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
@@ -225,6 +226,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderDeployConfig, "serviceVersion", "3.0"),
 					InstanceId:      maputil.GetString(options.ProviderDeployConfig, "instanceId"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
@@ -767,6 +769,27 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					Region:     maputil.GetString(options.ProviderDeployConfig, "region"),
 					Bucket:     maputil.GetString(options.ProviderDeployConfig, "bucket"),
 					Domain:     maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeUpyunCDN:
+		{
+			access := domain.AccessConfigForUpyun{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeUpyunCDN:
+				deployer, err := pUpyunCDN.NewDeployer(&pUpyunCDN.DeployerConfig{
+					Username: access.Username,
+					Password: access.Password,
+					Domain:   maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
 

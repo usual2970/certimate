@@ -28,6 +28,7 @@ const (
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
 	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
+	AccessProviderTypeDynv6        = AccessProviderType("dynv6") // dynv6（预留）
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
 	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
 	AccessProviderTypeGname        = AccessProviderType("gname")
@@ -50,6 +51,7 @@ const (
 	AccessProviderTypeSSH          = AccessProviderType("ssh")
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
+	AccessProviderTypeUpyun        = AccessProviderType("upyun")
 	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
 	AccessProviderTypeWestcn       = AccessProviderType("westcn")
@@ -158,6 +160,7 @@ const (
 	DeployProviderTypeTencentCloudWAF       = DeployProviderType("tencentcloud-waf")
 	DeployProviderTypeUCloudUCDN            = DeployProviderType("ucloud-ucdn")
 	DeployProviderTypeUCloudUS3             = DeployProviderType("ucloud-us3")
+	DeployProviderTypeUpyunCDN              = DeployProviderType("upyun-cdn")
 	DeployProviderTypeVolcEngineCDN         = DeployProviderType("volcengine-cdn")
 	DeployProviderTypeVolcEngineCLB         = DeployProviderType("volcengine-clb")
 	DeployProviderTypeVolcEngineDCDN        = DeployProviderType("volcengine-dcdn")

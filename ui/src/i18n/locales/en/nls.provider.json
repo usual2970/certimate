@@ -93,6 +93,8 @@
   "provider.ucloud": "UCloud",
   "provider.ucloud.ucdn": "UCloud - UCDN (UCloud Content Delivery Network)",
   "provider.ucloud.us3": "UCloud - US3 (UCloud Object-based Storage)",
+  "provider.upyun": "UPYUN",
+  "provider.upyun.cdn": "UPYUN - CDN (Content Delivery Network)",
   "provider.volcengine": "Volcengine",
   "provider.volcengine.cdn": "Volcengine - CDN (Content Delivery Network)",
   "provider.volcengine.clb": "Volcengine - CLB (Cloud Load Balancer)",
