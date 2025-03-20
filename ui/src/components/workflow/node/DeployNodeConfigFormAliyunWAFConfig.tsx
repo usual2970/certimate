@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -7,6 +7,7 @@ import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormAliyunWAFConfigFieldValues = Nullish<{
   region: string;
+  serviceVersion: string;
   instanceId: string;
   domain?: string;
 }>;
@@ -20,7 +21,9 @@ export type DeployNodeConfigFormAliyunWAFConfigProps = {
 };
 
 const initFormModel = (): DeployNodeConfigFormAliyunWAFConfigFieldValues => {
-  return {};
+  return {
+    serviceVersion: "3.0",
+  };
 };
 
 const DeployNodeConfigFormAliyunWAFConfig = ({
@@ -37,6 +40,9 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
       .string({ message: t("workflow_node.deploy.form.aliyun_waf_region.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aliyun_waf_region.placeholder"))
       .trim(),
+    serviceVersion: z.literal("3.0", {
+      message: t("workflow_node.deploy.form.aliyun_waf_service_version.placeholder"),
+    }),
     instanceId: z
       .string({ message: t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder"))
@@ -71,6 +77,14 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_waf_region.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.aliyun_waf_region.placeholder")} />
+      </Form.Item>
+
+      <Form.Item name="serviceVersion" label={t("workflow_node.deploy.form.aliyun_waf_service_version.label")} rules={[formRule]}>
+        <Select placeholder={t("workflow_node.deploy.form.aliyun_waf_service_version.placeholder")}>
+          <Select.Option key="3.0" value="3.0">
+            3.0
+          </Select.Option>
+        </Select>
       </Form.Item>
 
       <Form.Item
