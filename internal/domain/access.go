@@ -108,6 +108,10 @@ type AccessConfigForDogeCloud struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForDynv6 struct {
+	HttpToken string `json:"httpToken"`
+}
+
 type AccessConfigForEdgio struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`

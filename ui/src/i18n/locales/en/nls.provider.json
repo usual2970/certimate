@@ -47,6 +47,7 @@
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "Doge Cloud",
   "provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",
+  "provider.dynv6": "dynv6",
   "provider.edgio": "Edgio",
   "provider.edgio.applications": "Edgio - Applications",
   "provider.fastly": "Fastly",

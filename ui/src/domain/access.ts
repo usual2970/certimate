@@ -22,6 +22,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCMCCCloud
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
+      | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForGcore
       | AccessConfigForGname
@@ -130,6 +131,10 @@ export type AccessConfigForDNSLA = {
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForDynv6 = {
+  httpToken: string;
 };
 
 export type AccessConfigForEdgio = {

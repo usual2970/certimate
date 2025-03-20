@@ -28,7 +28,7 @@ const (
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
 	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
-	AccessProviderTypeDynv6        = AccessProviderType("dynv6") // dynv6（预留）
+	AccessProviderTypeDynv6        = AccessProviderType("dynv6")
 	AccessProviderTypeEdgio        = AccessProviderType("edgio")
 	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
 	AccessProviderTypeGname        = AccessProviderType("gname")
@@ -80,6 +80,7 @@ const (
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
 	ApplyDNSProviderTypeCMCCCloud       = ApplyDNSProviderType("cmcccloud")
 	ApplyDNSProviderTypeDNSLA           = ApplyDNSProviderType("dnsla")
+	ApplyDNSProviderTypeDynv6           = ApplyDNSProviderType("dynv6")
 	ApplyDNSProviderTypeGcore           = ApplyDNSProviderType("gcore")
 	ApplyDNSProviderTypeGname           = ApplyDNSProviderType("gname")
 	ApplyDNSProviderTypeGoDaddy         = ApplyDNSProviderType("godaddy")
