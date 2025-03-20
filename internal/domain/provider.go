@@ -145,6 +145,7 @@ const (
 	DeployProviderTypeKubernetesSecret      = DeployProviderType("k8s-secret")
 	DeployProviderTypeLocal                 = DeployProviderType("local")
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")
+	DeployProviderTypeQiniuKodo             = DeployProviderType("qiniu-kodo")
 	DeployProviderTypeQiniuPili             = DeployProviderType("qiniu-pili")
 	DeployProviderTypeSafeLine              = DeployProviderType("safeline")
 	DeployProviderTypeSSH                   = DeployProviderType("ssh")

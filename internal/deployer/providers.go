@@ -563,7 +563,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuPili:
+	case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuKodo, domain.DeployProviderTypeQiniuPili:
 		{
 			access := domain.AccessConfigForQiniu{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -571,7 +571,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeQiniuCDN:
+			case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuKodo:
 				deployer, err := pQiniuCDN.NewDeployer(&pQiniuCDN.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,

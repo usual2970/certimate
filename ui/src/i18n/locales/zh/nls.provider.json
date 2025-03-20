@@ -74,6 +74,7 @@
   "provider.powerdns": "PowerDNS",
   "provider.qiniu": "七牛云",
   "provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",
+  "provider.qiniu.kodo": "七牛云 - 对象存储 Kodo",
   "provider.qiniu.pili": "七牛云 - 视频直播 Pili",
   "provider.rainyun": "雨云",
   "provider.safeline": "雷池",

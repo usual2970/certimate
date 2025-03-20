@@ -49,6 +49,7 @@ import DeployNodeConfigFormJDCloudVODConfig from "./DeployNodeConfigFormJDCloudV
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
+import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
@@ -64,6 +65,8 @@ import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudWAFConfig from "./DeployNodeConfigFormTencentCloudWAFConfig";
 import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
+import DeployNodeConfigFormUpyunCDNConfig from "./DeployNodeConfigFormUpyunCDNConfig.tsx";
+import DeployNodeConfigFormUpyunFileConfig from "./DeployNodeConfigFormUpyunFileConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
@@ -210,6 +213,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_CDN:
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.QINIU_KODO:
+          return <DeployNodeConfigFormQiniuKodoConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_PILI:
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SAFELINE:
@@ -240,6 +245,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UCLOUD_US3:
           return <DeployNodeConfigFormUCloudUS3Config {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UPYUN_CDN:
+          return <DeployNodeConfigFormUpyunCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.UPYUN_FILE:
+          return <DeployNodeConfigFormUpyunFileConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CLB:
