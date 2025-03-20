@@ -777,7 +777,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeUpyunCDN:
+	case domain.DeployProviderTypeUpyunCDN, domain.DeployProviderTypeUpyunFile:
 		{
 			access := domain.AccessConfigForUpyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -785,7 +785,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeUpyunCDN:
+			case domain.DeployProviderTypeUpyunCDN, domain.DeployProviderTypeUpyunFile:
 				deployer, err := pUpyunCDN.NewDeployer(&pUpyunCDN.DeployerConfig{
 					Username: access.Username,
 					Password: access.Password,
