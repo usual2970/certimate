@@ -8,7 +8,7 @@
   "dashboard.statistics.enabled_workflows": "Enabled workflows",
   "dashboard.statistics.unit": "",
 
-  "dashboard.latest_workflow_run": "Latest workflow run",
+  "dashboard.latest_workflow_runs": "Latest workflow runs",
 
   "dashboard.quick_actions": "Quick actions",
   "dashboard.quick_actions.create_workflow": "Create workflow",

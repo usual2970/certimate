@@ -5,17 +5,18 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
-	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
-	jdSslApi "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/apis"
-	jdSslClient "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/client"
+	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
+	jdsslapi "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/apis"
+	jdsslclient "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/client"
 	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 type UploaderConfig struct {
@@ -27,7 +28,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *jdSslClient.SslClient
+	logger    *slog.Logger
+	sdkClient *jdsslclient.SslClient
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -44,13 +46,23 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -66,11 +78,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	describeCertsPageNumber := 1
 	describeCertsPageSize := 10
 	for {
-		describeCertsReq := jdSslApi.NewDescribeCertsRequest()
+		describeCertsReq := jdsslapi.NewDescribeCertsRequest()
 		describeCertsReq.SetDomainName(certX509.Subject.CommonName)
 		describeCertsReq.SetPageNumber(describeCertsPageNumber)
 		describeCertsReq.SetPageSize(describeCertsPageSize)
 		describeCertsResp, err := u.sdkClient.DescribeCerts(describeCertsReq)
+		u.logger.Debug("sdk request 'ssl.DescribeCerts'", slog.Any("request", describeCertsReq), slog.Any("response", describeCertsResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DescribeCerts'")
 		}
@@ -101,6 +114,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 			}
 
 			// 如果以上信息都一致，则视为已存在相同证书，直接返回
+			u.logger.Info("ssl certificate already exists")
 			return &uploader.UploadResult{
 				CertId:   certDetail.CertId,
 				CertName: certDetail.CertName,
@@ -119,8 +133,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 上传证书
 	// REF: https://docs.jdcloud.com/cn/ssl-certificate/api/uploadcert
-	uploadCertReq := jdSslApi.NewUploadCertRequest(certName, privkeyPem, certPem)
+	uploadCertReq := jdsslapi.NewUploadCertRequest(certName, privkeyPem, certPem)
 	uploadCertResp, err := u.sdkClient.UploadCert(uploadCertReq)
+	u.logger.Debug("sdk request 'ssl.UploadCertificate'", slog.Any("request", uploadCertReq), slog.Any("response", uploadCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.UploadCertificate'")
 	}
@@ -131,9 +146,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret string) (*jdSslClient.SslClient, error) {
-	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
-	client := jdSslClient.NewSslClient(clientCredentials)
-	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
+func createSdkClient(accessKeyId, accessKeySecret string) (*jdsslclient.SslClient, error) {
+	clientCredentials := jdcore.NewCredentials(accessKeyId, accessKeySecret)
+	client := jdsslclient.NewSslClient(clientCredentials)
+	client.SetLogger(jdcore.NewDefaultLogger(jdcore.LogWarn))
 	return client, nil
 }

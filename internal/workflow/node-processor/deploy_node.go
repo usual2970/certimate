@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/usual2970/certimate/internal/deployer"
@@ -13,7 +14,7 @@ import (
 
 type deployNode struct {
 	node *domain.WorkflowNode
-	*nodeLogger
+	*nodeProcessor
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -21,8 +22,8 @@ type deployNode struct {
 
 func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
-		node:       node,
-		nodeLogger: newNodeLogger(node),
+		node:          node,
+		nodeProcessor: newNodeProcessor(node),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -30,12 +31,11 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 }
 
 func (n *deployNode) Process(ctx context.Context) error {
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "开始执行")
+	n.logger.Info("ready to deploy ...")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "查询部署记录失败", err.Error())
 		return err
 	}
 
@@ -43,20 +43,22 @@ func (n *deployNode) Process(ctx context.Context) error {
 	previousNodeOutputCertificateSource := n.node.GetConfigForDeploy().Certificate
 	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, "#")
 	if len(previousNodeOutputCertificateSourceSlice) != 2 {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "证书来源配置错误", previousNodeOutputCertificateSource)
-		return fmt.Errorf("证书来源配置错误: %s", previousNodeOutputCertificateSource)
+		n.logger.Warn("invalid certificate source", slog.String("certificate.source", previousNodeOutputCertificateSource))
+		return fmt.Errorf("invalid certificate source: %s", previousNodeOutputCertificateSource)
 	}
 	certificate, err := n.certRepo.GetByWorkflowNodeId(ctx, previousNodeOutputCertificateSourceSlice[0])
 	if err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取证书失败", err.Error())
+		n.logger.Warn("invalid certificate source", slog.String("certificate.source", previousNodeOutputCertificateSource))
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
 	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
 		if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-			n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, skipReason)
+			n.logger.Info(fmt.Sprintf("skip this deployment, because %s", skipReason))
 			return nil
+		} else if skipReason != "" {
+			n.logger.Info(fmt.Sprintf("continue to deploy, because %s", skipReason))
 		}
 	}
 
@@ -66,16 +68,16 @@ func (n *deployNode) Process(ctx context.Context) error {
 		PrivateKey  string
 	}{Certificate: certificate.Certificate, PrivateKey: certificate.PrivateKey})
 	if err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取部署对象失败", err.Error())
+		n.logger.Warn("failed to create deployer provider")
 		return err
 	}
 
 	// 部署证书
+	deployer.SetLogger(n.logger)
 	if err := deployer.Deploy(ctx); err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "部署失败", err.Error())
+		n.logger.Warn("failed to deploy")
 		return err
 	}
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "部署成功")
 
 	// 保存执行结果
 	output := &domain.WorkflowOutput{
@@ -86,10 +88,11 @@ func (n *deployNode) Process(ctx context.Context) error {
 		Succeeded:  true,
 	}
 	if _, err := n.outputRepo.Save(ctx, output); err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "保存部署记录失败", err.Error())
+		n.logger.Warn("failed to save node output")
 		return err
 	}
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "保存部署记录成功")
+
+	n.logger.Info("deploy completed")
 
 	return nil
 }
@@ -100,14 +103,14 @@ func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 		currentNodeConfig := n.node.GetConfigForDeploy()
 		lastNodeConfig := lastOutput.Node.GetConfigForDeploy()
 		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
-			return false, "配置项变化：主机提供商授权"
+			return false, "the configuration item 'ProviderAccessId' changed"
 		}
 		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
-			return false, "配置项变化：主机提供商参数"
+			return false, "the configuration item 'ProviderConfig' changed"
 		}
 
 		if currentNodeConfig.SkipOnLastSucceeded {
-			return true, "已部署过证书，跳过此次部署"
+			return true, "the certificate has already been deployed"
 		}
 	}
 

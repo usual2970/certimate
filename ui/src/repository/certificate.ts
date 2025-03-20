@@ -3,14 +3,14 @@ import dayjs from "dayjs";
 import { type CertificateModel } from "@/domain/certificate";
 import { COLLECTION_NAME_CERTIFICATE, getPocketBase } from "./_pocketbase";
 
-export type ListCertificateRequest = {
+export type ListRequest = {
   keyword?: string;
   state?: "expireSoon" | "expired";
   page?: number;
   perPage?: number;
 };
 
-export const list = async (request: ListCertificateRequest) => {
+export const list = async (request: ListRequest) => {
   const pb = getPocketBase();
 
   const filters: string[] = ["deleted=null"];
@@ -39,7 +39,7 @@ export const listByWorkflowRunId = async (workflowRunId: string) => {
   const list = await pb.collection(COLLECTION_NAME_CERTIFICATE).getFullList<CertificateModel>({
     batch: 65535,
     filter: pb.filter("workflowRunId={:workflowRunId}", { workflowRunId: workflowRunId }),
-    sort: "-created",
+    sort: "created",
     requestKey: null,
   });
 

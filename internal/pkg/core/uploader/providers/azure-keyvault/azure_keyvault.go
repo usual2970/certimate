@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/x509"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
@@ -13,7 +14,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	azcommon "github.com/usual2970/certimate/internal/pkg/vendors/azure-sdk/common"
 )
 
@@ -32,6 +33,7 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
+	logger    *slog.Logger
 	sdkClient *azcertificates.Client
 }
 
@@ -49,13 +51,23 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +115,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 			// 最后对比证书内容
 			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), certItem.ID.Name(), certItem.ID.Version(), nil)
+			u.logger.Debug("sdk request 'keyvault.GetCertificate'", slog.String("request.certificateName", certItem.ID.Name()), slog.String("request.certificateVersion", certItem.ID.Version()), slog.Any("response", getCertificateResp))
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.GetCertificate'")
 			} else {
@@ -111,12 +124,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 					continue
 				}
 
-				if !certs.EqualCertificate(certX509, oldCertX509) {
+				if !certutil.EqualCertificate(certX509, oldCertX509) {
 					continue
 				}
 			}
 
 			// 如果以上信息都一致，则视为已存在相同证书，直接返回
+			u.logger.Info("ssl certificate already exists")
 			return &uploader.UploadResult{
 				CertId:   string(*certItem.ID),
 				CertName: certItem.ID.Name(),
@@ -142,6 +156,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		},
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), certName, importCertificateParams, nil)
+	u.logger.Debug("sdk request 'keyvault.ImportCertificate'", slog.String("request.certificateName", certName), slog.Any("request.parameters", importCertificateParams), slog.Any("response", importCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.ImportCertificate'")
 	}

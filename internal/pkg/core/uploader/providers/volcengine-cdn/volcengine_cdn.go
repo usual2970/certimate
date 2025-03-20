@@ -6,15 +6,16 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 
 	xerrors "github.com/pkg/errors"
-	veCdn "github.com/volcengine/volc-sdk-golang/service/cdn"
+	vecdn "github.com/volcengine/volc-sdk-golang/service/cdn"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 )
 
 type UploaderConfig struct {
@@ -26,7 +27,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *veCdn.CDN
+	logger    *slog.Logger
+	sdkClient *vecdn.CDN
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -36,19 +38,29 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client := veCdn.NewInstance()
+	client := vecdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -58,13 +70,14 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	listCertInfoPageNum := int64(1)
 	listCertInfoPageSize := int64(100)
 	listCertInfoTotal := 0
-	listCertInfoReq := &veCdn.ListCertInfoRequest{
+	listCertInfoReq := &vecdn.ListCertInfoRequest{
 		PageNum:  ve.Int64(listCertInfoPageNum),
 		PageSize: ve.Int64(listCertInfoPageSize),
 		Source:   "volc_cert_center",
 	}
 	for {
 		listCertInfoResp, err := u.sdkClient.ListCertInfo(listCertInfoReq)
+		u.logger.Debug("sdk request 'cdn.ListCertInfo'", slog.Any("request", listCertInfoReq), slog.Any("response", listCertInfoResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ListCertInfo'")
 		}
@@ -75,8 +88,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 				fingerprintSha256 := sha256.Sum256(certX509.Raw)
 				isSameCert := strings.EqualFold(hex.EncodeToString(fingerprintSha1[:]), certDetail.CertFingerprint.Sha1) &&
 					strings.EqualFold(hex.EncodeToString(fingerprintSha256[:]), certDetail.CertFingerprint.Sha256)
-				// 如果已存在相同证书，直接返回已有的证书信息
+				// 如果已存在相同证书，直接返回
 				if isSameCert {
+					u.logger.Info("ssl certificate already exists")
 					return &uploader.UploadResult{
 						CertId:   certDetail.CertId,
 						CertName: certDetail.Desc,
@@ -100,13 +114,14 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 上传新证书
 	// REF: https://www.volcengine.com/docs/6454/1245763
-	addCertificateReq := &veCdn.AddCertificateRequest{
+	addCertificateReq := &vecdn.AddCertificateRequest{
 		Certificate: certPem,
 		PrivateKey:  privkeyPem,
 		Source:      ve.String("volc_cert_center"),
 		Desc:        ve.String(certName),
 	}
 	addCertificateResp, err := u.sdkClient.AddCertificate(addCertificateReq)
+	u.logger.Debug("sdk request 'cdn.AddCertificate'", slog.Any("request", addCertificateResp), slog.Any("response", addCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.AddCertificate'")
 	}

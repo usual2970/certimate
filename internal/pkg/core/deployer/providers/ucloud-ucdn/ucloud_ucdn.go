@@ -3,6 +3,7 @@
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"strconv"
 
 	xerrors "github.com/pkg/errors"
@@ -11,7 +12,6 @@ import (
 	uAuth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ucloud-ussl"
 )
@@ -29,7 +29,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *uCdn.UCDNClient
 	sslUploader uploader.Uploader
 }
@@ -57,14 +57,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -73,9 +78,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 获取加速域名配置
 	// REF: https://docs.ucloud.cn/api/ucdn-api/get_ucdn_domain_config
@@ -85,13 +90,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		getUcdnDomainConfigReq.ProjectId = usdk.String(d.config.ProjectId)
 	}
 	getUcdnDomainConfigResp, err := d.sdkClient.GetUcdnDomainConfig(getUcdnDomainConfigReq)
+	d.logger.Debug("sdk request 'ucdn.GetUcdnDomainConfig'", slog.Any("request", getUcdnDomainConfigReq), slog.Any("response", getUcdnDomainConfigResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ucdn.GetUcdnDomainConfig'")
 	} else if len(getUcdnDomainConfigResp.DomainList) == 0 {
 		return nil, errors.New("no domain found")
 	}
-
-	d.logger.Logt("已查询到加速域名配置", getUcdnDomainConfigResp)
 
 	// 更新 HTTPS 加速配置
 	// REF: https://docs.ucloud.cn/api/ucdn-api/update_ucdn_domain_https_config_v2
@@ -108,11 +112,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		updateUcdnDomainHttpsConfigV2Req.ProjectId = usdk.String(d.config.ProjectId)
 	}
 	updateUcdnDomainHttpsConfigV2Resp, err := d.sdkClient.UpdateUcdnDomainHttpsConfigV2(updateUcdnDomainHttpsConfigV2Req)
+	d.logger.Debug("sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2'", slog.Any("request", updateUcdnDomainHttpsConfigV2Req), slog.Any("response", updateUcdnDomainHttpsConfigV2Resp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2'")
 	}
-
-	d.logger.Logt("已更新 HTTPS 加速配置", updateUcdnDomainHttpsConfigV2Resp)
 
 	return &deployer.DeployResult{}, nil
 }

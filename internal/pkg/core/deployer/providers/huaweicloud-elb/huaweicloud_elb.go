@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
@@ -17,7 +18,6 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
@@ -45,7 +45,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *hcElb.ElbClient
 	sslUploader uploader.Uploader
 }
@@ -73,26 +73,23 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
-	// 上传证书到 SCM
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
-	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
-	}
-
-	d.logger.Logt("certificate file uploaded", upres)
-
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:
@@ -134,11 +131,10 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
+	d.logger.Debug("sdk request 'elb.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateCertificate'")
 	}
-
-	d.logger.Logt("已更新 ELB 证书", updateCertificateResp)
 
 	return nil
 }
@@ -154,11 +150,10 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 		LoadbalancerId: d.config.LoadbalancerId,
 	}
 	showLoadBalancerResp, err := d.sdkClient.ShowLoadBalancer(showLoadBalancerReq)
+	d.logger.Debug("sdk request 'elb.ShowLoadBalancer'", slog.Any("request", showLoadBalancerReq), slog.Any("response", showLoadBalancerResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowLoadBalancer'")
 	}
-
-	d.logger.Logt("已查询到 ELB 负载均衡器", showLoadBalancerResp)
 
 	// 查询监听器列表
 	// REF: https://support.huaweicloud.com/api-elb/ListListeners.html
@@ -173,6 +168,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 			LoadbalancerId: &[]string{showLoadBalancerResp.Loadbalancer.Id},
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		d.logger.Debug("sdk request 'elb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListListeners'")
 		}
@@ -190,20 +186,19 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 		}
 	}
 
-	d.logger.Logt("已查询到 ELB 负载均衡器下的监听器", listenerIds)
-
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 遍历更新监听器证书
 	if len(listenerIds) == 0 {
-		return errors.New("listener not found")
+		d.logger.Info("no listeners to deploy")
 	} else {
+		d.logger.Info("found https listeners to deploy", slog.Any("listenerIds", listenerIds))
 		var errs []error
 
 		for _, listenerId := range listenerIds {
@@ -229,9 +224,9 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, certPem string,
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 更新监听器证书
 	if err := d.modifyListenerCertificate(ctx, d.config.ListenerId, upres.CertId); err != nil {
@@ -248,11 +243,10 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		ListenerId: cloudListenerId,
 	}
 	showListenerResp, err := d.sdkClient.ShowListener(showListenerReq)
+	d.logger.Debug("sdk request 'elb.ShowListener'", slog.Any("request", showListenerReq), slog.Any("response", showListenerResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowListener'")
 	}
-
-	d.logger.Logt("已查询到 ELB 监听器", showListenerResp)
 
 	// 更新监听器
 	// REF: https://support.huaweicloud.com/api-elb/UpdateListener.html
@@ -274,6 +268,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 				Id: &showListenerResp.Listener.SniContainerRefs,
 			}
 			listOldCertificateResp, err := d.sdkClient.ListCertificates(listOldCertificateReq)
+			d.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listOldCertificateReq), slog.Any("response", listOldCertificateResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
 			}
@@ -282,6 +277,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 				CertificateId: cloudCertId,
 			}
 			showNewCertificateResp, err := d.sdkClient.ShowCertificate(showNewCertificateReq)
+			d.logger.Debug("sdk request 'elb.ShowCertificate'", slog.Any("request", showNewCertificateReq), slog.Any("response", showNewCertificateResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowCertificate'")
 			}
@@ -311,11 +307,10 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		}
 	}
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)
+	d.logger.Debug("sdk request 'elb.UpdateListener'", slog.Any("request", updateListenerReq), slog.Any("response", updateListenerResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateListener'")
 	}
-
-	d.logger.Logt("已更新 ELB 监听器", updateListenerResp)
 
 	return nil
 }

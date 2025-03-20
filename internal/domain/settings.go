@@ -14,12 +14,10 @@ type Settings struct {
 }
 
 type NotifyTemplatesSettingsContent struct {
-	NotifyTemplates []NotifyTemplate `json:"notifyTemplates"`
-}
-
-type NotifyTemplate struct {
-	Subject string `json:"subject"`
-	Message string `json:"message"`
+	NotifyTemplates []struct {
+		Subject string `json:"subject"`
+		Message string `json:"message"`
+	} `json:"notifyTemplates"`
 }
 
 type NotifyChannelsSettingsContent map[string]map[string]any
@@ -36,4 +34,9 @@ func (s *Settings) GetNotifyChannelConfig(channel string) (map[string]any, error
 	}
 
 	return v, nil
+}
+
+type PersistenceSettingsContent struct {
+	WorkflowRunsMaxDaysRetention        int `json:"workflowRunsMaxDaysRetention"`
+	ExpiredCertificatesMaxDaysRetention int `json:"expiredCertificatesMaxDaysRetention"`
 }

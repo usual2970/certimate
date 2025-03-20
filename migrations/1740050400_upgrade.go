@@ -7,11 +7,13 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
-		certimateCollection, err := app.FindCollectionByNameOrId("4szxr9x43tpj6np")
-		if err != nil {
-			return err
-		} else {
-			// update field
+		// update collection `certificate`
+		{
+			certimateCollection, err := app.FindCollectionByNameOrId("4szxr9x43tpj6np")
+			if err != nil {
+				return err
+			}
+
 			if err := certimateCollection.Fields.AddMarshaledJSONAt(4, []byte(`{
 				"autogeneratePattern": "",
 				"hidden": false,
@@ -29,7 +31,6 @@ func init() {
 				return err
 			}
 
-			// update field
 			if err := certimateCollection.Fields.AddMarshaledJSONAt(5, []byte(`{
 				"autogeneratePattern": "",
 				"hidden": false,
@@ -47,7 +48,6 @@ func init() {
 				return err
 			}
 
-			// update field
 			if err := certimateCollection.Fields.AddMarshaledJSONAt(7, []byte(`{
 				"autogeneratePattern": "",
 				"hidden": false,
@@ -70,11 +70,13 @@ func init() {
 			}
 		}
 
-		workflowCollection, err := app.FindCollectionByNameOrId("tovyif5ax6j62ur")
-		if err != nil {
-			return err
-		} else {
-			// update field
+		// update collection `workflow`
+		{
+			workflowCollection, err := app.FindCollectionByNameOrId("tovyif5ax6j62ur")
+			if err != nil {
+				return err
+			}
+
 			if err := workflowCollection.Fields.AddMarshaledJSONAt(6, []byte(`{
 				"hidden": false,
 				"id": "awlphkfe",
@@ -88,7 +90,6 @@ func init() {
 				return err
 			}
 
-			// update field
 			if err := workflowCollection.Fields.AddMarshaledJSONAt(7, []byte(`{
 				"hidden": false,
 				"id": "g9ohkk5o",
@@ -107,11 +108,13 @@ func init() {
 			}
 		}
 
-		workflowOutputCollection, err := app.FindCollectionByNameOrId("bqnxb95f2cooowp")
-		if err != nil {
-			return err
-		} else {
-			// update field
+		// update collection `workflow_output`
+		{
+			workflowOutputCollection, err := app.FindCollectionByNameOrId("bqnxb95f2cooowp")
+			if err != nil {
+				return err
+			}
+
 			if err := workflowOutputCollection.Fields.AddMarshaledJSONAt(4, []byte(`{
 				"hidden": false,
 				"id": "c2rm9omj",

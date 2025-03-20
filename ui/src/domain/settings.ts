@@ -3,6 +3,7 @@ export const SETTINGS_NAMES = Object.freeze({
   NOTIFY_TEMPLATES: "notifyTemplates",
   NOTIFY_CHANNELS: "notifyChannels",
   SSL_PROVIDER: "sslProvider",
+  PERSISTENCE: "persistence",
 } as const);
 
 export type SettingsNames = (typeof SETTINGS_NAMES)[keyof typeof SETTINGS_NAMES];
@@ -163,5 +164,12 @@ export type SSLProviderZeroSSLConfig = {
 export type SSLProviderGoogleTrustServicesConfig = {
   eabKid: string;
   eabHmacKey: string;
+};
+// #endregion
+
+// #region Settings: Persistence
+export type PersistenceSettingsContent = {
+  workflowRunsMaxDaysRetention?: number;
+  expiredCertificatesMaxDaysRetention?: number;
 };
 // #endregion

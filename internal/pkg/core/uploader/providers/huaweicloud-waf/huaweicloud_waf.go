@@ -4,20 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
-	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
-	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
-	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
-	hcWaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
-	hcWafModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
-	hcWafRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
+	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	hcwaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
+	hcwafmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
+	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -32,7 +33,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *hcWaf.WafClient
+	logger    *slog.Logger
+	sdkClient *hcwaf.WafClient
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -42,24 +44,30 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(
-		config.AccessKeyId,
-		config.SecretAccessKey,
-		config.Region,
-	)
+	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -70,21 +78,23 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	listCertificatesPage := int32(1)
 	listCertificatesPageSize := int32(100)
 	for {
-		listCertificatesReq := &hcWafModel.ListCertificatesRequest{
+		listCertificatesReq := &hcwafmodel.ListCertificatesRequest{
 			Page:     hwsdk.Int32Ptr(listCertificatesPage),
 			Pagesize: hwsdk.Int32Ptr(listCertificatesPageSize),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
+		u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ListCertificates'")
 		}
 
 		if listCertificatesResp.Items != nil {
 			for _, certItem := range *listCertificatesResp.Items {
-				showCertificateReq := &hcWafModel.ShowCertificateRequest{
+				showCertificateReq := &hcwafmodel.ShowCertificateRequest{
 					CertificateId: certItem.Id,
 				}
 				showCertificateResp, err := u.sdkClient.ShowCertificate(showCertificateReq)
+				u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
 				if err != nil {
 					return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ShowCertificate'")
 				}
@@ -93,16 +103,17 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 				if *showCertificateResp.Content == certPem {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certs.ParseCertificateFromPEM(*showCertificateResp.Content)
+					oldCertX509, err := certutil.ParseCertificateFromPEM(*showCertificateResp.Content)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certs.EqualCertificate(certX509, oldCertX509)
+					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
 				}
 
-				// 如果已存在相同证书，直接返回已有的证书信息
+				// 如果已存在相同证书，直接返回
 				if isSameCert {
+					u.logger.Info("ssl certificate already exists")
 					return &uploader.UploadResult{
 						CertId:   certItem.Id,
 						CertName: certItem.Name,
@@ -124,14 +135,15 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 创建证书
 	// REF: https://support.huaweicloud.com/api-waf/CreateCertificate.html
-	createCertificateReq := &hcWafModel.CreateCertificateRequest{
-		Body: &hcWafModel.CreateCertificateRequestBody{
+	createCertificateReq := &hcwafmodel.CreateCertificateRequest{
+		Body: &hcwafmodel.CreateCertificateRequestBody{
 			Name:    certName,
 			Content: certPem,
 			Key:     privkeyPem,
 		},
 	}
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
+	u.logger.Debug("sdk request 'waf.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.CreateCertificate'")
 	}
@@ -144,7 +156,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcwaf.WafClient, error) {
 	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
 	if err != nil {
 		return nil, err
@@ -159,12 +171,12 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafCli
 		return nil, err
 	}
 
-	hcRegion, err := hcWafRegion.SafeValueOf(region)
+	hcRegion, err := hcwafregion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := hcWaf.WafClientBuilder().
+	hcClient, err := hcwaf.WafClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -172,7 +184,7 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafCli
 		return nil, err
 	}
 
-	client := hcWaf.NewWafClient(hcClient)
+	client := hcwaf.NewWafClient(hcClient)
 	return client, nil
 }
 
@@ -185,12 +197,12 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	hcRegion, err := hciamregion.SafeValueOf(region)
 	if err != nil {
 		return "", err
 	}
 
-	hcClient, err := hcIam.IamClientBuilder().
+	hcClient, err := hciam.IamClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -198,9 +210,9 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	client := hcIam.NewIamClient(hcClient)
+	client := hciam.NewIamClient(hcClient)
 
-	request := &hcIamModel.KeystoneListProjectsRequest{
+	request := &hciammodel.KeystoneListProjectsRequest{
 		Name: &region,
 	}
 	response, err := client.KeystoneListProjects(request)

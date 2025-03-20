@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	bssdk "github.com/usual2970/certimate/internal/pkg/vendors/baishan-sdk"
 )
 
@@ -22,7 +22,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *bssdk.Client
 }
 
@@ -40,13 +40,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -62,12 +66,11 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		Config:  []string{"https"},
 	}
 	getDomainConfigResp, err := d.sdkClient.GetDomainConfig(getDomainConfigReq)
+	d.logger.Debug("sdk request 'baishan.GetDomainConfig'", slog.Any("request", getDomainConfigReq), slog.Any("response", getDomainConfigResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'baishan.GetDomainConfig'")
 	} else if len(getDomainConfigResp.Data) == 0 {
 		return nil, errors.New("domain config not found")
-	} else {
-		d.logger.Logt("已查询到域名配置", getDomainConfigResp)
 	}
 
 	// 新增证书
@@ -78,10 +81,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		Name:        fmt.Sprintf("certimate_%d", time.Now().UnixMilli()),
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
+	d.logger.Debug("sdk request 'baishan.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'baishan.CreateCertificate'")
-	} else {
-		d.logger.Logt("已新增证书", createCertificateResp)
 	}
 
 	// 设置域名配置
@@ -98,10 +100,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		},
 	}
 	setDomainConfigResp, err := d.sdkClient.SetDomainConfig(setDomainConfigReq)
+	d.logger.Debug("sdk request 'baishan.SetDomainConfig'", slog.Any("request", setDomainConfigReq), slog.Any("response", setDomainConfigResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'baishan.SetDomainConfig'")
-	} else {
-		d.logger.Logt("已设置域名配置", setDomainConfigResp)
 	}
 
 	return &deployer.DeployResult{}, nil

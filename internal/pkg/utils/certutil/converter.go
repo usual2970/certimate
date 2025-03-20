@@ -1,4 +1,4 @@
-﻿package certs
+﻿package certutil
 
 import (
 	"crypto/ecdsa"

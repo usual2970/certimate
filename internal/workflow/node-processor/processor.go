@@ -2,21 +2,34 @@ package nodeprocessor
 
 import (
 	"context"
-	"errors"
-	"time"
+	"fmt"
+	"io"
+	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
 )
 
 type NodeProcessor interface {
-	Process(ctx context.Context) error
+	GetLogger() *slog.Logger
+	SetLogger(*slog.Logger)
 
-	GetLog(ctx context.Context) *domain.WorkflowRunLog
-	AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string)
+	Process(ctx context.Context) error
 }
 
-type nodeLogger struct {
-	log *domain.WorkflowRunLog
+type nodeProcessor struct {
+	logger *slog.Logger
+}
+
+func (n *nodeProcessor) GetLogger() *slog.Logger {
+	return n.logger
+}
+
+func (n *nodeProcessor) SetLogger(logger *slog.Logger) {
+	if logger == nil {
+		panic("logger is nil")
+	}
+
+	n.logger = logger
 }
 
 type certificateRepository interface {
@@ -33,32 +46,10 @@ type settingsRepository interface {
 	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
-func newNodeLogger(node *domain.WorkflowNode) *nodeLogger {
-	return &nodeLogger{
-		log: &domain.WorkflowRunLog{
-			NodeId:   node.Id,
-			NodeName: node.Name,
-			Records:  make([]domain.WorkflowRunLogRecord, 0),
-		},
+func newNodeProcessor(node *domain.WorkflowNode) *nodeProcessor {
+	return &nodeProcessor{
+		logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
 	}
-}
-
-func (l *nodeLogger) GetLog(ctx context.Context) *domain.WorkflowRunLog {
-	return l.log
-}
-
-func (l *nodeLogger) AppendLogRecord(ctx context.Context, level domain.WorkflowRunLogLevel, content string, err ...string) {
-	record := domain.WorkflowRunLogRecord{
-		Time:    time.Now().UTC().Format(time.RFC3339),
-		Level:   level,
-		Content: content,
-	}
-	if len(err) > 0 {
-		record.Error = err[0]
-		l.log.Error = err[0]
-	}
-
-	l.log.Records = append(l.log.Records, record)
 }
 
 func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
@@ -80,7 +71,8 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 	case domain.WorkflowNodeTypeExecuteFailure:
 		return NewExecuteFailureNode(node), nil
 	}
-	return nil, errors.New("not implemented")
+
+	return nil, fmt.Errorf("supported node type: %s", string(node.Type))
 }
 
 func getContextWorkflowId(ctx context.Context) string {

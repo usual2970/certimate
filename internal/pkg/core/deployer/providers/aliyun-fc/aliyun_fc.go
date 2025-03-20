@@ -3,6 +3,7 @@
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -12,7 +13,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 )
 
 type DeployerConfig struct {
@@ -23,7 +23,6 @@ type DeployerConfig struct {
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
-	// 零值时默认为 "3.0"。
 	ServiceVersion string `json:"serviceVersion"`
 	// 自定义域名（不支持泛域名）。
 	Domain string `json:"domain"`
@@ -31,7 +30,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config     *DeployerConfig
-	logger     logger.Logger
+	logger     *slog.Logger
 	sdkClients *wSdkClients
 }
 
@@ -54,19 +53,23 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:     config,
-		logger:     logger.NewNilLogger(),
+		logger:     slog.Default(),
 		sdkClients: clients,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	switch d.config.ServiceVersion {
-	case "", "3.0":
+	case "3.0":
 		if err := d.deployToFC3(ctx, certPem, privkeyPem); err != nil {
 			return nil, err
 		}
@@ -87,10 +90,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-getcustomdomain
 	getCustomDomainResp, err := d.sdkClients.fc3.GetCustomDomain(tea.String(d.config.Domain))
+	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
-	} else {
-		d.logger.Logt("已获取自定义域名", getCustomDomainResp)
 	}
 
 	// 更新自定义域名
@@ -107,10 +109,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 		},
 	}
 	updateCustomDomainResp, err := d.sdkClients.fc3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
-	} else {
-		d.logger.Logt("已更新自定义域名", updateCustomDomainResp)
 	}
 
 	return nil
@@ -120,10 +121,9 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-getcustomdomain
 	getCustomDomainResp, err := d.sdkClients.fc2.GetCustomDomain(tea.String(d.config.Domain))
+	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
-	} else {
-		d.logger.Logt("已获取自定义域名", getCustomDomainResp)
 	}
 
 	// 更新自定义域名
@@ -138,10 +138,9 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,
 	}
 	updateCustomDomainResp, err := d.sdkClients.fc2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
-	} else {
-		d.logger.Logt("已更新自定义域名", updateCustomDomainResp)
 	}
 
 	return nil

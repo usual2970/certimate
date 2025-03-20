@@ -2,12 +2,12 @@
 
 import (
 	"context"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	edgsdk "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7"
 	edgsdkDtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
@@ -23,7 +23,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *edgsdk.EdgioClient
 }
 
@@ -41,19 +41,23 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 提取 Edgio 所需的服务端证书和中间证书内容
-	privateCertPem, intermediateCertPem, err := certs.ExtractCertificatesFromPEM(certPem)
+	privateCertPem, intermediateCertPem, err := certutil.ExtractCertificatesFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -67,11 +71,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		PrivateKey:       privkeyPem,
 	}
 	uploadTlsCertResp, err := d.sdkClient.UploadTlsCert(uploadTlsCertReq)
+	d.logger.Debug("sdk request 'edgio.UploadTlsCert'", slog.Any("request", uploadTlsCertReq), slog.Any("response", uploadTlsCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'edgio.UploadTlsCert'")
 	}
-
-	d.logger.Logt("已上传 TLS 证书", uploadTlsCertResp)
 
 	return &deployer.DeployResult{}, nil
 }

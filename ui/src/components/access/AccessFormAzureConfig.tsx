@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { AutoComplete, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -92,7 +92,11 @@ const AccessFormAzureConfig = ({ form: formInst, formName, disabled, initialValu
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.azure_cloud_name.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.azure_cloud_name.placeholder")} />
+        <AutoComplete
+          options={["public", "azureusgovernment", "azurechina"].map((value) => ({ value }))}
+          placeholder={t("access.form.azure_cloud_name.placeholder")}
+          filterOption={(inputValue, option) => option!.value.toLowerCase().includes(inputValue.toLowerCase())}
+        />
       </Form.Item>
     </Form>
   );

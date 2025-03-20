@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
@@ -21,6 +22,7 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
+	logger    *slog.Logger
 	sdkClient *gsslcerts.Service
 }
 
@@ -38,8 +40,18 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
+}
+
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
 }
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
@@ -57,6 +69,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		ValidateRootCA: false,
 	}
 	createCertificateResp, err := u.sdkClient.Create(context.TODO(), createCertificateReq)
+	u.logger.Debug("sdk request 'sslcerts.Create'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'sslcerts.Create'")
 	}

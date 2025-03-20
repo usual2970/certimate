@@ -3,11 +3,11 @@
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cachefly-sdk"
 )
 
@@ -18,7 +18,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *cfsdk.Client
 }
 
@@ -36,13 +36,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -53,10 +57,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		CertificateKey: privkeyPem,
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
+	d.logger.Debug("sdk request 'cachefly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cachefly.CreateCertificate'")
-	} else {
-		d.logger.Logt("已上传证书", createCertificateResp)
 	}
 
 	return &deployer.DeployResult{}, nil

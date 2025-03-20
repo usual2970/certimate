@@ -3,14 +3,13 @@
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log/slog"
 	"strings"
 
 	bpCdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/byteplus-cdn"
 )
@@ -26,7 +25,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *bpCdn.CDN
 	sslUploader uploader.Uploader
 }
@@ -52,14 +51,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -68,9 +72,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	domains := make([]string, 0)
 	if strings.HasPrefix(d.config.Domain, "*.") {
@@ -80,6 +84,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			CertId: upres.CertId,
 		}
 		describeCertConfigResp, err := d.sdkClient.DescribeCertConfig(describeCertConfigReq)
+		d.logger.Debug("sdk request 'cdn.DescribeCertConfig'", slog.Any("request", describeCertConfigReq), slog.Any("response", describeCertConfigResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeCertConfig'")
 		}
@@ -99,6 +104,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		if len(domains) == 0 {
 			if len(describeCertConfigResp.Result.SpecifiedCertConfig) > 0 {
 				// 所有可关联的域名都配置了该证书，跳过部署
+				d.logger.Info("no domains to deploy")
 			} else {
 				return nil, errors.New("domain not found")
 			}
@@ -118,10 +124,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				Domain: domain,
 			}
 			batchDeployCertResp, err := d.sdkClient.BatchDeployCert(batchDeployCertReq)
+			d.logger.Debug("sdk request 'cdn.BatchDeployCert'", slog.Any("request", batchDeployCertReq), slog.Any("response", batchDeployCertResp))
 			if err != nil {
 				errs = append(errs, err)
-			} else {
-				d.logger.Logt(fmt.Sprintf("已关联证书到域名 %s", domain), batchDeployCertResp)
 			}
 		}
 

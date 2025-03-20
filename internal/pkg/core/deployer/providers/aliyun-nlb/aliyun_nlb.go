@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -12,7 +13,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 )
@@ -36,7 +36,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *aliyunNlb.Client
 	sslUploader uploader.Uploader
 }
@@ -60,14 +60,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -76,9 +81,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -110,11 +115,10 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
+	d.logger.Debug("sdk request 'nlb.GetLoadBalancerAttribute'", slog.Any("request", getLoadBalancerAttributeReq), slog.Any("response", getLoadBalancerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetLoadBalancerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 NLB 负载均衡实例", getLoadBalancerAttributeResp)
 
 	// 查询 TCPSSL 监听列表
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-listlisteners
@@ -129,6 +133,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			ListenerProtocol: tea.String("TCPSSL"),
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		d.logger.Debug("sdk request 'nlb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'nlb.ListListeners'")
 		}
@@ -146,12 +151,11 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		}
 	}
 
-	d.logger.Logt("已查询到 NLB 负载均衡实例下的全部 TCPSSL 监听", listenerIds)
-
 	// 遍历更新监听证书
 	if len(listenerIds) == 0 {
-		return errors.New("listener not found")
+		d.logger.Info("no nlb listeners to deploy")
 	} else {
+		d.logger.Info("found tcpssl listeners to deploy", slog.Any("listenerIds", listenerIds))
 		var errs []error
 
 		for _, listenerId := range listenerIds {
@@ -188,11 +192,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		ListenerId: tea.String(cloudListenerId),
 	}
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
+	d.logger.Debug("sdk request 'nlb.GetListenerAttribute'", slog.Any("request", getListenerAttributeReq), slog.Any("response", getListenerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetListenerAttribute'")
 	}
-
-	d.logger.Logt("已查询到 NLB 监听配置", getListenerAttributeResp)
 
 	// 修改监听的属性
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-updatelistenerattribute
@@ -201,11 +204,10 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		CertificateIds: []*string{tea.String(cloudCertId)},
 	}
 	updateListenerAttributeResp, err := d.sdkClient.UpdateListenerAttribute(updateListenerAttributeReq)
+	d.logger.Debug("sdk request 'nlb.UpdateListenerAttribute'", slog.Any("request", updateListenerAttributeReq), slog.Any("response", updateListenerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.UpdateListenerAttribute'")
 	}
-
-	d.logger.Logt("已更新 NLB 监听配置", updateListenerAttributeResp)
 
 	return nil
 }

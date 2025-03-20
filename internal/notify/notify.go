@@ -9,7 +9,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	"github.com/usual2970/certimate/internal/pkg/utils/maps"
+	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -62,7 +62,7 @@ func getEnabledNotifiers() ([]notifier.Notifier, error) {
 
 	notifiers := make([]notifier.Notifier, 0)
 	for k, v := range rs {
-		if !maps.GetValueAsBool(v, "enabled") {
+		if !maputil.GetBool(v, "enabled") {
 			continue
 		}
 

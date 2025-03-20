@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"log/slog"
 	"strings"
 
 	xerrors "github.com/pkg/errors"
@@ -10,7 +11,6 @@ import (
 	veSession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
 )
@@ -28,7 +28,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *veDcdn.DCDN
 	sslUploader uploader.Uploader
 }
@@ -56,14 +56,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -72,9 +77,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// "*.example.com" → ".example.com"，适配火山引擎 DCDN 要求的泛域名格式
 	domain := strings.TrimPrefix(d.config.Domain, "*")
@@ -87,10 +92,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		DomainNames: ve.StringSlice([]string{domain}),
 	}
 	createCertBindResp, err := d.sdkClient.CreateCertBind(createCertBindReq)
+	d.logger.Debug("sdk request 'dcdn.CreateCertBind'", slog.Any("request", createCertBindReq), slog.Any("response", createCertBindResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'dcdn.CreateCertBind'")
-	} else {
-		d.logger.Logt("已绑定证书", createCertBindResp)
 	}
 
 	return &deployer.DeployResult{}, nil

@@ -8,7 +8,7 @@
   "dashboard.statistics.enabled_workflows": "已启用工作流",
   "dashboard.statistics.unit": "个",
 
-  "dashboard.latest_workflow_run": "最近执行的工作流",
+  "dashboard.latest_workflow_runs": "最近执行的工作流",
 
   "dashboard.quick_actions": "快捷操作",
   "dashboard.quick_actions.create_workflow": "新建工作流",

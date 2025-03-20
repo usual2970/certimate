@@ -4,14 +4,14 @@ import { type WorkflowRunModel } from "@/domain/workflowRun";
 
 import { COLLECTION_NAME_WORKFLOW_RUN, getPocketBase } from "./_pocketbase";
 
-export type ListWorkflowRunsRequest = {
+export type ListRequest = {
   workflowId?: string;
   page?: number;
   perPage?: number;
   expand?: boolean;
 };
 
-export const list = async (request: ListWorkflowRunsRequest) => {
+export const list = async (request: ListRequest) => {
   const pb = getPocketBase();
 
   const filters: string[] = [];

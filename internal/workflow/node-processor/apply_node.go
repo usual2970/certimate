@@ -9,13 +9,13 @@ import (
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
 type applyNode struct {
 	node *domain.WorkflowNode
-	*nodeLogger
+	*nodeProcessor
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -23,8 +23,8 @@ type applyNode struct {
 
 func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
-		node:       node,
-		nodeLogger: newNodeLogger(node),
+		node:          node,
+		nodeProcessor: newNodeProcessor(node),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -32,40 +32,40 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "进入申请证书节点")
+	n.logger.Info("ready to apply ...")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
 	if err != nil && !domain.IsRecordNotFoundError(err) {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "查询申请记录失败", err.Error())
 		return err
 	}
 
 	// 检测是否可以跳过本次执行
 	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, skipReason)
+		n.logger.Info(fmt.Sprintf("skip this application, because %s", skipReason))
 		return nil
+	} else if skipReason != "" {
+		n.logger.Info(fmt.Sprintf("continue to apply, because %s", skipReason))
 	}
 
 	// 初始化申请器
 	applicant, err := applicant.NewWithApplyNode(n.node)
 	if err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "获取申请对象失败", err.Error())
+		n.logger.Warn("failed to create applicant provider")
 		return err
 	}
 
 	// 申请证书
 	applyResult, err := applicant.Apply()
 	if err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "申请失败", err.Error())
+		n.logger.Warn("failed to apply")
 		return err
 	}
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "申请成功")
 
 	// 解析证书并生成实体
-	certX509, err := certs.ParseCertificateFromPEM(applyResult.CertificateFullChain)
+	certX509, err := certutil.ParseCertificateFromPEM(applyResult.CertificateFullChain)
 	if err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "解析证书失败", err.Error())
+		n.logger.Warn("failed to parse certificate, may be the CA responded error")
 		return err
 	}
 	certificate := &domain.Certificate{
@@ -89,10 +89,11 @@ func (n *applyNode) Process(ctx context.Context) error {
 		Outputs:    n.node.Outputs,
 	}
 	if _, err := n.outputRepo.SaveWithCertificate(ctx, output, certificate); err != nil {
-		n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelError, "保存申请记录失败", err.Error())
+		n.logger.Warn("failed to save node output")
 		return err
 	}
-	n.AppendLogRecord(ctx, domain.WorkflowRunLogLevelInfo, "保存申请记录成功")
+
+	n.logger.Info("apply completed")
 
 	return nil
 }
@@ -103,19 +104,19 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 		currentNodeConfig := n.node.GetConfigForApply()
 		lastNodeConfig := lastOutput.Node.GetConfigForApply()
 		if currentNodeConfig.Domains != lastNodeConfig.Domains {
-			return false, "配置项变化：域名"
+			return false, "the configuration item 'Domains' changed"
 		}
 		if currentNodeConfig.ContactEmail != lastNodeConfig.ContactEmail {
-			return false, "配置项变化：联系邮箱"
+			return false, "the configuration item 'ContactEmail' changed"
 		}
 		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
-			return false, "配置项变化：DNS 提供商授权"
+			return false, "the configuration item 'ProviderAccessId' changed"
 		}
 		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
-			return false, "配置项变化：DNS 提供商参数"
+			return false, "the configuration item 'ProviderConfig' changed"
 		}
 		if currentNodeConfig.KeyAlgorithm != lastNodeConfig.KeyAlgorithm {
-			return false, "配置项变化：数字签名算法"
+			return false, "the configuration item 'KeyAlgorithm' changed"
 		}
 
 		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
@@ -123,7 +124,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("已申请过证书，且证书尚未临近过期（尚余 %d 天过期，不足 %d 天时续期），跳过此次申请", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

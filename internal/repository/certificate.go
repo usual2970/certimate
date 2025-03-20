@@ -67,11 +67,9 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 		dbx.Params{"workflowNodeId": workflowNodeId},
 	)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domain.ErrRecordNotFound
-		}
 		return nil, err
 	}
+
 	if len(records) == 0 {
 		return nil, domain.ErrRecordNotFound
 	}
@@ -123,6 +121,29 @@ func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Ce
 	certificate.CreatedAt = record.GetDateTime("created").Time()
 	certificate.UpdatedAt = record.GetDateTime("updated").Time()
 	return certificate, nil
+}
+
+func (r *CertificateRepository) DeleteWhere(ctx context.Context, exprs ...dbx.Expression) (int, error) {
+	records, err := app.GetApp().FindAllRecords(domain.CollectionNameCertificate, exprs...)
+	if err != nil {
+		return 0, nil
+	}
+
+	var ret int
+	var errs []error
+	for _, record := range records {
+		if err := app.GetApp().Delete(record); err != nil {
+			errs = append(errs, err)
+		} else {
+			ret++
+		}
+	}
+
+	if len(errs) > 0 {
+		return ret, errors.Join(errs...)
+	}
+
+	return ret, nil
 }
 
 func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.Certificate, error) {

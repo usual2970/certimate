@@ -10,6 +10,7 @@ import Settings from "./pages/settings/Settings";
 import SettingsAccount from "./pages/settings/SettingsAccount";
 import SettingsNotification from "./pages/settings/SettingsNotification";
 import SettingsPassword from "./pages/settings/SettingsPassword";
+import SettingsPersistence from "./pages/settings/SettingsPersistence";
 import SettingsSSLProvider from "./pages/settings/SettingsSSLProvider";
 import WorkflowDetail from "./pages/workflows/WorkflowDetail";
 import WorkflowList from "./pages/workflows/WorkflowList";
@@ -63,6 +64,10 @@ export const router = createHashRouter([
           {
             path: "/settings/ssl-provider",
             element: <SettingsSSLProvider />,
+          },
+          {
+            path: "/settings/persistence",
+            element: <SettingsPersistence />,
           },
         ],
       },

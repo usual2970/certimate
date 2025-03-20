@@ -11,11 +11,13 @@ import (
 	"time"
 
 	"github.com/go-acme/lego/v4/certcrypto"
+	"github.com/pocketbase/dbx"
+
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/domain/dtos"
 	"github.com/usual2970/certimate/internal/notify"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -27,21 +29,29 @@ const (
 type certificateRepository interface {
 	ListExpireSoon(ctx context.Context) ([]*domain.Certificate, error)
 	GetById(ctx context.Context, id string) (*domain.Certificate, error)
+	DeleteWhere(ctx context.Context, exprs ...dbx.Expression) (int, error)
+}
+
+type settingsRepository interface {
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 type CertificateService struct {
-	certRepo certificateRepository
+	certificateRepo certificateRepository
+	settingsRepo    settingsRepository
 }
 
-func NewCertificateService(certRepo certificateRepository) *CertificateService {
+func NewCertificateService(certificateRepo certificateRepository, settingsRepo settingsRepository) *CertificateService {
 	return &CertificateService{
-		certRepo: certRepo,
+		certificateRepo: certificateRepo,
+		settingsRepo:    settingsRepo,
 	}
 }
 
 func (s *CertificateService) InitSchedule(ctx context.Context) error {
+	// 每日发送过期证书提醒
 	app.GetScheduler().MustAdd("certificateExpireSoonNotify", "0 0 * * *", func() {
-		certificates, err := s.certRepo.ListExpireSoon(context.Background())
+		certificates, err := s.certificateRepo.ListExpireSoon(context.Background())
 		if err != nil {
 			app.GetLogger().Error("failed to get certificates which expire soon", "err", err)
 			return
@@ -56,11 +66,37 @@ func (s *CertificateService) InitSchedule(ctx context.Context) error {
 			app.GetLogger().Error("failed to send notification", "err", err)
 		}
 	})
+
+	// 每日清理过期证书
+	app.GetScheduler().MustAdd("certificateExpiredCleanup", "0 0 * * *", func() {
+		settings, err := s.settingsRepo.GetByName(ctx, "persistence")
+		if err != nil {
+			app.GetLogger().Error("failed to get persistence settings", "err", err)
+			return
+		}
+
+		var settingsContent *domain.PersistenceSettingsContent
+		json.Unmarshal([]byte(settings.Content), &settingsContent)
+		if settingsContent != nil && settingsContent.ExpiredCertificatesMaxDaysRetention != 0 {
+			ret, err := s.certificateRepo.DeleteWhere(
+				context.Background(),
+				dbx.NewExp(fmt.Sprintf("expireAt<DATETIME('now', '-%d days')", settingsContent.ExpiredCertificatesMaxDaysRetention)),
+			)
+			if err != nil {
+				app.GetLogger().Error("failed to delete expired certificates", "err", err)
+			}
+
+			if ret > 0 {
+				app.GetLogger().Info(fmt.Sprintf("cleanup %d expired certificates", ret))
+			}
+		}
+	})
+
 	return nil
 }
 
 func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.CertificateArchiveFileReq) (*dtos.CertificateArchiveFileResp, error) {
-	certificate, err := s.certRepo.GetById(ctx, req.CertificateId)
+	certificate, err := s.certificateRepo.GetById(ctx, req.CertificateId)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +145,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const pfxPassword = "certimate"
 
-			certPFX, err := certs.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
+			certPFX, err := certutil.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -147,7 +183,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const jksPassword = "certimate"
 
-			certJKS, err := certs.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
+			certJKS, err := certutil.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -187,7 +223,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 }
 
 func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error) {
-	certX509, err := certs.ParseCertificateFromPEM(req.Certificate)
+	certX509, err := certutil.ParseCertificateFromPEM(req.Certificate)
 	if err != nil {
 		return nil, err
 	} else if time.Now().After(certX509.NotAfter) {

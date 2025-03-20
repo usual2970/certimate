@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 	tcClb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb/v20180317"
@@ -12,7 +13,6 @@ import (
 	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -39,7 +39,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
@@ -71,14 +71,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -87,9 +92,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
@@ -142,11 +147,10 @@ func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId 
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", d.config.LoadbalancerId, d.config.ListenerId, d.config.Domain)})
 	}
 	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
+	d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
 	}
-
-	d.logger.Logt("已部署证书到云资源实例", deployCertificateInstanceResp.Response)
 
 	return nil
 }
@@ -162,6 +166,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	describeListenersReq := tcClb.NewDescribeListenersRequest()
 	describeListenersReq.LoadBalancerId = common.StringPtr(d.config.LoadbalancerId)
 	describeListenersResp, err := d.sdkClients.clb.DescribeListeners(describeListenersReq)
+	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
 	} else {
@@ -176,12 +181,11 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		}
 	}
 
-	d.logger.Logt("已查询到负载均衡器下的监听器", listenerIds)
-
 	// 遍历更新监听器证书
 	if len(listenerIds) == 0 {
-		return errors.New("listener not found")
+		d.logger.Info("no clb listeners to deploy")
 	} else {
+		d.logger.Info("found https/tcpssl/quic listeners to deploy", slog.Any("listenerIds", listenerIds))
 		var errs []error
 
 		for _, listenerId := range listenerIds {
@@ -236,11 +240,10 @@ func (d *DeployerProvider) deployToRuleDomain(ctx context.Context, cloudCertId s
 		CertId:  common.StringPtr(cloudCertId),
 	}
 	modifyDomainAttributesResp, err := d.sdkClients.clb.ModifyDomainAttributes(modifyDomainAttributesReq)
+	d.logger.Debug("sdk request 'clb.ModifyDomainAttributes'", slog.Any("request", modifyDomainAttributesReq), slog.Any("response", modifyDomainAttributesResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyDomainAttributes'")
 	}
-
-	d.logger.Logt("已修改七层监听器转发规则的域名级别属性", modifyDomainAttributesResp.Response)
 
 	return nil
 }
@@ -252,14 +255,12 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	describeListenersReq.LoadBalancerId = common.StringPtr(cloudLoadbalancerId)
 	describeListenersReq.ListenerIds = common.StringPtrs([]string{cloudListenerId})
 	describeListenersResp, err := d.sdkClients.clb.DescribeListeners(describeListenersReq)
+	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
-	}
-	if len(describeListenersResp.Response.Listeners) == 0 {
+	} else if len(describeListenersResp.Response.Listeners) == 0 {
 		return errors.New("listener not found")
 	}
-
-	d.logger.Logt("已查询到监听器属性", describeListenersResp.Response)
 
 	// 修改监听器属性
 	// REF: https://cloud.tencent.com/document/product/214/30681
@@ -274,11 +275,10 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		modifyListenerReq.Certificate.SSLMode = common.StringPtr("UNIDIRECTIONAL")
 	}
 	modifyListenerResp, err := d.sdkClients.clb.ModifyListener(modifyListenerReq)
+	d.logger.Debug("sdk request 'clb.ModifyListener'", slog.Any("request", modifyListenerReq), slog.Any("response", modifyListenerResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyListener'")
 	}
-
-	d.logger.Logt("已修改监听器属性", modifyListenerResp.Response)
 
 	return nil
 }

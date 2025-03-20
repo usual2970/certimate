@@ -1,9 +1,7 @@
-﻿package maps
+﻿package maputil
 
 import (
 	"strconv"
-
-	mapstructure "github.com/go-viper/mapstructure/v2"
 )
 
 // 以字符串形式从字典中获取指定键的值。
@@ -14,8 +12,8 @@ import (
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在或者值的类型不是字符串，则返回空字符串。
-func GetValueAsString(dict map[string]any, key string) string {
-	return GetValueOrDefaultAsString(dict, key, "")
+func GetString(dict map[string]any, key string) string {
+	return GetOrDefaultString(dict, key, "")
 }
 
 // 以字符串形式从字典中获取指定键的值。
@@ -27,7 +25,7 @@ func GetValueAsString(dict map[string]any, key string) string {
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在、值的类型不是字符串或者值为零值，则返回默认值。
-func GetValueOrDefaultAsString(dict map[string]any, key string, defaultValue string) string {
+func GetOrDefaultString(dict map[string]any, key string, defaultValue string) string {
 	if dict == nil {
 		return defaultValue
 	}
@@ -51,8 +49,8 @@ func GetValueOrDefaultAsString(dict map[string]any, key string, defaultValue str
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在或者值的类型不是 32 位整数，则返回 0。
-func GetValueAsInt32(dict map[string]any, key string) int32 {
-	return GetValueOrDefaultAsInt32(dict, key, 0)
+func GetInt32(dict map[string]any, key string) int32 {
+	return GetOrDefaultInt32(dict, key, 0)
 }
 
 // 以 32 位整数形式从字典中获取指定键的值。
@@ -64,7 +62,7 @@ func GetValueAsInt32(dict map[string]any, key string) int32 {
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在、值的类型不是 32 位整数或者值为零值，则返回默认值。
-func GetValueOrDefaultAsInt32(dict map[string]any, key string, defaultValue int32) int32 {
+func GetOrDefaultInt32(dict map[string]any, key string, defaultValue int32) int32 {
 	if dict == nil {
 		return defaultValue
 	}
@@ -97,8 +95,8 @@ func GetValueOrDefaultAsInt32(dict map[string]any, key string, defaultValue int3
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在或者值的类型不是 64 位整数，则返回 0。
-func GetValueAsInt64(dict map[string]any, key string) int64 {
-	return GetValueOrDefaultAsInt64(dict, key, 0)
+func GetInt64(dict map[string]any, key string) int64 {
+	return GetOrDefaultInt64(dict, key, 0)
 }
 
 // 以 64 位整数形式从字典中获取指定键的值。
@@ -110,7 +108,7 @@ func GetValueAsInt64(dict map[string]any, key string) int64 {
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在、值的类型不是 64 位整数或者值为零值，则返回默认值。
-func GetValueOrDefaultAsInt64(dict map[string]any, key string, defaultValue int64) int64 {
+func GetOrDefaultInt64(dict map[string]any, key string, defaultValue int64) int64 {
 	if dict == nil {
 		return defaultValue
 	}
@@ -149,8 +147,8 @@ func GetValueOrDefaultAsInt64(dict map[string]any, key string, defaultValue int6
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在或者值的类型不是布尔，则返回 false。
-func GetValueAsBool(dict map[string]any, key string) bool {
-	return GetValueOrDefaultAsBool(dict, key, false)
+func GetBool(dict map[string]any, key string) bool {
+	return GetOrDefaultBool(dict, key, false)
 }
 
 // 以布尔形式从字典中获取指定键的值。
@@ -162,7 +160,7 @@ func GetValueAsBool(dict map[string]any, key string) bool {
 //
 // 出参：
 //   - 字典中键对应的值。如果指定键不存在或者值的类型不是布尔，则返回默认值。
-func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool) bool {
+func GetOrDefaultBool(dict map[string]any, key string, defaultValue bool) bool {
 	if dict == nil {
 		return defaultValue
 	}
@@ -181,29 +179,4 @@ func GetValueOrDefaultAsBool(dict map[string]any, key string, defaultValue bool)
 	}
 
 	return defaultValue
-}
-
-// 将字典填充到指定类型的结构体。
-// 与 [json.Unmarshal] 类似，但传入的是一个 [map[string]interface{}] 对象而非 JSON 格式的字符串。
-//
-// 入参：
-//   - dict: 字典。
-//   - output: 结构体指针。
-//
-// 出参：
-//   - 错误信息。如果填充失败，则返回错误信息。
-func Populate(dict map[string]any, output any) error {
-	config := &mapstructure.DecoderConfig{
-		Metadata:         nil,
-		Result:           output,
-		WeaklyTypedInput: true,
-		TagName:          "json",
-	}
-
-	decoder, err := mapstructure.NewDecoder(config)
-	if err != nil {
-		return err
-	}
-
-	return decoder.Decode(dict)
 }

@@ -3,8 +3,10 @@ package dispatcher
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/pkg/logging"
 	nodes "github.com/usual2970/certimate/internal/workflow/node-processor"
 )
 
@@ -12,24 +14,23 @@ type workflowInvoker struct {
 	workflowId      string
 	workflowContent *domain.WorkflowNode
 	runId           string
-	runLogs         []domain.WorkflowRunLog
+	logs            []domain.WorkflowLog
 
-	workflowRunRepo workflowRunRepository
+	workflowLogRepo workflowLogRepository
 }
 
-func newWorkflowInvokerWithData(workflowRunRepo workflowRunRepository, data *WorkflowWorkerData) *workflowInvoker {
+func newWorkflowInvokerWithData(workflowLogRepo workflowLogRepository, data *WorkflowWorkerData) *workflowInvoker {
 	if data == nil {
 		panic("worker data is nil")
 	}
 
-	// TODO: 待优化，日志与执行解耦
 	return &workflowInvoker{
 		workflowId:      data.WorkflowId,
 		workflowContent: data.WorkflowContent,
 		runId:           data.RunId,
-		runLogs:         make([]domain.WorkflowRunLog, 0),
+		logs:            make([]domain.WorkflowLog, 0),
 
-		workflowRunRepo: workflowRunRepo,
+		workflowLogRepo: workflowLogRepo,
 	}
 }
 
@@ -39,8 +40,8 @@ func (w *workflowInvoker) Invoke(ctx context.Context) error {
 	return w.processNode(ctx, w.workflowContent)
 }
 
-func (w *workflowInvoker) GetLogs() []domain.WorkflowRunLog {
-	return w.runLogs
+func (w *workflowInvoker) GetLogs() domain.WorkflowLogs {
+	return w.logs
 }
 
 func (w *workflowInvoker) processNode(ctx context.Context, node *domain.WorkflowNode) error {
@@ -68,21 +69,34 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 			if current.Type != domain.WorkflowNodeTypeBranch && current.Type != domain.WorkflowNodeTypeExecuteResultBranch {
 				processor, procErr = nodes.GetProcessor(current)
 				if procErr != nil {
-					break
+					panic(procErr)
 				}
+
+				processor.SetLogger(slog.New(logging.NewHookHandler(&logging.HookHandlerOptions{
+					Level: slog.LevelDebug,
+					WriteFunc: func(ctx context.Context, record *logging.Record) error {
+						log := domain.WorkflowLog{}
+						log.WorkflowId = w.workflowId
+						log.RunId = w.runId
+						log.NodeId = current.Id
+						log.NodeName = current.Name
+						log.Timestamp = record.Time.UnixMilli()
+						log.Level = record.Level.String()
+						log.Message = record.Message
+						log.Data = record.Data
+						log.CreatedAt = record.Time
+						if _, err := w.workflowLogRepo.Save(ctx, &log); err != nil {
+							return err
+						}
+
+						w.logs = append(w.logs, log)
+						return nil
+					},
+				})))
 
 				procErr = processor.Process(ctx)
-				log := processor.GetLog(ctx)
-				if log != nil {
-					w.runLogs = append(w.runLogs, *log)
-
-					// TODO: 待优化，把 /pkg/core/* 包下的输出写入到 DEBUG 级别的日志中
-					if run, err := w.workflowRunRepo.GetById(ctx, w.runId); err == nil {
-						run.Logs = w.runLogs
-						w.workflowRunRepo.Save(ctx, run)
-					}
-				}
 				if procErr != nil {
+					processor.GetLogger().Error(procErr.Error())
 					break
 				}
 			}

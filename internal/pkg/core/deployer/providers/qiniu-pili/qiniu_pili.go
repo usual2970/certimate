@@ -2,12 +2,12 @@
 
 import (
 	"context"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/pili"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/qiniu-sslcert"
 )
@@ -25,7 +25,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *pili.Manager
 	sslUploader uploader.Uploader
 }
@@ -49,14 +49,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   manager,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -65,9 +70,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	// 修改域名证书配置
 	// REF: https://developer.qiniu.com/pili/9910/pili-service-sdk#66
@@ -77,11 +82,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		CertName: upres.CertName,
 	}
 	err = d.sdkClient.SetDomainCert(context.TODO(), setDomainCertReq)
+	d.logger.Debug("sdk request 'pili.SetDomainCert'", slog.Any("request", setDomainCertReq))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'pili.SetDomainCert'")
 	}
-
-	d.logger.Logt("已修改域名证书配置")
 
 	return &deployer.DeployResult{}, nil
 }

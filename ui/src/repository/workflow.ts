@@ -3,14 +3,14 @@ import { type RecordSubscription } from "pocketbase";
 import { type WorkflowModel } from "@/domain/workflow";
 import { COLLECTION_NAME_WORKFLOW, getPocketBase } from "./_pocketbase";
 
-export type ListWorkflowRequest = {
+export type ListRequest = {
   keyword?: string;
   enabled?: boolean;
   page?: number;
   perPage?: number;
 };
 
-export const list = async (request: ListWorkflowRequest) => {
+export const list = async (request: ListRequest) => {
   const pb = getPocketBase();
 
   const filters: string[] = [];

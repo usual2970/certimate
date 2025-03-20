@@ -18,7 +18,7 @@ const SettingsAccount = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const formSchema = z.object({
-    username: z.string({ message: "settings.account.form.email.placeholder" }).email({ message: t("common.errmsg.email_invalid") }),
+    username: z.string({ message: t("settings.account.form.email.placeholder") }).email({ message: t("common.errmsg.email_invalid") }),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const {

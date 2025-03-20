@@ -2,7 +2,7 @@
 import { create } from "zustand";
 
 import { type AccessModel } from "@/domain/access";
-import { list as listAccess, remove as removeAccess, save as saveAccess } from "@/repository/access";
+import { list as listAccesses, remove as removeAccess, save as saveAccess } from "@/repository/access";
 
 export interface AccessesState {
   accesses: AccessModel[];
@@ -24,7 +24,7 @@ export const useAccessesStore = create<AccessesState>((set) => {
     loadedAtOnce: false,
 
     fetchAccesses: async () => {
-      fetcher ??= listAccess().then((res) => res.items);
+      fetcher ??= listAccesses().then((res) => res.items);
 
       try {
         set({ loading: true });

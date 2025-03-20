@@ -3,7 +3,7 @@
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log/slog"
 	"strings"
 
 	xerrors "github.com/pkg/errors"
@@ -11,7 +11,6 @@ import (
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-live"
 )
@@ -27,7 +26,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *veLive.Live
 	sslUploader uploader.Uploader
 }
@@ -53,14 +52,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -69,9 +73,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+	} else {
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
-
-	d.logger.Logt("certificate file uploaded", upres)
 
 	domains := make([]string, 0)
 	if strings.HasPrefix(d.config.Domain, "*.") {
@@ -86,6 +90,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				PageSize: listDomainDetailPageSize,
 			}
 			listDomainDetailResp, err := d.sdkClient.ListDomainDetail(ctx, listDomainDetailReq)
+			d.logger.Debug("sdk request 'live.ListDomainDetail'", slog.Any("request", listDomainDetailReq), slog.Any("response", listDomainDetailResp))
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'live.ListDomainDetail'")
 			}
@@ -110,7 +115,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		}
 
 		if len(domains) == 0 {
-			return nil, xerrors.Errorf("未查询到匹配的域名: %s", d.config.Domain)
+			return nil, errors.New("domain not found")
 		}
 	} else {
 		domains = append(domains, d.config.Domain)
@@ -128,10 +133,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				HTTPS:   ve.Bool(true),
 			}
 			bindCertResp, err := d.sdkClient.BindCert(ctx, bindCertReq)
+			d.logger.Debug("sdk request 'live.BindCert'", slog.Any("request", bindCertReq), slog.Any("response", bindCertResp))
 			if err != nil {
 				errs = append(errs, err)
-			} else {
-				d.logger.Logt(fmt.Sprintf("已绑定证书到域名 %s", domain), bindCertResp)
 			}
 		}
 

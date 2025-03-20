@@ -23,17 +23,15 @@ var (
 )
 
 func Register(router *router.Router[*core.RequestEvent]) {
-	certificateRepo := repository.NewCertificateRepository()
-	certificateSvc = certificate.NewCertificateService(certificateRepo)
-
 	workflowRepo := repository.NewWorkflowRepository()
 	workflowRunRepo := repository.NewWorkflowRunRepository()
-	workflowSvc = workflow.NewWorkflowService(workflowRepo, workflowRunRepo)
-
-	statisticsRepo := repository.NewStatisticsRepository()
-	statisticsSvc = statistics.NewStatisticsService(statisticsRepo)
-
+	certificateRepo := repository.NewCertificateRepository()
 	settingsRepo := repository.NewSettingsRepository()
+	statisticsRepo := repository.NewStatisticsRepository()
+
+	certificateSvc = certificate.NewCertificateService(certificateRepo, settingsRepo)
+	workflowSvc = workflow.NewWorkflowService(workflowRepo, workflowRunRepo, settingsRepo)
+	statisticsSvc = statistics.NewStatisticsService(statisticsRepo)
 	notifySvc = notify.NewNotifyService(settingsRepo)
 
 	group := router.Group("/api")

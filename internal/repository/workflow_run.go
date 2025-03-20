@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
@@ -54,7 +55,7 @@ func (r *WorkflowRunRepository) Save(ctx context.Context, workflowRun *domain.Wo
 		record.Set("status", string(workflowRun.Status))
 		record.Set("startedAt", workflowRun.StartedAt)
 		record.Set("endedAt", workflowRun.EndedAt)
-		record.Set("logs", workflowRun.Logs)
+		record.Set("detail", workflowRun.Detail)
 		record.Set("error", workflowRun.Error)
 		err = txApp.Save(record)
 		if err != nil {
@@ -96,13 +97,36 @@ func (r *WorkflowRunRepository) Save(ctx context.Context, workflowRun *domain.Wo
 	return workflowRun, nil
 }
 
+func (r *WorkflowRunRepository) DeleteWhere(ctx context.Context, exprs ...dbx.Expression) (int, error) {
+	records, err := app.GetApp().FindAllRecords(domain.CollectionNameWorkflowRun, exprs...)
+	if err != nil {
+		return 0, nil
+	}
+
+	var ret int
+	var errs []error
+	for _, record := range records {
+		if err := app.GetApp().Delete(record); err != nil {
+			errs = append(errs, err)
+		} else {
+			ret++
+		}
+	}
+
+	if len(errs) > 0 {
+		return ret, errors.Join(errs...)
+	}
+
+	return ret, nil
+}
+
 func (r *WorkflowRunRepository) castRecordToModel(record *core.Record) (*domain.WorkflowRun, error) {
 	if record == nil {
 		return nil, fmt.Errorf("record is nil")
 	}
 
-	logs := make([]domain.WorkflowRunLog, 0)
-	if err := record.UnmarshalJSONField("logs", &logs); err != nil {
+	detail := &domain.WorkflowNode{}
+	if err := record.UnmarshalJSONField("detail", &detail); err != nil {
 		return nil, err
 	}
 
@@ -117,7 +141,7 @@ func (r *WorkflowRunRepository) castRecordToModel(record *core.Record) (*domain.
 		Trigger:    domain.WorkflowTriggerType(record.GetString("trigger")),
 		StartedAt:  record.GetDateTime("startedAt").Time(),
 		EndedAt:    record.GetDateTime("endedAt").Time(),
-		Logs:       logs,
+		Detail:     detail,
 		Error:      record.GetString("error"),
 	}
 	return workflowRun, nil

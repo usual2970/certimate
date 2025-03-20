@@ -3,6 +3,7 @@
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"strconv"
 
 	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
@@ -10,7 +11,6 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/gcore-cdn"
 	gcoresdk "github.com/usual2970/certimate/internal/pkg/vendors/gcore-sdk/common"
@@ -25,7 +25,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *gresources.Service
 	sslUploader uploader.Uploader
 }
@@ -51,14 +51,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -72,16 +77,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 获取 CDN 资源详情
 	// REF: https://api.gcore.com/docs/cdn#tag/CDN-resources/paths/~1cdn~1resources~1%7Bresource_id%7D/get
 	getResourceResp, err := d.sdkClient.Get(context.TODO(), d.config.ResourceId)
+	d.logger.Debug("sdk request 'resources.Get'", slog.Any("resourceId", d.config.ResourceId), slog.Any("response", getResourceResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'resources.Get'")
-	} else {
-		d.logger.Logt("已获取 CDN 资源详情", getResourceResp)
 	}
 
 	// 更新 CDN 资源详情
@@ -101,10 +105,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		Options:            getResourceResp.Options,
 	}
 	updateResourceResp, err := d.sdkClient.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
+	d.logger.Debug("sdk request 'resources.Update'", slog.Int64("resourceId", d.config.ResourceId), slog.Any("request", updateResourceReq), slog.Any("response", updateResourceResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'resources.Update'")
-	} else {
-		d.logger.Logt("已更新 CDN 资源详情", updateResourceResp)
 	}
 
 	return &deployer.DeployResult{}, nil

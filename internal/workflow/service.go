@@ -2,9 +2,12 @@ package workflow
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/pocketbase/dbx"
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
@@ -21,6 +24,11 @@ type workflowRepository interface {
 type workflowRunRepository interface {
 	GetById(ctx context.Context, id string) (*domain.WorkflowRun, error)
 	Save(ctx context.Context, workflowRun *domain.WorkflowRun) (*domain.WorkflowRun, error)
+	DeleteWhere(ctx context.Context, exprs ...dbx.Expression) (int, error)
+}
+
+type settingsRepository interface {
+	GetByName(ctx context.Context, name string) (*domain.Settings, error)
 }
 
 type WorkflowService struct {
@@ -28,40 +36,71 @@ type WorkflowService struct {
 
 	workflowRepo    workflowRepository
 	workflowRunRepo workflowRunRepository
+	settingsRepo    settingsRepository
 }
 
-func NewWorkflowService(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository) *WorkflowService {
+func NewWorkflowService(workflowRepo workflowRepository, workflowRunRepo workflowRunRepository, settingsRepo settingsRepository) *WorkflowService {
 	srv := &WorkflowService{
-		dispatcher: dispatcher.GetSingletonDispatcher(workflowRepo, workflowRunRepo),
+		dispatcher: dispatcher.GetSingletonDispatcher(),
 
 		workflowRepo:    workflowRepo,
 		workflowRunRepo: workflowRunRepo,
+		settingsRepo:    settingsRepo,
 	}
 	return srv
 }
 
 func (s *WorkflowService) InitSchedule(ctx context.Context) error {
-	workflows, err := s.workflowRepo.ListEnabledAuto(ctx)
-	if err != nil {
-		return err
-	}
-
-	scheduler := app.GetScheduler()
-	for _, workflow := range workflows {
-		var errs []error
-
-		err := scheduler.Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
-			s.StartRun(ctx, &dtos.WorkflowStartRunReq{
-				WorkflowId: workflow.Id,
-				RunTrigger: domain.WorkflowTriggerTypeAuto,
-			})
-		})
+	// 每日清理工作流执行历史
+	app.GetScheduler().MustAdd("workflowHistoryRunsCleanup", "0 0 * * *", func() {
+		settings, err := s.settingsRepo.GetByName(ctx, "persistence")
 		if err != nil {
-			errs = append(errs, err)
+			app.GetLogger().Error("failed to get persistence settings", "err", err)
+			return
 		}
 
-		if len(errs) > 0 {
-			return errors.Join(errs...)
+		var settingsContent *domain.PersistenceSettingsContent
+		json.Unmarshal([]byte(settings.Content), &settingsContent)
+		if settingsContent != nil && settingsContent.WorkflowRunsMaxDaysRetention != 0 {
+			ret, err := s.workflowRunRepo.DeleteWhere(
+				context.Background(),
+				dbx.NewExp(fmt.Sprintf("status!='%s'", string(domain.WorkflowRunStatusTypePending))),
+				dbx.NewExp(fmt.Sprintf("status!='%s'", string(domain.WorkflowRunStatusTypeRunning))),
+				dbx.NewExp(fmt.Sprintf("endedAt<DATETIME('now', '-%d days')", settingsContent.WorkflowRunsMaxDaysRetention)),
+			)
+			if err != nil {
+				app.GetLogger().Error("failed to delete workflow history runs", "err", err)
+			}
+
+			if ret > 0 {
+				app.GetLogger().Info(fmt.Sprintf("cleanup %d workflow history runs", ret))
+			}
+		}
+	})
+
+	// 工作流
+	{
+		workflows, err := s.workflowRepo.ListEnabledAuto(ctx)
+		if err != nil {
+			return err
+		}
+
+		for _, workflow := range workflows {
+			var errs []error
+
+			err := app.GetScheduler().Add(fmt.Sprintf("workflow#%s", workflow.Id), workflow.TriggerCron, func() {
+				s.StartRun(ctx, &dtos.WorkflowStartRunReq{
+					WorkflowId: workflow.Id,
+					RunTrigger: domain.WorkflowTriggerTypeAuto,
+				})
+			})
+			if err != nil {
+				errs = append(errs, err)
+			}
+
+			if len(errs) > 0 {
+				return errors.Join(errs...)
+			}
 		}
 	}
 
@@ -83,6 +122,7 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 		Status:     domain.WorkflowRunStatusTypePending,
 		Trigger:    req.RunTrigger,
 		StartedAt:  time.Now(),
+		Detail:     workflow.Content,
 	}
 	if resp, err := s.workflowRunRepo.Save(ctx, run); err != nil {
 		return err
@@ -91,8 +131,8 @@ func (s *WorkflowService) StartRun(ctx context.Context, req *dtos.WorkflowStartR
 	}
 
 	s.dispatcher.Dispatch(&dispatcher.WorkflowWorkerData{
-		WorkflowId:      workflow.Id,
-		WorkflowContent: workflow.Content,
+		WorkflowId:      run.WorkflowId,
+		WorkflowContent: run.Detail,
 		RunId:           run.Id,
 	})
 

@@ -3,16 +3,17 @@
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
-	hcScm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
-	hcScmModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
-	hcScmRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
+	hcscm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
+	hcscmmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
+	hcscmregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -27,7 +28,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *hcScm.ScmClient
+	logger    *slog.Logger
+	sdkClient *hcscm.ScmClient
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -37,24 +39,30 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(
-		config.AccessKeyId,
-		config.SecretAccessKey,
-		config.Region,
-	)
+	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -65,23 +73,25 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	listCertificatesLimit := int32(50)
 	listCertificatesOffset := int32(0)
 	for {
-		listCertificatesReq := &hcScmModel.ListCertificatesRequest{
+		listCertificatesReq := &hcscmmodel.ListCertificatesRequest{
 			Limit:   hwsdk.Int32Ptr(listCertificatesLimit),
 			Offset:  hwsdk.Int32Ptr(listCertificatesOffset),
 			SortDir: hwsdk.StringPtr("DESC"),
 			SortKey: hwsdk.StringPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
+		u.logger.Debug("sdk request 'scm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ListCertificates'")
 		}
 
 		if listCertificatesResp.Certificates != nil {
 			for _, certDetail := range *listCertificatesResp.Certificates {
-				exportCertificateReq := &hcScmModel.ExportCertificateRequest{
+				exportCertificateReq := &hcscmmodel.ExportCertificateRequest{
 					CertificateId: certDetail.Id,
 				}
 				exportCertificateResp, err := u.sdkClient.ExportCertificate(exportCertificateReq)
+				u.logger.Debug("sdk request 'scm.ExportCertificate'", slog.Any("request", exportCertificateReq), slog.Any("response", exportCertificateResp))
 				if err != nil {
 					if exportCertificateResp != nil && exportCertificateResp.HttpStatusCode == 404 {
 						continue
@@ -93,16 +103,17 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 				if *exportCertificateResp.Certificate == certPem {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certs.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
+					oldCertX509, err := certutil.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certs.EqualCertificate(certX509, oldCertX509)
+					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
 				}
 
-				// 如果已存在相同证书，直接返回已有的证书信息
+				// 如果已存在相同证书，直接返回
 				if isSameCert {
+					u.logger.Info("ssl certificate already exists")
 					return &uploader.UploadResult{
 						CertId:   certDetail.Id,
 						CertName: certDetail.Name,
@@ -124,14 +135,15 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 上传新证书
 	// REF: https://support.huaweicloud.com/api-ccm/ImportCertificate.html
-	importCertificateReq := &hcScmModel.ImportCertificateRequest{
-		Body: &hcScmModel.ImportCertificateRequestBody{
+	importCertificateReq := &hcscmmodel.ImportCertificateRequest{
+		Body: &hcscmmodel.ImportCertificateRequestBody{
 			Name:        certName,
 			Certificate: certPem,
 			PrivateKey:  privkeyPem,
 		},
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)
+	u.logger.Debug("sdk request 'scm.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ImportCertificate'")
 	}
@@ -143,7 +155,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcscm.ScmClient, error) {
 	if region == "" {
 		region = "cn-north-4" // SCM 服务默认区域：华北四北京
 	}
@@ -156,12 +168,12 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmCli
 		return nil, err
 	}
 
-	hcRegion, err := hcScmRegion.SafeValueOf(region)
+	hcRegion, err := hcscmregion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := hcScm.ScmClientBuilder().
+	hcClient, err := hcscm.ScmClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -169,6 +181,6 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcScm.ScmCli
 		return nil, err
 	}
 
-	client := hcScm.NewScmClient(hcClient)
+	client := hcscm.NewScmClient(hcClient)
 	return client, nil
 }

@@ -5,13 +5,13 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/url"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
-	"github.com/usual2970/certimate/internal/pkg/utils/slices"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
 )
 
@@ -32,7 +32,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config    *DeployerConfig
-	logger    logger.Logger
+	logger    *slog.Logger
 	sdkClient *btsdk.Client
 }
 
@@ -50,13 +50,17 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:    config,
-		logger:    logger.NewNilLogger(),
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
 	return d
 }
 
@@ -76,10 +80,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				PrivateKey:  privkeyPem,
 			}
 			siteSetSSLResp, err := d.sdkClient.SiteSetSSL(siteSetSSLReq)
+			d.logger.Debug("sdk request 'bt.SiteSetSSL'", slog.Any("request", siteSetSSLReq), slog.Any("response", siteSetSSLResp))
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SiteSetSSL'")
-			} else {
-				d.logger.Logt("已设置站点证书", siteSetSSLResp)
 			}
 		}
 
@@ -95,15 +98,14 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				PrivateKey:  privkeyPem,
 			}
 			sslCertSaveCertResp, err := d.sdkClient.SSLCertSaveCert(sslCertSaveCertReq)
+			d.logger.Debug("sdk request 'bt.SSLCertSaveCert'", slog.Any("request", sslCertSaveCertReq), slog.Any("response", sslCertSaveCertResp))
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SSLCertSaveCert'")
-			} else {
-				d.logger.Logt("已上传证书", sslCertSaveCertResp)
 			}
 
 			// 设置站点证书
 			sslSetBatchCertToSiteReq := &btsdk.SSLSetBatchCertToSiteRequest{
-				BatchInfo: slices.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
+				BatchInfo: sliceutil.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
 					return &btsdk.SSLSetBatchCertToSiteRequestBatchInfo{
 						SiteName: siteName,
 						SSLHash:  sslCertSaveCertResp.SSLHash,
@@ -111,10 +113,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 				}),
 			}
 			sslSetBatchCertToSiteResp, err := d.sdkClient.SSLSetBatchCertToSite(sslSetBatchCertToSiteReq)
+			d.logger.Debug("sdk request 'bt.SSLSetBatchCertToSite'", slog.Any("request", sslSetBatchCertToSiteReq), slog.Any("response", sslSetBatchCertToSiteResp))
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.SSLSetBatchCertToSite'")
-			} else {
-				d.logger.Logt("已设置站点证书", sslSetBatchCertToSiteResp)
 			}
 		}
 

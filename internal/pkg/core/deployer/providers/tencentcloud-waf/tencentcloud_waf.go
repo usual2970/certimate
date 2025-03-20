@@ -3,6 +3,7 @@
 import (
 	"context"
 	"errors"
+	"log/slog"
 
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -10,7 +11,6 @@ import (
 	tcWaf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf/v20180125"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/core/logger"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
 )
@@ -32,7 +32,7 @@ type DeployerConfig struct {
 
 type DeployerProvider struct {
 	config      *DeployerConfig
-	logger      logger.Logger
+	logger      *slog.Logger
 	sdkClient   *tcWaf.Client
 	sslUploader uploader.Uploader
 }
@@ -59,14 +59,19 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	return &DeployerProvider{
 		config:      config,
-		logger:      logger.NewNilLogger(),
+		logger:      slog.Default(),
 		sdkClient:   client,
 		sslUploader: uploader,
 	}, nil
 }
 
-func (d *DeployerProvider) WithLogger(logger logger.Logger) *DeployerProvider {
-	d.logger = logger
+func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
+	if logger == nil {
+		d.logger = slog.Default()
+	} else {
+		d.logger = logger
+	}
+	d.sslUploader.WithLogger(logger)
 	return d
 }
 
@@ -86,7 +91,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
-		d.logger.Logt("certificate file uploaded", upres)
+		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
 	// 查询单个 SaaS 型 WAF 域名详情
@@ -96,10 +101,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	describeDomainDetailsSaasReq.DomainId = common.StringPtr(d.config.DomainId)
 	describeDomainDetailsSaasReq.InstanceId = common.StringPtr(d.config.InstanceId)
 	describeDomainDetailsSaasResp, err := d.sdkClient.DescribeDomainDetailsSaas(describeDomainDetailsSaasReq)
+	d.logger.Debug("sdk request 'waf.DescribeDomainDetailsSaas'", slog.Any("request", describeDomainDetailsSaasReq), slog.Any("response", describeDomainDetailsSaasResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDomainDetailsSaas'")
-	} else {
-		d.logger.Logt("已查询到 SaaS 型 WAF 域名详情", describeDomainDetailsSaasResp.Response)
 	}
 
 	// 编辑 SaaS 型 WAF 域名
@@ -111,10 +115,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	modifySpartaProtectionReq.CertType = common.Int64Ptr(2)
 	modifySpartaProtectionReq.SSLId = common.StringPtr(upres.CertId)
 	modifySpartaProtectionResp, err := d.sdkClient.ModifySpartaProtection(modifySpartaProtectionReq)
+	d.logger.Debug("sdk request 'waf.ModifySpartaProtection'", slog.Any("request", modifySpartaProtectionReq), slog.Any("response", modifySpartaProtectionResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifySpartaProtection'")
-	} else {
-		d.logger.Logt("已编辑 SaaS 型 WAF 域名", modifySpartaProtectionResp.Response)
 	}
 
 	return &deployer.DeployResult{}, nil

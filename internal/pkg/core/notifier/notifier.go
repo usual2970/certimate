@@ -1,9 +1,14 @@
 ﻿package notifier
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 // 表示定义消息通知器的抽象类型接口。
 type Notifier interface {
+	WithLogger(logger *slog.Logger) Notifier
+
 	// 发送通知。
 	//
 	// 入参：

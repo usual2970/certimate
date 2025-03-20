@@ -19,8 +19,10 @@
   "workflow_run.props.ended_at": "Ended at",
 
   "workflow_run.logs": "Logs",
-  "workflow_run.artifacts": "Artifacts",
+  "workflow_run.logs.menu.show_timestamps": "Show timestamps",
+  "workflow_run.logs.menu.show_whitespaces": "Show whitespaces",
 
+  "workflow_run.artifacts": "Artifacts",
   "workflow_run_artifact.props.type": "Type",
   "workflow_run_artifact.props.type.certificate": "Certificate",
   "workflow_run_artifact.props.name": "Name"

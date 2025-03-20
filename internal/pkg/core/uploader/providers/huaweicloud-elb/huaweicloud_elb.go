@@ -4,20 +4,21 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
-	hcElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
-	hcElbModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
-	hcElbRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
-	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
-	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
-	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	hcelb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
+	hcelbmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
+	hcelbregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
+	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certs"
+	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
 )
 
@@ -32,7 +33,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *hcElb.ElbClient
+	logger    *slog.Logger
+	sdkClient *hcelb.ElbClient
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -42,24 +44,30 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(
-		config.AccessKeyId,
-		config.SecretAccessKey,
-		config.Region,
-	)
+	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
 }
 
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
+}
+
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certs.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {
 		return nil, err
 	}
@@ -69,12 +77,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	listCertificatesLimit := int32(2000)
 	var listCertificatesMarker *string = nil
 	for {
-		listCertificatesReq := &hcElbModel.ListCertificatesRequest{
+		listCertificatesReq := &hcelbmodel.ListCertificatesRequest{
 			Limit:  hwsdk.Int32Ptr(listCertificatesLimit),
 			Marker: listCertificatesMarker,
 			Type:   &[]string{"server"},
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
+		u.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
 		}
@@ -85,16 +94,17 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 				if certDetail.Certificate == certPem {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certs.ParseCertificateFromPEM(certDetail.Certificate)
+					oldCertX509, err := certutil.ParseCertificateFromPEM(certDetail.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certs.EqualCertificate(certX509, oldCertX509)
+					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
 				}
 
-				// 如果已存在相同证书，直接返回已有的证书信息
+				// 如果已存在相同证书，直接返回
 				if isSameCert {
+					u.logger.Info("ssl certificate already exists")
 					return &uploader.UploadResult{
 						CertId:   certDetail.Id,
 						CertName: certDetail.Name,
@@ -123,9 +133,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 创建新证书
 	// REF: https://support.huaweicloud.com/api-elb/CreateCertificate.html
-	createCertificateReq := &hcElbModel.CreateCertificateRequest{
-		Body: &hcElbModel.CreateCertificateRequestBody{
-			Certificate: &hcElbModel.CreateCertificateOption{
+	createCertificateReq := &hcelbmodel.CreateCertificateRequest{
+		Body: &hcelbmodel.CreateCertificateRequestBody{
+			Certificate: &hcelbmodel.CreateCertificateOption{
 				ProjectId:   hwsdk.StringPtr(projectId),
 				Name:        hwsdk.StringPtr(certName),
 				Certificate: hwsdk.StringPtr(certPem),
@@ -134,6 +144,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		},
 	}
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
+	u.logger.Debug("sdk request 'elb.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.CreateCertificate'")
 	}
@@ -146,7 +157,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcelb.ElbClient, error) {
 	if region == "" {
 		region = "cn-north-4" // ELB 服务默认区域：华北四北京
 	}
@@ -159,12 +170,12 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbCli
 		return nil, err
 	}
 
-	hcRegion, err := hcElbRegion.SafeValueOf(region)
+	hcRegion, err := hcelbregion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := hcElb.ElbClientBuilder().
+	hcClient, err := hcelb.ElbClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -172,7 +183,7 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbCli
 		return nil, err
 	}
 
-	client := hcElb.NewElbClient(hcClient)
+	client := hcelb.NewElbClient(hcClient)
 	return client, nil
 }
 
@@ -189,12 +200,12 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	hcRegion, err := hciamregion.SafeValueOf(region)
 	if err != nil {
 		return "", err
 	}
 
-	hcClient, err := hcIam.IamClientBuilder().
+	hcClient, err := hciam.IamClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -202,9 +213,9 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	client := hcIam.NewIamClient(hcClient)
+	client := hciam.NewIamClient(hcClient)
 
-	request := &hcIamModel.KeystoneListProjectsRequest{
+	request := &hciammodel.KeystoneListProjectsRequest{
 		Name: &region,
 	}
 	response, err := client.KeystoneListProjects(request)

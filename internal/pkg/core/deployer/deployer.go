@@ -1,10 +1,15 @@
 ﻿package deployer
 
-import "context"
+import (
+	"context"
+	"log/slog"
+)
 
 // 表示定义证书部署器的抽象类型接口。
 // 注意与 `Uploader` 区分，“部署”通常为“上传”的后置操作。
 type Deployer interface {
+	WithLogger(logger *slog.Logger) Deployer
+
 	// 部署证书。
 	//
 	// 入参：

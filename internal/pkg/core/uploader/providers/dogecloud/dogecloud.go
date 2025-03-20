@@ -3,12 +3,13 @@
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	doge "github.com/usual2970/certimate/internal/pkg/vendors/dogecloud-sdk"
+	dogesdk "github.com/usual2970/certimate/internal/pkg/vendors/dogecloud-sdk"
 )
 
 type UploaderConfig struct {
@@ -20,7 +21,8 @@ type UploaderConfig struct {
 
 type UploaderProvider struct {
 	config    *UploaderConfig
-	sdkClient *doge.Client
+	logger    *slog.Logger
+	sdkClient *dogesdk.Client
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -30,18 +32,25 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(
-		config.AccessKey,
-		config.SecretKey,
-	)
+	client, err := createSdkClient(config.AccessKey, config.SecretKey)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create sdk client")
 	}
 
 	return &UploaderProvider{
 		config:    config,
+		logger:    slog.Default(),
 		sdkClient: client,
 	}, nil
+}
+
+func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
+	if logger == nil {
+		u.logger = slog.Default()
+	} else {
+		u.logger = logger
+	}
+	return u
 }
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
@@ -52,6 +61,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 上传新证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-upload
 	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPem, privkeyPem)
+	u.logger.Debug("sdk request 'cdn.UploadCdnCert'", slog.Any("response", uploadSslCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadCdnCert'")
 	}
@@ -63,7 +73,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func createSdkClient(accessKey, secretKey string) (*doge.Client, error) {
-	client := doge.NewClient(accessKey, secretKey)
+func createSdkClient(accessKey, secretKey string) (*dogesdk.Client, error) {
+	client := dogesdk.NewClient(accessKey, secretKey)
 	return client, nil
 }

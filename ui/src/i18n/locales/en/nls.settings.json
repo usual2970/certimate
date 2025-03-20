@@ -90,5 +90,15 @@
   "settings.sslprovider.form.gts_eab_kid.tooltip": "For more information, see <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
   "settings.sslprovider.form.gts_eab_hmac_key.label": "EAB HMAC Key",
   "settings.sslprovider.form.gts_eab_hmac_key.placeholder": "Please enter EAB HMAC Key",
-  "settings.sslprovider.form.gts_eab_hmac_key.tooltip": "For more information, see <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>"
+  "settings.sslprovider.form.gts_eab_hmac_key.tooltip": "For more information, see <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
+
+  "settings.persistence.tab": "Persistence",
+  "settings.persistence.form.workflow_runs_max_days.label": "Max days retention of workflow history runs",
+  "settings.persistence.form.workflow_runs_max_days.placeholder": "Please enter the maximum retention days of workflow history runs",
+  "settings.persistence.form.workflow_runs_max_days.unit": "days",
+  "settings.persistence.form.workflow_runs_max_days.extra": "Set to <b>0</b> to disable cleanup workflow history runs. It is recommended to set it to <b>180</b> days or more.",
+  "settings.persistence.form.expired_certificates_max_days.label": "Max days retention of expired certificates",
+  "settings.persistence.form.expired_certificates_max_days.placeholder": "Please enter the maximum retention days of expired certificates",
+  "settings.persistence.form.expired_certificates_max_days.unit": "days",
+  "settings.persistence.form.expired_certificates_max_days.extra": "Set to <b>0</emb> to disable cleanup expired certificates."
 }

@@ -10,10 +10,11 @@ import (
 func Register() {
 	workflowRepo := repository.NewWorkflowRepository()
 	workflowRunRepo := repository.NewWorkflowRunRepository()
-	workflowSvc := workflow.NewWorkflowService(workflowRepo, workflowRunRepo)
-
 	certificateRepo := repository.NewCertificateRepository()
-	certificateSvc := certificate.NewCertificateService(certificateRepo)
+	settingsRepo := repository.NewSettingsRepository()
+
+	workflowSvc := workflow.NewWorkflowService(workflowRepo, workflowRunRepo, settingsRepo)
+	certificateSvc := certificate.NewCertificateService(certificateRepo, settingsRepo)
 
 	if err := InitWorkflowScheduler(workflowSvc); err != nil {
 		app.GetLogger().Error("failed to init workflow scheduler", "err", err)
