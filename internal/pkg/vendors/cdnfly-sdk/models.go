@@ -1,17 +1,19 @@
 package cdnflysdk
 
+import "encoding/json"
+
 type BaseResponse interface {
 	GetCode() string
 	GetMessage() string
 }
 
 type baseResponse struct {
-	Code    string `json:"code"`
-	Message string `json:"msg"`
+	Code    json.Number `json:"code"`
+	Message string      `json:"msg"`
 }
 
 func (r *baseResponse) GetCode() string {
-	return r.Code
+	return r.Code.String()
 }
 
 func (r *baseResponse) GetMessage() string {
