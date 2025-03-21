@@ -291,22 +291,26 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		// 遍历查询监听证书，并找出需要解除关联的证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
 		// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-getusercertificatedetail
-		certificateIsAssociated := false
-		certificateIdsExpired := make([]string, 0)
+		certificateIsAlreadyAssociated := false
+		certificateIdsToDissociate := make([]string, 0)
 		if len(listenerCertificates) > 0 {
 			d.logger.Info("found listener certificates to deploy", slog.Any("listenerCertificates", listenerCertificates))
 			var errs []error
 
 			for _, listenerCertificate := range listenerCertificates {
-				// 监听证书 ID 格式：${证书 ID}-${地域}
-				certificateId := strings.Split(*listenerCertificate.CertificateId, "-")[0]
-				if certificateId == cloudCertId {
-					certificateIsAssociated = true
+				if tea.BoolValue(listenerCertificate.IsDefault) {
 					continue
 				}
 
-				if *listenerCertificate.IsDefault || !strings.EqualFold(*listenerCertificate.Status, "Associated") {
+				if !strings.EqualFold(tea.StringValue(listenerCertificate.Status), "Associated") {
 					continue
+				}
+
+				// 监听证书 ID 格式：${证书 ID}-${地域}
+				certificateId := strings.Split(tea.StringValue(listenerCertificate.CertificateId), "-")[0]
+				if certificateId == cloudCertId {
+					certificateIsAlreadyAssociated = true
+					break
 				}
 
 				certificateIdAsInt64, err := strconv.ParseInt(certificateId, 10, 64)
@@ -321,22 +325,28 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				getUserCertificateDetailResp, err := d.sdkClients.CAS.GetUserCertificateDetail(getUserCertificateDetailReq)
 				d.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
 				if err != nil {
+					if sdkerr, ok := err.(*tea.SDKError); ok {
+						if tea.IntValue(sdkerr.StatusCode) == 400 && tea.StringValue(sdkerr.Code) == "NotFound" {
+							continue
+						}
+					}
+
 					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'"))
 					continue
-				}
+				} else {
+					certCNMatched := tea.StringValue(getUserCertificateDetailResp.Body.Common) == d.config.Domain
+					certSANMatched := slices.Contains(strings.Split(tea.StringValue(getUserCertificateDetailResp.Body.Sans), ","), d.config.Domain)
+					if !certCNMatched && !certSANMatched {
+						continue
+					}
 
-				certCnMatched := getUserCertificateDetailResp.Body.Common != nil && *getUserCertificateDetailResp.Body.Common == d.config.Domain
-				certSanMatched := getUserCertificateDetailResp.Body.Sans != nil && slices.Contains(strings.Split(*getUserCertificateDetailResp.Body.Sans, ","), d.config.Domain)
-				if !certCnMatched && !certSanMatched {
-					continue
-				}
+					certEndDate, _ := time.Parse("2006-01-02", tea.StringValue(getUserCertificateDetailResp.Body.EndDate))
+					if time.Now().Before(certEndDate) {
+						continue
+					}
 
-				certEndDate, _ := time.Parse("2006-01-02", *getUserCertificateDetailResp.Body.EndDate)
-				if time.Now().Before(certEndDate) {
-					continue
+					certificateIdsToDissociate = append(certificateIdsToDissociate, certificateId)
 				}
-
-				certificateIdsExpired = append(certificateIdsExpired, certificateId)
 			}
 
 			if len(errs) > 0 {
@@ -346,7 +356,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 关联监听和扩展证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-associateadditionalcertificateswithlistener
-		if !certificateIsAssociated {
+		if !certificateIsAlreadyAssociated {
 			associateAdditionalCertificatesFromListenerReq := &alialb.AssociateAdditionalCertificatesWithListenerRequest{
 				ListenerId: tea.String(cloudListenerId),
 				Certificates: []*alialb.AssociateAdditionalCertificatesWithListenerRequestCertificates{
@@ -364,9 +374,9 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 解除关联监听和扩展证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-dissociateadditionalcertificatesfromlistener
-		if len(certificateIdsExpired) > 0 {
+		if !certificateIsAlreadyAssociated && len(certificateIdsToDissociate) > 0 {
 			dissociateAdditionalCertificates := make([]*alialb.DissociateAdditionalCertificatesFromListenerRequestCertificates, 0)
-			for _, certificateId := range certificateIdsExpired {
+			for _, certificateId := range certificateIdsToDissociate {
 				dissociateAdditionalCertificates = append(dissociateAdditionalCertificates, &alialb.DissociateAdditionalCertificatesFromListenerRequestCertificates{
 					CertificateId: tea.String(certificateId),
 				})
