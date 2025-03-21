@@ -7,7 +7,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcVod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod/v20180717"
+	tcvod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod/v20180717"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -28,7 +28,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *tcVod.Client
+	sdkClient   *tcvod.Client
 	sslUploader uploader.Uploader
 }
 
@@ -81,7 +81,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 设置点播域名 HTTPS 证书
 	// REF: https://cloud.tencent.com/document/api/266/102015
-	setVodDomainCertificateReq := tcVod.NewSetVodDomainCertificateRequest()
+	setVodDomainCertificateReq := tcvod.NewSetVodDomainCertificateRequest()
 	setVodDomainCertificateReq.Domain = common.StringPtr(d.config.Domain)
 	setVodDomainCertificateReq.Operation = common.StringPtr("Set")
 	setVodDomainCertificateReq.CertID = common.StringPtr(upres.CertId)
@@ -97,9 +97,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey string) (*tcVod.Client, error) {
+func createSdkClient(secretId, secretKey string) (*tcvod.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
-	client, err := tcVod.NewClient(credential, "", profile.NewClientProfile())
+	client, err := tcvod.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

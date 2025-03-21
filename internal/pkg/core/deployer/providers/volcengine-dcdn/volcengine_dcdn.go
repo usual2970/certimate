@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	xerrors "github.com/pkg/errors"
-	veDcdn "github.com/volcengine/volcengine-go-sdk/service/dcdn"
+	vedcdn "github.com/volcengine/volcengine-go-sdk/service/dcdn"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
-	veSession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
+	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -29,7 +29,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veDcdn.DCDN
+	sdkClient   *vedcdn.DCDN
 	sslUploader uploader.Uploader
 }
 
@@ -86,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 绑定证书
 	// REF: https://www.volcengine.com/docs/6559/1250189
-	createCertBindReq := &veDcdn.CreateCertBindInput{
+	createCertBindReq := &vedcdn.CreateCertBindInput{
 		CertSource:  ve.String("volc"),
 		CertId:      ve.String(upres.CertId),
 		DomainNames: ve.StringSlice([]string{domain}),
@@ -100,18 +100,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veDcdn.DCDN, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*vedcdn.DCDN, error) {
 	if region == "" {
 		region = "cn-beijing" // DCDN 服务默认区域：北京
 	}
 
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)
 
-	session, err := veSession.NewSession(config)
+	session, err := vesession.NewSession(config)
 	if err != nil {
 		return nil, err
 	}
 
-	client := veDcdn.New(session)
+	client := vedcdn.New(session)
 	return client, nil
 }

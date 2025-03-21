@@ -8,10 +8,10 @@ import (
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/platform/config/env"
-	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
-	jdDnsApi "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/apis"
-	jdDnsClient "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/client"
-	jdDnsModel "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/models"
+	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
+	jddnsapi "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/apis"
+	jddnsclient "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/client"
+	jddnsmodel "github.com/jdcloud-api/jdcloud-sdk-go/services/domainservice/models"
 )
 
 const (
@@ -41,7 +41,7 @@ type Config struct {
 }
 
 type DNSProvider struct {
-	client *jdDnsClient.DomainserviceClient
+	client *jddnsclient.DomainserviceClient
 	config *Config
 }
 
@@ -73,12 +73,12 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 		return nil, errors.New("jdcloud: the configuration of the DNS provider is nil")
 	}
 
-	clientCredentials := jdCore.NewCredentials(config.AccessKeyID, config.AccessKeySecret)
-	client := jdDnsClient.NewDomainserviceClient(clientCredentials)
+	clientCredentials := jdcore.NewCredentials(config.AccessKeyID, config.AccessKeySecret)
+	client := jddnsclient.NewDomainserviceClient(clientCredentials)
 	clientConfig := &client.Config
 	clientConfig.SetTimeout(config.HTTPTimeout)
 	client.SetConfig(clientConfig)
-	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
+	client.SetLogger(jdcore.NewDefaultLogger(jdcore.LogWarn))
 
 	return &DNSProvider{
 		client: client,
@@ -130,11 +130,11 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSZone(zoneName string) (*jdDnsModel.DomainInfo, error) {
+func (d *DNSProvider) getDNSZone(zoneName string) (*jddnsmodel.DomainInfo, error) {
 	pageNumber := 1
 	pageSize := 10
 	for {
-		request := jdDnsApi.NewDescribeDomainsRequest(d.config.RegionId, pageNumber, pageSize)
+		request := jddnsapi.NewDescribeDomainsRequest(d.config.RegionId, pageNumber, pageSize)
 		request.SetDomainName(zoneName)
 
 		response, err := d.client.DescribeDomains(request)
@@ -158,7 +158,7 @@ func (d *DNSProvider) getDNSZone(zoneName string) (*jdDnsModel.DomainInfo, error
 	return nil, fmt.Errorf("jdcloud: zone %s not found", zoneName)
 }
 
-func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsModel.DomainInfo, *jdDnsModel.RRInfo, error) {
+func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jddnsmodel.DomainInfo, *jddnsmodel.RRInfo, error) {
 	zone, err := d.getDNSZone(zoneName)
 	if err != nil {
 		return nil, nil, err
@@ -167,7 +167,7 @@ func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*jdDnsMod
 	pageNumber := 1
 	pageSize := 10
 	for {
-		request := jdDnsApi.NewDescribeResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id))
+		request := jddnsapi.NewDescribeResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id))
 		request.SetSearch(subDomain)
 		request.SetPageNumber(pageNumber)
 		request.SetPageSize(pageSize)
@@ -200,7 +200,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 	}
 
 	if record == nil {
-		request := jdDnsApi.NewCreateResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), &jdDnsModel.AddRR{
+		request := jddnsapi.NewCreateResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), &jddnsmodel.AddRR{
 			Type:       "TXT",
 			HostRecord: subDomain,
 			HostValue:  value,
@@ -210,7 +210,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 		_, err := d.client.CreateResourceRecord(request)
 		return err
 	} else {
-		request := jdDnsApi.NewModifyResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id), &jdDnsModel.UpdateRR{
+		request := jddnsapi.NewModifyResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id), &jddnsmodel.UpdateRR{
 			Type:       "TXT",
 			HostRecord: subDomain,
 			HostValue:  value,
@@ -231,7 +231,7 @@ func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
 	if record == nil {
 		return nil
 	} else {
-		request := jdDnsApi.NewDeleteResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id))
+		request := jddnsapi.NewDeleteResourceRecordRequest(d.config.RegionId, fmt.Sprintf("%d", zone.Id), fmt.Sprintf("%d", record.Id))
 		_, err = d.client.DeleteResourceRecord(request)
 		return err
 	}

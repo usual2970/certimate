@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliyunFc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
-	aliyunFc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alifc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
+	alifc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -37,8 +37,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	fc2 *aliyunFc2.Client
-	fc3 *aliyunFc3.Client
+	fc2 *alifc2.Client
+	fc3 *alifc3.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -97,9 +97,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 
 	// 更新自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-updatecustomdomain
-	updateCustomDomainReq := &aliyunFc3.UpdateCustomDomainRequest{
-		Body: &aliyunFc3.UpdateCustomDomainInput{
-			CertConfig: &aliyunFc3.CertConfig{
+	updateCustomDomainReq := &alifc3.UpdateCustomDomainRequest{
+		Body: &alifc3.UpdateCustomDomainInput{
+			CertConfig: &alifc3.CertConfig{
 				CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 				Certificate: tea.String(certPem),
 				PrivateKey:  tea.String(privkeyPem),
@@ -128,8 +128,8 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 
 	// 更新自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-updatecustomdomain
-	updateCustomDomainReq := &aliyunFc2.UpdateCustomDomainRequest{
-		CertConfig: &aliyunFc2.CertConfig{
+	updateCustomDomainReq := &alifc2.UpdateCustomDomainRequest{
+		CertConfig: &alifc2.CertConfig{
 			CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 			Certificate: tea.String(certPem),
 			PrivateKey:  tea.String(privkeyPem),
@@ -156,24 +156,24 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		fc2Endpoint = fmt.Sprintf("fc.%s.aliyuncs.com", region)
 	}
 
-	fc2Config := &aliyunOpen.Config{
+	fc2Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fc2Endpoint),
 	}
-	fc2Client, err := aliyunFc2.NewClient(fc2Config)
+	fc2Client, err := alifc2.NewClient(fc2Config)
 	if err != nil {
 		return nil, err
 	}
 
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
 	fc3Endpoint := fmt.Sprintf("fcv3.%s.aliyuncs.com", region)
-	fc3Config := &aliyunOpen.Config{
+	fc3Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fc3Endpoint),
 	}
-	fc3Client, err := aliyunFc3.NewClient(fc3Config)
+	fc3Client, err := alifc3.NewClient(fc3Config)
 	if err != nil {
 		return nil, err
 	}

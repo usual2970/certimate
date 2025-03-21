@@ -5,8 +5,8 @@ import (
 	"log/slog"
 
 	xerrors "github.com/pkg/errors"
-	usdk "github.com/ucloud/ucloud-sdk-go/ucloud"
-	uAuth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
+	"github.com/ucloud/ucloud-sdk-go/ucloud"
+	"github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -87,12 +87,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 添加 SSL 证书
 	// REF: https://docs.ucloud.cn/api/ufile-api/add_ufile_ssl_cert
 	addUFileSSLCertReq := d.sdkClient.NewAddUFileSSLCertRequest()
-	addUFileSSLCertReq.BucketName = usdk.String(d.config.Bucket)
-	addUFileSSLCertReq.Domain = usdk.String(d.config.Domain)
-	addUFileSSLCertReq.USSLId = usdk.String(upres.CertId)
-	addUFileSSLCertReq.CertificateName = usdk.String(upres.CertName)
+	addUFileSSLCertReq.BucketName = ucloud.String(d.config.Bucket)
+	addUFileSSLCertReq.Domain = ucloud.String(d.config.Domain)
+	addUFileSSLCertReq.USSLId = ucloud.String(upres.CertId)
+	addUFileSSLCertReq.CertificateName = ucloud.String(upres.CertName)
 	if d.config.ProjectId != "" {
-		addUFileSSLCertReq.ProjectId = usdk.String(d.config.ProjectId)
+		addUFileSSLCertReq.ProjectId = ucloud.String(d.config.ProjectId)
 	}
 	addUFileSSLCertResp, err := d.sdkClient.AddUFileSSLCert(addUFileSSLCertReq)
 	d.logger.Debug("sdk request 'us3.AddUFileSSLCert'", slog.Any("request", addUFileSSLCertReq), slog.Any("response", addUFileSSLCertResp))
@@ -104,10 +104,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 }
 
 func createSdkClient(privateKey, publicKey, region string) (*usdkFile.UFileClient, error) {
-	cfg := usdk.NewConfig()
+	cfg := ucloud.NewConfig()
 	cfg.Region = region
 
-	credential := uAuth.NewCredential()
+	credential := auth.NewCredential()
 	credential.PrivateKey = privateKey
 	credential.PublicKey = publicKey
 

@@ -9,12 +9,12 @@ import (
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
-	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
-	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
-	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
-	hcWaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
-	hcWafModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
-	hcWafRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
+	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hciamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	hcwaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
+	hcwafmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
+	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -43,7 +43,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *hcWaf.WafClient
+	sdkClient   *hcwaf.WafClient
 	sslUploader uploader.Uploader
 }
 
@@ -126,7 +126,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 
 	// 查询证书
 	// REF: https://support.huaweicloud.com/api-waf/ShowCertificate.html
-	showCertificateReq := &hcWafModel.ShowCertificateRequest{
+	showCertificateReq := &hcwafmodel.ShowCertificateRequest{
 		CertificateId: d.config.CertificateId,
 	}
 	showCertificateResp, err := d.sdkClient.ShowCertificate(showCertificateReq)
@@ -137,9 +137,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 
 	// 更新证书
 	// REF: https://support.huaweicloud.com/api-waf/UpdateCertificate.html
-	updateCertificateReq := &hcWafModel.UpdateCertificateRequest{
+	updateCertificateReq := &hcwafmodel.UpdateCertificateRequest{
 		CertificateId: d.config.CertificateId,
-		Body: &hcWafModel.UpdateCertificateRequestBody{
+		Body: &hcwafmodel.UpdateCertificateRequestBody{
 			Name:    *showCertificateResp.Name,
 			Content: hwsdk.StringPtr(certPem),
 			Key:     hwsdk.StringPtr(privkeyPem),
@@ -173,7 +173,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 	listHostPage := int32(1)
 	listHostPageSize := int32(100)
 	for {
-		listHostReq := &hcWafModel.ListHostRequest{
+		listHostReq := &hcwafmodel.ListHostRequest{
 			Hostname: hwsdk.StringPtr(strings.TrimPrefix(d.config.Domain, "*")),
 			Page:     hwsdk.Int32Ptr(listHostPage),
 			Pagesize: hwsdk.Int32Ptr(listHostPageSize),
@@ -205,9 +205,9 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 
 	// 更新云模式防护域名的配置
 	// REF: https://support.huaweicloud.com/api-waf/UpdateHost.html
-	updateHostReq := &hcWafModel.UpdateHostRequest{
+	updateHostReq := &hcwafmodel.UpdateHostRequest{
 		InstanceId: hostId,
-		Body: &hcWafModel.UpdateHostRequestBody{
+		Body: &hcwafmodel.UpdateHostRequestBody{
 			Certificateid:   hwsdk.StringPtr(upres.CertId),
 			Certificatename: hwsdk.StringPtr(upres.CertName),
 		},
@@ -240,7 +240,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 	listPremiumHostPage := int32(1)
 	listPremiumHostPageSize := int32(100)
 	for {
-		listPremiumHostReq := &hcWafModel.ListPremiumHostRequest{
+		listPremiumHostReq := &hcwafmodel.ListPremiumHostRequest{
 			Hostname: hwsdk.StringPtr(strings.TrimPrefix(d.config.Domain, "*")),
 			Page:     hwsdk.StringPtr(fmt.Sprintf("%d", listPremiumHostPage)),
 			Pagesize: hwsdk.StringPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
@@ -272,9 +272,9 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 
 	// 修改独享模式域名配置
 	// REF: https://support.huaweicloud.com/api-waf/UpdatePremiumHost.html
-	updatePremiumHostReq := &hcWafModel.UpdatePremiumHostRequest{
+	updatePremiumHostReq := &hcwafmodel.UpdatePremiumHostRequest{
 		HostId: hostId,
-		Body: &hcWafModel.UpdatePremiumHostRequestBody{
+		Body: &hcwafmodel.UpdatePremiumHostRequestBody{
 			Certificateid:   hwsdk.StringPtr(upres.CertId),
 			Certificatename: hwsdk.StringPtr(upres.CertName),
 		},
@@ -288,7 +288,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem stri
 	return nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcwaf.WafClient, error) {
 	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
 	if err != nil {
 		return nil, err
@@ -303,12 +303,12 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafCli
 		return nil, err
 	}
 
-	hcRegion, err := hcWafRegion.SafeValueOf(region)
+	hcRegion, err := hcwafregion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := hcWaf.WafClientBuilder().
+	hcClient, err := hcwaf.WafClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -316,7 +316,7 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcWaf.WafCli
 		return nil, err
 	}
 
-	client := hcWaf.NewWafClient(hcClient)
+	client := hcwaf.NewWafClient(hcClient)
 	return client, nil
 }
 
@@ -329,12 +329,12 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	hcRegion, err := hciamregion.SafeValueOf(region)
 	if err != nil {
 		return "", err
 	}
 
-	hcClient, err := hcIam.IamClientBuilder().
+	hcClient, err := hciam.IamClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -342,9 +342,9 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	client := hcIam.NewIamClient(hcClient)
+	client := hciam.NewIamClient(hcClient)
 
-	request := &hcIamModel.KeystoneListProjectsRequest{
+	request := &hciamModel.KeystoneListProjectsRequest{
 		Name: &region,
 	}
 	response, err := client.KeystoneListProjects(request)

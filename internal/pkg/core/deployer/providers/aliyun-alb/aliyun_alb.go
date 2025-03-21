@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	aliyunAlb "github.com/alibabacloud-go/alb-20200616/v2/client"
-	aliyunCas "github.com/alibabacloud-go/cas-20200407/v3/client"
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alialb "github.com/alibabacloud-go/alb-20200616/v2/client"
+	alicas "github.com/alibabacloud-go/cas-20200407/v3/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
@@ -51,8 +51,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	alb *aliyunAlb.Client
-	cas *aliyunCas.Client
+	alb *alialb.Client
+	cas *alicas.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -123,7 +123,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getloadbalancerattribute
-	getLoadBalancerAttributeReq := &aliyunAlb.GetLoadBalancerAttributeRequest{
+	getLoadBalancerAttributeReq := &alialb.GetLoadBalancerAttributeRequest{
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClients.alb.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
@@ -138,7 +138,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
-		listListenersReq := &aliyunAlb.ListListenersRequest{
+		listListenersReq := &alialb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
@@ -167,7 +167,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
 	listListenersToken = nil
 	for {
-		listListenersReq := &aliyunAlb.ListListenersRequest{
+		listListenersReq := &alialb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
@@ -229,7 +229,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听的属性
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-getlistenerattribute
-	getListenerAttributeReq := &aliyunAlb.GetListenerAttributeRequest{
+	getListenerAttributeReq := &alialb.GetListenerAttributeRequest{
 		ListenerId: tea.String(cloudListenerId),
 	}
 	getListenerAttributeResp, err := d.sdkClients.alb.GetListenerAttribute(getListenerAttributeReq)
@@ -243,9 +243,9 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 修改监听的属性
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-updatelistenerattribute
-		updateListenerAttributeReq := &aliyunAlb.UpdateListenerAttributeRequest{
+		updateListenerAttributeReq := &alialb.UpdateListenerAttributeRequest{
 			ListenerId: tea.String(cloudListenerId),
-			Certificates: []*aliyunAlb.UpdateListenerAttributeRequestCertificates{{
+			Certificates: []*alialb.UpdateListenerAttributeRequestCertificates{{
 				CertificateId: tea.String(cloudCertId),
 			}},
 		}
@@ -259,11 +259,11 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 查询监听证书列表
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlistenercertificates
-		listenerCertificates := make([]aliyunAlb.ListListenerCertificatesResponseBodyCertificates, 0)
+		listenerCertificates := make([]alialb.ListListenerCertificatesResponseBodyCertificates, 0)
 		listListenerCertificatesLimit := int32(100)
 		var listListenerCertificatesToken *string = nil
 		for {
-			listListenerCertificatesReq := &aliyunAlb.ListListenerCertificatesRequest{
+			listListenerCertificatesReq := &alialb.ListListenerCertificatesRequest{
 				NextToken:       listListenerCertificatesToken,
 				MaxResults:      tea.Int32(listListenerCertificatesLimit),
 				ListenerId:      tea.String(cloudListenerId),
@@ -315,7 +315,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					continue
 				}
 
-				getUserCertificateDetailReq := &aliyunCas.GetUserCertificateDetailRequest{
+				getUserCertificateDetailReq := &alicas.GetUserCertificateDetailRequest{
 					CertId: tea.Int64(certificateIdAsInt64),
 				}
 				getUserCertificateDetailResp, err := d.sdkClients.cas.GetUserCertificateDetail(getUserCertificateDetailReq)
@@ -347,9 +347,9 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		// 关联监听和扩展证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-associateadditionalcertificateswithlistener
 		if !certificateIsAssociated {
-			associateAdditionalCertificatesFromListenerReq := &aliyunAlb.AssociateAdditionalCertificatesWithListenerRequest{
+			associateAdditionalCertificatesFromListenerReq := &alialb.AssociateAdditionalCertificatesWithListenerRequest{
 				ListenerId: tea.String(cloudListenerId),
-				Certificates: []*aliyunAlb.AssociateAdditionalCertificatesWithListenerRequestCertificates{
+				Certificates: []*alialb.AssociateAdditionalCertificatesWithListenerRequestCertificates{
 					{
 						CertificateId: tea.String(cloudCertId),
 					},
@@ -365,14 +365,14 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		// 解除关联监听和扩展证书
 		// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-dissociateadditionalcertificatesfromlistener
 		if len(certificateIdsExpired) > 0 {
-			dissociateAdditionalCertificates := make([]*aliyunAlb.DissociateAdditionalCertificatesFromListenerRequestCertificates, 0)
+			dissociateAdditionalCertificates := make([]*alialb.DissociateAdditionalCertificatesFromListenerRequestCertificates, 0)
 			for _, certificateId := range certificateIdsExpired {
-				dissociateAdditionalCertificates = append(dissociateAdditionalCertificates, &aliyunAlb.DissociateAdditionalCertificatesFromListenerRequestCertificates{
+				dissociateAdditionalCertificates = append(dissociateAdditionalCertificates, &alialb.DissociateAdditionalCertificatesFromListenerRequestCertificates{
 					CertificateId: tea.String(certificateId),
 				})
 			}
 
-			dissociateAdditionalCertificatesFromListenerReq := &aliyunAlb.DissociateAdditionalCertificatesFromListenerRequest{
+			dissociateAdditionalCertificatesFromListenerReq := &alialb.DissociateAdditionalCertificatesFromListenerRequest{
 				ListenerId:   tea.String(cloudListenerId),
 				Certificates: dissociateAdditionalCertificates,
 			}
@@ -397,12 +397,12 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		albEndpoint = fmt.Sprintf("alb.%s.aliyuncs.com", region)
 	}
 
-	albConfig := &aliyunOpen.Config{
+	albConfig := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(albEndpoint),
 	}
-	albClient, err := aliyunAlb.NewClient(albConfig)
+	albClient, err := alialb.NewClient(albConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -415,12 +415,12 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		casEndpoint = "cas.aliyuncs.com"
 	}
 
-	casConfig := &aliyunOpen.Config{
+	casConfig := &aliopen.Config{
 		Endpoint:        tea.String(casEndpoint),
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 	}
-	casClient, err := aliyunCas.NewClient(casConfig)
+	casClient, err := alicas.NewClient(casConfig)
 	if err != nil {
 		return nil, err
 	}

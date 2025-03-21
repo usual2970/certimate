@@ -8,12 +8,12 @@ import (
 
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/basic"
 	"github.com/huaweicloud/huaweicloud-sdk-go-v3/core/auth/global"
-	hcElb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
-	hcElbModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
-	hcElbRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
-	hcIam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
-	hcIamModel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
-	hcIamRegion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
+	hcelb "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3"
+	hcelbmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/model"
+	hcelbregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/elb/v3/region"
+	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
+	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
+	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
@@ -46,7 +46,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *hcElb.ElbClient
+	sdkClient   *hcelb.ElbClient
 	sslUploader uploader.Uploader
 }
 
@@ -121,10 +121,10 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 
 	// 更新证书
 	// REF: https://support.huaweicloud.com/api-elb/UpdateCertificate.html
-	updateCertificateReq := &hcElbModel.UpdateCertificateRequest{
+	updateCertificateReq := &hcelbmodel.UpdateCertificateRequest{
 		CertificateId: d.config.CertificateId,
-		Body: &hcElbModel.UpdateCertificateRequestBody{
-			Certificate: &hcElbModel.UpdateCertificateOption{
+		Body: &hcelbmodel.UpdateCertificateRequestBody{
+			Certificate: &hcelbmodel.UpdateCertificateOption{
 				Certificate: hwsdk.StringPtr(certPem),
 				PrivateKey:  hwsdk.StringPtr(privkeyPem),
 			},
@@ -146,7 +146,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 
 	// 查询负载均衡器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowLoadBalancer.html
-	showLoadBalancerReq := &hcElbModel.ShowLoadBalancerRequest{
+	showLoadBalancerReq := &hcelbmodel.ShowLoadBalancerRequest{
 		LoadbalancerId: d.config.LoadbalancerId,
 	}
 	showLoadBalancerResp, err := d.sdkClient.ShowLoadBalancer(showLoadBalancerReq)
@@ -161,7 +161,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 	listListenersLimit := int32(2000)
 	var listListenersMarker *string = nil
 	for {
-		listListenersReq := &hcElbModel.ListListenersRequest{
+		listListenersReq := &hcelbmodel.ListListenersRequest{
 			Limit:          hwsdk.Int32Ptr(listListenersLimit),
 			Marker:         listListenersMarker,
 			Protocol:       &[]string{"HTTPS", "TERMINATED_HTTPS"},
@@ -239,7 +239,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, certPem string,
 func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听器详情
 	// REF: https://support.huaweicloud.com/api-elb/ShowListener.html
-	showListenerReq := &hcElbModel.ShowListenerRequest{
+	showListenerReq := &hcelbmodel.ShowListenerRequest{
 		ListenerId: cloudListenerId,
 	}
 	showListenerResp, err := d.sdkClient.ShowListener(showListenerReq)
@@ -250,10 +250,10 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 
 	// 更新监听器
 	// REF: https://support.huaweicloud.com/api-elb/UpdateListener.html
-	updateListenerReq := &hcElbModel.UpdateListenerRequest{
+	updateListenerReq := &hcelbmodel.UpdateListenerRequest{
 		ListenerId: cloudListenerId,
-		Body: &hcElbModel.UpdateListenerRequestBody{
-			Listener: &hcElbModel.UpdateListenerOption{
+		Body: &hcelbmodel.UpdateListenerRequestBody{
+			Listener: &hcelbmodel.UpdateListenerOption{
 				DefaultTlsContainerRef: hwsdk.StringPtr(cloudCertId),
 			},
 		},
@@ -264,7 +264,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 			sniCertIds := make([]string, 0)
 			sniCertIds = append(sniCertIds, cloudCertId)
 
-			listOldCertificateReq := &hcElbModel.ListCertificatesRequest{
+			listOldCertificateReq := &hcelbmodel.ListCertificatesRequest{
 				Id: &showListenerResp.Listener.SniContainerRefs,
 			}
 			listOldCertificateResp, err := d.sdkClient.ListCertificates(listOldCertificateReq)
@@ -273,7 +273,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
 			}
 
-			showNewCertificateReq := &hcElbModel.ShowCertificateRequest{
+			showNewCertificateReq := &hcelbmodel.ShowCertificateRequest{
 				CertificateId: cloudCertId,
 			}
 			showNewCertificateResp, err := d.sdkClient.ShowCertificate(showNewCertificateReq)
@@ -315,7 +315,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	return nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbClient, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcelb.ElbClient, error) {
 	projectId, err := getSdkProjectId(accessKeyId, secretAccessKey, region)
 	if err != nil {
 		return nil, err
@@ -330,12 +330,12 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbCli
 		return nil, err
 	}
 
-	hcRegion, err := hcElbRegion.SafeValueOf(region)
+	hcRegion, err := hcelbregion.SafeValueOf(region)
 	if err != nil {
 		return nil, err
 	}
 
-	hcClient, err := hcElb.ElbClientBuilder().
+	hcClient, err := hcelb.ElbClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -343,7 +343,7 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hcElb.ElbCli
 		return nil, err
 	}
 
-	client := hcElb.NewElbClient(hcClient)
+	client := hcelb.NewElbClient(hcClient)
 	return client, nil
 }
 
@@ -360,12 +360,12 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	hcRegion, err := hcIamRegion.SafeValueOf(region)
+	hcRegion, err := hciamregion.SafeValueOf(region)
 	if err != nil {
 		return "", err
 	}
 
-	hcClient, err := hcIam.IamClientBuilder().
+	hcClient, err := hciam.IamClientBuilder().
 		WithRegion(hcRegion).
 		WithCredential(auth).
 		SafeBuild()
@@ -373,9 +373,9 @@ func getSdkProjectId(accessKeyId, secretAccessKey, region string) (string, error
 		return "", err
 	}
 
-	client := hcIam.NewIamClient(hcClient)
+	client := hciam.NewIamClient(hcClient)
 
-	request := &hcIamModel.KeystoneListProjectsRequest{
+	request := &hciammodel.KeystoneListProjectsRequest{
 		Name: &region,
 	}
 	response, err := client.KeystoneListProjects(request)
