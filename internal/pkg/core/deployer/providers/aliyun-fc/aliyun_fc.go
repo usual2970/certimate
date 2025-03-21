@@ -37,8 +37,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	fc2 *alifc2.Client
-	fc3 *alifc3.Client
+	FC2 *alifc2.Client
+	FC3 *alifc3.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -89,7 +89,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, privkeyPem string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-getcustomdomain
-	getCustomDomainResp, err := d.sdkClients.fc3.GetCustomDomain(tea.String(d.config.Domain))
+	getCustomDomainResp, err := d.sdkClients.FC3.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
@@ -108,7 +108,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 			TlsConfig: getCustomDomainResp.Body.TlsConfig,
 		},
 	}
-	updateCustomDomainResp, err := d.sdkClients.fc3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	updateCustomDomainResp, err := d.sdkClients.FC3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
@@ -120,7 +120,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, privkeyPem string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-getcustomdomain
-	getCustomDomainResp, err := d.sdkClients.fc2.GetCustomDomain(tea.String(d.config.Domain))
+	getCustomDomainResp, err := d.sdkClients.FC2.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
@@ -137,7 +137,7 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 		Protocol:  getCustomDomainResp.Body.Protocol,
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,
 	}
-	updateCustomDomainResp, err := d.sdkClients.fc2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	updateCustomDomainResp, err := d.sdkClients.FC2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
@@ -179,7 +179,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}
 
 	return &wSdkClients{
-		fc2: fc2Client,
-		fc3: fc3Client,
+		FC2: fc2Client,
+		FC3: fc3Client,
 	}, nil
 }

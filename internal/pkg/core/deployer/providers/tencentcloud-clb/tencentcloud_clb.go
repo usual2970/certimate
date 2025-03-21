@@ -47,8 +47,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	ssl *tcssl.Client
-	clb *tcclb.Client
+	SSL *tcssl.Client
+	CLB *tcclb.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -146,7 +146,7 @@ func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId 
 		// 指定 SNI，需部署到域名
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs([]string{fmt.Sprintf("%s|%s|%s", d.config.LoadbalancerId, d.config.ListenerId, d.config.Domain)})
 	}
-	deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
+	deployCertificateInstanceResp, err := d.sdkClients.SSL.DeployCertificateInstance(deployCertificateInstanceReq)
 	d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
@@ -165,7 +165,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	listenerIds := make([]string, 0)
 	describeListenersReq := tcclb.NewDescribeListenersRequest()
 	describeListenersReq.LoadBalancerId = common.StringPtr(d.config.LoadbalancerId)
-	describeListenersResp, err := d.sdkClients.clb.DescribeListeners(describeListenersReq)
+	describeListenersResp, err := d.sdkClients.CLB.DescribeListeners(describeListenersReq)
 	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
@@ -239,7 +239,7 @@ func (d *DeployerProvider) deployToRuleDomain(ctx context.Context, cloudCertId s
 		SSLMode: common.StringPtr("UNIDIRECTIONAL"),
 		CertId:  common.StringPtr(cloudCertId),
 	}
-	modifyDomainAttributesResp, err := d.sdkClients.clb.ModifyDomainAttributes(modifyDomainAttributesReq)
+	modifyDomainAttributesResp, err := d.sdkClients.CLB.ModifyDomainAttributes(modifyDomainAttributesReq)
 	d.logger.Debug("sdk request 'clb.ModifyDomainAttributes'", slog.Any("request", modifyDomainAttributesReq), slog.Any("response", modifyDomainAttributesResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyDomainAttributes'")
@@ -254,7 +254,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	describeListenersReq := tcclb.NewDescribeListenersRequest()
 	describeListenersReq.LoadBalancerId = common.StringPtr(cloudLoadbalancerId)
 	describeListenersReq.ListenerIds = common.StringPtrs([]string{cloudListenerId})
-	describeListenersResp, err := d.sdkClients.clb.DescribeListeners(describeListenersReq)
+	describeListenersResp, err := d.sdkClients.CLB.DescribeListeners(describeListenersReq)
 	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
@@ -274,7 +274,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	} else {
 		modifyListenerReq.Certificate.SSLMode = common.StringPtr("UNIDIRECTIONAL")
 	}
-	modifyListenerResp, err := d.sdkClients.clb.ModifyListener(modifyListenerReq)
+	modifyListenerResp, err := d.sdkClients.CLB.ModifyListener(modifyListenerReq)
 	d.logger.Debug("sdk request 'clb.ModifyListener'", slog.Any("request", modifyListenerReq), slog.Any("response", modifyListenerResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyListener'")
@@ -298,7 +298,7 @@ func createSdkClients(secretId, secretKey, region string) (*wSdkClients, error) 
 	}
 
 	return &wSdkClients{
-		ssl: sslClient,
-		clb: clbClient,
+		SSL: sslClient,
+		CLB: clbClient,
 	}, nil
 }

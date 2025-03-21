@@ -37,8 +37,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	ssl *tcssl.Client
-	teo *tcteo.Client
+	SSL *tcssl.Client
+	TEO *tcteo.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -97,7 +97,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	modifyHostsCertificateReq.Mode = common.StringPtr("sslcert")
 	modifyHostsCertificateReq.Hosts = common.StringPtrs([]string{d.config.Domain})
 	modifyHostsCertificateReq.ServerCertInfo = []*tcteo.ServerCertInfo{{CertId: common.StringPtr(upres.CertId)}}
-	modifyHostsCertificateResp, err := d.sdkClients.teo.ModifyHostsCertificate(modifyHostsCertificateReq)
+	modifyHostsCertificateResp, err := d.sdkClients.TEO.ModifyHostsCertificate(modifyHostsCertificateReq)
 	d.logger.Debug("sdk request 'teo.ModifyHostsCertificate'", slog.Any("request", modifyHostsCertificateReq), slog.Any("response", modifyHostsCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'teo.ModifyHostsCertificate'")
@@ -120,7 +120,7 @@ func createSdkClients(secretId, secretKey string) (*wSdkClients, error) {
 	}
 
 	return &wSdkClients{
-		ssl: sslClient,
-		teo: teoClient,
+		SSL: sslClient,
+		TEO: teoClient,
 	}, nil
 }

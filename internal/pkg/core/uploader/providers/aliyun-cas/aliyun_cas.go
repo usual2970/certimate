@@ -85,36 +85,38 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 		if listUserCertificateOrderResp.Body.CertificateOrderList != nil {
 			for _, certDetail := range listUserCertificateOrderResp.Body.CertificateOrderList {
-				if strings.EqualFold(certX509.SerialNumber.Text(16), *certDetail.SerialNo) {
-					getUserCertificateDetailReq := &alicas.GetUserCertificateDetailRequest{
-						CertId: certDetail.CertificateId,
-					}
-					getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
-					u.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
+				if !strings.EqualFold(certX509.SerialNumber.Text(16), *certDetail.SerialNo) {
+					continue
+				}
+
+				getUserCertificateDetailReq := &alicas.GetUserCertificateDetailRequest{
+					CertId: certDetail.CertificateId,
+				}
+				getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
+				u.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
+				if err != nil {
+					return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
+				}
+
+				var isSameCert bool
+				if *getUserCertificateDetailResp.Body.Cert == certPem {
+					isSameCert = true
+				} else {
+					oldCertX509, err := certutil.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
 					if err != nil {
-						return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
+						continue
 					}
 
-					var isSameCert bool
-					if *getUserCertificateDetailResp.Body.Cert == certPem {
-						isSameCert = true
-					} else {
-						oldCertX509, err := certutil.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
-						if err != nil {
-							continue
-						}
+					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+				}
 
-						isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
-					}
-
-					// 如果已存在相同证书，直接返回
-					if isSameCert {
-						u.logger.Info("ssl certificate already exists")
-						return &uploader.UploadResult{
-							CertId:   fmt.Sprintf("%d", tea.Int64Value(certDetail.CertificateId)),
-							CertName: *certDetail.Name,
-						}, nil
-					}
+				// 如果已存在相同证书，直接返回
+				if isSameCert {
+					u.logger.Info("ssl certificate already exists")
+					return &uploader.UploadResult{
+						CertId:   fmt.Sprintf("%d", tea.Int64Value(certDetail.CertificateId)),
+						CertName: *certDetail.Name,
+					}, nil
 				}
 			}
 		}

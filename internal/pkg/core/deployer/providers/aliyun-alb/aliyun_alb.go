@@ -51,8 +51,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	alb *alialb.Client
-	cas *alicas.Client
+	ALB *alialb.Client
+	CAS *alicas.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -126,7 +126,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	getLoadBalancerAttributeReq := &alialb.GetLoadBalancerAttributeRequest{
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
-	getLoadBalancerAttributeResp, err := d.sdkClients.alb.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
+	getLoadBalancerAttributeResp, err := d.sdkClients.ALB.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
 	d.logger.Debug("sdk request 'alb.GetLoadBalancerAttribute'", slog.Any("request", getLoadBalancerAttributeReq), slog.Any("response", getLoadBalancerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetLoadBalancerAttribute'")
@@ -144,7 +144,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
 			ListenerProtocol: tea.String("HTTPS"),
 		}
-		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
+		listListenersResp, err := d.sdkClients.ALB.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'alb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
@@ -173,7 +173,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
 			ListenerProtocol: tea.String("QUIC"),
 		}
-		listListenersResp, err := d.sdkClients.alb.ListListeners(listListenersReq)
+		listListenersResp, err := d.sdkClients.ALB.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'alb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListeners'")
@@ -232,7 +232,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	getListenerAttributeReq := &alialb.GetListenerAttributeRequest{
 		ListenerId: tea.String(cloudListenerId),
 	}
-	getListenerAttributeResp, err := d.sdkClients.alb.GetListenerAttribute(getListenerAttributeReq)
+	getListenerAttributeResp, err := d.sdkClients.ALB.GetListenerAttribute(getListenerAttributeReq)
 	d.logger.Debug("sdk request 'alb.GetListenerAttribute'", slog.Any("request", getListenerAttributeReq), slog.Any("response", getListenerAttributeResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'alb.GetListenerAttribute'")
@@ -249,7 +249,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				CertificateId: tea.String(cloudCertId),
 			}},
 		}
-		updateListenerAttributeResp, err := d.sdkClients.alb.UpdateListenerAttribute(updateListenerAttributeReq)
+		updateListenerAttributeResp, err := d.sdkClients.ALB.UpdateListenerAttribute(updateListenerAttributeReq)
 		d.logger.Debug("sdk request 'alb.UpdateListenerAttribute'", slog.Any("request", updateListenerAttributeReq), slog.Any("response", updateListenerAttributeResp))
 		if err != nil {
 			return xerrors.Wrap(err, "failed to execute sdk request 'alb.UpdateListenerAttribute'")
@@ -269,7 +269,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				ListenerId:      tea.String(cloudListenerId),
 				CertificateType: tea.String("Server"),
 			}
-			listListenerCertificatesResp, err := d.sdkClients.alb.ListListenerCertificates(listListenerCertificatesReq)
+			listListenerCertificatesResp, err := d.sdkClients.ALB.ListListenerCertificates(listListenerCertificatesReq)
 			d.logger.Debug("sdk request 'alb.ListListenerCertificates'", slog.Any("request", listListenerCertificatesReq), slog.Any("response", listListenerCertificatesResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.ListListenerCertificates'")
@@ -318,7 +318,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				getUserCertificateDetailReq := &alicas.GetUserCertificateDetailRequest{
 					CertId: tea.Int64(certificateIdAsInt64),
 				}
-				getUserCertificateDetailResp, err := d.sdkClients.cas.GetUserCertificateDetail(getUserCertificateDetailReq)
+				getUserCertificateDetailResp, err := d.sdkClients.CAS.GetUserCertificateDetail(getUserCertificateDetailReq)
 				d.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
 				if err != nil {
 					errs = append(errs, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'"))
@@ -355,7 +355,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					},
 				},
 			}
-			associateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.AssociateAdditionalCertificatesWithListener(associateAdditionalCertificatesFromListenerReq)
+			associateAdditionalCertificatesFromListenerResp, err := d.sdkClients.ALB.AssociateAdditionalCertificatesWithListener(associateAdditionalCertificatesFromListenerReq)
 			d.logger.Debug("sdk request 'alb.AssociateAdditionalCertificatesWithListener'", slog.Any("request", associateAdditionalCertificatesFromListenerReq), slog.Any("response", associateAdditionalCertificatesFromListenerResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.AssociateAdditionalCertificatesWithListener'")
@@ -376,7 +376,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 				ListenerId:   tea.String(cloudListenerId),
 				Certificates: dissociateAdditionalCertificates,
 			}
-			dissociateAdditionalCertificatesFromListenerResp, err := d.sdkClients.alb.DissociateAdditionalCertificatesFromListener(dissociateAdditionalCertificatesFromListenerReq)
+			dissociateAdditionalCertificatesFromListenerResp, err := d.sdkClients.ALB.DissociateAdditionalCertificatesFromListener(dissociateAdditionalCertificatesFromListenerReq)
 			d.logger.Debug("sdk request 'alb.DissociateAdditionalCertificatesFromListener'", slog.Any("request", dissociateAdditionalCertificatesFromListenerReq), slog.Any("response", dissociateAdditionalCertificatesFromListenerResp))
 			if err != nil {
 				return xerrors.Wrap(err, "failed to execute sdk request 'alb.DissociateAdditionalCertificatesFromListener'")
@@ -426,8 +426,8 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}
 
 	return &wSdkClients{
-		alb: albClient,
-		cas: casClient,
+		ALB: albClient,
+		CAS: casClient,
 	}, nil
 }
 

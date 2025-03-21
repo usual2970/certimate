@@ -36,8 +36,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	ssl *tcssl.Client
-	cdn *tccdn.Client
+	SSL *tcssl.Client
+	CDN *tccdn.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -127,7 +127,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		deployCertificateInstanceReq.ResourceType = common.StringPtr("cdn")
 		deployCertificateInstanceReq.Status = common.Int64Ptr(1)
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(instanceIds)
-		deployCertificateInstanceResp, err := d.sdkClients.ssl.DeployCertificateInstance(deployCertificateInstanceReq)
+		deployCertificateInstanceResp, err := d.sdkClients.SSL.DeployCertificateInstance(deployCertificateInstanceReq)
 		d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
@@ -143,7 +143,7 @@ func (d *DeployerProvider) getDomainsByCertificateId(cloudCertId string) ([]stri
 	describeCertDomainsReq := tccdn.NewDescribeCertDomainsRequest()
 	describeCertDomainsReq.CertId = common.StringPtr(cloudCertId)
 	describeCertDomainsReq.Product = common.StringPtr("cdn")
-	describeCertDomainsResp, err := d.sdkClients.cdn.DescribeCertDomains(describeCertDomainsReq)
+	describeCertDomainsResp, err := d.sdkClients.CDN.DescribeCertDomains(describeCertDomainsReq)
 	d.logger.Debug("sdk request 'cdn.DescribeCertDomains'", slog.Any("request", describeCertDomainsReq), slog.Any("response", describeCertDomainsResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeCertDomains'")
@@ -165,7 +165,7 @@ func (d *DeployerProvider) getDeployedDomainsByCertificateId(cloudCertId string)
 	describeDeployedResourcesReq := tcssl.NewDescribeDeployedResourcesRequest()
 	describeDeployedResourcesReq.CertificateIds = common.StringPtrs([]string{cloudCertId})
 	describeDeployedResourcesReq.ResourceType = common.StringPtr("cdn")
-	describeDeployedResourcesResp, err := d.sdkClients.ssl.DescribeDeployedResources(describeDeployedResourcesReq)
+	describeDeployedResourcesResp, err := d.sdkClients.SSL.DescribeDeployedResources(describeDeployedResourcesReq)
 	d.logger.Debug("sdk request 'cdn.DescribeDeployedResources'", slog.Any("request", describeDeployedResourcesReq), slog.Any("response", describeDeployedResourcesResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeDeployedResources'")
@@ -197,7 +197,7 @@ func createSdkClients(secretId, secretKey string) (*wSdkClients, error) {
 	}
 
 	return &wSdkClients{
-		ssl: sslClient,
-		cdn: cdnClient,
+		SSL: sslClient,
+		CDN: cdnClient,
 	}, nil
 }
