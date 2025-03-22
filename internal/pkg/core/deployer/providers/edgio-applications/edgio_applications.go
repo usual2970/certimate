@@ -9,7 +9,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
 	edgsdk "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7"
-	edgsdkDtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
+	edgsdkdtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
 
 type DeployerConfig struct {
@@ -64,7 +64,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 上传 TLS 证书
 	// REF: https://docs.edg.io/rest_api/#tag/tls-certs/operation/postConfigV01TlsCerts
-	uploadTlsCertReq := edgsdkDtos.UploadTlsCertRequest{
+	uploadTlsCertReq := edgsdkdtos.UploadTlsCertRequest{
 		EnvironmentID:    d.config.EnvironmentId,
 		PrimaryCert:      privateCertPem,
 		IntermediateCert: intermediateCertPem,

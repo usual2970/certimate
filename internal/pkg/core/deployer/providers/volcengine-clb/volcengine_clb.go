@@ -7,9 +7,9 @@ import (
 	"log/slog"
 
 	xerrors "github.com/pkg/errors"
-	veClb "github.com/volcengine/volcengine-go-sdk/service/clb"
+	veclb "github.com/volcengine/volcengine-go-sdk/service/clb"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
-	veSession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
+	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -33,7 +33,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veClb.CLB
+	sdkClient   *veclb.CLB
 	sslUploader uploader.Uploader
 }
 
@@ -106,7 +106,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 
 	// 修改监听器
 	// REF: https://www.volcengine.com/docs/6406/71775
-	modifyListenerAttributesReq := &veClb.ModifyListenerAttributesInput{
+	modifyListenerAttributesReq := &veclb.ModifyListenerAttributesInput{
 		ListenerId:              ve.String(d.config.ListenerId),
 		CertificateSource:       ve.String("cert_center"),
 		CertCenterCertificateId: ve.String(cloudCertId),
@@ -120,14 +120,14 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veClb.CLB, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*veclb.CLB, error) {
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)
 
-	session, err := veSession.NewSession(config)
+	session, err := vesession.NewSession(config)
 	if err != nil {
 		return nil, err
 	}
 
-	client := veClb.New(session)
+	client := veclb.New(session)
 	return client, nil
 }

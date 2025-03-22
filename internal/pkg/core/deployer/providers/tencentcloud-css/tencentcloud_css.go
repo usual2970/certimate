@@ -7,7 +7,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcLive "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live/v20180801"
+	tclive "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live/v20180801"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *tcLive.Client
+	sdkClient   *tclive.Client
 	sslUploader uploader.Uploader
 }
 
@@ -79,8 +79,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 绑定证书对应的播放域名
 	// REF: https://cloud.tencent.com/document/product/267/78655
-	modifyLiveDomainCertBindingsReq := &tcLive.ModifyLiveDomainCertBindingsRequest{
-		DomainInfos: []*tcLive.LiveCertDomainInfo{
+	modifyLiveDomainCertBindingsReq := &tclive.ModifyLiveDomainCertBindingsRequest{
+		DomainInfos: []*tclive.LiveCertDomainInfo{
 			{
 				DomainName: common.StringPtr(d.config.Domain),
 				Status:     common.Int64Ptr(1),
@@ -97,10 +97,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey string) (*tcLive.Client, error) {
+func createSdkClient(secretId, secretKey string) (*tclive.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
 
-	client, err := tcLive.NewClient(credential, "", profile.NewClientProfile())
+	client, err := tclive.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

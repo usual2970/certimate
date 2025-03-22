@@ -7,7 +7,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcScf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
+	tcscf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -28,7 +28,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *tcScf.Client
+	sdkClient   *tcscf.Client
 	sslUploader uploader.Uploader
 }
 
@@ -73,7 +73,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 查看云函数自定义域名详情
 	// REF: https://cloud.tencent.com/document/product/583/111924
-	getCustomDomainReq := tcScf.NewGetCustomDomainRequest()
+	getCustomDomainReq := tcscf.NewGetCustomDomainRequest()
 	getCustomDomainReq.Domain = common.StringPtr(d.config.Domain)
 	getCustomDomainResp, err := d.sdkClient.GetCustomDomain(getCustomDomainReq)
 	d.logger.Debug("sdk request 'scf.GetCustomDomain'", slog.Any("request", getCustomDomainReq), slog.Any("response", getCustomDomainResp))
@@ -91,9 +91,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 更新云函数自定义域名
 	// REF: https://cloud.tencent.com/document/product/583/111922
-	updateCustomDomainReq := tcScf.NewUpdateCustomDomainRequest()
+	updateCustomDomainReq := tcscf.NewUpdateCustomDomainRequest()
 	updateCustomDomainReq.Domain = common.StringPtr(d.config.Domain)
-	updateCustomDomainReq.CertConfig = &tcScf.CertConf{
+	updateCustomDomainReq.CertConfig = &tcscf.CertConf{
 		CertificateId: common.StringPtr(upres.CertId),
 	}
 	updateCustomDomainReq.Protocol = getCustomDomainResp.Response.Protocol
@@ -106,9 +106,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey, region string) (*tcScf.Client, error) {
+func createSdkClient(secretId, secretKey, region string) (*tcscf.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
-	client, err := tcScf.NewClient(credential, region, profile.NewClientProfile())
+	client, err := tcscf.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

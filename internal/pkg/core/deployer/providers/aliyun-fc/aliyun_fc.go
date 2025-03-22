@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliyunFc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
-	aliyunFc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alifc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
+	alifc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -24,7 +24,7 @@ type DeployerConfig struct {
 	Region string `json:"region"`
 	// 服务版本。
 	ServiceVersion string `json:"serviceVersion"`
-	// 自定义域名（不支持泛域名）。
+	// 自定义域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
@@ -37,8 +37,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	fc2 *aliyunFc2.Client
-	fc3 *aliyunFc3.Client
+	FC2 *alifc2.Client
+	FC3 *alifc3.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -89,7 +89,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, privkeyPem string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-getcustomdomain
-	getCustomDomainResp, err := d.sdkClients.fc3.GetCustomDomain(tea.String(d.config.Domain))
+	getCustomDomainResp, err := d.sdkClients.FC3.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
@@ -97,9 +97,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 
 	// 更新自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-updatecustomdomain
-	updateCustomDomainReq := &aliyunFc3.UpdateCustomDomainRequest{
-		Body: &aliyunFc3.UpdateCustomDomainInput{
-			CertConfig: &aliyunFc3.CertConfig{
+	updateCustomDomainReq := &alifc3.UpdateCustomDomainRequest{
+		Body: &alifc3.UpdateCustomDomainInput{
+			CertConfig: &alifc3.CertConfig{
 				CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 				Certificate: tea.String(certPem),
 				PrivateKey:  tea.String(privkeyPem),
@@ -108,7 +108,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 			TlsConfig: getCustomDomainResp.Body.TlsConfig,
 		},
 	}
-	updateCustomDomainResp, err := d.sdkClients.fc3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	updateCustomDomainResp, err := d.sdkClients.FC3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
@@ -120,7 +120,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, privkeyPem string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-getcustomdomain
-	getCustomDomainResp, err := d.sdkClients.fc2.GetCustomDomain(tea.String(d.config.Domain))
+	getCustomDomainResp, err := d.sdkClients.FC2.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
@@ -128,8 +128,8 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 
 	// 更新自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-updatecustomdomain
-	updateCustomDomainReq := &aliyunFc2.UpdateCustomDomainRequest{
-		CertConfig: &aliyunFc2.CertConfig{
+	updateCustomDomainReq := &alifc2.UpdateCustomDomainRequest{
+		CertConfig: &alifc2.CertConfig{
 			CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 			Certificate: tea.String(certPem),
 			PrivateKey:  tea.String(privkeyPem),
@@ -137,7 +137,7 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 		Protocol:  getCustomDomainResp.Body.Protocol,
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,
 	}
-	updateCustomDomainResp, err := d.sdkClients.fc2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
+	updateCustomDomainResp, err := d.sdkClients.FC2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
 		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
@@ -156,30 +156,30 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 		fc2Endpoint = fmt.Sprintf("fc.%s.aliyuncs.com", region)
 	}
 
-	fc2Config := &aliyunOpen.Config{
+	fc2Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fc2Endpoint),
 	}
-	fc2Client, err := aliyunFc2.NewClient(fc2Config)
+	fc2Client, err := alifc2.NewClient(fc2Config)
 	if err != nil {
 		return nil, err
 	}
 
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
 	fc3Endpoint := fmt.Sprintf("fcv3.%s.aliyuncs.com", region)
-	fc3Config := &aliyunOpen.Config{
+	fc3Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fc3Endpoint),
 	}
-	fc3Client, err := aliyunFc3.NewClient(fc3Config)
+	fc3Client, err := alifc3.NewClient(fc3Config)
 	if err != nil {
 		return nil, err
 	}
 
 	return &wSdkClients{
-		fc2: fc2Client,
-		fc3: fc3Client,
+		FC2: fc2Client,
+		FC3: fc3Client,
 	}, nil
 }

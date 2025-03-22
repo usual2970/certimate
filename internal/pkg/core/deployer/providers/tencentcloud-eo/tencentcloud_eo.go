@@ -8,8 +8,8 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
-	tcTeo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
+	tcssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcteo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -37,8 +37,8 @@ type DeployerProvider struct {
 var _ deployer.Deployer = (*DeployerProvider)(nil)
 
 type wSdkClients struct {
-	ssl *tcSsl.Client
-	teo *tcTeo.Client
+	SSL *tcssl.Client
+	TEO *tcteo.Client
 }
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
@@ -92,12 +92,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 配置域名证书
 	// REF: https://cloud.tencent.com/document/product/1552/80764
-	modifyHostsCertificateReq := tcTeo.NewModifyHostsCertificateRequest()
+	modifyHostsCertificateReq := tcteo.NewModifyHostsCertificateRequest()
 	modifyHostsCertificateReq.ZoneId = common.StringPtr(d.config.ZoneId)
 	modifyHostsCertificateReq.Mode = common.StringPtr("sslcert")
 	modifyHostsCertificateReq.Hosts = common.StringPtrs([]string{d.config.Domain})
-	modifyHostsCertificateReq.ServerCertInfo = []*tcTeo.ServerCertInfo{{CertId: common.StringPtr(upres.CertId)}}
-	modifyHostsCertificateResp, err := d.sdkClients.teo.ModifyHostsCertificate(modifyHostsCertificateReq)
+	modifyHostsCertificateReq.ServerCertInfo = []*tcteo.ServerCertInfo{{CertId: common.StringPtr(upres.CertId)}}
+	modifyHostsCertificateResp, err := d.sdkClients.TEO.ModifyHostsCertificate(modifyHostsCertificateReq)
 	d.logger.Debug("sdk request 'teo.ModifyHostsCertificate'", slog.Any("request", modifyHostsCertificateReq), slog.Any("response", modifyHostsCertificateResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'teo.ModifyHostsCertificate'")
@@ -109,18 +109,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 func createSdkClients(secretId, secretKey string) (*wSdkClients, error) {
 	credential := common.NewCredential(secretId, secretKey)
 
-	sslClient, err := tcSsl.NewClient(credential, "", profile.NewClientProfile())
+	sslClient, err := tcssl.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}
 
-	teoClient, err := tcTeo.NewClient(credential, "", profile.NewClientProfile())
+	teoClient, err := tcteo.NewClient(credential, "", profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}
 
 	return &wSdkClients{
-		ssl: sslClient,
-		teo: teoClient,
+		SSL: sslClient,
+		TEO: teoClient,
 	}, nil
 }

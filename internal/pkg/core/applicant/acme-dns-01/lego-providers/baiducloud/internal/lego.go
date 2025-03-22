@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	bceDns "github.com/baidubce/bce-sdk-go/services/dns"
+	bcedns "github.com/baidubce/bce-sdk-go/services/dns"
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/platform/config/env"
@@ -38,7 +38,7 @@ type Config struct {
 }
 
 type DNSProvider struct {
-	client *bceDns.Client
+	client *bcedns.Client
 	config *Config
 }
 
@@ -69,7 +69,7 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 		return nil, errors.New("baiducloud: the configuration of the DNS provider is nil")
 	}
 
-	client, err := bceDns.NewClient(config.AccessKeyID, config.SecretAccessKey, "")
+	client, err := bcedns.NewClient(config.AccessKeyID, config.SecretAccessKey, "")
 	if err != nil {
 		return nil, err
 	} else {
@@ -128,11 +128,11 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*bceDns.Record, error) {
+func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*bcedns.Record, error) {
 	pageMarker := ""
 	pageSize := 1000
 	for {
-		request := &bceDns.ListRecordRequest{}
+		request := &bcedns.ListRecordRequest{}
 		request.Rr = subDomain
 		request.Marker = pageMarker
 		request.MaxKeys = pageSize
@@ -165,7 +165,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 	}
 
 	if record == nil {
-		request := &bceDns.CreateRecordRequest{
+		request := &bcedns.CreateRecordRequest{
 			Type:  "TXT",
 			Rr:    subDomain,
 			Value: value,
@@ -174,7 +174,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 		err := d.client.CreateRecord(zoneName, request, d.generateClientToken())
 		return err
 	} else {
-		request := &bceDns.UpdateRecordRequest{
+		request := &bcedns.UpdateRecordRequest{
 			Type:  "TXT",
 			Rr:    subDomain,
 			Value: value,

@@ -10,7 +10,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcSsl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	tcssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -33,7 +33,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *tcSsl.Client
+	sdkClient   *tcssl.Client
 	sslUploader uploader.Uploader
 }
 
@@ -93,7 +93,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 证书部署到云资源实例列表
 	// REF: https://cloud.tencent.com/document/product/400/91667
-	deployCertificateInstanceReq := tcSsl.NewDeployCertificateInstanceRequest()
+	deployCertificateInstanceReq := tcssl.NewDeployCertificateInstanceRequest()
 	deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)
 	deployCertificateInstanceReq.ResourceType = common.StringPtr(d.config.ResourceType)
 	deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(d.config.ResourceIds)
@@ -113,7 +113,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			return nil, ctx.Err()
 		}
 
-		describeHostDeployRecordDetailReq := tcSsl.NewDescribeHostDeployRecordDetailRequest()
+		describeHostDeployRecordDetailReq := tcssl.NewDescribeHostDeployRecordDetailRequest()
 		describeHostDeployRecordDetailReq.DeployRecordId = common.StringPtr(fmt.Sprintf("%d", *deployCertificateInstanceResp.Response.DeployRecordId))
 		describeHostDeployRecordDetailReq.Limit = common.Uint64Ptr(100)
 		describeHostDeployRecordDetailResp, err := d.sdkClient.DescribeHostDeployRecordDetail(describeHostDeployRecordDetailReq)
@@ -145,10 +145,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey, region string) (*tcSsl.Client, error) {
+func createSdkClient(secretId, secretKey, region string) (*tcssl.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
 
-	client, err := tcSsl.NewClient(credential, region, profile.NewClientProfile())
+	client, err := tcssl.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

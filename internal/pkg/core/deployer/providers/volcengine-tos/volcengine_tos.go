@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	xerrors "github.com/pkg/errors"
-	veTos "github.com/volcengine/ve-tos-golang-sdk/v2/tos"
+	"github.com/volcengine/ve-tos-golang-sdk/v2/tos"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -30,7 +30,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veTos.ClientV2
+	sdkClient   *tos.ClientV2
 	sslUploader uploader.Uploader
 }
 
@@ -91,9 +91,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 设置自定义域名
 	// REF: https://www.volcengine.com/docs/6559/1250189
-	putBucketCustomDomainReq := &veTos.PutBucketCustomDomainInput{
+	putBucketCustomDomainReq := &tos.PutBucketCustomDomainInput{
 		Bucket: d.config.Bucket,
-		Rule: veTos.CustomDomainRule{
+		Rule: tos.CustomDomainRule{
 			Domain: d.config.Domain,
 			CertID: upres.CertId,
 		},
@@ -107,13 +107,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veTos.ClientV2, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*tos.ClientV2, error) {
 	endpoint := fmt.Sprintf("tos-%s.ivolces.com", region)
 
-	client, err := veTos.NewClientV2(
+	client, err := tos.NewClientV2(
 		endpoint,
-		veTos.WithRegion(region),
-		veTos.WithCredentials(veTos.NewStaticCredentials(accessKeyId, accessKeySecret)),
+		tos.WithRegion(region),
+		tos.WithCredentials(tos.NewStaticCredentials(accessKeyId, accessKeySecret)),
 	)
 	if err != nil {
 		return nil, err

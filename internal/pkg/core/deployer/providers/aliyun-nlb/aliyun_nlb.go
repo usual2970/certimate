@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"strings"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliyunNlb "github.com/alibabacloud-go/nlb-20220430/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alinlb "github.com/alibabacloud-go/nlb-20220430/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -37,7 +37,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliyunNlb.Client
+	sdkClient   *alinlb.Client
 	sslUploader uploader.Uploader
 }
 
@@ -111,7 +111,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-getloadbalancerattribute
-	getLoadBalancerAttributeReq := &aliyunNlb.GetLoadBalancerAttributeRequest{
+	getLoadBalancerAttributeReq := &alinlb.GetLoadBalancerAttributeRequest{
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
@@ -126,7 +126,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
-		listListenersReq := &aliyunNlb.ListListenersRequest{
+		listListenersReq := &alinlb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
 			LoadBalancerIds:  []*string{tea.String(d.config.LoadbalancerId)},
@@ -188,7 +188,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
 	// 查询监听的属性
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-getlistenerattribute
-	getListenerAttributeReq := &aliyunNlb.GetListenerAttributeRequest{
+	getListenerAttributeReq := &alinlb.GetListenerAttributeRequest{
 		ListenerId: tea.String(cloudListenerId),
 	}
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
@@ -199,7 +199,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 	// 修改监听的属性
 	// REF: https://help.aliyun.com/zh/slb/network-load-balancer/developer-reference/api-nlb-2022-04-30-updatelistenerattribute
-	updateListenerAttributeReq := &aliyunNlb.UpdateListenerAttributeRequest{
+	updateListenerAttributeReq := &alinlb.UpdateListenerAttributeRequest{
 		ListenerId:     tea.String(cloudListenerId),
 		CertificateIds: []*string{tea.String(cloudCertId)},
 	}
@@ -212,7 +212,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunNlb.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*alinlb.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/Nlb
 	var endpoint string
 	switch region {
@@ -220,13 +220,13 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunNlb.Cl
 		endpoint = fmt.Sprintf("nlb.%s.aliyuncs.com", region)
 	}
 
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(endpoint),
 	}
 
-	client, err := aliyunNlb.NewClient(config)
+	client, err := alinlb.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

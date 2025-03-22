@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	xerrors "github.com/pkg/errors"
-	veCdn "github.com/volcengine/volc-sdk-golang/service/cdn"
+	vecdn "github.com/volcengine/volc-sdk-golang/service/cdn"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veCdn.CDN
+	sdkClient   *vecdn.CDN
 	sslUploader uploader.Uploader
 }
 
@@ -37,7 +37,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client := veCdn.NewInstance()
+	client := vecdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKeyId)
 	client.Client.SetSecretKey(config.AccessKeySecret)
 
@@ -80,7 +80,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if strings.HasPrefix(d.config.Domain, "*.") {
 		// 获取指定证书可关联的域名
 		// REF: https://www.volcengine.com/docs/6454/125711
-		describeCertConfigReq := &veCdn.DescribeCertConfigRequest{
+		describeCertConfigReq := &vecdn.DescribeCertConfigRequest{
 			CertId: upres.CertId,
 		}
 		describeCertConfigResp, err := d.sdkClient.DescribeCertConfig(describeCertConfigReq)
@@ -119,7 +119,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		for _, domain := range domains {
 			// 关联证书与加速域名
 			// REF: https://www.volcengine.com/docs/6454/125712
-			batchDeployCertReq := &veCdn.BatchDeployCertRequest{
+			batchDeployCertReq := &vecdn.BatchDeployCertRequest{
 				CertId: upres.CertId,
 				Domain: domain,
 			}

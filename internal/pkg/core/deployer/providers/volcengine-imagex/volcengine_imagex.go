@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	xerrors "github.com/pkg/errors"
-	veBase "github.com/volcengine/volc-sdk-golang/base"
-	veImageX "github.com/volcengine/volc-sdk-golang/service/imagex/v2"
+	vebase "github.com/volcengine/volc-sdk-golang/base"
+	veimagex "github.com/volcengine/volc-sdk-golang/service/imagex/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -30,7 +30,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veImageX.Imagex
+	sdkClient   *veimagex.Imagex
 	sslUploader uploader.Uploader
 }
 
@@ -91,7 +91,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 获取域名配置
 	// REF: https://www.volcengine.com/docs/508/9366
-	getDomainConfigReq := &veImageX.GetDomainConfigQuery{
+	getDomainConfigReq := &veimagex.GetDomainConfigQuery{
 		ServiceID:  d.config.ServiceId,
 		DomainName: d.config.Domain,
 	}
@@ -103,13 +103,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 更新 HTTPS 配置
 	// REF: https://www.volcengine.com/docs/508/66012
-	updateHttpsReq := &veImageX.UpdateHTTPSReq{
-		UpdateHTTPSQuery: &veImageX.UpdateHTTPSQuery{
+	updateHttpsReq := &veimagex.UpdateHTTPSReq{
+		UpdateHTTPSQuery: &veimagex.UpdateHTTPSQuery{
 			ServiceID: d.config.ServiceId,
 		},
-		UpdateHTTPSBody: &veImageX.UpdateHTTPSBody{
+		UpdateHTTPSBody: &veimagex.UpdateHTTPSBody{
 			Domain: d.config.Domain,
-			HTTPS: &veImageX.UpdateHTTPSBodyHTTPS{
+			HTTPS: &veimagex.UpdateHTTPSBodyHTTPS{
 				CertID:      upres.CertId,
 				EnableHTTPS: true,
 			},
@@ -133,15 +133,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veImageX.Imagex, error) {
-	var instance *veImageX.Imagex
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*veimagex.Imagex, error) {
+	var instance *veimagex.Imagex
 	if region == "" {
-		instance = veImageX.NewInstance()
+		instance = veimagex.NewInstance()
 	} else {
-		instance = veImageX.NewInstanceWithRegion(region)
+		instance = veimagex.NewInstanceWithRegion(region)
 	}
 
-	instance.SetCredential(veBase.Credentials{
+	instance.SetCredential(vebase.Credentials{
 		AccessKeyID:     accessKeyId,
 		SecretAccessKey: accessKeySecret,
 	})

@@ -7,9 +7,9 @@ import (
 	"log/slog"
 	"strings"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	aliyunWaf "github.com/alibabacloud-go/waf-openapi-20211001/v5/client"
+	aliwaf "github.com/alibabacloud-go/waf-openapi-20211001/v5/client"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -35,7 +35,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliyunWaf.Client
+	sdkClient   *aliwaf.Client
 	sslUploader uploader.Uploader
 }
 
@@ -106,7 +106,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 
 		// 查询默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedefaulthttps
-		describeDefaultHttpsReq := &aliyunWaf.DescribeDefaultHttpsRequest{
+		describeDefaultHttpsReq := &aliwaf.DescribeDefaultHttpsRequest{
 			InstanceId: tea.String(d.config.InstanceId),
 			RegionId:   tea.String(d.config.Region),
 		}
@@ -118,7 +118,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 
 		// 修改默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydefaulthttps
-		modifyDefaultHttpsReq := &aliyunWaf.ModifyDefaultHttpsRequest{
+		modifyDefaultHttpsReq := &aliwaf.ModifyDefaultHttpsRequest{
 			InstanceId:  tea.String(d.config.InstanceId),
 			RegionId:    tea.String(d.config.Region),
 			CertId:      tea.String(upres.CertId),
@@ -139,7 +139,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 
 		// 查询 CNAME 接入详情
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedomaindetail
-		describeDomainDetailReq := &aliyunWaf.DescribeDomainDetailRequest{
+		describeDomainDetailReq := &aliwaf.DescribeDomainDetailRequest{
 			InstanceId: tea.String(d.config.InstanceId),
 			RegionId:   tea.String(d.config.Region),
 			Domain:     tea.String(d.config.Domain),
@@ -152,16 +152,16 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 
 		// 修改 CNAME 接入资源
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydomain
-		modifyDomainReq := &aliyunWaf.ModifyDomainRequest{
+		modifyDomainReq := &aliwaf.ModifyDomainRequest{
 			InstanceId: tea.String(d.config.InstanceId),
 			RegionId:   tea.String(d.config.Region),
 			Domain:     tea.String(d.config.Domain),
-			Listen: &aliyunWaf.ModifyDomainRequestListen{
+			Listen: &aliwaf.ModifyDomainRequestListen{
 				CertId:      tea.String(upres.CertId),
 				TLSVersion:  tea.String("tlsv1"),
 				EnableTLSv3: tea.Bool(false),
 			},
-			Redirect: &aliyunWaf.ModifyDomainRequestRedirect{
+			Redirect: &aliwaf.ModifyDomainRequestRedirect{
 				Loadbalance: tea.String("iphash"),
 			},
 		}
@@ -186,15 +186,15 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunWaf.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliwaf.Client, error) {
 	// 接入点一览：https://api.aliyun.com/product/waf-openapi
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fmt.Sprintf("wafopenapi.%s.aliyuncs.com", region)),
 	}
 
-	client, err := aliyunWaf.NewClient(config)
+	client, err := aliwaf.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

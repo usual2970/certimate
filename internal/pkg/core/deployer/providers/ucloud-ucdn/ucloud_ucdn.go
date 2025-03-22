@@ -7,9 +7,9 @@ import (
 	"strconv"
 
 	xerrors "github.com/pkg/errors"
-	uCdn "github.com/ucloud/ucloud-sdk-go/services/ucdn"
-	usdk "github.com/ucloud/ucloud-sdk-go/ucloud"
-	uAuth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
+	"github.com/ucloud/ucloud-sdk-go/services/ucdn"
+	"github.com/ucloud/ucloud-sdk-go/ucloud"
+	"github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -30,7 +30,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *uCdn.UCDNClient
+	sdkClient   *ucdn.UCDNClient
 	sslUploader uploader.Uploader
 }
 
@@ -87,7 +87,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	getUcdnDomainConfigReq := d.sdkClient.NewGetUcdnDomainConfigRequest()
 	getUcdnDomainConfigReq.DomainId = []string{d.config.DomainId}
 	if d.config.ProjectId != "" {
-		getUcdnDomainConfigReq.ProjectId = usdk.String(d.config.ProjectId)
+		getUcdnDomainConfigReq.ProjectId = ucloud.String(d.config.ProjectId)
 	}
 	getUcdnDomainConfigResp, err := d.sdkClient.GetUcdnDomainConfig(getUcdnDomainConfigReq)
 	d.logger.Debug("sdk request 'ucdn.GetUcdnDomainConfig'", slog.Any("request", getUcdnDomainConfigReq), slog.Any("response", getUcdnDomainConfigResp))
@@ -101,15 +101,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.ucloud.cn/api/ucdn-api/update_ucdn_domain_https_config_v2
 	certId, _ := strconv.Atoi(upres.CertId)
 	updateUcdnDomainHttpsConfigV2Req := d.sdkClient.NewUpdateUcdnDomainHttpsConfigV2Request()
-	updateUcdnDomainHttpsConfigV2Req.DomainId = usdk.String(d.config.DomainId)
-	updateUcdnDomainHttpsConfigV2Req.HttpsStatusCn = usdk.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusCn)
-	updateUcdnDomainHttpsConfigV2Req.HttpsStatusAbroad = usdk.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusAbroad)
-	updateUcdnDomainHttpsConfigV2Req.HttpsStatusAbroad = usdk.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusAbroad)
-	updateUcdnDomainHttpsConfigV2Req.CertId = usdk.Int(certId)
-	updateUcdnDomainHttpsConfigV2Req.CertName = usdk.String(upres.CertName)
-	updateUcdnDomainHttpsConfigV2Req.CertType = usdk.String("ussl")
+	updateUcdnDomainHttpsConfigV2Req.DomainId = ucloud.String(d.config.DomainId)
+	updateUcdnDomainHttpsConfigV2Req.HttpsStatusCn = ucloud.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusCn)
+	updateUcdnDomainHttpsConfigV2Req.HttpsStatusAbroad = ucloud.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusAbroad)
+	updateUcdnDomainHttpsConfigV2Req.HttpsStatusAbroad = ucloud.String(getUcdnDomainConfigResp.DomainList[0].HttpsStatusAbroad)
+	updateUcdnDomainHttpsConfigV2Req.CertId = ucloud.Int(certId)
+	updateUcdnDomainHttpsConfigV2Req.CertName = ucloud.String(upres.CertName)
+	updateUcdnDomainHttpsConfigV2Req.CertType = ucloud.String("ussl")
 	if d.config.ProjectId != "" {
-		updateUcdnDomainHttpsConfigV2Req.ProjectId = usdk.String(d.config.ProjectId)
+		updateUcdnDomainHttpsConfigV2Req.ProjectId = ucloud.String(d.config.ProjectId)
 	}
 	updateUcdnDomainHttpsConfigV2Resp, err := d.sdkClient.UpdateUcdnDomainHttpsConfigV2(updateUcdnDomainHttpsConfigV2Req)
 	d.logger.Debug("sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2'", slog.Any("request", updateUcdnDomainHttpsConfigV2Req), slog.Any("response", updateUcdnDomainHttpsConfigV2Resp))
@@ -120,13 +120,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(privateKey, publicKey string) (*uCdn.UCDNClient, error) {
-	cfg := usdk.NewConfig()
+func createSdkClient(privateKey, publicKey string) (*ucdn.UCDNClient, error) {
+	cfg := ucloud.NewConfig()
 
-	credential := uAuth.NewCredential()
+	credential := auth.NewCredential()
 	credential.PrivateKey = privateKey
 	credential.PublicKey = publicKey
 
-	client := uCdn.NewClient(&cfg, &credential)
+	client := ucdn.NewClient(&cfg, &credential)
 	return client, nil
 }

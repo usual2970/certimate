@@ -4,9 +4,9 @@ import (
 	"context"
 	"log/slog"
 
-	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
-	jdLiveApi "github.com/jdcloud-api/jdcloud-sdk-go/services/live/apis"
-	jdLiveClient "github.com/jdcloud-api/jdcloud-sdk-go/services/live/client"
+	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
+	jdliveapi "github.com/jdcloud-api/jdcloud-sdk-go/services/live/apis"
+	jdliveclient "github.com/jdcloud-api/jdcloud-sdk-go/services/live/client"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -24,7 +24,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *jdLiveClient.LiveClient
+	sdkClient *jdliveclient.LiveClient
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -58,7 +58,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 设置直播证书
 	// REF: https://docs.jdcloud.com/cn/live-video/api/setlivedomaincertificate
-	setLiveDomainCertificateReq := jdLiveApi.NewSetLiveDomainCertificateRequest(d.config.Domain, "on")
+	setLiveDomainCertificateReq := jdliveapi.NewSetLiveDomainCertificateRequest(d.config.Domain, "on")
 	setLiveDomainCertificateReq.SetCert(certPem)
 	setLiveDomainCertificateReq.SetKey(privkeyPem)
 	setLiveDomainCertificateResp, err := d.sdkClient.SetLiveDomainCertificate(setLiveDomainCertificateReq)
@@ -70,9 +70,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret string) (*jdLiveClient.LiveClient, error) {
-	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
-	client := jdLiveClient.NewLiveClient(clientCredentials)
-	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
+func createSdkClient(accessKeyId, accessKeySecret string) (*jdliveclient.LiveClient, error) {
+	clientCredentials := jdcore.NewCredentials(accessKeyId, accessKeySecret)
+	client := jdliveclient.NewLiveClient(clientCredentials)
+	client.SetLogger(jdcore.NewDefaultLogger(jdcore.LogWarn))
 	return client, nil
 }
