@@ -30,7 +30,7 @@ type CreateCertificateResponse struct {
 }
 
 type GetDomainConfigRequest struct {
-	Domains string `json:"domains"`
+	Domains string   `json:"domains"`
 	Config  []string `json:"config"`
 }
 
