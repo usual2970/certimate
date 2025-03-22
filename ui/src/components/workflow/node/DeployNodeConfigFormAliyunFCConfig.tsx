@@ -38,7 +38,7 @@ const DeployNodeConfigFormAliyunFCConfig = ({ form: formInst, formName, disabled
       .trim(),
     domain: z
       .string({ message: t("workflow_node.deploy.form.aliyun_fc_domain.placeholder") })
-      .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),
+      .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

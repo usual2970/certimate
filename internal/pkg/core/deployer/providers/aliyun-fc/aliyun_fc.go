@@ -24,7 +24,7 @@ type DeployerConfig struct {
 	Region string `json:"region"`
 	// 服务版本。
 	ServiceVersion string `json:"serviceVersion"`
-	// 自定义域名（不支持泛域名）。
+	// 自定义域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 

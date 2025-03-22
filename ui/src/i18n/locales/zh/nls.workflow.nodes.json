@@ -163,7 +163,7 @@
   "workflow_node.deploy.form.aliyun_fc_service_version.label": "阿里云 FC 服务版本",
   "workflow_node.deploy.form.aliyun_fc_service_version.placeholder": "请选择阿里云 FC 服务版本",
   "workflow_node.deploy.form.aliyun_fc_domain.label": "阿里云 FC 自定义域名",
-  "workflow_node.deploy.form.aliyun_fc_domain.placeholder": "请输入阿里云 FC 自定义域名",
+  "workflow_node.deploy.form.aliyun_fc_domain.placeholder": "请输入阿里云 FC 自定义域名（支持泛域名）",
   "workflow_node.deploy.form.aliyun_fc_domain.tooltip": "这是什么？请参阅 see <a href=\"https://fcnext.console.aliyun.com/\" target=\"_blank\">https://fcnext.console.aliyun.com/</a>",
   "workflow_node.deploy.form.aliyun_live_region.label": "阿里云视频直播服务地域",
   "workflow_node.deploy.form.aliyun_live_region.placeholder": "请输入阿里云视频直播服务地域（例如：cn-hangzhou）",
