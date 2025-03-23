@@ -38,6 +38,7 @@ import AccessFormNamecheapConfig from "./AccessFormNamecheapConfig";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
 import AccessFormNameSiloConfig from "./AccessFormNameSiloConfig";
 import AccessFormNS1Config from "./AccessFormNS1Config";
+import AccessFormPorkbunConfig from "./AccessFormPorkbunConfig";
 import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
@@ -160,6 +161,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormNameSiloConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.NS1:
         return <AccessFormNS1Config {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.PORKBUN:
+        return <AccessFormPorkbunConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.POWERDNS:
         return <AccessFormPowerDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.QINIU:

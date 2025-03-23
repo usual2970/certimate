@@ -25,6 +25,7 @@ import (
 	pNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
 	pNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
 	pNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
+	pPorkbun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/porkbun"
 	pPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
 	pRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
 	pTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
@@ -339,6 +340,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 
 			applicant, err := pNS1.NewChallengeProvider(&pNS1.ChallengeProviderConfig{
 				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypePorkbun:
+		{
+			access := domain.AccessConfigForPorkbun{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pPorkbun.NewChallengeProvider(&pPorkbun.ChallengeProviderConfig{
+				ApiKey:                access.ApiKey,
+				SecretApiKey:          access.SecretApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

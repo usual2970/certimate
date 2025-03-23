@@ -1,16 +1,15 @@
-package powerdns
+package porkbun
 
 import (
-	"net/url"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
-	"github.com/go-acme/lego/v4/providers/dns/pdns"
+	"github.com/go-acme/lego/v4/providers/dns/porkbun"
 )
 
 type ChallengeProviderConfig struct {
-	ApiUrl                string `json:"apiUrl"`
 	ApiKey                string `json:"apiKey"`
+	SecretApiKey          string `json:"secretApiKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -20,10 +19,9 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 		panic("config is nil")
 	}
 
-	host, _ := url.Parse(config.ApiUrl)
-	providerConfig := pdns.NewDefaultConfig()
-	providerConfig.Host = host
+	providerConfig := porkbun.NewDefaultConfig()
 	providerConfig.APIKey = config.ApiKey
+	providerConfig.SecretAPIKey = config.SecretApiKey
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
@@ -31,7 +29,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 		providerConfig.TTL = int(config.DnsTTL)
 	}
 
-	provider, err := pdns.NewDNSProviderConfig(providerConfig)
+	provider, err := porkbun.NewDNSProviderConfig(providerConfig)
 	if err != nil {
 		return nil, err
 	}

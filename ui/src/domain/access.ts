@@ -34,6 +34,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
+      | AccessConfigForPorkbun
       | AccessConfigForPowerDNS
       | AccessConfigForQiniu
       | AccessConfigForRainYun
@@ -188,6 +189,11 @@ export type AccessConfigForNameSilo = {
 
 export type AccessConfigForNS1 = {
   apiKey: string;
+};
+
+export type AccessConfigForPorkbun = {
+  apiKey: string;
+  secretApiKey: string;
 };
 
 export type AccessConfigForPowerDNS = {

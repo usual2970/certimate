@@ -165,6 +165,11 @@ type AccessConfigForNS1 struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForPorkbun struct {
+	ApiKey       string `json:"apiKey"`
+	SecretApiKey string `json:"secretApiKey"`
+}
+
 type AccessConfigForPowerDNS struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`

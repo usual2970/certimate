@@ -26,6 +26,7 @@ const (
 	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud")
 	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
+	AccessProviderTypeDeSEC        = AccessProviderType("desec")     // deSEC（预留）
 	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeDynv6        = AccessProviderType("dynv6")
@@ -43,6 +44,7 @@ const (
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
 	AccessProviderTypeNameSilo     = AccessProviderType("namesilo")
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
+	AccessProviderTypePorkbun      = AccessProviderType("porkbun") // Porkbun（预留）
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
 	AccessProviderTypeQingCloud    = AccessProviderType("qingcloud") // 青云（预留）
@@ -52,6 +54,7 @@ const (
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
 	AccessProviderTypeUpyun        = AccessProviderType("upyun")
+	AccessProviderTypeVercel       = AccessProviderType("vercel") // Vercel（预留）
 	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
 	AccessProviderTypeWestcn       = AccessProviderType("westcn")
@@ -79,6 +82,7 @@ const (
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
 	ApplyDNSProviderTypeCMCCCloud       = ApplyDNSProviderType("cmcccloud")
+	ApplyDNSProviderTypeDeSEC           = ApplyDNSProviderType("desec")
 	ApplyDNSProviderTypeDNSLA           = ApplyDNSProviderType("dnsla")
 	ApplyDNSProviderTypeDynv6           = ApplyDNSProviderType("dynv6")
 	ApplyDNSProviderTypeGcore           = ApplyDNSProviderType("gcore")
@@ -92,10 +96,12 @@ const (
 	ApplyDNSProviderTypeNameDotCom      = ApplyDNSProviderType("namedotcom")
 	ApplyDNSProviderTypeNameSilo        = ApplyDNSProviderType("namesilo")
 	ApplyDNSProviderTypeNS1             = ApplyDNSProviderType("ns1")
+	ApplyDNSProviderTypePorkbun         = ApplyDNSProviderType("porkbun")
 	ApplyDNSProviderTypePowerDNS        = ApplyDNSProviderType("powerdns")
 	ApplyDNSProviderTypeRainYun         = ApplyDNSProviderType("rainyun")
 	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
+	ApplyDNSProviderTypeVercel          = ApplyDNSProviderType("vercel")
 	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
 	ApplyDNSProviderTypeVolcEngineDNS   = ApplyDNSProviderType("volcengine-dns")
 	ApplyDNSProviderTypeWestcn          = ApplyDNSProviderType("westcn")

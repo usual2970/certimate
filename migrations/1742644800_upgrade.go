@@ -7,7 +7,7 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
-		// create collection `workflow_run`
+		// update collection `workflow_run`
 		{
 			collection, err := app.FindCollectionByNameOrId("qjp8lygssgwyqyz")
 			if err != nil {
@@ -37,7 +37,7 @@ func init() {
 			}
 		}
 
-		// create collection `workflow_output`
+		// update collection `workflow_output`
 		{
 			collection, err := app.FindCollectionByNameOrId("bqnxb95f2cooowp")
 			if err != nil {
@@ -63,7 +63,7 @@ func init() {
 			}
 		}
 
-		// create collection `workflow_logs`
+		// update collection `workflow_logs`
 		{
 			collection, err := app.FindCollectionByNameOrId("pbc_1682296116")
 			if err != nil {
@@ -98,6 +98,83 @@ func init() {
 				"required": false,
 				"system": false,
 				"type": "json"
+			}`)); err != nil {
+				return err
+			}
+
+			if err := app.Save(collection); err != nil {
+				return err
+			}
+		}
+
+		// update collection `access`
+		{
+			collection, err := app.FindCollectionByNameOrId("4yzbv8urny5ja1e")
+			if err != nil {
+				return err
+			}
+
+			// update field
+			if err := collection.Fields.AddMarshaledJSONAt(2, []byte(`{
+				"hidden": false,
+				"id": "hwy7m03o",
+				"maxSelect": 1,
+				"name": "provider",
+				"presentable": false,
+				"required": false,
+				"system": false,
+				"type": "select",
+				"values": [
+					"1panel",
+					"acmehttpreq",
+					"akamai",
+					"aliyun",
+					"aws",
+					"azure",
+					"baiducloud",
+					"baishan",
+					"baotapanel",
+					"byteplus",
+					"cachefly",
+					"cdnfly",
+					"cloudflare",
+					"cloudns",
+					"cmcccloud",
+					"ctcccloud",
+					"cucccloud",
+					"desec",
+					"dnsla",
+					"dogecloud",
+					"dynv6",
+					"edgio",
+					"fastly",
+					"gname",
+					"gcore",
+					"godaddy",
+					"goedge",
+					"huaweicloud",
+					"jdcloud",
+					"k8s",
+					"local",
+					"namecheap",
+					"namedotcom",
+					"namesilo",
+					"ns1",
+					"porkbun",
+					"powerdns",
+					"qiniu",
+					"qingcloud",
+					"rainyun",
+					"safeline",
+					"ssh",
+					"tencentcloud",
+					"ucloud",
+					"upyun",
+					"vercel",
+					"volcengine",
+					"webhook",
+					"westcn"
+				]
 			}`)); err != nil {
 				return err
 			}
