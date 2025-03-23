@@ -54,7 +54,7 @@ const (
 	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
 	AccessProviderTypeUpyun        = AccessProviderType("upyun")
-	AccessProviderTypeVercel       = AccessProviderType("vercel") // Vercel（预留）
+	AccessProviderTypeVercel       = AccessProviderType("vercel")
 	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
 	AccessProviderTypeWebhook      = AccessProviderType("webhook")
 	AccessProviderTypeWestcn       = AccessProviderType("westcn")

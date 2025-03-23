@@ -28,9 +28,9 @@ const AccessFormVolcEngineConfig = ({ form: formInst, formName, disabled, initia
   const formSchema = z.object({
     accessKeyId: z
       .string()
-      .trim()
       .min(1, t("access.form.volcengine_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     secretAccessKey: z
       .string()
       .min(1, t("access.form.volcengine_secret_access_key.placeholder"))

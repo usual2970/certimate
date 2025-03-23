@@ -219,6 +219,11 @@ type AccessConfigForUpyun struct {
 	Password string `json:"password"`
 }
 
+type AccessConfigForVercel struct {
+	ApiAccessToken string `json:"apiAccessToken"`
+	TeamId         string `json:"teamId,omitempty"`
+}
+
 type AccessConfigForVolcEngine struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`

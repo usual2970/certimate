@@ -44,6 +44,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
+      | AccessConfigForVercel
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
       | AccessConfigForWestcn
@@ -244,6 +245,11 @@ export type AccessConfigForUCloud = {
 export type AccessConfigForUpyun = {
   username: string;
   password: string;
+};
+
+export type AccessConfigForVercel = {
+  apiAccessToken: string;
+  teamId?: string;
 };
 
 export type AccessConfigForVolcEngine = {

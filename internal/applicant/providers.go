@@ -30,6 +30,7 @@ import (
 	pPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
 	pRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
 	pTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
+	pVercel "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/vercel"
 	pVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
 	pWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
 	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
@@ -419,6 +420,22 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pTencentCloud.NewChallengeProvider(&pTencentCloud.ChallengeProviderConfig{
 				SecretId:              access.SecretId,
 				SecretKey:             access.SecretKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeVercel:
+		{
+			access := domain.AccessConfigForVercel{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pVercel.NewChallengeProvider(&pVercel.ChallengeProviderConfig{
+				ApiAccessToken:        access.ApiAccessToken,
+				TeamId:                access.TeamId,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
