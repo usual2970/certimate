@@ -1,4 +1,4 @@
-﻿package volcengineclb
+﻿package volcenginealb
 
 import (
 	"context"
@@ -7,13 +7,14 @@ import (
 	"log/slog"
 
 	xerrors "github.com/pkg/errors"
-	veclb "github.com/volcengine/volcengine-go-sdk/service/clb"
+	vealb "github.com/volcengine/volcengine-go-sdk/service/alb"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 )
 
 type DeployerConfig struct {
@@ -31,12 +32,15 @@ type DeployerConfig struct {
 	// 负载均衡监听器 ID。
 	// 部署资源类型为 [RESOURCE_TYPE_LISTENER] 时必填。
 	ListenerId string `json:"listenerId,omitempty"`
+	// SNI 域名（支持泛域名）。
+	// 部署资源类型为 [RESOURCE_TYPE_LOADBALANCER]、[RESOURCE_TYPE_LISTENER] 时选填。
+	Domain string `json:"domain,omitempty"`
 }
 
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veclb.CLB
+	sdkClient   *vealb.ALB
 	sslUploader uploader.Uploader
 }
 
@@ -112,33 +116,33 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		return errors.New("config `loadbalancerId` is required")
 	}
 
-	// 查看指定负载均衡实例的详情
-	// REF: https://www.volcengine.com/docs/6406/71773
-	describeLoadBalancerAttributesReq := &veclb.DescribeLoadBalancerAttributesInput{
+	// 查询 ALB 实例的详细信息
+	// REF: https://www.volcengine.com/docs/6767/113596
+	describeLoadBalancerAttributesReq := &vealb.DescribeLoadBalancerAttributesInput{
 		LoadBalancerId: ve.String(d.config.LoadbalancerId),
 	}
 	describeLoadBalancerAttributesResp, err := d.sdkClient.DescribeLoadBalancerAttributes(describeLoadBalancerAttributesReq)
-	d.logger.Debug("sdk request 'clb.DescribeLoadBalancerAttributes'", slog.Any("request", describeLoadBalancerAttributesReq), slog.Any("response", describeLoadBalancerAttributesResp))
+	d.logger.Debug("sdk request 'alb.DescribeLoadBalancerAttributes'", slog.Any("request", describeLoadBalancerAttributesReq), slog.Any("response", describeLoadBalancerAttributesResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeLoadBalancerAttributes'")
+		return xerrors.Wrap(err, "failed to execute sdk request 'alb.DescribeLoadBalancerAttributes'")
 	}
 
 	// 查询 HTTPS 监听器列表
-	// REF: https://www.volcengine.com/docs/6406/71776
+	// REF: https://www.volcengine.com/docs/6767/113684
 	listenerIds := make([]string, 0)
 	describeListenersPageSize := int64(100)
 	describeListenersPageNumber := int64(1)
 	for {
-		describeListenersReq := &veclb.DescribeListenersInput{
+		describeListenersReq := &vealb.DescribeListenersInput{
 			LoadBalancerId: ve.String(d.config.LoadbalancerId),
 			Protocol:       ve.String("HTTPS"),
 			PageNumber:     ve.Int64(describeListenersPageNumber),
 			PageSize:       ve.Int64(describeListenersPageSize),
 		}
 		describeListenersResp, err := d.sdkClient.DescribeListeners(describeListenersReq)
-		d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
+		d.logger.Debug("sdk request 'alb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.DescribeListeners'")
 		}
 
 		for _, listener := range describeListenersResp.Listeners {
@@ -154,7 +158,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 	// 遍历更新监听证书
 	if len(listenerIds) == 0 {
-		d.logger.Info("no clb listeners to deploy")
+		d.logger.Info("no alb listeners to deploy")
 	} else {
 		d.logger.Info("found https listeners to deploy", slog.Any("listenerIds", listenerIds))
 		var errs []error
@@ -186,23 +190,67 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 }
 
 func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudListenerId string, cloudCertId string) error {
-	// 修改指定监听器
-	// REF: https://www.volcengine.com/docs/6406/71775
-	modifyListenerAttributesReq := &veclb.ModifyListenerAttributesInput{
-		ListenerId:              ve.String(cloudListenerId),
-		CertificateSource:       ve.String("cert_center"),
-		CertCenterCertificateId: ve.String(cloudCertId),
+	// 查询指定监听器的详细信息
+	// REF: https://www.volcengine.com/docs/6767/113686
+	describeListenerAttributesReq := &vealb.DescribeListenerAttributesInput{
+		ListenerId: ve.String(cloudListenerId),
 	}
-	modifyListenerAttributesResp, err := d.sdkClient.ModifyListenerAttributes(modifyListenerAttributesReq)
-	d.logger.Debug("sdk request 'clb.ModifyListenerAttributes'", slog.Any("request", modifyListenerAttributesReq), slog.Any("response", modifyListenerAttributesResp))
+	describeListenerAttributesResp, err := d.sdkClient.DescribeListenerAttributes(describeListenerAttributesReq)
+	d.logger.Debug("sdk request 'alb.DescribeListenerAttributes'", slog.Any("request", describeListenerAttributesReq), slog.Any("response", describeListenerAttributesResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyListenerAttributes'")
+		return xerrors.Wrap(err, "failed to execute sdk request 'alb.DescribeListenerAttributes'")
+	}
+
+	if d.config.Domain == "" {
+		// 未指定 SNI，只需部署到监听器
+
+		// 修改指定监听器
+		// REF: https://www.volcengine.com/docs/6767/113683
+		modifyListenerAttributesReq := &vealb.ModifyListenerAttributesInput{
+			ListenerId:              ve.String(cloudListenerId),
+			CertificateSource:       ve.String("cert_center"),
+			CertCenterCertificateId: ve.String(cloudCertId),
+		}
+		modifyListenerAttributesResp, err := d.sdkClient.ModifyListenerAttributes(modifyListenerAttributesReq)
+		d.logger.Debug("sdk request 'alb.ModifyListenerAttributes'", slog.Any("request", modifyListenerAttributesReq), slog.Any("response", modifyListenerAttributesResp))
+		if err != nil {
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ModifyListenerAttributes'")
+		}
+	} else {
+		// 指定 SNI，需部署到扩展域名
+
+		// 修改指定监听器
+		// REF: https://www.volcengine.com/docs/6767/113683
+		modifyListenerAttributesReq := &vealb.ModifyListenerAttributesInput{
+			ListenerId: ve.String(cloudListenerId),
+			DomainExtensions: sliceutil.Map(
+				sliceutil.Filter(
+					describeListenerAttributesResp.DomainExtensions,
+					func(domain *vealb.DomainExtensionForDescribeListenerAttributesOutput) bool {
+						return *domain.Domain == d.config.Domain
+					},
+				),
+				func(domain *vealb.DomainExtensionForDescribeListenerAttributesOutput) *vealb.DomainExtensionForModifyListenerAttributesInput {
+					return &vealb.DomainExtensionForModifyListenerAttributesInput{
+						DomainExtensionId:       domain.DomainExtensionId,
+						Domain:                  domain.Domain,
+						CertificateSource:       ve.String("cert_center"),
+						CertCenterCertificateId: ve.String(cloudCertId),
+						Action:                  ve.String("modify"),
+					}
+				}),
+		}
+		modifyListenerAttributesResp, err := d.sdkClient.ModifyListenerAttributes(modifyListenerAttributesReq)
+		d.logger.Debug("sdk request 'alb.ModifyListenerAttributes'", slog.Any("request", modifyListenerAttributesReq), slog.Any("response", modifyListenerAttributesResp))
+		if err != nil {
+			return xerrors.Wrap(err, "failed to execute sdk request 'alb.ModifyListenerAttributes'")
+		}
 	}
 
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*veclb.CLB, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*vealb.ALB, error) {
 	config := ve.NewConfig().WithRegion(region).WithAkSk(accessKeyId, accessKeySecret)
 
 	session, err := vesession.NewSession(config)
@@ -210,6 +258,6 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*veclb.CLB, e
 		return nil, err
 	}
 
-	client := veclb.New(session)
+	client := vealb.New(session)
 	return client, nil
 }

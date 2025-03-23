@@ -103,6 +103,7 @@
   "provider.upyun.cdn": "又拍云 - 云分发 CDN",
   "provider.upyun.file": "又拍云 - 云存储",
   "provider.volcengine": "火山引擎",
+  "provider.volcengine.alb": "火山引擎 - 应用型负载均衡 ALB",
   "provider.volcengine.cdn": "火山引擎 - 内容分发网络 CDN",
   "provider.volcengine.clb": "火山引擎 - 负载均衡 CLB",
   "provider.volcengine.dcdn": "火山引擎 - 全站加速 DCDN",

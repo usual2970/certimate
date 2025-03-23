@@ -61,6 +61,7 @@ import (
 	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
 	pUpyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/upyun-cdn"
+	pVolcEngineALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-alb"
 	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
 	pVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	pVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
@@ -848,7 +849,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineImageX, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
+	case domain.DeployProviderTypeVolcEngineALB, domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineImageX, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -856,6 +857,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
+			case domain.DeployProviderTypeVolcEngineALB:
+				deployer, err := pVolcEngineALB.NewDeployer(&pVolcEngineALB.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+					ResourceType:    pVolcEngineALB.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderDeployConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
 			case domain.DeployProviderTypeVolcEngineCDN:
 				deployer, err := pVolcEngineCDN.NewDeployer(&pVolcEngineCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
@@ -870,6 +883,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeySecret: access.SecretAccessKey,
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 					ResourceType:    pVolcEngineCLB.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maputil.GetString(options.ProviderDeployConfig, "listenerId"),
 				})
 				return deployer, err

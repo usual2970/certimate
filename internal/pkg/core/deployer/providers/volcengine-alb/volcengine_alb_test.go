@@ -1,4 +1,4 @@
-﻿package volcengineclb_test
+﻿package volcenginealb_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-alb"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINECLB_"
+	argsPrefix := "CERTIMATE_DEPLOYER_VOLCENGINEALB_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -34,13 +34,13 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./volcengine_clb_test.go -args \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_REGION="cn-beijing" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_LISTENERID="your-listener-id"
+	go test -v ./volcengine_alb_test.go -args \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_REGION="cn-beijing" \
+	--CERTIMATE_DEPLOYER_VOLCENGINEALB_LISTENERID="your-listener-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

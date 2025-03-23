@@ -168,6 +168,7 @@ const (
 	DeployProviderTypeUCloudUS3             = DeployProviderType("ucloud-us3")
 	DeployProviderTypeUpyunCDN              = DeployProviderType("upyun-cdn")
 	DeployProviderTypeUpyunFile             = DeployProviderType("upyun-file")
+	DeployProviderTypeVolcEngineALB         = DeployProviderType("volcengine-alb")
 	DeployProviderTypeVolcEngineCDN         = DeployProviderType("volcengine-cdn")
 	DeployProviderTypeVolcEngineCLB         = DeployProviderType("volcengine-clb")
 	DeployProviderTypeVolcEngineDCDN        = DeployProviderType("volcengine-dcdn")

@@ -103,6 +103,7 @@
   "provider.upyun.cdn": "UPYUN - CDN (Content Delivery Network)",
   "provider.upyun.file": "UPYUN - File Storage",
   "provider.volcengine": "Volcengine",
+  "provider.volcengine.alb": "Volcengine - ALB (Application Load Balancer)",
   "provider.volcengine.cdn": "Volcengine - CDN (Content Delivery Network)",
   "provider.volcengine.clb": "Volcengine - CLB (Cloud Load Balancer)",
   "provider.volcengine.dcdn": "Volcengine - DCDN (Dynamic Content Delivery Network)",
