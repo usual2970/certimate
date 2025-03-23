@@ -20,6 +20,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
+      | AccessConfigForDeSEC
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForDynv6
@@ -122,6 +123,10 @@ export type AccessConfigForClouDNS = {
 export type AccessConfigForCMCCCloud = {
   accessKeyId: string;
   accessKeySecret: string;
+};
+
+export type AccessConfigForDeSEC = {
+  token: string;
 };
 
 export type AccessConfigForDNSLA = {

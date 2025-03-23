@@ -100,6 +100,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
 
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.png", [ACCESS_USAGES.APPLY]],
+    [ACCESS_PROVIDERS.DESEC, "provider.desec", "/imgs/providers/desec.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.DNSLA, "provider.dnsla", "/imgs/providers/dnsla.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.DYNV6, "provider.dynv6", "/imgs/providers/dynv6.svg", [ACCESS_USAGES.APPLY]],
     [ACCESS_PROVIDERS.GNAME, "provider.gname", "/imgs/providers/gname.png", [ACCESS_USAGES.APPLY]],
@@ -194,6 +195,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.AZURE_DNS, "provider.azure.dns"],
     [APPLY_DNS_PROVIDERS.CLOUDFLARE, "provider.cloudflare"],
     [APPLY_DNS_PROVIDERS.CLOUDNS, "provider.cloudns"],
+    [APPLY_DNS_PROVIDERS.DESEC, "provider.desec"],
     [APPLY_DNS_PROVIDERS.DNSLA, "provider.dnsla"],
     [APPLY_DNS_PROVIDERS.DYNV6, "provider.dynv6"],
     [APPLY_DNS_PROVIDERS.GCORE, "provider.gcore"],

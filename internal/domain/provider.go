@@ -26,7 +26,7 @@ const (
 	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud")
 	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
-	AccessProviderTypeDeSEC        = AccessProviderType("desec")     // deSEC（预留）
+	AccessProviderTypeDeSEC        = AccessProviderType("desec")
 	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
 	AccessProviderTypeDynv6        = AccessProviderType("dynv6")
@@ -44,7 +44,7 @@ const (
 	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
 	AccessProviderTypeNameSilo     = AccessProviderType("namesilo")
 	AccessProviderTypeNS1          = AccessProviderType("ns1")
-	AccessProviderTypePorkbun      = AccessProviderType("porkbun") // Porkbun（预留）
+	AccessProviderTypePorkbun      = AccessProviderType("porkbun")
 	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
 	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
 	AccessProviderTypeQingCloud    = AccessProviderType("qingcloud") // 青云（预留）
