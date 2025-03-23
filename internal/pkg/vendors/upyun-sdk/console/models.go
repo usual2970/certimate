@@ -41,10 +41,10 @@ type signinRequest struct {
 
 type signinResponse struct {
 	baseResponse
-	Data struct {
+	Data *struct {
 		baseResponseData
 		Result bool `json:"result"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type UploadHttpsCertificateRequest struct {
@@ -62,7 +62,7 @@ type UploadHttpsCertificateResponse struct {
 			CommonName    string `json:"commonName"`
 			Serial        string `json:"serial"`
 		} `json:"result"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type GetHttpsCertificateManagerRequest struct {
@@ -76,7 +76,7 @@ type GetHttpsCertificateManagerResponse struct {
 		AuthenticateNum     int32                           `json:"authenticate_num"`
 		AuthenticateDomains []string                        `json:"authenticate_domain"`
 		Domains             []HttpsCertificateManagerDomain `json:"domains"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type HttpsCertificateManagerDomain struct {
@@ -98,7 +98,7 @@ type UpdateHttpsCertificateManagerResponse struct {
 	Data *struct {
 		baseResponseData
 		Status bool `json:"status"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type GetHttpsServiceManagerRequest struct {
@@ -111,7 +111,7 @@ type GetHttpsServiceManagerResponse struct {
 		baseResponseData
 		Status  int                         `json:"status"`
 		Domains []HttpsServiceManagerDomain `json:"result"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type HttpsServiceManagerDomain struct {
@@ -137,5 +137,5 @@ type MigrateHttpsDomainResponse struct {
 	Data *struct {
 		baseResponseData
 		Status bool `json:"status"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }

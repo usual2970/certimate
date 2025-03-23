@@ -33,12 +33,9 @@ func (c *Client) UploadHttpsCertificate(req *UploadHttpsCertificateRequest) (*Up
 		}
 	}
 
-	resp := UploadHttpsCertificateResponse{}
-	err := c.sendRequestWithResult(http.MethodPost, "/api/https/certificate/", req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	resp := &UploadHttpsCertificateResponse{}
+	err := c.sendRequestWithResult(http.MethodPost, "/api/https/certificate/", req, resp)
+	return resp, err
 }
 
 func (c *Client) GetHttpsCertificateManager(certificateId string) (*GetHttpsCertificateManagerResponse, error) {
@@ -48,13 +45,10 @@ func (c *Client) GetHttpsCertificateManager(certificateId string) (*GetHttpsCert
 		}
 	}
 
-	req := GetHttpsCertificateManagerRequest{CertificateId: certificateId}
-	resp := GetHttpsCertificateManagerResponse{}
-	err := c.sendRequestWithResult(http.MethodGet, "/api/https/certificate/manager/", &req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	req := &GetHttpsCertificateManagerRequest{CertificateId: certificateId}
+	resp := &GetHttpsCertificateManagerResponse{}
+	err := c.sendRequestWithResult(http.MethodGet, "/api/https/certificate/manager/", req, resp)
+	return resp, err
 }
 
 func (c *Client) UpdateHttpsCertificateManager(req *UpdateHttpsCertificateManagerRequest) (*UpdateHttpsCertificateManagerResponse, error) {
@@ -64,12 +58,9 @@ func (c *Client) UpdateHttpsCertificateManager(req *UpdateHttpsCertificateManage
 		}
 	}
 
-	resp := UpdateHttpsCertificateManagerResponse{}
-	err := c.sendRequestWithResult(http.MethodPost, "/api/https/certificate/manager", req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	resp := &UpdateHttpsCertificateManagerResponse{}
+	err := c.sendRequestWithResult(http.MethodPost, "/api/https/certificate/manager", req, resp)
+	return resp, err
 }
 
 func (c *Client) GetHttpsServiceManager(domain string) (*GetHttpsServiceManagerResponse, error) {
@@ -79,13 +70,10 @@ func (c *Client) GetHttpsServiceManager(domain string) (*GetHttpsServiceManagerR
 		}
 	}
 
-	req := GetHttpsServiceManagerRequest{Domain: domain}
-	resp := GetHttpsServiceManagerResponse{}
-	err := c.sendRequestWithResult(http.MethodGet, "/api/https/services/manager", &req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	req := &GetHttpsServiceManagerRequest{Domain: domain}
+	resp := &GetHttpsServiceManagerResponse{}
+	err := c.sendRequestWithResult(http.MethodGet, "/api/https/services/manager", req, resp)
+	return resp, err
 }
 
 func (c *Client) MigrateHttpsDomain(req *MigrateHttpsDomainRequest) (*MigrateHttpsDomainResponse, error) {
@@ -95,10 +83,7 @@ func (c *Client) MigrateHttpsDomain(req *MigrateHttpsDomainRequest) (*MigrateHtt
 		}
 	}
 
-	resp := MigrateHttpsDomainResponse{}
-	err := c.sendRequestWithResult(http.MethodPost, "/api/https/migrate/domain", req, &resp)
-	if err != nil {
-		return nil, err
-	}
-	return &resp, nil
+	resp := &MigrateHttpsDomainResponse{}
+	err := c.sendRequestWithResult(http.MethodPost, "/api/https/migrate/domain", req, resp)
+	return resp, err
 }

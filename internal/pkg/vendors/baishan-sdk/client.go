@@ -63,7 +63,7 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 		req = req.
 			SetQueryParam("token", c.apiToken).
-			SetQueryParamsFromValues(qs).SetDebug(true)
+			SetQueryParamsFromValues(qs)
 	} else {
 		req = req.
 			SetHeader("Content-Type", "application/json").
@@ -73,9 +73,9 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 	resp, err := req.Send()
 	if err != nil {
-		return nil, fmt.Errorf("baishan api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("baishan api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("baishan api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("baishan api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil

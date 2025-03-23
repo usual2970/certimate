@@ -37,7 +37,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_UPYUNCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_UPYUNCDN_USERNAME="your-username" \
 	--CERTIMATE_DEPLOYER_UPYUNCDN_PASSWORD="your-password" \
-	--CERTIMATE_DEPLOYER_UPYUNCDN_DOMAIN="example.com" \
+	--CERTIMATE_DEPLOYER_UPYUNCDN_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

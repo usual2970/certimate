@@ -60,12 +60,11 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 			SetBody(params)
 	}
 
-	req = req.SetDebug(true)
 	resp, err := req.Send()
 	if err != nil {
-		return nil, fmt.Errorf("upyun api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("upyun api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("upyun api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("upyun api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil

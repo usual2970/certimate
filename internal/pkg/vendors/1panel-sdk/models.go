@@ -6,16 +6,22 @@ type BaseResponse interface {
 }
 
 type baseResponse struct {
-	Code    int32  `json:"code"`
-	Message string `json:"message"`
+	Code    *int32  `json:"code,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 func (r *baseResponse) GetCode() int32 {
-	return r.Code
+	if r.Code != nil {
+		return *r.Code
+	}
+	return 0
 }
 
 func (r *baseResponse) GetMessage() string {
-	return r.Message
+	if r.Message != nil {
+		return *r.Message
+	}
+	return ""
 }
 
 type UpdateSystemSSLRequest struct {
@@ -38,7 +44,7 @@ type SearchWebsiteSSLRequest struct {
 
 type SearchWebsiteSSLResponse struct {
 	baseResponse
-	Data struct {
+	Data *struct {
 		Items []*struct {
 			ID          int64  `json:"id"`
 			PEM         string `json:"pem"`
@@ -50,7 +56,7 @@ type SearchWebsiteSSLResponse struct {
 			CreatedAt   string `json:"createdAt"`
 		} `json:"items"`
 		Total int32 `json:"total"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type UploadWebsiteSSLRequest struct {
@@ -73,13 +79,13 @@ type GetHttpsConfRequest struct {
 
 type GetHttpsConfResponse struct {
 	baseResponse
-	Data struct {
+	Data *struct {
 		Enable      bool     `json:"enable"`
 		HttpConfig  string   `json:"httpConfig"`
 		SSLProtocol []string `json:"SSLProtocol"`
 		Algorithm   string   `json:"algorithm"`
 		Hsts        bool     `json:"hsts"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type UpdateHttpsConfRequest struct {

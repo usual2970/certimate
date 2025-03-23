@@ -6,16 +6,22 @@ type BaseResponse interface {
 }
 
 type baseResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    *int    `json:"code,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 func (r *baseResponse) GetCode() int {
-	return r.Code
+	if r.Code != nil {
+		return *r.Code
+	}
+	return 0
 }
 
 func (r *baseResponse) GetMessage() string {
-	return r.Message
+	if r.Message != nil {
+		return *r.Message
+	}
+	return ""
 }
 
 type CreateCertificateRequest struct {
@@ -26,7 +32,7 @@ type CreateCertificateRequest struct {
 
 type CreateCertificateResponse struct {
 	baseResponse
-	Data *DomainCertificate `json:"data"`
+	Data *DomainCertificate `json:"data,omitempty"`
 }
 
 type GetDomainConfigRequest struct {
@@ -39,7 +45,7 @@ type GetDomainConfigResponse struct {
 	Data []*struct {
 		Domain string        `json:"domain"`
 		Config *DomainConfig `json:"config"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type SetDomainConfigRequest struct {
@@ -51,7 +57,7 @@ type SetDomainConfigResponse struct {
 	baseResponse
 	Data *struct {
 		Config *DomainConfig `json:"config"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type DomainCertificate struct {

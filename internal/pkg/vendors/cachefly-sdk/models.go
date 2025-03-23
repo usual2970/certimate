@@ -1,15 +1,18 @@
 package cacheflysdk
 
 type BaseResponse interface {
-	GetMessage() *string
+	GetMessage() string
 }
 
 type baseResponse struct {
 	Message *string `json:"message,omitempty"`
 }
 
-func (r *baseResponse) GetMessage() *string {
-	return r.Message
+func (r *baseResponse) GetMessage() string {
+	if r.Message != nil {
+		return *r.Message
+	}
+	return ""
 }
 
 type CreateCertificateRequest struct {
