@@ -56,6 +56,9 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 func (c *Client) sendRequestWithResult(path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(path, params)
 	if err != nil {
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &result)
+		}
 		return err
 	}
 

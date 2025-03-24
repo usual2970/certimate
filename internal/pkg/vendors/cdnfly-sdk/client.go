@@ -74,6 +74,9 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(method, path, params)
 	if err != nil {
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &result)
+		}
 		return err
 	}
 
