@@ -1,0 +1,56 @@
+name: "💡 Feature Request"
+description: "提出新功能请求或改进意见 / Suggest an idea for this project."
+title: "[Feature] 简要描述你希望实现的功能"
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes: 
+      value: |
+        ## Welcome!
+
+        **在提交 Issue 之前，请确认以下事项**：
+        1. 我**确认**是基于当前最新大版本而提出的新功能请求或改进意见。
+        2. 我**确认**已搜索过[已有的 Issues](https://github.com/usual2970/certimate/issues)（包括已关闭的），没有类似的问题。
+        3. 我**确认**已阅读过[文档](https://docs.certimate.me/)，没有类似的问题。
+        4. 请**务必**按照模板规范详细描述问题，否则 Issue 将会被直接关闭。
+
+        **Before you submit the issue, please make sure of the following checklist**:
+        1. Yes, I'm using the latest release.
+        2. Yes, I've searched for [existing issues](https://github.com/usual2970/certimate/issues) (including closed ones) on GitHub and didn't find any similar.
+        3. Yes, I've read the [documentation](https://docs.certimate.me/en/) and didn't find any similar.
+        4. Please describe the problem in detail according to the template specification, otherwise the issue will be closed directly.
+
+  - type: textarea
+    attributes:
+      label: 功能描述 / Description
+      description: 请详细清晰地描述你希望添加的功能，如果可能请上传截图。 / Describe the feature you'd like to add in detail and clearly, and upload screenshots if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 请求动机 / Motivation
+      description: 为什么这个功能对项目有帮助？ / Why is this feature helpful to the project?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 其他 / Miscellaneous
+      description: 在此处添加关于该 Issue 的任何其他信息。 / Add any other context about the problem here.
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: 贡献 / Contribution
+      options:
+        - label: 我乐意为此贡献代码！ / I am interested in contributing to this feature!
+          required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        请保持每个 Issue 只包含一个功能请求。
+        Please limit one request per issue.

@@ -1,0 +1,40 @@
+name: "❓ Questions"
+description: "遇到了困难需要求助？ / Have problem in use and need help?"
+title: "[Feature] 简要描述你遇到的问题"
+body:
+  - type: markdown
+    attributes: 
+      value: |
+        ## Welcome!
+
+        **在提交 Issue 之前，请确认以下事项**：
+        1. 我**确认**正在使用的是当前最新版本。
+        2. 我**确认**已搜索过[已有的 Issues](https://github.com/usual2970/certimate/issues)（包括已关闭的），没有类似的问题。
+        3. 我**确认**已阅读过[文档](https://docs.certimate.me/)，没有类似的问题。
+        4. 请**务必**按照模板规范详细描述问题，否则 Issue 将会被直接关闭。
+
+        **Before you submit the issue, please make sure of the following checklist**:
+        1. Yes, I'm using the latest release.
+        2. Yes, I've searched for [existing issues](https://github.com/usual2970/certimate/issues) (including closed ones) on GitHub and didn't find any similar.
+        3. Yes, I've read the [documentation](https://docs.certimate.me/en/) and didn't find any similar.
+        4. Please describe the problem in detail according to the template specification, otherwise the issue will be closed directly.
+
+  - type: textarea
+    attributes:
+      label: 问题描述 / Description
+      description: 请详细清晰地描述你遇到的问题，如果可能请上传截图。 / Describe the problem you encountered in detail and clearly, and upload screenshots if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 其他 / Miscellaneous
+      description: 在此处添加关于该问题的任何其他信息。 / Add any other context about the problem here.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        请保持每个 Issue 只包含一个问题求助。
+        Please limit one question per issue.

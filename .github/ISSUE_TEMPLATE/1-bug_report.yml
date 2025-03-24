@@ -1,0 +1,77 @@
+name: "🐞 Bug Report"
+description: "报告缺陷来帮助我们完善 / Create a report to help us improve."
+title: "[Bug] 简要描述你发现的缺陷"
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes: 
+      value: |
+        ## Welcome!
+
+        **在提交 Issue 之前，请确认以下事项**：
+        1. 我**确认**已尝试使用是当前最新版本，并能复现问题。
+        2. 我**确认**已搜索过[已有的 Issues](https://github.com/usual2970/certimate/issues)（包括已关闭的），没有类似的问题。
+        3. 我**确认**已阅读过[文档](https://docs.certimate.me/)，没有类似的问题。
+        4. 请**务必**按照模板规范详细描述问题，否则 Issue 将会被直接关闭。
+
+        **Before you submit the issue, please make sure of the following checklist**:
+        1. Yes, I'm using the latest release and can reproduce the issue.
+        2. Yes, I've searched for [existing issues](https://github.com/usual2970/certimate/issues) (including closed ones) on GitHub and didn't find any similar.
+        3. Yes, I've read the [documentation](https://docs.certimate.me/en/) and didn't find any similar.
+        4. Please describe the problem in detail according to the template specification, otherwise the issue will be closed directly.
+
+  - type: input
+    attributes:
+      label: 软件版本 / Release Version
+      description: 请提供 Certimate 的具体版本。 / Please provide the specific version of Certimate.
+      placeholder: (e.g. v1.0.0)
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 缺陷描述 / Description
+      description: 请详细清晰地描述你发现的缺陷或故障，如果可能请上传截图。 / Describe the bug you found in detail and clearly, and upload screenshots if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      description: 请提供可复现的完整步骤。 / Please walk us through it step by step.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: 日志 / Logs
+      description: 在此处添加日志信息（如果有的话）。 / Add logs here if available.
+      value: |-
+        <details>
+
+        ```console
+        # 请在此粘贴日志 / Paste logs here
+        ```
+
+        </details>
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: 其他 / Miscellaneous
+      description: 在此处添加关于该 Issue 的任何其他信息。 / Add any other context about the issue here.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        请保持每个 Issue 只包含一个缺陷报告。
+        Please limit one report per issue.

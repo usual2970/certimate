@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 加入频道讨论
-    url: https://t.me/+ZXphsppxUg41YmVl
-    about: 加入到电报频道寻求更多帮助
+  - name: "🌐 加入频道讨论"
+    about: "加入到电报频道寻求更多帮助。 / Join in our Telegram channel."
+    url: "https://t.me/+ZXphsppxUg41YmVl"
+  - name: "📖 常见问题"
+    about: "请先阅读文档 FAQ，可能会有你需要的答案。 / Please take a look to FAQs."
+    url: "https://docs.certimate.me/docs/reference/faq"
