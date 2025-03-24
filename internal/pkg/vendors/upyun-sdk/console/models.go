@@ -17,7 +17,7 @@ type baseResponseData struct {
 	ErrorMessage string      `json:"message"`
 }
 
-func (r *baseResponseData) GetErrorCode() int {
+func (r *baseResponseData) GetErrorCode() int32 {
 	if r.ErrorCode.String() == "" {
 		return 0
 	}
@@ -27,7 +27,7 @@ func (r *baseResponseData) GetErrorCode() int {
 		return -1
 	}
 
-	return int(errcode)
+	return int32(errcode)
 }
 
 func (r *baseResponseData) GetErrorMessage() string {
@@ -56,7 +56,7 @@ type UploadHttpsCertificateResponse struct {
 	baseResponse
 	Data *struct {
 		baseResponseData
-		Status int `json:"status"`
+		Status int32 `json:"status"`
 		Result struct {
 			CertificateId string `json:"certificate_id"`
 			CommonName    string `json:"commonName"`
@@ -109,7 +109,7 @@ type GetHttpsServiceManagerResponse struct {
 	baseResponse
 	Data *struct {
 		baseResponseData
-		Status  int                         `json:"status"`
+		Status  int32                       `json:"status"`
 		Domains []HttpsServiceManagerDomain `json:"result"`
 	} `json:"data,omitempty"`
 }

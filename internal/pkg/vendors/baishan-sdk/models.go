@@ -1,16 +1,16 @@
 package baishansdk
 
 type BaseResponse interface {
-	GetCode() int
+	GetCode() int32
 	GetMessage() string
 }
 
 type baseResponse struct {
-	Code    *int    `json:"code,omitempty"`
+	Code    *int32  `json:"code,omitempty"`
 	Message *string `json:"message,omitempty"`
 }
 
-func (r *baseResponse) GetCode() int {
+func (r *baseResponse) GetCode() int32 {
 	if r.Code != nil {
 		return *r.Code
 	}

@@ -1,16 +1,18 @@
 package gnamesdk
 
+import "encoding/json"
+
 type BaseResponse interface {
-	GetCode() int
+	GetCode() int32
 	GetMessage() string
 }
 
 type baseResponse struct {
-	Code    int    `json:"code"`
+	Code    int32  `json:"code"`
 	Message string `json:"msg"`
 }
 
-func (r *baseResponse) GetCode() int {
+func (r *baseResponse) GetCode() int32 {
 	return r.Code
 }
 
@@ -23,23 +25,23 @@ type AddDomainResolutionRequest struct {
 	RecordType  string `json:"lx"`
 	RecordName  string `json:"zj"`
 	RecordValue string `json:"jlz"`
-	MX          int    `json:"mx"`
-	TTL         int    `json:"ttl"`
+	MX          int32  `json:"mx"`
+	TTL         int32  `json:"ttl"`
 }
 
 type AddDomainResolutionResponse struct {
 	baseResponse
-	Data string `json:"data"`
+	Data json.Number `json:"data"`
 }
 
 type ModifyDomainResolutionRequest struct {
-	ID          string `json:"jxid"`
+	ID          int64  `json:"jxid"`
 	ZoneName    string `json:"ym"`
 	RecordType  string `json:"lx"`
 	RecordName  string `json:"zj"`
 	RecordValue string `json:"jlz"`
-	MX          int    `json:"mx"`
-	TTL         int    `json:"ttl"`
+	MX          int32  `json:"mx"`
+	TTL         int32  `json:"ttl"`
 }
 
 type ModifyDomainResolutionResponse struct {
@@ -48,7 +50,7 @@ type ModifyDomainResolutionResponse struct {
 
 type DeleteDomainResolutionRequest struct {
 	ZoneName string `json:"ym"`
-	RecordID string `json:"jxid"`
+	RecordID int64  `json:"jxid"`
 }
 
 type DeleteDomainResolutionResponse struct {
@@ -57,23 +59,23 @@ type DeleteDomainResolutionResponse struct {
 
 type ListDomainResolutionRequest struct {
 	ZoneName string `json:"ym"`
-	Page     *int   `json:"page,omitempty"`
-	PageSize *int   `json:"limit,omitempty"`
+	Page     *int32 `json:"page,omitempty"`
+	PageSize *int32 `json:"limit,omitempty"`
 }
 
 type ListDomainResolutionResponse struct {
 	baseResponse
-	Count    int                 `json:"count"`
+	Count    int32               `json:"count"`
 	Data     []*ResolutionRecord `json:"data"`
-	Page     int                 `json:"page"`
-	PageSize int                 `json:"pagesize"`
+	Page     int32               `json:"page"`
+	PageSize int32               `json:"pagesize"`
 }
 
 type ResolutionRecord struct {
-	ID          string `json:"id"`
-	ZoneName    string `json:"ym"`
-	RecordType  string `json:"lx"`
-	RecordName  string `json:"zjt"`
-	RecordValue string `json:"jxz"`
-	MX          int    `json:"mx"`
+	ID          json.Number `json:"id"`
+	ZoneName    string      `json:"ym"`
+	RecordType  string      `json:"lx"`
+	RecordName  string      `json:"zjt"`
+	RecordValue string      `json:"jxz"`
+	MX          int32       `json:"mx"`
 }
