@@ -1,5 +1,7 @@
 package baishansdk
 
+import "encoding/json"
+
 type BaseResponse interface {
 	GetCode() int32
 	GetMessage() string
@@ -61,10 +63,10 @@ type SetDomainConfigResponse struct {
 }
 
 type DomainCertificate struct {
-	CertId         int64  `json:"cert_id"`
-	Name           string `json:"name"`
-	CertStartTime  string `json:"cert_start_time"`
-	CertExpireTime string `json:"cert_expire_time"`
+	CertId         json.Number `json:"cert_id"`
+	Name           string      `json:"name"`
+	CertStartTime  string      `json:"cert_start_time"`
+	CertExpireTime string      `json:"cert_expire_time"`
 }
 
 type DomainConfig struct {
@@ -72,8 +74,8 @@ type DomainConfig struct {
 }
 
 type DomainConfigHttps struct {
-	CertId      int64   `json:"cert_id"`
-	ForceHttps  *string `json:"force_https,omitempty"`
-	EnableHttp2 *string `json:"http2,omitempty"`
-	EnableOcsp  *string `json:"ocsp,omitempty"`
+	CertId      json.Number `json:"cert_id"`
+	ForceHttps  *string     `json:"force_https,omitempty"`
+	EnableHttp2 *string     `json:"http2,omitempty"`
+	EnableOcsp  *string     `json:"ocsp,omitempty"`
 }
