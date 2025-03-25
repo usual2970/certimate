@@ -79,15 +79,14 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 绑定证书对应的播放域名
 	// REF: https://cloud.tencent.com/document/product/267/78655
-	modifyLiveDomainCertBindingsReq := &tclive.ModifyLiveDomainCertBindingsRequest{
-		DomainInfos: []*tclive.LiveCertDomainInfo{
-			{
-				DomainName: common.StringPtr(d.config.Domain),
-				Status:     common.Int64Ptr(1),
-			},
+	modifyLiveDomainCertBindingsReq := tclive.NewModifyLiveDomainCertBindingsRequest()
+	modifyLiveDomainCertBindingsReq.DomainInfos = []*tclive.LiveCertDomainInfo{
+		{
+			DomainName: common.StringPtr(d.config.Domain),
+			Status:     common.Int64Ptr(1),
 		},
-		CloudCertId: common.StringPtr(upres.CertId),
 	}
+	modifyLiveDomainCertBindingsReq.CloudCertId = common.StringPtr(upres.CertId)
 	modifyLiveDomainCertBindingsResp, err := d.sdkClient.ModifyLiveDomainCertBindings(modifyLiveDomainCertBindingsReq)
 	d.logger.Debug("sdk request 'live.ModifyLiveDomainCertBindings'", slog.Any("request", modifyLiveDomainCertBindingsReq), slog.Any("response", modifyLiveDomainCertBindingsResp))
 	if err != nil {
