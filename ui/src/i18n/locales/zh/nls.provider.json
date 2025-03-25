@@ -65,6 +65,7 @@
   "provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "provider.huaweicloud.dns": "华为云 - 云解析 DNS",
   "provider.huaweicloud.elb": "华为云 - 弹性负载均衡 ELB",
+  "provider.huaweicloud.scm": "华为云 - 上传到云证书管理服务 SCM",
   "provider.huaweicloud.waf": "华为云 - Web 应用防火墙 WAF",
   "provider.jdcloud": "京东云",
   "provider.jdcloud.alb": "京东云 - 应用负载均衡 ALB",

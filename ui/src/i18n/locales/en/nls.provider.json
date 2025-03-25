@@ -65,6 +65,7 @@
   "provider.huaweicloud.cdn": "Huawei Cloud - CDN (Content Delivery Network)",
   "provider.huaweicloud.dns": "Huawei Cloud - DNS (Domain Name Service)",
   "provider.huaweicloud.elb": "Huawei Cloud - ELB (Elastic Load Balance)",
+  "provider.huaweicloud.scm": "Huawei Cloud - Upload to SCM (SSL Certificate Manager)",
   "provider.huaweicloud.waf": "Huawei Cloud - WAF (Web Application Firewall)",
   "provider.jdcloud": "JD Cloud",
   "provider.jdcloud.alb": "JD Cloud - ALB (Application Load Balancer)",

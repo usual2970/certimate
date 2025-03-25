@@ -150,6 +150,7 @@ const (
 	DeployProviderTypeGcoreCDN              = DeployProviderType("gcore-cdn")
 	DeployProviderTypeHuaweiCloudCDN        = DeployProviderType("huaweicloud-cdn")
 	DeployProviderTypeHuaweiCloudELB        = DeployProviderType("huaweicloud-elb")
+	DeployProviderTypeHuaweiCloudSCM        = DeployProviderType("huaweicloud-scm")
 	DeployProviderTypeHuaweiCloudWAF        = DeployProviderType("huaweicloud-waf")
 	DeployProviderTypeJDCloudALB            = DeployProviderType("jdcloud-alb")
 	DeployProviderTypeJDCloudCDN            = DeployProviderType("jdcloud-cdn")
