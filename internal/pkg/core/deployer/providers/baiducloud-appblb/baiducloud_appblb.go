@@ -1,4 +1,4 @@
-﻿package baiducloudblb
+﻿package baiducloudappblb
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	bceblb "github.com/baidubce/bce-sdk-go/services/blb"
+	bceappblb "github.com/baidubce/bce-sdk-go/services/appblb"
 	"github.com/google/uuid"
 	xerrors "github.com/pkg/errors"
 
@@ -41,7 +41,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *bceblb.Client
+	sdkClient   *bceappblb.Client
 	sslUploader uploader.Uploader
 }
 
@@ -116,11 +116,11 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	}
 
 	// 查询 BLB 实例详情
-	// REF: https://cloud.baidu.com/doc/BLB/s/njwvxnv79#describeloadbalancerdetail%E6%9F%A5%E8%AF%A2blb%E5%AE%9E%E4%BE%8B%E8%AF%A6%E6%83%85
+	// REF: https://cloud.baidu.com/doc/BLB/s/6jwvxnyhi#describeloadbalancerdetail%E6%9F%A5%E8%AF%A2blb%E5%AE%9E%E4%BE%8B%E8%AF%A6%E6%83%85
 	describeLoadBalancerDetailResp, err := d.sdkClient.DescribeLoadBalancerDetail(d.config.LoadbalancerId)
-	d.logger.Debug("sdk request 'blb.DescribeLoadBalancerAttribute'", slog.String("blbId", d.config.LoadbalancerId), slog.Any("response", describeLoadBalancerDetailResp))
+	d.logger.Debug("sdk request 'appblb.DescribeLoadBalancerAttribute'", slog.String("blbId", d.config.LoadbalancerId), slog.Any("response", describeLoadBalancerDetailResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'blb.DescribeLoadBalancerDetail'")
+		return xerrors.Wrap(err, "failed to execute sdk request 'appblb.DescribeLoadBalancerDetail'")
 	}
 
 	// 获取全部 HTTPS/SSL 监听端口
@@ -175,14 +175,14 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 	}
 
 	// 查询监听
-	// REF: https://cloud.baidu.com/doc/BLB/s/yjwvxnvl6#describealllisteners%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E7%9B%91%E5%90%AC
-	describeAllListenersRequest := &bceblb.DescribeListenerArgs{
+	// REF: https://cloud.baidu.com/doc/BLB/s/ujwvxnyux#describeappalllisteners%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E7%9B%91%E5%90%AC
+	describeAppAllListenersRequest := &bceappblb.DescribeAppListenerArgs{
 		ListenerPort: uint16(d.config.ListenerPort),
 	}
-	describeAllListenersResp, err := d.sdkClient.DescribeAllListeners(d.config.LoadbalancerId, describeAllListenersRequest)
-	d.logger.Debug("sdk request 'blb.DescribeAllListeners'", slog.String("blbId", d.config.LoadbalancerId), slog.Any("request", describeAllListenersRequest), slog.Any("response", describeAllListenersResp))
+	describeAppAllListenersResp, err := d.sdkClient.DescribeAppAllListeners(d.config.LoadbalancerId, describeAppAllListenersRequest)
+	d.logger.Debug("sdk request 'appblb.DescribeAppAllListeners'", slog.String("blbId", d.config.LoadbalancerId), slog.Any("request", describeAppAllListenersRequest), slog.Any("response", describeAppAllListenersResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'blb.DescribeAllListeners'")
+		return xerrors.Wrap(err, "failed to execute sdk request 'appblb.DescribeAppAllListeners'")
 	}
 
 	// 获取全部 HTTPS/SSL 监听端口
@@ -190,7 +190,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 		Type string
 		Port int32
 	}, 0)
-	for _, listener := range describeAllListenersResp.AllListenerList {
+	for _, listener := range describeAppAllListenersResp.ListenerList {
 		if listener.ListenerType == "HTTPS" || listener.ListenerType == "SSL" {
 			listeners = append(listeners, struct {
 				Type string
@@ -236,16 +236,16 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 func (d *DeployerProvider) updateHttpsListenerCertificate(ctx context.Context, cloudLoadbalancerId string, cloudHttpsListenerPort int32, cloudCertId string) error {
 	// 查询 HTTPS 监听器
-	// REF: https://cloud.baidu.com/doc/BLB/s/yjwvxnvl6#describehttpslisteners%E6%9F%A5%E8%AF%A2https%E7%9B%91%E5%90%AC%E5%99%A8
-	describeHTTPSListenersReq := &bceblb.DescribeListenerArgs{
+	// REF: https://cloud.baidu.com/doc/BLB/s/ujwvxnyux#describeapphttpslisteners%E6%9F%A5%E8%AF%A2https%E7%9B%91%E5%90%AC%E5%99%A8
+	describeAppHTTPSListenersReq := &bceappblb.DescribeAppListenerArgs{
 		ListenerPort: uint16(cloudHttpsListenerPort),
 		MaxKeys:      1,
 	}
-	describeHTTPSListenersResp, err := d.sdkClient.DescribeHTTPSListeners(cloudLoadbalancerId, describeHTTPSListenersReq)
-	d.logger.Debug("sdk request 'blb.DescribeHTTPSListeners'", slog.String("blbId", cloudLoadbalancerId), slog.Any("request", describeHTTPSListenersReq), slog.Any("response", describeHTTPSListenersResp))
+	describeAppHTTPSListenersResp, err := d.sdkClient.DescribeAppHTTPSListeners(cloudLoadbalancerId, describeAppHTTPSListenersReq)
+	d.logger.Debug("sdk request 'appblb.DescribeAppHTTPSListeners'", slog.String("blbId", cloudLoadbalancerId), slog.Any("request", describeAppHTTPSListenersReq), slog.Any("response", describeAppHTTPSListenersResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'blb.DescribeHTTPSListeners'")
-	} else if len(describeHTTPSListenersResp.ListenerList) == 0 {
+		return xerrors.Wrap(err, "failed to execute sdk request 'appblb.DescribeAppHTTPSListeners'")
+	} else if len(describeAppHTTPSListenersResp.ListenerList) == 0 {
 		return fmt.Errorf("listener %s:%d not found", cloudLoadbalancerId, cloudHttpsListenerPort)
 	}
 
@@ -253,43 +253,43 @@ func (d *DeployerProvider) updateHttpsListenerCertificate(ctx context.Context, c
 		// 未指定 SNI，只需部署到监听器
 
 		// 更新 HTTPS 监听器
-		// REF: https://cloud.baidu.com/doc/BLB/s/yjwvxnvl6#updatehttpslistener%E6%9B%B4%E6%96%B0https%E7%9B%91%E5%90%AC%E5%99%A8
-		updateHTTPSListenerReq := &bceblb.UpdateHTTPSListenerArgs{
+		// REF: https://cloud.baidu.com/doc/BLB/s/ujwvxnyux#updateapphttpslistener%E6%9B%B4%E6%96%B0https%E7%9B%91%E5%90%AC%E5%99%A8
+		updateAppHTTPSListenerReq := &bceappblb.UpdateAppHTTPSListenerArgs{
 			ClientToken:  generateClientToken(),
 			ListenerPort: uint16(cloudHttpsListenerPort),
 			CertIds:      []string{cloudCertId},
 		}
-		err := d.sdkClient.UpdateHTTPSListener(cloudLoadbalancerId, updateHTTPSListenerReq)
-		d.logger.Debug("sdk request 'blb.UpdateHTTPSListener'", slog.Any("request", updateHTTPSListenerReq))
+		err := d.sdkClient.UpdateAppHTTPSListener(cloudLoadbalancerId, updateAppHTTPSListenerReq)
+		d.logger.Debug("sdk request 'appblb.UpdateAppHTTPSListener'", slog.Any("request", updateAppHTTPSListenerReq))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'blb.UpdateHTTPSListener'")
+			return xerrors.Wrap(err, "failed to execute sdk request 'appblb.UpdateAppHTTPSListener'")
 		}
 	} else {
 		// 指定 SNI，需部署到扩展域名
 
 		// 更新 HTTPS 监听器
 		// REF: https://cloud.baidu.com/doc/BLB/s/yjwvxnvl6#updatehttpslistener%E6%9B%B4%E6%96%B0https%E7%9B%91%E5%90%AC%E5%99%A8
-		updateHTTPSListenerReq := &bceblb.UpdateHTTPSListenerArgs{
+		updateAppHTTPSListenerReq := &bceappblb.UpdateAppHTTPSListenerArgs{
 			ClientToken:  generateClientToken(),
 			ListenerPort: uint16(cloudHttpsListenerPort),
-			AdditionalCertDomains: sliceutil.Map(describeHTTPSListenersResp.ListenerList[0].AdditionalCertDomains, func(domain bceblb.AdditionalCertDomainsModel) bceblb.AdditionalCertDomainsModel {
+			AdditionalCertDomains: sliceutil.Map(describeAppHTTPSListenersResp.ListenerList[0].AdditionalCertDomains, func(domain bceappblb.AdditionalCertDomainsModel) bceappblb.AdditionalCertDomainsModel {
 				if domain.Host == d.config.Domain {
-					return bceblb.AdditionalCertDomainsModel{
+					return bceappblb.AdditionalCertDomainsModel{
 						Host:   domain.Host,
 						CertId: cloudCertId,
 					}
 				}
 
-				return bceblb.AdditionalCertDomainsModel{
+				return bceappblb.AdditionalCertDomainsModel{
 					Host:   domain.Host,
 					CertId: domain.CertId,
 				}
 			}),
 		}
-		err := d.sdkClient.UpdateHTTPSListener(cloudLoadbalancerId, updateHTTPSListenerReq)
-		d.logger.Debug("sdk request 'blb.UpdateHTTPSListener'", slog.Any("request", updateHTTPSListenerReq))
+		err := d.sdkClient.UpdateAppHTTPSListener(cloudLoadbalancerId, updateAppHTTPSListenerReq)
+		d.logger.Debug("sdk request 'appblb.UpdateAppHTTPSListener'", slog.Any("request", updateAppHTTPSListenerReq))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'blb.UpdateHTTPSListener'")
+			return xerrors.Wrap(err, "failed to execute sdk request 'appblb.UpdateAppHTTPSListener'")
 		}
 	}
 
@@ -298,28 +298,28 @@ func (d *DeployerProvider) updateHttpsListenerCertificate(ctx context.Context, c
 
 func (d *DeployerProvider) updateSslListenerCertificate(ctx context.Context, cloudLoadbalancerId string, cloudHttpsListenerPort int32, cloudCertId string) error {
 	// 更新 SSL 监听器
-	// REF: https://cloud.baidu.com/doc/BLB/s/yjwvxnvl6#updatessllistener%E6%9B%B4%E6%96%B0ssl%E7%9B%91%E5%90%AC%E5%99%A8
-	updateSSLListenerReq := &bceblb.UpdateSSLListenerArgs{
+	// REF: https://cloud.baidu.com/doc/BLB/s/ujwvxnyux#updateappssllistener%E6%9B%B4%E6%96%B0ssl%E7%9B%91%E5%90%AC%E5%99%A8
+	updateAppSSLListenerReq := &bceappblb.UpdateAppSSLListenerArgs{
 		ClientToken:  generateClientToken(),
 		ListenerPort: uint16(cloudHttpsListenerPort),
 		CertIds:      []string{cloudCertId},
 	}
-	err := d.sdkClient.UpdateSSLListener(cloudLoadbalancerId, updateSSLListenerReq)
-	d.logger.Debug("sdk request 'blb.UpdateSSLListener'", slog.Any("request", updateSSLListenerReq))
+	err := d.sdkClient.UpdateAppSSLListener(cloudLoadbalancerId, updateAppSSLListenerReq)
+	d.logger.Debug("sdk request 'appblb.UpdateAppSSLListener'", slog.Any("request", updateAppSSLListenerReq))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'blb.UpdateSSLListener'")
+		return xerrors.Wrap(err, "failed to execute sdk request 'appblb.UpdateAppSSLListener'")
 	}
 
 	return nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*bceblb.Client, error) {
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*bceappblb.Client, error) {
 	endpoint := ""
 	if region != "" {
 		endpoint = fmt.Sprintf("blb.%s.baidubce.com", region)
 	}
 
-	client, err := bceblb.NewClient(accessKeyId, secretAccessKey, endpoint)
+	client, err := bceappblb.NewClient(accessKeyId, secretAccessKey, endpoint)
 	if err != nil {
 		return nil, err
 	}

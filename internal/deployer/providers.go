@@ -24,6 +24,7 @@ import (
 	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	pAzureKeyVault "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/azure-keyvault"
+	pBaiduCloudAppBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-appblb"
 	pBaiduCloudBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-blb"
 	pBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
@@ -304,7 +305,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeBaiduCloudBLB, domain.DeployProviderTypeBaiduCloudCDN:
+	case domain.DeployProviderTypeBaiduCloudAppBLB, domain.DeployProviderTypeBaiduCloudBLB, domain.DeployProviderTypeBaiduCloudCDN:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -312,6 +313,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 
 			switch options.Provider {
+			case domain.DeployProviderTypeBaiduCloudAppBLB:
+				deployer, err := pBaiduCloudAppBLB.NewDeployer(&pBaiduCloudAppBLB.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+					ResourceType:    pBaiduCloudAppBLB.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
+					ListenerPort:    maputil.GetInt32(options.ProviderDeployConfig, "listenerPort"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
 			case domain.DeployProviderTypeBaiduCloudBLB:
 				deployer, err := pBaiduCloudBLB.NewDeployer(&pBaiduCloudBLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
