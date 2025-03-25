@@ -67,6 +67,7 @@ import (
 	pUpyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/upyun-cdn"
 	pVolcEngineALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-alb"
 	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
+	pVolcEngineCertCenter "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-certcenter"
 	pVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
 	pVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
 	pVolcEngineImageX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-imagex"
@@ -891,7 +892,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineALB, domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineImageX, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
+	case domain.DeployProviderTypeVolcEngineALB, domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCertCenter, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineImageX, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -916,6 +917,14 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeVolcEngineCertCenter:
+				deployer, err := pVolcEngineCertCenter.NewDeployer(&pVolcEngineCertCenter.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.SecretAccessKey,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 				})
 				return deployer, err
 

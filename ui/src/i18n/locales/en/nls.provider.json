@@ -112,6 +112,7 @@
   "provider.volcengine": "Volcengine",
   "provider.volcengine.alb": "Volcengine - ALB (Application Load Balancer)",
   "provider.volcengine.cdn": "Volcengine - CDN (Content Delivery Network)",
+  "provider.volcengine.certcenter": "Volcengine - Upload to Certificate Center",
   "provider.volcengine.clb": "Volcengine - CLB (Cloud Load Balancer)",
   "provider.volcengine.dcdn": "Volcengine - DCDN (Dynamic Content Delivery Network)",
   "provider.volcengine.dns": "Volcengine - DNS (Domain Name Service)",

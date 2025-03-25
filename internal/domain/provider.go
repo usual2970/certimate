@@ -180,6 +180,7 @@ const (
 	DeployProviderTypeUpyunFile             = DeployProviderType("upyun-file")
 	DeployProviderTypeVolcEngineALB         = DeployProviderType("volcengine-alb")
 	DeployProviderTypeVolcEngineCDN         = DeployProviderType("volcengine-cdn")
+	DeployProviderTypeVolcEngineCertCenter  = DeployProviderType("volcengine-certcenter")
 	DeployProviderTypeVolcEngineCLB         = DeployProviderType("volcengine-clb")
 	DeployProviderTypeVolcEngineDCDN        = DeployProviderType("volcengine-dcdn")
 	DeployProviderTypeVolcEngineImageX      = DeployProviderType("volcengine-imagex")
