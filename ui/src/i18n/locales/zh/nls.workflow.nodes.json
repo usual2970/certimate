@@ -31,6 +31,8 @@
   "workflow_node.apply.form.contact_email.label": "联系邮箱",
   "workflow_node.apply.form.contact_email.placeholder": "请输入联系邮箱",
   "workflow_node.apply.form.contact_email.tooltip": "申请签发 SSL 证书时所需的联系方式。请注意 Let's Encrypt 账户注册的速率限制。<a href=\"https://letsencrypt.org/zh-cn/docs/rate-limits/\" target=\"_blank\">点此了解更多</a>。",
+  "workflow_node.apply.form.challenge_type.label": "质询方式",
+  "workflow_node.apply.form.challenge_type.placeholder": "请选择质询方式",
   "workflow_node.apply.form.provider.label": "DNS 提供商",
   "workflow_node.apply.form.provider.placeholder": "请选择 DNS 提供商",
   "workflow_node.apply.form.provider_access.label": "DNS 提供商授权",
@@ -75,7 +77,7 @@
   "workflow_node.apply.form.skip_before_expiry_days.prefix": "当上次签发的证书距到期时间超过",
   "workflow_node.apply.form.skip_before_expiry_days.suffix": "时，跳过重新申请。",
   "workflow_node.apply.form.skip_before_expiry_days.unit": "天",
-  "workflow_node.apply.form.skip_before_expiry_days.tooltip": "注意不要超过 CA 的证书有效期限制，否则证书可能永远不会续期。",
+  "workflow_node.apply.form.skip_before_expiry_days.tooltip": "注意不要超过颁发的证书最大有效期，否则证书可能永远不会续期。",
 
   "workflow_node.deploy.label": "部署证书",
   "workflow_node.deploy.search.provider.placeholder": "搜索部署目标……",

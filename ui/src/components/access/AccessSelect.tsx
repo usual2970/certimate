@@ -21,9 +21,9 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessModel }>>([]);
   useEffect(() => {
-    const items = filter != null ? accesses.filter(filter) : accesses;
+    const filteredItems = filter != null ? accesses.filter(filter) : accesses;
     setOptions(
-      items.map((item) => ({
+      filteredItems.map((item) => ({
         key: item.id,
         value: item.id,
         label: item.name,

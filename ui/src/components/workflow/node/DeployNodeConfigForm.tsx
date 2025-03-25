@@ -400,7 +400,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               </label>
               <Form.Item name="providerAccessId" rules={[formRule]}>
                 <AccessSelect
-                  placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                   filter={(record) => {
                     if (fieldProvider) {
                       return deployProvidersMap.get(fieldProvider)?.provider === record.provider;
@@ -409,6 +408,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     const provider = accessProvidersMap.get(record.provider);
                     return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
                   }}
+                  placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                 />
               </Form.Item>
             </Form.Item>
