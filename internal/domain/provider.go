@@ -138,6 +138,7 @@ const (
 	DeployProviderTypeBaiduCloudAppBLB      = DeployProviderType("baiducloud-appblb")
 	DeployProviderTypeBaiduCloudBLB         = DeployProviderType("baiducloud-blb")
 	DeployProviderTypeBaiduCloudCDN         = DeployProviderType("baiducloud-cdn")
+	DeployProviderTypeBaiduCloudCert        = DeployProviderType("baiducloud-cert")
 	DeployProviderTypeBaishanCDN            = DeployProviderType("baishan-cdn")
 	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")
 	DeployProviderTypeBaotaPanelSite        = DeployProviderType("baotapanel-site")

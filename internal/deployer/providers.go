@@ -27,6 +27,7 @@ import (
 	pBaiduCloudAppBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-appblb"
 	pBaiduCloudBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-blb"
 	pBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
+	pBaiduCloudCert "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cert"
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
@@ -305,7 +306,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeBaiduCloudAppBLB, domain.DeployProviderTypeBaiduCloudBLB, domain.DeployProviderTypeBaiduCloudCDN:
+	case domain.DeployProviderTypeBaiduCloudAppBLB, domain.DeployProviderTypeBaiduCloudBLB, domain.DeployProviderTypeBaiduCloudCDN, domain.DeployProviderTypeBaiduCloudCert:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -342,6 +343,13 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeBaiduCloudCert:
+				deployer, err := pBaiduCloudCert.NewDeployer(&pBaiduCloudCert.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
 				})
 				return deployer, err
 

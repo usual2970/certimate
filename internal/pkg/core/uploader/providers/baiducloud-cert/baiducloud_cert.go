@@ -1,4 +1,4 @@
-﻿package baiducloudcas
+﻿package baiducloudcert
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	bdsdk "github.com/usual2970/certimate/internal/pkg/vendors/baiducloud-sdk/cas"
+	bdsdk "github.com/usual2970/certimate/internal/pkg/vendors/baiducloud-sdk/cert"
 )
 
 type UploaderConfig struct {

@@ -1,4 +1,4 @@
-﻿package baiducloudcas_test
+﻿package baiducloudcert_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/baiducloud-cas"
+	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/baiducloud-cert"
 )
 
 var (

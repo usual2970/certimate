@@ -14,7 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/baiducloud-cas"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/baiducloud-cert"
 	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 )
 
