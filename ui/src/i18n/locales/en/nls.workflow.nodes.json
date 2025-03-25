@@ -630,15 +630,6 @@
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.on": "skip",
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.off": "not skip",
 
-  "workflow_node.notify.label": "Notification",
-  "workflow_node.notify.form.subject.label": "Subject",
-  "workflow_node.notify.form.subject.placeholder": "Please enter subject",
-  "workflow_node.notify.form.message.label": "Message",
-  "workflow_node.notify.form.message.placeholder": "Please enter message",
-  "workflow_node.notify.form.channel.label": "Channel",
-  "workflow_node.notify.form.channel.placeholder": "Please select channel",
-  "workflow_node.notify.form.channel.button": "Configure",
-
   "workflow_node.upload.label": "Upload",
   "workflow_node.upload.form.domains.label": "Domains",
   "workflow_node.upload.form.domains.placholder": "Please select certificate file",
@@ -648,6 +639,15 @@
   "workflow_node.upload.form.private_key.label": "Private key (PEM format)",
   "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
   "workflow_node.upload.form.private_key.button": "Choose file ...",
+
+  "workflow_node.notify.label": "Notification",
+  "workflow_node.notify.form.subject.label": "Subject",
+  "workflow_node.notify.form.subject.placeholder": "Please enter subject",
+  "workflow_node.notify.form.message.label": "Message",
+  "workflow_node.notify.form.message.placeholder": "Please enter message",
+  "workflow_node.notify.form.channel.label": "Channel",
+  "workflow_node.notify.form.channel.placeholder": "Please select channel",
+  "workflow_node.notify.form.channel.button": "Configure",
 
   "workflow_node.end.label": "End",
 

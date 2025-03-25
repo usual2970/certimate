@@ -22,7 +22,7 @@
   "workflow_node.start.form.trigger_cron.extra": "预计最近 5 次执行时间：",
   "workflow_node.start.form.trigger_cron.guide": "小贴士：如果你有多个工作流，建议将它们设置为在一天中的多个时间段运行，而非总是在相同的特定时间。也不要总是设置为每日零时，以免遭遇证书颁发机构的流量高峰。<br><br>参考链接：<br>1. <a href=\"https://letsencrypt.org/zh-cn/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt 速率限制</a><br>2. <a href=\"https://letsencrypt.org/zh-cn/docs/faq/#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%88%91%E7%9A%84-let-s-encrypt-acme-%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%AF%E5%8A%A8%E6%97%B6%E9%97%B4%E5%BA%94%E5%BD%93%E9%9A%8F%E6%9C%BA\" target=\"_blank\">为什么我的 Let’s Encrypt (ACME) 客户端启动时间应当随机？</a>",
 
-  "workflow_node.apply.label": "申请",
+  "workflow_node.apply.label": "申请证书",
   "workflow_node.apply.form.domains.label": "域名",
   "workflow_node.apply.form.domains.placeholder": "请输入域名（多个值请用半角分号隔开）",
   "workflow_node.apply.form.domains.tooltip": "泛域名表示形式为：*.example.com",
@@ -77,7 +77,7 @@
   "workflow_node.apply.form.skip_before_expiry_days.unit": "天",
   "workflow_node.apply.form.skip_before_expiry_days.tooltip": "注意不要超过 CA 的证书有效期限制，否则证书可能永远不会续期。",
 
-  "workflow_node.deploy.label": "部署",
+  "workflow_node.deploy.label": "部署证书",
   "workflow_node.deploy.search.provider.placeholder": "搜索部署目标……",
   "workflow_node.deploy.form.provider.label": "部署目标",
   "workflow_node.deploy.form.provider.placeholder": "请选择部署目标",
@@ -630,16 +630,7 @@
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.on": "跳过",
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.off": "不跳过",
 
-  "workflow_node.notify.label": "通知",
-  "workflow_node.notify.form.subject.label": "通知主题",
-  "workflow_node.notify.form.subject.placeholder": "请输入通知主题",
-  "workflow_node.notify.form.message.label": "通知内容",
-  "workflow_node.notify.form.message.placeholder": "请输入通知内容",
-  "workflow_node.notify.form.channel.label": "通知渠道",
-  "workflow_node.notify.form.channel.placeholder": "请选择通知渠道",
-  "workflow_node.notify.form.channel.button": "去配置",
-
-  "workflow_node.upload.label": "上传",
+  "workflow_node.upload.label": "上传证书",
   "workflow_node.upload.form.domains.label": "域名",
   "workflow_node.upload.form.domains.placeholder": "上传证书文件后显示",
   "workflow_node.upload.form.certificate.label": "证书文件（PEM 格式）",
@@ -648,6 +639,15 @@
   "workflow_node.upload.form.private_key.label": "私钥文件（PEM 格式）",
   "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
   "workflow_node.upload.form.private_key.button": "选择文件",
+
+  "workflow_node.notify.label": "推送通知",
+  "workflow_node.notify.form.subject.label": "通知主题",
+  "workflow_node.notify.form.subject.placeholder": "请输入通知主题",
+  "workflow_node.notify.form.message.label": "通知内容",
+  "workflow_node.notify.form.message.placeholder": "请输入通知内容",
+  "workflow_node.notify.form.channel.label": "通知渠道",
+  "workflow_node.notify.form.channel.placeholder": "请选择通知渠道",
+  "workflow_node.notify.form.channel.button": "去配置",
 
   "workflow_node.end.label": "结束",
 
