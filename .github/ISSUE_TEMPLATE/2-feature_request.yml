@@ -1,11 +1,11 @@
 name: "💡 Feature Request"
-description: "提出新功能请求或改进意见 / Suggest an idea for this project."
+description: "提出新功能请求或改进意见。 / Suggest an idea for this project."
 title: "[Feature] 简要描述你希望实现的功能"
 labels:
   - enhancement
 body:
   - type: markdown
-    attributes: 
+    attributes:
       value: |
         ## Welcome!
 
