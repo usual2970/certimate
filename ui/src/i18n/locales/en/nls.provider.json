@@ -28,6 +28,7 @@
   "provider.azure.dns": "Azure - DNS",
   "provider.azure.keyvault": "Azure - KeyVault",
   "provider.baiducloud": "Baidu Cloud",
+  "provider.baiducloud.blb": "Baidu Cloud - BLB (Baidu Load Balancer)",
   "provider.baiducloud.cdn": "Baidu Cloud - CDN (Content Delivery Network)",
   "provider.baiducloud.dns": "Baidu Cloud - DNS (Domain Name Service)",
   "provider.baishan": "Baishan",

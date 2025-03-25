@@ -135,6 +135,7 @@ const (
 	DeployProviderTypeAWSACM                = DeployProviderType("aws-acm")
 	DeployProviderTypeAWSCloudFront         = DeployProviderType("aws-cloudfront")
 	DeployProviderTypeAzureKeyVault         = DeployProviderType("azure-keyvault")
+	DeployProviderTypeBaiduCloudBLB         = DeployProviderType("baiducloud-blb")
 	DeployProviderTypeBaiduCloudCDN         = DeployProviderType("baiducloud-cdn")
 	DeployProviderTypeBaishanCDN            = DeployProviderType("baishan-cdn")
 	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")

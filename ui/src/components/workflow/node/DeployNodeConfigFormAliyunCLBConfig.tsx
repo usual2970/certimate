@@ -54,20 +54,8 @@ const DeployNodeConfigFormAliyunCLBConfig = ({
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
     listenerPort: z
-      .union([
-        z
-          .number()
-          .refine(
-            (v) => fieldResourceType === RESOURCE_TYPE_LISTENER && validPortNumber(v),
-            t("workflow_node.deploy.form.aliyun_clb_listener_port.placeholder")
-          ),
-        z
-          .string()
-          .refine(
-            (v) => fieldResourceType === RESOURCE_TYPE_LISTENER && validPortNumber(v),
-            t("workflow_node.deploy.form.aliyun_clb_listener_port.placeholder")
-          ),
-      ])
+      .union([z.number(), z.string()])
+      .refine((v) => fieldResourceType === RESOURCE_TYPE_LISTENER && validPortNumber(v), t("workflow_node.deploy.form.aliyun_clb_listener_port.placeholder"))
       .nullish(),
     domain: z
       .string()

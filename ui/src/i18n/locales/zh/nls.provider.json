@@ -28,6 +28,7 @@
   "provider.azure.dns": "Azure - DNS",
   "provider.azure.keyvault": "Azure - KeyVault",
   "provider.baiducloud": "百度智能云",
+  "provider.baiducloud.blb": "百度智能云 - 普通型负载均衡 BLB",
   "provider.baiducloud.cdn": "百度智能云 - 内容分发网络 CDN",
   "provider.baiducloud.dns": "百度智能云 - 智能云解析 DNS",
   "provider.baishan": "白山云",
