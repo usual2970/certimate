@@ -1,0 +1,207 @@
+﻿package lego_tencentcloudeo
+
+import (
+	"errors"
+	"fmt"
+	"math"
+	"strings"
+	"time"
+
+	"github.com/go-acme/lego/v4/challenge"
+	"github.com/go-acme/lego/v4/challenge/dns01"
+	"github.com/go-acme/lego/v4/platform/config/env"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	teo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
+)
+
+const (
+	envNamespace = "TENCENTCLOUDEO_"
+
+	EnvSecretID  = envNamespace + "SECRET_ID"
+	EnvSecretKey = envNamespace + "SECRET_KEY"
+	EnvZoneId    = envNamespace + "ZONE_ID"
+
+	EnvTTL                = envNamespace + "TTL"
+	EnvPropagationTimeout = envNamespace + "PROPAGATION_TIMEOUT"
+	EnvPollingInterval    = envNamespace + "POLLING_INTERVAL"
+	EnvHTTPTimeout        = envNamespace + "HTTP_TIMEOUT"
+)
+
+var _ challenge.ProviderTimeout = (*DNSProvider)(nil)
+
+type Config struct {
+	SecretID  string
+	SecretKey string
+	ZoneId    string
+
+	PropagationTimeout time.Duration
+	PollingInterval    time.Duration
+	TTL                int32
+	HTTPTimeout        time.Duration
+}
+
+type DNSProvider struct {
+	client *teo.Client
+	config *Config
+}
+
+func NewDefaultConfig() *Config {
+	return &Config{
+		TTL:                int32(env.GetOrDefaultInt(EnvTTL, 300)),
+		PropagationTimeout: env.GetOrDefaultSecond(EnvPropagationTimeout, 2*time.Minute),
+		PollingInterval:    env.GetOrDefaultSecond(EnvPollingInterval, dns01.DefaultPollingInterval),
+		HTTPTimeout:        env.GetOrDefaultSecond(EnvHTTPTimeout, 30*time.Second),
+	}
+}
+
+func NewDNSProvider() (*DNSProvider, error) {
+	values, err := env.Get(EnvSecretID, EnvSecretKey, EnvZoneId)
+	if err != nil {
+		return nil, fmt.Errorf("tencentcloud-eo: %w", err)
+	}
+
+	config := NewDefaultConfig()
+	config.SecretID = values[EnvSecretID]
+	config.SecretKey = values[EnvSecretKey]
+	config.ZoneId = values[EnvSecretKey]
+
+	return NewDNSProviderConfig(config)
+}
+
+func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
+	if config == nil {
+		return nil, errors.New("tencentcloud-eo: the configuration of the DNS provider is nil")
+	}
+
+	credential := common.NewCredential(config.SecretID, config.SecretKey)
+	cpf := profile.NewClientProfile()
+	cpf.HttpProfile.ReqTimeout = int(math.Round(config.HTTPTimeout.Seconds()))
+	client, err := teo.NewClient(credential, "", cpf)
+	if err != nil {
+		return nil, err
+	}
+
+	return &DNSProvider{
+		client: client,
+		config: config,
+	}, nil
+}
+
+func (d *DNSProvider) Present(domain, token, keyAuth string) error {
+	info := dns01.GetChallengeInfo(domain, keyAuth)
+
+	if err := d.addOrUpdateDNSRecord(strings.TrimRight(info.EffectiveFQDN, "."), info.Value); err != nil {
+		return fmt.Errorf("tencentcloud-eo: %w", err)
+	}
+
+	return nil
+}
+
+func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
+	info := dns01.GetChallengeInfo(domain, keyAuth)
+
+	if err := d.removeDNSRecord(strings.TrimRight(info.EffectiveFQDN, ".")); err != nil {
+		return fmt.Errorf("tencentcloud-eo: %w", err)
+	}
+
+	return nil
+}
+
+func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
+	return d.config.PropagationTimeout, d.config.PollingInterval
+}
+
+func (d *DNSProvider) getDNSRecord(effectiveFQDN string) (*teo.DnsRecord, error) {
+	pageOffset := 0
+	pageLimit := 1000
+	for {
+		request := teo.NewDescribeDnsRecordsRequest()
+		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.Offset = common.Int64Ptr(int64(pageOffset))
+		request.Limit = common.Int64Ptr(int64(pageLimit))
+		request.Filters = []*teo.AdvancedFilter{
+			{
+				Name:   common.StringPtr("type"),
+				Values: []*string{common.StringPtr("TXT")},
+			},
+		}
+
+		response, err := d.client.DescribeDnsRecords(request)
+		if err != nil {
+			return nil, err
+		}
+
+		if response.Response == nil {
+			break
+		} else {
+			for _, record := range response.Response.DnsRecords {
+				if *record.Name == effectiveFQDN {
+					return record, nil
+				}
+			}
+
+			if len(response.Response.DnsRecords) < int(pageLimit) {
+				break
+			}
+
+			pageOffset += len(response.Response.DnsRecords)
+		}
+	}
+
+	return nil, nil
+}
+
+func (d *DNSProvider) addOrUpdateDNSRecord(effectiveFQDN, value string) error {
+	record, err := d.getDNSRecord(effectiveFQDN)
+	if err != nil {
+		return err
+	}
+
+	if record == nil {
+		request := teo.NewCreateDnsRecordRequest()
+		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.Name = common.StringPtr(effectiveFQDN)
+		request.Type = common.StringPtr("TXT")
+		request.Content = common.StringPtr(value)
+		request.TTL = common.Int64Ptr(int64(d.config.TTL))
+		_, err := d.client.CreateDnsRecord(request)
+		return err
+	} else {
+		record.Content = common.StringPtr(value)
+		request := teo.NewModifyDnsRecordsRequest()
+		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.DnsRecords = []*teo.DnsRecord{record}
+		if _, err := d.client.ModifyDnsRecords(request); err != nil {
+			return err
+		}
+
+		if *record.Status == "disable" {
+			request := teo.NewModifyDnsRecordsStatusRequest()
+			request.ZoneId = common.StringPtr(d.config.ZoneId)
+			request.RecordsToEnable = []*string{record.RecordId}
+			if _, err = d.client.ModifyDnsRecordsStatus(request); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
+}
+
+func (d *DNSProvider) removeDNSRecord(effectiveFQDN string) error {
+	record, err := d.getDNSRecord(effectiveFQDN)
+	if err != nil {
+		return err
+	}
+
+	if record == nil {
+		return nil
+	} else {
+		request := teo.NewDeleteDnsRecordsRequest()
+		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.RecordIds = []*string{record.RecordId}
+		_, err = d.client.DeleteDnsRecords(request)
+		return err
+	}
+}

@@ -36,6 +36,7 @@ import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/val
 import ApplyNodeConfigFormAWSRoute53Config from "./ApplyNodeConfigFormAWSRoute53Config";
 import ApplyNodeConfigFormHuaweiCloudDNSConfig from "./ApplyNodeConfigFormHuaweiCloudDNSConfig";
 import ApplyNodeConfigFormJDCloudDNSConfig from "./ApplyNodeConfigFormJDCloudDNSConfig";
+import ApplyNodeConfigFormTencentCloudEOConfig from "./ApplyNodeConfigFormTencentCloudEOConfig";
 
 type ApplyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForApply>;
 
@@ -125,6 +126,19 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     const fieldDomains = Form.useWatch<string>("domains", formInst);
     const fieldNameservers = Form.useWatch<string>("nameservers", formInst);
 
+    const [showProvider, setShowProvider] = useState(false);
+    useEffect(() => {
+      // 通常情况下每个授权信息只对应一个 DNS 提供商，此时无需显示 DNS 提供商字段；
+      // 如果对应多个（如 AWS 的 Route53、Lightsail，腾讯云的 DNS、EdgeOne 等），则显示。
+      if (fieldProviderAccessId) {
+        const access = accesses.find((e) => e.id === fieldProviderAccessId);
+        const providers = Array.from(applyDNSProvidersMap.values()).filter((e) => e.provider === access?.provider);
+        setShowProvider(providers.length > 1);
+      } else {
+        setShowProvider(false);
+      }
+    }, [accesses, fieldProviderAccessId]);
+
     const [nestedFormInst] = Form.useForm();
     const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeApplyConfigFormProviderConfigForm" });
     const nestedFormEl = useMemo(() => {
@@ -149,12 +163,15 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         case APPLY_DNS_PROVIDERS.JDCLOUD:
         case APPLY_DNS_PROVIDERS.JDCLOUD_DNS:
           return <ApplyNodeConfigFormJDCloudDNSConfig {...nestedFormProps} />;
+        case APPLY_DNS_PROVIDERS.TENCENTCLOUD_EO:
+          return <ApplyNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
       }
     }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
 
     const handleProviderSelect = (value: string) => {
       if (fieldProvider === value) return;
 
+      // 切换 DNS 提供商时联动授权信息
       if (initialValues?.provider === value) {
         formInst.setFieldValue("providerAccessId", initialValues?.providerAccessId);
         onValuesChange?.(formInst.getFieldsValue(true));
@@ -169,10 +186,13 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     const handleProviderAccessSelect = (value: string) => {
       if (fieldProviderAccessId === value) return;
 
-      // DNS 提供商和授权提供商目前一一对应，因此切换授权时，自动切换到相应提供商
+      // 切换授权信息时联动 DNS 提供商
       const access = accesses.find((access) => access.id === value);
-      formInst.setFieldValue("provider", Array.from(applyDNSProvidersMap.values()).find((provider) => provider.provider === access?.provider)?.type);
-      onValuesChange?.(formInst.getFieldsValue(true));
+      const provider = Array.from(applyDNSProvidersMap.values()).find((provider) => provider.provider === access?.provider);
+      if (fieldProvider !== provider?.type) {
+        formInst.setFieldValue("provider", provider?.type);
+        onValuesChange?.(formInst.getFieldsValue(true));
+      }
     };
 
     const handleFormProviderChange = (name: string) => {
@@ -252,10 +272,16 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             />
           </Form.Item>
 
-          <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden rules={[formRule]}>
+          <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden={!showProvider} rules={[formRule]}>
             <ApplyDNSProviderSelect
-              allowClear
-              disabled
+              disabled={!showProvider}
+              filter={(record) => {
+                if (fieldProviderAccessId) {
+                  return accesses.find((e) => e.id === fieldProviderAccessId)?.provider === record.provider;
+                }
+
+                return true;
+              }}
               placeholder={t("workflow_node.apply.form.provider.placeholder")}
               showSearch
               onSelect={handleProviderSelect}
@@ -294,11 +320,11 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             </label>
             <Form.Item name="providerAccessId" rules={[formRule]}>
               <AccessSelect
-                placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
                 filter={(record) => {
                   const provider = accessProvidersMap.get(record.provider);
                   return !!provider?.usages?.includes(ACCESS_USAGES.APPLY);
                 }}
+                placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
                 onChange={handleProviderAccessSelect}
               />
             </Form.Item>

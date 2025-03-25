@@ -101,6 +101,7 @@ const (
 	ApplyDNSProviderTypeRainYun         = ApplyDNSProviderType("rainyun")
 	ApplyDNSProviderTypeTencentCloud    = ApplyDNSProviderType("tencentcloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeTencentCloudDNS]
 	ApplyDNSProviderTypeTencentCloudDNS = ApplyDNSProviderType("tencentcloud-dns")
+	ApplyDNSProviderTypeTencentCloudEO  = ApplyDNSProviderType("tencentcloud-eo")
 	ApplyDNSProviderTypeVercel          = ApplyDNSProviderType("vercel")
 	ApplyDNSProviderTypeVolcEngine      = ApplyDNSProviderType("volcengine") // 兼容旧值，等同于 [ApplyDNSProviderTypeVolcEngineDNS]
 	ApplyDNSProviderTypeVolcEngineDNS   = ApplyDNSProviderType("volcengine-dns")

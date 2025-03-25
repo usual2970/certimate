@@ -165,6 +165,7 @@ export const APPLY_DNS_PROVIDERS = Object.freeze({
   RAINYUN: `${ACCESS_PROVIDERS.RAINYUN}`,
   TENCENTCLOUD: `${ACCESS_PROVIDERS.TENCENTCLOUD}`, // 兼容旧值，等同于 `TENCENTCLOUD_DNS`
   TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
+  TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
   VERCEL: `${ACCESS_PROVIDERS.VERCEL}`,
   VOLCENGINE: `${ACCESS_PROVIDERS.VOLCENGINE}`, // 兼容旧值，等同于 `VOLCENGINE_DNS`
   VOLCENGINE_DNS: `${ACCESS_PROVIDERS.VOLCENGINE}-dns`,
@@ -188,6 +189,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
   [
     [APPLY_DNS_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
     [APPLY_DNS_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
+    [APPLY_DNS_PROVIDERS.TENCENTCLOUD_EO, "provider.tencentcloud.eo"],
     [APPLY_DNS_PROVIDERS.BAIDUCLOUD_DNS, "provider.baiducloud.dns"],
     [APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS, "provider.huaweicloud.dns"],
     [APPLY_DNS_PROVIDERS.VOLCENGINE_DNS, "provider.volcengine.dns"],
@@ -208,7 +210,7 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
     [APPLY_DNS_PROVIDERS.NS1, "provider.ns1"],
     [APPLY_DNS_PROVIDERS.PORKBUN, "provider.porkbun"],
     [APPLY_DNS_PROVIDERS.VERCEL, "provider.vercel"],
-    [APPLY_DNS_PROVIDERS.CMCCCLOUD, "provider.cmcc"],
+    [APPLY_DNS_PROVIDERS.CMCCCLOUD, "provider.cmcccloud"],
     [APPLY_DNS_PROVIDERS.RAINYUN, "provider.rainyun"],
     [APPLY_DNS_PROVIDERS.WESTCN, "provider.westcn"],
     [APPLY_DNS_PROVIDERS.POWERDNS, "provider.powerdns"],
