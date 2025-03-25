@@ -57,9 +57,9 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 	resp, err := req.Send()
 	if err != nil {
-		return nil, fmt.Errorf("cachefly api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("cachefly api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("cachefly api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("cachefly api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
@@ -68,6 +68,9 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(method, path, params)
 	if err != nil {
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &result)
+		}
 		return err
 	}
 

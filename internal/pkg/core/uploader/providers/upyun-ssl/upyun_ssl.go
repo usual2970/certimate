@@ -59,9 +59,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		PrivateKey:  privkeyPem,
 	}
 	uploadHttpsCertificateResp, err := u.sdkClient.UploadHttpsCertificate(uploadHttpsCertificateReq)
-	u.logger.Debug("sdk request 'ssl.UploadHttpsCertificate'", slog.Any("response", uploadHttpsCertificateResp))
+	u.logger.Debug("sdk request 'console.UploadHttpsCertificate'", slog.Any("response", uploadHttpsCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.UploadHttpsCertificate'")
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'console.UploadHttpsCertificate'")
 	}
 
 	return &uploader.UploadResult{

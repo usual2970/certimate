@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	xerrors "github.com/pkg/errors"
-	veLive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
+	velive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -27,7 +27,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *veLive.Live
+	sdkClient   *velive.Live
 	sslUploader uploader.Uploader
 }
 
@@ -38,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client := veLive.NewInstance()
+	client := velive.NewInstance()
 	client.SetAccessKey(config.AccessKeyId)
 	client.SetSecretKey(config.AccessKeySecret)
 
@@ -85,7 +85,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		for {
 			// 查询域名列表
 			// REF: https://www.volcengine.com/docs/6469/1186277#%E6%9F%A5%E8%AF%A2%E5%9F%9F%E5%90%8D%E5%88%97%E8%A1%A8
-			listDomainDetailReq := &veLive.ListDomainDetailBody{
+			listDomainDetailReq := &velive.ListDomainDetailBody{
 				PageNum:  listDomainDetailPageNum,
 				PageSize: listDomainDetailPageSize,
 			}
@@ -127,7 +127,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		for _, domain := range domains {
 			// 绑定证书
 			// REF: https://www.volcengine.com/docs/6469/1186278#%E7%BB%91%E5%AE%9A%E8%AF%81%E4%B9%A6
-			bindCertReq := &veLive.BindCertBody{
+			bindCertReq := &velive.BindCertBody{
 				ChainID: upres.CertId,
 				Domain:  domain,
 				HTTPS:   ve.Bool(true),

@@ -28,9 +28,9 @@ const AccessFormUCloudConfig = ({ form: formInst, formName, disabled, initialVal
   const formSchema = z.object({
     privateKey: z
       .string()
-      .trim()
       .min(1, t("access.form.ucloud_private_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     publicKey: z
       .string()
       .min(1, t("access.form.ucloud_public_key.placeholder"))

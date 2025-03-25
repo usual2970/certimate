@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliyunEsa "github.com/alibabacloud-go/esa-20240910/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliesa "github.com/alibabacloud-go/esa-20240910/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -32,7 +32,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliyunEsa.Client
+	sdkClient   *aliesa.Client
 	sslUploader uploader.Uploader
 }
 
@@ -87,7 +87,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 配置站点证书
 	// REF: https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-setcertificate
 	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	setCertificateReq := &aliyunEsa.SetCertificateRequest{
+	setCertificateReq := &aliesa.SetCertificateRequest{
 		SiteId: tea.Int64(d.config.SiteId),
 		Type:   tea.String("cas"),
 		CasId:  tea.Int64(certId),
@@ -101,15 +101,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunEsa.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliesa.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/ESA
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(fmt.Sprintf("esa.%s.aliyuncs.com", region)),
 	}
 
-	client, err := aliyunEsa.NewClient(config)
+	client, err := aliesa.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

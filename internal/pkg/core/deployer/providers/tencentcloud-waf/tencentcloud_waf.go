@@ -8,7 +8,7 @@ import (
 	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	tcWaf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf/v20180125"
+	tcwaf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/waf/v20180125"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -33,7 +33,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *tcWaf.Client
+	sdkClient   *tcwaf.Client
 	sslUploader uploader.Uploader
 }
 
@@ -96,7 +96,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 查询单个 SaaS 型 WAF 域名详情
 	// REF: https://cloud.tencent.com/document/api/627/82938
-	describeDomainDetailsSaasReq := tcWaf.NewDescribeDomainDetailsSaasRequest()
+	describeDomainDetailsSaasReq := tcwaf.NewDescribeDomainDetailsSaasRequest()
 	describeDomainDetailsSaasReq.Domain = common.StringPtr(d.config.Domain)
 	describeDomainDetailsSaasReq.DomainId = common.StringPtr(d.config.DomainId)
 	describeDomainDetailsSaasReq.InstanceId = common.StringPtr(d.config.InstanceId)
@@ -108,7 +108,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 编辑 SaaS 型 WAF 域名
 	// REF: https://cloud.tencent.com/document/api/627/94309
-	modifySpartaProtectionReq := tcWaf.NewModifySpartaProtectionRequest()
+	modifySpartaProtectionReq := tcwaf.NewModifySpartaProtectionRequest()
 	modifySpartaProtectionReq.Domain = common.StringPtr(d.config.Domain)
 	modifySpartaProtectionReq.DomainId = common.StringPtr(d.config.DomainId)
 	modifySpartaProtectionReq.InstanceID = common.StringPtr(d.config.InstanceId)
@@ -123,9 +123,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(secretId, secretKey, region string) (*tcWaf.Client, error) {
+func createSdkClient(secretId, secretKey, region string) (*tcwaf.Client, error) {
 	credential := common.NewCredential(secretId, secretKey)
-	client, err := tcWaf.NewClient(credential, region, profile.NewClientProfile())
+	client, err := tcwaf.NewClient(credential, region, profile.NewClientProfile())
 	if err != nil {
 		return nil, err
 	}

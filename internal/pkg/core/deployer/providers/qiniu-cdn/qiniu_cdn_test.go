@@ -37,7 +37,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_QINIUCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_QINIUCDN_ACCESSKEY="your-access-key" \
 	--CERTIMATE_DEPLOYER_QINIUCDN_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_QINIUCDN_DOMAIN="example.com" \
+	--CERTIMATE_DEPLOYER_QINIUCDN_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

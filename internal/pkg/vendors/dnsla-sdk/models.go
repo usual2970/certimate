@@ -1,21 +1,27 @@
 package dnslasdk
 
 type BaseResponse interface {
-	GetCode() int
+	GetCode() int32
 	GetMessage() string
 }
 
 type baseResponse struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    *int32  `json:"code,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
-func (r *baseResponse) GetCode() int {
-	return r.Code
+func (r *baseResponse) GetCode() int32 {
+	if r.Code != nil {
+		return *r.Code
+	}
+	return 0
 }
 
 func (r *baseResponse) GetMessage() string {
-	return r.Message
+	if r.Message != nil {
+		return *r.Message
+	}
+	return ""
 }
 
 type DomainInfo struct {

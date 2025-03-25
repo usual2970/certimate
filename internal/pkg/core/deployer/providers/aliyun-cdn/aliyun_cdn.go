@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	aliyunCdn "github.com/alibabacloud-go/cdn-20180510/v5/client"
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alicdn "github.com/alibabacloud-go/cdn-20180510/v5/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -27,7 +27,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *aliyunCdn.Client
+	sdkClient *alicdn.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -64,7 +64,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 设置 CDN 域名域名证书
 	// REF: https://help.aliyun.com/zh/cdn/developer-reference/api-cdn-2018-05-10-setcdndomainsslcertificate
-	setCdnDomainSSLCertificateReq := &aliyunCdn.SetCdnDomainSSLCertificateRequest{
+	setCdnDomainSSLCertificateReq := &alicdn.SetCdnDomainSSLCertificateRequest{
 		DomainName:  tea.String(domain),
 		CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		CertType:    tea.String("upload"),
@@ -81,14 +81,14 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret string) (*aliyunCdn.Client, error) {
-	config := &aliyunOpen.Config{
+func createSdkClient(accessKeyId, accessKeySecret string) (*alicdn.Client, error) {
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String("cdn.aliyuncs.com"),
 	}
 
-	client, err := aliyunCdn.NewClient(config)
+	client, err := alicdn.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

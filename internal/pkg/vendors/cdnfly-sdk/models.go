@@ -31,7 +31,7 @@ type GetSiteResponse struct {
 		Name        string `json:"name"`
 		Domain      string `json:"domain"`
 		HttpsListen string `json:"https_listen"`
-	} `json:"data"`
+	} `json:"data,omitempty"`
 }
 
 type UpdateSiteRequest struct {
