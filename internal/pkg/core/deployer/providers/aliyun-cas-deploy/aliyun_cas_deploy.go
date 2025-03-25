@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	aliyunCas "github.com/alibabacloud-go/cas-20200407/v3/client"
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alicas "github.com/alibabacloud-go/cas-20200407/v3/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -35,7 +35,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliyunCas.Client
+	sdkClient   *alicas.Client
 	sslUploader uploader.Uploader
 }
 
@@ -95,7 +95,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if len(contactIds) == 0 {
 		// 获取联系人列表
 		// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-listcontact
-		listContactReq := &aliyunCas.ListContactRequest{}
+		listContactReq := &alicas.ListContactRequest{}
 		listContactReq.ShowSize = tea.Int32(1)
 		listContactReq.CurrentPage = tea.Int32(1)
 		listContactResp, err := d.sdkClient.ListContact(listContactReq)
@@ -111,7 +111,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 创建部署任务
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-createdeploymentjob
-	createDeploymentJobReq := &aliyunCas.CreateDeploymentJobRequest{
+	createDeploymentJobReq := &alicas.CreateDeploymentJobRequest{
 		Name:        tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		JobType:     tea.String("user"),
 		CertIds:     tea.String(upres.CertId),
@@ -131,7 +131,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			return nil, ctx.Err()
 		}
 
-		describeDeploymentJobReq := &aliyunCas.DescribeDeploymentJobRequest{
+		describeDeploymentJobReq := &alicas.DescribeDeploymentJobRequest{
 			JobId: createDeploymentJobResp.Body.JobId,
 		}
 		describeDeploymentJobResp, err := d.sdkClient.DescribeDeploymentJob(describeDeploymentJobReq)
@@ -155,7 +155,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*alicas.Client, error) {
 	if region == "" {
 		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
 	}
@@ -169,13 +169,13 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunCas.Cl
 		endpoint = fmt.Sprintf("cas.%s.aliyuncs.com", region)
 	}
 
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(endpoint),
 	}
 
-	client, err := aliyunCas.NewClient(config)
+	client, err := alicas.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

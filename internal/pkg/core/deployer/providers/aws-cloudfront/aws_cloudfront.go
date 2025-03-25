@@ -6,10 +6,10 @@ import (
 	"log/slog"
 
 	aws "github.com/aws/aws-sdk-go-v2/aws"
-	awsCfg "github.com/aws/aws-sdk-go-v2/config"
-	awsCred "github.com/aws/aws-sdk-go-v2/credentials"
-	awsCf "github.com/aws/aws-sdk-go-v2/service/cloudfront"
-	awsCfTypes "github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
+	awscfg "github.com/aws/aws-sdk-go-v2/config"
+	awscred "github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -31,7 +31,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *awsCf.Client
+	sdkClient   *cloudfront.Client
 	sslUploader uploader.Uploader
 }
 
@@ -89,7 +89,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 获取分配配置
 	// REF: https://docs.aws.amazon.com/en_us/cloudfront/latest/APIReference/API_GetDistributionConfig.html
-	getDistributionConfigReq := &awsCf.GetDistributionConfigInput{
+	getDistributionConfigReq := &cloudfront.GetDistributionConfigInput{
 		Id: aws.String(d.config.DistributionId),
 	}
 	getDistributionConfigResp, err := d.sdkClient.GetDistributionConfig(context.TODO(), getDistributionConfigReq)
@@ -100,13 +100,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 更新分配配置
 	// REF: https://docs.aws.amazon.com/zh_cn/cloudfront/latest/APIReference/API_UpdateDistribution.html
-	updateDistributionReq := &awsCf.UpdateDistributionInput{
+	updateDistributionReq := &cloudfront.UpdateDistributionInput{
 		Id:                 aws.String(d.config.DistributionId),
 		DistributionConfig: getDistributionConfigResp.DistributionConfig,
 		IfMatch:            getDistributionConfigResp.ETag,
 	}
 	if updateDistributionReq.DistributionConfig.ViewerCertificate == nil {
-		updateDistributionReq.DistributionConfig.ViewerCertificate = &awsCfTypes.ViewerCertificate{}
+		updateDistributionReq.DistributionConfig.ViewerCertificate = &types.ViewerCertificate{}
 	}
 	updateDistributionReq.DistributionConfig.ViewerCertificate.CloudFrontDefaultCertificate = aws.Bool(false)
 	updateDistributionReq.DistributionConfig.ViewerCertificate.ACMCertificateArn = aws.String(upres.CertId)
@@ -119,15 +119,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey, region string) (*awsCf.Client, error) {
-	cfg, err := awsCfg.LoadDefaultConfig(context.TODO())
+func createSdkClient(accessKeyId, secretAccessKey, region string) (*cloudfront.Client, error) {
+	cfg, err := awscfg.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		return nil, err
 	}
 
-	client := awsCf.NewFromConfig(cfg, func(o *awsCf.Options) {
+	client := cloudfront.NewFromConfig(cfg, func(o *cloudfront.Options) {
 		o.Region = region
-		o.Credentials = aws.NewCredentialsCache(awsCred.NewStaticCredentialsProvider(accessKeyId, secretAccessKey, ""))
+		o.Credentials = aws.NewCredentialsCache(awscred.NewStaticCredentialsProvider(accessKeyId, secretAccessKey, ""))
 	})
 	return client, nil
 }

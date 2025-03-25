@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"time"
 
-	bceCdn "github.com/baidubce/bce-sdk-go/services/cdn"
-	bceCdnApi "github.com/baidubce/bce-sdk-go/services/cdn/api"
+	bcecdn "github.com/baidubce/bce-sdk-go/services/cdn"
+	bcecdnapi "github.com/baidubce/bce-sdk-go/services/cdn/api"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -25,7 +25,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *bceCdn.Client
+	sdkClient *bcecdn.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -61,7 +61,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://cloud.baidu.com/doc/CDN/s/qjzuz2hp8
 	putCertResp, err := d.sdkClient.PutCert(
 		d.config.Domain,
-		&bceCdnApi.UserCertificate{
+		&bcecdnapi.UserCertificate{
 			CertName:    fmt.Sprintf("certimate-%d", time.Now().UnixMilli()),
 			ServerData:  certPem,
 			PrivateData: privkeyPem,
@@ -76,8 +76,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, secretAccessKey string) (*bceCdn.Client, error) {
-	client, err := bceCdn.NewClient(accessKeyId, secretAccessKey, "")
+func createSdkClient(accessKeyId, secretAccessKey string) (*bcecdn.Client, error) {
+	client, err := bcecdn.NewClient(accessKeyId, secretAccessKey, "")
 	if err != nil {
 		return nil, err
 	}

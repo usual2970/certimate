@@ -4,9 +4,9 @@ import (
 	"context"
 	"log/slog"
 
-	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
-	jdCdnApi "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/apis"
-	jdCdnClient "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/client"
+	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
+	jdcdnapi "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/apis"
+	jdcdnclient "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/client"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *jdCdnClient.CdnClient
+	sdkClient   *jdcdnclient.CdnClient
 	sslUploader uploader.Uploader
 }
 
@@ -71,7 +71,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 查询域名配置信息
 	// REF: https://docs.jdcloud.com/cn/cdn/api/querydomainconfig
-	queryDomainConfigReq := jdCdnApi.NewQueryDomainConfigRequest(d.config.Domain)
+	queryDomainConfigReq := jdcdnapi.NewQueryDomainConfigRequest(d.config.Domain)
 	queryDomainConfigResp, err := d.sdkClient.QueryDomainConfig(queryDomainConfigReq)
 	d.logger.Debug("sdk request 'cdn.QueryDomainConfig'", slog.Any("request", queryDomainConfigReq), slog.Any("response", queryDomainConfigResp))
 	if err != nil {
@@ -88,7 +88,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 设置通讯协议
 	// REF: https://docs.jdcloud.com/cn/cdn/api/sethttptype
-	setHttpTypeReq := jdCdnApi.NewSetHttpTypeRequest(d.config.Domain)
+	setHttpTypeReq := jdcdnapi.NewSetHttpTypeRequest(d.config.Domain)
 	setHttpTypeReq.SetHttpType("https")
 	setHttpTypeReq.SetCertificate(certPem)
 	setHttpTypeReq.SetRsaKey(privkeyPem)
@@ -104,9 +104,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret string) (*jdCdnClient.CdnClient, error) {
-	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
-	client := jdCdnClient.NewCdnClient(clientCredentials)
-	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
+func createSdkClient(accessKeyId, accessKeySecret string) (*jdcdnclient.CdnClient, error) {
+	clientCredentials := jdcore.NewCredentials(accessKeyId, accessKeySecret)
+	client := jdcdnclient.NewCdnClient(clientCredentials)
+	client.SetLogger(jdcore.NewDefaultLogger(jdcore.LogWarn))
 	return client, nil
 }

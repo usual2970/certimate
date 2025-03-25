@@ -28,9 +28,9 @@ const AccessFormWestcnConfig = ({ form: formInst, formName, disabled, initialVal
   const formSchema = z.object({
     username: z
       .string()
-      .trim()
       .min(1, t("access.form.westcn_username.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 })),
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
     apiPassword: z
       .string()
       .min(1, t("access.form.westcn_api_password.placeholder"))

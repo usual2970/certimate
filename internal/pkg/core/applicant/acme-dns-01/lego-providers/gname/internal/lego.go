@@ -122,8 +122,8 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 }
 
 func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*gnamesdk.ResolutionRecord, error) {
-	page := 1
-	pageSize := 20
+	page := int32(1)
+	pageSize := int32(20)
 	for {
 		request := &gnamesdk.ListDomainResolutionRequest{}
 		request.ZoneName = zoneName
@@ -166,18 +166,19 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 			RecordType:  "TXT",
 			RecordName:  subDomain,
 			RecordValue: value,
-			TTL:         d.config.TTL,
+			TTL:         int32(d.config.TTL),
 		}
 		_, err := d.client.AddDomainResolution(request)
 		return err
 	} else {
+		recordId, _ := record.ID.Int64()
 		request := &gnamesdk.ModifyDomainResolutionRequest{
-			ID:          record.ID,
+			ID:          recordId,
 			ZoneName:    zoneName,
 			RecordType:  "TXT",
 			RecordName:  subDomain,
 			RecordValue: value,
-			TTL:         d.config.TTL,
+			TTL:         int32(d.config.TTL),
 		}
 		_, err := d.client.ModifyDomainResolution(request)
 		return err
@@ -194,9 +195,10 @@ func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
 		return nil
 	}
 
+	recordId, _ := record.ID.Int64()
 	request := &gnamesdk.DeleteDomainResolutionRequest{
 		ZoneName: zoneName,
-		RecordID: record.ID,
+		RecordID: recordId,
 	}
 	_, err = d.client.DeleteDomainResolution(request)
 	return err

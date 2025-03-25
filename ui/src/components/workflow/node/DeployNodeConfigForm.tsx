@@ -70,6 +70,7 @@ import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUC
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
 import DeployNodeConfigFormUpyunCDNConfig from "./DeployNodeConfigFormUpyunCDNConfig.tsx";
 import DeployNodeConfigFormUpyunFileConfig from "./DeployNodeConfigFormUpyunFileConfig.tsx";
+import DeployNodeConfigFormVolcEngineALBConfig from "./DeployNodeConfigFormVolcEngineALBConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
@@ -258,6 +259,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormUpyunCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.UPYUN_FILE:
           return <DeployNodeConfigFormUpyunFileConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_ALB:
+          return <DeployNodeConfigFormVolcEngineALBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CLB:

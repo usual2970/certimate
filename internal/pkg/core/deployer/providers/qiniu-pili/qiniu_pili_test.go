@@ -40,7 +40,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_QINIUPILI_ACCESSKEY="your-access-key" \
 	--CERTIMATE_DEPLOYER_QINIUPILI_SECRETKEY="your-secret-key" \
 	--CERTIMATE_DEPLOYER_QINIUPILI_HUB="your-hub-name" \
-	--CERTIMATE_DEPLOYER_QINIUPILI_DOMAIN="example.com" \
+	--CERTIMATE_DEPLOYER_QINIUPILI_DOMAIN="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

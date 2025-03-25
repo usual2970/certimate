@@ -1,4 +1,4 @@
-package namesilo
+package powerdns
 
 import (
 	"net/url"

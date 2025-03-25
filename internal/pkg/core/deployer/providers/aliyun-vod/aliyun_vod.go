@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	aliyunVod "github.com/alibabacloud-go/vod-20170321/v4/client"
+	alivod "github.com/alibabacloud-go/vod-20170321/v4/client"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -28,7 +28,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *aliyunVod.Client
+	sdkClient *alivod.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -62,7 +62,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
 	// 设置域名证书
 	// REF: https://help.aliyun.com/zh/vod/developer-reference/api-vod-2017-03-21-setvoddomainsslcertificate
-	setVodDomainSSLCertificateReq := &aliyunVod.SetVodDomainSSLCertificateRequest{
+	setVodDomainSSLCertificateReq := &alivod.SetVodDomainSSLCertificateRequest{
 		DomainName:  tea.String(d.config.Domain),
 		CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
 		CertType:    tea.String("upload"),
@@ -79,17 +79,17 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunVod.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*alivod.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/vod
 	endpoint := fmt.Sprintf("vod.%s.aliyuncs.com", region)
 
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(endpoint),
 	}
 
-	client, err := aliyunVod.NewClient(config)
+	client, err := alivod.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

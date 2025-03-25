@@ -84,9 +84,9 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 		SetFormData(data)
 	resp, err := req.Post(url)
 	if err != nil {
-		return nil, fmt.Errorf("baota api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("baota api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("baota api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("baota api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil

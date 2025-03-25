@@ -2,9 +2,12 @@
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
+	"regexp"
+	"strings"
 	"time"
 
 	xerrors "github.com/pkg/errors"
@@ -75,6 +78,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 新增证书
 	// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
+	certificateId := ""
 	createCertificateReq := &bssdk.CreateCertificateRequest{
 		Certificate: certPem,
 		Key:         privkeyPem,
@@ -83,7 +87,19 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'baishan.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'baishan.CreateCertificate'")
+		if createCertificateResp != nil {
+			if createCertificateResp.GetCode() == 400699 && strings.Contains(createCertificateResp.GetMessage(), "this certificate is exists") {
+				// 证书已存在，忽略新增证书接口错误
+				re := regexp.MustCompile(`\d+`)
+				certificateId = re.FindString(createCertificateResp.GetMessage())
+			}
+		}
+
+		if certificateId == "" {
+			return nil, xerrors.Wrap(err, "failed to execute sdk request 'baishan.CreateCertificate'")
+		}
+	} else {
+		certificateId = createCertificateResp.Data.CertId.String()
 	}
 
 	// 设置域名配置
@@ -92,7 +108,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		Domains: d.config.Domain,
 		Config: &bssdk.DomainConfig{
 			Https: &bssdk.DomainConfigHttps{
-				CertId:      createCertificateResp.Data.CertId,
+				CertId:      json.Number(certificateId),
 				ForceHttps:  getDomainConfigResp.Data[0].Config.Https.ForceHttps,
 				EnableHttp2: getDomainConfigResp.Data[0].Config.Https.EnableHttp2,
 				EnableOcsp:  getDomainConfigResp.Data[0].Config.Https.EnableOcsp,

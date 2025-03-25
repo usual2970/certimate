@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	aliyunOpen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliyunSlb "github.com/alibabacloud-go/slb-20140515/v4/client"
+	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	alislb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
 	xerrors "github.com/pkg/errors"
 
@@ -39,7 +39,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliyunSlb.Client
+	sdkClient   *alislb.Client
 	sslUploader uploader.Uploader
 }
 
@@ -117,7 +117,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 	// 查询负载均衡实例的详细信息
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerattribute
-	describeLoadBalancerAttributeReq := &aliyunSlb.DescribeLoadBalancerAttributeRequest{
+	describeLoadBalancerAttributeReq := &alislb.DescribeLoadBalancerAttributeRequest{
 		RegionId:       tea.String(d.config.Region),
 		LoadBalancerId: tea.String(d.config.LoadbalancerId),
 	}
@@ -133,7 +133,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	describeLoadBalancerListenersLimit := int32(100)
 	var describeLoadBalancerListenersToken *string = nil
 	for {
-		describeLoadBalancerListenersReq := &aliyunSlb.DescribeLoadBalancerListenersRequest{
+		describeLoadBalancerListenersReq := &alislb.DescribeLoadBalancerListenersRequest{
 			RegionId:         tea.String(d.config.Region),
 			MaxResults:       tea.Int32(describeLoadBalancerListenersLimit),
 			NextToken:        describeLoadBalancerListenersToken,
@@ -199,7 +199,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudLoadbalancerId string, cloudListenerPort int32, cloudCertId string) error {
 	// 查询监听配置
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeloadbalancerhttpslistenerattribute
-	describeLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.DescribeLoadBalancerHTTPSListenerAttributeRequest{
+	describeLoadBalancerHTTPSListenerAttributeReq := &alislb.DescribeLoadBalancerHTTPSListenerAttributeRequest{
 		LoadBalancerId: tea.String(cloudLoadbalancerId),
 		ListenerPort:   tea.Int32(cloudListenerPort),
 	}
@@ -214,7 +214,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 修改监听配置
 		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-setloadbalancerhttpslistenerattribute
-		setLoadBalancerHTTPSListenerAttributeReq := &aliyunSlb.SetLoadBalancerHTTPSListenerAttributeRequest{
+		setLoadBalancerHTTPSListenerAttributeReq := &alislb.SetLoadBalancerHTTPSListenerAttributeRequest{
 			RegionId:            tea.String(d.config.Region),
 			LoadBalancerId:      tea.String(cloudLoadbalancerId),
 			ListenerPort:        tea.Int32(cloudListenerPort),
@@ -230,7 +230,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 		// 查询扩展域名
 		// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describedomainextensions
-		describeDomainExtensionsReq := &aliyunSlb.DescribeDomainExtensionsRequest{
+		describeDomainExtensionsReq := &alislb.DescribeDomainExtensionsRequest{
 			RegionId:       tea.String(d.config.Region),
 			LoadBalancerId: tea.String(cloudLoadbalancerId),
 			ListenerPort:   tea.Int32(cloudListenerPort),
@@ -251,7 +251,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 					continue
 				}
 
-				setDomainExtensionAttributeReq := &aliyunSlb.SetDomainExtensionAttributeRequest{
+				setDomainExtensionAttributeReq := &alislb.SetDomainExtensionAttributeRequest{
 					RegionId:            tea.String(d.config.Region),
 					DomainExtensionId:   tea.String(*domainExtension.DomainExtensionId),
 					ServerCertificateId: tea.String(cloudCertId),
@@ -273,7 +273,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	return nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Client, error) {
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*alislb.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/Slb
 	var endpoint string
 	switch region {
@@ -287,13 +287,13 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliyunSlb.Cl
 		endpoint = fmt.Sprintf("slb.%s.aliyuncs.com", region)
 	}
 
-	config := &aliyunOpen.Config{
+	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
 		Endpoint:        tea.String(endpoint),
 	}
 
-	client, err := aliyunSlb.NewClient(config)
+	client, err := alislb.NewClient(config)
 	if err != nil {
 		return nil, err
 	}

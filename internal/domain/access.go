@@ -98,6 +98,10 @@ type AccessConfigForCMCCCloud struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
+type AccessConfigForDeSEC struct {
+	Token string `json:"token"`
+}
+
 type AccessConfigForDNSLA struct {
 	ApiId     string `json:"apiId"`
 	ApiSecret string `json:"apiSecret"`
@@ -165,6 +169,11 @@ type AccessConfigForNS1 struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForPorkbun struct {
+	ApiKey       string `json:"apiKey"`
+	SecretApiKey string `json:"secretApiKey"`
+}
+
 type AccessConfigForPowerDNS struct {
 	ApiUrl string `json:"apiUrl"`
 	ApiKey string `json:"apiKey"`
@@ -208,6 +217,11 @@ type AccessConfigForUCloud struct {
 type AccessConfigForUpyun struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type AccessConfigForVercel struct {
+	ApiAccessToken string `json:"apiAccessToken"`
+	TeamId         string `json:"teamId,omitempty"`
 }
 
 type AccessConfigForVolcEngine struct {

@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	jdCore "github.com/jdcloud-api/jdcloud-sdk-go/core"
-	jdVodApi "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/apis"
-	jdVodClient "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/client"
+	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
+	jdvodapi "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/apis"
+	jdvodclient "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/client"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -27,7 +27,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *jdVodClient.VodClient
+	sdkClient *jdvodclient.VodClient
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -65,7 +65,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	listDomainsPageNumber := 1
 	listDomainsPageSize := 100
 	for {
-		listDomainsReq := jdVodApi.NewListDomainsRequest()
+		listDomainsReq := jdvodapi.NewListDomainsRequest()
 		listDomainsReq.SetPageNumber(1)
 		listDomainsReq.SetPageSize(100)
 		listDomainsResp, err := d.sdkClient.ListDomains(listDomainsReq)
@@ -93,7 +93,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 查询域名 SSL 配置
 	// REF: https://docs.jdcloud.com/cn/video-on-demand/api/gethttpssl
-	getHttpSslReq := jdVodApi.NewGetHttpSslRequest(domainId)
+	getHttpSslReq := jdvodapi.NewGetHttpSslRequest(domainId)
 	getHttpSslResp, err := d.sdkClient.GetHttpSsl(getHttpSslReq)
 	d.logger.Debug("sdk request 'vod.GetHttpSsl'", slog.Any("request", getHttpSslReq), slog.Any("response", getHttpSslResp))
 	if err != nil {
@@ -102,7 +102,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 设置域名 SSL 配置
 	// REF: https://docs.jdcloud.com/cn/video-on-demand/api/sethttpssl
-	setHttpSslReq := jdVodApi.NewSetHttpSslRequest(domainId)
+	setHttpSslReq := jdvodapi.NewSetHttpSslRequest(domainId)
 	setHttpSslReq.SetTitle(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
 	setHttpSslReq.SetSslCert(certPem)
 	setHttpSslReq.SetSslKey(privkeyPem)
@@ -118,9 +118,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret string) (*jdVodClient.VodClient, error) {
-	clientCredentials := jdCore.NewCredentials(accessKeyId, accessKeySecret)
-	client := jdVodClient.NewVodClient(clientCredentials)
-	client.SetLogger(jdCore.NewDefaultLogger(jdCore.LogWarn))
+func createSdkClient(accessKeyId, accessKeySecret string) (*jdvodclient.VodClient, error) {
+	clientCredentials := jdcore.NewCredentials(accessKeyId, accessKeySecret)
+	client := jdvodclient.NewVodClient(clientCredentials)
+	client.SetLogger(jdcore.NewDefaultLogger(jdcore.LogWarn))
 	return client, nil
 }

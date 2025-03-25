@@ -20,6 +20,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
+      | AccessConfigForDeSEC
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForDynv6
@@ -34,6 +35,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
+      | AccessConfigForPorkbun
       | AccessConfigForPowerDNS
       | AccessConfigForQiniu
       | AccessConfigForRainYun
@@ -42,6 +44,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
+      | AccessConfigForVercel
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
       | AccessConfigForWestcn
@@ -123,6 +126,10 @@ export type AccessConfigForCMCCCloud = {
   accessKeySecret: string;
 };
 
+export type AccessConfigForDeSEC = {
+  token: string;
+};
+
 export type AccessConfigForDNSLA = {
   apiId: string;
   apiSecret: string;
@@ -190,6 +197,11 @@ export type AccessConfigForNS1 = {
   apiKey: string;
 };
 
+export type AccessConfigForPorkbun = {
+  apiKey: string;
+  secretApiKey: string;
+};
+
 export type AccessConfigForPowerDNS = {
   apiUrl: string;
   apiKey: string;
@@ -233,6 +245,11 @@ export type AccessConfigForUCloud = {
 export type AccessConfigForUpyun = {
   username: string;
   password: string;
+};
+
+export type AccessConfigForVercel = {
+  apiAccessToken: string;
+  teamId?: string;
 };
 
 export type AccessConfigForVolcEngine = {

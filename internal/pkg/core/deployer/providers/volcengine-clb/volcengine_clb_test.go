@@ -40,7 +40,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_VOLCENGINECLB_ACCESSKEYSECRET="your-access-key-secret" \
 	--CERTIMATE_DEPLOYER_VOLCENGINECLB_REGION="cn-beijing" \
-	--CERTIMATE_DEPLOYER_VOLCENGINECLB_LISTENERID="cn-beijing"
+	--CERTIMATE_DEPLOYER_VOLCENGINECLB_LISTENERID="your-listener-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

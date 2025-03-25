@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"strings"
 
-	bpCdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
+	bpcdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -26,7 +26,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *bpCdn.CDN
+	sdkClient   *bpcdn.CDN
 	sslUploader uploader.Uploader
 }
 
@@ -37,7 +37,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client := bpCdn.NewInstance()
+	client := bpcdn.NewInstance()
 	client.Client.SetAccessKey(config.AccessKey)
 	client.Client.SetSecretKey(config.SecretKey)
 
@@ -80,7 +80,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if strings.HasPrefix(d.config.Domain, "*.") {
 		// 获取指定证书可关联的域名
 		// REF: https://docs.byteplus.com/en/docs/byteplus-cdn/reference-describecertconfig-9ea17
-		describeCertConfigReq := &bpCdn.DescribeCertConfigRequest{
+		describeCertConfigReq := &bpcdn.DescribeCertConfigRequest{
 			CertId: upres.CertId,
 		}
 		describeCertConfigResp, err := d.sdkClient.DescribeCertConfig(describeCertConfigReq)
@@ -119,7 +119,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		for _, domain := range domains {
 			// 关联证书与加速域名
 			// REF: https://docs.byteplus.com/en/docs/byteplus-cdn/reference-batchdeploycert
-			batchDeployCertReq := &bpCdn.BatchDeployCertRequest{
+			batchDeployCertReq := &bpcdn.BatchDeployCertRequest{
 				CertId: upres.CertId,
 				Domain: domain,
 			}
