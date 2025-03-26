@@ -1,22 +1,32 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { deployProvidersMap } from "@/domain/provider";
+import { type DeployProvider, deployProvidersMap } from "@/domain/provider";
 
 export type DeployProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
->;
+> & {
+  filter?: (record: DeployProvider) => boolean;
+};
 
-const DeployProviderSelect = (props: DeployProviderSelectProps) => {
+const DeployProviderSelect = ({ filter, ...props }: DeployProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const options = Array.from(deployProvidersMap.values()).map((item) => ({
-    key: item.type,
-    value: item.type,
-    label: t(item.name),
-  }));
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: DeployProvider }>>([]);
+  useEffect(() => {
+    const allItems = Array.from(deployProvidersMap.values());
+    const filteredItems = filter != null ? allItems.filter(filter) : allItems;
+    setOptions(
+      filteredItems.map((item) => ({
+        key: item.type,
+        value: item.type,
+        label: t(item.name),
+        data: item,
+      }))
+    );
+  }, [filter]);
 
   const renderOption = (key: string) => {
     const provider = deployProvidersMap.get(key);

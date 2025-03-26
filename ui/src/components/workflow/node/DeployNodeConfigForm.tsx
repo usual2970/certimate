@@ -33,6 +33,8 @@ import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAF
 import DeployNodeConfigFormAWSACMConfig from "./DeployNodeConfigFormAWSACMConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormAzureKeyVaultConfig from "./DeployNodeConfigFormAzureKeyVaultConfig";
+import DeployNodeConfigFormBaiduCloudAppBLBConfig from "./DeployNodeConfigFormBaiduCloudAppBLBConfig";
+import DeployNodeConfigFormBaiduCloudBLBConfig from "./DeployNodeConfigFormBaiduCloudBLBConfig";
 import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaiduCloudCDNConfig";
 import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanCDNConfig";
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
@@ -72,6 +74,7 @@ import DeployNodeConfigFormUpyunCDNConfig from "./DeployNodeConfigFormUpyunCDNCo
 import DeployNodeConfigFormUpyunFileConfig from "./DeployNodeConfigFormUpyunFileConfig.tsx";
 import DeployNodeConfigFormVolcEngineALBConfig from "./DeployNodeConfigFormVolcEngineALBConfig.tsx";
 import DeployNodeConfigFormVolcEngineCDNConfig from "./DeployNodeConfigFormVolcEngineCDNConfig.tsx";
+import DeployNodeConfigFormVolcEngineCertCenterConfig from "./DeployNodeConfigFormVolcEngineCertCenterConfig.tsx";
 import DeployNodeConfigFormVolcEngineCLBConfig from "./DeployNodeConfigFormVolcEngineCLBConfig.tsx";
 import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolcEngineDCDNConfig.tsx";
 import DeployNodeConfigFormVolcEngineImageXConfig from "./DeployNodeConfigFormVolcEngineImageXConfig.tsx";
@@ -185,6 +188,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.AZURE_KEYVAULT:
           return <DeployNodeConfigFormAzureKeyVaultConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.BAIDUCLOUD_APPBLB:
+          return <DeployNodeConfigFormBaiduCloudAppBLBConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.BAIDUCLOUD_BLB:
+          return <DeployNodeConfigFormBaiduCloudBLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAISHAN_CDN:
@@ -263,6 +270,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormVolcEngineALBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.VOLCENGINE_CERTCENTER:
+          return <DeployNodeConfigFormVolcEngineCertCenterConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_CLB:
           return <DeployNodeConfigFormVolcEngineCLBConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_DCDN:
@@ -391,7 +400,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               </label>
               <Form.Item name="providerAccessId" rules={[formRule]}>
                 <AccessSelect
-                  placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                   filter={(record) => {
                     if (fieldProvider) {
                       return deployProvidersMap.get(fieldProvider)?.provider === record.provider;
@@ -400,6 +408,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     const provider = accessProvidersMap.get(record.provider);
                     return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
                   }}
+                  placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                 />
               </Form.Item>
             </Form.Item>

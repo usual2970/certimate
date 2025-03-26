@@ -1,22 +1,32 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { applyDNSProvidersMap } from "@/domain/provider";
+import { type ApplyDNSProvider, applyDNSProvidersMap } from "@/domain/provider";
 
 export type ApplyDNSProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
->;
+> & {
+  filter?: (record: ApplyDNSProvider) => boolean;
+};
 
-const ApplyDNSProviderSelect = (props: ApplyDNSProviderSelectProps) => {
+const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const options = Array.from(applyDNSProvidersMap.values()).map((item) => ({
-    key: item.type,
-    value: item.type,
-    label: t(item.name),
-  }));
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyDNSProvider }>>([]);
+  useEffect(() => {
+    const allItems = Array.from(applyDNSProvidersMap.values());
+    const filteredItems = filter != null ? allItems.filter(filter) : allItems;
+    setOptions(
+      filteredItems.map((item) => ({
+        key: item.type,
+        value: item.type,
+        label: t(item.name),
+        data: item,
+      }))
+    );
+  }, [filter]);
 
   const renderOption = (key: string) => {
     const provider = applyDNSProvidersMap.get(key);

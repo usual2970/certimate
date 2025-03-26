@@ -73,12 +73,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	if access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId); err != nil {
 		return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
 	} else {
-		accessConfig, err := access.UnmarshalConfigToMap()
-		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshal access config: %w", err)
-		}
-
-		options.ProviderAccessConfig = accessConfig
+		options.ProviderAccessConfig = access.Config
 	}
 
 	certRepo := repository.NewCertificateRepository()

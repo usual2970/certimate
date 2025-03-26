@@ -43,7 +43,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 		n.logger.Info(fmt.Sprintf("skip this upload, because %s", skipReason))
 		return nil
 	} else if skipReason != "" {
-		n.logger.Info(fmt.Sprintf("continue to upload, because %s", skipReason))
+		n.logger.Info(fmt.Sprintf("re-upload, because %s", skipReason))
 	}
 
 	// 生成证书实体

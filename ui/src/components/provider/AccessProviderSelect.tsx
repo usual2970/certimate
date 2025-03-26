@@ -1,22 +1,32 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Tag, Typography } from "antd";
 
-import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, type AccessProvider, accessProvidersMap } from "@/domain/provider";
 
 export type AccessProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
->;
+> & {
+  filter?: (record: AccessProvider) => boolean;
+};
 
-const AccessProviderSelect = (props: AccessProviderSelectProps) => {
+const AccessProviderSelect = ({ filter, ...props }: AccessProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const options = Array.from(accessProvidersMap.values()).map((item) => ({
-    key: item.type,
-    value: item.type,
-    label: t(item.name),
-  }));
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessProvider }>>([]);
+  useEffect(() => {
+    const allItems = Array.from(accessProvidersMap.values());
+    const filteredItems = filter != null ? allItems.filter(filter) : allItems;
+    setOptions(
+      filteredItems.map((item) => ({
+        key: item.type,
+        value: item.type,
+        label: t(item.name),
+        data: item,
+      }))
+    );
+  }, [filter]);
 
   const renderOption = (key: string) => {
     const provider = accessProvidersMap.get(key);

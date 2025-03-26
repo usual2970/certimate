@@ -106,6 +106,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	if err != nil {
 		return err
 	}
+
 	if record == nil {
 		// add new record
 		resp, err := d.client.CreateRecordOpenapi(&model.CreateRecordOpenapiRequest{

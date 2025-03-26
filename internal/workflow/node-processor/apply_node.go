@@ -45,7 +45,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 		n.logger.Info(fmt.Sprintf("skip this application, because %s", skipReason))
 		return nil
 	} else if skipReason != "" {
-		n.logger.Info(fmt.Sprintf("continue to apply, because %s", skipReason))
+		n.logger.Info(fmt.Sprintf("re-apply, because %s", skipReason))
 	}
 
 	// 初始化申请器

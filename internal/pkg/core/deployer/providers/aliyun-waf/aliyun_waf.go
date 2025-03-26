@@ -15,6 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
 )
 
 type DeployerConfig struct {
@@ -156,26 +157,10 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 			InstanceId: tea.String(d.config.InstanceId),
 			RegionId:   tea.String(d.config.Region),
 			Domain:     tea.String(d.config.Domain),
-			Listen: &aliwaf.ModifyDomainRequestListen{
-				CertId:      tea.String(upres.CertId),
-				TLSVersion:  tea.String("tlsv1"),
-				EnableTLSv3: tea.Bool(false),
-			},
-			Redirect: &aliwaf.ModifyDomainRequestRedirect{
-				Loadbalance: tea.String("iphash"),
-			},
+			Listen:     &aliwaf.ModifyDomainRequestListen{CertId: tea.String(upres.CertId)},
+			Redirect:   &aliwaf.ModifyDomainRequestRedirect{Loadbalance: tea.String("iphash")},
 		}
-		if describeDomainDetailResp.Body != nil && describeDomainDetailResp.Body.Listen != nil {
-			modifyDomainReq.Listen.TLSVersion = describeDomainDetailResp.Body.Listen.TLSVersion
-			modifyDomainReq.Listen.EnableTLSv3 = describeDomainDetailResp.Body.Listen.EnableTLSv3
-			modifyDomainReq.Listen.FocusHttps = describeDomainDetailResp.Body.Listen.FocusHttps
-		}
-		if describeDomainDetailResp.Body != nil && describeDomainDetailResp.Body.Redirect != nil {
-			modifyDomainReq.Redirect.Loadbalance = describeDomainDetailResp.Body.Redirect.Loadbalance
-			modifyDomainReq.Redirect.FocusHttpBackend = describeDomainDetailResp.Body.Redirect.FocusHttpBackend
-			modifyDomainReq.Redirect.SniEnabled = describeDomainDetailResp.Body.Redirect.SniEnabled
-			modifyDomainReq.Redirect.SniHost = describeDomainDetailResp.Body.Redirect.SniHost
-		}
+		modifyDomainReq = assign(modifyDomainReq, describeDomainDetailResp.Body)
 		modifyDomainResp, err := d.sdkClient.ModifyDomain(modifyDomainReq)
 		d.logger.Debug("sdk request 'waf.ModifyDomain'", slog.Any("request", modifyDomainReq), slog.Any("response", modifyDomainResp))
 		if err != nil {
@@ -221,4 +206,167 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 		Region:          casRegion,
 	})
 	return uploader, err
+}
+
+func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDetailResponseBody) *aliwaf.ModifyDomainRequest {
+	// `ModifyDomain` 中不传的字段表示使用默认值、而非保留原值，
+	// 因此这里需要把原配置中的参数重新赋值回去。
+
+	if target == nil {
+		return source
+	}
+
+	if target.Listen != nil {
+		if source.Listen == nil {
+			source.Listen = &aliwaf.ModifyDomainRequestListen{}
+		}
+
+		if target.Listen.CipherSuite != nil {
+			source.Listen.CipherSuite = tea.Int32(int32(*target.Listen.CipherSuite))
+		}
+
+		if target.Listen.CustomCiphers != nil {
+			source.Listen.CustomCiphers = target.Listen.CustomCiphers
+		}
+
+		if target.Listen.EnableTLSv3 != nil {
+			source.Listen.EnableTLSv3 = target.Listen.EnableTLSv3
+		}
+
+		if target.Listen.ExclusiveIp != nil {
+			source.Listen.ExclusiveIp = target.Listen.ExclusiveIp
+		}
+
+		if target.Listen.FocusHttps != nil {
+			source.Listen.FocusHttps = target.Listen.FocusHttps
+		}
+
+		if target.Listen.Http2Enabled != nil {
+			source.Listen.Http2Enabled = target.Listen.Http2Enabled
+		}
+
+		if target.Listen.HttpPorts != nil {
+			source.Listen.HttpPorts = sliceutil.Map(target.Listen.HttpPorts, func(v *int64) *int32 {
+				if v == nil {
+					return nil
+				}
+				return tea.Int32(int32(*v))
+			})
+		}
+
+		if target.Listen.HttpsPorts != nil {
+			source.Listen.HttpsPorts = sliceutil.Map(target.Listen.HttpsPorts, func(v *int64) *int32 {
+				if v == nil {
+					return nil
+				}
+				return tea.Int32(int32(*v))
+			})
+		}
+
+		if target.Listen.IPv6Enabled != nil {
+			source.Listen.IPv6Enabled = target.Listen.IPv6Enabled
+		}
+
+		if target.Listen.ProtectionResource != nil {
+			source.Listen.ProtectionResource = target.Listen.ProtectionResource
+		}
+
+		if target.Listen.TLSVersion != nil {
+			source.Listen.TLSVersion = target.Listen.TLSVersion
+		}
+
+		if target.Listen.XffHeaderMode != nil {
+			source.Listen.XffHeaderMode = tea.Int32(int32(*target.Listen.XffHeaderMode))
+		}
+
+		if target.Listen.XffHeaders != nil {
+			source.Listen.XffHeaders = target.Listen.XffHeaders
+		}
+	}
+
+	if target.Redirect != nil {
+		if source.Redirect == nil {
+			source.Redirect = &aliwaf.ModifyDomainRequestRedirect{}
+		}
+
+		if target.Redirect.Backends != nil {
+			source.Redirect.Backends = sliceutil.Map(target.Redirect.Backends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackends) *string {
+				if v == nil {
+					return nil
+				}
+				return v.Backend
+			})
+		}
+
+		if target.Redirect.BackupBackends != nil {
+			source.Redirect.BackupBackends = sliceutil.Map(target.Redirect.BackupBackends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackupBackends) *string {
+				if v == nil {
+					return nil
+				}
+				return v.Backend
+			})
+		}
+
+		if target.Redirect.ConnectTimeout != nil {
+			source.Redirect.ConnectTimeout = target.Redirect.ConnectTimeout
+		}
+
+		if target.Redirect.FocusHttpBackend != nil {
+			source.Redirect.FocusHttpBackend = target.Redirect.FocusHttpBackend
+		}
+
+		if target.Redirect.Keepalive != nil {
+			source.Redirect.Keepalive = target.Redirect.Keepalive
+		}
+
+		if target.Redirect.KeepaliveRequests != nil {
+			source.Redirect.KeepaliveRequests = target.Redirect.KeepaliveRequests
+		}
+
+		if target.Redirect.KeepaliveTimeout != nil {
+			source.Redirect.KeepaliveTimeout = target.Redirect.KeepaliveTimeout
+		}
+
+		if target.Redirect.Loadbalance != nil {
+			source.Redirect.Loadbalance = target.Redirect.Loadbalance
+		}
+
+		if target.Redirect.ReadTimeout != nil {
+			source.Redirect.ReadTimeout = target.Redirect.ReadTimeout
+		}
+
+		if target.Redirect.RequestHeaders != nil {
+			source.Redirect.RequestHeaders = sliceutil.Map(target.Redirect.RequestHeaders, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectRequestHeaders) *aliwaf.ModifyDomainRequestRedirectRequestHeaders {
+				if v == nil {
+					return nil
+				}
+				return &aliwaf.ModifyDomainRequestRedirectRequestHeaders{
+					Key:   v.Key,
+					Value: v.Value,
+				}
+			})
+		}
+
+		if target.Redirect.Retry != nil {
+			source.Redirect.Retry = target.Redirect.Retry
+		}
+
+		if target.Redirect.SniEnabled != nil {
+			source.Redirect.SniEnabled = target.Redirect.SniEnabled
+		}
+
+		if target.Redirect.SniHost != nil {
+			source.Redirect.SniHost = target.Redirect.SniHost
+		}
+
+		if target.Redirect.WriteTimeout != nil {
+			source.Redirect.WriteTimeout = target.Redirect.WriteTimeout
+		}
+
+		if target.Redirect.XffProto != nil {
+			source.Redirect.XffProto = target.Redirect.XffProto
+		}
+	}
+
+	return source
 }

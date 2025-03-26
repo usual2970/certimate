@@ -150,38 +150,40 @@ func createSdkClient(accessKeyId, secretAccessKey, region string) (*hccdn.CdnCli
 	return client, nil
 }
 
-func assign(reqContent *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent, target *hccdnmodel.ConfigsGetBody) *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent {
+func assign(source *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent, target *hccdnmodel.ConfigsGetBody) *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent {
+	// `UpdateDomainMultiCertificates` 中不传的字段表示使用默认值、而非保留原值，
+	// 因此这里需要把原配置中的参数重新赋值回去。
+
 	if target == nil {
-		return reqContent
+		return source
 	}
 
-	// 华为云 API 中不传的字段表示使用默认值、而非保留原值，因此这里需要把原配置中的参数重新赋值回去。
-	// 而且蛋疼的是查询接口返回的数据结构和更新接口传入的参数结构不一致，需要做很多转化。
-
 	if *target.OriginProtocol == "follow" {
-		reqContent.AccessOriginWay = hwsdk.Int32Ptr(1)
+		source.AccessOriginWay = hwsdk.Int32Ptr(1)
 	} else if *target.OriginProtocol == "http" {
-		reqContent.AccessOriginWay = hwsdk.Int32Ptr(2)
+		source.AccessOriginWay = hwsdk.Int32Ptr(2)
 	} else if *target.OriginProtocol == "https" {
-		reqContent.AccessOriginWay = hwsdk.Int32Ptr(3)
+		source.AccessOriginWay = hwsdk.Int32Ptr(3)
 	}
 
 	if target.ForceRedirect != nil {
-		reqContent.ForceRedirectConfig = &hccdnmodel.ForceRedirect{}
+		if source.ForceRedirectConfig == nil {
+			source.ForceRedirectConfig = &hccdnmodel.ForceRedirect{}
+		}
 
 		if target.ForceRedirect.Status == "on" {
-			reqContent.ForceRedirectConfig.Switch = 1
-			reqContent.ForceRedirectConfig.RedirectType = target.ForceRedirect.Type
+			source.ForceRedirectConfig.Switch = 1
+			source.ForceRedirectConfig.RedirectType = target.ForceRedirect.Type
 		} else {
-			reqContent.ForceRedirectConfig.Switch = 0
+			source.ForceRedirectConfig.Switch = 0
 		}
 	}
 
 	if target.Https != nil {
 		if *target.Https.Http2Status == "on" {
-			reqContent.Http2 = hwsdk.Int32Ptr(1)
+			source.Http2 = hwsdk.Int32Ptr(1)
 		}
 	}
 
-	return reqContent
+	return source
 }

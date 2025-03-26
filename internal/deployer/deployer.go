@@ -39,14 +39,9 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 		return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
 	}
 
-	accessConfig, err := access.UnmarshalConfigToMap()
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal access config: %w", err)
-	}
-
 	deployer, err := createDeployer(&deployerOptions{
 		Provider:             domain.DeployProviderType(nodeConfig.Provider),
-		ProviderAccessConfig: accessConfig,
+		ProviderAccessConfig: access.Config,
 		ProviderDeployConfig: nodeConfig.ProviderConfig,
 	})
 	if err != nil {

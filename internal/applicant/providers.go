@@ -30,6 +30,7 @@ import (
 	pPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
 	pRainYun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/rainyun"
 	pTencentCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud"
+	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud-eo"
 	pVercel "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/vercel"
 	pVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
 	pWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
@@ -294,7 +295,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pJDCloud.NewChallengeProvider(&pJDCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
-				RegionId:              maputil.GetString(options.ProviderApplyConfig, "region_id"),
+				RegionId:              maputil.GetString(options.ProviderApplyConfig, "regionId"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -410,20 +411,36 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			return applicant, err
 		}
 
-	case domain.ApplyDNSProviderTypeTencentCloud, domain.ApplyDNSProviderTypeTencentCloudDNS:
+	case domain.ApplyDNSProviderTypeTencentCloud, domain.ApplyDNSProviderTypeTencentCloudDNS, domain.ApplyDNSProviderTypeTencentCloudEO:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := pTencentCloud.NewChallengeProvider(&pTencentCloud.ChallengeProviderConfig{
-				SecretId:              access.SecretId,
-				SecretKey:             access.SecretKey,
-				DnsPropagationTimeout: options.DnsPropagationTimeout,
-				DnsTTL:                options.DnsTTL,
-			})
-			return applicant, err
+			switch options.Provider {
+			case domain.ApplyDNSProviderTypeTencentCloud, domain.ApplyDNSProviderTypeTencentCloudDNS:
+				applicant, err := pTencentCloud.NewChallengeProvider(&pTencentCloud.ChallengeProviderConfig{
+					SecretId:              access.SecretId,
+					SecretKey:             access.SecretKey,
+					DnsPropagationTimeout: options.DnsPropagationTimeout,
+					DnsTTL:                options.DnsTTL,
+				})
+				return applicant, err
+
+			case domain.ApplyDNSProviderTypeTencentCloudEO:
+				applicant, err := pTencentCloudEO.NewChallengeProvider(&pTencentCloudEO.ChallengeProviderConfig{
+					SecretId:              access.SecretId,
+					SecretKey:             access.SecretKey,
+					ZoneId:                maputil.GetString(options.ProviderApplyConfig, "zoneId"),
+					DnsPropagationTimeout: options.DnsPropagationTimeout,
+					DnsTTL:                options.DnsTTL,
+				})
+				return applicant, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.ApplyDNSProviderTypeVercel:

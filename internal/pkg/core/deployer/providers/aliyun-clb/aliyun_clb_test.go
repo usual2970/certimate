@@ -46,7 +46,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_ALIYUNCLB_REGION="cn-hangzhou" \
 	--CERTIMATE_DEPLOYER_ALIYUNCLB_LOADBALANCERID="your-clb-instance-id" \
 	--CERTIMATE_DEPLOYER_ALIYUNCLB_LISTENERPORT=443 \
-	--CERTIMATE_DEPLOYER_ALIYUNCLB_DOMAIN="your-alb-sni-domain"
+	--CERTIMATE_DEPLOYER_ALIYUNCLB_DOMAIN="your-clb-sni-domain"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
