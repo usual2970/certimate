@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -9,19 +8,10 @@ const CollectionNameAccess = "access"
 
 type Access struct {
 	Meta
-	Name      string     `json:"name" db:"name"`
-	Provider  string     `json:"provider" db:"provider"`
-	Config    string     `json:"config" db:"config"`
-	DeletedAt *time.Time `json:"deleted" db:"deleted"`
-}
-
-func (a *Access) UnmarshalConfigToMap() (map[string]any, error) {
-	config := make(map[string]any)
-	if err := json.Unmarshal([]byte(a.Config), &config); err != nil {
-		return nil, err
-	}
-
-	return config, nil
+	Name      string         `json:"name" db:"name"`
+	Provider  string         `json:"provider" db:"provider"`
+	Config    map[string]any `json:"config" db:"config"`
+	DeletedAt *time.Time     `json:"deleted" db:"deleted"`
 }
 
 type AccessConfigFor1Panel struct {

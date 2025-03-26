@@ -39,6 +39,11 @@ func (r *AccessRepository) castRecordToModel(record *core.Record) (*domain.Acces
 		return nil, fmt.Errorf("record is nil")
 	}
 
+	config := make(map[string]any)
+	if err := record.UnmarshalJSONField("config", &config); err != nil {
+		return nil, err
+	}
+
 	access := &domain.Access{
 		Meta: domain.Meta{
 			Id:        record.Id,
@@ -47,7 +52,7 @@ func (r *AccessRepository) castRecordToModel(record *core.Record) (*domain.Acces
 		},
 		Name:     record.GetString("name"),
 		Provider: record.GetString("provider"),
-		Config:   record.GetString("config"),
+		Config:   config,
 	}
 	return access, nil
 }

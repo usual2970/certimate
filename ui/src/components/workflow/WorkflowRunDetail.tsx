@@ -37,6 +37,7 @@ import Show from "@/components/Show";
 import { type CertificateModel } from "@/domain/certificate";
 import type { WorkflowLogModel } from "@/domain/workflowLog";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
+import { useBrowserTheme } from "@/hooks";
 import { listByWorkflowRunId as listCertificatesByWorkflowRunId } from "@/repository/certificate";
 import { listByWorkflowRunId as listLogsByWorkflowRunId } from "@/repository/workflowLog";
 import { mergeCls } from "@/utils/css";
@@ -67,6 +68,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
   const { t } = useTranslation();
 
   const { token: themeToken } = theme.useToken();
+  const { theme: browserTheme } = useBrowserTheme();
 
   type Log = Pick<WorkflowLogModel, "timestamp" | "level" | "message" | "data">;
   type LogGroup = { id: string; name: string; records: Log[] };
@@ -212,7 +214,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
               }}
               trigger={["click"]}
             >
-              <Button icon={<SettingOutlinedIcon />} ghost />
+              <Button color="primary" icon={<SettingOutlinedIcon />} ghost={browserTheme === "light"} />
             </Dropdown>
           </div>
         </div>
