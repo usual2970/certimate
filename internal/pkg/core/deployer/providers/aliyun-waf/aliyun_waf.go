@@ -157,7 +157,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, pri
 			InstanceId: tea.String(d.config.InstanceId),
 			RegionId:   tea.String(d.config.Region),
 			Domain:     tea.String(d.config.Domain),
-			Listen:     &aliwaf.ModifyDomainRequestListen{CertId: tea.String(upres.CertId)},
+			Listen:     &aliwaf.ModifyDomainRequestListen{CertId: tea.String(upres.ExtendedData["certIdentifier"].(string))},
 			Redirect:   &aliwaf.ModifyDomainRequestRedirect{Loadbalance: tea.String("iphash")},
 		}
 		modifyDomainReq = assign(modifyDomainReq, describeDomainDetailResp.Body)
