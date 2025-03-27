@@ -370,8 +370,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderTypeBaishanCDN:
 				deployer, err := pBaishanCDN.NewDeployer(&pBaishanCDN.DeployerConfig{
-					ApiToken: access.ApiToken,
-					Domain:   maputil.GetString(options.ProviderDeployConfig, "domain"),
+					ApiToken:      access.ApiToken,
+					Domain:        maputil.GetString(options.ProviderDeployConfig, "domain"),
+					CertificateId: maputil.GetString(options.ProviderDeployConfig, "certificateId"),
 				})
 				return deployer, err
 
