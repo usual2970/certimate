@@ -36,7 +36,7 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
       .string({ message: t("workflow_node.deploy.form.baishan_cdn_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),
     certificateId: z
-      .string()
+      .union([z.string(), z.number().int()])
       .nullish()
       .refine((v) => {
         if (!v) return true;
@@ -73,7 +73,7 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.baishan_cdn_certificate_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")} />
+        <Input type="number" placeholder={t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")} />
       </Form.Item>
     </Form>
   );
