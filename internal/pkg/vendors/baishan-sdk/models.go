@@ -27,9 +27,10 @@ func (r *baseResponse) GetMessage() string {
 }
 
 type CreateCertificateRequest struct {
-	Certificate string `json:"certificate"`
-	Key         string `json:"key"`
-	Name        string `json:"name"`
+	CertificateId *string `json:"cert_id,omitempty"`
+	Certificate   string  `json:"certificate"`
+	Key           string  `json:"key"`
+	Name          string  `json:"name"`
 }
 
 type CreateCertificateResponse struct {

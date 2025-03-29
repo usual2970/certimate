@@ -116,6 +116,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 					return &uploader.UploadResult{
 						CertId:   fmt.Sprintf("%d", tea.Int64Value(certDetail.CertificateId)),
 						CertName: *certDetail.Name,
+						ExtendedData: map[string]any{
+							"instanceId":     tea.StringValue(getUserCertificateDetailResp.Body.InstanceId),
+							"certIdentifier": tea.StringValue(getUserCertificateDetailResp.Body.CertIdentifier),
+						},
 					}, nil
 				}
 			}
@@ -129,8 +133,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 生成新证书名（需符合阿里云命名规则）
-	var certId, certName string
-	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
+	certName := fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
 
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-uploadusercertificate
@@ -145,10 +148,25 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.UploadUserCertificate'")
 	}
 
-	certId = fmt.Sprintf("%d", tea.Int64Value(uploadUserCertificateResp.Body.CertId))
+	// 获取证书详情
+	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-getusercertificatedetail
+	getUserCertificateDetailReq := &alicas.GetUserCertificateDetailRequest{
+		CertId:     uploadUserCertificateResp.Body.CertId,
+		CertFilter: tea.Bool(true),
+	}
+	getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
+	u.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
+	if err != nil {
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
+	}
+
 	return &uploader.UploadResult{
-		CertId:   certId,
+		CertId:   fmt.Sprintf("%d", tea.Int64Value(getUserCertificateDetailResp.Body.Id)),
 		CertName: certName,
+		ExtendedData: map[string]any{
+			"instanceId":     tea.StringValue(getUserCertificateDetailResp.Body.InstanceId),
+			"certIdentifier": tea.StringValue(getUserCertificateDetailResp.Body.CertIdentifier),
+		},
 	}, nil
 }
 

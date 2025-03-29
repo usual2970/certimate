@@ -38,10 +38,13 @@ const DeployNodeConfigFormCdnflyConfig = ({ form: formInst, formName, disabled, 
       if (fieldResourceType !== RESOURCE_TYPE_SITE) return true;
       return /^\d+$/.test(v + "") && +v > 0;
     }, t("workflow_node.deploy.form.cdnfly_site_id.placeholder")),
-    certificateId: z.union([z.string(), z.number().int()]).refine((v) => {
-      if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;
-      return /^\d+$/.test(v + "") && +v > 0;
-    }, t("workflow_node.deploy.form.cdnfly_certificate_id.placeholder")),
+    certificateId: z
+      .union([z.string(), z.number().int()])
+      .nullish()
+      .refine((v) => {
+        if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;
+        return /^\d+$/.test(v + "") && +v! > 0;
+      }, t("workflow_node.deploy.form.cdnfly_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

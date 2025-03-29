@@ -71,7 +71,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 	// 获取证书列表，避免重复上传
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListCertificates.html
-	listCertificatesNextToken := new(string)
+	var listCertificatesNextToken *string = nil
 	listCertificatesMaxItems := int32(1000)
 	for {
 		listCertificatesReq := &awsacm.ListCertificatesInput{

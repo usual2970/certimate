@@ -7,6 +7,7 @@ import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormBaishanCDNConfigFieldValues = Nullish<{
   domain: string;
+  certificateId?: string | number;
 }>;
 
 export type DeployNodeConfigFormBaishanCDNConfigProps = {
@@ -34,6 +35,13 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
     domain: z
       .string({ message: t("workflow_node.deploy.form.baishan_cdn_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),
+    certificateId: z
+      .union([z.string(), z.number().int()])
+      .nullish()
+      .refine((v) => {
+        if (!v) return true;
+        return /^\d+$/.test(v + "") && +v > 0;
+      }, t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -57,6 +65,15 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.baishan_cdn_domain.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.baishan_cdn_domain.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="certificateId"
+        label={t("workflow_node.deploy.form.baishan_cdn_certificate_id.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.baishan_cdn_certificate_id.tooltip") }}></span>}
+      >
+        <Input type="number" placeholder={t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")} />
       </Form.Item>
     </Form>
   );
