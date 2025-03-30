@@ -97,7 +97,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         .nullish()
         .refine((v) => {
           if (!fieldCAProvider) return true;
-          return !!v;
+
+          const provider = applyCAProvidersMap.get(fieldCAProvider);
+          return !!provider?.builtin || !!v;
         }, t("workflow_node.apply.form.ca_provider_access.placeholder")),
       caProviderConfig: z.any().nullish(),
       keyAlgorithm: z
@@ -158,8 +160,10 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
     const [showCAProviderAccess, setShowCAProviderAccess] = useState(false);
     useEffect(() => {
+      // 内置的 CA 提供商（如 Let's Encrypt）无需显示授权信息字段
       if (fieldCAProvider) {
-        setShowCAProviderAccess(true);
+        const provider = applyCAProvidersMap.get(fieldCAProvider);
+        setShowCAProviderAccess(!provider?.builtin);
       } else {
         setShowCAProviderAccess(false);
       }

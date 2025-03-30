@@ -125,8 +125,14 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
-        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
-      providerConfig: z.any(),
+        .nullish()
+        .refine((v) => {
+          if (!fieldProvider) return true;
+
+          const provider = deployProvidersMap.get(fieldProvider);
+          return !!provider?.builtin || !!v;
+        }, t("workflow_node.deploy.form.provider_access.placeholder")),
+      providerConfig: z.any().nullish(),
       skipOnLastSucceeded: z.boolean().nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
@@ -136,6 +142,17 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     });
 
     const fieldProvider = Form.useWatch("provider", { form: formInst, preserve: true });
+
+    const [showProviderAccess, setShowProviderAccess] = useState(false);
+    useEffect(() => {
+      // 内置的部署提供商（如本地部署）无需显示授权信息字段
+      if (fieldProvider) {
+        const provider = deployProvidersMap.get(fieldProvider);
+        setShowProviderAccess(!provider?.builtin);
+      } else {
+        setShowProviderAccess(false);
+      }
+    }, [fieldProvider]);
 
     const [nestedFormInst] = Form.useForm();
     const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeDeployConfigFormProviderConfigForm" });
@@ -368,7 +385,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               />
             </Form.Item>
 
-            <Form.Item className="mb-0">
+            <Form.Item className="mb-0" hidden={!showProviderAccess}>
               <label className="mb-1 block">
                 <div className="flex w-full items-center justify-between gap-4">
                   <div className="max-w-full grow truncate">

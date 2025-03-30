@@ -148,8 +148,8 @@ export type WorkflowNodeConfigForUpload = {
 export type WorkflowNodeConfigForDeploy = {
   certificate: string;
   provider: string;
-  providerAccessId: string;
-  providerConfig: Record<string, unknown>;
+  providerAccessId?: string;
+  providerConfig?: Record<string, unknown>;
   skipOnLastSucceeded: boolean;
 };
 

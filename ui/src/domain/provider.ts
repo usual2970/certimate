@@ -69,6 +69,7 @@ export type AccessProvider = {
   name: string;
   icon: string;
   usages: AccessUsageType[];
+  builtin: boolean;
 };
 
 export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProvider> = new Map(
@@ -135,6 +136,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
       name: e[1] as string,
       icon: e[2] as string,
       usages: e[3] as AccessUsageType[],
+      builtin: ([ACCESS_PROVIDERS.LOCAL, ACCESS_PROVIDERS.LETSENCRYPT, ACCESS_PROVIDERS.LETSENCRYPTSTAGING] as string[]).includes(e[0] as string),
     },
   ])
 );
@@ -159,6 +161,7 @@ export type ApplyCAProvider = {
   name: string;
   icon: string;
   provider: AccessProviderType;
+  builtin: boolean;
 };
 
 export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAProvider> = new Map(
@@ -166,17 +169,21 @@ export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAP
     注意：此处的顺序决定显示在前端的顺序。
     NOTICE: The following order determines the order displayed at the frontend.
   */
-  [[APPLY_CA_PROVIDERS.LETSENCRYPT], [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING], [APPLY_CA_PROVIDERS.ZEROSSL], [APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES]].map(
-    ([type]) => [
-      type,
-      {
-        type: type as ApplyCAProviderType,
-        name: accessProvidersMap.get(type.split("-")[0])!.name,
-        icon: accessProvidersMap.get(type.split("-")[0])!.icon,
-        provider: type.split("-")[0] as AccessProviderType,
-      },
-    ]
-  )
+  [
+    [APPLY_CA_PROVIDERS.LETSENCRYPT, "true"],
+    [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING, "true"],
+    [APPLY_CA_PROVIDERS.ZEROSSL],
+    [APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES],
+  ].map(([type, builtin]) => [
+    type,
+    {
+      type: type as ApplyCAProviderType,
+      name: accessProvidersMap.get(type.split("-")[0])!.name,
+      icon: accessProvidersMap.get(type.split("-")[0])!.icon,
+      provider: type.split("-")[0] as AccessProviderType,
+      builtin: builtin === "true",
+    },
+  ])
 );
 // #endregion
 
@@ -379,6 +386,7 @@ export type DeployProvider = {
   icon: string;
   provider: AccessProviderType;
   category: DeployCategoryType;
+  builtin: boolean;
 };
 
 export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProvider> = new Map(
@@ -387,7 +395,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
      NOTICE: The following order determines the order displayed at the frontend.
     */
   [
-    [DEPLOY_PROVIDERS.LOCAL, "provider.local", DEPLOY_CATEGORIES.OTHER],
+    [DEPLOY_PROVIDERS.LOCAL, "provider.local", DEPLOY_CATEGORIES.OTHER, "true"],
     [DEPLOY_PROVIDERS.SSH, "provider.ssh", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.WEBHOOK, "provider.webhook", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.KUBERNETES_SECRET, "provider.kubernetes.secret", DEPLOY_CATEGORIES.OTHER],
@@ -457,7 +465,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOY_CATEGORIES.WEBSITE],
     [DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE, "provider.baotapanel.console", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.SAFELINE, "provider.safeline", DEPLOY_CATEGORIES.FIREWALL],
-  ].map(([type, name, category]) => [
+  ].map(([type, name, category, builtin]) => [
     type,
     {
       type: type as DeployProviderType,
@@ -465,6 +473,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
       icon: accessProvidersMap.get(type.split("-")[0])!.icon,
       provider: type.split("-")[0] as AccessProviderType,
       category: category as DeployCategoryType,
+      builtin: builtin === "true",
     },
   ])
 );

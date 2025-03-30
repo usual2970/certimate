@@ -96,7 +96,7 @@
   "workflow_node.deploy.form.provider_access.placeholder": "Please select an authorization of host provider",
   "workflow_node.deploy.form.provider_access.tooltip": "Used to deploy certificates.",
   "workflow_node.deploy.form.provider_access.button": "Create",
-  "workflow_node.deploy.form.provider_access.guide_for_local": "Tips: Due to the form validations, youe need to select an authorization for local deployment also, even if it means nothing.",
+  "workflow_node.deploy.form.provider_access.guide_for_local": "Tips: If you are running Certimate in Docker, the \"Local\" refers to the container rather than the host.",
   "workflow_node.deploy.form.certificate.label": "Certificate",
   "workflow_node.deploy.form.certificate.placeholder": "Please select certificate",
   "workflow_node.deploy.form.certificate.tooltip": "The certificate to be deployed comes from the previous nodes of application or upload.",

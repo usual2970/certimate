@@ -87,11 +87,11 @@ type WorkflowNodeConfigForUpload struct {
 }
 
 type WorkflowNodeConfigForDeploy struct {
-	Certificate         string         `json:"certificate"`         // 前序节点输出的证书，形如“${NodeId}#certificate”
-	Provider            string         `json:"provider"`            // 主机提供商
-	ProviderAccessId    string         `json:"providerAccessId"`    // 主机提供商授权记录 ID
-	ProviderConfig      map[string]any `json:"providerConfig"`      // 主机提供商额外配置
-	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"` // 上次部署成功时是否跳过
+	Certificate         string         `json:"certificate"`                // 前序节点输出的证书，形如“${NodeId}#certificate”
+	Provider            string         `json:"provider"`                   // 主机提供商
+	ProviderAccessId    string         `json:"providerAccessId,omitempty"` // 主机提供商授权记录 ID
+	ProviderConfig      map[string]any `json:"providerConfig,omitempty"`   // 主机提供商额外配置
+	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"`        // 上次部署成功时是否跳过
 }
 
 type WorkflowNodeConfigForNotify struct {

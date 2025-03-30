@@ -24,6 +24,7 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
         key: item.type,
         value: item.type,
         label: t(item.name),
+        disabled: item.builtin,
         data: item,
       }))
     );
@@ -35,7 +36,7 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
       <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
         <Space className="max-w-full grow truncate" size={4}>
           <Avatar src={provider?.icon} size="small" />
-          <Typography.Text className="leading-loose" ellipsis>
+          <Typography.Text className="leading-loose" type={provider?.builtin ? "secondary" : undefined} delete={provider?.builtin ? true : undefined} ellipsis>
             {t(provider?.name ?? "")}
           </Typography.Text>
         </Space>

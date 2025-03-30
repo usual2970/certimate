@@ -32,7 +32,6 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
-      | AccessConfigForLocal
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
@@ -183,8 +182,6 @@ export type AccessConfigForJDCloud = {
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
 };
-
-export type AccessConfigForLocal = NonNullable<unknown>;
 
 export type AccessConfigForNamecheap = {
   username: string;

@@ -144,8 +144,6 @@ type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
 }
 
-type AccessConfigForLocal struct{}
-
 type AccessConfigForNamecheap struct {
 	Username string `json:"username"`
 	ApiKey   string `json:"apiKey"`
