@@ -251,10 +251,10 @@ const AccessList = () => {
             key: "ca-only",
             label: t("access.props.range.ca_only"),
           },
-          {
-            key: "notify-only",
-            label: t("access.props.range.notify_only"),
-          },
+          // {
+          //   key: "notify-only",
+          //   label: t("access.props.range.notify_only"),
+          // },
         ]}
         activeTabKey={filters["range"] as string}
         onTabChange={(key) => handleTabChange(key)}
