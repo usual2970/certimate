@@ -54,6 +54,7 @@ const (
 	AccessProviderTypeRainYun             = AccessProviderType("rainyun")
 	AccessProviderTypeSafeLine            = AccessProviderType("safeline")
 	AccessProviderTypeSSH                 = AccessProviderType("ssh")
+	AccessProviderTypeSSLCOM              = AccessProviderType("sslcom")
 	AccessProviderTypeTencentCloud        = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud              = AccessProviderType("ucloud")
 	AccessProviderTypeUpyun               = AccessProviderType("upyun")
@@ -74,10 +75,11 @@ type ApplyCAProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	ApplyCAProviderTypeGoogleTrustServices = ApplyCAProviderType("googletrustservices")
-	ApplyCAProviderTypeLetsEncrypt         = ApplyCAProviderType("letsencrypt")
-	ApplyCAProviderTypeLetsEncryptStaging  = ApplyCAProviderType("letsencryptstaging")
-	ApplyCAProviderTypeZeroSSL             = ApplyCAProviderType("zerossl")
+	ApplyCAProviderTypeGoogleTrustServices = ApplyCAProviderType(string(AccessProviderTypeGoogleTrustServices))
+	ApplyCAProviderTypeLetsEncrypt         = ApplyCAProviderType(string(AccessProviderTypeLetsEncrypt))
+	ApplyCAProviderTypeLetsEncryptStaging  = ApplyCAProviderType(string(AccessProviderTypeLetsEncryptStaging))
+	ApplyCAProviderTypeSSLCom              = ApplyCAProviderType(string(AccessProviderTypeSSLCOM))
+	ApplyCAProviderTypeZeroSSL             = ApplyCAProviderType(string(AccessProviderTypeZeroSSL))
 )
 
 type ApplyDNSProviderType string

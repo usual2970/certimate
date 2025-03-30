@@ -41,6 +41,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForRainYun
       | AccessConfigForSafeLine
       | AccessConfigForSSH
+      | AccessConfigForSSLCom
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
@@ -233,6 +234,11 @@ export type AccessConfigForSSH = {
   password?: string;
   key?: string;
   keyPassphrase?: string;
+};
+
+export type AccessConfigForSSLCom = {
+  eabKid: string;
+  eabHmacKey: string;
 };
 
 export type AccessConfigForTencentCloud = {

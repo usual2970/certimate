@@ -92,6 +92,7 @@
   "provider.rainyun": "Rain Yun",
   "provider.safeline": "SafeLine",
   "provider.ssh": "SSH deployment",
+  "provider.sslcom": "SSL.com",
   "provider.tencentcloud": "Tencent Cloud",
   "provider.tencentcloud.cdn": "Tencent Cloud - CDN (Content Delivery Network)",
   "provider.tencentcloud.clb": "Tencent Cloud - CLB (Cloud Load Balancer)",

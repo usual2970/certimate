@@ -196,6 +196,11 @@ type AccessConfigForSSH struct {
 	KeyPassphrase string `json:"keyPassphrase,omitempty"`
 }
 
+type AccessConfigForSSLCom struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
+}
+
 type AccessConfigForTencentCloud struct {
 	SecretId  string `json:"secretId"`
 	SecretKey string `json:"secretKey"`

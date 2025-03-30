@@ -43,6 +43,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   RAINYUN: "rainyun",
   SAFELINE: "safeline",
   SSH: "ssh",
+  SSLCOM: "sslcom",
   TENCENTCLOUD: "tencentcloud",
   UCLOUD: "ucloud",
   UPYUN: "upyun",
@@ -129,6 +130,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.LETSENCRYPTSTAGING, "provider.letsencryptstaging", "/imgs/providers/letsencrypt.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.GOOGLETRUSTSERVICES, "provider.googletrustservices", "/imgs/providers/google.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
+    [ACCESS_PROVIDERS.SSLCOM, "provider.sslcom", "/imgs/providers/sslcom.svg", [ACCESS_USAGES.CA]],
   ].map((e) => [
     e[0] as string,
     {
@@ -151,6 +153,7 @@ export const APPLY_CA_PROVIDERS = Object.freeze({
   GOOGLETRUSTSERVICES: `${ACCESS_PROVIDERS.GOOGLETRUSTSERVICES}`,
   LETSENCRYPT: `${ACCESS_PROVIDERS.LETSENCRYPT}`,
   LETSENCRYPTSTAGING: `${ACCESS_PROVIDERS.LETSENCRYPTSTAGING}`,
+  SSLCOM: `${ACCESS_PROVIDERS.SSLCOM}`,
   ZEROSSL: `${ACCESS_PROVIDERS.ZEROSSL}`,
 } as const);
 
@@ -174,6 +177,7 @@ export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAP
     [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING, "true"],
     [APPLY_CA_PROVIDERS.ZEROSSL],
     [APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES],
+    [APPLY_CA_PROVIDERS.SSLCOM],
   ].map(([type, builtin]) => [
     type,
     {

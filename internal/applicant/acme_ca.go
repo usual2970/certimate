@@ -6,6 +6,7 @@ const (
 	sslProviderLetsEncrypt         = string(domain.ApplyCAProviderTypeLetsEncrypt)
 	sslProviderLetsEncryptStaging  = string(domain.ApplyCAProviderTypeLetsEncryptStaging)
 	sslProviderGoogleTrustServices = string(domain.ApplyCAProviderTypeGoogleTrustServices)
+	sslProviderSSLCom              = string(domain.ApplyCAProviderTypeSSLCom)
 	sslProviderZeroSSL             = string(domain.ApplyCAProviderTypeZeroSSL)
 
 	sslProviderDefault = sslProviderLetsEncrypt
@@ -15,6 +16,7 @@ var sslProviderUrls = map[string]string{
 	sslProviderLetsEncrypt:         "https://acme-v02.api.letsencrypt.org/directory",
 	sslProviderLetsEncryptStaging:  "https://acme-staging-v02.api.letsencrypt.org/directory",
 	sslProviderGoogleTrustServices: "https://dv.acme-v02.api.pki.goog/directory",
+	sslProviderSSLCom:              "https://acme.ssl.com/sslcom-dv-ecc",
 	sslProviderZeroSSL:             "https://acme.zerossl.com/v2/DV90",
 }
 

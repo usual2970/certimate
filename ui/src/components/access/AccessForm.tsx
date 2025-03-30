@@ -45,6 +45,7 @@ import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
+import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormUpyunConfig from "./AccessFormUpyunConfig";
@@ -216,6 +217,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormSafeLineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:
         return <AccessFormSSHConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.SSLCOM:
+        return <AccessFormSSLComConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.TENCENTCLOUD:
         return <AccessFormTencentCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.UCLOUD:

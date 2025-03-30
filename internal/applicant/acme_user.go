@@ -112,6 +112,20 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 			})
 		}
 
+	case sslProviderSSLCom:
+		{
+			access := domain.AccessConfigForSSLCom{}
+			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+				TermsOfServiceAgreed: true,
+				Kid:                  access.EabKid,
+				HmacEncoded:          access.EabHmacKey,
+			})
+		}
+
 	case sslProviderZeroSSL:
 		{
 			access := domain.AccessConfigForZeroSSL{}

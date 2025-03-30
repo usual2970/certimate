@@ -118,6 +118,7 @@ func init() {
 					"rainyun",
 					"safeline",
 					"ssh",
+					"sslcom",
 					"tencentcloud",
 					"ucloud",
 					"upyun",
