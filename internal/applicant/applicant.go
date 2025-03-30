@@ -184,7 +184,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		Domains: options.Domains,
 		Bundle:  true,
 	}
-	if options.ReplacedARICertId != "" && options.ReplacedARIAcctId != user.Registration.URI {
+	if options.ReplacedARICertId != "" && options.ReplacedARIAcctId == user.Registration.URI {
 		certRequest.ReplacesCertID = options.ReplacedARICertId
 	}
 	certResource, err := client.Certificate.Obtain(certRequest)
