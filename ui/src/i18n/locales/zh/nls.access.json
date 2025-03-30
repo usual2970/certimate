@@ -14,7 +14,11 @@
   "access.props.name": "名称",
   "access.props.provider": "提供商",
   "access.props.provider.usage.dns": "DNS 提供商",
-  "access.props.provider.usage.host": "主机提供商",
+  "access.props.provider.usage.hosting": "主机提供商",
+  "access.props.provider.usage.ca": "证书颁发机构",
+  "access.props.provider.usage.notification": "通知渠道",
+  "access.props.ca": "证书颁发机构",
+  "access.props.channel": "通知渠道",
   "access.props.created_at": "创建时间",
   "access.props.updated_at": "更新时间",
 
@@ -159,6 +163,12 @@
   "access.form.godaddy_api_secret.label": "GoDaddy API Secret",
   "access.form.godaddy_api_secret.placeholder": "请输入 GoDaddy API Secret",
   "access.form.godaddy_api_secret.tooltip": "这是什么？请参阅 <a href=\"https://developer.godaddy.com/\" target=\"_blank\">https://developer.godaddy.com/</a>",
+  "access.form.googletrustservices_eab_kid.label": "ACME EAB KID",
+  "access.form.googletrustservices_eab_kid.placeholder": "请输入 ACME EAB KID",
+  "access.form.googletrustservices_eab_kid.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
+  "access.form.googletrustservices_eab_hmac_key.label": "ACME EAB HMAC Key",
+  "access.form.googletrustservices_eab_hmac_key.placeholder": "请输入 ACME EAB HMAC Key",
+  "access.form.googletrustservices_eab_hmac_key.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
   "access.form.huaweicloud_access_key_id.label": "华为云 AccessKeyId",
   "access.form.huaweicloud_access_key_id.placeholder": "请输入华为云 AccessKeyId",
   "access.form.huaweicloud_access_key_id.tooltip": "这是什么？请参阅 <a href=\"https://support.huaweicloud.com/usermanual-ca/ca_01_0003.html\" target=\"_blank\">https://support.huaweicloud.com/usermanual-ca/ca_01_0003.html</a>",
@@ -284,5 +294,11 @@
   "access.form.westcn_username.tooltip": "这是什么？请参阅 <a href=\"https://www.west.cn/CustomerCenter/doc/apiv2.html#12u3001u8eabu4efdu9a8cu8bc10a3ca20id3d12u3001u8eabu4efdu9a8cu8bc13e203ca3e\" target=\"_blank\">https://www.west.cn/CustomerCenter/doc/apiv2.html</a>",
   "access.form.westcn_api_password.label": "西部数码 API 密码",
   "access.form.westcn_api_password.placeholder": "请输入西部数码 API 密码",
-  "access.form.westcn_api_password.tooltip": "这是什么？请参阅 <a href=\"https://www.west.cn/CustomerCenter/doc/apiv2.html#12u3001u8eabu4efdu9a8cu8bc10a3ca20id3d12u3001u8eabu4efdu9a8cu8bc13e203ca3e\" target=\"_blank\">https://www.west.cn/CustomerCenter/doc/apiv2.html</a>"
+  "access.form.westcn_api_password.tooltip": "这是什么？请参阅 <a href=\"https://www.west.cn/CustomerCenter/doc/apiv2.html#12u3001u8eabu4efdu9a8cu8bc10a3ca20id3d12u3001u8eabu4efdu9a8cu8bc13e203ca3e\" target=\"_blank\">https://www.west.cn/CustomerCenter/doc/apiv2.html</a>",
+  "access.form.zerossl_eab_kid.label": "ACME EAB KID",
+  "access.form.zerossl_eab_kid.placeholder": "请输入 ACME EAB KID",
+  "access.form.zerossl_eab_kid.tooltip": "这是什么？请参阅 <a href=\"https://zerossl.com/documentation/acme/\" target=\"_blank\">https://zerossl.com/documentation/acme/</a>",
+  "access.form.zerossl_eab_hmac_key.label": "ACME EAB HMAC Key",
+  "access.form.zerossl_eab_hmac_key.placeholder": "请输入 ACME EAB HMAC Key",
+  "access.form.zerossl_eab_hmac_key.tooltip": "这是什么？请参阅 <a href=\"https://zerossl.com/documentation/acme/\" target=\"_blank\">https://zerossl.com/documentation/acme/</a>"
 }

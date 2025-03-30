@@ -1,25 +1,21 @@
 ﻿package applicant
 
-const (
-	sslProviderLetsEncrypt         = "letsencrypt"
-	sslProviderLetsEncryptStaging  = "letsencrypt_staging"
-	sslProviderZeroSSL             = "zerossl"
-	sslProviderGoogleTrustServices = "gts"
-)
-const defaultSSLProvider = sslProviderLetsEncrypt
+import "github.com/usual2970/certimate/internal/domain"
 
 const (
-	letsencryptUrl        = "https://acme-v02.api.letsencrypt.org/directory"
-	letsencryptStagingUrl = "https://acme-staging-v02.api.letsencrypt.org/directory"
-	zerosslUrl            = "https://acme.zerossl.com/v2/DV90"
-	gtsUrl                = "https://dv.acme-v02.api.pki.goog/directory"
+	sslProviderLetsEncrypt         = string(domain.ApplyCAProviderTypeLetsEncrypt)
+	sslProviderLetsEncryptStaging  = string(domain.ApplyCAProviderTypeLetsEncryptStaging)
+	sslProviderGoogleTrustServices = string(domain.ApplyCAProviderTypeGoogleTrustServices)
+	sslProviderZeroSSL             = string(domain.ApplyCAProviderTypeZeroSSL)
+
+	sslProviderDefault = sslProviderLetsEncrypt
 )
 
 var sslProviderUrls = map[string]string{
-	sslProviderLetsEncrypt:         letsencryptUrl,
-	sslProviderLetsEncryptStaging:  letsencryptStagingUrl,
-	sslProviderZeroSSL:             zerosslUrl,
-	sslProviderGoogleTrustServices: gtsUrl,
+	sslProviderLetsEncrypt:         "https://acme-v02.api.letsencrypt.org/directory",
+	sslProviderLetsEncryptStaging:  "https://acme-staging-v02.api.letsencrypt.org/directory",
+	sslProviderGoogleTrustServices: "https://dv.acme-v02.api.pki.goog/directory",
+	sslProviderZeroSSL:             "https://acme.zerossl.com/v2/DV90",
 }
 
 type acmeSSLProviderConfig struct {
@@ -29,7 +25,7 @@ type acmeSSLProviderConfig struct {
 
 type acmeSSLProviderConfigContent struct {
 	ZeroSSL             acmeSSLProviderEabConfig `json:"zerossl"`
-	GoogleTrustServices acmeSSLProviderEabConfig `json:"gts"`
+	GoogleTrustServices acmeSSLProviderEabConfig `json:"googletrustservices"`
 }
 
 type acmeSSLProviderEabConfig struct {

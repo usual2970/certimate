@@ -7,8 +7,6 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 	m "github.com/pocketbase/pocketbase/migrations"
-
-	"github.com/usual2970/certimate/internal/domain"
 )
 
 func init() {
@@ -179,20 +177,20 @@ func init() {
 			}
 
 			for _, workflowRun := range workflowRuns {
-				type oldWorkflowRunLogRecord struct {
+				type dWorkflowRunLogRecord struct {
 					Time    string `json:"time"`
 					Level   string `json:"level"`
 					Content string `json:"content"`
 					Error   string `json:"error"`
 				}
-				type oldWorkflowRunLog struct {
-					NodeId   string                    `json:"nodeId"`
-					NodeName string                    `json:"nodeName"`
-					Records  []oldWorkflowRunLogRecord `json:"records"`
-					Error    string                    `json:"error"`
+				type dWorkflowRunLog struct {
+					NodeId   string                  `json:"nodeId"`
+					NodeName string                  `json:"nodeName"`
+					Records  []dWorkflowRunLogRecord `json:"records"`
+					Error    string                  `json:"error"`
 				}
 
-				logs := make([]oldWorkflowRunLog, 0)
+				logs := make([]dWorkflowRunLog, 0)
 				if err := workflowRun.UnmarshalJSONField("logs", &logs); err != nil {
 					continue
 				}
@@ -259,8 +257,20 @@ func init() {
 				return err
 			}
 
+			type dWorkflowNode struct {
+				Id        string          `json:"id"`
+				Type      string          `json:"type"`
+				Name      string          `json:"name"`
+				Config    map[string]any  `json:"config"`
+				Inputs    map[string]any  `json:"inputs"`
+				Outputs   map[string]any  `json:"outputs"`
+				Next      *dWorkflowNode  `json:"next,omitempty"`
+				Branches  []dWorkflowNode `json:"branches,omitempty"`
+				Validated bool            `json:"validated"`
+			}
+
 			for _, workflowRun := range workflowRuns {
-				node := &domain.WorkflowNode{}
+				node := &dWorkflowNode{}
 				for _, workflowOutput := range workflowOutputs {
 					if workflowOutput.GetString("runId") != workflowRun.Get("id") {
 						continue
@@ -270,8 +280,8 @@ func init() {
 						continue
 					}
 
-					if node.Type != domain.WorkflowNodeTypeApply {
-						node = &domain.WorkflowNode{}
+					if node.Type != "apply" {
+						node = &dWorkflowNode{}
 						continue
 					}
 				}
@@ -286,7 +296,7 @@ func init() {
 				} else {
 					workflow, _ := app.FindRecordById("workflow", workflowRun.GetString("workflowId"))
 					if workflow != nil {
-						rootNode := &domain.WorkflowNode{}
+						rootNode := &dWorkflowNode{}
 						if err := workflow.UnmarshalJSONField("content", rootNode); err != nil {
 							return err
 						}
@@ -294,9 +304,9 @@ func init() {
 						rootNode.Next = node
 						workflowRun.Set("detail", rootNode)
 					} else {
-						rootNode := &domain.WorkflowNode{
+						rootNode := &dWorkflowNode{
 							Id:   core.GenerateDefaultRandomId(),
-							Type: domain.WorkflowNodeTypeStart,
+							Type: "start",
 							Name: "开始",
 							Config: map[string]any{
 								"trigger": "manual",

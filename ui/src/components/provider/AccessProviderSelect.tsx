@@ -9,9 +9,10 @@ export type AccessProviderSelectProps = Omit<
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: AccessProvider) => boolean;
+  showOptionTags?: boolean;
 };
 
-const AccessProviderSelect = ({ filter, ...props }: AccessProviderSelectProps) => {
+const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProviderSelectProps = { showOptionTags: true }) => {
   const { t } = useTranslation();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessProvider }>>([]);
@@ -38,18 +39,14 @@ const AccessProviderSelect = ({ filter, ...props }: AccessProviderSelectProps) =
             {t(provider?.name ?? "")}
           </Typography.Text>
         </Space>
-        <div>
-          {provider?.usages?.includes(ACCESS_USAGES.APPLY) && (
-            <>
-              <Tag color="orange">{t("access.props.provider.usage.dns")}</Tag>
-            </>
-          )}
-          {provider?.usages?.includes(ACCESS_USAGES.DEPLOY) && (
-            <>
-              <Tag color="blue">{t("access.props.provider.usage.host")}</Tag>
-            </>
-          )}
-        </div>
+        {!showOptionTags && (
+          <div>
+            {provider?.usages?.includes(ACCESS_USAGES.DNS) && <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>}
+            {provider?.usages?.includes(ACCESS_USAGES.HOSTING) && <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>}
+            {/* {provider?.usages?.includes(ACCESS_USAGES.CA) && <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>} */}
+            {/* {provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION) && <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>} */}
+          </div>
+        )}
       </div>
     );
   };

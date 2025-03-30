@@ -31,6 +31,7 @@ import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
 import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
+import AccessFormGoogleTrustServicesConfig from "./AccessFormGoogleTrustServicesConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
@@ -52,6 +53,7 @@ import AccessFormVercelConfig from "./AccessFormVercelConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
 import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
+import AccessFormZeroSSLConfig from "./AccessFormZeroSSLConfig";
 
 type AccessFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
 type AccessFormPresets = "add" | "edit";
@@ -147,6 +149,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormGnameConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GODADDY:
         return <AccessFormGoDaddyConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.GOOGLETRUSTSERVICES:
+        return <AccessFormGoogleTrustServicesConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.EDGIO:
         return <AccessFormEdgioConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
@@ -191,6 +195,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormWebhookConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WESTCN:
         return <AccessFormWestcnConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.ZEROSSL:
+        return <AccessFormZeroSSLConfig {...nestedFormProps} />;
     }
   }, [disabled, initialValues?.config, fieldProvider, nestedFormInst, nestedFormName]);
 

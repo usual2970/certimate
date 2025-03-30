@@ -317,28 +317,28 @@ const SettingsSSLProvider = () => {
           <Form.Item className="mb-2" name="provider" label={t("settings.sslprovider.form.provider.label")}>
             <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as SSLProviders)}>
               <CheckCard
-                avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.letsencrypt.label")}
                 description="letsencrypt.org"
                 value={SSLPROVIDERS.LETS_ENCRYPT}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.letsencrypt_staging.label")}
                 description="letsencrypt.org"
                 value={SSLPROVIDERS.LETS_ENCRYPT_STAGING}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/zerossl.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/zerossl.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.zerossl.label")}
                 description="zerossl.com"
                 value={SSLPROVIDERS.ZERO_SSL}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/google.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/google.svg"} className="size-8" />}
                 size="small"
                 title={t("settings.sslprovider.form.provider.option.gts.label")}
                 description="pki.goog"

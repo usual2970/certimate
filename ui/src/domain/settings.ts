@@ -136,9 +136,9 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 // #region Settings: SSLProvider
 export const SSLPROVIDERS = Object.freeze({
   LETS_ENCRYPT: "letsencrypt",
-  LETS_ENCRYPT_STAGING: "letsencrypt_staging",
+  LETS_ENCRYPT_STAGING: "letsencryptstaging",
   ZERO_SSL: "zerossl",
-  GOOGLE_TRUST_SERVICES: "gts",
+  GOOGLE_TRUST_SERVICES: "googletrustservices",
 } as const);
 
 export type SSLProviders = (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];

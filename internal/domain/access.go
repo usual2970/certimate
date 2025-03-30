@@ -125,6 +125,11 @@ type AccessConfigForGoDaddy struct {
 	ApiSecret string `json:"apiSecret"`
 }
 
+type AccessConfigForGoogleTrustServices struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
+}
+
 type AccessConfigForHuaweiCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
@@ -227,4 +232,9 @@ type AccessConfigForWebhook struct {
 type AccessConfigForWestcn struct {
 	Username    string `json:"username"`
 	ApiPassword string `json:"password"`
+}
+
+type AccessConfigForZeroSSL struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
 }

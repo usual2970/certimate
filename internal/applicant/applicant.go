@@ -111,7 +111,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 
 	sslProviderConfig := &acmeSSLProviderConfig{
 		Config:   acmeSSLProviderConfigContent{},
-		Provider: defaultSSLProvider,
+		Provider: sslProviderDefault,
 	}
 	if settings != nil {
 		if err := json.Unmarshal([]byte(settings.Content), sslProviderConfig); err != nil {
@@ -120,7 +120,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	}
 
 	if sslProviderConfig.Provider == "" {
-		sslProviderConfig.Provider = defaultSSLProvider
+		sslProviderConfig.Provider = sslProviderDefault
 	}
 
 	acmeUser, err := newAcmeUser(sslProviderConfig.Provider, options.ContactEmail)
