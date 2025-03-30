@@ -13,6 +13,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   BAISHAN: "baishan",
   BAOTAPANEL: "baotapanel",
   BYTEPLUS: "byteplus",
+  BUYPASS: "buypass",
   CACHEFLY: "cachefly",
   CDNFLY: "cdnfly",
   CLOUDFLARE: "cloudflare",
@@ -128,9 +129,10 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
 
     [ACCESS_PROVIDERS.LETSENCRYPT, "provider.letsencrypt", "/imgs/providers/letsencrypt.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.LETSENCRYPTSTAGING, "provider.letsencryptstaging", "/imgs/providers/letsencrypt.svg", [ACCESS_USAGES.CA]],
+    [ACCESS_PROVIDERS.BUYPASS, "provider.buypass", "/imgs/providers/buypass.png", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.GOOGLETRUSTSERVICES, "provider.googletrustservices", "/imgs/providers/google.svg", [ACCESS_USAGES.CA]],
-    [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.SSLCOM, "provider.sslcom", "/imgs/providers/sslcom.svg", [ACCESS_USAGES.CA]],
+    [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
   ].map((e) => [
     e[0] as string,
     {
@@ -150,6 +152,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const APPLY_CA_PROVIDERS = Object.freeze({
+  BUYPASS: `${ACCESS_PROVIDERS.BUYPASS}`,
   GOOGLETRUSTSERVICES: `${ACCESS_PROVIDERS.GOOGLETRUSTSERVICES}`,
   LETSENCRYPT: `${ACCESS_PROVIDERS.LETSENCRYPT}`,
   LETSENCRYPTSTAGING: `${ACCESS_PROVIDERS.LETSENCRYPTSTAGING}`,
@@ -173,11 +176,12 @@ export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAP
     NOTICE: The following order determines the order displayed at the frontend.
   */
   [
-    [APPLY_CA_PROVIDERS.LETSENCRYPT, "true"],
-    [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING, "true"],
-    [APPLY_CA_PROVIDERS.ZEROSSL],
+    [APPLY_CA_PROVIDERS.LETSENCRYPT, "builtin"],
+    [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING, "builtin"],
+    [APPLY_CA_PROVIDERS.BUYPASS],
     [APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES],
     [APPLY_CA_PROVIDERS.SSLCOM],
+    [APPLY_CA_PROVIDERS.ZEROSSL],
   ].map(([type, builtin]) => [
     type,
     {
@@ -185,7 +189,7 @@ export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAP
       name: accessProvidersMap.get(type.split("-")[0])!.name,
       icon: accessProvidersMap.get(type.split("-")[0])!.icon,
       provider: type.split("-")[0] as AccessProviderType,
-      builtin: builtin === "true",
+      builtin: builtin === "builtin",
     },
   ])
 );
@@ -399,7 +403,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
      NOTICE: The following order determines the order displayed at the frontend.
     */
   [
-    [DEPLOY_PROVIDERS.LOCAL, "provider.local", DEPLOY_CATEGORIES.OTHER, "true"],
+    [DEPLOY_PROVIDERS.LOCAL, "provider.local", DEPLOY_CATEGORIES.OTHER, "builtin"],
     [DEPLOY_PROVIDERS.SSH, "provider.ssh", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.WEBHOOK, "provider.webhook", DEPLOY_CATEGORIES.OTHER],
     [DEPLOY_PROVIDERS.KUBERNETES_SECRET, "provider.kubernetes.secret", DEPLOY_CATEGORIES.OTHER],
@@ -477,7 +481,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
       icon: accessProvidersMap.get(type.split("-")[0])!.icon,
       provider: type.split("-")[0] as AccessProviderType,
       category: category as DeployCategoryType,
-      builtin: builtin === "true",
+      builtin: builtin === "builtin",
     },
   ])
 );

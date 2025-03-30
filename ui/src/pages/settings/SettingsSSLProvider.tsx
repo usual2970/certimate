@@ -107,31 +107,20 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
   );
 };
 
-const SSLProviderEditFormZeroSSLConfig = () => {
+const SSLProviderEditFormBuypassConfig = () => {
   const { t } = useTranslation();
 
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
-  const formSchema = z.object({
-    eabKid: z
-      .string({ message: t("settings.sslprovider.form.zerossl_eab_kid.placeholder") })
-      .min(1, t("settings.sslprovider.form.zerossl_eab_kid.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
-    eabHmacKey: z
-      .string({ message: t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder") })
-      .min(1, t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.ZEROSSL],
+  const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.BUYPASS],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.ZEROSSL;
+        draft.content.provider = APPLY_CA_PROVIDERS.BUYPASS;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.ZEROSSL] = values;
+        draft.content.config[APPLY_CA_PROVIDERS.BUYPASS] = values;
       });
       await updateSettings(newSettings);
 
@@ -141,7 +130,7 @@ const SSLProviderEditFormZeroSSLConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.ZEROSSL);
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -150,24 +139,6 @@ const SSLProviderEditFormZeroSSLConfig = () => {
 
   return (
     <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
-      <Form.Item
-        name="eabKid"
-        label={t("settings.sslprovider.form.zerossl_eab_kid.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.zerossl_eab_kid.tooltip") }}></span>}
-      >
-        <Input autoComplete="new-password" placeholder={t("settings.sslprovider.form.zerossl_eab_kid.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
-        name="eabHmacKey"
-        label={t("settings.sslprovider.form.zerossl_eab_hmac_key.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.zerossl_eab_hmac_key.tooltip") }}></span>}
-      >
-        <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder")} />
-      </Form.Item>
-
       <Form.Item>
         <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
           {t("common.button.save")}
@@ -317,6 +288,76 @@ const SSLProviderEditFormSSLComConfig = () => {
   );
 };
 
+const SSLProviderEditFormZeroSSLConfig = () => {
+  const { t } = useTranslation();
+
+  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
+
+  const formSchema = z.object({
+    eabKid: z
+      .string({ message: t("settings.sslprovider.form.zerossl_eab_kid.placeholder") })
+      .min(1, t("settings.sslprovider.form.zerossl_eab_kid.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+    eabHmacKey: z
+      .string({ message: t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder") })
+      .min(1, t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.ZEROSSL],
+    onSubmit: async (values) => {
+      const newSettings = produce(settings, (draft) => {
+        draft.content ??= {} as SSLProviderSettingsContent;
+        draft.content.provider = APPLY_CA_PROVIDERS.ZEROSSL;
+
+        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
+        draft.content.config[APPLY_CA_PROVIDERS.ZEROSSL] = values;
+      });
+      await updateSettings(newSettings);
+
+      setFormChanged(false);
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
+  useEffect(() => {
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.ZEROSSL);
+  }, [settings?.content?.provider]);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
+  };
+
+  return (
+    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item
+        name="eabKid"
+        label={t("settings.sslprovider.form.zerossl_eab_kid.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.zerossl_eab_kid.tooltip") }}></span>}
+      >
+        <Input autoComplete="new-password" placeholder={t("settings.sslprovider.form.zerossl_eab_kid.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="eabHmacKey"
+        label={t("settings.sslprovider.form.zerossl_eab_hmac_key.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.zerossl_eab_hmac_key.tooltip") }}></span>}
+      >
+        <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder")} />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
+          {t("common.button.save")}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
 const SettingsSSLProvider = () => {
   const { t } = useTranslation();
 
@@ -349,6 +390,8 @@ const SettingsSSLProvider = () => {
         return <SSLProviderEditFormLetsEncryptConfig />;
       case APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING:
         return <SSLProviderEditFormLetsEncryptStagingConfig />;
+      case APPLY_CA_PROVIDERS.BUYPASS:
+        return <SSLProviderEditFormBuypassConfig />;
       case APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES:
         return <SSLProviderEditFormGoogleTrustServicesConfig />;
       case APPLY_CA_PROVIDERS.SSLCOM:
@@ -404,11 +447,11 @@ const SettingsSSLProvider = () => {
                 value={APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING}
               />
               <CheckCard
-                avatar={<img src={"/imgs/providers/zerossl.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/buypass.png"} className="size-8" />}
                 size="small"
-                title={t("provider.zerossl")}
-                description="zerossl.com"
-                value={APPLY_CA_PROVIDERS.ZEROSSL}
+                title={t("provider.buypass")}
+                description="buypass.com"
+                value={APPLY_CA_PROVIDERS.BUYPASS}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/google.svg"} className="size-8" />}
@@ -423,6 +466,13 @@ const SettingsSSLProvider = () => {
                 title={t("provider.sslcom")}
                 description="ssl.com"
                 value={APPLY_CA_PROVIDERS.SSLCOM}
+              />
+              <CheckCard
+                avatar={<img src={"/imgs/providers/zerossl.svg"} className="size-8" />}
+                size="small"
+                title={t("provider.zerossl")}
+                description="zerossl.com"
+                value={APPLY_CA_PROVIDERS.ZEROSSL}
               />
             </CheckCard.Group>
           </Form.Item>

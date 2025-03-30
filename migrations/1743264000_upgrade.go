@@ -83,6 +83,7 @@ func init() {
 					"baishan",
 					"baotapanel",
 					"byteplus",
+					"buypass",
 					"cachefly",
 					"cdnfly",
 					"cloudflare",

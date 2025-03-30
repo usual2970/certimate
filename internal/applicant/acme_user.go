@@ -98,6 +98,11 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 	case sslProviderLetsEncrypt, sslProviderLetsEncryptStaging:
 		reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 
+	case sslProviderBuypass:
+		{
+			reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		}
+
 	case sslProviderGoogleTrustServices:
 		{
 			access := domain.AccessConfigForGoogleTrustServices{}

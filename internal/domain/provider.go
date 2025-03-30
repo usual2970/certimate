@@ -19,6 +19,7 @@ const (
 	AccessProviderTypeBaishan             = AccessProviderType("baishan")
 	AccessProviderTypeBaotaPanel          = AccessProviderType("baotapanel")
 	AccessProviderTypeBytePlus            = AccessProviderType("byteplus")
+	AccessProviderTypeBuypass             = AccessProviderType("buypass")
 	AccessProviderTypeCacheFly            = AccessProviderType("cachefly")
 	AccessProviderTypeCdnfly              = AccessProviderType("cdnfly")
 	AccessProviderTypeCloudflare          = AccessProviderType("cloudflare")
@@ -75,6 +76,7 @@ type ApplyCAProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	ApplyCAProviderTypeBuypass             = ApplyCAProviderType(string(AccessProviderTypeBuypass))
 	ApplyCAProviderTypeGoogleTrustServices = ApplyCAProviderType(string(AccessProviderTypeGoogleTrustServices))
 	ApplyCAProviderTypeLetsEncrypt         = ApplyCAProviderType(string(AccessProviderTypeLetsEncrypt))
 	ApplyCAProviderTypeLetsEncryptStaging  = ApplyCAProviderType(string(AccessProviderTypeLetsEncryptStaging))
