@@ -7,8 +7,8 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
-import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
+import HostingProviderPicker from "@/components/provider/HostingProviderPicker.tsx";
+import HostingProviderSelect from "@/components/provider/HostingProviderSelect.tsx";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
@@ -292,7 +292,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       onValuesChange?.(formInst.getFieldsValue(true));
     };
 
-    const handleProviderSelect = (value: string) => {
+    const handleProviderSelect = (value?: string | undefined) => {
       if (fieldProvider === value) return;
 
       // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
@@ -310,7 +310,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         }
         formInst.setFieldsValue(newValues);
 
-        if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
+        if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value!)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -355,15 +355,16 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Show
             when={!!fieldProvider}
-            fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+            fallback={<HostingProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-              <DeployProviderSelect
+              <HostingProviderSelect
                 allowClear
                 disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
                 showSearch
                 onSelect={handleProviderSelect}
+                onClear={handleProviderSelect}
               />
             </Form.Item>
 
@@ -384,13 +385,13 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                       preset="add"
                       trigger={
                         <Button size="small" type="link">
-                          <PlusOutlinedIcon />
                           {t("workflow_node.deploy.form.provider_access.button")}
+                          <PlusOutlinedIcon className="text-xs" />
                         </Button>
                       }
                       afterSubmit={(record) => {
                         const provider = accessProvidersMap.get(record.provider);
-                        if (provider?.usages?.includes(ACCESS_USAGES.DEPLOY)) {
+                        if (provider?.usages?.includes(ACCESS_USAGES.HOSTING)) {
                           formInst.setFieldValue("providerAccessId", record.id);
                         }
                       }}
@@ -406,7 +407,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     }
 
                     const provider = accessProvidersMap.get(record.provider);
-                    return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
+                    return !!provider?.usages?.includes(ACCESS_USAGES.HOSTING);
                   }}
                   placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                 />

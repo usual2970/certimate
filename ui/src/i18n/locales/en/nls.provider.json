@@ -134,5 +134,7 @@
   "provider.category.av": "Audio/Video",
   "provider.category.serverless": "Serverless",
   "provider.category.website": "Website",
-  "provider.category.other": "Other"
+  "provider.category.other": "Other",
+
+  "provider.default_ca_provider.label": "Follow global settings"
 }

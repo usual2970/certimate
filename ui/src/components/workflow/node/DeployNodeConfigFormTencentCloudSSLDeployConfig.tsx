@@ -107,6 +107,9 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
               onChange={(e) => {
                 formInst.setFieldValue("resourceIds", e.target.value);
               }}
+              onClear={() => {
+                formInst.setFieldValue("resourceIds", "");
+              }}
             />
           </Form.Item>
           <ResourceIdsModalInput

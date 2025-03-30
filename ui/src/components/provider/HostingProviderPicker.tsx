@@ -5,7 +5,7 @@ import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Tabs, Toolti
 import Show from "@/components/Show";
 import { DEPLOY_CATEGORIES, deployProvidersMap } from "@/domain/provider";
 
-export type DeployProviderPickerProps = {
+export type HostingProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
@@ -13,7 +13,7 @@ export type DeployProviderPickerProps = {
   onSelect?: (value: string) => void;
 };
 
-const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DeployProviderPickerProps) => {
+const HostingProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: HostingProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
@@ -110,4 +110,4 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
   );
 };
 
-export default memo(DeployProviderPicker);
+export default memo(HostingProviderPicker);

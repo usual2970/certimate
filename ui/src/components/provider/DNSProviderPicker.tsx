@@ -5,7 +5,7 @@ import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography }
 import Show from "@/components/Show";
 import { applyDNSProvidersMap } from "@/domain/provider";
 
-export type ApplyDNSProviderPickerProps = {
+export type DNSProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
@@ -13,7 +13,7 @@ export type ApplyDNSProviderPickerProps = {
   onSelect?: (value: string) => void;
 };
 
-const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ApplyDNSProviderPickerProps) => {
+const DNSProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DNSProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
@@ -71,4 +71,4 @@ const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSe
   );
 };
 
-export default memo(ApplyDNSProviderPicker);
+export default memo(DNSProviderPicker);

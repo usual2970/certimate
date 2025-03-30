@@ -4,14 +4,14 @@ import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
 import { type DeployProvider, deployProvidersMap } from "@/domain/provider";
 
-export type DeployProviderSelectProps = Omit<
+export type HostingProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: DeployProvider) => boolean;
 };
 
-const DeployProviderSelect = ({ filter, ...props }: DeployProviderSelectProps) => {
+const HostingProviderSelect = ({ filter, ...props }: HostingProviderSelectProps) => {
   const { t } = useTranslation();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: DeployProvider }>>([]);
@@ -64,4 +64,4 @@ const DeployProviderSelect = ({ filter, ...props }: DeployProviderSelectProps) =
   );
 };
 
-export default memo(DeployProviderSelect);
+export default memo(HostingProviderSelect);

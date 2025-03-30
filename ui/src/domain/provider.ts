@@ -140,7 +140,47 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
 );
 // #endregion
 
-// #region ApplyProvider
+// #region ApplyCAProvider
+/*
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
+export const APPLY_CA_PROVIDERS = Object.freeze({
+  GOOGLETRUSTSERVICES: `${ACCESS_PROVIDERS.GOOGLETRUSTSERVICES}`,
+  LETSENCRYPT: `${ACCESS_PROVIDERS.LETSENCRYPT}`,
+  LETSENCRYPTSTAGING: `${ACCESS_PROVIDERS.LETSENCRYPTSTAGING}`,
+  ZEROSSL: `${ACCESS_PROVIDERS.ZEROSSL}`,
+} as const);
+
+export type ApplyCAProviderType = (typeof APPLY_CA_PROVIDERS)[keyof typeof APPLY_CA_PROVIDERS];
+
+export type ApplyCAProvider = {
+  type: ApplyCAProviderType;
+  name: string;
+  icon: string;
+  provider: AccessProviderType;
+};
+
+export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAProvider> = new Map(
+  /*
+    注意：此处的顺序决定显示在前端的顺序。
+    NOTICE: The following order determines the order displayed at the frontend.
+  */
+  [[APPLY_CA_PROVIDERS.LETSENCRYPT], [APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING], [APPLY_CA_PROVIDERS.ZEROSSL], [APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES]].map(
+    ([type]) => [
+      type,
+      {
+        type: type as ApplyCAProviderType,
+        name: accessProvidersMap.get(type.split("-")[0])!.name,
+        icon: accessProvidersMap.get(type.split("-")[0])!.icon,
+        provider: type.split("-")[0] as AccessProviderType,
+      },
+    ]
+  )
+);
+// #endregion
+
+// #region ApplyDNSProvider
 /*
     注意：如果追加新的常量值，请保持以 ASCII 排序。
     NOTICE: If you add new constant, please keep ASCII order.

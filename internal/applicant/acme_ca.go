@@ -19,16 +19,6 @@ var sslProviderUrls = map[string]string{
 }
 
 type acmeSSLProviderConfig struct {
-	Config   acmeSSLProviderConfigContent `json:"config"`
-	Provider string                       `json:"provider"`
-}
-
-type acmeSSLProviderConfigContent struct {
-	ZeroSSL             acmeSSLProviderEabConfig `json:"zerossl"`
-	GoogleTrustServices acmeSSLProviderEabConfig `json:"googletrustservices"`
-}
-
-type acmeSSLProviderEabConfig struct {
-	EabHmacKey string `json:"eabHmacKey"`
-	EabKid     string `json:"eabKid"`
+	Config   map[domain.ApplyCAProviderType]map[string]any `json:"config"`
+	Provider string                                        `json:"provider"`
 }
