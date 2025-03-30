@@ -17,8 +17,9 @@
   "access.props.provider.usage.hosting": "Hosting provider",
   "access.props.provider.usage.ca": "Certificate authority",
   "access.props.provider.usage.notification": "Notification channel",
-  "access.props.ca": "Certificate authority",
-  "access.props.channel": "Notification channel",
+  "access.props.range.both_dns_hosting": "Provider",
+  "access.props.range.ca_only": "Certificate authority",
+  "access.props.range.notify_only": "Notification channel",
   "access.props.created_at": "Created at",
   "access.props.updated_at": "Updated at",
 

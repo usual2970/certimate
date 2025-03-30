@@ -40,7 +40,7 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
             {t(provider?.name ?? "")}
           </Typography.Text>
         </Space>
-        {!showOptionTags && (
+        {showOptionTags && (
           <div>
             {provider?.usages?.includes(ACCESS_USAGES.DNS) && <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>}
             {provider?.usages?.includes(ACCESS_USAGES.HOSTING) && <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>}
