@@ -14,13 +14,14 @@ export type AccessEditModalProps = {
   data?: AccessFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
-  preset: AccessFormProps["preset"];
+  range?: AccessFormProps["range"];
+  scene: AccessFormProps["scene"];
   trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
   afterSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props }: AccessEditModalProps) => {
+const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ...props }: AccessEditModalProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -50,13 +51,13 @@ const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props
     try {
       let values: AccessModel = formRef.current!.getFieldsValue();
 
-      if (preset === "add") {
+      if (scene === "add") {
         if (data?.id) {
           throw "Invalid props: `data`";
         }
 
         values = await createAccess(values);
-      } else if (preset === "edit") {
+      } else if (scene === "edit") {
         if (!data?.id) {
           throw "Invalid props: `data`";
         }
@@ -96,15 +97,15 @@ const AccessEditModal = ({ data, loading, trigger, preset, afterSubmit, ...props
         confirmLoading={formPending}
         destroyOnClose
         loading={loading}
-        okText={preset === "edit" ? t("common.button.save") : t("common.button.submit")}
+        okText={scene === "edit" ? t("common.button.save") : t("common.button.submit")}
         open={open}
-        title={t(`access.action.${preset}`)}
+        title={t(`access.action.${scene}`)}
         width={480}
         onOk={handleOkClick}
         onCancel={handleCancelClick}
       >
         <div className="pb-2 pt-4">
-          <AccessForm ref={formRef} initialValues={data} preset={preset === "add" ? "add" : "edit"} />
+          <AccessForm ref={formRef} initialValues={data} range={range} scene={scene === "add" ? "add" : "edit"} />
         </div>
       </Modal>
     </>

@@ -352,7 +352,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 </div>
                 <div className="text-right">
                   <AccessEditModal
-                    preset="add"
+                    range="both-dns-hosting"
+                    scene="add"
                     trigger={
                       <Button size="small" type="link">
                         {t("workflow_node.apply.form.provider_access.button")}
@@ -424,7 +425,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 </div>
                 <div className="text-right">
                   <AccessEditModal
-                    preset="add"
+                    data={{ provider: applyCAProvidersMap.get(fieldCAProvider!)?.provider }}
+                    range="ca-only"
+                    scene="add"
                     trigger={
                       <Button size="small" type="link">
                         {t("workflow_node.apply.form.ca_provider_access.button")}

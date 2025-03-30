@@ -50,8 +50,8 @@ type applicantOptions struct {
 	DnsPropagationTimeout    int32
 	DnsTTL                   int32
 	DisableFollowCNAME       bool
-	ReplacedARIAcctId        string
-	ReplacedARICertId        string
+	ReplacedARIAcct          string
+	ReplacedARICert          string
 }
 
 func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -124,8 +124,8 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 			lastCertX509, _ := certcrypto.ParsePEMCertificate([]byte(lastCertificate.Certificate))
 			if lastCertX509 != nil {
 				replacedARICertId, _ := certificate.MakeARICertID(lastCertX509)
-				options.ReplacedARIAcctId = lastCertificate.ACMEAccountUrl
-				options.ReplacedARICertId = replacedARICertId
+				options.ReplacedARIAcct = lastCertificate.ACMEAccountUrl
+				options.ReplacedARICert = replacedARICertId
 			}
 		}
 	}
@@ -184,8 +184,8 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		Domains: options.Domains,
 		Bundle:  true,
 	}
-	if options.ReplacedARICertId != "" && options.ReplacedARIAcctId == user.Registration.URI {
-		certRequest.ReplacesCertID = options.ReplacedARICertId
+	if options.ReplacedARIAcct == user.Registration.URI {
+		certRequest.ReplacesCertID = options.ReplacedARICert
 	}
 	certResource, err := client.Certificate.Obtain(certRequest)
 	if err != nil {

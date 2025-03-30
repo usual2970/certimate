@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
 import { type AccessModel } from "@/domain/access";
-import { ACCESS_PROVIDERS } from "@/domain/provider";
+import { ACCESS_PROVIDERS, ACCESS_USAGES } from "@/domain/provider";
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
@@ -55,14 +55,16 @@ import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 import AccessFormZeroSSLConfig from "./AccessFormZeroSSLConfig";
 
 type AccessFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
-type AccessFormPresets = "add" | "edit";
+type AccessFormRanges = "both-dns-hosting" | "ca-only" | "notify-only";
+type AccessFormScenes = "add" | "edit";
 
 export type AccessFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
   initialValues?: AccessFormFieldValues;
-  preset: AccessFormPresets;
+  range?: AccessFormRanges;
+  scene: AccessFormScenes;
   onValuesChange?: (values: AccessFormFieldValues) => void;
 };
 
@@ -72,7 +74,7 @@ export type AccessFormInstance = {
   validateFields: FormInstance<AccessFormFieldValues>["validateFields"];
 };
 
-const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className, style, disabled, initialValues, preset, onValuesChange }, ref) => {
+const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className, style, disabled, initialValues, range, scene, onValuesChange }, ref) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -81,13 +83,49 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       .min(1, t("access.form.name.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
-    provider: z.nativeEnum(ACCESS_PROVIDERS, { message: t("access.form.provider.placeholder") }),
+    provider: z.nativeEnum(ACCESS_PROVIDERS, {
+      message:
+        range === "ca-only"
+          ? t("access.form.certificate_authority.placeholder")
+          : range === "notify-only"
+            ? t("access.form.notification_channel.placeholder")
+            : t("access.form.provider.placeholder"),
+    }),
     config: z.any(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm({
     initialValues: initialValues,
   });
+
+  const providerLabel = useMemo(() => {
+    switch (range) {
+      case "ca-only":
+        return t("access.form.certificate_authority.label");
+      case "notify-only":
+        return t("access.form.notification_channel.label");
+    }
+
+    return t("access.form.provider.label");
+  }, [range]);
+  const providerPlaceholder = useMemo(() => {
+    switch (range) {
+      case "ca-only":
+        return t("access.form.certificate_authority.placeholder");
+      case "notify-only":
+        return t("access.form.notification_channel.placeholder");
+    }
+
+    return t("access.form.provider.placeholder");
+  }, [range]);
+  const providerTooltip = useMemo(() => {
+    switch (range) {
+      case "both-dns-hosting":
+        return <span dangerouslySetInnerHTML={{ __html: t("access.form.provider.tooltip") }}></span>;
+    }
+
+    return undefined;
+  }, [range]);
 
   const fieldProvider = Form.useWatch("provider", formInst);
 
@@ -238,13 +276,24 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
             <Input placeholder={t("access.form.name.placeholder")} />
           </Form.Item>
 
-          <Form.Item
-            name="provider"
-            label={t("access.form.provider.label")}
-            rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.provider.tooltip") }}></span>}
-          >
-            <AccessProviderSelect disabled={preset !== "add"} placeholder={t("access.form.provider.placeholder")} showSearch={!disabled} />
+          <Form.Item name="provider" label={providerLabel} rules={[formRule]} tooltip={providerTooltip}>
+            <AccessProviderSelect
+              filter={(record) => {
+                if (range == null) return true;
+
+                switch (range) {
+                  case "both-dns-hosting":
+                    return record.usages.includes(ACCESS_USAGES.DNS) || record.usages.includes(ACCESS_USAGES.HOSTING);
+                  case "ca-only":
+                    return record.usages.includes(ACCESS_USAGES.CA);
+                  case "notify-only":
+                    return record.usages.includes(ACCESS_USAGES.NOTIFICATION);
+                }
+              }}
+              disabled={scene !== "add"}
+              placeholder={providerPlaceholder}
+              showSearch={!disabled}
+            />
           </Form.Item>
         </Form>
 

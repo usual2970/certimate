@@ -85,7 +85,7 @@ const AccessList = () => {
         <Space.Compact>
           <AccessEditModal
             data={record}
-            preset="edit"
+            scene="edit"
             trigger={
               <Tooltip title={t("access.action.edit")}>
                 <Button color="primary" icon={<EditOutlinedIcon />} variant="text" />
@@ -95,7 +95,7 @@ const AccessList = () => {
 
           <AccessEditModal
             data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-            preset="add"
+            scene="add"
             trigger={
               <Tooltip title={t("access.action.duplicate")}>
                 <Button color="primary" icon={<SnippetsOutlinedIcon />} variant="text" />
@@ -203,7 +203,7 @@ const AccessList = () => {
         extra={[
           <AccessEditModal
             key="create"
-            preset="add"
+            scene="add"
             trigger={
               <Button type="primary" icon={<PlusOutlinedIcon />}>
                 {t("access.action.add")}
