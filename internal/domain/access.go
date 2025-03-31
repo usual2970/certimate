@@ -75,7 +75,8 @@ type AccessConfigForCdnfly struct {
 }
 
 type AccessConfigForCloudflare struct {
-	DnsApiToken string `json:"dnsApiToken"`
+	DnsApiToken  string `json:"dnsApiToken"`
+	ZoneApiToken string `json:"zoneApiToken,omitempty"`
 }
 
 type AccessConfigForClouDNS struct {

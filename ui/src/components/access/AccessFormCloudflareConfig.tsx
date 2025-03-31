@@ -30,6 +30,11 @@ const AccessFormCloudflareConfig = ({ form: formInst, formName, disabled, initia
       .min(1, t("access.form.cloudflare_dns_api_token.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
+    zoneApiToken: z
+      .string()
+      .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim()
+      .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -53,6 +58,15 @@ const AccessFormCloudflareConfig = ({ form: formInst, formName, disabled, initia
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.cloudflare_dns_api_token.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.cloudflare_dns_api_token.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="zoneApiToken"
+        label={t("access.form.cloudflare_zone_api_token.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.cloudflare_zone_api_token.tooltip") }}></span>}
+      >
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.cloudflare_zone_api_token.placeholder")} />
       </Form.Item>
     </Form>
   );

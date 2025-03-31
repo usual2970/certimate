@@ -114,6 +114,7 @@ export type AccessConfigForCdnfly = {
 
 export type AccessConfigForCloudflare = {
   dnsApiToken: string;
+  zoneApiToken?: string;
 };
 
 export type AccessConfigForClouDNS = {

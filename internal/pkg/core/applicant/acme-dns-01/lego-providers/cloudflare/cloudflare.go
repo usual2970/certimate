@@ -9,6 +9,7 @@ import (
 
 type ChallengeProviderConfig struct {
 	DnsApiToken           string `json:"dnsApiToken"`
+	ZoneApiToken          string `json:"zoneApiToken,omitempty"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -20,6 +21,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 
 	providerConfig := cloudflare.NewDefaultConfig()
 	providerConfig.AuthToken = config.DnsApiToken
+	providerConfig.ZoneToken = config.ZoneApiToken
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
