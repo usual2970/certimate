@@ -19,6 +19,8 @@ var sslProviderUrls = map[string]string{
 	sslProviderBuypass:             "https://api.buypass.com/acme/directory",
 	sslProviderGoogleTrustServices: "https://dv.acme-v02.api.pki.goog/directory",
 	sslProviderSSLCom:              "https://acme.ssl.com/sslcom-dv-rsa",
+	sslProviderSSLCom + "RSA":      "https://acme.ssl.com/sslcom-dv-rsa",
+	sslProviderSSLCom + "ECC":      "https://acme.ssl.com/sslcom-dv-ecc",
 	sslProviderZeroSSL:             "https://acme.zerossl.com/v2/DV90",
 }
 

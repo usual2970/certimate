@@ -153,8 +153,15 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 
 	// Create an ACME client config
 	config := lego.NewConfig(user)
-	config.CADirURL = sslProviderUrls[user.CA]
 	config.Certificate.KeyType = parseKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
+	config.CADirURL = sslProviderUrls[user.CA]
+	if user.CA == sslProviderSSLCom {
+		if strings.HasPrefix(options.KeyAlgorithm, "RSA") {
+			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"RSA"]
+		} else if strings.HasPrefix(options.KeyAlgorithm, "EC") {
+			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"ECC"]
+		}
+	}
 
 	// Create an ACME client
 	client, err := lego.NewClient(config)
@@ -217,6 +224,8 @@ func parseKeyAlgorithm(algo domain.CertificateKeyAlgorithmType) certcrypto.KeyTy
 		return certcrypto.EC256
 	case domain.CertificateKeyAlgorithmTypeEC384:
 		return certcrypto.EC384
+	case domain.CertificateKeyAlgorithmTypeEC512:
+		return certcrypto.KeyType("P512")
 	}
 
 	return certcrypto.RSA2048
