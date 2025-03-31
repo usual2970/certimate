@@ -138,5 +138,5 @@
   "provider.category.website": "网站托管",
   "provider.category.other": "其他",
 
-  "provider.default_ca_provider.label": "跟随全局设置"
+  "provider.default_ca_provider.label": "（默认）不指定，跟随全局设置"
 }
