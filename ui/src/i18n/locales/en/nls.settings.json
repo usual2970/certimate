@@ -72,7 +72,7 @@
   "settings.notification.channel.form.wecom_webhook_url.tooltip": "For more information, see <a href=\"https://open.work.weixin.qq.com/help2/pc/18401#%E5%85%AD%E3%80%81%E7%BE%A4%E6%9C%BA%E5%99%A8%E4%BA%BAWebhook%E5%9C%B0%E5%9D%80\" target=\"_blank\">https://open.work.weixin.qq.com/help2/pc/18401</a>",
 
   "settings.sslprovider.tab": "Certificate authority",
-  "settings.sslprovider.form.provider.label": "ACME provider",
+  "settings.sslprovider.form.provider.label": "ACME provider (system-wide)",
   "settings.sslprovider.form.provider.alert": "Attention: The certificate validity lifetime, certificate algorithm, domain names count, and support for wildcard domain names are allowed may vary among different providers. After switching service providers, please check whether the configuration of the workflows needs to be adjusted.",
   "settings.sslprovider.form.letsencryptstaging_alert": "The staging environment can reduce the chance of your running up against rate limits.<br><br>Learn more:<br><a href=\"https://letsencrypt.org/docs/staging-environment/\" target=\"_blank\">https://letsencrypt.org/docs/staging-environment/</a>",
   "settings.sslprovider.form.zerossl_eab_kid.label": "EAB KID",
