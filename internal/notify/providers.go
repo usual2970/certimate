@@ -8,6 +8,7 @@ import (
 	pBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
 	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
+	pGotify "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/gotify"
 	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
 	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
@@ -43,6 +44,13 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 			Password:        maputil.GetString(channelConfig, "password"),
 			SenderAddress:   maputil.GetString(channelConfig, "senderAddress"),
 			ReceiverAddress: maputil.GetString(channelConfig, "receiverAddress"),
+		})
+
+	case domain.NotifyChannelTypeGotify:
+		return pGotify.NewNotifier(&pGotify.NotifierConfig{
+			Url:      maputil.GetString(channelConfig, "url"),
+			Token:    maputil.GetString(channelConfig, "token"),
+			Priority: maputil.GetOrDefaultInt64(channelConfig, "priority", 1),
 		})
 
 	case domain.NotifyChannelTypeLark:

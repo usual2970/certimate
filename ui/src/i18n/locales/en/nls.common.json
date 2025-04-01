@@ -38,6 +38,7 @@
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "DingTalk",
   "common.notifier.email": "Email",
+  "common.notifier.gotify": "Gotify",
   "common.notifier.lark": "Lark",
   "common.notifier.serverchan": "ServerChan",
   "common.notifier.telegram": "Telegram",

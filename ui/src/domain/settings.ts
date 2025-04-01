@@ -40,6 +40,7 @@ export const NOTIFY_CHANNELS = Object.freeze({
   BARK: "bark",
   DINGTALK: "dingtalk",
   EMAIL: "email",
+  GOTIFY: "gotify",
   LARK: "lark",
   SERVERCHAN: "serverchan",
   TELEGRAM: "telegram",
@@ -58,6 +59,7 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.BARK]?: BarkNotifyChannelConfig;
   [NOTIFY_CHANNELS.DINGTALK]?: DingTalkNotifyChannelConfig;
   [NOTIFY_CHANNELS.EMAIL]?: EmailNotifyChannelConfig;
+  [NOTIFY_CHANNELS.GOTIFY]?: GotifyNotifyChannelConfig;
   [NOTIFY_CHANNELS.LARK]?: LarkNotifyChannelConfig;
   [NOTIFY_CHANNELS.SERVERCHAN]?: ServerChanNotifyChannelConfig;
   [NOTIFY_CHANNELS.TELEGRAM]?: TelegramNotifyChannelConfig;
@@ -85,6 +87,13 @@ export type EmailNotifyChannelConfig = {
 export type DingTalkNotifyChannelConfig = {
   accessToken: string;
   secret: string;
+  enabled?: boolean;
+};
+
+export type GotifyNotifyChannelConfig = {
+  url: string;
+  token: string;
+  priority: string;
   enabled?: boolean;
 };
 
