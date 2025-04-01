@@ -1,15 +1,16 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Tag, Typography } from "antd";
 
-import { ACCESS_USAGES, type AccessProvider, accessProvidersMap } from "@/domain/provider";
+import Show from "@/components/Show";
+import { ACCESS_USAGES, type AccessProvider, type AccessUsageType, accessProvidersMap } from "@/domain/provider";
 
 export type AccessProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: AccessProvider) => boolean;
-  showOptionTags?: boolean;
+  showOptionTags?: boolean | { [key in AccessUsageType]?: boolean };
 };
 
 const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProviderSelectProps = { showOptionTags: true }) => {
@@ -30,22 +31,43 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
     );
   }, [filter]);
 
+  const showOptionTagsForDNS = useMemo(() => {
+    return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.DNS] : !!showOptionTags;
+  }, [showOptionTags]);
+  const showOptionTagsForHosting = useMemo(() => {
+    return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.HOSTING] : !!showOptionTags;
+  }, [showOptionTags]);
+  const showOptionTagsForCA = useMemo(() => {
+    return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.CA] : !!showOptionTags;
+  }, [showOptionTags]);
+  const showOptionTagsForNotification = useMemo(() => {
+    return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.NOTIFICATION] : !!showOptionTags;
+  }, [showOptionTags]);
+
   const renderOption = (key: string) => {
-    const provider = accessProvidersMap.get(key);
+    const provider = accessProvidersMap.get(key) ?? ({ type: "", name: "", icon: "", usages: [] } as unknown as AccessProvider);
     return (
       <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
         <Space className="max-w-full grow truncate" size={4}>
-          <Avatar src={provider?.icon} size="small" />
-          <Typography.Text className="leading-loose" type={provider?.builtin ? "secondary" : undefined} delete={provider?.builtin ? true : undefined} ellipsis>
-            {t(provider?.name ?? "")}
+          <Avatar src={provider.icon} size="small" />
+          <Typography.Text className="leading-loose" type={provider.builtin ? "secondary" : undefined} delete={provider.builtin ? true : undefined} ellipsis>
+            {t(provider.name)}
           </Typography.Text>
         </Space>
         {showOptionTags && (
           <div>
-            {provider?.usages?.includes(ACCESS_USAGES.DNS) && <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>}
-            {provider?.usages?.includes(ACCESS_USAGES.HOSTING) && <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>}
-            {/* {provider?.usages?.includes(ACCESS_USAGES.CA) && <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>} */}
-            {/* {provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION) && <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>} */}
+            <Show when={showOptionTagsForDNS && provider.usages.includes(ACCESS_USAGES.DNS)}>
+              <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>
+            </Show>
+            <Show when={showOptionTagsForHosting && provider.usages.includes(ACCESS_USAGES.HOSTING)}>
+              <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>
+            </Show>
+            <Show when={showOptionTagsForCA && provider.usages.includes(ACCESS_USAGES.CA)}>
+              <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>
+            </Show>
+            <Show when={showOptionTagsForNotification && provider.usages.includes(ACCESS_USAGES.NOTIFICATION)}>
+              <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>
+            </Show>
           </div>
         )}
       </div>

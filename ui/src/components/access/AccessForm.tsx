@@ -295,7 +295,7 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
               }}
               disabled={scene !== "add"}
               placeholder={providerPlaceholder}
-              showOptionTags={range == null || range === "both-dns-hosting"}
+              showOptionTags={range == null || (range === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
               showSearch={!disabled}
             />
           </Form.Item>
