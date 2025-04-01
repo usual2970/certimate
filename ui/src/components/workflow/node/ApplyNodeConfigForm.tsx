@@ -31,8 +31,8 @@ import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import ModalForm from "@/components/ModalForm";
 import MultipleInput from "@/components/MultipleInput";
-import CAProviderSelect from "@/components/provider/CAProviderSelect";
-import DNSProviderSelect from "@/components/provider/DNSProviderSelect";
+import ApplyCAProviderSelect from "@/components/provider/ApplyCAProviderSelect";
+import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
 import { ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyCAProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
@@ -324,7 +324,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
 
           <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden={!showProvider} rules={[formRule]}>
-            <DNSProviderSelect
+            <ApplyDNSProviderSelect
               disabled={!showProvider}
               filter={(record) => {
                 if (fieldProviderAccessId) {
@@ -407,7 +407,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
               </div>
             </label>
             <Form.Item name="caProvider" rules={[formRule]}>
-              <CAProviderSelect
+              <ApplyCAProviderSelect
                 allowClear
                 placeholder={t("workflow_node.apply.form.ca_provider.placeholder")}
                 showSearch

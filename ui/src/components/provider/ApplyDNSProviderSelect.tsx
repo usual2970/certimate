@@ -4,14 +4,14 @@ import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
 import { type ApplyDNSProvider, applyDNSProvidersMap } from "@/domain/provider";
 
-export type DNSProviderSelectProps = Omit<
+export type ApplyDNSProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: ApplyDNSProvider) => boolean;
 };
 
-const DNSProviderSelect = ({ filter, ...props }: DNSProviderSelectProps) => {
+const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProps) => {
   const { t } = useTranslation();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyDNSProvider }>>([]);
@@ -64,4 +64,4 @@ const DNSProviderSelect = ({ filter, ...props }: DNSProviderSelectProps) => {
   );
 };
 
-export default memo(DNSProviderSelect);
+export default memo(ApplyDNSProviderSelect);

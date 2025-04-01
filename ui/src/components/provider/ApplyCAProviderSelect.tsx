@@ -4,14 +4,14 @@ import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
 import { type ApplyCAProvider, applyCAProvidersMap } from "@/domain/provider";
 
-export type CAProviderSelectProps = Omit<
+export type ApplyCAProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
   filter?: (record: ApplyCAProvider) => boolean;
 };
 
-const CAProviderSelect = ({ filter, ...props }: CAProviderSelectProps) => {
+const ApplyCAProviderSelect = ({ filter, ...props }: ApplyCAProviderSelectProps) => {
   const { t } = useTranslation();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyCAProvider }>>([]);
@@ -80,4 +80,4 @@ const CAProviderSelect = ({ filter, ...props }: CAProviderSelectProps) => {
   );
 };
 
-export default memo(CAProviderSelect);
+export default memo(ApplyCAProviderSelect);

@@ -7,8 +7,8 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import HostingProviderPicker from "@/components/provider/HostingProviderPicker.tsx";
-import HostingProviderSelect from "@/components/provider/HostingProviderSelect.tsx";
+import DeployProviderPicker from "@/components/provider/DeployProviderPicker.tsx";
+import DeployProviderSelect from "@/components/provider/DeployProviderSelect.tsx";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
@@ -372,10 +372,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Show
             when={!!fieldProvider}
-            fallback={<HostingProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+            fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-              <HostingProviderSelect
+              <DeployProviderSelect
                 allowClear
                 disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
