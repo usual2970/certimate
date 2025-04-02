@@ -21,6 +21,7 @@
   "workflow_run.logs": "Logs",
   "workflow_run.logs.menu.show_timestamps": "Show timestamps",
   "workflow_run.logs.menu.show_whitespaces": "Show whitespaces",
+  "workflow_run.logs.menu.download_logs": "Download logs",
 
   "workflow_run.artifacts": "Artifacts",
   "workflow_run_artifact.props.type": "Type",
