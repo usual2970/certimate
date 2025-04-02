@@ -114,24 +114,27 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             .split(MULTIPLE_INPUT_DELIMITER)
             .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         }, t("common.errmsg.host_invalid")),
-      dnsPropagationTimeout: z
-        .union([
-          z.number().int().gte(1, t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
-          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_propagation_timeout.placeholder")),
-        ])
-        .nullish(),
-      dnsTTL: z
-        .union([
-          z.number().int().gte(1, t("workflow_node.apply.form.dns_ttl.placeholder")),
-          z.string().refine((v) => !v || /^[1-9]\d*$/.test(v), t("workflow_node.apply.form.dns_ttl.placeholder")),
-        ])
-        .nullish(),
+      dnsPropagationTimeout: z.preprocess(
+        (v) => (v == null || v === "" ? undefined : Number(v)),
+        z
+          .number()
+          .int(t("workflow_node.apply.form.dns_propagation_timeout.placeholder"))
+          .gte(1, t("workflow_node.apply.form.dns_propagation_timeout.placeholder"))
+          .nullish()
+      ),
+      dnsTTL: z.preprocess(
+        (v) => (v == null || v === "" ? undefined : Number(v)),
+        z.number().int(t("workflow_node.apply.form.dns_ttl.placeholder")).gte(1, t("workflow_node.apply.form.dns_ttl.placeholder")).nullish()
+      ),
       disableFollowCNAME: z.boolean().nullish(),
       disableARI: z.boolean().nullish(),
-      skipBeforeExpiryDays: z
-        .number({ message: t("workflow_node.apply.form.skip_before_expiry_days.placeholder") })
-        .int(t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
-        .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder")),
+      skipBeforeExpiryDays: z.preprocess(
+        (v) => Number(v),
+        z
+          .number({ message: t("workflow_node.apply.form.skip_before_expiry_days.placeholder") })
+          .int(t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
+          .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
+      ),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -570,7 +573,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 <InputNumber
                   className="w-36"
                   min={1}
-                  max={90}
+                  max={365}
                   placeholder={t("workflow_node.apply.form.skip_before_expiry_days.placeholder")}
                   addonAfter={t("workflow_node.apply.form.skip_before_expiry_days.unit")}
                 />
