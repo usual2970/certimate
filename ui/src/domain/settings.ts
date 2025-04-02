@@ -132,6 +132,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
   [
     [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],
     [NOTIFY_CHANNELS.DINGTALK, "common.notifier.dingtalk"],
+    [NOTIFY_CHANNELS.GOTIFY, "common.notifier.gotify"],
     [NOTIFY_CHANNELS.LARK, "common.notifier.lark"],
     [NOTIFY_CHANNELS.WECOM, "common.notifier.wecom"],
     [NOTIFY_CHANNELS.TELEGRAM, "common.notifier.telegram"],
