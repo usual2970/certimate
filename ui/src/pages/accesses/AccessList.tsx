@@ -14,14 +14,14 @@ import { Avatar, Button, Card, Empty, Flex, Input, Modal, Space, Table, type Tab
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import AccessEditModal, { type AccessEditModalProps } from "@/components/access/AccessEditModal";
+import AccessEditDrawer, { type AccessEditDrawerProps } from "@/components/access/AccessEditDrawer";
 import { type AccessModel } from "@/domain/access";
 import { ACCESS_USAGES, accessProvidersMap } from "@/domain/provider";
 import { useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
-type AccessRanges = AccessEditModalProps["range"];
+type AccessRanges = AccessEditDrawerProps["range"];
 
 const AccessList = () => {
   const [searchParams] = useSearchParams();
@@ -85,7 +85,7 @@ const AccessList = () => {
       width: 120,
       render: (_, record) => (
         <Space.Compact>
-          <AccessEditModal
+          <AccessEditDrawer
             data={record}
             range={filters["range"] as AccessRanges}
             scene="edit"
@@ -96,7 +96,7 @@ const AccessList = () => {
             }
           />
 
-          <AccessEditModal
+          <AccessEditDrawer
             data={{ ...record, id: undefined, name: `${record.name}-copy` }}
             range={filters["range"] as AccessRanges}
             scene="add"
@@ -222,7 +222,7 @@ const AccessList = () => {
       <PageHeader
         title={t("access.page.title")}
         extra={[
-          <AccessEditModal
+          <AccessEditDrawer
             key="create"
             range={filters["range"] as AccessRanges}
             scene="add"
