@@ -1,4 +1,4 @@
-﻿import { memo, useEffect, useRef, useState } from "react";
+﻿import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography } from "antd";
 
@@ -24,15 +24,16 @@ const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSe
     }
   }, []);
 
-  const providers = Array.from(applyDNSProvidersMap.values());
-  const filteredProviders = providers.filter((provider) => {
-    if (keyword) {
-      const value = keyword.toLowerCase();
-      return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
-    }
+  const providers = useMemo(() => {
+    return Array.from(applyDNSProvidersMap.values()).filter((provider) => {
+      if (keyword) {
+        const value = keyword.toLowerCase();
+        return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [keyword]);
 
   const handleProviderTypeSelect = (value: string) => {
     onSelect?.(value);
@@ -40,12 +41,12 @@ const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSe
 
   return (
     <div className={className} style={style}>
-      <Input.Search ref={keywordInputRef} placeholder={placeholder} onChange={(e) => setKeyword(e.target.value.trim())} />
+      <Input.Search ref={keywordInputRef} placeholder={placeholder ?? t("common.text.search")} onChange={(e) => setKeyword(e.target.value.trim())} />
 
       <div className="mt-4">
-        <Show when={filteredProviders.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
+        <Show when={providers.length > 0} fallback={<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}>
           <Row gutter={[16, 16]}>
-            {filteredProviders.map((provider, index) => {
+            {providers.map((provider, index) => {
               return (
                 <Col key={index} xs={24} md={12} span={12}>
                   <Card

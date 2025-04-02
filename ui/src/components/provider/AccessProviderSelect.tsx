@@ -31,16 +31,16 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
     );
   }, [filter]);
 
-  const showOptionTagsForDNS = useMemo(() => {
+  const showOptionTagForDNS = useMemo(() => {
     return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.DNS] : !!showOptionTags;
   }, [showOptionTags]);
-  const showOptionTagsForHosting = useMemo(() => {
+  const showOptionTagForHosting = useMemo(() => {
     return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.HOSTING] : !!showOptionTags;
   }, [showOptionTags]);
-  const showOptionTagsForCA = useMemo(() => {
+  const showOptionTagForCA = useMemo(() => {
     return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.CA] : !!showOptionTags;
   }, [showOptionTags]);
-  const showOptionTagsForNotification = useMemo(() => {
+  const showOptionTagForNotification = useMemo(() => {
     return typeof showOptionTags === "object" ? !!showOptionTags[ACCESS_USAGES.NOTIFICATION] : !!showOptionTags;
   }, [showOptionTags]);
 
@@ -56,16 +56,16 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
         </Space>
         {showOptionTags && (
           <div>
-            <Show when={showOptionTagsForDNS && provider.usages.includes(ACCESS_USAGES.DNS)}>
+            <Show when={showOptionTagForDNS && provider.usages.includes(ACCESS_USAGES.DNS)}>
               <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>
             </Show>
-            <Show when={showOptionTagsForHosting && provider.usages.includes(ACCESS_USAGES.HOSTING)}>
+            <Show when={showOptionTagForHosting && provider.usages.includes(ACCESS_USAGES.HOSTING)}>
               <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>
             </Show>
-            <Show when={showOptionTagsForCA && provider.usages.includes(ACCESS_USAGES.CA)}>
+            <Show when={showOptionTagForCA && provider.usages.includes(ACCESS_USAGES.CA)}>
               <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>
             </Show>
-            <Show when={showOptionTagsForNotification && provider.usages.includes(ACCESS_USAGES.NOTIFICATION)}>
+            <Show when={showOptionTagForNotification && provider.usages.includes(ACCESS_USAGES.NOTIFICATION)}>
               <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>
             </Show>
           </div>

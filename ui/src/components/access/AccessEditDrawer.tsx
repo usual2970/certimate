@@ -64,7 +64,7 @@ const AccessEditDrawer = ({ data, loading, trigger, scene, range, afterSubmit, .
 
         values = await updateAccess({ ...data, ...values });
       } else {
-        throw "Invalid props: `preset`";
+        throw "Invalid props: `scene`";
       }
 
       afterSubmit?.(values);
