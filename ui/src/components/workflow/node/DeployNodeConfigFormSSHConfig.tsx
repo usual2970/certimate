@@ -134,8 +134,8 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           formInst.setFieldValue(
             "preCommand",
             `# 请将以下路径替换为实际值
-cp "${formInst.getFieldValue("certPath")}" "${formInst.getFieldValue("certPath")}.bak" 2>/dev/null || :
-cp "${formInst.getFieldValue("keyPath")}" "${formInst.getFieldValue("keyPath")}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" "${formInst.getFieldValue("certPath") || "<your-cert-path>"}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFieldValue("keyPath") || "<your-key-path>"}.bak" 2>/dev/null || :
             `.trim()
           );
         }
