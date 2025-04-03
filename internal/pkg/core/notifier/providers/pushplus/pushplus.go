@@ -19,18 +19,6 @@ type NotifierConfig struct {
 	Token string `json:"token"`
 }
 
-// Message PushPlus 消息体
-type Message struct {
-	Token   string `json:"token"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
-}
-
-type ErrorResponse struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-}
-
 type NotifierProvider struct {
 	config *NotifierConfig
 	logger *slog.Logger
@@ -64,7 +52,11 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 // 参考文档：https://pushplus.plus/doc/guide/api.html
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	// 请求体
-	reqBody := &Message{
+	reqBody := &struct {
+		Token   string `json:"token"`
+		Title   string `json:"title"`
+		Content string `json:"content"`
+	}{
 		Token:   n.config.Token,
 		Title:   subject,
 		Content: message,
@@ -93,6 +85,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	if err != nil {
 		return nil, errors.Wrapf(err, "send request to pushplus server")
 	}
+	defer resp.Body.Close()
 
 	result, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -104,7 +97,10 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	}
 
 	// 解析响应
-	var errorResponse ErrorResponse
+	var errorResponse struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
 	if err := json.Unmarshal(result, &errorResponse); err != nil {
 		return nil, errors.Wrap(err, "decode response")
 	}
