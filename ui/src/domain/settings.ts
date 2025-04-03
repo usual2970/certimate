@@ -40,6 +40,7 @@ export const NOTIFY_CHANNELS = Object.freeze({
   BARK: "bark",
   DINGTALK: "dingtalk",
   EMAIL: "email",
+  GOTIFY: "gotify",
   LARK: "lark",
   PUSHPLUS: "pushplus",
   SERVERCHAN: "serverchan",
@@ -59,6 +60,7 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.BARK]?: BarkNotifyChannelConfig;
   [NOTIFY_CHANNELS.DINGTALK]?: DingTalkNotifyChannelConfig;
   [NOTIFY_CHANNELS.EMAIL]?: EmailNotifyChannelConfig;
+  [NOTIFY_CHANNELS.GOTIFY]?: GotifyNotifyChannelConfig;
   [NOTIFY_CHANNELS.LARK]?: LarkNotifyChannelConfig;
   [NOTIFY_CHANNELS.PUSHPLUS]?: PushPlusNotifyChannelConfig;
   [NOTIFY_CHANNELS.SERVERCHAN]?: ServerChanNotifyChannelConfig;
@@ -87,6 +89,13 @@ export type EmailNotifyChannelConfig = {
 export type DingTalkNotifyChannelConfig = {
   accessToken: string;
   secret: string;
+  enabled?: boolean;
+};
+
+export type GotifyNotifyChannelConfig = {
+  url: string;
+  token: string;
+  priority: string;
   enabled?: boolean;
 };
 
@@ -130,6 +139,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
   [
     [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],
     [NOTIFY_CHANNELS.DINGTALK, "common.notifier.dingtalk"],
+    [NOTIFY_CHANNELS.GOTIFY, "common.notifier.gotify"],
     [NOTIFY_CHANNELS.LARK, "common.notifier.lark"],
     [NOTIFY_CHANNELS.PUSHPLUS, "common.notifier.pushplus"],
     [NOTIFY_CHANNELS.WECOM, "common.notifier.wecom"],

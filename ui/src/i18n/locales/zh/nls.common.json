@@ -38,6 +38,7 @@
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "钉钉",
   "common.notifier.email": "邮件",
+  "common.notifier.gotify": "Gotify",
   "common.notifier.lark": "飞书",
   "common.notifier.pushplus": "PushPlus推送加",
   "common.notifier.serverchan": "Server 酱",
