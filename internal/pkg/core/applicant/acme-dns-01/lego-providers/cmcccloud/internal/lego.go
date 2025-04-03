@@ -93,7 +93,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 
 	zoneName, err := dns01.FindZoneByFqdn(info.EffectiveFQDN)
 	if err != nil {
-		return fmt.Errorf("cmccecloud: %w", err)
+		return fmt.Errorf("cmccecloud: could not find zone for domain %q: %w", domain, err)
 	}
 
 	subDomain, err := dns01.ExtractSubDomain(info.EffectiveFQDN, zoneName)
@@ -108,33 +108,33 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	}
 
 	if record == nil {
-		// add new record
 		resp, err := d.client.CreateRecordOpenapi(&model.CreateRecordOpenapiRequest{
 			CreateRecordOpenapiBody: &model.CreateRecordOpenapiBody{
 				LineId:      "0", // 默认线路
 				Rr:          subDomain,
 				DomainName:  readDomain,
-				Description: "from certimate",
+				Description: "certimate acme",
 				Type:        model.CreateRecordOpenapiBodyTypeEnumTxt,
 				Value:       info.Value,
 				Ttl:         &d.config.TTL,
 			},
 		})
 		if err != nil {
-			return fmt.Errorf("lego: %w", err)
+			return fmt.Errorf("cmccecloud: %w", err)
 		}
+
 		if resp.State != model.CreateRecordOpenapiResponseStateEnumOk {
-			return fmt.Errorf("lego: create record failed, response state: %s, message: %s, code: %s", resp.State, resp.ErrorMessage, resp.ErrorCode)
+			return fmt.Errorf("cmccecloud: create record failed, response state: %s, message: %s, code: %s", resp.State, resp.ErrorMessage, resp.ErrorCode)
 		}
+
 		return nil
 	} else {
-		// update record
 		resp, err := d.client.ModifyRecordOpenapi(&model.ModifyRecordOpenapiRequest{
 			ModifyRecordOpenapiBody: &model.ModifyRecordOpenapiBody{
 				RecordId:    record.RecordId,
 				Rr:          subDomain,
 				DomainName:  readDomain,
-				Description: "from certmate",
+				Description: "certmate acme",
 				LineId:      "0",
 				Type:        model.ModifyRecordOpenapiBodyTypeEnumTxt,
 				Value:       info.Value,
@@ -142,44 +142,52 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 			},
 		})
 		if err != nil {
-			return fmt.Errorf("lego: %w", err)
+			return fmt.Errorf("cmccecloud: %w", err)
 		}
+
 		if resp.State != model.ModifyRecordOpenapiResponseStateEnumOk {
-			return fmt.Errorf("lego: create record failed, response state: %s", resp.State)
+			return fmt.Errorf("cmccecloud: create record failed, response state: %s", resp.State)
 		}
+
 		return nil
 	}
 }
 
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 	challengeInfo := dns01.GetChallengeInfo(domain, keyAuth)
+
 	zoneName, err := dns01.FindZoneByFqdn(challengeInfo.FQDN)
 	if err != nil {
-		return fmt.Errorf("cmccecloud: %w", err)
+		return fmt.Errorf("cmccecloud: could not find zone for domain %q: %w", domain, err)
 	}
+
 	subDomain, err := dns01.ExtractSubDomain(challengeInfo.FQDN, zoneName)
 	if err != nil {
 		return fmt.Errorf("cmccecloud: %w", err)
 	}
+
 	readDomain := strings.Trim(zoneName, ".")
 	record, err := d.getDomainRecord(readDomain, subDomain)
 	if err != nil {
 		return err
 	}
+
 	if record == nil {
 		return nil
+	} else {
+		resp, err := d.client.DeleteRecordOpenapi(&model.DeleteRecordOpenapiRequest{
+			DeleteRecordOpenapiBody: &model.DeleteRecordOpenapiBody{
+				RecordIdList: []string{record.RecordId},
+			},
+		})
+		if err != nil {
+			return fmt.Errorf("cmccecloud: %w", err)
+		}
+		if resp.State != model.DeleteRecordOpenapiResponseStateEnumOk {
+			return fmt.Errorf("cmccecloud: delete record failed, unexpected response state: %s", resp.State)
+		}
 	}
-	resp, err := d.client.DeleteRecordOpenapi(&model.DeleteRecordOpenapiRequest{
-		DeleteRecordOpenapiBody: &model.DeleteRecordOpenapiBody{
-			RecordIdList: []string{record.RecordId},
-		},
-	})
-	if err != nil {
-		return fmt.Errorf("lego: %w", err)
-	}
-	if resp.State != model.DeleteRecordOpenapiResponseStateEnumOk {
-		return fmt.Errorf("lego: delete record failed, response state: %s", resp.State)
-	}
+
 	return nil
 }
 
@@ -205,8 +213,9 @@ func (d *DNSProvider) getDomainRecord(domain string, rr string) (*model.ListReco
 		}
 		if resp.State != model.ListRecordOpenapiResponseStateEnumOk {
 			respStr, _ := json.Marshal(resp)
-			return nil, fmt.Errorf("request error. %s", string(respStr))
+			return nil, fmt.Errorf("cmccecloud: request error: %s", string(respStr))
 		}
+
 		if resp.Body.Data != nil {
 			for _, item := range *resp.Body.Data {
 				if item.Rr == rr {
@@ -214,9 +223,11 @@ func (d *DNSProvider) getDomainRecord(domain string, rr string) (*model.ListReco
 				}
 			}
 		}
+
 		if resp.Body.TotalPages == nil || page >= *resp.Body.TotalPages {
 			return nil, nil
 		}
+
 		page++
 	}
 }
