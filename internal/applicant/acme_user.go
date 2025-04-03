@@ -14,6 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -76,16 +77,11 @@ func (u *acmeUser) getPrivateKeyPEM() string {
 	return u.privkey
 }
 
-type acmeAccountRepository interface {
-	GetByCAAndEmail(ca, email string) (*domain.AcmeAccount, error)
-	Save(ca, email, key string, resource *registration.Resource) error
-}
-
 var registerGroup singleflight.Group
 
-func registerAcmeUserWithSingleFlight(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
-	resp, err, _ := registerGroup.Do(fmt.Sprintf("register_acme_user_%s_%s", sslProviderConfig.Provider, user.GetEmail()), func() (interface{}, error) {
-		return registerAcmeUser(client, sslProviderConfig, user)
+func registerAcmeUserWithSingleFlight(client *lego.Client, user *acmeUser, userRegisterOptions map[string]any) (*registration.Resource, error) {
+	resp, err, _ := registerGroup.Do(fmt.Sprintf("register_acme_user_%s_%s", user.CA, user.Email), func() (interface{}, error) {
+		return registerAcmeUser(client, user, userRegisterOptions)
 	})
 
 	if err != nil {
@@ -95,45 +91,81 @@ func registerAcmeUserWithSingleFlight(client *lego.Client, sslProviderConfig *ac
 	return resp.(*registration.Resource), nil
 }
 
-func registerAcmeUser(client *lego.Client, sslProviderConfig *acmeSSLProviderConfig, user *acmeUser) (*registration.Resource, error) {
+func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions map[string]any) (*registration.Resource, error) {
 	var reg *registration.Resource
 	var err error
-	switch sslProviderConfig.Provider {
-	case sslProviderZeroSSL:
-		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
-			TermsOfServiceAgreed: true,
-			Kid:                  sslProviderConfig.Config.ZeroSSL.EabKid,
-			HmacEncoded:          sslProviderConfig.Config.ZeroSSL.EabHmacKey,
-		})
-	case sslProviderGoogleTrustServices:
-		reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
-			TermsOfServiceAgreed: true,
-			Kid:                  sslProviderConfig.Config.GoogleTrustServices.EabKid,
-			HmacEncoded:          sslProviderConfig.Config.GoogleTrustServices.EabHmacKey,
-		})
+	switch user.CA {
 	case sslProviderLetsEncrypt, sslProviderLetsEncryptStaging:
 		reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+
+	case sslProviderBuypass:
+		{
+			reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
+		}
+
+	case sslProviderGoogleTrustServices:
+		{
+			access := domain.AccessConfigForGoogleTrustServices{}
+			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+				TermsOfServiceAgreed: true,
+				Kid:                  access.EabKid,
+				HmacEncoded:          access.EabHmacKey,
+			})
+		}
+
+	case sslProviderSSLCom:
+		{
+			access := domain.AccessConfigForSSLCom{}
+			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+				TermsOfServiceAgreed: true,
+				Kid:                  access.EabKid,
+				HmacEncoded:          access.EabHmacKey,
+			})
+		}
+
+	case sslProviderZeroSSL:
+		{
+			access := domain.AccessConfigForZeroSSL{}
+			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+				TermsOfServiceAgreed: true,
+				Kid:                  access.EabKid,
+				HmacEncoded:          access.EabHmacKey,
+			})
+		}
+
 	default:
-		err = fmt.Errorf("unsupported ssl provider: %s", sslProviderConfig.Provider)
+		err = fmt.Errorf("unsupported ca provider: %s", user.CA)
 	}
 	if err != nil {
 		return nil, err
 	}
 
 	repo := repository.NewAcmeAccountRepository()
-	resp, err := repo.GetByCAAndEmail(sslProviderConfig.Provider, user.GetEmail())
+	resp, err := repo.GetByCAAndEmail(user.CA, user.Email)
 	if err == nil {
 		user.privkey = resp.Key
 		return resp.Resource, nil
 	}
 
 	if _, err := repo.Save(context.Background(), &domain.AcmeAccount{
-		CA:       sslProviderConfig.Provider,
-		Email:    user.GetEmail(),
+		CA:       user.CA,
+		Email:    user.Email,
 		Key:      user.getPrivateKeyPEM(),
 		Resource: reg,
 	}); err != nil {
-		return nil, fmt.Errorf("failed to save registration: %w", err)
+		return nil, fmt.Errorf("failed to save acme account registration: %w", err)
 	}
 
 	return reg, nil

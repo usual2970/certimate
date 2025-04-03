@@ -123,6 +123,9 @@ const DeployNodeConfigFormBaotaPanelSiteConfig = ({
                 onChange={(e) => {
                   formInst.setFieldValue("siteNames", e.target.value);
                 }}
+                onClear={() => {
+                  formInst.setFieldValue("siteNames", "");
+                }}
               />
             </Form.Item>
             <SiteNamesModalInput

@@ -5,6 +5,7 @@ import {
   CheckOutlined as CheckOutlinedIcon,
   ClockCircleOutlined as ClockCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
+  DownloadOutlined as DownloadOutlinedIcon,
   RightOutlined as RightOutlinedIcon,
   SelectOutlined as SelectOutlinedIcon,
   SettingOutlined as SettingOutlinedIcon,
@@ -188,6 +189,34 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
     );
   };
 
+  const handleDownloadClick = () => {
+    const NEWLINE = "\n";
+    const logstr = listData
+      .map((group) => {
+        return (
+          group.name +
+          NEWLINE +
+          group.records
+            .map((record) => {
+              const datetime = dayjs(record.timestamp).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+              const level = record.level;
+              const message = record.message.trim().replaceAll("\r", "\\r").replaceAll("\n", "\\n");
+              return `[${datetime}] [${level}] ${message}`;
+            })
+            .join(NEWLINE)
+        );
+      })
+      .join(NEWLINE + NEWLINE);
+    const blob = new Blob([logstr], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `certimate_workflow_run_#${runId}_logs.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+  };
+
   return (
     <>
       <Typography.Title level={5}>{t("workflow_run.logs")}</Typography.Title>
@@ -209,6 +238,15 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
                     label: t("workflow_run.logs.menu.show_whitespaces"),
                     icon: <CheckOutlinedIcon className={showWhitespace ? "visible" : "invisible"} />,
                     onClick: () => setShowWhitespace(!showWhitespace),
+                  },
+                  {
+                    type: "divider",
+                  },
+                  {
+                    key: "download-logs",
+                    label: t("workflow_run.logs.menu.download_logs"),
+                    icon: <DownloadOutlinedIcon className="invisible" />,
+                    onClick: handleDownloadClick,
                   },
                 ],
               }}

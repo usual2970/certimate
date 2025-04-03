@@ -62,19 +62,22 @@ type WorkflowNode struct {
 }
 
 type WorkflowNodeConfigForApply struct {
-	Domains               string         `json:"domains"`               // 域名列表，以半角分号分隔
-	ContactEmail          string         `json:"contactEmail"`          // 联系邮箱
-	ChallengeType         string         `json:"challengeType"`         // TODO: 验证方式。目前仅支持 dns-01
-	Provider              string         `json:"provider"`              // DNS 提供商
-	ProviderAccessId      string         `json:"providerAccessId"`      // DNS 提供商授权记录 ID
-	ProviderConfig        map[string]any `json:"providerConfig"`        // DNS 提供商额外配置
-	KeyAlgorithm          string         `json:"keyAlgorithm"`          // 密钥算法
-	Nameservers           string         `json:"nameservers"`           // DNS 服务器列表，以半角分号分隔
-	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout"` // DNS 传播超时时间（零值取决于提供商的默认值）
-	DnsTTL                int32          `json:"dnsTTL"`                // DNS TTL（零值取决于提供商的默认值）
-	DisableFollowCNAME    bool           `json:"disableFollowCNAME"`    // 是否关闭 CNAME 跟随
-	DisableARI            bool           `json:"disableARI"`            // 是否关闭 ARI
-	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
+	Domains               string         `json:"domains"`                         // 域名列表，以半角分号分隔
+	ContactEmail          string         `json:"contactEmail"`                    // 联系邮箱
+	ChallengeType         string         `json:"challengeType"`                   // TODO: 验证方式。目前仅支持 dns-01
+	Provider              string         `json:"provider"`                        // DNS 提供商
+	ProviderAccessId      string         `json:"providerAccessId"`                // DNS 提供商授权记录 ID
+	ProviderConfig        map[string]any `json:"providerConfig"`                  // DNS 提供商额外配置
+	CAProvider            string         `json:"caProvider,omitempty"`            // CA 提供商（零值将使用全局配置）
+	CAProviderAccessId    string         `json:"caProviderAccessId,omitempty"`    // CA 提供商授权记录 ID
+	CAProviderConfig      map[string]any `json:"caProviderConfig,omitempty"`      // CA 提供商额外配置
+	KeyAlgorithm          string         `json:"keyAlgorithm"`                    // 密钥算法
+	Nameservers           string         `json:"nameservers,omitempty"`           // DNS 服务器列表，以半角分号分隔
+	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout,omitempty"` // DNS 传播超时时间（零值取决于提供商的默认值）
+	DnsTTL                int32          `json:"dnsTTL,omitempty"`                // DNS TTL（零值取决于提供商的默认值）
+	DisableFollowCNAME    bool           `json:"disableFollowCNAME,omitempty"`    // 是否关闭 CNAME 跟随
+	DisableARI            bool           `json:"disableARI,omitempty"`            // 是否关闭 ARI
+	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays,omitempty"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
 }
 
 type WorkflowNodeConfigForUpload struct {
@@ -84,11 +87,11 @@ type WorkflowNodeConfigForUpload struct {
 }
 
 type WorkflowNodeConfigForDeploy struct {
-	Certificate         string         `json:"certificate"`         // 前序节点输出的证书，形如“${NodeId}#certificate”
-	Provider            string         `json:"provider"`            // 主机提供商
-	ProviderAccessId    string         `json:"providerAccessId"`    // 主机提供商授权记录 ID
-	ProviderConfig      map[string]any `json:"providerConfig"`      // 主机提供商额外配置
-	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"` // 上次部署成功时是否跳过
+	Certificate         string         `json:"certificate"`                // 前序节点输出的证书，形如“${NodeId}#certificate”
+	Provider            string         `json:"provider"`                   // 主机提供商
+	ProviderAccessId    string         `json:"providerAccessId,omitempty"` // 主机提供商授权记录 ID
+	ProviderConfig      map[string]any `json:"providerConfig,omitempty"`   // 主机提供商额外配置
+	SkipOnLastSucceeded bool           `json:"skipOnLastSucceeded"`        // 上次部署成功时是否跳过
 }
 
 type WorkflowNodeConfigForNotify struct {
@@ -97,73 +100,54 @@ type WorkflowNodeConfigForNotify struct {
 	Message string `json:"message"` // 通知内容
 }
 
-func (n *WorkflowNode) getConfigString(key string) string {
-	return maputil.GetString(n.Config, key)
-}
-
-func (n *WorkflowNode) getConfigBool(key string) bool {
-	return maputil.GetBool(n.Config, key)
-}
-
-func (n *WorkflowNode) getConfigInt32(key string) int32 {
-	return maputil.GetInt32(n.Config, key)
-}
-
-func (n *WorkflowNode) getConfigMap(key string) map[string]any {
-	if val, ok := n.Config[key]; ok {
-		if result, ok := val.(map[string]any); ok {
-			return result
-		}
-	}
-
-	return make(map[string]any)
-}
-
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
-	skipBeforeExpiryDays := n.getConfigInt32("skipBeforeExpiryDays")
+	skipBeforeExpiryDays := maputil.GetInt32(n.Config, "skipBeforeExpiryDays")
 	if skipBeforeExpiryDays == 0 {
 		skipBeforeExpiryDays = 30
 	}
 
 	return WorkflowNodeConfigForApply{
-		Domains:               n.getConfigString("domains"),
-		ContactEmail:          n.getConfigString("contactEmail"),
-		Provider:              n.getConfigString("provider"),
-		ProviderAccessId:      n.getConfigString("providerAccessId"),
-		ProviderConfig:        n.getConfigMap("providerConfig"),
-		KeyAlgorithm:          n.getConfigString("keyAlgorithm"),
-		Nameservers:           n.getConfigString("nameservers"),
-		DnsPropagationTimeout: n.getConfigInt32("dnsPropagationTimeout"),
-		DnsTTL:                n.getConfigInt32("dnsTTL"),
-		DisableFollowCNAME:    n.getConfigBool("disableFollowCNAME"),
-		DisableARI:            n.getConfigBool("disableARI"),
+		Domains:               maputil.GetString(n.Config, "domains"),
+		ContactEmail:          maputil.GetString(n.Config, "contactEmail"),
+		Provider:              maputil.GetString(n.Config, "provider"),
+		ProviderAccessId:      maputil.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:        maputil.GetAnyMap(n.Config, "providerConfig"),
+		CAProvider:            maputil.GetString(n.Config, "caProvider"),
+		CAProviderAccessId:    maputil.GetString(n.Config, "caProviderAccessId"),
+		CAProviderConfig:      maputil.GetAnyMap(n.Config, "caProviderConfig"),
+		KeyAlgorithm:          maputil.GetString(n.Config, "keyAlgorithm"),
+		Nameservers:           maputil.GetString(n.Config, "nameservers"),
+		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
+		DnsTTL:                maputil.GetInt32(n.Config, "dnsTTL"),
+		DisableFollowCNAME:    maputil.GetBool(n.Config, "disableFollowCNAME"),
+		DisableARI:            maputil.GetBool(n.Config, "disableARI"),
 		SkipBeforeExpiryDays:  skipBeforeExpiryDays,
 	}
 }
 
 func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
 	return WorkflowNodeConfigForUpload{
-		Certificate: n.getConfigString("certificate"),
-		PrivateKey:  n.getConfigString("privateKey"),
-		Domains:     n.getConfigString("domains"),
+		Certificate: maputil.GetString(n.Config, "certificate"),
+		PrivateKey:  maputil.GetString(n.Config, "privateKey"),
+		Domains:     maputil.GetString(n.Config, "domains"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
-		Certificate:         n.getConfigString("certificate"),
-		Provider:            n.getConfigString("provider"),
-		ProviderAccessId:    n.getConfigString("providerAccessId"),
-		ProviderConfig:      n.getConfigMap("providerConfig"),
-		SkipOnLastSucceeded: n.getConfigBool("skipOnLastSucceeded"),
+		Certificate:         maputil.GetString(n.Config, "certificate"),
+		Provider:            maputil.GetString(n.Config, "provider"),
+		ProviderAccessId:    maputil.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:      maputil.GetAnyMap(n.Config, "providerConfig"),
+		SkipOnLastSucceeded: maputil.GetBool(n.Config, "skipOnLastSucceeded"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	return WorkflowNodeConfigForNotify{
-		Channel: n.getConfigString("channel"),
-		Subject: n.getConfigString("subject"),
-		Message: n.getConfigString("message"),
+		Channel: maputil.GetString(n.Config, "channel"),
+		Subject: maputil.GetString(n.Config, "subject"),
+		Message: maputil.GetString(n.Config, "message"),
 	}
 }
 

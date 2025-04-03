@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useControllableValue } from "ahooks";
-import { Modal, notification } from "antd";
+import { Button, Drawer, Space, notification } from "antd";
 
 import { type AccessModel } from "@/domain/access";
 import { useTriggerElement, useZustandShallowSelector } from "@/hooks";
@@ -10,7 +10,7 @@ import { getErrMsg } from "@/utils/error";
 
 import AccessForm, { type AccessFormInstance, type AccessFormProps } from "./AccessForm";
 
-export type AccessEditModalProps = {
+export type AccessEditDrawerProps = {
   data?: AccessFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
@@ -21,7 +21,7 @@ export type AccessEditModalProps = {
   afterSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ...props }: AccessEditModalProps) => {
+const AccessEditDrawer = ({ data, loading, trigger, scene, range, afterSubmit, ...props }: AccessEditDrawerProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -64,7 +64,7 @@ const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ..
 
         values = await updateAccess({ ...data, ...values });
       } else {
-        throw "Invalid props: `preset`";
+        throw "Invalid props: `scene`";
       }
 
       afterSubmit?.(values);
@@ -90,26 +90,29 @@ const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ..
 
       {triggerEl}
 
-      <Modal
-        afterClose={() => setOpen(false)}
-        cancelButtonProps={{ disabled: formPending }}
-        closable
-        confirmLoading={formPending}
+      <Drawer
+        afterOpenChange={setOpen}
+        closable={!formPending}
         destroyOnClose
+        footer={
+          <Space className="w-full justify-end">
+            <Button onClick={handleCancelClick}>{t("common.button.cancel")}</Button>
+            <Button loading={formPending} type="primary" onClick={handleOkClick}>
+              {scene === "edit" ? t("common.button.save") : t("common.button.submit")}
+            </Button>
+          </Space>
+        }
         loading={loading}
-        okText={scene === "edit" ? t("common.button.save") : t("common.button.submit")}
+        maskClosable={!formPending}
         open={open}
         title={t(`access.action.${scene}`)}
-        width={480}
-        onOk={handleOkClick}
-        onCancel={handleCancelClick}
+        width={720}
+        onClose={() => setOpen(false)}
       >
-        <div className="pb-2 pt-4">
-          <AccessForm ref={formRef} initialValues={data} range={range} scene={scene === "add" ? "add" : "edit"} />
-        </div>
-      </Modal>
+        <AccessForm ref={formRef} initialValues={data} range={range} scene={scene === "add" ? "add" : "edit"} />
+      </Drawer>
     </>
   );
 };
 
-export default AccessEditModal;
+export default AccessEditDrawer;

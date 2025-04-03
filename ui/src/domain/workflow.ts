@@ -126,6 +126,9 @@ export type WorkflowNodeConfigForApply = {
   provider: string;
   providerAccessId: string;
   providerConfig?: Record<string, unknown>;
+  caProvider?: string;
+  caProviderAccessId?: string;
+  caProviderConfig?: Record<string, unknown>;
   keyAlgorithm: string;
   nameservers?: string;
   dnsPropagationTimeout?: number;
@@ -145,8 +148,8 @@ export type WorkflowNodeConfigForUpload = {
 export type WorkflowNodeConfigForDeploy = {
   certificate: string;
   provider: string;
-  providerAccessId: string;
-  providerConfig: Record<string, unknown>;
+  providerAccessId?: string;
+  providerConfig?: Record<string, unknown>;
   skipOnLastSucceeded: boolean;
 };
 

@@ -40,6 +40,7 @@
   "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Website",
   "provider.byteplus": "BytePlus",
   "provider.byteplus.cdn": "BytePlus - CDN (Content Delivery Network)",
+  "provider.buypass": "Buypass AS",
   "provider.cachefly": "CacheFly",
   "provider.cdnfly": "Cdnfly",
   "provider.cloudflare": "Cloudflare",
@@ -61,6 +62,7 @@
   "provider.godaddy": "GoDaddy",
   "provider.goedge": "GoEdge",
   "provider.goedge.cdn": "GoEdge - CDN (Content Delivery Network)",
+  "provider.googletrustservices": "Google Trust Services",
   "provider.huaweicloud": "Huawei Cloud",
   "provider.huaweicloud.cdn": "Huawei Cloud - CDN (Content Delivery Network)",
   "provider.huaweicloud.dns": "Huawei Cloud - DNS (Domain Name Service)",
@@ -75,6 +77,8 @@
   "provider.jdcloud.vod": "JD Cloud - VOD (Video on Demand)",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
+  "provider.letsencrypt": "Let's Encrypt",
+  "provider.letsencryptstaging": "Let's Encrypt Staging Environment",
   "provider.local": "Local deployment",
   "provider.namecheap": "Namecheap",
   "provider.namedotcom": "Name.com",
@@ -89,6 +93,7 @@
   "provider.rainyun": "Rain Yun",
   "provider.safeline": "SafeLine",
   "provider.ssh": "SSH deployment",
+  "provider.sslcom": "SSL.com",
   "provider.tencentcloud": "Tencent Cloud",
   "provider.tencentcloud.cdn": "Tencent Cloud - CDN (Content Delivery Network)",
   "provider.tencentcloud.clb": "Tencent Cloud - CLB (Cloud Load Balancer)",
@@ -121,6 +126,7 @@
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
   "provider.webhook": "Webhook",
   "provider.westcn": "West.cn",
+  "provider.zerossl": "ZeroSSL",
 
   "provider.category.all": "All",
   "provider.category.cdn": "CDN",
@@ -130,5 +136,7 @@
   "provider.category.av": "Audio/Video",
   "provider.category.serverless": "Serverless",
   "provider.category.website": "Website",
-  "provider.category.other": "Other"
+  "provider.category.other": "Other",
+
+  "provider.default_ca_provider.label": "(Default) Follow global settings"
 }

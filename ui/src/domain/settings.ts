@@ -1,3 +1,5 @@
+import { type ApplyCAProviderType } from "./provider";
+
 export const SETTINGS_NAMES = Object.freeze({
   EMAILS: "emails",
   NOTIFY_TEMPLATES: "notifyTemplates",
@@ -152,36 +154,11 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 // #endregion
 
 // #region Settings: SSLProvider
-export const SSLPROVIDERS = Object.freeze({
-  LETS_ENCRYPT: "letsencrypt",
-  LETS_ENCRYPT_STAGING: "letsencrypt_staging",
-  ZERO_SSL: "zerossl",
-  GOOGLE_TRUST_SERVICES: "gts",
-} as const);
-
-export type SSLProviders = (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
-
 export type SSLProviderSettingsContent = {
-  provider: (typeof SSLPROVIDERS)[keyof typeof SSLPROVIDERS];
+  provider: ApplyCAProviderType;
   config: {
     [key: string]: Record<string, unknown> | undefined;
-    [SSLPROVIDERS.LETS_ENCRYPT]?: SSLProviderLetsEncryptConfig;
-    [SSLPROVIDERS.LETS_ENCRYPT_STAGING]?: SSLProviderLetsEncryptConfig;
-    [SSLPROVIDERS.ZERO_SSL]?: SSLProviderZeroSSLConfig;
-    [SSLPROVIDERS.GOOGLE_TRUST_SERVICES]?: SSLProviderGoogleTrustServicesConfig;
   };
-};
-
-export type SSLProviderLetsEncryptConfig = NonNullable<unknown>;
-
-export type SSLProviderZeroSSLConfig = {
-  eabKid: string;
-  eabHmacKey: string;
-};
-
-export type SSLProviderGoogleTrustServicesConfig = {
-  eabKid: string;
-  eabHmacKey: string;
 };
 // #endregion
 

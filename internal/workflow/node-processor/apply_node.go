@@ -109,11 +109,23 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 		if currentNodeConfig.ContactEmail != lastNodeConfig.ContactEmail {
 			return false, "the configuration item 'ContactEmail' changed"
 		}
+		if currentNodeConfig.Provider != lastNodeConfig.Provider {
+			return false, "the configuration item 'Provider' changed"
+		}
 		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
 			return false, "the configuration item 'ProviderAccessId' changed"
 		}
 		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
 			return false, "the configuration item 'ProviderConfig' changed"
+		}
+		if currentNodeConfig.CAProvider != lastNodeConfig.CAProvider {
+			return false, "the configuration item 'CAProvider' changed"
+		}
+		if currentNodeConfig.CAProviderAccessId != lastNodeConfig.CAProviderAccessId {
+			return false, "the configuration item 'CAProviderAccessId' changed"
+		}
+		if !maps.Equal(currentNodeConfig.CAProviderConfig, lastNodeConfig.CAProviderConfig) {
+			return false, "the configuration item 'CAProviderConfig' changed"
 		}
 		if currentNodeConfig.KeyAlgorithm != lastNodeConfig.KeyAlgorithm {
 			return false, "the configuration item 'KeyAlgorithm' changed"

@@ -180,3 +180,25 @@ func GetOrDefaultBool(dict map[string]any, key string, defaultValue bool) bool {
 
 	return defaultValue
 }
+
+// 以 `map[string]any` 形式从字典中获取指定键的值。
+//
+// 入参：
+//   - dict: 字典。
+//   - key: 键。
+//
+// 出参：
+//   - 字典中键对应的 `map[string]any` 对象。
+func GetAnyMap(dict map[string]any, key string) map[string]any {
+	if dict == nil {
+		return make(map[string]any)
+	}
+
+	if val, ok := dict[key]; ok {
+		if result, ok := val.(map[string]any); ok {
+			return result
+		}
+	}
+
+	return make(map[string]any)
+}

@@ -10,7 +10,7 @@ type DeployNodeConfigFormBaiduCloudAppBLBConfigFieldValues = Nullish<{
   resourceType: string;
   region: string;
   loadbalancerId?: string;
-  listenerPort?: string | number;
+  listenerPort?: number;
   domain?: string;
 }>;
 
@@ -53,13 +53,16 @@ const DeployNodeConfigFormBaiduCloudAppBLBConfig = ({
       .min(1, t("workflow_node.deploy.form.baiducloud_appblb_loadbalancer_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
       .trim(),
-    listenerPort: z
-      .union([z.number(), z.string()])
-      .refine(
-        (v) => fieldResourceType === RESOURCE_TYPE_LISTENER && validPortNumber(v),
-        t("workflow_node.deploy.form.baiducloud_appblb_listener_port.placeholder")
-      )
-      .nullish(),
+    listenerPort: z.preprocess(
+      (v) => (v == null || v === "" ? undefined : Number(v)),
+      z
+        .number()
+        .refine(
+          (v) => fieldResourceType === RESOURCE_TYPE_LISTENER && validPortNumber(v!),
+          t("workflow_node.deploy.form.baiducloud_appblb_listener_port.placeholder")
+        )
+        .nullish()
+    ),
     domain: z
       .string()
       .nullish()

@@ -37,18 +37,21 @@ type Applicant interface {
 }
 
 type applicantOptions struct {
-	Domains               []string
-	ContactEmail          string
-	Provider              domain.ApplyDNSProviderType
-	ProviderAccessConfig  map[string]any
-	ProviderApplyConfig   map[string]any
-	KeyAlgorithm          string
-	Nameservers           []string
-	DnsPropagationTimeout int32
-	DnsTTL                int32
-	DisableFollowCNAME    bool
-	ReplacedARIAcctId     string
-	ReplacedARICertId     string
+	Domains                  []string
+	ContactEmail             string
+	Provider                 domain.ApplyDNSProviderType
+	ProviderAccessConfig     map[string]any
+	ProviderExtendedConfig   map[string]any
+	CAProvider               domain.ApplyCAProviderType
+	CAProviderAccessConfig   map[string]any
+	CAProviderExtendedConfig map[string]any
+	KeyAlgorithm             string
+	Nameservers              []string
+	DnsPropagationTimeout    int32
+	DnsTTL                   int32
+	DisableFollowCNAME       bool
+	ReplacedARIAcct          string
+	ReplacedARICert          string
 }
 
 func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
@@ -58,22 +61,55 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 
 	nodeConfig := node.GetConfigForApply()
 	options := &applicantOptions{
-		Domains:               sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
-		ContactEmail:          nodeConfig.ContactEmail,
-		Provider:              domain.ApplyDNSProviderType(nodeConfig.Provider),
-		ProviderApplyConfig:   nodeConfig.ProviderConfig,
-		KeyAlgorithm:          nodeConfig.KeyAlgorithm,
-		Nameservers:           sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
-		DnsPropagationTimeout: nodeConfig.DnsPropagationTimeout,
-		DnsTTL:                nodeConfig.DnsTTL,
-		DisableFollowCNAME:    nodeConfig.DisableFollowCNAME,
+		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:             nodeConfig.ContactEmail,
+		Provider:                 domain.ApplyDNSProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:     make(map[string]any),
+		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
+		CAProvider:               domain.ApplyCAProviderType(nodeConfig.CAProvider),
+		CAProviderAccessConfig:   make(map[string]any),
+		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
+		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
+		Nameservers:              sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationTimeout:    nodeConfig.DnsPropagationTimeout,
+		DnsTTL:                   nodeConfig.DnsTTL,
+		DisableFollowCNAME:       nodeConfig.DisableFollowCNAME,
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	if access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId); err != nil {
-		return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
-	} else {
-		options.ProviderAccessConfig = access.Config
+	if nodeConfig.ProviderAccessId != "" {
+		if access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId); err != nil {
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
+		} else {
+			options.ProviderAccessConfig = access.Config
+		}
+	}
+	if nodeConfig.CAProviderAccessId != "" {
+		if access, err := accessRepo.GetById(context.Background(), nodeConfig.CAProviderAccessId); err != nil {
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.CAProviderAccessId, err)
+		} else {
+			options.CAProviderAccessConfig = access.Config
+		}
+	}
+
+	settingsRepo := repository.NewSettingsRepository()
+	if string(options.CAProvider) == "" {
+		settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
+
+		sslProviderConfig := &acmeSSLProviderConfig{
+			Config:   make(map[domain.ApplyCAProviderType]map[string]any),
+			Provider: sslProviderDefault,
+		}
+		if settings != nil {
+			if err := json.Unmarshal([]byte(settings.Content), sslProviderConfig); err != nil {
+				return nil, err
+			} else if sslProviderConfig.Provider == "" {
+				sslProviderConfig.Provider = sslProviderDefault
+			}
+		}
+
+		options.CAProvider = domain.ApplyCAProviderType(sslProviderConfig.Provider)
+		options.CAProviderAccessConfig = sslProviderConfig.Config[options.CAProvider]
 	}
 
 	certRepo := repository.NewCertificateRepository()
@@ -88,8 +124,8 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 			lastCertX509, _ := certcrypto.ParsePEMCertificate([]byte(lastCertificate.Certificate))
 			if lastCertX509 != nil {
 				replacedARICertId, _ := certificate.MakeARICertID(lastCertX509)
-				options.ReplacedARIAcctId = lastCertificate.ACMEAccountUrl
-				options.ReplacedARICertId = replacedARICertId
+				options.ReplacedARIAcct = lastCertificate.ACMEAccountUrl
+				options.ReplacedARICert = replacedARICertId
 			}
 		}
 	}
@@ -106,24 +142,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 }
 
 func apply(challengeProvider challenge.Provider, options *applicantOptions) (*ApplyCertResult, error) {
-	settingsRepo := repository.NewSettingsRepository()
-	settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
-
-	sslProviderConfig := &acmeSSLProviderConfig{
-		Config:   acmeSSLProviderConfigContent{},
-		Provider: defaultSSLProvider,
-	}
-	if settings != nil {
-		if err := json.Unmarshal([]byte(settings.Content), sslProviderConfig); err != nil {
-			return nil, err
-		}
-	}
-
-	if sslProviderConfig.Provider == "" {
-		sslProviderConfig.Provider = defaultSSLProvider
-	}
-
-	acmeUser, err := newAcmeUser(sslProviderConfig.Provider, options.ContactEmail)
+	user, err := newAcmeUser(string(options.CAProvider), options.ContactEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -133,9 +152,16 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	os.Setenv("LEGO_DISABLE_CNAME_SUPPORT", strconv.FormatBool(options.DisableFollowCNAME))
 
 	// Create an ACME client config
-	config := lego.NewConfig(acmeUser)
-	config.CADirURL = sslProviderUrls[sslProviderConfig.Provider]
+	config := lego.NewConfig(user)
 	config.Certificate.KeyType = parseKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
+	config.CADirURL = sslProviderUrls[user.CA]
+	if user.CA == sslProviderSSLCom {
+		if strings.HasPrefix(options.KeyAlgorithm, "RSA") {
+			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"RSA"]
+		} else if strings.HasPrefix(options.KeyAlgorithm, "EC") {
+			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"ECC"]
+		}
+	}
 
 	// Create an ACME client
 	client, err := lego.NewClient(config)
@@ -152,12 +178,12 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	client.Challenge.SetDNS01Provider(challengeProvider, challengeOptions...)
 
 	// New users need to register first
-	if !acmeUser.hasRegistration() {
-		reg, err := registerAcmeUserWithSingleFlight(client, sslProviderConfig, acmeUser)
+	if !user.hasRegistration() {
+		reg, err := registerAcmeUserWithSingleFlight(client, user, options.CAProviderAccessConfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to register: %w", err)
 		}
-		acmeUser.Registration = reg
+		user.Registration = reg
 	}
 
 	// Obtain a certificate
@@ -165,8 +191,8 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		Domains: options.Domains,
 		Bundle:  true,
 	}
-	if options.ReplacedARICertId != "" && options.ReplacedARIAcctId != acmeUser.Registration.URI {
-		certRequest.ReplacesCertID = options.ReplacedARICertId
+	if options.ReplacedARIAcct == user.Registration.URI {
+		certRequest.ReplacesCertID = options.ReplacedARICert
 	}
 	certResource, err := client.Certificate.Obtain(certRequest)
 	if err != nil {
@@ -177,7 +203,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		CertificateFullChain: strings.TrimSpace(string(certResource.Certificate)),
 		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
 		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
-		ACMEAccountUrl:       acmeUser.Registration.URI,
+		ACMEAccountUrl:       user.Registration.URI,
 		ACMECertUrl:          certResource.CertURL,
 		ACMECertStableUrl:    certResource.CertStableURL,
 		CSR:                  strings.TrimSpace(string(certResource.CSR)),
@@ -198,6 +224,8 @@ func parseKeyAlgorithm(algo domain.CertificateKeyAlgorithmType) certcrypto.KeyTy
 		return certcrypto.EC256
 	case domain.CertificateKeyAlgorithmTypeEC384:
 		return certcrypto.EC384
+	case domain.CertificateKeyAlgorithmTypeEC512:
+		return certcrypto.KeyType("P512")
 	}
 
 	return certcrypto.RSA2048

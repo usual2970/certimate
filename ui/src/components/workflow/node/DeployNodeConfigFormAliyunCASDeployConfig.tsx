@@ -100,6 +100,9 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
               onChange={(e) => {
                 formInst.setFieldValue("resourceIds", e.target.value);
               }}
+              onClear={() => {
+                formInst.setFieldValue("resourceIds", "");
+              }}
             />
           </Form.Item>
           <ResourceIdsModalInput
@@ -129,6 +132,9 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
               placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.placeholder")}
               onChange={(e) => {
                 formInst.setFieldValue("contactIds", e.target.value);
+              }}
+              onClear={() => {
+                formInst.setFieldValue("contactIds", "");
               }}
             />
           </Form.Item>

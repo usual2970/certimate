@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { type AccessConfigForSSH } from "@/domain/access";
 import { readFileContent } from "@/utils/file";
-import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
+import { validDomainName, validIPv4Address, validIPv6Address, validPortNumber } from "@/utils/validators";
 
 type AccessFormSSHConfigFieldValues = Nullish<AccessConfigForSSH>;
 
@@ -34,11 +34,13 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
     host: z
       .string({ message: t("access.form.ssh_host.placeholder") })
       .refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
-    port: z
-      .number({ message: t("access.form.ssh_port.placeholder") })
-      .int()
-      .gte(1, t("common.errmsg.port_invalid"))
-      .lte(65535, t("common.errmsg.port_invalid")),
+    port: z.preprocess(
+      (v) => Number(v),
+      z
+        .number({ message: t("access.form.ssh_port.placeholder") })
+        .int(t("access.form.ssh_port.placeholder"))
+        .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
+    ),
     username: z
       .string()
       .min(1, "access.form.ssh_username.placeholder")

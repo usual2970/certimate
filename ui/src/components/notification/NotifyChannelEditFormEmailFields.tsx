@@ -3,6 +3,8 @@ import { Form, Input, InputNumber, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import { validPortNumber } from "@/utils/validators";
+
 const NotifyChannelEditFormEmailFields = () => {
   const { t } = useTranslation();
 
@@ -11,11 +13,13 @@ const NotifyChannelEditFormEmailFields = () => {
       .string({ message: t("settings.notification.channel.form.email_smtp_host.placeholder") })
       .min(1, t("settings.notification.channel.form.email_smtp_host.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 })),
-    smtpPort: z
-      .number({ message: t("settings.notification.channel.form.email_smtp_port.placeholder") })
-      .int()
-      .gte(1, t("common.errmsg.port_invalid"))
-      .lte(65535, t("common.errmsg.port_invalid")),
+    smtpPort: z.preprocess(
+      (v) => Number(v),
+      z
+        .number({ message: t("settings.notification.channel.form.email_smtp_port.placeholder") })
+        .int(t("settings.notification.channel.form.email_smtp_port.placeholder"))
+        .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
+    ),
     smtpTLS: z.boolean().nullish(),
     username: z
       .string({ message: t("settings.notification.channel.form.email_username.placeholder") })

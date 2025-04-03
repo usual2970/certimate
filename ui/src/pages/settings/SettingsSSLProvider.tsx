@@ -7,7 +7,8 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { SETTINGS_NAMES, SSLPROVIDERS, type SSLProviderSettingsContent, type SSLProviders, type SettingsModel } from "@/domain/settings";
+import { APPLY_CA_PROVIDERS, type ApplyCAProviderType } from "@/domain/provider";
+import { SETTINGS_NAMES, type SSLProviderSettingsContent, type SettingsModel } from "@/domain/settings";
 import { useAntdForm } from "@/hooks";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 import { getErrMsg } from "@/utils/error";
@@ -26,14 +27,14 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
   const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
-    initialValues: settings?.content?.config?.[SSLPROVIDERS.LETS_ENCRYPT],
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.LETSENCRYPT],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = SSLPROVIDERS.LETS_ENCRYPT;
+        draft.content.provider = APPLY_CA_PROVIDERS.LETSENCRYPT;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[SSLPROVIDERS.LETS_ENCRYPT] = values;
+        draft.content.config[APPLY_CA_PROVIDERS.LETSENCRYPT] = values;
       });
       await updateSettings(newSettings);
 
@@ -43,7 +44,7 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== SSLPROVIDERS.LETS_ENCRYPT);
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPT);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -67,14 +68,14 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
   const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
-    initialValues: settings?.content?.config?.[SSLPROVIDERS.LETS_ENCRYPT_STAGING],
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = SSLPROVIDERS.LETS_ENCRYPT_STAGING;
+        draft.content.provider = APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[SSLPROVIDERS.LETS_ENCRYPT_STAGING] = values;
+        draft.content.config[APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING] = values;
       });
       await updateSettings(newSettings);
 
@@ -84,7 +85,7 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== SSLPROVIDERS.LETS_ENCRYPT_STAGING);
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -94,7 +95,188 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
   return (
     <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
       <Form.Item>
-        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.letsencrypt_staging_alert") }}></span>} />
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.letsencryptstaging_alert") }}></span>} />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
+          {t("common.button.save")}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+const SSLProviderEditFormBuypassConfig = () => {
+  const { t } = useTranslation();
+
+  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
+
+  const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.BUYPASS],
+    onSubmit: async (values) => {
+      const newSettings = produce(settings, (draft) => {
+        draft.content ??= {} as SSLProviderSettingsContent;
+        draft.content.provider = APPLY_CA_PROVIDERS.BUYPASS;
+
+        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
+        draft.content.config[APPLY_CA_PROVIDERS.BUYPASS] = values;
+      });
+      await updateSettings(newSettings);
+
+      setFormChanged(false);
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
+  useEffect(() => {
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING);
+  }, [settings?.content?.provider]);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
+  };
+
+  return (
+    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item>
+        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
+          {t("common.button.save")}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+const SSLProviderEditFormGoogleTrustServicesConfig = () => {
+  const { t } = useTranslation();
+
+  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
+
+  const formSchema = z.object({
+    eabKid: z
+      .string({ message: t("settings.sslprovider.form.googletrustservices_eab_kid.placeholder") })
+      .min(1, t("settings.sslprovider.form.googletrustservices_eab_kid.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+    eabHmacKey: z
+      .string({ message: t("settings.sslprovider.form.googletrustservices_eab_hmac_key.placeholder") })
+      .min(1, t("settings.sslprovider.form.googletrustservices_eab_hmac_key.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES],
+    onSubmit: async (values) => {
+      const newSettings = produce(settings, (draft) => {
+        draft.content ??= {} as SSLProviderSettingsContent;
+        draft.content.provider = APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES;
+
+        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
+        draft.content.config[APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES] = values;
+      });
+      await updateSettings(newSettings);
+
+      setFormChanged(false);
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
+  useEffect(() => {
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES);
+  }, [settings?.content?.provider]);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
+  };
+
+  return (
+    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item
+        name="eabKid"
+        label={t("settings.sslprovider.form.googletrustservices_eab_kid.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.googletrustservices_eab_kid.tooltip") }}></span>}
+      >
+        <Input autoComplete="new-password" placeholder={t("settings.sslprovider.form.googletrustservices_eab_kid.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="eabHmacKey"
+        label={t("settings.sslprovider.form.googletrustservices_eab_hmac_key.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.googletrustservices_eab_hmac_key.tooltip") }}></span>}
+      >
+        <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.googletrustservices_eab_hmac_key.placeholder")} />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
+          {t("common.button.save")}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+const SSLProviderEditFormSSLComConfig = () => {
+  const { t } = useTranslation();
+
+  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
+
+  const formSchema = z.object({
+    eabKid: z
+      .string({ message: t("settings.sslprovider.form.sslcom_eab_kid.placeholder") })
+      .min(1, t("settings.sslprovider.form.sslcom_eab_kid.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+    eabHmacKey: z
+      .string({ message: t("settings.sslprovider.form.sslcom_eab_hmac_key.placeholder") })
+      .min(1, t("settings.sslprovider.form.sslcom_eab_hmac_key.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
+  });
+  const formRule = createSchemaFieldRule(formSchema);
+  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.SSLCOM],
+    onSubmit: async (values) => {
+      const newSettings = produce(settings, (draft) => {
+        draft.content ??= {} as SSLProviderSettingsContent;
+        draft.content.provider = APPLY_CA_PROVIDERS.SSLCOM;
+
+        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
+        draft.content.config[APPLY_CA_PROVIDERS.SSLCOM] = values;
+      });
+      await updateSettings(newSettings);
+
+      setFormChanged(false);
+    },
+  });
+
+  const [formChanged, setFormChanged] = useState(false);
+  useEffect(() => {
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.SSLCOM);
+  }, [settings?.content?.provider]);
+
+  const handleFormChange = () => {
+    setFormChanged(true);
+  };
+
+  return (
+    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
+      <Form.Item
+        name="eabKid"
+        label={t("settings.sslprovider.form.sslcom_eab_kid.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.sslcom_eab_kid.tooltip") }}></span>}
+      >
+        <Input autoComplete="new-password" placeholder={t("settings.sslprovider.form.sslcom_eab_kid.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="eabHmacKey"
+        label={t("settings.sslprovider.form.sslcom_eab_hmac_key.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.sslcom_eab_hmac_key.tooltip") }}></span>}
+      >
+        <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.sslcom_eab_hmac_key.placeholder")} />
       </Form.Item>
 
       <Form.Item>
@@ -123,14 +305,14 @@ const SSLProviderEditFormZeroSSLConfig = () => {
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[SSLPROVIDERS.ZERO_SSL],
+    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.ZEROSSL],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = SSLPROVIDERS.ZERO_SSL;
+        draft.content.provider = APPLY_CA_PROVIDERS.ZEROSSL;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[SSLPROVIDERS.ZERO_SSL] = values;
+        draft.content.config[APPLY_CA_PROVIDERS.ZEROSSL] = values;
       });
       await updateSettings(newSettings);
 
@@ -140,7 +322,7 @@ const SSLProviderEditFormZeroSSLConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== SSLPROVIDERS.ZERO_SSL);
+    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.ZEROSSL);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -165,76 +347,6 @@ const SSLProviderEditFormZeroSSLConfig = () => {
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.zerossl_eab_hmac_key.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.zerossl_eab_hmac_key.placeholder")} />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" disabled={!formChanged} loading={pending}>
-          {t("common.button.save")}
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
-
-const SSLProviderEditFormGoogleTrustServicesConfig = () => {
-  const { t } = useTranslation();
-
-  const { pending, settings, updateSettings } = useContext(SSLProviderContext);
-
-  const formSchema = z.object({
-    eabKid: z
-      .string({ message: t("settings.sslprovider.form.gts_eab_kid.placeholder") })
-      .min(1, t("settings.sslprovider.form.gts_eab_kid.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
-    eabHmacKey: z
-      .string({ message: t("settings.sslprovider.form.gts_eab_hmac_key.placeholder") })
-      .min(1, t("settings.sslprovider.form.gts_eab_hmac_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[SSLPROVIDERS.GOOGLE_TRUST_SERVICES],
-    onSubmit: async (values) => {
-      const newSettings = produce(settings, (draft) => {
-        draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = SSLPROVIDERS.GOOGLE_TRUST_SERVICES;
-
-        draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[SSLPROVIDERS.GOOGLE_TRUST_SERVICES] = values;
-      });
-      await updateSettings(newSettings);
-
-      setFormChanged(false);
-    },
-  });
-
-  const [formChanged, setFormChanged] = useState(false);
-  useEffect(() => {
-    setFormChanged(settings?.content?.provider !== SSLPROVIDERS.GOOGLE_TRUST_SERVICES);
-  }, [settings?.content?.provider]);
-
-  const handleFormChange = () => {
-    setFormChanged(true);
-  };
-
-  return (
-    <Form {...formProps} form={formInst} disabled={pending} layout="vertical" onValuesChange={handleFormChange}>
-      <Form.Item
-        name="eabKid"
-        label={t("settings.sslprovider.form.gts_eab_kid.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.gts_eab_kid.tooltip") }}></span>}
-      >
-        <Input autoComplete="new-password" placeholder={t("settings.sslprovider.form.gts_eab_kid.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
-        name="eabHmacKey"
-        label={t("settings.sslprovider.form.gts_eab_hmac_key.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.sslprovider.form.gts_eab_hmac_key.tooltip") }}></span>}
-      >
-        <Input.Password autoComplete="new-password" placeholder={t("settings.sslprovider.form.gts_eab_hmac_key.placeholder")} />
       </Form.Item>
 
       <Form.Item>
@@ -271,17 +383,21 @@ const SettingsSSLProvider = () => {
     fetchData();
   }, []);
 
-  const [providerType, setProviderType] = useState<SSLProviders>(SSLPROVIDERS.LETS_ENCRYPT);
+  const [providerType, setProviderType] = useState<ApplyCAProviderType>(APPLY_CA_PROVIDERS.LETSENCRYPT);
   const providerFormEl = useMemo(() => {
     switch (providerType) {
-      case SSLPROVIDERS.LETS_ENCRYPT:
+      case APPLY_CA_PROVIDERS.LETSENCRYPT:
         return <SSLProviderEditFormLetsEncryptConfig />;
-      case SSLPROVIDERS.LETS_ENCRYPT_STAGING:
+      case APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING:
         return <SSLProviderEditFormLetsEncryptStagingConfig />;
-      case SSLPROVIDERS.ZERO_SSL:
-        return <SSLProviderEditFormZeroSSLConfig />;
-      case SSLPROVIDERS.GOOGLE_TRUST_SERVICES:
+      case APPLY_CA_PROVIDERS.BUYPASS:
+        return <SSLProviderEditFormBuypassConfig />;
+      case APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES:
         return <SSLProviderEditFormGoogleTrustServicesConfig />;
+      case APPLY_CA_PROVIDERS.SSLCOM:
+        return <SSLProviderEditFormSSLComConfig />;
+      case APPLY_CA_PROVIDERS.ZEROSSL:
+        return <SSLProviderEditFormZeroSSLConfig />;
     }
   }, [providerType]);
 
@@ -315,34 +431,48 @@ const SettingsSSLProvider = () => {
       <Show when={!loading} fallback={<Skeleton active />}>
         <Form form={formInst} disabled={formPending} layout="vertical" initialValues={{ provider: providerType }}>
           <Form.Item className="mb-2" name="provider" label={t("settings.sslprovider.form.provider.label")}>
-            <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as SSLProviders)}>
+            <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as ApplyCAProviderType)}>
               <CheckCard
-                avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
-                title={t("settings.sslprovider.form.provider.option.letsencrypt.label")}
+                title={t("provider.letsencrypt")}
                 description="letsencrypt.org"
-                value={SSLPROVIDERS.LETS_ENCRYPT}
+                value={APPLY_CA_PROVIDERS.LETSENCRYPT}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/letsencrypt.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
-                title={t("settings.sslprovider.form.provider.option.letsencrypt_staging.label")}
+                title={t("provider.letsencryptstaging")}
                 description="letsencrypt.org"
-                value={SSLPROVIDERS.LETS_ENCRYPT_STAGING}
+                value={APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/zerossl.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/buypass.png"} className="size-8" />}
                 size="small"
-                title={t("settings.sslprovider.form.provider.option.zerossl.label")}
-                description="zerossl.com"
-                value={SSLPROVIDERS.ZERO_SSL}
+                title={t("provider.buypass")}
+                description="buypass.com"
+                value={APPLY_CA_PROVIDERS.BUYPASS}
               />
               <CheckCard
-                avatar={<img src={"/imgs/acme/google.svg"} className="size-8" />}
+                avatar={<img src={"/imgs/providers/google.svg"} className="size-8" />}
                 size="small"
-                title={t("settings.sslprovider.form.provider.option.gts.label")}
+                title={t("provider.googletrustservices")}
                 description="pki.goog"
-                value={SSLPROVIDERS.GOOGLE_TRUST_SERVICES}
+                value={APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES}
+              />
+              <CheckCard
+                avatar={<img src={"/imgs/providers/sslcom.svg"} className="size-8" />}
+                size="small"
+                title={t("provider.sslcom")}
+                description="ssl.com"
+                value={APPLY_CA_PROVIDERS.SSLCOM}
+              />
+              <CheckCard
+                avatar={<img src={"/imgs/providers/zerossl.svg"} className="size-8" />}
+                size="small"
+                title={t("provider.zerossl")}
+                description="zerossl.com"
+                value={APPLY_CA_PROVIDERS.ZEROSSL}
               />
             </CheckCard.Group>
           </Form.Item>

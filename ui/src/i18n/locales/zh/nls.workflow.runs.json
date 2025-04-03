@@ -21,6 +21,7 @@
   "workflow_run.logs": "日志",
   "workflow_run.logs.menu.show_timestamps": "显示日期时间",
   "workflow_run.logs.menu.show_whitespaces": "显示转义换行符",
+  "workflow_run.logs.menu.download_logs": "下载日志",
 
   "workflow_run.artifacts": "输出产物",
   "workflow_run_artifact.props.type": "类型",

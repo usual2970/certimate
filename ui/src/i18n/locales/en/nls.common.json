@@ -16,6 +16,7 @@
   "common.text.operation_succeeded": "Operation succeeded",
   "common.text.operation_failed": "Operation failed",
   "common.text.request_error": "Request error",
+  "common.text.search": "Search ...",
 
   "common.menu.theme": "Change theme",
   "common.menu.locale": "Change language",

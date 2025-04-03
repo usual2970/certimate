@@ -16,6 +16,7 @@
   "common.text.operation_succeeded": "操作成功",
   "common.text.operation_failed": "操作失败",
   "common.text.request_error": "请求错误",
+  "common.text.search": "搜索 ……",
 
   "common.menu.theme": "切换主题",
   "common.menu.locale": "切换语言",

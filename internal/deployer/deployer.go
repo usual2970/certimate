@@ -32,18 +32,23 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 	}
 
 	nodeConfig := node.GetConfigForDeploy()
-
-	accessRepo := repository.NewAccessRepository()
-	access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
+	options := &deployerOptions{
+		Provider:             domain.DeployProviderType(nodeConfig.Provider),
+		ProviderAccessConfig: make(map[string]any),
+		ProviderDeployConfig: nodeConfig.ProviderConfig,
 	}
 
-	deployer, err := createDeployer(&deployerOptions{
-		Provider:             domain.DeployProviderType(nodeConfig.Provider),
-		ProviderAccessConfig: access.Config,
-		ProviderDeployConfig: nodeConfig.ProviderConfig,
-	})
+	accessRepo := repository.NewAccessRepository()
+	if nodeConfig.ProviderAccessId != "" {
+		access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
+		} else {
+			options.ProviderAccessConfig = access.Config
+		}
+	}
+
+	deployer, err := createDeployer(options)
 	if err != nil {
 		return nil, err
 	}

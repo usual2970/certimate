@@ -126,6 +126,11 @@ type AccessConfigForGoDaddy struct {
 	ApiSecret string `json:"apiSecret"`
 }
 
+type AccessConfigForGoogleTrustServices struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
+}
+
 type AccessConfigForHuaweiCloud struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
@@ -139,8 +144,6 @@ type AccessConfigForJDCloud struct {
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
 }
-
-type AccessConfigForLocal struct{}
 
 type AccessConfigForNamecheap struct {
 	Username string `json:"username"`
@@ -194,6 +197,11 @@ type AccessConfigForSSH struct {
 	KeyPassphrase string `json:"keyPassphrase,omitempty"`
 }
 
+type AccessConfigForSSLCom struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
+}
+
 type AccessConfigForTencentCloud struct {
 	SecretId  string `json:"secretId"`
 	SecretKey string `json:"secretKey"`
@@ -228,4 +236,9 @@ type AccessConfigForWebhook struct {
 type AccessConfigForWestcn struct {
 	Username    string `json:"username"`
 	ApiPassword string `json:"password"`
+}
+
+type AccessConfigForZeroSSL struct {
+	EabKid     string `json:"eabKid"`
+	EabHmacKey string `json:"eabHmacKey"`
 }

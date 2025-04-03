@@ -16,6 +16,8 @@ export type DeployProviderPickerProps = {
 const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DeployProviderPickerProps) => {
   const { t } = useTranslation();
 
+  const [category, setCategory] = useState<string>(DEPLOY_CATEGORIES.ALL);
+
   const [keyword, setKeyword] = useState<string>();
   const keywordInputRef = useRef<InputRef>(null);
   useEffect(() => {
@@ -24,10 +26,15 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
     }
   }, []);
 
-  const [category, setCategory] = useState<string>(DEPLOY_CATEGORIES.ALL);
-
   const providers = useMemo(() => {
     return Array.from(deployProvidersMap.values())
+      .filter((provider) => {
+        if (category && category !== DEPLOY_CATEGORIES.ALL) {
+          return provider.category === category;
+        }
+
+        return true;
+      })
       .filter((provider) => {
         if (keyword) {
           const value = keyword.toLowerCase();
@@ -35,15 +42,8 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
         }
 
         return true;
-      })
-      .filter((provider) => {
-        if (category && category !== DEPLOY_CATEGORIES.ALL) {
-          return provider.category === category;
-        }
-
-        return true;
       });
-  }, [keyword, category]);
+  }, [category, keyword]);
 
   const handleProviderTypeSelect = (value: string) => {
     onSelect?.(value);
@@ -51,7 +51,7 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
 
   return (
     <div className={className} style={style}>
-      <Input.Search ref={keywordInputRef} placeholder={placeholder} onChange={(e) => setKeyword(e.target.value.trim())} />
+      <Input.Search ref={keywordInputRef} placeholder={placeholder ?? t("common.text.search")} onChange={(e) => setKeyword(e.target.value.trim())} />
 
       <div className="mt-4">
         <Flex>

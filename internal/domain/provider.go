@@ -9,55 +9,79 @@ type AccessProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	AccessProviderType1Panel       = AccessProviderType("1panel")
-	AccessProviderTypeACMEHttpReq  = AccessProviderType("acmehttpreq")
-	AccessProviderTypeAkamai       = AccessProviderType("akamai") // Akamai（预留）
-	AccessProviderTypeAliyun       = AccessProviderType("aliyun")
-	AccessProviderTypeAWS          = AccessProviderType("aws")
-	AccessProviderTypeAzure        = AccessProviderType("azure")
-	AccessProviderTypeBaiduCloud   = AccessProviderType("baiducloud")
-	AccessProviderTypeBaishan      = AccessProviderType("baishan")
-	AccessProviderTypeBaotaPanel   = AccessProviderType("baotapanel")
-	AccessProviderTypeBytePlus     = AccessProviderType("byteplus")
-	AccessProviderTypeCacheFly     = AccessProviderType("cachefly")
-	AccessProviderTypeCdnfly       = AccessProviderType("cdnfly")
-	AccessProviderTypeCloudflare   = AccessProviderType("cloudflare")
-	AccessProviderTypeClouDNS      = AccessProviderType("cloudns")
-	AccessProviderTypeCMCCCloud    = AccessProviderType("cmcccloud")
-	AccessProviderTypeCTCCCloud    = AccessProviderType("ctcccloud") // 联通云（预留）
-	AccessProviderTypeCUCCCloud    = AccessProviderType("cucccloud") // 天翼云（预留）
-	AccessProviderTypeDeSEC        = AccessProviderType("desec")
-	AccessProviderTypeDNSLA        = AccessProviderType("dnsla")
-	AccessProviderTypeDogeCloud    = AccessProviderType("dogecloud")
-	AccessProviderTypeDynv6        = AccessProviderType("dynv6")
-	AccessProviderTypeEdgio        = AccessProviderType("edgio")
-	AccessProviderTypeFastly       = AccessProviderType("fastly") // Fastly（预留）
-	AccessProviderTypeGname        = AccessProviderType("gname")
-	AccessProviderTypeGcore        = AccessProviderType("gcore")
-	AccessProviderTypeGoDaddy      = AccessProviderType("godaddy")
-	AccessProviderTypeGoEdge       = AccessProviderType("goedge") // GoEdge（预留）
-	AccessProviderTypeHuaweiCloud  = AccessProviderType("huaweicloud")
-	AccessProviderTypeJDCloud      = AccessProviderType("jdcloud")
-	AccessProviderTypeKubernetes   = AccessProviderType("k8s")
-	AccessProviderTypeLocal        = AccessProviderType("local")
-	AccessProviderTypeNamecheap    = AccessProviderType("namecheap")
-	AccessProviderTypeNameDotCom   = AccessProviderType("namedotcom")
-	AccessProviderTypeNameSilo     = AccessProviderType("namesilo")
-	AccessProviderTypeNS1          = AccessProviderType("ns1")
-	AccessProviderTypePorkbun      = AccessProviderType("porkbun")
-	AccessProviderTypePowerDNS     = AccessProviderType("powerdns")
-	AccessProviderTypeQiniu        = AccessProviderType("qiniu")
-	AccessProviderTypeQingCloud    = AccessProviderType("qingcloud") // 青云（预留）
-	AccessProviderTypeRainYun      = AccessProviderType("rainyun")
-	AccessProviderTypeSafeLine     = AccessProviderType("safeline")
-	AccessProviderTypeSSH          = AccessProviderType("ssh")
-	AccessProviderTypeTencentCloud = AccessProviderType("tencentcloud")
-	AccessProviderTypeUCloud       = AccessProviderType("ucloud")
-	AccessProviderTypeUpyun        = AccessProviderType("upyun")
-	AccessProviderTypeVercel       = AccessProviderType("vercel")
-	AccessProviderTypeVolcEngine   = AccessProviderType("volcengine")
-	AccessProviderTypeWebhook      = AccessProviderType("webhook")
-	AccessProviderTypeWestcn       = AccessProviderType("westcn")
+	AccessProviderType1Panel              = AccessProviderType("1panel")
+	AccessProviderTypeACMEHttpReq         = AccessProviderType("acmehttpreq")
+	AccessProviderTypeAkamai              = AccessProviderType("akamai") // Akamai（预留）
+	AccessProviderTypeAliyun              = AccessProviderType("aliyun")
+	AccessProviderTypeAWS                 = AccessProviderType("aws")
+	AccessProviderTypeAzure               = AccessProviderType("azure")
+	AccessProviderTypeBaiduCloud          = AccessProviderType("baiducloud")
+	AccessProviderTypeBaishan             = AccessProviderType("baishan")
+	AccessProviderTypeBaotaPanel          = AccessProviderType("baotapanel")
+	AccessProviderTypeBytePlus            = AccessProviderType("byteplus")
+	AccessProviderTypeBuypass             = AccessProviderType("buypass")
+	AccessProviderTypeCacheFly            = AccessProviderType("cachefly")
+	AccessProviderTypeCdnfly              = AccessProviderType("cdnfly")
+	AccessProviderTypeCloudflare          = AccessProviderType("cloudflare")
+	AccessProviderTypeClouDNS             = AccessProviderType("cloudns")
+	AccessProviderTypeCMCCCloud           = AccessProviderType("cmcccloud")
+	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 联通云（预留）
+	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 天翼云（预留）
+	AccessProviderTypeDeSEC               = AccessProviderType("desec")
+	AccessProviderTypeDNSLA               = AccessProviderType("dnsla")
+	AccessProviderTypeDogeCloud           = AccessProviderType("dogecloud")
+	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
+	AccessProviderTypeEdgio               = AccessProviderType("edgio")
+	AccessProviderTypeFastly              = AccessProviderType("fastly") // Fastly（预留）
+	AccessProviderTypeGname               = AccessProviderType("gname")
+	AccessProviderTypeGcore               = AccessProviderType("gcore")
+	AccessProviderTypeGoDaddy             = AccessProviderType("godaddy")
+	AccessProviderTypeGoEdge              = AccessProviderType("goedge") // GoEdge（预留）
+	AccessProviderTypeGoogleTrustServices = AccessProviderType("googletrustservices")
+	AccessProviderTypeHuaweiCloud         = AccessProviderType("huaweicloud")
+	AccessProviderTypeJDCloud             = AccessProviderType("jdcloud")
+	AccessProviderTypeKubernetes          = AccessProviderType("k8s")
+	AccessProviderTypeLetsEncrypt         = AccessProviderType("letsencrypt")
+	AccessProviderTypeLetsEncryptStaging  = AccessProviderType("letsencryptstaging")
+	AccessProviderTypeLocal               = AccessProviderType("local")
+	AccessProviderTypeNamecheap           = AccessProviderType("namecheap")
+	AccessProviderTypeNameDotCom          = AccessProviderType("namedotcom")
+	AccessProviderTypeNameSilo            = AccessProviderType("namesilo")
+	AccessProviderTypeNS1                 = AccessProviderType("ns1")
+	AccessProviderTypePorkbun             = AccessProviderType("porkbun")
+	AccessProviderTypePowerDNS            = AccessProviderType("powerdns")
+	AccessProviderTypeQiniu               = AccessProviderType("qiniu")
+	AccessProviderTypeQingCloud           = AccessProviderType("qingcloud") // 青云（预留）
+	AccessProviderTypeRainYun             = AccessProviderType("rainyun")
+	AccessProviderTypeSafeLine            = AccessProviderType("safeline")
+	AccessProviderTypeSSH                 = AccessProviderType("ssh")
+	AccessProviderTypeSSLCOM              = AccessProviderType("sslcom")
+	AccessProviderTypeTencentCloud        = AccessProviderType("tencentcloud")
+	AccessProviderTypeUCloud              = AccessProviderType("ucloud")
+	AccessProviderTypeUpyun               = AccessProviderType("upyun")
+	AccessProviderTypeVercel              = AccessProviderType("vercel")
+	AccessProviderTypeVolcEngine          = AccessProviderType("volcengine")
+	AccessProviderTypeWebhook             = AccessProviderType("webhook")
+	AccessProviderTypeWestcn              = AccessProviderType("westcn")
+	AccessProviderTypeZeroSSL             = AccessProviderType("zerossl")
+)
+
+type ApplyCAProviderType string
+
+/*
+申请证书 CA 提供商常量值。
+始终等于授权提供商类型。
+
+	注意：如果追加新的常量值，请保持以 ASCII 排序。
+	NOTICE: If you add new constant, please keep ASCII order.
+*/
+const (
+	ApplyCAProviderTypeBuypass             = ApplyCAProviderType(string(AccessProviderTypeBuypass))
+	ApplyCAProviderTypeGoogleTrustServices = ApplyCAProviderType(string(AccessProviderTypeGoogleTrustServices))
+	ApplyCAProviderTypeLetsEncrypt         = ApplyCAProviderType(string(AccessProviderTypeLetsEncrypt))
+	ApplyCAProviderTypeLetsEncryptStaging  = ApplyCAProviderType(string(AccessProviderTypeLetsEncryptStaging))
+	ApplyCAProviderTypeSSLCom              = ApplyCAProviderType(string(AccessProviderTypeSSLCOM))
+	ApplyCAProviderTypeZeroSSL             = ApplyCAProviderType(string(AccessProviderTypeZeroSSL))
 )
 
 type ApplyDNSProviderType string
@@ -111,7 +135,7 @@ const (
 type DeployProviderType string
 
 /*
-部署目标提供商常量值。
+部署证书主机提供商常量值。
 短横线前的部分始终等于授权提供商类型。
 
 	注意：如果追加新的常量值，请保持以 ASCII 排序。

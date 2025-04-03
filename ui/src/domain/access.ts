@@ -28,10 +28,10 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
+      | AccessConfigForGoogleTrustServices
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
-      | AccessConfigForLocal
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
@@ -41,6 +41,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForRainYun
       | AccessConfigForSafeLine
       | AccessConfigForSSH
+      | AccessConfigForSSLCom
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
@@ -48,6 +49,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForVolcEngine
       | AccessConfigForWebhook
       | AccessConfigForWestcn
+      | AccessConfigForZeroSSL
     );
 }
 
@@ -164,6 +166,11 @@ export type AccessConfigForGoDaddy = {
   apiSecret: string;
 };
 
+export type AccessConfigForGoogleTrustServices = {
+  eabKid: string;
+  eabHmacKey: string;
+};
+
 export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
@@ -177,8 +184,6 @@ export type AccessConfigForJDCloud = {
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
 };
-
-export type AccessConfigForLocal = NonNullable<unknown>;
 
 export type AccessConfigForNamecheap = {
   username: string;
@@ -232,6 +237,11 @@ export type AccessConfigForSSH = {
   keyPassphrase?: string;
 };
 
+export type AccessConfigForSSLCom = {
+  eabKid: string;
+  eabHmacKey: string;
+};
+
 export type AccessConfigForTencentCloud = {
   secretId: string;
   secretKey: string;
@@ -266,5 +276,10 @@ export type AccessConfigForWebhook = {
 export type AccessConfigForWestcn = {
   username: string;
   apiPassword: string;
+};
+
+export type AccessConfigForZeroSSL = {
+  eabKid: string;
+  eabHmacKey: string;
 };
 // #endregion

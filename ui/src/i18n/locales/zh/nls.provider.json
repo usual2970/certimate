@@ -40,6 +40,7 @@
   "provider.baotapanel.site": "宝塔面板 - 网站",
   "provider.byteplus": "BytePlus",
   "provider.byteplus.cdn": "BytePlus - 内容分发网络 CDN",
+  "provider.buypass": "Buypass AS",
   "provider.cachefly": "CacheFly",
   "provider.cdnfly": "Cdnfly",
   "provider.cloudflare": "Cloudflare",
@@ -61,6 +62,7 @@
   "provider.godaddy": "GoDaddy",
   "provider.goedge": "GoEdge",
   "provider.goedge.cdn": "GoEdge - 内容分发网络 CDN",
+  "provider.googletrustservices": "Google Trust Services",
   "provider.huaweicloud": "华为云",
   "provider.huaweicloud.cdn": "华为云 - 内容分发网络 CDN",
   "provider.huaweicloud.dns": "华为云 - 云解析 DNS",
@@ -75,11 +77,13 @@
   "provider.jdcloud.vod": "京东云 - 视频点播",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
+  "provider.letsencrypt": "Let's Encrypt",
+  "provider.letsencryptstaging": "Let's Encrypt 测试环境",
   "provider.local": "本地部署",
   "provider.namecheap": "Namecheap",
   "provider.namedotcom": "Name.com",
   "provider.namesilo": "NameSilo",
-  "provider.ns1": "NS1（IBM NS1 Connect）",
+  "provider.ns1": "NS1 (IBM NS1 Connect)",
   "provider.porkbun": "Porkbun",
   "provider.powerdns": "PowerDNS",
   "provider.qiniu": "七牛云",
@@ -89,6 +93,7 @@
   "provider.rainyun": "雨云",
   "provider.safeline": "雷池",
   "provider.ssh": "SSH 部署",
+  "provider.sslcom": "SSL.com",
   "provider.tencentcloud": "腾讯云",
   "provider.tencentcloud.cdn": "腾讯云 - 内容分发网络 CDN",
   "provider.tencentcloud.clb": "腾讯云 - 负载均衡 CLB",
@@ -121,6 +126,7 @@
   "provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
   "provider.webhook": "Webhook",
   "provider.westcn": "西部数码",
+  "provider.zerossl": "ZeroSSL",
 
   "provider.category.all": "全部",
   "provider.category.cdn": "CDN",
@@ -130,5 +136,7 @@
   "provider.category.av": "音视频",
   "provider.category.serverless": "Serverless",
   "provider.category.website": "网站托管",
-  "provider.category.other": "其他"
+  "provider.category.other": "其他",
+
+  "provider.default_ca_provider.label": "（默认）不指定，跟随全局设置"
 }

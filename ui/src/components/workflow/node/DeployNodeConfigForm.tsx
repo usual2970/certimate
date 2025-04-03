@@ -7,8 +7,8 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import DeployProviderPicker from "@/components/provider/DeployProviderPicker";
-import DeployProviderSelect from "@/components/provider/DeployProviderSelect";
+import DeployProviderPicker from "@/components/provider/DeployProviderPicker.tsx";
+import DeployProviderSelect from "@/components/provider/DeployProviderSelect.tsx";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
@@ -125,8 +125,14 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       provider: z.string({ message: t("workflow_node.deploy.form.provider.placeholder") }).nonempty(t("workflow_node.deploy.form.provider.placeholder")),
       providerAccessId: z
         .string({ message: t("workflow_node.deploy.form.provider_access.placeholder") })
-        .nonempty(t("workflow_node.deploy.form.provider_access.placeholder")),
-      providerConfig: z.any(),
+        .nullish()
+        .refine((v) => {
+          if (!fieldProvider) return true;
+
+          const provider = deployProvidersMap.get(fieldProvider);
+          return !!provider?.builtin || !!v;
+        }, t("workflow_node.deploy.form.provider_access.placeholder")),
+      providerConfig: z.any().nullish(),
       skipOnLastSucceeded: z.boolean().nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
@@ -136,6 +142,17 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     });
 
     const fieldProvider = Form.useWatch("provider", { form: formInst, preserve: true });
+
+    const [showProviderAccess, setShowProviderAccess] = useState(false);
+    useEffect(() => {
+      // 内置的部署提供商（如本地部署）无需显示授权信息字段
+      if (fieldProvider) {
+        const provider = deployProvidersMap.get(fieldProvider);
+        setShowProviderAccess(!provider?.builtin);
+      } else {
+        setShowProviderAccess(false);
+      }
+    }, [fieldProvider]);
 
     const [nestedFormInst] = Form.useForm();
     const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeDeployConfigFormProviderConfigForm" });
@@ -292,7 +309,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
       onValuesChange?.(formInst.getFieldsValue(true));
     };
 
-    const handleProviderSelect = (value: string) => {
+    const handleProviderSelect = (value?: string | undefined) => {
       if (fieldProvider === value) return;
 
       // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
@@ -310,7 +327,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         }
         formInst.setFieldsValue(newValues);
 
-        if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value)?.provider) {
+        if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value!)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -364,10 +381,11 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
                 showSearch
                 onSelect={handleProviderSelect}
+                onClear={handleProviderSelect}
               />
             </Form.Item>
 
-            <Form.Item className="mb-0">
+            <Form.Item className="mb-0" hidden={!showProviderAccess}>
               <label className="mb-1 block">
                 <div className="flex w-full items-center justify-between gap-4">
                   <div className="max-w-full grow truncate">
@@ -381,16 +399,17 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                   <div className="text-right">
                     <AccessEditModal
                       data={{ provider: deployProvidersMap.get(fieldProvider!)?.provider }}
-                      preset="add"
+                      range="both-dns-hosting"
+                      scene="add"
                       trigger={
                         <Button size="small" type="link">
-                          <PlusOutlinedIcon />
                           {t("workflow_node.deploy.form.provider_access.button")}
+                          <PlusOutlinedIcon className="text-xs" />
                         </Button>
                       }
                       afterSubmit={(record) => {
                         const provider = accessProvidersMap.get(record.provider);
-                        if (provider?.usages?.includes(ACCESS_USAGES.DEPLOY)) {
+                        if (provider?.usages?.includes(ACCESS_USAGES.HOSTING)) {
                           formInst.setFieldValue("providerAccessId", record.id);
                         }
                       }}
@@ -406,7 +425,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     }
 
                     const provider = accessProvidersMap.get(record.provider);
-                    return !!provider?.usages?.includes(ACCESS_USAGES.DEPLOY);
+                    return !!provider?.usages?.includes(ACCESS_USAGES.HOSTING);
                   }}
                   placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
                 />

@@ -86,8 +86,8 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pAWSRoute53.NewChallengeProvider(&pAWSRoute53.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
-				Region:                maputil.GetString(options.ProviderApplyConfig, "region"),
-				HostedZoneId:          maputil.GetString(options.ProviderApplyConfig, "hostedZoneId"),
+				Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
+				HostedZoneId:          maputil.GetString(options.ProviderExtendedConfig, "hostedZoneId"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -279,7 +279,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pHuaweiCloud.NewChallengeProvider(&pHuaweiCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
-				Region:                maputil.GetString(options.ProviderApplyConfig, "region"),
+				Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -296,7 +296,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pJDCloud.NewChallengeProvider(&pJDCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
-				RegionId:              maputil.GetString(options.ProviderApplyConfig, "regionId"),
+				RegionId:              maputil.GetString(options.ProviderExtendedConfig, "regionId"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -433,7 +433,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 				applicant, err := pTencentCloudEO.NewChallengeProvider(&pTencentCloudEO.ChallengeProviderConfig{
 					SecretId:              access.SecretId,
 					SecretKey:             access.SecretKey,
-					ZoneId:                maputil.GetString(options.ProviderApplyConfig, "zoneId"),
+					ZoneId:                maputil.GetString(options.ProviderExtendedConfig, "zoneId"),
 					DnsPropagationTimeout: options.DnsPropagationTimeout,
 					DnsTTL:                options.DnsTTL,
 				})
