@@ -41,6 +41,7 @@ export const NOTIFY_CHANNELS = Object.freeze({
   DINGTALK: "dingtalk",
   EMAIL: "email",
   LARK: "lark",
+  PUSHPLUS: "pushplus",
   SERVERCHAN: "serverchan",
   TELEGRAM: "telegram",
   WEBHOOK: "webhook",
@@ -59,6 +60,7 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.DINGTALK]?: DingTalkNotifyChannelConfig;
   [NOTIFY_CHANNELS.EMAIL]?: EmailNotifyChannelConfig;
   [NOTIFY_CHANNELS.LARK]?: LarkNotifyChannelConfig;
+  [NOTIFY_CHANNELS.PUSHPLUS]?: PushPlusNotifyChannelConfig;
   [NOTIFY_CHANNELS.SERVERCHAN]?: ServerChanNotifyChannelConfig;
   [NOTIFY_CHANNELS.TELEGRAM]?: TelegramNotifyChannelConfig;
   [NOTIFY_CHANNELS.WEBHOOK]?: WebhookNotifyChannelConfig;
@@ -93,6 +95,11 @@ export type LarkNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+export type PushPlusNotifyChannelConfig = {
+  token: string;
+  enabled?: boolean;
+};
+
 export type ServerChanNotifyChannelConfig = {
   url: string;
   enabled?: boolean;
@@ -124,6 +131,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
     [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],
     [NOTIFY_CHANNELS.DINGTALK, "common.notifier.dingtalk"],
     [NOTIFY_CHANNELS.LARK, "common.notifier.lark"],
+    [NOTIFY_CHANNELS.PUSHPLUS, "common.notifier.pushplus"],
     [NOTIFY_CHANNELS.WECOM, "common.notifier.wecom"],
     [NOTIFY_CHANNELS.TELEGRAM, "common.notifier.telegram"],
     [NOTIFY_CHANNELS.SERVERCHAN, "common.notifier.serverchan"],

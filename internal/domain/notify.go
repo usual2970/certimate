@@ -13,6 +13,7 @@ const (
 	NotifyChannelTypeDingTalk   = NotifyChannelType("dingtalk")
 	NotifyChannelTypeEmail      = NotifyChannelType("email")
 	NotifyChannelTypeLark       = NotifyChannelType("lark")
+	NotifyChannelTypePushPlus   = NotifyChannelType("pushplus")
 	NotifyChannelTypeServerChan = NotifyChannelType("serverchan")
 	NotifyChannelTypeTelegram   = NotifyChannelType("telegram")
 	NotifyChannelTypeWebhook    = NotifyChannelType("webhook")

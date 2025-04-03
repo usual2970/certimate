@@ -39,6 +39,7 @@
   "common.notifier.dingtalk": "DingTalk",
   "common.notifier.email": "Email",
   "common.notifier.lark": "Lark",
+  "common.notifier.pushplus": "PushPlus",
   "common.notifier.serverchan": "ServerChan",
   "common.notifier.telegram": "Telegram",
   "common.notifier.webhook": "Webhook",

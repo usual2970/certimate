@@ -39,6 +39,7 @@
   "common.notifier.dingtalk": "钉钉",
   "common.notifier.email": "邮件",
   "common.notifier.lark": "飞书",
+  "common.notifier.pushplus": "PushPlus推送加",
   "common.notifier.serverchan": "Server 酱",
   "common.notifier.telegram": "Telegram",
   "common.notifier.webhook": "Webhook",

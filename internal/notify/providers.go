@@ -9,6 +9,7 @@ import (
 	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
+	pPushPlus "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushplus"
 	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
@@ -48,6 +49,11 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 	case domain.NotifyChannelTypeLark:
 		return pLark.NewNotifier(&pLark.NotifierConfig{
 			WebhookUrl: maputil.GetString(channelConfig, "webhookUrl"),
+		})
+
+	case domain.NotifyChannelTypePushPlus:
+		return pPushPlus.NewNotifier(&pPushPlus.NotifierConfig{
+			Token: maputil.GetString(channelConfig, "token"),
 		})
 
 	case domain.NotifyChannelTypeServerChan:
