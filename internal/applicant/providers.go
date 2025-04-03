@@ -137,6 +137,7 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 
 			applicant, err := pCloudflare.NewChallengeProvider(&pCloudflare.ChallengeProviderConfig{
 				DnsApiToken:           access.DnsApiToken,
+				ZoneApiToken:          access.ZoneApiToken,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
