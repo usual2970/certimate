@@ -182,7 +182,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 		return errors.New("config `listenerId` is required")
 	}
 
-	if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, cloudCertId); err != nil {
+	if err := d.updateListenerCertificate(ctx, d.config.ListenerId, cloudCertId); err != nil {
 		return err
 	}
 
