@@ -113,7 +113,7 @@ const DeployNodeConfigFormVolcEngineALBConfig = ({
 
       <Show when={fieldResourceType === RESOURCE_TYPE_LOADBALANCER}>
         <Form.Item
-          name="listenerId"
+          name="loadbalancerId"
           label={t("workflow_node.deploy.form.volcengine_alb_loadbalancer_id.label")}
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.volcengine_alb_loadbalancer_id.tooltip") }}></span>}
