@@ -261,6 +261,7 @@ func init() {
 				Id        string           `json:"id"`
 				Type      string           `json:"type"`
 				Name      string           `json:"name"`
+				Config    map[string]any   `json:"config"`
 				Inputs    []map[string]any `json:"inputs"`
 				Outputs   []map[string]any `json:"outputs"`
 				Next      *dWorkflowNode   `json:"next,omitempty"`
