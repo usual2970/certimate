@@ -49,6 +49,7 @@ import (
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
+	pRainYunRCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/rainyun-rcdn"
 	pSafeLine "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/safeline"
 	pSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	pTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
@@ -673,6 +674,27 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					SecretKey: access.SecretKey,
 					Hub:       maputil.GetString(options.ProviderDeployConfig, "hub"),
 					Domain:    maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeRainYunRCDN:
+		{
+			access := domain.AccessConfigForRainYun{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeTencentCloudCDN:
+				deployer, err := pRainYunRCDN.NewDeployer(&pRainYunRCDN.DeployerConfig{
+					ApiKey:     access.ApiKey,
+					InstanceId: maputil.GetInt32(options.ProviderDeployConfig, "instanceId"),
+					Domain:     maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
 

@@ -186,6 +186,7 @@ const (
 	DeployProviderTypeQiniuCDN              = DeployProviderType("qiniu-cdn")
 	DeployProviderTypeQiniuKodo             = DeployProviderType("qiniu-kodo")
 	DeployProviderTypeQiniuPili             = DeployProviderType("qiniu-pili")
+	DeployProviderTypeRainYunRCDN           = DeployProviderType("rainyun-rcdn")
 	DeployProviderTypeSafeLine              = DeployProviderType("safeline")
 	DeployProviderTypeSSH                   = DeployProviderType("ssh")
 	DeployProviderTypeTencentCloudCDN       = DeployProviderType("tencentcloud-cdn")
