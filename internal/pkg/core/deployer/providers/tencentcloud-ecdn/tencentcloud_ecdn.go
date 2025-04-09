@@ -107,7 +107,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		// REF: https://cloud.tencent.com/document/product/400/91667
 		deployCertificateInstanceReq := tcssl.NewDeployCertificateInstanceRequest()
 		deployCertificateInstanceReq.CertificateId = common.StringPtr(upres.CertId)
-		deployCertificateInstanceReq.ResourceType = common.StringPtr("ecdn")
+		deployCertificateInstanceReq.ResourceType = common.StringPtr("cdn")
 		deployCertificateInstanceReq.Status = common.Int64Ptr(1)
 		deployCertificateInstanceReq.InstanceIdList = common.StringPtrs(instanceIds)
 		deployCertificateInstanceResp, err := d.sdkClients.SSL.DeployCertificateInstance(deployCertificateInstanceReq)
