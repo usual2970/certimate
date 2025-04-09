@@ -1,6 +1,6 @@
 name: "❓ Questions"
 description: "遇到了困难需要求助？ / Have problem in use and need help?"
-title: "[Feature] 简要描述你遇到的问题"
+title: "简要描述你遇到的问题"
 body:
   - type: markdown
     attributes: 
@@ -18,6 +18,14 @@ body:
         2. Yes, I've searched for [existing issues](https://github.com/usual2970/certimate/issues) (including closed ones) on GitHub and didn't find any similar.
         3. Yes, I've read the [documentation](https://docs.certimate.me/en/) and didn't find any similar.
         4. Please describe the problem in detail according to the template specification, otherwise the issue will be closed directly.
+
+  - type: input
+    attributes:
+      label: 软件版本 / Release Version
+      description: 请提供 Certimate 的具体版本。 / Please provide the specific version of Certimate.
+      placeholder: (e.g. v1.0.0)
+    validations:
+      required: true
 
   - type: textarea
     attributes:
