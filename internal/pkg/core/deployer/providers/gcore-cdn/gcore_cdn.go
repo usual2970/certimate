@@ -100,9 +100,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		SSlEnabled:         true,
 		SSLData:            int(updateResourceCertId),
 		ProxySSLEnabled:    getResourceResp.ProxySSLEnabled,
-		ProxySSLCA:         &getResourceResp.ProxySSLCA,
-		ProxySSLData:       &getResourceResp.ProxySSLData,
-		Options:            getResourceResp.Options,
+	}
+	if getResourceResp.ProxySSLCA != 0 {
+		updateResourceReq.ProxySSLCA = &getResourceResp.ProxySSLCA
+	}
+	if getResourceResp.ProxySSLData != 0 {
+		updateResourceReq.ProxySSLData = &getResourceResp.ProxySSLData
+	}
+	if getResourceResp.Options != nil {
+		updateResourceReq.Options = getResourceResp.Options
 	}
 	updateResourceResp, err := d.sdkClient.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
 	d.logger.Debug("sdk request 'resources.Update'", slog.Int64("resourceId", d.config.ResourceId), slog.Any("request", updateResourceReq), slog.Any("response", updateResourceResp))

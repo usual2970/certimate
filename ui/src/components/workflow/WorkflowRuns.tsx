@@ -11,7 +11,7 @@ import {
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
 import { useRequest } from "ahooks";
-import { Button, Empty, Modal, Space, Table, type TableProps, Tag, Tooltip, notification } from "antd";
+import { Alert, Button, Empty, Modal, Space, Table, type TableProps, Tag, Tooltip, notification } from "antd";
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
@@ -284,6 +284,8 @@ const WorkflowRuns = ({ className, style, workflowId }: WorkflowRunsProps) => {
       {NotificationContextHolder}
 
       <div className={className} style={style}>
+        <Alert className="mb-4" type="warning" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_run.table.alert") }}></span>} />
+
         <Table<WorkflowRunModel>
           columns={tableColumns}
           dataSource={tableData}
