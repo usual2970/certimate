@@ -91,6 +91,7 @@
   "provider.qiniu.kodo": "Qiniu - Kodo",
   "provider.qiniu.pili": "Qiniu - Pili",
   "provider.rainyun": "Rain Yun",
+  "provider.rainyun.rcdn": "Rain Yun - RCDN (Rain Content Delivery Network)",
   "provider.safeline": "SafeLine",
   "provider.ssh": "SSH deployment",
   "provider.sslcom": "SSL.com",

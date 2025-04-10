@@ -89,10 +89,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	u.logger.Debug("sdk request 'ussl.UploadNormalCertificate'", slog.Any("request", uploadNormalCertificateReq), slog.Any("response", uploadNormalCertificateResp))
 	if err != nil {
 		if uploadNormalCertificateResp != nil && uploadNormalCertificateResp.GetRetCode() == 80035 {
-			if res, err := u.getExistCert(ctx, certPem); err != nil {
+			if res, err := u.getCertIfExists(ctx, certPem); err != nil {
 				return nil, err
 			} else if res == nil {
-				return nil, errors.New("no certificate found")
+				return nil, errors.New("ucloud ssl: no certificate found")
 			} else {
 				u.logger.Info("ssl certificate already exists")
 				return res, nil
@@ -112,7 +112,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}, nil
 }
 
-func (u *UploaderProvider) getExistCert(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPem)
 	if err != nil {

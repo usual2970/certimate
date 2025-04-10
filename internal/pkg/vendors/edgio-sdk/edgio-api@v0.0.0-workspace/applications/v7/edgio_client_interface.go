@@ -3,7 +3,7 @@ package edgio_api
 import (
 	"context"
 
-	"github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
+	"github.com/Edgio/edgio-api/applications/v7/dtos"
 )
 
 type EdgioClientInterface interface {

@@ -58,7 +58,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	// 遍历证书列表，避免重复上传
-	if res, err := u.getExistCert(ctx, certPem, privkeyPem); err != nil {
+	if res, err := u.getCertIfExists(ctx, certPem, privkeyPem); err != nil {
 		return nil, err
 	} else if res != nil {
 		u.logger.Info("ssl certificate already exists")
@@ -82,7 +82,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 遍历证书列表，获取刚刚上传证书 ID
-	if res, err := u.getExistCert(ctx, certPem, privkeyPem); err != nil {
+	if res, err := u.getCertIfExists(ctx, certPem, privkeyPem); err != nil {
 		return nil, err
 	} else if res == nil {
 		return nil, fmt.Errorf("no ssl certificate found, may be upload failed (code: %d, message: %s)", uploadWebsiteSSLResp.GetCode(), uploadWebsiteSSLResp.GetMessage())
@@ -91,7 +91,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}
 }
 
-func (u *UploaderProvider) getExistCert(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
 	searchWebsiteSSLPageNumber := int32(1)
 	searchWebsiteSSLPageSize := int32(100)
 	for {
