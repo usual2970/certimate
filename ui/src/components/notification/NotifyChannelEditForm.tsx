@@ -1,8 +1,8 @@
-import { forwardRef, useImperativeHandle, useMemo } from "react";
-import { Form, type FormInstance } from "antd";
+import {forwardRef, useImperativeHandle, useMemo} from "react";
+import {Form, type FormInstance} from "antd";
 
-import { NOTIFY_CHANNELS, type NotifyChannelsSettingsContent } from "@/domain/settings";
-import { useAntdForm } from "@/hooks";
+import {NOTIFY_CHANNELS, type NotifyChannelsSettingsContent} from "@/domain/settings";
+import {useAntdForm} from "@/hooks";
 
 import NotifyChannelEditFormBarkFields from "./NotifyChannelEditFormBarkFields";
 import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalkFields";
@@ -14,6 +14,7 @@ import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServer
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
+import NotifyChannelEditFormMattermostFields from "@/components/notification/NotifyChannelEditFormMattermostFields.tsx";
 
 type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 
@@ -54,6 +55,8 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
           return <NotifyChannelEditFormGotifyFields />;
         case NOTIFY_CHANNELS.LARK:
           return <NotifyChannelEditFormLarkFields />;
+        case NOTIFY_CHANNELS.MATTERMOST:
+          return <NotifyChannelEditFormMattermostFields />;
         case NOTIFY_CHANNELS.PUSHPLUS:
           return <NotifyChannelEditFormPushPlusFields />;
         case NOTIFY_CHANNELS.SERVERCHAN:
