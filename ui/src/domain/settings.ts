@@ -44,6 +44,7 @@ export const NOTIFY_CHANNELS = Object.freeze({
   EMAIL: "email",
   GOTIFY: "gotify",
   LARK: "lark",
+  MATTERMOST: "mattermost",
   PUSHPLUS: "pushplus",
   SERVERCHAN: "serverchan",
   TELEGRAM: "telegram",
@@ -64,6 +65,7 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.EMAIL]?: EmailNotifyChannelConfig;
   [NOTIFY_CHANNELS.GOTIFY]?: GotifyNotifyChannelConfig;
   [NOTIFY_CHANNELS.LARK]?: LarkNotifyChannelConfig;
+  [NOTIFY_CHANNELS.MATTERMOST]?: MattermostNotifyChannelConfig;
   [NOTIFY_CHANNELS.PUSHPLUS]?: PushPlusNotifyChannelConfig;
   [NOTIFY_CHANNELS.SERVERCHAN]?: ServerChanNotifyChannelConfig;
   [NOTIFY_CHANNELS.TELEGRAM]?: TelegramNotifyChannelConfig;
@@ -106,6 +108,14 @@ export type LarkNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+export type MattermostNotifyChannelConfig = {
+  serverUrl: string;
+  channel: string;
+  username: string;
+  password: string;
+  enabled?: boolean;
+}
+
 export type PushPlusNotifyChannelConfig = {
   token: string;
   enabled?: boolean;
@@ -143,6 +153,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
     [NOTIFY_CHANNELS.DINGTALK, "common.notifier.dingtalk"],
     [NOTIFY_CHANNELS.GOTIFY, "common.notifier.gotify"],
     [NOTIFY_CHANNELS.LARK, "common.notifier.lark"],
+    [NOTIFY_CHANNELS.MATTERMOST, "common.notifier.mattermost"],
     [NOTIFY_CHANNELS.PUSHPLUS, "common.notifier.pushplus"],
     [NOTIFY_CHANNELS.WECOM, "common.notifier.wecom"],
     [NOTIFY_CHANNELS.TELEGRAM, "common.notifier.telegram"],

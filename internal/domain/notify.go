@@ -14,6 +14,7 @@ const (
 	NotifyChannelTypeEmail      = NotifyChannelType("email")
 	NotifyChannelTypeGotify     = NotifyChannelType("gotify")
 	NotifyChannelTypeLark       = NotifyChannelType("lark")
+	NotifyChannelTypeMattermost = NotifyChannelType("mattermost")
 	NotifyChannelTypePushPlus   = NotifyChannelType("pushplus")
 	NotifyChannelTypeServerChan = NotifyChannelType("serverchan")
 	NotifyChannelTypeTelegram   = NotifyChannelType("telegram")
