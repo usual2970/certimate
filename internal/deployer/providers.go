@@ -74,6 +74,7 @@ import (
 	pVolcEngineImageX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-imagex"
 	pVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	pVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
+	pWangsuCDNPro "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdnpro"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
 	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
@@ -995,6 +996,30 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 					Bucket:          maputil.GetString(options.ProviderDeployConfig, "bucket"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeWangsuCDNPro:
+		{
+			access := domain.AccessConfigForWangsu{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeWangsuCDNPro:
+				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Environment:     maputil.GetOrDefaultString(options.ProviderDeployConfig, "environment", "production"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+					CertificateId:   maputil.GetString(options.ProviderDeployConfig, "certificateId"),
+					WebhookId:       maputil.GetString(options.ProviderDeployConfig, "webhookId"),
 				})
 				return deployer, err
 

@@ -125,6 +125,8 @@
   "provider.volcengine.imagex": "火山引擎 - 图片服务 ImageX",
   "provider.volcengine.live": "火山引擎 - 视频直播 Live",
   "provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
+  "provider.wangsu": "网宿云",
+  "provider.wangsu.cdnpro": "网宿云 - CDN Pro",
   "provider.webhook": "Webhook",
   "provider.westcn": "西部数码",
   "provider.zerossl": "ZeroSSL",

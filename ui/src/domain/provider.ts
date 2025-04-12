@@ -50,6 +50,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   UPYUN: "upyun",
   VERCEL: "vercel",
   VOLCENGINE: "volcengine",
+  WANGSU: "wangsu",
   WEBHOOK: "webhook",
   WESTCN: "westcn",
   ZEROSSL: "zerossl",
@@ -99,6 +100,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.UPYUN, "provider.upyun", "/imgs/providers/upyun.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.BAISHAN, "provider.baishan", "/imgs/providers/baishan.png", [ACCESS_USAGES.HOSTING]],
+    [ACCESS_PROVIDERS.WANGSU, "provider.wangsu", "/imgs/providers/wangsu.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.HOSTING]],
@@ -370,6 +372,7 @@ export const DEPLOY_PROVIDERS = Object.freeze({
   VOLCENGINE_IMAGEX: `${ACCESS_PROVIDERS.VOLCENGINE}-imagex`,
   VOLCENGINE_LIVE: `${ACCESS_PROVIDERS.VOLCENGINE}-live`,
   VOLCENGINE_TOS: `${ACCESS_PROVIDERS.VOLCENGINE}-tos`,
+  WANGSU_CDNPRO: `${ACCESS_PROVIDERS.WANGSU}-cdnpro`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
 } as const);
 
@@ -458,6 +461,7 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
     [DEPLOY_PROVIDERS.UPYUN_FILE, "provider.upyun.file", DEPLOY_CATEGORIES.STORAGE],
     [DEPLOY_PROVIDERS.UPYUN_CDN, "provider.upyun.cdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.BAISHAN_CDN, "provider.baishan.cdn", DEPLOY_CATEGORIES.CDN],
+    [DEPLOY_PROVIDERS.WANGSU_CDNPRO, "provider.wangsu.cdnpro", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.DOGECLOUD_CDN, "provider.dogecloud.cdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.BYTEPLUS_CDN, "provider.byteplus.cdn", DEPLOY_CATEGORIES.CDN],
     [DEPLOY_PROVIDERS.UCLOUD_US3, "provider.ucloud.us3", DEPLOY_CATEGORIES.STORAGE],

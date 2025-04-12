@@ -125,6 +125,8 @@
   "provider.volcengine.imagex": "Volcengine - ImageX",
   "provider.volcengine.live": "Volcengine - Live",
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
+  "provider.wangsu": "Wangsu Cloud",
+  "provider.wangsu.cdnpro": "Wangsu Cloud - CDN Pro",
   "provider.webhook": "Webhook",
   "provider.westcn": "West.cn",
   "provider.zerossl": "ZeroSSL",

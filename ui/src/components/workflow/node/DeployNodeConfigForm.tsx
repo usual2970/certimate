@@ -81,6 +81,7 @@ import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolc
 import DeployNodeConfigFormVolcEngineImageXConfig from "./DeployNodeConfigFormVolcEngineImageXConfig.tsx";
 import DeployNodeConfigFormVolcEngineLiveConfig from "./DeployNodeConfigFormVolcEngineLiveConfig.tsx";
 import DeployNodeConfigFormVolcEngineTOSConfig from "./DeployNodeConfigFormVolcEngineTOSConfig.tsx";
+import DeployNodeConfigFormWangsuCDNProConfig from "./DeployNodeConfigFormWangsuCDNProConfig.tsx";
 import DeployNodeConfigFormWebhookConfig from "./DeployNodeConfigFormWebhookConfig.tsx";
 
 type DeployNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForDeploy>;
@@ -302,6 +303,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_TOS:
           return <DeployNodeConfigFormVolcEngineTOSConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.WANGSU_CDNPRO:
+          return <DeployNodeConfigFormWangsuCDNProConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.WEBHOOK:
           return <DeployNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }
