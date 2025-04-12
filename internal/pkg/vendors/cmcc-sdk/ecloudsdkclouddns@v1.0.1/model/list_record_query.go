@@ -5,11 +5,11 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
 
 type ListRecordQuery struct {
-    position.Query
+	position.Query
 	// 页大小
 	PageSize *int32 `json:"pageSize,omitempty"`
 

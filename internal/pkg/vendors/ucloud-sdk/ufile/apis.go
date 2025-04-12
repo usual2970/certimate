@@ -1,4 +1,4 @@
-﻿package ufile
+package ufile
 
 import (
 	"github.com/ucloud/ucloud-sdk-go/ucloud/request"

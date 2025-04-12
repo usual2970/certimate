@@ -4,10 +4,7 @@
 
 package model
 
-
-
 type ModifyRecordOpenapiResponseTags struct {
-
 	// 标签ID
 	TagId string `json:"tagId,omitempty"`
 

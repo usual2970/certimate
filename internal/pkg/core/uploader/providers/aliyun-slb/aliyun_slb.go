@@ -1,4 +1,4 @@
-﻿package aliyunslb
+package aliyunslb
 
 import (
 	"context"

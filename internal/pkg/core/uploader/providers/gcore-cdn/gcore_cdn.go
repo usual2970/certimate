@@ -1,4 +1,4 @@
-﻿package gcorecdn
+package gcorecdn
 
 import (
 	"context"

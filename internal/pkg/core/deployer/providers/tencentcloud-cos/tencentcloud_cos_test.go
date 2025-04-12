@@ -1,4 +1,4 @@
-﻿package tencentcloudcos_test
+package tencentcloudcos_test
 
 import (
 	"context"

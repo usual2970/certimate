@@ -1,4 +1,4 @@
-﻿package lego_jdcloud
+package lego_jdcloud
 
 import (
 	"errors"

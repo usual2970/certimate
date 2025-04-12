@@ -1,4 +1,4 @@
-﻿package bark_test
+package bark_test
 
 import (
 	"context"

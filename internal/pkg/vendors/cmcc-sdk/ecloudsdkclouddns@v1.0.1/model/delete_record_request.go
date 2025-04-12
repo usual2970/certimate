@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type DeleteRecordRequest struct {
-
 	DeleteRecordBody *DeleteRecordBody `json:"deleteRecordBody,omitempty"`
 }

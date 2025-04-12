@@ -1,4 +1,4 @@
-﻿package qiniupili_test
+package qiniupili_test
 
 import (
 	"context"

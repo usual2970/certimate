@@ -1,4 +1,4 @@
-﻿package ussl
+package ussl
 
 type CertificateListItem struct {
 	CertificateID     int

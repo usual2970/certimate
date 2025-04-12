@@ -1,4 +1,4 @@
-﻿package tencentcloudclb_test
+package tencentcloudclb_test
 
 import (
 	"context"

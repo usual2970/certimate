@@ -1,4 +1,4 @@
-﻿package sliceutil
+package sliceutil
 
 // 创建给定切片一部分的浅拷贝，其包含通过所提供函数实现的测试的所有元素。
 //

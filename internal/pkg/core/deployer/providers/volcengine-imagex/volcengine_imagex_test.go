@@ -1,4 +1,4 @@
-﻿package volcengineimagex_test
+package volcengineimagex_test
 
 import (
 	"context"

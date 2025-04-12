@@ -1,4 +1,4 @@
-﻿package onepanelssl
+package onepanelssl
 
 import (
 	"context"

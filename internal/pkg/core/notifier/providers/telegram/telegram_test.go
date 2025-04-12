@@ -1,4 +1,4 @@
-﻿package telegram_test
+package telegram_test
 
 import (
 	"context"

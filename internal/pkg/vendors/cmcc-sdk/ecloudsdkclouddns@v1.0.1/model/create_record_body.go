@@ -5,29 +5,30 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
+
 type CreateRecordBodyTypeEnum string
 
 // List of Type
 const (
-    CreateRecordBodyTypeEnumA CreateRecordBodyTypeEnum = "A"
-    CreateRecordBodyTypeEnumAaaa CreateRecordBodyTypeEnum = "AAAA"
-    CreateRecordBodyTypeEnumCaa CreateRecordBodyTypeEnum = "CAA"
-    CreateRecordBodyTypeEnumCmauth CreateRecordBodyTypeEnum = "CMAUTH"
-    CreateRecordBodyTypeEnumCname CreateRecordBodyTypeEnum = "CNAME"
-    CreateRecordBodyTypeEnumMx CreateRecordBodyTypeEnum = "MX"
-    CreateRecordBodyTypeEnumNs CreateRecordBodyTypeEnum = "NS"
-    CreateRecordBodyTypeEnumPtr CreateRecordBodyTypeEnum = "PTR"
-    CreateRecordBodyTypeEnumRp CreateRecordBodyTypeEnum = "RP"
-    CreateRecordBodyTypeEnumSpf CreateRecordBodyTypeEnum = "SPF"
-    CreateRecordBodyTypeEnumSrv CreateRecordBodyTypeEnum = "SRV"
-    CreateRecordBodyTypeEnumTxt CreateRecordBodyTypeEnum = "TXT"
-    CreateRecordBodyTypeEnumUrl CreateRecordBodyTypeEnum = "URL"
+	CreateRecordBodyTypeEnumA      CreateRecordBodyTypeEnum = "A"
+	CreateRecordBodyTypeEnumAaaa   CreateRecordBodyTypeEnum = "AAAA"
+	CreateRecordBodyTypeEnumCaa    CreateRecordBodyTypeEnum = "CAA"
+	CreateRecordBodyTypeEnumCmauth CreateRecordBodyTypeEnum = "CMAUTH"
+	CreateRecordBodyTypeEnumCname  CreateRecordBodyTypeEnum = "CNAME"
+	CreateRecordBodyTypeEnumMx     CreateRecordBodyTypeEnum = "MX"
+	CreateRecordBodyTypeEnumNs     CreateRecordBodyTypeEnum = "NS"
+	CreateRecordBodyTypeEnumPtr    CreateRecordBodyTypeEnum = "PTR"
+	CreateRecordBodyTypeEnumRp     CreateRecordBodyTypeEnum = "RP"
+	CreateRecordBodyTypeEnumSpf    CreateRecordBodyTypeEnum = "SPF"
+	CreateRecordBodyTypeEnumSrv    CreateRecordBodyTypeEnum = "SRV"
+	CreateRecordBodyTypeEnumTxt    CreateRecordBodyTypeEnum = "TXT"
+	CreateRecordBodyTypeEnumUrl    CreateRecordBodyTypeEnum = "URL"
 )
 
 type CreateRecordBody struct {
-    position.Body
+	position.Body
 	// 主机头
 	Rr string `json:"rr"`
 

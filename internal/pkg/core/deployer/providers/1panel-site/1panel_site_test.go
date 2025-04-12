@@ -1,4 +1,4 @@
-﻿package onepanelsite_test
+package onepanelsite_test
 
 import (
 	"context"

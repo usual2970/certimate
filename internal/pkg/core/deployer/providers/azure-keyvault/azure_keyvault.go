@@ -1,4 +1,4 @@
-﻿package azurekeyvault
+package azurekeyvault
 
 import (
 	"context"

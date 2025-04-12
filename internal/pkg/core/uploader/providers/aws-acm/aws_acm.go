@@ -1,4 +1,4 @@
-﻿package awsacm
+package awsacm
 
 import (
 	"context"

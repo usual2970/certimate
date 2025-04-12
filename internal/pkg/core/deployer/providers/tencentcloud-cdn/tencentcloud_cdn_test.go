@@ -1,4 +1,4 @@
-﻿package tencentcloudcdn_test
+package tencentcloudcdn_test
 
 import (
 	"context"

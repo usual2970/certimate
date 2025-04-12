@@ -1,4 +1,4 @@
-﻿package jdcloudlive_test
+package jdcloudlive_test
 
 import (
 	"context"

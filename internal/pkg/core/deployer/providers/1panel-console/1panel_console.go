@@ -1,4 +1,4 @@
-﻿package onepanelconsole
+package onepanelconsole
 
 import (
 	"context"

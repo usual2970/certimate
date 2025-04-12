@@ -4,43 +4,43 @@
 
 package model
 
-
 type ListRecordResponseResultsTypeEnum string
 
 // List of Type
 const (
-    ListRecordResponseResultsTypeEnumA ListRecordResponseResultsTypeEnum = "A"
-    ListRecordResponseResultsTypeEnumAaaa ListRecordResponseResultsTypeEnum = "AAAA"
-    ListRecordResponseResultsTypeEnumCaa ListRecordResponseResultsTypeEnum = "CAA"
-    ListRecordResponseResultsTypeEnumCmauth ListRecordResponseResultsTypeEnum = "CMAUTH"
-    ListRecordResponseResultsTypeEnumCname ListRecordResponseResultsTypeEnum = "CNAME"
-    ListRecordResponseResultsTypeEnumMx ListRecordResponseResultsTypeEnum = "MX"
-    ListRecordResponseResultsTypeEnumNs ListRecordResponseResultsTypeEnum = "NS"
-    ListRecordResponseResultsTypeEnumPtr ListRecordResponseResultsTypeEnum = "PTR"
-    ListRecordResponseResultsTypeEnumRp ListRecordResponseResultsTypeEnum = "RP"
-    ListRecordResponseResultsTypeEnumSpf ListRecordResponseResultsTypeEnum = "SPF"
-    ListRecordResponseResultsTypeEnumSrv ListRecordResponseResultsTypeEnum = "SRV"
-    ListRecordResponseResultsTypeEnumTxt ListRecordResponseResultsTypeEnum = "TXT"
-    ListRecordResponseResultsTypeEnumUrl ListRecordResponseResultsTypeEnum = "URL"
+	ListRecordResponseResultsTypeEnumA      ListRecordResponseResultsTypeEnum = "A"
+	ListRecordResponseResultsTypeEnumAaaa   ListRecordResponseResultsTypeEnum = "AAAA"
+	ListRecordResponseResultsTypeEnumCaa    ListRecordResponseResultsTypeEnum = "CAA"
+	ListRecordResponseResultsTypeEnumCmauth ListRecordResponseResultsTypeEnum = "CMAUTH"
+	ListRecordResponseResultsTypeEnumCname  ListRecordResponseResultsTypeEnum = "CNAME"
+	ListRecordResponseResultsTypeEnumMx     ListRecordResponseResultsTypeEnum = "MX"
+	ListRecordResponseResultsTypeEnumNs     ListRecordResponseResultsTypeEnum = "NS"
+	ListRecordResponseResultsTypeEnumPtr    ListRecordResponseResultsTypeEnum = "PTR"
+	ListRecordResponseResultsTypeEnumRp     ListRecordResponseResultsTypeEnum = "RP"
+	ListRecordResponseResultsTypeEnumSpf    ListRecordResponseResultsTypeEnum = "SPF"
+	ListRecordResponseResultsTypeEnumSrv    ListRecordResponseResultsTypeEnum = "SRV"
+	ListRecordResponseResultsTypeEnumTxt    ListRecordResponseResultsTypeEnum = "TXT"
+	ListRecordResponseResultsTypeEnumUrl    ListRecordResponseResultsTypeEnum = "URL"
 )
+
 type ListRecordResponseResultsTimedStatusEnum string
 
 // List of TimedStatus
 const (
-    ListRecordResponseResultsTimedStatusEnumDisabled ListRecordResponseResultsTimedStatusEnum = "DISABLED"
-    ListRecordResponseResultsTimedStatusEnumEnabled ListRecordResponseResultsTimedStatusEnum = "ENABLED"
-    ListRecordResponseResultsTimedStatusEnumTimed ListRecordResponseResultsTimedStatusEnum = "TIMED"
+	ListRecordResponseResultsTimedStatusEnumDisabled ListRecordResponseResultsTimedStatusEnum = "DISABLED"
+	ListRecordResponseResultsTimedStatusEnumEnabled  ListRecordResponseResultsTimedStatusEnum = "ENABLED"
+	ListRecordResponseResultsTimedStatusEnumTimed    ListRecordResponseResultsTimedStatusEnum = "TIMED"
 )
+
 type ListRecordResponseResultsStateEnum string
 
 // List of State
 const (
-    ListRecordResponseResultsStateEnumDisabled ListRecordResponseResultsStateEnum = "DISABLED"
-    ListRecordResponseResultsStateEnumEnabled ListRecordResponseResultsStateEnum = "ENABLED"
+	ListRecordResponseResultsStateEnumDisabled ListRecordResponseResultsStateEnum = "DISABLED"
+	ListRecordResponseResultsStateEnumEnabled  ListRecordResponseResultsStateEnum = "ENABLED"
 )
 
 type ListRecordResponseResults struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

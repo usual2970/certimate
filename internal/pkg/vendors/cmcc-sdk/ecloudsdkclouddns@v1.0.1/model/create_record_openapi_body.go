@@ -5,26 +5,27 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
+
 type CreateRecordOpenapiBodyTypeEnum string
 
 // List of Type
 const (
-    CreateRecordOpenapiBodyTypeEnumA CreateRecordOpenapiBodyTypeEnum = "A"
-    CreateRecordOpenapiBodyTypeEnumAaaa CreateRecordOpenapiBodyTypeEnum = "AAAA"
-    CreateRecordOpenapiBodyTypeEnumCname CreateRecordOpenapiBodyTypeEnum = "CNAME"
-    CreateRecordOpenapiBodyTypeEnumMx CreateRecordOpenapiBodyTypeEnum = "MX"
-    CreateRecordOpenapiBodyTypeEnumTxt CreateRecordOpenapiBodyTypeEnum = "TXT"
-    CreateRecordOpenapiBodyTypeEnumNs CreateRecordOpenapiBodyTypeEnum = "NS"
-    CreateRecordOpenapiBodyTypeEnumSpf CreateRecordOpenapiBodyTypeEnum = "SPF"
-    CreateRecordOpenapiBodyTypeEnumSrv CreateRecordOpenapiBodyTypeEnum = "SRV"
-    CreateRecordOpenapiBodyTypeEnumCaa CreateRecordOpenapiBodyTypeEnum = "CAA"
-    CreateRecordOpenapiBodyTypeEnumCmauth CreateRecordOpenapiBodyTypeEnum = "CMAUTH"
+	CreateRecordOpenapiBodyTypeEnumA      CreateRecordOpenapiBodyTypeEnum = "A"
+	CreateRecordOpenapiBodyTypeEnumAaaa   CreateRecordOpenapiBodyTypeEnum = "AAAA"
+	CreateRecordOpenapiBodyTypeEnumCname  CreateRecordOpenapiBodyTypeEnum = "CNAME"
+	CreateRecordOpenapiBodyTypeEnumMx     CreateRecordOpenapiBodyTypeEnum = "MX"
+	CreateRecordOpenapiBodyTypeEnumTxt    CreateRecordOpenapiBodyTypeEnum = "TXT"
+	CreateRecordOpenapiBodyTypeEnumNs     CreateRecordOpenapiBodyTypeEnum = "NS"
+	CreateRecordOpenapiBodyTypeEnumSpf    CreateRecordOpenapiBodyTypeEnum = "SPF"
+	CreateRecordOpenapiBodyTypeEnumSrv    CreateRecordOpenapiBodyTypeEnum = "SRV"
+	CreateRecordOpenapiBodyTypeEnumCaa    CreateRecordOpenapiBodyTypeEnum = "CAA"
+	CreateRecordOpenapiBodyTypeEnumCmauth CreateRecordOpenapiBodyTypeEnum = "CMAUTH"
 )
 
 type CreateRecordOpenapiBody struct {
-    position.Body
+	position.Body
 	// 主机头
 	Rr string `json:"rr"`
 

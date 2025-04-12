@@ -1,4 +1,4 @@
-﻿package upyunssl_test
+package upyunssl_test
 
 import (
 	"context"

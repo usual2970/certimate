@@ -1,4 +1,4 @@
-﻿package applicant
+package applicant
 
 import "github.com/usual2970/certimate/internal/domain"
 

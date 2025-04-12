@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type ModifyRecordOpenapiRequest struct {
-
 	ModifyRecordOpenapiBody *ModifyRecordOpenapiBody `json:"modifyRecordOpenapiBody,omitempty"`
 }

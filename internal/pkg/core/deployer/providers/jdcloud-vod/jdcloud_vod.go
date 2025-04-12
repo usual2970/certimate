@@ -1,4 +1,4 @@
-﻿package jdcloudvod
+package jdcloudvod
 
 import (
 	"context"

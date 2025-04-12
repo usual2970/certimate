@@ -1,4 +1,4 @@
-﻿package aliyunvod_test
+package aliyunvod_test
 
 import (
 	"context"

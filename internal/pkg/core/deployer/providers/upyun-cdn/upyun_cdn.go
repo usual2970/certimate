@@ -1,4 +1,4 @@
-﻿package upyuncdn
+package upyuncdn
 
 import (
 	"context"

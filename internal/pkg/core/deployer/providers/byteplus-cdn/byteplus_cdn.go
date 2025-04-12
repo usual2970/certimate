@@ -1,4 +1,4 @@
-﻿package bytepluscdn
+package bytepluscdn
 
 import (
 	"context"

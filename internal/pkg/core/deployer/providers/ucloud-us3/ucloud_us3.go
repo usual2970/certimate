@@ -1,4 +1,4 @@
-﻿package ucloudus3
+package ucloudus3
 
 import (
 	"context"

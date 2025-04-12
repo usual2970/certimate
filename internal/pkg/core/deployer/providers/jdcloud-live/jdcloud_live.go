@@ -1,4 +1,4 @@
-﻿package jdcloudlive
+package jdcloudlive
 
 import (
 	"context"

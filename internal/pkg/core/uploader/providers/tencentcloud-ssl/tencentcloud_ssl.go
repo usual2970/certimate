@@ -1,4 +1,4 @@
-﻿package tencentcloudssl
+package tencentcloudssl
 
 import (
 	"context"

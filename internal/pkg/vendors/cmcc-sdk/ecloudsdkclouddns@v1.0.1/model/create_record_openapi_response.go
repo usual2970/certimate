@@ -4,19 +4,17 @@
 
 package model
 
-
 type CreateRecordOpenapiResponseStateEnum string
 
 // List of State
 const (
-    CreateRecordOpenapiResponseStateEnumError CreateRecordOpenapiResponseStateEnum = "ERROR"
-    CreateRecordOpenapiResponseStateEnumException CreateRecordOpenapiResponseStateEnum = "EXCEPTION"
-    CreateRecordOpenapiResponseStateEnumForbidden CreateRecordOpenapiResponseStateEnum = "FORBIDDEN"
-    CreateRecordOpenapiResponseStateEnumOk CreateRecordOpenapiResponseStateEnum = "OK"
+	CreateRecordOpenapiResponseStateEnumError     CreateRecordOpenapiResponseStateEnum = "ERROR"
+	CreateRecordOpenapiResponseStateEnumException CreateRecordOpenapiResponseStateEnum = "EXCEPTION"
+	CreateRecordOpenapiResponseStateEnumForbidden CreateRecordOpenapiResponseStateEnum = "FORBIDDEN"
+	CreateRecordOpenapiResponseStateEnumOk        CreateRecordOpenapiResponseStateEnum = "OK"
 )
 
 type CreateRecordOpenapiResponse struct {
-
 	RequestId string `json:"requestId,omitempty"`
 
 	ErrorMessage string `json:"errorMessage,omitempty"`

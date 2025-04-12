@@ -1,4 +1,4 @@
-﻿package qiniupili
+package qiniupili
 
 import (
 	"context"

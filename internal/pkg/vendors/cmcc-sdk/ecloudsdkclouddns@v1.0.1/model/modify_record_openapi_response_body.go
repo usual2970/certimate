@@ -4,40 +4,40 @@
 
 package model
 
-
 type ModifyRecordOpenapiResponseBodyTypeEnum string
 
 // List of Type
 const (
-    ModifyRecordOpenapiResponseBodyTypeEnumA ModifyRecordOpenapiResponseBodyTypeEnum = "A"
-    ModifyRecordOpenapiResponseBodyTypeEnumAaaa ModifyRecordOpenapiResponseBodyTypeEnum = "AAAA"
-    ModifyRecordOpenapiResponseBodyTypeEnumCname ModifyRecordOpenapiResponseBodyTypeEnum = "CNAME"
-    ModifyRecordOpenapiResponseBodyTypeEnumMx ModifyRecordOpenapiResponseBodyTypeEnum = "MX"
-    ModifyRecordOpenapiResponseBodyTypeEnumTxt ModifyRecordOpenapiResponseBodyTypeEnum = "TXT"
-    ModifyRecordOpenapiResponseBodyTypeEnumNs ModifyRecordOpenapiResponseBodyTypeEnum = "NS"
-    ModifyRecordOpenapiResponseBodyTypeEnumSpf ModifyRecordOpenapiResponseBodyTypeEnum = "SPF"
-    ModifyRecordOpenapiResponseBodyTypeEnumSrv ModifyRecordOpenapiResponseBodyTypeEnum = "SRV"
-    ModifyRecordOpenapiResponseBodyTypeEnumCaa ModifyRecordOpenapiResponseBodyTypeEnum = "CAA"
-    ModifyRecordOpenapiResponseBodyTypeEnumCmauth ModifyRecordOpenapiResponseBodyTypeEnum = "CMAUTH"
+	ModifyRecordOpenapiResponseBodyTypeEnumA      ModifyRecordOpenapiResponseBodyTypeEnum = "A"
+	ModifyRecordOpenapiResponseBodyTypeEnumAaaa   ModifyRecordOpenapiResponseBodyTypeEnum = "AAAA"
+	ModifyRecordOpenapiResponseBodyTypeEnumCname  ModifyRecordOpenapiResponseBodyTypeEnum = "CNAME"
+	ModifyRecordOpenapiResponseBodyTypeEnumMx     ModifyRecordOpenapiResponseBodyTypeEnum = "MX"
+	ModifyRecordOpenapiResponseBodyTypeEnumTxt    ModifyRecordOpenapiResponseBodyTypeEnum = "TXT"
+	ModifyRecordOpenapiResponseBodyTypeEnumNs     ModifyRecordOpenapiResponseBodyTypeEnum = "NS"
+	ModifyRecordOpenapiResponseBodyTypeEnumSpf    ModifyRecordOpenapiResponseBodyTypeEnum = "SPF"
+	ModifyRecordOpenapiResponseBodyTypeEnumSrv    ModifyRecordOpenapiResponseBodyTypeEnum = "SRV"
+	ModifyRecordOpenapiResponseBodyTypeEnumCaa    ModifyRecordOpenapiResponseBodyTypeEnum = "CAA"
+	ModifyRecordOpenapiResponseBodyTypeEnumCmauth ModifyRecordOpenapiResponseBodyTypeEnum = "CMAUTH"
 )
+
 type ModifyRecordOpenapiResponseBodyTimedStatusEnum string
 
 // List of TimedStatus
 const (
-    ModifyRecordOpenapiResponseBodyTimedStatusEnumDisabled ModifyRecordOpenapiResponseBodyTimedStatusEnum = "DISABLED"
-    ModifyRecordOpenapiResponseBodyTimedStatusEnumEnabled ModifyRecordOpenapiResponseBodyTimedStatusEnum = "ENABLED"
-    ModifyRecordOpenapiResponseBodyTimedStatusEnumTimed ModifyRecordOpenapiResponseBodyTimedStatusEnum = "TIMED"
+	ModifyRecordOpenapiResponseBodyTimedStatusEnumDisabled ModifyRecordOpenapiResponseBodyTimedStatusEnum = "DISABLED"
+	ModifyRecordOpenapiResponseBodyTimedStatusEnumEnabled  ModifyRecordOpenapiResponseBodyTimedStatusEnum = "ENABLED"
+	ModifyRecordOpenapiResponseBodyTimedStatusEnumTimed    ModifyRecordOpenapiResponseBodyTimedStatusEnum = "TIMED"
 )
+
 type ModifyRecordOpenapiResponseBodyStateEnum string
 
 // List of State
 const (
-    ModifyRecordOpenapiResponseBodyStateEnumDisabled ModifyRecordOpenapiResponseBodyStateEnum = "DISABLED"
-    ModifyRecordOpenapiResponseBodyStateEnumEnabled ModifyRecordOpenapiResponseBodyStateEnum = "ENABLED"
+	ModifyRecordOpenapiResponseBodyStateEnumDisabled ModifyRecordOpenapiResponseBodyStateEnum = "DISABLED"
+	ModifyRecordOpenapiResponseBodyStateEnumEnabled  ModifyRecordOpenapiResponseBodyStateEnum = "ENABLED"
 )
 
 type ModifyRecordOpenapiResponseBody struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

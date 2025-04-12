@@ -4,40 +4,40 @@
 
 package model
 
-
 type ListRecordOpenapiResponseDataTypeEnum string
 
 // List of Type
 const (
-    ListRecordOpenapiResponseDataTypeEnumA ListRecordOpenapiResponseDataTypeEnum = "A"
-    ListRecordOpenapiResponseDataTypeEnumAaaa ListRecordOpenapiResponseDataTypeEnum = "AAAA"
-    ListRecordOpenapiResponseDataTypeEnumCname ListRecordOpenapiResponseDataTypeEnum = "CNAME"
-    ListRecordOpenapiResponseDataTypeEnumMx ListRecordOpenapiResponseDataTypeEnum = "MX"
-    ListRecordOpenapiResponseDataTypeEnumTxt ListRecordOpenapiResponseDataTypeEnum = "TXT"
-    ListRecordOpenapiResponseDataTypeEnumNs ListRecordOpenapiResponseDataTypeEnum = "NS"
-    ListRecordOpenapiResponseDataTypeEnumSpf ListRecordOpenapiResponseDataTypeEnum = "SPF"
-    ListRecordOpenapiResponseDataTypeEnumSrv ListRecordOpenapiResponseDataTypeEnum = "SRV"
-    ListRecordOpenapiResponseDataTypeEnumCaa ListRecordOpenapiResponseDataTypeEnum = "CAA"
-    ListRecordOpenapiResponseDataTypeEnumCmauth ListRecordOpenapiResponseDataTypeEnum = "CMAUTH"
+	ListRecordOpenapiResponseDataTypeEnumA      ListRecordOpenapiResponseDataTypeEnum = "A"
+	ListRecordOpenapiResponseDataTypeEnumAaaa   ListRecordOpenapiResponseDataTypeEnum = "AAAA"
+	ListRecordOpenapiResponseDataTypeEnumCname  ListRecordOpenapiResponseDataTypeEnum = "CNAME"
+	ListRecordOpenapiResponseDataTypeEnumMx     ListRecordOpenapiResponseDataTypeEnum = "MX"
+	ListRecordOpenapiResponseDataTypeEnumTxt    ListRecordOpenapiResponseDataTypeEnum = "TXT"
+	ListRecordOpenapiResponseDataTypeEnumNs     ListRecordOpenapiResponseDataTypeEnum = "NS"
+	ListRecordOpenapiResponseDataTypeEnumSpf    ListRecordOpenapiResponseDataTypeEnum = "SPF"
+	ListRecordOpenapiResponseDataTypeEnumSrv    ListRecordOpenapiResponseDataTypeEnum = "SRV"
+	ListRecordOpenapiResponseDataTypeEnumCaa    ListRecordOpenapiResponseDataTypeEnum = "CAA"
+	ListRecordOpenapiResponseDataTypeEnumCmauth ListRecordOpenapiResponseDataTypeEnum = "CMAUTH"
 )
+
 type ListRecordOpenapiResponseDataTimedStatusEnum string
 
 // List of TimedStatus
 const (
-    ListRecordOpenapiResponseDataTimedStatusEnumDisabled ListRecordOpenapiResponseDataTimedStatusEnum = "DISABLED"
-    ListRecordOpenapiResponseDataTimedStatusEnumEnabled ListRecordOpenapiResponseDataTimedStatusEnum = "ENABLED"
-    ListRecordOpenapiResponseDataTimedStatusEnumTimed ListRecordOpenapiResponseDataTimedStatusEnum = "TIMED"
+	ListRecordOpenapiResponseDataTimedStatusEnumDisabled ListRecordOpenapiResponseDataTimedStatusEnum = "DISABLED"
+	ListRecordOpenapiResponseDataTimedStatusEnumEnabled  ListRecordOpenapiResponseDataTimedStatusEnum = "ENABLED"
+	ListRecordOpenapiResponseDataTimedStatusEnumTimed    ListRecordOpenapiResponseDataTimedStatusEnum = "TIMED"
 )
+
 type ListRecordOpenapiResponseDataStateEnum string
 
 // List of State
 const (
-    ListRecordOpenapiResponseDataStateEnumDisabled ListRecordOpenapiResponseDataStateEnum = "DISABLED"
-    ListRecordOpenapiResponseDataStateEnumEnabled ListRecordOpenapiResponseDataStateEnum = "ENABLED"
+	ListRecordOpenapiResponseDataStateEnumDisabled ListRecordOpenapiResponseDataStateEnum = "DISABLED"
+	ListRecordOpenapiResponseDataStateEnumEnabled  ListRecordOpenapiResponseDataStateEnum = "ENABLED"
 )
 
 type ListRecordOpenapiResponseData struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

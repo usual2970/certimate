@@ -1,4 +1,4 @@
-﻿package tencentcloudvod
+package tencentcloudvod
 
 import (
 	"context"

@@ -4,19 +4,17 @@
 
 package model
 
-
 type ListRecordResponseStateEnum string
 
 // List of State
 const (
-    ListRecordResponseStateEnumError ListRecordResponseStateEnum = "ERROR"
-    ListRecordResponseStateEnumException ListRecordResponseStateEnum = "EXCEPTION"
-    ListRecordResponseStateEnumForbidden ListRecordResponseStateEnum = "FORBIDDEN"
-    ListRecordResponseStateEnumOk ListRecordResponseStateEnum = "OK"
+	ListRecordResponseStateEnumError     ListRecordResponseStateEnum = "ERROR"
+	ListRecordResponseStateEnumException ListRecordResponseStateEnum = "EXCEPTION"
+	ListRecordResponseStateEnumForbidden ListRecordResponseStateEnum = "FORBIDDEN"
+	ListRecordResponseStateEnumOk        ListRecordResponseStateEnum = "OK"
 )
 
 type ListRecordResponse struct {
-
 	RequestId string `json:"requestId,omitempty"`
 
 	ErrorMessage string `json:"errorMessage,omitempty"`

@@ -1,4 +1,4 @@
-﻿package qiniusdk
+package qiniusdk
 
 type BaseResponse struct {
 	Code  *int    `json:"code,omitempty"`

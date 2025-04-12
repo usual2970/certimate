@@ -1,4 +1,4 @@
-﻿package dogecloudcdn_test
+package dogecloudcdn_test
 
 import (
 	"context"

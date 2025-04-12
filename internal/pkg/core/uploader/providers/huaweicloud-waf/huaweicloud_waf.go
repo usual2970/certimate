@@ -1,4 +1,4 @@
-﻿package huaweicloudwaf
+package huaweicloudwaf
 
 import (
 	"context"

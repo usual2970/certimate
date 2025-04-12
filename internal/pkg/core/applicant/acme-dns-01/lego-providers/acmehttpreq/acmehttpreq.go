@@ -1,4 +1,4 @@
-﻿package acmehttpreq
+package acmehttpreq
 
 import (
 	"net/url"

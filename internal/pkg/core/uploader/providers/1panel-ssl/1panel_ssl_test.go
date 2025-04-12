@@ -1,4 +1,4 @@
-﻿package onepanelssl_test
+package onepanelssl_test
 
 import (
 	"context"

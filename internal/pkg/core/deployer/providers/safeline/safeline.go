@@ -1,4 +1,4 @@
-﻿package safeline
+package safeline
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package aliyuncdn
+package aliyuncdn
 
 import (
 	"context"

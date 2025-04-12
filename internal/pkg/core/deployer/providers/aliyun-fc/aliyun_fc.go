@@ -1,4 +1,4 @@
-﻿package aliyunfc
+package aliyunfc
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package onepanelconsole_test
+package onepanelconsole_test
 
 import (
 	"context"

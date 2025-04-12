@@ -1,4 +1,4 @@
-﻿package aliyunlive_test
+package aliyunlive_test
 
 import (
 	"context"

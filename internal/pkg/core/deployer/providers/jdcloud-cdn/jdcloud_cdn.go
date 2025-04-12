@@ -1,4 +1,4 @@
-﻿package jdcloudcdn
+package jdcloudcdn
 
 import (
 	"context"

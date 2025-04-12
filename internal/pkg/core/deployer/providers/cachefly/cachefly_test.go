@@ -1,4 +1,4 @@
-﻿package cachefly_test
+package cachefly_test
 
 import (
 	"context"

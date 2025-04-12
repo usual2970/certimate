@@ -4,19 +4,17 @@
 
 package model
 
-
 type DeleteRecordOpenapiResponseStateEnum string
 
 // List of State
 const (
-    DeleteRecordOpenapiResponseStateEnumError DeleteRecordOpenapiResponseStateEnum = "ERROR"
-    DeleteRecordOpenapiResponseStateEnumException DeleteRecordOpenapiResponseStateEnum = "EXCEPTION"
-    DeleteRecordOpenapiResponseStateEnumForbidden DeleteRecordOpenapiResponseStateEnum = "FORBIDDEN"
-    DeleteRecordOpenapiResponseStateEnumOk DeleteRecordOpenapiResponseStateEnum = "OK"
+	DeleteRecordOpenapiResponseStateEnumError     DeleteRecordOpenapiResponseStateEnum = "ERROR"
+	DeleteRecordOpenapiResponseStateEnumException DeleteRecordOpenapiResponseStateEnum = "EXCEPTION"
+	DeleteRecordOpenapiResponseStateEnumForbidden DeleteRecordOpenapiResponseStateEnum = "FORBIDDEN"
+	DeleteRecordOpenapiResponseStateEnumOk        DeleteRecordOpenapiResponseStateEnum = "OK"
 )
 
 type DeleteRecordOpenapiResponse struct {
-
 	RequestId string `json:"requestId,omitempty"`
 
 	ErrorMessage string `json:"errorMessage,omitempty"`

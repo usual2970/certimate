@@ -1,4 +1,4 @@
-﻿package upyunssl
+package upyunssl
 
 import (
 	"context"

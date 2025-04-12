@@ -5,29 +5,30 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
+
 type ModifyRecordBodyTypeEnum string
 
 // List of Type
 const (
-    ModifyRecordBodyTypeEnumA ModifyRecordBodyTypeEnum = "A"
-    ModifyRecordBodyTypeEnumAaaa ModifyRecordBodyTypeEnum = "AAAA"
-    ModifyRecordBodyTypeEnumCaa ModifyRecordBodyTypeEnum = "CAA"
-    ModifyRecordBodyTypeEnumCmauth ModifyRecordBodyTypeEnum = "CMAUTH"
-    ModifyRecordBodyTypeEnumCname ModifyRecordBodyTypeEnum = "CNAME"
-    ModifyRecordBodyTypeEnumMx ModifyRecordBodyTypeEnum = "MX"
-    ModifyRecordBodyTypeEnumNs ModifyRecordBodyTypeEnum = "NS"
-    ModifyRecordBodyTypeEnumPtr ModifyRecordBodyTypeEnum = "PTR"
-    ModifyRecordBodyTypeEnumRp ModifyRecordBodyTypeEnum = "RP"
-    ModifyRecordBodyTypeEnumSpf ModifyRecordBodyTypeEnum = "SPF"
-    ModifyRecordBodyTypeEnumSrv ModifyRecordBodyTypeEnum = "SRV"
-    ModifyRecordBodyTypeEnumTxt ModifyRecordBodyTypeEnum = "TXT"
-    ModifyRecordBodyTypeEnumUrl ModifyRecordBodyTypeEnum = "URL"
+	ModifyRecordBodyTypeEnumA      ModifyRecordBodyTypeEnum = "A"
+	ModifyRecordBodyTypeEnumAaaa   ModifyRecordBodyTypeEnum = "AAAA"
+	ModifyRecordBodyTypeEnumCaa    ModifyRecordBodyTypeEnum = "CAA"
+	ModifyRecordBodyTypeEnumCmauth ModifyRecordBodyTypeEnum = "CMAUTH"
+	ModifyRecordBodyTypeEnumCname  ModifyRecordBodyTypeEnum = "CNAME"
+	ModifyRecordBodyTypeEnumMx     ModifyRecordBodyTypeEnum = "MX"
+	ModifyRecordBodyTypeEnumNs     ModifyRecordBodyTypeEnum = "NS"
+	ModifyRecordBodyTypeEnumPtr    ModifyRecordBodyTypeEnum = "PTR"
+	ModifyRecordBodyTypeEnumRp     ModifyRecordBodyTypeEnum = "RP"
+	ModifyRecordBodyTypeEnumSpf    ModifyRecordBodyTypeEnum = "SPF"
+	ModifyRecordBodyTypeEnumSrv    ModifyRecordBodyTypeEnum = "SRV"
+	ModifyRecordBodyTypeEnumTxt    ModifyRecordBodyTypeEnum = "TXT"
+	ModifyRecordBodyTypeEnumUrl    ModifyRecordBodyTypeEnum = "URL"
 )
 
 type ModifyRecordBody struct {
-    position.Body
+	position.Body
 	// 解析记录ID
 	RecordId string `json:"recordId"`
 

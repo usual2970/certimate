@@ -1,4 +1,4 @@
-﻿package dtos
+package dtos
 
 type CertificateArchiveFileReq struct {
 	CertificateId string `json:"-"`

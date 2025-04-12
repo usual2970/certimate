@@ -1,4 +1,4 @@
-﻿package baishancdn
+package baishancdn
 
 import (
 	"context"

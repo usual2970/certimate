@@ -1,4 +1,4 @@
-﻿package qiniusslcert
+package qiniusslcert
 
 import (
 	"context"

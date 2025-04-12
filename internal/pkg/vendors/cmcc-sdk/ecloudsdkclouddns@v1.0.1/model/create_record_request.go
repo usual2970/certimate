@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type CreateRecordRequest struct {
-
 	CreateRecordBody *CreateRecordBody `json:"createRecordBody,omitempty"`
 }

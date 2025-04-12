@@ -4,10 +4,7 @@
 
 package model
 
-
-
 type ListRecordOpenapiRequest struct {
-
 	ListRecordOpenapiQuery *ListRecordOpenapiQuery `json:"listRecordOpenapiQuery,omitempty"`
 
 	ListRecordOpenapiBody *ListRecordOpenapiBody `json:"listRecordOpenapiBody,omitempty"`

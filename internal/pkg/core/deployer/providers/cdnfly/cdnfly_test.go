@@ -1,4 +1,4 @@
-﻿package cdnfly_test
+package cdnfly_test
 
 import (
 	"context"
