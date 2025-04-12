@@ -9,12 +9,12 @@ import NotifyChannelEditFormDingTalkFields from "./NotifyChannelEditFormDingTalk
 import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields";
 import NotifyChannelEditFormGotifyFields from "./NotifyChannelEditFormGotifyFields.tsx";
 import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
+import NotifyChannelEditFormMattermostFields from "./NotifyChannelEditFormMattermostFields.tsx";
 import NotifyChannelEditFormPushPlusFields from "./NotifyChannelEditFormPushPlusFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
 import NotifyChannelEditFormWebhookFields from "./NotifyChannelEditFormWebhookFields";
 import NotifyChannelEditFormWeComFields from "./NotifyChannelEditFormWeComFields";
-import NotifyChannelEditFormMattermostFields from "@/components/notification/NotifyChannelEditFormMattermostFields.tsx";
 
 type NotifyChannelEditFormFieldValues = NotifyChannelsSettingsContent[keyof NotifyChannelsSettingsContent];
 

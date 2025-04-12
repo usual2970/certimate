@@ -71,6 +71,7 @@
   "settings.notification.channel.form.mattermost_server_url.tooltip": "Example: <b>https://exmaple.com</b>, the protocol needs to be included but the trailing '/' should not be included.",
   "settings.notification.channel.form.mattermost_channel_id.label": "Channel ID",
   "settings.notification.channel.form.mattermost_channel_id.placeholder": "Please enter channel ID",
+  "settings.notification.channel.form.mattermost_channel_id.tooltip": "How to get the channel ID? Select the target channel from the left sidebar, click on the channel name at the top, and choose ”Channel Details.” You can directly see the channel ID on the pop-up page.",
   "settings.notification.channel.form.mattermost_username.label": "Username",
   "settings.notification.channel.form.mattermost_username.placeholder": "Please enter username",
   "settings.notification.channel.form.mattermost_password.label": "Password",

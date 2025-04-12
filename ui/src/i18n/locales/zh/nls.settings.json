@@ -71,6 +71,7 @@
   "settings.notification.channel.form.mattermost_server_url.tooltip": "示例: <b>https://exmaple.com</b>，需要包含协议但不要包含末尾的'/'",
   "settings.notification.channel.form.mattermost_channel_id.label": "频道ID",
   "settings.notification.channel.form.mattermost_channel_id.placeholder": "请输入频道ID",
+  "settings.notification.channel.form.mattermost_channel_id.tooltip": "频道ID怎么获取？从左侧边栏中选择目标频道，点击顶部的频道名称，选择“频道详情”，即可在弹出页面中直接看到频道ID",
   "settings.notification.channel.form.mattermost_username.label": "用户名",
   "settings.notification.channel.form.mattermost_username.placeholder": "请输入用户名",
   "settings.notification.channel.form.mattermost_password.label": "密码",

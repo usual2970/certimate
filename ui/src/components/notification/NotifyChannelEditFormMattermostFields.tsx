@@ -37,6 +37,7 @@ const NotifyChannelEditFormMattermostFields = () => {
         name="channelId"
         label={t("settings.notification.channel.form.mattermost_channel_id.label")}
         rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("settings.notification.channel.form.mattermost_channel_id.tooltip") }}></span>}
       >
         <Input placeholder={t("settings.notification.channel.form.mattermost_channel_id.placeholder")} />
       </Form.Item>
