@@ -86,7 +86,7 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	if err != nil {
 		return resp, fmt.Errorf("baota api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("baota api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("baota api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
