@@ -1,7 +1,7 @@
-import {useTranslation} from "react-i18next";
-import {Form, Input} from "antd";
-import {createSchemaFieldRule} from "antd-zod";
-import {z} from "zod";
+import { useTranslation } from "react-i18next";
+import { Form, Input } from "antd";
+import { createSchemaFieldRule } from "antd-zod";
+import { z } from "zod";
 
 const NotifyChannelEditFormMattermostFields = () => {
   const { t } = useTranslation();
