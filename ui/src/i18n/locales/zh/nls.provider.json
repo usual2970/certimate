@@ -38,6 +38,8 @@
   "provider.baotapanel": "宝塔面板",
   "provider.baotapanel.console": "宝塔面板 - 面板",
   "provider.baotapanel.site": "宝塔面板 - 网站",
+  "provider.bunny": "Bunny",
+  "provider.bunny.cdn": "Bunny - 内容分发网络 CDN",
   "provider.byteplus": "BytePlus",
   "provider.byteplus.cdn": "BytePlus - 内容分发网络 CDN",
   "provider.buypass": "Buypass AS",

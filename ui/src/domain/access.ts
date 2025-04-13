@@ -14,6 +14,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBaiduCloud
       | AccessConfigForBaishan
       | AccessConfigForBaotaPanel
+      | AccessConfigForBunny
       | AccessConfigForBytePlus
       | AccessConfigForCacheFly
       | AccessConfigForCdnfly
@@ -97,6 +98,10 @@ export type AccessConfigForBaotaPanel = {
   apiUrl: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForBunny = {
+  apiKey: string;
 };
 
 export type AccessConfigForBytePlus = {

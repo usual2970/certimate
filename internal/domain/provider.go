@@ -103,6 +103,7 @@ const (
 	ApplyDNSProviderTypeAzureDNS        = ApplyDNSProviderType("azure-dns")
 	ApplyDNSProviderTypeBaiduCloud      = ApplyDNSProviderType("baiducloud") // 兼容旧值，等同于 [ApplyDNSProviderTypeBaiduCloudDNS]
 	ApplyDNSProviderTypeBaiduCloudDNS   = ApplyDNSProviderType("baiducloud-dns")
+	ApplyDNSProviderTypeBunny           = ApplyDNSProviderType("bunny")
 	ApplyDNSProviderTypeCloudflare      = ApplyDNSProviderType("cloudflare")
 	ApplyDNSProviderTypeClouDNS         = ApplyDNSProviderType("cloudns")
 	ApplyDNSProviderTypeCMCCCloud       = ApplyDNSProviderType("cmcccloud")
@@ -167,6 +168,7 @@ const (
 	DeployProviderTypeBaishanCDN            = DeployProviderType("baishan-cdn")
 	DeployProviderTypeBaotaPanelConsole     = DeployProviderType("baotapanel-console")
 	DeployProviderTypeBaotaPanelSite        = DeployProviderType("baotapanel-site")
+	DeployProviderTypeBunnyCDN              = DeployProviderType("bunny-cdn")
 	DeployProviderTypeBytePlusCDN           = DeployProviderType("byteplus-cdn")
 	DeployProviderTypeCacheFly              = DeployProviderType("cachefly")
 	DeployProviderTypeCdnfly                = DeployProviderType("cdnfly")
