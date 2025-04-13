@@ -1,8 +1,8 @@
-﻿import { CronExpressionParser } from "cron-parser";
+﻿import { parseExpression } from "cron-parser";
 
 export const validCronExpression = (expr: string): boolean => {
   try {
-    CronExpressionParser.parse(expr);
+    parseExpression(expr);
 
     if (expr.trim().split(" ").length !== 5) return false; // pocketbase 后端仅支持五段式的表达式
     return true;
@@ -15,7 +15,7 @@ export const getNextCronExecutions = (expr: string, times = 1): Date[] => {
   if (!validCronExpression(expr)) return [];
 
   const now = new Date();
-  const cron = CronExpressionParser.parse(expr, { currentDate: now });
+  const cron = parseExpression(expr, { currentDate: now });
 
-  return cron.take(times).map((date) => date.toDate());
+  return cron.iterate(times).map((date) => date.toDate());
 };
