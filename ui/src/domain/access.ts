@@ -47,6 +47,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForUpyun
       | AccessConfigForVercel
       | AccessConfigForVolcEngine
+      | AccessConfigForWangsu
       | AccessConfigForWebhook
       | AccessConfigForWestcn
       | AccessConfigForZeroSSL
@@ -266,6 +267,11 @@ export type AccessConfigForVercel = {
 export type AccessConfigForVolcEngine = {
   accessKeyId: string;
   secretAccessKey: string;
+};
+
+export type AccessConfigForWangsu = {
+  accessKeyId: string;
+  accessKeySecret: string;
 };
 
 export type AccessConfigForWebhook = {

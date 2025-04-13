@@ -4,12 +4,12 @@ import (
 	"context"
 	"log/slog"
 
+	edgio "github.com/Edgio/edgio-api/applications/v7"
+	edgiodtos "github.com/Edgio/edgio-api/applications/v7/dtos"
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	edgsdk "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7"
-	edgsdkdtos "github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
 
 type DeployerConfig struct {
@@ -24,7 +24,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *edgsdk.EdgioClient
+	sdkClient *edgio.EdgioClient
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -64,7 +64,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 	// 上传 TLS 证书
 	// REF: https://docs.edg.io/rest_api/#tag/tls-certs/operation/postConfigV01TlsCerts
-	uploadTlsCertReq := edgsdkdtos.UploadTlsCertRequest{
+	uploadTlsCertReq := edgiodtos.UploadTlsCertRequest{
 		EnvironmentID:    d.config.EnvironmentId,
 		PrimaryCert:      privateCertPem,
 		IntermediateCert: intermediateCertPem,
@@ -79,7 +79,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(clientId, clientSecret string) (*edgsdk.EdgioClient, error) {
-	client := edgsdk.NewEdgioClient(clientId, clientSecret, "", "")
+func createSdkClient(clientId, clientSecret string) (*edgio.EdgioClient, error) {
+	client := edgio.NewEdgioClient(clientId, clientSecret, "", "")
 	return client, nil
 }

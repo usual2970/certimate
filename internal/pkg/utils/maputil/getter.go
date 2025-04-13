@@ -74,6 +74,18 @@ func GetOrDefaultInt32(dict map[string]any, key string, defaultValue int32) int3
 			}
 		}
 
+		if result, ok := value.(int64); ok {
+			if result != 0 {
+				return int32(result)
+			}
+		}
+
+		if result, ok := value.(int); ok {
+			if result != 0 {
+				return int32(result)
+			}
+		}
+
 		// 兼容字符串类型的值
 		if str, ok := value.(string); ok {
 			if result, err := strconv.ParseInt(str, 10, 32); err == nil {
@@ -121,6 +133,12 @@ func GetOrDefaultInt64(dict map[string]any, key string, defaultValue int64) int6
 		}
 
 		if result, ok := value.(int32); ok {
+			if result != 0 {
+				return int64(result)
+			}
+		}
+
+		if result, ok := value.(int); ok {
 			if result != 0 {
 				return int64(result)
 			}

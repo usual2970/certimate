@@ -41,6 +41,8 @@
   "common.notifier.email": "Email",
   "common.notifier.gotify": "Gotify",
   "common.notifier.lark": "Lark",
+  "common.notifier.mattermost": "Mattermost",
+  "common.notifier.pushover": "Pushover",
   "common.notifier.pushplus": "PushPlus",
   "common.notifier.serverchan": "ServerChan",
   "common.notifier.telegram": "Telegram",

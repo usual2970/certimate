@@ -285,7 +285,7 @@ const Dashboard = () => {
             }}
             pagination={false}
             rowKey={(record) => record.id}
-            scroll={{ x: "max(100%, 960px)" }}
+            scroll={{ x: "max(100%, 720px)" }}
             size="small"
           />
         </Card>
@@ -310,7 +310,7 @@ const StatisticCard = ({
   onClick?: () => void;
 }) => {
   return (
-    <Card className="size-full overflow-hidden" hoverable loading={loading} variant="borderless" onClick={onClick}>
+    <Card className="size-full overflow-hidden" hoverable loading={loading} bordered={false} onClick={onClick}>
       <Space size="middle">
         {icon}
         <Statistic

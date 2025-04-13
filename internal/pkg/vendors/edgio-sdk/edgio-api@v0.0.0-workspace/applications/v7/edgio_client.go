@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Edgio/edgio-api/applications/v7/dtos"
 	"github.com/go-resty/resty/v2"
-
-	"github.com/usual2970/certimate/internal/pkg/vendors/edgio-sdk/applications/v7/dtos"
 )
 
 // AccessTokenResponse represents the response from the token endpoint.
