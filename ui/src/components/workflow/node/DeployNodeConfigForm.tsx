@@ -56,6 +56,7 @@ import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
 import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
+import DeployNodeConfigFormRainYunRCDNConfig from "./DeployNodeConfigFormRainYunRCDNConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
@@ -80,6 +81,7 @@ import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolc
 import DeployNodeConfigFormVolcEngineImageXConfig from "./DeployNodeConfigFormVolcEngineImageXConfig.tsx";
 import DeployNodeConfigFormVolcEngineLiveConfig from "./DeployNodeConfigFormVolcEngineLiveConfig.tsx";
 import DeployNodeConfigFormVolcEngineTOSConfig from "./DeployNodeConfigFormVolcEngineTOSConfig.tsx";
+import DeployNodeConfigFormWangsuCDNProConfig from "./DeployNodeConfigFormWangsuCDNProConfig.tsx";
 import DeployNodeConfigFormWebhookConfig from "./DeployNodeConfigFormWebhookConfig.tsx";
 
 type DeployNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForDeploy>;
@@ -251,6 +253,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormQiniuKodoConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.QINIU_PILI:
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.RAINYUN_RCDN:
+          return <DeployNodeConfigFormRainYunRCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SAFELINE:
           return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.SSH:
@@ -299,6 +303,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.VOLCENGINE_TOS:
           return <DeployNodeConfigFormVolcEngineTOSConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.WANGSU_CDNPRO:
+          return <DeployNodeConfigFormWangsuCDNProConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.WEBHOOK:
           return <DeployNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }

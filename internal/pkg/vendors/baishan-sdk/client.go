@@ -75,7 +75,7 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 	if err != nil {
 		return resp, fmt.Errorf("baishan api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("baishan api error: unexpected status code: %d, %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("baishan api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
