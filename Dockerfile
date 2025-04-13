@@ -18,6 +18,8 @@ RUN go build -o certimate
 
 
 FROM alpine:latest
+ENV TZ UTC
+RUN apk add tzdata
 WORKDIR /app
 COPY --from=builder /app/certimate .
 ENTRYPOINT ["./certimate", "serve", "--http", "0.0.0.0:8090"]
