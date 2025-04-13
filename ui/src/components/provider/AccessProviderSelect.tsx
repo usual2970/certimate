@@ -50,26 +50,27 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
       <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
         <Space className="max-w-full grow truncate" size={4}>
           <Avatar src={provider.icon} size="small" />
-          <Typography.Text className="leading-loose" type={provider.builtin ? "secondary" : undefined} delete={provider.builtin ? true : undefined} ellipsis>
+          <Typography.Text className="leading-loose" type={provider.builtin ? "secondary" : undefined} ellipsis>
             {t(provider.name)}
           </Typography.Text>
         </Space>
-        {showOptionTags && (
-          <div>
-            <Show when={showOptionTagForDNS && provider.usages.includes(ACCESS_USAGES.DNS)}>
-              <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>
-            </Show>
-            <Show when={showOptionTagForHosting && provider.usages.includes(ACCESS_USAGES.HOSTING)}>
-              <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>
-            </Show>
-            <Show when={showOptionTagForCA && provider.usages.includes(ACCESS_USAGES.CA)}>
-              <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>
-            </Show>
-            <Show when={showOptionTagForNotification && provider.usages.includes(ACCESS_USAGES.NOTIFICATION)}>
-              <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>
-            </Show>
-          </div>
-        )}
+        <div>
+          <Show when={provider.builtin}>
+            <Tag color="grey">{t("access.props.provider.builtin")}</Tag>
+          </Show>
+          <Show when={showOptionTagForDNS && provider.usages.includes(ACCESS_USAGES.DNS)}>
+            <Tag color="peru">{t("access.props.provider.usage.dns")}</Tag>
+          </Show>
+          <Show when={showOptionTagForHosting && provider.usages.includes(ACCESS_USAGES.HOSTING)}>
+            <Tag color="royalblue">{t("access.props.provider.usage.hosting")}</Tag>
+          </Show>
+          <Show when={showOptionTagForCA && provider.usages.includes(ACCESS_USAGES.CA)}>
+            <Tag color="crimson">{t("access.props.provider.usage.ca")}</Tag>
+          </Show>
+          <Show when={showOptionTagForNotification && provider.usages.includes(ACCESS_USAGES.NOTIFICATION)}>
+            <Tag color="mediumaquamarine">{t("access.props.provider.usage.notification")}</Tag>
+          </Show>
+        </div>
       </div>
     );
   };

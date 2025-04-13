@@ -10,6 +10,7 @@ import NotifyChannelEditFormEmailFields from "./NotifyChannelEditFormEmailFields
 import NotifyChannelEditFormGotifyFields from "./NotifyChannelEditFormGotifyFields.tsx";
 import NotifyChannelEditFormLarkFields from "./NotifyChannelEditFormLarkFields";
 import NotifyChannelEditFormMattermostFields from "./NotifyChannelEditFormMattermostFields.tsx";
+import NotifyChannelEditFormPushoverFields from "./NotifyChannelEditFormPushoverFields";
 import NotifyChannelEditFormPushPlusFields from "./NotifyChannelEditFormPushPlusFields";
 import NotifyChannelEditFormServerChanFields from "./NotifyChannelEditFormServerChanFields";
 import NotifyChannelEditFormTelegramFields from "./NotifyChannelEditFormTelegramFields";
@@ -57,6 +58,8 @@ const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyCh
           return <NotifyChannelEditFormLarkFields />;
         case NOTIFY_CHANNELS.MATTERMOST:
           return <NotifyChannelEditFormMattermostFields />;
+        case NOTIFY_CHANNELS.PUSHOVER:
+          return <NotifyChannelEditFormPushoverFields />;
         case NOTIFY_CHANNELS.PUSHPLUS:
           return <NotifyChannelEditFormPushPlusFields />;
         case NOTIFY_CHANNELS.SERVERCHAN:

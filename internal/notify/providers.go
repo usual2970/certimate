@@ -11,6 +11,7 @@ import (
 	pGotify "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/gotify"
 	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
+	pPushover "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushover"
 	pPushPlus "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushplus"
 	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
@@ -66,6 +67,11 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 			ChannelId: maputil.GetString(channelConfig, "channelId"),
 			Username:  maputil.GetString(channelConfig, "username"),
 			Password:  maputil.GetString(channelConfig, "password"),
+    })
+	case domain.NotifyChannelTypePushover:
+		return pPushover.NewNotifier(&pPushover.NotifierConfig{
+			Token: maputil.GetString(channelConfig, "token"),
+			User:  maputil.GetString(channelConfig, "user"),
 		})
 
 	case domain.NotifyChannelTypePushPlus:

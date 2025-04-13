@@ -258,15 +258,15 @@ func init() {
 			}
 
 			type dWorkflowNode struct {
-				Id        string          `json:"id"`
-				Type      string          `json:"type"`
-				Name      string          `json:"name"`
-				Config    map[string]any  `json:"config"`
-				Inputs    map[string]any  `json:"inputs"`
-				Outputs   map[string]any  `json:"outputs"`
-				Next      *dWorkflowNode  `json:"next,omitempty"`
-				Branches  []dWorkflowNode `json:"branches,omitempty"`
-				Validated bool            `json:"validated"`
+				Id        string           `json:"id"`
+				Type      string           `json:"type"`
+				Name      string           `json:"name"`
+				Config    map[string]any   `json:"config"`
+				Inputs    []map[string]any `json:"inputs"`
+				Outputs   []map[string]any `json:"outputs"`
+				Next      *dWorkflowNode   `json:"next,omitempty"`
+				Branches  []dWorkflowNode  `json:"branches,omitempty"`
+				Validated bool             `json:"validated"`
 			}
 
 			for _, workflowRun := range workflowRuns {
