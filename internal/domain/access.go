@@ -228,6 +228,11 @@ type AccessConfigForVolcEngine struct {
 	SecretAccessKey string `json:"secretAccessKey"`
 }
 
+type AccessConfigForWangsu struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	AccessKeySecret string `json:"accessKeySecret"`
+}
+
 type AccessConfigForWebhook struct {
 	Url                      string `json:"url"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`

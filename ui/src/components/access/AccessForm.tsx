@@ -51,6 +51,7 @@ import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormUpyunConfig from "./AccessFormUpyunConfig";
 import AccessFormVercelConfig from "./AccessFormVercelConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
+import AccessFormWangsuConfig from "./AccessFormWangsuConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
 import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 import AccessFormZeroSSLConfig from "./AccessFormZeroSSLConfig";
@@ -229,6 +230,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormVercelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.VOLCENGINE:
         return <AccessFormVolcEngineConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.WANGSU:
+        return <AccessFormWangsuConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:
         return <AccessFormWebhookConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WESTCN:

@@ -71,6 +71,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns v1.3.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.3 // indirect
+	github.com/Edgio/edgio-api v0.0.0-workspace // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
@@ -210,6 +211,8 @@ require (
 	modernc.org/memory v1.8.2 // indirect
 	modernc.org/sqlite v1.36.1 // indirect
 )
+
+replace github.com/Edgio/edgio-api v0.0.0-workspace => ./internal/pkg/vendors/edgio-sdk/edgio-api@v0.0.0-workspace
 
 replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./internal/pkg/vendors/cmcc-sdk/ecloudsdkcore@v1.0.0
 

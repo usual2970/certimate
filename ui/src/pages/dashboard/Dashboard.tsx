@@ -285,7 +285,7 @@ const Dashboard = () => {
             }}
             pagination={false}
             rowKey={(record) => record.id}
-            scroll={{ x: "max(100%, 960px)" }}
+            scroll={{ x: "max(100%, 720px)" }}
             size="small"
           />
         </Card>

@@ -49,6 +49,7 @@ import (
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
+	pRainYunRCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/rainyun-rcdn"
 	pSafeLine "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/safeline"
 	pSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	pTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
@@ -73,6 +74,7 @@ import (
 	pVolcEngineImageX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-imagex"
 	pVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	pVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
+	pWangsuCDNPro "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdnpro"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
 	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
@@ -681,6 +683,27 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
+	case domain.DeployProviderTypeRainYunRCDN:
+		{
+			access := domain.AccessConfigForRainYun{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeTencentCloudCDN:
+				deployer, err := pRainYunRCDN.NewDeployer(&pRainYunRCDN.DeployerConfig{
+					ApiKey:     access.ApiKey,
+					InstanceId: maputil.GetInt32(options.ProviderDeployConfig, "instanceId"),
+					Domain:     maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
 	case domain.DeployProviderTypeSafeLine:
 		{
 			access := domain.AccessConfigForSafeLine{}
@@ -973,6 +996,30 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
 					Bucket:          maputil.GetString(options.ProviderDeployConfig, "bucket"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeployProviderTypeWangsuCDNPro:
+		{
+			access := domain.AccessConfigForWangsu{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeployProviderTypeWangsuCDNPro:
+				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Environment:     maputil.GetOrDefaultString(options.ProviderDeployConfig, "environment", "production"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+					CertificateId:   maputil.GetString(options.ProviderDeployConfig, "certificateId"),
+					WebhookId:       maputil.GetString(options.ProviderDeployConfig, "webhookId"),
 				})
 				return deployer, err
 

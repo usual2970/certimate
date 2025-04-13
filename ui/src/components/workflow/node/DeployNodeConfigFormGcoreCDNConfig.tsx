@@ -4,7 +4,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 type DeployNodeConfigFormGcoreCDNConfigFieldValues = Nullish<{
-  resourceId?: string | number;
+  resourceId: string | number;
 }>;
 
 export type DeployNodeConfigFormGcoreCDNConfigProps = {
@@ -27,7 +27,7 @@ const DeployNodeConfigFormGcoreCDNConfig = ({ form: formInst, formName, disabled
   const formSchema = z.object({
     resourceId: z.union([z.string(), z.number()]).refine((v) => {
       return /^\d+$/.test(v + "") && +v > 0;
-    }, t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder")),
+    }, t("workflow_node.deploy.form.gcore_cdn_resource_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
