@@ -22,6 +22,8 @@ type DeployerConfig struct {
 	CloudName string `json:"cloudName,omitempty"`
 	// Key Vault 名称。
 	KeyVaultName string `json:"keyvaultName"`
+	// Certificate 名称。
+	CertificateName string `json:"certificateName"`
 }
 
 type DeployerProvider struct {
@@ -38,11 +40,12 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		TenantId:     config.TenantId,
-		ClientId:     config.ClientId,
-		ClientSecret: config.ClientSecret,
-		CloudName:    config.CloudName,
-		KeyVaultName: config.KeyVaultName,
+		TenantId:        config.TenantId,
+		ClientId:        config.ClientId,
+		ClientSecret:    config.ClientSecret,
+		CloudName:       config.CloudName,
+		KeyVaultName:    config.KeyVaultName,
+		CertificateName: config.CertificateName,
 	})
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to create ssl uploader")

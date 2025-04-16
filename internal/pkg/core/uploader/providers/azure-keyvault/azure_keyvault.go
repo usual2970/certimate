@@ -3,6 +3,7 @@
 import (
 	"context"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
 	"log/slog"
 	"time"
@@ -29,6 +30,8 @@ type UploaderConfig struct {
 	CloudName string `json:"cloudName,omitempty"`
 	// Key Vault 名称。
 	KeyVaultName string `json:"keyvaultName"`
+	// Certificate 名称。
+	CertificateName string `json:"certificateName,omitempty"`
 }
 
 type UploaderProvider struct {
@@ -88,6 +91,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		}
 
 		for _, certItem := range page.Value {
+			// 如果已经指定了证书名称，则跳过证书名称不匹配的证书
+			if u.config.CertificateName != "" && certItem.ID.Name() != u.config.CertificateName {
+				continue
+			}
+
 			// 先对比证书有效期
 			if certItem.Attributes == nil {
 				continue
@@ -138,16 +146,28 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		}
 	}
 
-	// 生成新证书名（需符合 Azure 命名规则）
-	certName := fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
+	certName := u.config.CertificateName
+	if certName == "" {
+		// 未指定证书名称时，生成包含timestamp的新证书名（需符合 Azure 命名规则）
+		certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
+	}
+
+	// Azure Key Vault 不支持导入带有Certificiate Chain的PEM证书。
+	// Issue Link: https://github.com/Azure/azure-cli/issues/19017
+	// 暂时的解决方法是，将 PEM 证书转换成 PFX 格式，然后再导入。
+	pfxCert, err := certutil.TransformCertificateFromPEMToPFX(certPem, privkeyPem, "")
+	if err != nil {
+		u.logger.Error("failed to transform certificate from PEM to PFX", slog.String("certPem", certPem), slog.String("privkeyPem", privkeyPem))
+		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
+	}
 
 	// 导入证书
 	// REF: https://learn.microsoft.com/en-us/rest/api/keyvault/certificates/import-certificate/import-certificate
 	importCertificateParams := azcertificates.ImportCertificateParameters{
-		Base64EncodedCertificate: to.Ptr(certPem),
+		Base64EncodedCertificate: to.Ptr(base64.StdEncoding.EncodeToString(pfxCert)),
 		CertificatePolicy: &azcertificates.CertificatePolicy{
 			SecretProperties: &azcertificates.SecretProperties{
-				ContentType: to.Ptr("application/x-pem-file"),
+				ContentType: to.Ptr("application/x-pkcs12"),
 			},
 		},
 		Tags: map[string]*string{
