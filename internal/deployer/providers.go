@@ -1016,6 +1016,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
+					ApiKey:          access.ApiKey,
 					Environment:     maputil.GetOrDefaultString(options.ProviderDeployConfig, "environment", "production"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 					CertificateId:   maputil.GetString(options.ProviderDeployConfig, "certificateId"),

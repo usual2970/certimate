@@ -28,6 +28,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 网宿云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 网宿云 API Key。
+	ApiKey string `json:"apiKey"`
 	// 网宿云环境。
 	Environment string `json:"environment"`
 	// 加速域名（支持泛域名）。
@@ -93,7 +95,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 生成网宿云证书参数
-	encryptedPrivateKey, err := encryptPrivateKey(privkeyPem, d.config.AccessKeySecret, time.Now().Unix())
+	encryptedPrivateKey, err := encryptPrivateKey(privkeyPem, d.config.ApiKey, time.Now().Unix())
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to encrypt private key")
 	}
@@ -231,11 +233,11 @@ func createSdkClient(accessKeyId, accessKeySecret string) (*wangsucdn.Client, er
 	return wangsucdn.NewClient(accessKeyId, accessKeySecret), nil
 }
 
-func encryptPrivateKey(privkeyPem string, secretKey string, timestamp int64) (string, error) {
+func encryptPrivateKey(privkeyPem string, apiKey string, timestamp int64) (string, error) {
 	date := time.Unix(timestamp, 0).UTC()
 	dateStr := date.Format("Mon, 02 Jan 2006 15:04:05 GMT")
 
-	mac := hmac.New(sha256.New, []byte(secretKey))
+	mac := hmac.New(sha256.New, []byte(apiKey))
 	mac.Write([]byte(dateStr))
 	aesivkey := mac.Sum(nil)
 	aesivkeyHex := hex.EncodeToString(aesivkey)

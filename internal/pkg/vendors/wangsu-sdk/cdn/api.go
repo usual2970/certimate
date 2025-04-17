@@ -53,6 +53,6 @@ func (c *Client) CreateDeploymentTask(req *CreateDeploymentTaskRequest) (*Create
 
 func (c *Client) GetDeploymentTaskDetail(deploymentTaskId string) (*GetDeploymentTaskDetailResponse, error) {
 	resp := &GetDeploymentTaskDetailResponse{}
-	_, err := c.client.SendRequestWithResult(http.MethodGet, fmt.Sprintf("/cdn/deploymentTasks/%s", deploymentTaskId), nil, resp)
+	_, err := c.client.SendRequestWithResult(http.MethodGet, fmt.Sprintf("/cdn/deploymentTasks/%s", url.PathEscape(deploymentTaskId)), nil, resp)
 	return resp, err
 }
