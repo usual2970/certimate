@@ -35,7 +35,6 @@
   "common.errmsg.port_invalid": "Please enter a valid port",
   "common.errmsg.ip_invalid": "Please enter a valid IP address",
   "common.errmsg.url_invalid": "Please enter a valid URL",
-  "common.errmsg.azure_keyvault_certificate_name_invalid": "Certificate name can only contain letters, numbers, and hyphens (-), with a length limit of 1 to 127 characters",
 
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "DingTalk",

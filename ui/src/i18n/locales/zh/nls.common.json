@@ -35,7 +35,6 @@
   "common.errmsg.port_invalid": "请输入正确的端口号",
   "common.errmsg.ip_invalid": "请输入正确的 IP 地址",
   "common.errmsg.url_invalid": "请输入正确的 URL 地址",
-  "common.errmsg.azure_keyvault_certificate_name_invalid": "证书名称只能包含字母、数字和连字符（-），长度限制为 1 到 127 个字符",
 
   "common.notifier.bark": "Bark",
   "common.notifier.dingtalk": "钉钉",

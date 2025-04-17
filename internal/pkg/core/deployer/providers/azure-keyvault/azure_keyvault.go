@@ -22,8 +22,8 @@ type DeployerConfig struct {
 	CloudName string `json:"cloudName,omitempty"`
 	// Key Vault 名称。
 	KeyVaultName string `json:"keyvaultName"`
-	// Certificate 名称。
-	CertificateName string `json:"certificateName"`
+	// Certificate 名称，可选。
+	CertificateName string `json:"certificateName,omitempty"`
 }
 
 type DeployerProvider struct {

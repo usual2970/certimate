@@ -157,7 +157,6 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 暂时的解决方法是，将 PEM 证书转换成 PFX 格式，然后再导入。
 	pfxCert, err := certutil.TransformCertificateFromPEMToPFX(certPem, privkeyPem, "")
 	if err != nil {
-		u.logger.Error("failed to transform certificate from PEM to PFX", slog.String("certPem", certPem), slog.String("privkeyPem", privkeyPem))
 		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
 	}
 

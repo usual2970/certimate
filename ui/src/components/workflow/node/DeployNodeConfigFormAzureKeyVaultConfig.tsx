@@ -41,7 +41,7 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
       .refine((v) =>{
         if (!v) return true;
         return validAzureKeyVaultCertificateName(v);
-      }, t("common.errmsg.azure_keyvault_certificate_name_invalid")),
+      }, t("workflow_node.deploy.form.azure_keyvault_certificate_name.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
