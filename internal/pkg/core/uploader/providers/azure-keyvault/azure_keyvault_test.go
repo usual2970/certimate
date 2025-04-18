@@ -13,13 +13,13 @@ import (
 )
 
 var (
-	fInputCertPath   string
-	fInputKeyPath    string
-	fTenantId        string
-	fAccessKeyId     string
-	fSecretAccessKey string
-	fKeyVaultName    string
-	fCertificateName string
+	fInputCertPath string
+	fInputKeyPath  string
+	fTenantId      string
+	fClientId      string
+	fClientSecret  string
+	fCloudName     string
+	fKeyVaultName  string
 )
 
 func init() {
@@ -28,10 +28,10 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fTenantId, argsPrefix+"TENANTID", "", "")
-	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
-	flag.StringVar(&fSecretAccessKey, argsPrefix+"SECRETACCESSKEY", "", "")
+	flag.StringVar(&fClientId, argsPrefix+"CLIENTID", "", "")
+	flag.StringVar(&fClientSecret, argsPrefix+"CLIENTSECRET", "", "")
+	flag.StringVar(&fCloudName, argsPrefix+"CLOUDNAME", "", "")
 	flag.StringVar(&fKeyVaultName, argsPrefix+"KEYVAULTNAME", "", "")
-	flag.StringVar(&fCertificateName, argsPrefix+"CERTIFICATENAME", "", "")
 }
 
 /*
@@ -41,10 +41,10 @@ Shell command to run this test:
 	--CERTIMATE_UPLOADER_AZUREKEYVAULT_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_UPLOADER_AZUREKEYVAULT_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_UPLOADER_AZUREKEYVAULT_TENANTID="your-tenant-id" \
-	--CERTIMATE_UPLOADER_AZUREKEYVAULT_ACCESSKEYID="your-app-registration-client-id" \
-	--CERTIMATE_UPLOADER_AZUREKEYVAULT_SECRETACCESSKEY="your-app-registration-client-secret" \
-	--CERTIMATE_UPLOADER_AZUREKEYVAULT_KEYVAULTNAME="your-keyvault-name" \
-	--CERTIMATE_UPLOADER_AZUREKEYVAULT_CERTIFICATENAME="your-certificate-name"
+	--CERTIMATE_UPLOADER_AZUREKEYVAULT_CLIENTID="your-app-registration-client-id" \
+	--CERTIMATE_UPLOADER_AZUREKEYVAULT_CLIENTSECRET="your-app-registration-client-secret" \
+	--CERTIMATE_UPLOADER_AZUREKEYVAULT_CLOUDNAME="china" \
+	--CERTIMATE_UPLOADER_AZUREKEYVAULT_KEYVAULTNAME="your-keyvault-name"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -55,18 +55,18 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("TENANTID: %v", fTenantId),
-			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
-			fmt.Sprintf("SECRETACCESSKEY: %v", fSecretAccessKey),
+			fmt.Sprintf("CLIENTID: %v", fClientId),
+			fmt.Sprintf("CLIENTSECRET: %v", fClientSecret),
+			fmt.Sprintf("CLOUDNAME: %v", fCloudName),
 			fmt.Sprintf("KEYVAULTNAME: %v", fKeyVaultName),
-			fmt.Sprintf("CERTIFICATENAME: %v", fCertificateName),
 		}, "\n"))
 
 		uploader, err := provider.NewUploader(&provider.UploaderConfig{
-			TenantId:        fTenantId,
-			ClientId:        fAccessKeyId,
-			ClientSecret:    fSecretAccessKey,
-			KeyVaultName:    fKeyVaultName,
-			CertificateName: fCertificateName,
+			TenantId:     fTenantId,
+			ClientId:     fClientId,
+			ClientSecret: fClientSecret,
+			CloudName:    fCloudName,
+			KeyVaultName: fKeyVaultName,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

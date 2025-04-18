@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
-import { validAzureKeyVaultCertificateName } from "@/utils/validators";
 
 type DeployNodeConfigFormAzureKeyVaultConfigFieldValues = Nullish<{
   keyvaultName: string;
@@ -40,7 +39,7 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
       .nullish()
       .refine((v) =>{
         if (!v) return true;
-        return validAzureKeyVaultCertificateName(v);
+        return /^[a-zA-Z0-9-]{1,127}$/.test(v);
       }, t("workflow_node.deploy.form.azure_keyvault_certificate_name.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -66,6 +65,7 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
       >
         <Input placeholder={t("workflow_node.deploy.form.azure_keyvault_name.placeholder")} />
       </Form.Item>
+
       <Form.Item
         name="certificateName"
         label={t("workflow_node.deploy.form.azure_keyvault_certificate_name.label")}

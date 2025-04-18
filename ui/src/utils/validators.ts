@@ -9,11 +9,6 @@ export const validDomainName = (value: string, { allowWildcard = false }: { allo
   return re.test(value);
 };
 
-export const validAzureKeyVaultCertificateName = (value: string) => {
-  const re = /^[a-zA-Z0-9-]{1,127}$/;
-  return re.test(value);
-}
-
 export const validEmailAddress = (value: string) => {
   const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return re.test(value);
