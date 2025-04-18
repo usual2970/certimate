@@ -214,8 +214,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			break
 		}
 
-		d.logger.Info("waiting for deployment task completion ...")
-		time.Sleep(time.Second * 15)
+		d.logger.Info(fmt.Sprintf("waiting for deployment task completion (current status: %s) ...", getDeploymentTaskDetailResp.Status))
+		time.Sleep(time.Second * 5)
 	}
 
 	return &deployer.DeployResult{}, nil
