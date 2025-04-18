@@ -9,6 +9,7 @@ import (
 	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
 	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
 	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	pAliyunAPIGW "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-apigw"
 	pAliyunCAS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas"
 	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
@@ -117,7 +118,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunAPIGW, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -133,6 +134,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					ResourceType:    pAliyunALB.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maputil.GetString(options.ProviderDeployConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeAliyunAPIGW:
+				deployer, err := pAliyunAPIGW.NewDeployer(&pAliyunAPIGW.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+					ServiceType:     pAliyunAPIGW.ServiceType(maputil.GetString(options.ProviderDeployConfig, "serviceType")),
+					GatewayId:       maputil.GetString(options.ProviderDeployConfig, "gatewayId"),
+					GroupId:         maputil.GetString(options.ProviderDeployConfig, "groupId"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err

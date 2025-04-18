@@ -146,6 +146,7 @@ const (
 	DeployProviderType1PanelConsole         = DeployProviderType("1panel-console")
 	DeployProviderType1PanelSite            = DeployProviderType("1panel-site")
 	DeployProviderTypeAliyunALB             = DeployProviderType("aliyun-alb")
+	DeployProviderTypeAliyunAPIGW           = DeployProviderType("aliyun-apigw")
 	DeployProviderTypeAliyunCAS             = DeployProviderType("aliyun-cas")
 	DeployProviderTypeAliyunCASDeploy       = DeployProviderType("aliyun-casdeploy")
 	DeployProviderTypeAliyunCDN             = DeployProviderType("aliyun-cdn")
