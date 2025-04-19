@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_1PANELCONSOLE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_1PANELSITE_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -32,12 +32,12 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./1panel_console_test.go -args \
-	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIURL="http://127.0.0.1:20410" \
-	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIKEY="your-api-key" \
-	--CERTIMATE_DEPLOYER_1PANELCONSOLE_WEBSITEID="your-website-id"
+	go test -v ./1panel_site_test.go -args \
+	--CERTIMATE_DEPLOYER_1PANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_1PANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_1PANELSITE_APIURL="http://127.0.0.1:20410" \
+	--CERTIMATE_DEPLOYER_1PANELSITE_APIKEY="your-api-key" \
+	--CERTIMATE_DEPLOYER_1PANELSITE_WEBSITEID="your-website-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -55,8 +55,9 @@ func TestDeploy(t *testing.T) {
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
 			ApiKey:                   fApiKey,
-			WebsiteId:                fWebsiteId,
 			AllowInsecureConnections: true,
+			ResourceType:             provider.RESOURCE_TYPE_WEBSITE,
+			WebsiteId:                fWebsiteId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

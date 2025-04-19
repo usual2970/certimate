@@ -109,7 +109,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
+					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderDeployConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
 					WebsiteId:                maputil.GetInt64(options.ProviderDeployConfig, "websiteId"),
+					CertificateId:            maputil.GetInt64(options.ProviderDeployConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -474,7 +476,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 				ApiUrl:        access.ApiUrl,
 				ApiKey:        access.ApiKey,
 				ApiSecret:     access.ApiSecret,
-				ResourceType:  pCdnfly.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
+				ResourceType:  pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderDeployConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
 				SiteId:        maputil.GetString(options.ProviderDeployConfig, "siteId"),
 				CertificateId: maputil.GetString(options.ProviderDeployConfig, "certificateId"),
 			})
