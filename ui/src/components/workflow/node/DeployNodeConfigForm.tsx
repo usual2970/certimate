@@ -39,6 +39,7 @@ import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaidu
 import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanCDNConfig";
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
 import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaotaPanelSiteConfig";
+import DeployNodeConfigFormBunnyCDNConfig from "./DeployNodeConfigFormBunnyCDNConfig.tsx";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
@@ -219,6 +220,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormBaotaPanelConsoleConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BAOTAPANEL_SITE:
           return <DeployNodeConfigFormBaotaPanelSiteConfig {...nestedFormProps} />;
+        case DEPLOY_PROVIDERS.BUNNY_CDN:
+          return <DeployNodeConfigFormBunnyCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
         case DEPLOY_PROVIDERS.CDNFLY:

@@ -11,6 +11,7 @@ import (
 	pAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
 	pAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
 	pBaiduCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/baiducloud"
+	pBunny "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/bunny"
 	pCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
 	pClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
 	pCMCCCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cmcccloud"
@@ -122,6 +123,21 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 			applicant, err := pBaiduCloud.NewChallengeProvider(&pBaiduCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ApplyDNSProviderTypeBunny:
+		{
+			access := domain.AccessConfigForBunny{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pBunny.NewChallengeProvider(&pBunny.ChallengeProviderConfig{
+				ApiKey:                access.ApiKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

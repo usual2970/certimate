@@ -651,6 +651,8 @@ github.com/ncruces/go-strftime v0.1.9/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJm
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nikoksr/notify v1.3.0 h1:UxzfxzAYGQD9a5JYLBTVx0lFMxeHCke3rPCkfWdPgLs=
 github.com/nikoksr/notify v1.3.0/go.mod h1:Xor2hMmkvrCfkCKvXGbcrESez4brac2zQjhd6U2BbeM=
+github.com/nrdcg/bunny-go v0.0.0-20240207213615-dde5bf4577a3 h1:ouZ2JWDl8IW5k1qugYbmpbmW8hn85Ig6buSMBRlz3KI=
+github.com/nrdcg/bunny-go v0.0.0-20240207213615-dde5bf4577a3/go.mod h1:ZwadWt7mVhMHMbAQ1w8IhDqtWO3eWqWq72W7trnaiE8=
 github.com/nrdcg/desec v0.10.0 h1:qrEDiqnsvNU9QE7lXIXi/tIHAfyaFXKxF2/8/52O8uM=
 github.com/nrdcg/desec v0.10.0/go.mod h1:5+4vyhMRTs49V9CNoODF/HwT8Mwxv9DJ6j+7NekUnBs=
 github.com/nrdcg/mailinabox v0.2.0 h1:IKq8mfKiVwNW2hQii/ng1dJ4yYMMv3HAP3fMFIq2CFk=

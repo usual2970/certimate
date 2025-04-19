@@ -31,6 +31,7 @@ import (
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
+	pBunnyCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
@@ -414,6 +415,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			default:
 				break
 			}
+		}
+
+	case domain.DeployProviderTypeBunnyCDN:
+		{
+			access := domain.AccessConfigForBunny{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pBunnyCDN.NewDeployer(&pBunnyCDN.DeployerConfig{
+				ApiKey:     access.ApiKey,
+				PullZoneId: maputil.GetString(options.ProviderDeployConfig, "pullZoneId"),
+				HostName:   maputil.GetString(options.ProviderDeployConfig, "hostName"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeployProviderTypeBytePlusCDN:

@@ -64,6 +64,10 @@ type AccessConfigForBytePlus struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForBunny struct {
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForCacheFly struct {
 	ApiToken string `json:"apiToken"`
 }
