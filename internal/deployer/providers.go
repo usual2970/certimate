@@ -298,11 +298,12 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderTypeAzureKeyVault:
 				deployer, err := pAzureKeyVault.NewDeployer(&pAzureKeyVault.DeployerConfig{
-					TenantId:     access.TenantId,
-					ClientId:     access.ClientId,
-					ClientSecret: access.ClientSecret,
-					CloudName:    access.CloudName,
-					KeyVaultName: maputil.GetString(options.ProviderDeployConfig, "keyvaultName"),
+					TenantId:        access.TenantId,
+					ClientId:        access.ClientId,
+					ClientSecret:    access.ClientSecret,
+					CloudName:       access.CloudName,
+					KeyVaultName:    maputil.GetString(options.ProviderDeployConfig, "keyvaultName"),
+					CertificateName: maputil.GetString(options.ProviderDeployConfig, "certificateName"),
 				})
 				return deployer, err
 
