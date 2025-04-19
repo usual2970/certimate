@@ -35,8 +35,8 @@ const FORMAT_JKS = CERTIFICATE_FORMATS.JKS;
 const initFormModel = (): DeployNodeConfigFormSSHConfigFieldValues => {
   return {
     format: FORMAT_PEM,
-    certPath: "/etc/ssl/certs/cert.crt",
-    keyPath: "/etc/ssl/certs/cert.key",
+    certPath: "/etc/ssl/certimate/cert.crt",
+    keyPath: "/etc/ssl/certimate/cert.key",
   };
 };
 
