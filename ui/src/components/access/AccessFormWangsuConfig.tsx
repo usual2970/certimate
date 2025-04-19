@@ -19,6 +19,7 @@ const initFormModel = (): AccessFormWangsuConfigFieldValues => {
   return {
     accessKeyId: "",
     accessKeySecret: "",
+    apiKey: "",
   };
 };
 
@@ -35,6 +36,11 @@ const AccessFormWangsuConfig = ({ form: formInst, formName, disabled, initialVal
       .string()
       .min(1, t("access.form.wangsu_access_key_secret.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 }))
+      .trim(),
+    apiKey: z
+      .string()
+      .min(1, t("access.form.wangsu_api_key.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
       .trim(),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -68,6 +74,15 @@ const AccessFormWangsuConfig = ({ form: formInst, formName, disabled, initialVal
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.wangsu_access_key_secret.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.wangsu_access_key_secret.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="apiKey"
+        label={t("access.form.wangsu_api_key.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.wangsu_api_key.tooltip") }}></span>}
+      >
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.wangsu_api_key.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -277,6 +277,7 @@ export type AccessConfigForVolcEngine = {
 export type AccessConfigForWangsu = {
   accessKeyId: string;
   accessKeySecret: string;
+  apiKey: string;
 };
 
 export type AccessConfigForWebhook = {

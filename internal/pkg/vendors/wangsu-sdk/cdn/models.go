@@ -97,6 +97,8 @@ type CreateDeploymentTaskResponse struct {
 
 type GetDeploymentTaskDetailResponse struct {
 	baseResponse
+	Id             string                 `json:"id"`
+	Name           string                 `json:"name"`
 	Target         string                 `json:"target"`
 	Actions        []DeploymentTaskAction `json:"actions"`
 	Status         string                 `json:"status"`

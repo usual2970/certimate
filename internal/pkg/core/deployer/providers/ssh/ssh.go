@@ -243,7 +243,6 @@ func writeFileWithSCP(sshCli *ssh.Client, path string, data []byte) error {
 	if err != nil {
 		return xerrors.Wrap(err, "failed to create scp client")
 	}
-	defer scpCli.Close()
 
 	reader := bytes.NewReader(data)
 	err = scpCli.CopyToRemote(reader, path, &scp.FileTransferOption{})

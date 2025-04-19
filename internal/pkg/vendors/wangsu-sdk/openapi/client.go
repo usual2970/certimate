@@ -178,8 +178,11 @@ func (c *Client) SendRequestWithResult(method string, path string, params interf
 		return resp, err
 	}
 
-	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return resp, fmt.Errorf("wangsu api error: failed to parse response: %w", err)
+	respBody := resp.Body()
+	if len(respBody) != 0 {
+		if err := json.Unmarshal(respBody, &result); err != nil {
+			return resp, fmt.Errorf("wangsu api error: failed to parse response: %w", err)
+		}
 	}
 
 	result.SetRequestId(resp.Header().Get("x-cnc-request-id"))

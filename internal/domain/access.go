@@ -235,6 +235,7 @@ type AccessConfigForVolcEngine struct {
 type AccessConfigForWangsu struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
+	ApiKey          string `json:"apiKey"`
 }
 
 type AccessConfigForWebhook struct {
