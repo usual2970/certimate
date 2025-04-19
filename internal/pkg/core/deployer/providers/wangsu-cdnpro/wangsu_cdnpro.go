@@ -210,7 +210,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 		if getDeploymentTaskDetailResp.Status == "failed" {
 			return nil, errors.New("unexpected deployment task status")
-		} else if getDeploymentTaskDetailResp.Status == "succeeded" {
+		} else if getDeploymentTaskDetailResp.Status == "succeeded" || getDeploymentTaskDetailResp.FinishTime != "" {
 			break
 		}
 
