@@ -17,6 +17,12 @@ func (c *Client) SearchWebsiteSSL(req *SearchWebsiteSSLRequest) (*SearchWebsiteS
 	return resp, err
 }
 
+func (c *Client) GetWebsiteSSL(req *GetWebsiteSSLRequest) (*GetWebsiteSSLResponse, error) {
+	resp := &GetWebsiteSSLResponse{}
+	err := c.sendRequestWithResult(http.MethodGet, fmt.Sprintf("/websites/ssl/%d", req.SSLID), req, resp)
+	return resp, err
+}
+
 func (c *Client) UploadWebsiteSSL(req *UploadWebsiteSSLRequest) (*UploadWebsiteSSLResponse, error) {
 	resp := &UploadWebsiteSSLResponse{}
 	err := c.sendRequestWithResult(http.MethodPost, "/websites/ssl/upload", req, resp)

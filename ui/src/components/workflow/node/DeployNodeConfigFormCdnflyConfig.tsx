@@ -7,6 +7,7 @@ import Show from "@/components/Show";
 
 type DeployNodeConfigFormCdnflyConfigFieldValues = Nullish<{
   resourceType: string;
+  siteId?: string | number;
   certificateId?: string | number;
 }>;
 
@@ -34,10 +35,13 @@ const DeployNodeConfigFormCdnflyConfig = ({ form: formInst, formName, disabled, 
     resourceType: z.union([z.literal(RESOURCE_TYPE_SITE), z.literal(RESOURCE_TYPE_CERTIFICATE)], {
       message: t("workflow_node.deploy.form.cdnfly_resource_type.placeholder"),
     }),
-    siteId: z.union([z.string(), z.number().int()]).refine((v) => {
-      if (fieldResourceType !== RESOURCE_TYPE_SITE) return true;
-      return /^\d+$/.test(v + "") && +v > 0;
-    }, t("workflow_node.deploy.form.cdnfly_site_id.placeholder")),
+    siteId: z
+      .union([z.string(), z.number().int()])
+      .nullish()
+      .refine((v) => {
+        if (fieldResourceType !== RESOURCE_TYPE_SITE) return true;
+        return /^\d+$/.test(v + "") && +v! > 0;
+      }, t("workflow_node.deploy.form.cdnfly_site_id.placeholder")),
     certificateId: z
       .union([z.string(), z.number().int()])
       .nullish()

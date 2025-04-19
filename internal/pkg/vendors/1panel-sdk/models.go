@@ -59,6 +59,28 @@ type SearchWebsiteSSLResponse struct {
 	} `json:"data,omitempty"`
 }
 
+type GetWebsiteSSLRequest struct {
+	SSLID int64 `json:"-"`
+}
+
+type GetWebsiteSSLResponse struct {
+	baseResponse
+	Data *struct {
+		ID            int64  `json:"id"`
+		Provider      string `json:"provider"`
+		Description   string `json:"description"`
+		PrimaryDomain string `json:"primaryDomain"`
+		Domains       string `json:"domains"`
+		Type          string `json:"type"`
+		Organization  string `json:"organization"`
+		Status        string `json:"status"`
+		StartDate     string `json:"startDate"`
+		ExpireDate    string `json:"expireDate"`
+		CreatedAt     string `json:"createdAt"`
+		UpdatedAt     string `json:"updatedAt"`
+	} `json:"data,omitempty"`
+}
+
 type UploadWebsiteSSLRequest struct {
 	Type            string `json:"type"`
 	SSLID           int64  `json:"sslID"`
