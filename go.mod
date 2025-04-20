@@ -73,6 +73,8 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.3 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7 // indirect
+	github.com/alibabacloud-go/apig-20240327/v3 v3.2.2 // indirect
+	github.com/alibabacloud-go/cloudapi-20160714/v5 v5.7.2 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect
