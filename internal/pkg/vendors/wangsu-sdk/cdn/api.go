@@ -22,6 +22,10 @@ func (c *Client) CreateCertificate(req *CreateCertificateRequest) (*CreateCertif
 }
 
 func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateRequest) (*UpdateCertificateResponse, error) {
+	if certificateId == "" {
+		return nil, fmt.Errorf("invalid parameter: certificateId")
+	}
+
 	resp := &UpdateCertificateResponse{}
 	r, err := c.client.SendRequestWithResult(http.MethodPatch, fmt.Sprintf("/cdn/certificates/%s", url.PathEscape(certificateId)), req, resp, func(r *resty.Request) {
 		r.SetHeader("x-cnc-timestamp", fmt.Sprintf("%d", req.Timestamp))
@@ -35,6 +39,10 @@ func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateR
 }
 
 func (c *Client) GetHostnameDetail(hostname string) (*GetHostnameDetailResponse, error) {
+	if hostname == "" {
+		return nil, fmt.Errorf("invalid parameter: hostname")
+	}
+
 	resp := &GetHostnameDetailResponse{}
 	_, err := c.client.SendRequestWithResult(http.MethodGet, fmt.Sprintf("/cdn/hostnames/%s", url.PathEscape(hostname)), nil, resp)
 	return resp, err
@@ -52,7 +60,11 @@ func (c *Client) CreateDeploymentTask(req *CreateDeploymentTaskRequest) (*Create
 }
 
 func (c *Client) GetDeploymentTaskDetail(deploymentTaskId string) (*GetDeploymentTaskDetailResponse, error) {
+	if deploymentTaskId == "" {
+		return nil, fmt.Errorf("invalid parameter: deploymentTaskId")
+	}
+
 	resp := &GetDeploymentTaskDetailResponse{}
-	_, err := c.client.SendRequestWithResult(http.MethodGet, fmt.Sprintf("/cdn/deploymentTasks/%s", deploymentTaskId), nil, resp)
+	_, err := c.client.SendRequestWithResult(http.MethodGet, fmt.Sprintf("/cdn/deploymentTasks/%s", url.PathEscape(deploymentTaskId)), nil, resp)
 	return resp, err
 }
