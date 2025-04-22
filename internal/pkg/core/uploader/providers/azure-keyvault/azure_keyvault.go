@@ -11,7 +11,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
-	"github.com/Azure/azure-sdk-for-go/sdk/keyvault/azcertificates"
+	"github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azcertificates"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
@@ -80,42 +80,42 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 	// 获取证书列表，避免重复上传
 	// REF: https://learn.microsoft.com/en-us/rest/api/keyvault/certificates/get-certificates/get-certificates
-	listCertificatesPager := u.sdkClient.NewListCertificatesPager(nil)
+	listCertificatesPager := u.sdkClient.NewListCertificatePropertiesPager(nil)
 	for listCertificatesPager.More() {
 		page, err := listCertificatesPager.NextPage(context.TODO())
 		if err != nil {
 			return nil, fmt.Errorf("failed to execute sdk request 'keyvault.GetCertificates': %w", err)
 		}
 
-		for _, certItem := range page.Value {
+		for _, certProp := range page.Value {
 			// 先对比证书有效期
-			if certItem.Attributes == nil {
+			if certProp.Attributes == nil {
 				continue
 			}
-			if certItem.Attributes.NotBefore == nil || !certItem.Attributes.NotBefore.Equal(certX509.NotBefore) {
+			if certProp.Attributes.NotBefore == nil || !certProp.Attributes.NotBefore.Equal(certX509.NotBefore) {
 				continue
 			}
-			if certItem.Attributes.Expires == nil || !certItem.Attributes.Expires.Equal(certX509.NotAfter) {
+			if certProp.Attributes.Expires == nil || !certProp.Attributes.Expires.Equal(certX509.NotAfter) {
 				continue
 			}
 
 			// 再对比 Tag 中的通用名称
-			if v, ok := certItem.Tags[TAG_CERTCN]; !ok || v == nil {
+			if v, ok := certProp.Tags[TAG_CERTCN]; !ok || v == nil {
 				continue
 			} else if *v != certCN {
 				continue
 			}
 
 			// 再对比 Tag 中的序列号
-			if v, ok := certItem.Tags[TAG_CERTSN]; !ok || v == nil {
+			if v, ok := certProp.Tags[TAG_CERTSN]; !ok || v == nil {
 				continue
 			} else if *v != certSN {
 				continue
 			}
 
 			// 最后对比证书内容
-			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), certItem.ID.Name(), certItem.ID.Version(), nil)
-			u.logger.Debug("sdk request 'keyvault.GetCertificate'", slog.String("request.certificateName", certItem.ID.Name()), slog.String("request.certificateVersion", certItem.ID.Version()), slog.Any("response", getCertificateResp))
+			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), certProp.ID.Name(), certProp.ID.Version(), nil)
+			u.logger.Debug("sdk request 'keyvault.GetCertificate'", slog.String("request.certificateName", certProp.ID.Name()), slog.String("request.certificateVersion", certProp.ID.Version()), slog.Any("response", getCertificateResp))
 			if err != nil {
 				return nil, fmt.Errorf("failed to execute sdk request 'keyvault.GetCertificate': %w", err)
 			} else {
@@ -132,8 +132,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			// 如果以上信息都一致，则视为已存在相同证书，直接返回
 			u.logger.Info("ssl certificate already exists")
 			return &uploader.UploadResult{
-				CertId:   string(*certItem.ID),
-				CertName: certItem.ID.Name(),
+				CertId:   string(*certProp.ID),
+				CertName: certProp.ID.Name(),
 			}, nil
 		}
 	}

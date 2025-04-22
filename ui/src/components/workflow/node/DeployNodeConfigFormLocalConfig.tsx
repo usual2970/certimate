@@ -142,8 +142,8 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
           formInst.setFieldValue(
             "preCommand",
             `# 请将以下路径替换为实际值
-cp "${formInst.getFieldValue("certPath")}" "${formInst.getFieldValue("certPath")}.bak" 2>/dev/null || :
-cp "${formInst.getFieldValue("keyPath")}" "${formInst.getFieldValue("keyPath")}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" "${formInst.getFieldValue("certPath") || "<your-cert-path>"}.bak" 2>/dev/null || :
+cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFieldValue("keyPath") || "<your-key-path>"}.bak" 2>/dev/null || :
             `.trim()
           );
         }
@@ -166,8 +166,8 @@ cp "${formInst.getFieldValue("keyPath")}" "${formInst.getFieldValue("keyPath")}.
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
 $siteName = "<your-site-name>" # IIS 网站名称
 $domain = "<your-domain-name>" # 域名
 $ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
@@ -203,8 +203,8 @@ Remove-Item -Path "$pfxPath" -Force
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
 $ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
 $port = "<your-binding-port>"  # 绑定端口
 
@@ -232,8 +232,8 @@ Remove-Item -Path "$pfxPath" -Force
           formInst.setFieldValue(
             "postCommand",
             `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath")}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword")}" # PFX 密码
+$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
 
 # 导入证书到本地计算机的个人存储区
 $cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable

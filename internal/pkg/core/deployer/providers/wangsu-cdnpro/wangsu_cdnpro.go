@@ -16,11 +16,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/alibabacloud-go/tea/tea"
-
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -100,10 +99,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, fmt.Errorf("failed to encrypt private key: %w", err)
 	}
 	certificateNewVersionInfo := &wangsucdn.CertificateVersion{
-		PrivateKey:  tea.String(encryptedPrivateKey),
-		Certificate: tea.String(certPEM),
+		PrivateKey:  typeutil.ToPtr(encryptedPrivateKey),
+		Certificate: typeutil.ToPtr(certPEM),
 		IdentificationInfo: &wangsucdn.CertificateVersionIdentificationInfo{
-			CommonName:              tea.String(certX509.Subject.CommonName),
+			CommonName:              typeutil.ToPtr(certX509.Subject.CommonName),
 			SubjectAlternativeNames: &certX509.DNSNames,
 		},
 	}
@@ -122,8 +121,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 创建证书
 		createCertificateReq := &wangsucdn.CreateCertificateRequest{
 			Timestamp:  timestamp,
-			Name:       tea.String(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-			AutoRenew:  tea.String("Off"),
+			Name:       typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			AutoRenew:  typeutil.ToPtr("Off"),
 			NewVersion: certificateNewVersionInfo,
 		}
 		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
@@ -145,8 +144,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 更新证书
 		updateCertificateReq := &wangsucdn.UpdateCertificateRequest{
 			Timestamp:  timestamp,
-			Name:       tea.String(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-			AutoRenew:  tea.String("Off"),
+			Name:       typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			AutoRenew:  typeutil.ToPtr("Off"),
 			NewVersion: certificateNewVersionInfo,
 		}
 		updateCertificateResp, err := d.sdkClient.UpdateCertificate(d.config.CertificateId, updateCertificateReq)
@@ -173,18 +172,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 创建部署任务
 	// REF: https://www.wangsu.com/document/api-doc/27034
 	createDeploymentTaskReq := &wangsucdn.CreateDeploymentTaskRequest{
-		Name:   tea.String(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-		Target: tea.String(d.config.Environment),
+		Name:   typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+		Target: typeutil.ToPtr(d.config.Environment),
 		Actions: &[]wangsucdn.DeploymentTaskAction{
 			{
-				Action:        tea.String("deploy_cert"),
-				CertificateId: tea.String(wangsuCertId),
-				Version:       tea.Int32(wangsuCertVer),
+				Action:        typeutil.ToPtr("deploy_cert"),
+				CertificateId: typeutil.ToPtr(wangsuCertId),
+				Version:       typeutil.ToPtr(wangsuCertVer),
 			},
 		},
 	}
 	if d.config.WebhookId != "" {
-		createDeploymentTaskReq.Webhook = tea.String(d.config.WebhookId)
+		createDeploymentTaskReq.Webhook = typeutil.ToPtr(d.config.WebhookId)
 	}
 	createDeploymentTaskResp, err := d.sdkClient.CreateDeploymentTask(createDeploymentTaskReq)
 	d.logger.Debug("sdk request 'cdn.CreateCertificate'", slog.Any("request", createDeploymentTaskReq), slog.Any("response", createDeploymentTaskResp))
