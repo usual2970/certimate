@@ -1,4 +1,4 @@
-﻿package onepanelsite_test
+﻿package bunnycdn_test
 
 import (
 	"context"
@@ -8,36 +8,36 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
 )
 
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
 	fApiKey        string
-	fWebsiteId     int64
+	fPullZoneId    string
+	fHostName      string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_1PANELSITE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_BUNNYCDN_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
-	flag.Int64Var(&fWebsiteId, argsPrefix+"WEBSITEID", 0, "")
+	flag.StringVar(&fPullZoneId, argsPrefix+"PULLZONEID", "", "")
+	flag.StringVar(&fHostName, argsPrefix+"HOSTNAME", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./1panel_site_test.go -args \
-	--CERTIMATE_DEPLOYER_1PANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_1PANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_1PANELSITE_APIURL="http://127.0.0.1:20410" \
-	--CERTIMATE_DEPLOYER_1PANELSITE_APIKEY="your-api-key" \
-	--CERTIMATE_DEPLOYER_1PANELSITE_WEBSITEID="your-website-id"
+	go test -v ./bunny_cdn_test.go -args \
+	--CERTIMATE_DEPLOYER_BUNNYCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_BUNNYCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_BUNNYCDN_APITOKEN="your-api-token" \
+	--CERTIMATE_DEPLOYER_BUNNYCDN_PULLZONEID="your-pull-zone-id" \
+	--CERTIMATE_DEPLOYER_BUNNYCDN_HOSTNAME="example.com"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -47,17 +47,15 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
-			fmt.Sprintf("WEBSITEID: %v", fWebsiteId),
+			fmt.Sprintf("PULLZONEID: %v", fPullZoneId),
+			fmt.Sprintf("HOSTNAME: %v", fHostName),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
-			ApiKey:                   fApiKey,
-			AllowInsecureConnections: true,
-			ResourceType:             provider.RESOURCE_TYPE_WEBSITE,
-			WebsiteId:                fWebsiteId,
+			ApiKey:     fApiKey,
+			PullZoneId: fPullZoneId,
+			HostName:   fHostName,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

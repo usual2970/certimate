@@ -72,12 +72,17 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}
 
 	var certId string
-	if importCertificateResp.InstanceId != nil {
+	if importCertificateResp.InstanceId != nil && *importCertificateResp.InstanceId != "" {
 		certId = *importCertificateResp.InstanceId
 	}
-	if importCertificateResp.RepeatId != nil {
+	if importCertificateResp.RepeatId != nil && *importCertificateResp.RepeatId != "" {
 		certId = *importCertificateResp.RepeatId
 	}
+
+	if certId == "" {
+		return nil, xerrors.New("failed to get certificate id, both `InstanceId` and `RepeatId` are empty")
+	}
+
 	return &uploader.UploadResult{
 		CertId: certId,
 	}, nil

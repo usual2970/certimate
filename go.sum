@@ -95,10 +95,14 @@ github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6/go.mod h1:4EUIoxs/do2
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4/go.mod h1:sCavSAvdzOjul4cEqeVtvlSaSScfNsTQ+46HwlTL1hc=
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5 h1:zE8vH9C7JiZLNJJQ5OwjU9mSi4T9ef9u3BURT6LCLC8=
 github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5/go.mod h1:tWnyE9AjF8J8qqLk645oUmVUnFybApTQWklQmi5tY6g=
+github.com/alibabacloud-go/apig-20240327/v3 v3.2.2 h1:yH84ePgqtA2tF3ly7Tf3AA5ogl2SC8kqCNG4+zz4yo4=
+github.com/alibabacloud-go/apig-20240327/v3 v3.2.2/go.mod h1:XLaCapbSH7olJTs42wisDO9JvX9BGy5acZk0bLNejDs=
 github.com/alibabacloud-go/cas-20200407/v3 v3.0.4 h1:ngRlctbt135zoujwX0lXSv9m4h1/bmg/yalQS0z1EWc=
 github.com/alibabacloud-go/cas-20200407/v3 v3.0.4/go.mod h1:6n9MZ9SH3HlSzfe2oKwjOqhJx3dxvW2gMDO+lq8t9U4=
 github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2 h1:+KJOPukTM+xMyiLOW5qBwYKG2df3Ar7coRsqc1juKO8=
 github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2/go.mod h1:GnPiPL3HlzCi8SGiLiVgKrAFkP1vTtcF4yGtjsl4wfo=
+github.com/alibabacloud-go/cloudapi-20160714/v5 v5.7.2 h1:Ug50clztqiQAy5t0R9Vejibz2Xgxm1Tpw2Y6A9eAwRE=
+github.com/alibabacloud-go/cloudapi-20160714/v5 v5.7.2/go.mod h1:l9Zd2FanDUO2UqHJSPnOv+cY9DVT+YXcr97zfpSHywo=
 github.com/alibabacloud-go/darabonba-array v0.1.0 h1:vR8s7b1fWAQIjEjWnuF0JiKsCvclSRTfDzZHTYqfufY=
 github.com/alibabacloud-go/darabonba-array v0.1.0/go.mod h1:BLKxr0brnggqOJPqT09DFJ8g3fsDshapUD3C3aOEFaI=
 github.com/alibabacloud-go/darabonba-encode-util v0.0.2 h1:1uJGrbsGEVqWcWxrS9MyC2NG0Ax+GpOM5gtupki31XE=
@@ -651,6 +655,8 @@ github.com/ncruces/go-strftime v0.1.9/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJm
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
 github.com/nikoksr/notify v1.3.0 h1:UxzfxzAYGQD9a5JYLBTVx0lFMxeHCke3rPCkfWdPgLs=
 github.com/nikoksr/notify v1.3.0/go.mod h1:Xor2hMmkvrCfkCKvXGbcrESez4brac2zQjhd6U2BbeM=
+github.com/nrdcg/bunny-go v0.0.0-20240207213615-dde5bf4577a3 h1:ouZ2JWDl8IW5k1qugYbmpbmW8hn85Ig6buSMBRlz3KI=
+github.com/nrdcg/bunny-go v0.0.0-20240207213615-dde5bf4577a3/go.mod h1:ZwadWt7mVhMHMbAQ1w8IhDqtWO3eWqWq72W7trnaiE8=
 github.com/nrdcg/desec v0.10.0 h1:qrEDiqnsvNU9QE7lXIXi/tIHAfyaFXKxF2/8/52O8uM=
 github.com/nrdcg/desec v0.10.0/go.mod h1:5+4vyhMRTs49V9CNoODF/HwT8Mwxv9DJ6j+7NekUnBs=
 github.com/nrdcg/mailinabox v0.2.0 h1:IKq8mfKiVwNW2hQii/ng1dJ4yYMMv3HAP3fMFIq2CFk=

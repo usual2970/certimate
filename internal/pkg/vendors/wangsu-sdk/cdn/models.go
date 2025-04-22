@@ -80,7 +80,7 @@ type DeploymentTaskAction struct {
 	Action        *string `json:"action,omitempty" required:"true"`
 	PropertyId    *string `json:"propertyId,omitempty"`
 	CertificateId *string `json:"certificateId,omitempty"`
-	Version       *string `json:"version,omitempty"`
+	Version       *int32  `json:"version,omitempty"`
 }
 
 type CreateDeploymentTaskRequest struct {
@@ -97,6 +97,7 @@ type CreateDeploymentTaskResponse struct {
 
 type GetDeploymentTaskDetailResponse struct {
 	baseResponse
+	Name           string                 `json:"name"`
 	Target         string                 `json:"target"`
 	Actions        []DeploymentTaskAction `json:"actions"`
 	Status         string                 `json:"status"`

@@ -64,6 +64,10 @@ type AccessConfigForBytePlus struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForBunny struct {
+	ApiKey string `json:"apiKey"`
+}
+
 type AccessConfigForCacheFly struct {
 	ApiToken string `json:"apiToken"`
 }
@@ -231,6 +235,7 @@ type AccessConfigForVolcEngine struct {
 type AccessConfigForWangsu struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
+	ApiKey          string `json:"apiKey"`
 }
 
 type AccessConfigForWebhook struct {

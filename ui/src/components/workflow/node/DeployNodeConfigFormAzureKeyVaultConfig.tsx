@@ -5,6 +5,7 @@ import { z } from "zod";
 
 type DeployNodeConfigFormAzureKeyVaultConfigFieldValues = Nullish<{
   keyvaultName: string;
+  certificateName?: string;
 }>;
 
 export type DeployNodeConfigFormAzureKeyVaultConfigProps = {
@@ -33,6 +34,13 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
       .string({ message: t("workflow_node.deploy.form.azure_keyvault_name.placeholder") })
       .nonempty(t("workflow_node.deploy.form.azure_keyvault_name.placeholder"))
       .trim(),
+    certificateName: z
+      .string({ message: t("workflow_node.deploy.form.azure_keyvault_certificate_name.placeholder") })
+      .nullish()
+      .refine((v) =>{
+        if (!v) return true;
+        return /^[a-zA-Z0-9-]{1,127}$/.test(v);
+      }, t("workflow_node.deploy.form.azure_keyvault_certificate_name.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -56,6 +64,15 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.azure_keyvault_name.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.azure_keyvault_name.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="certificateName"
+        label={t("workflow_node.deploy.form.azure_keyvault_certificate_name.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.azure_keyvault_certificate_name.tooltip") }}></span>}
+      >
+        <Input placeholder={t("workflow_node.deploy.form.azure_keyvault_certificate_name.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/alibabacloud-go/tea/tea"
@@ -28,6 +29,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 网宿云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 网宿云 API Key。
+	ApiKey string `json:"apiKey"`
 	// 网宿云环境。
 	Environment string `json:"environment"`
 	// 加速域名（支持泛域名）。
@@ -93,7 +96,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 生成网宿云证书参数
-	encryptedPrivateKey, err := encryptPrivateKey(privkeyPem, d.config.AccessKeySecret, time.Now().Unix())
+	encryptedPrivateKey, err := encryptPrivateKey(privkeyPem, d.config.ApiKey, time.Now().Unix())
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to encrypt private key")
 	}
@@ -111,7 +114,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	//    http://open.chinanetcenter.com/cdn/certificates/5dca2205f9e9cc0001df7b33
 	//    http://open.chinanetcenter.com/cdn/certificates/329f12c1fe6708c23c31e91f/versions/5
 	var wangsuCertUrl string
-	var wangsuCertId, wangsuCertVer string
+	var wangsuCertId string
+	var wangsuCertVer int32
 
 	// 如果原证书 ID 为空，则创建证书；否则更新证书。
 	timestamp := time.Now().Unix()
@@ -137,7 +141,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			wangsuCertId = wangsuCertIdMatches[1]
 		}
 
-		wangsuCertVer = "1"
+		wangsuCertVer = 1
 	} else {
 		// 更新证书
 		updateCertificateReq := &wangsucdn.UpdateCertificateRequest{
@@ -162,7 +166,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 		wangsuCertVerMatches := regexp.MustCompile(`/versions/(\d+)`).FindStringSubmatch(wangsuCertUrl)
 		if len(wangsuCertVerMatches) > 1 {
-			wangsuCertVer = wangsuCertVerMatches[1]
+			n, _ := strconv.ParseInt(wangsuCertVerMatches[1], 10, 32)
+			wangsuCertVer = int32(n)
 		}
 	}
 
@@ -175,7 +180,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			{
 				Action:        tea.String("deploy_cert"),
 				CertificateId: tea.String(wangsuCertId),
-				Version:       tea.String(wangsuCertVer),
+				Version:       tea.Int32(wangsuCertVer),
 			},
 		},
 	}
@@ -191,7 +196,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 循环获取部署任务详细信息，等待任务状态变更
 	// REF: https://www.wangsu.com/document/api-doc/27038
 	var wangsuTaskId string
-	wangsuTaskMatches := regexp.MustCompile(`/deploymentTasks/([a-zA-Z0-9-]+)`).FindStringSubmatch(wangsuCertUrl)
+	wangsuTaskMatches := regexp.MustCompile(`/deploymentTasks/([a-zA-Z0-9-]+)`).FindStringSubmatch(createDeploymentTaskResp.DeploymentTaskUrl)
 	if len(wangsuTaskMatches) > 1 {
 		wangsuTaskId = wangsuTaskMatches[1]
 	}
@@ -201,19 +206,19 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		}
 
 		getDeploymentTaskDetailResp, err := d.sdkClient.GetDeploymentTaskDetail(wangsuTaskId)
-		d.logger.Debug("sdk request 'cdn.GetDeploymentTaskDetail'", slog.Any("taskId", wangsuTaskId), slog.Any("response", getDeploymentTaskDetailResp))
+		d.logger.Info("sdk request 'cdn.GetDeploymentTaskDetail'", slog.Any("taskId", wangsuTaskId), slog.Any("response", getDeploymentTaskDetailResp))
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDeploymentTaskDetail'")
 		}
 
 		if getDeploymentTaskDetailResp.Status == "failed" {
 			return nil, errors.New("unexpected deployment task status")
-		} else if getDeploymentTaskDetailResp.Status == "succeeded" {
+		} else if getDeploymentTaskDetailResp.Status == "succeeded" || getDeploymentTaskDetailResp.FinishTime != "" {
 			break
 		}
 
-		d.logger.Info("waiting for deployment task completion ...")
-		time.Sleep(time.Second * 15)
+		d.logger.Info(fmt.Sprintf("waiting for deployment task completion (current status: %s) ...", getDeploymentTaskDetailResp.Status))
+		time.Sleep(time.Second * 5)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -231,11 +236,11 @@ func createSdkClient(accessKeyId, accessKeySecret string) (*wangsucdn.Client, er
 	return wangsucdn.NewClient(accessKeyId, accessKeySecret), nil
 }
 
-func encryptPrivateKey(privkeyPem string, secretKey string, timestamp int64) (string, error) {
+func encryptPrivateKey(privkeyPem string, apiKey string, timestamp int64) (string, error) {
 	date := time.Unix(timestamp, 0).UTC()
 	dateStr := date.Format("Mon, 02 Jan 2006 15:04:05 GMT")
 
-	mac := hmac.New(sha256.New, []byte(secretKey))
+	mac := hmac.New(sha256.New, []byte(apiKey))
 	mac.Write([]byte(dateStr))
 	aesivkey := mac.Sum(nil)
 	aesivkeyHex := hex.EncodeToString(aesivkey)

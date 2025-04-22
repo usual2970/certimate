@@ -9,6 +9,7 @@ import (
 	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
 	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
 	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	pAliyunAPIGW "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-apigw"
 	pAliyunCAS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas"
 	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
 	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
@@ -31,6 +32,7 @@ import (
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
+	pBunnyCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
@@ -108,7 +110,9 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
+					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderDeployConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
 					WebsiteId:                maputil.GetInt64(options.ProviderDeployConfig, "websiteId"),
+					CertificateId:            maputil.GetInt64(options.ProviderDeployConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -117,7 +121,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunAPIGW, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -133,6 +137,18 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 					ResourceType:    pAliyunALB.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
 					LoadbalancerId:  maputil.GetString(options.ProviderDeployConfig, "loadbalancerId"),
 					ListenerId:      maputil.GetString(options.ProviderDeployConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeployProviderTypeAliyunAPIGW:
+				deployer, err := pAliyunAPIGW.NewDeployer(&pAliyunAPIGW.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					Region:          maputil.GetString(options.ProviderDeployConfig, "region"),
+					ServiceType:     pAliyunAPIGW.ServiceType(maputil.GetString(options.ProviderDeployConfig, "serviceType")),
+					GatewayId:       maputil.GetString(options.ProviderDeployConfig, "gatewayId"),
+					GroupId:         maputil.GetString(options.ProviderDeployConfig, "groupId"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 				})
 				return deployer, err
@@ -297,11 +313,12 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			switch options.Provider {
 			case domain.DeployProviderTypeAzureKeyVault:
 				deployer, err := pAzureKeyVault.NewDeployer(&pAzureKeyVault.DeployerConfig{
-					TenantId:     access.TenantId,
-					ClientId:     access.ClientId,
-					ClientSecret: access.ClientSecret,
-					CloudName:    access.CloudName,
-					KeyVaultName: maputil.GetString(options.ProviderDeployConfig, "keyvaultName"),
+					TenantId:        access.TenantId,
+					ClientId:        access.ClientId,
+					ClientSecret:    access.ClientSecret,
+					CloudName:       access.CloudName,
+					KeyVaultName:    maputil.GetString(options.ProviderDeployConfig, "keyvaultName"),
+					CertificateName: maputil.GetString(options.ProviderDeployConfig, "certificateName"),
 				})
 				return deployer, err
 
@@ -416,6 +433,21 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			}
 		}
 
+	case domain.DeployProviderTypeBunnyCDN:
+		{
+			access := domain.AccessConfigForBunny{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pBunnyCDN.NewDeployer(&pBunnyCDN.DeployerConfig{
+				ApiKey:     access.ApiKey,
+				PullZoneId: maputil.GetString(options.ProviderDeployConfig, "pullZoneId"),
+				HostName:   maputil.GetString(options.ProviderDeployConfig, "hostName"),
+			})
+			return deployer, err
+		}
+
 	case domain.DeployProviderTypeBytePlusCDN:
 		{
 			access := domain.AccessConfigForBytePlus{}
@@ -461,7 +493,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 				ApiUrl:        access.ApiUrl,
 				ApiKey:        access.ApiKey,
 				ApiSecret:     access.ApiSecret,
-				ResourceType:  pCdnfly.ResourceType(maputil.GetString(options.ProviderDeployConfig, "resourceType")),
+				ResourceType:  pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderDeployConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
 				SiteId:        maputil.GetString(options.ProviderDeployConfig, "siteId"),
 				CertificateId: maputil.GetString(options.ProviderDeployConfig, "certificateId"),
 			})
@@ -1016,6 +1048,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
+					ApiKey:          access.ApiKey,
 					Environment:     maputil.GetOrDefaultString(options.ProviderDeployConfig, "environment", "production"),
 					Domain:          maputil.GetString(options.ProviderDeployConfig, "domain"),
 					CertificateId:   maputil.GetString(options.ProviderDeployConfig, "certificateId"),

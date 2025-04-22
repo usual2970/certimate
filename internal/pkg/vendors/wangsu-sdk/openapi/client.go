@@ -111,7 +111,7 @@ func NewClient(accessKey, secretKey string) *Client {
 			signHex := strings.ToLower(hex.EncodeToString(sign))
 
 			// Step 9: Add headers to request
-			req.Header.Set("x-cnc-accessKey", accessKey)
+			req.Header.Set("x-cnc-accesskey", accessKey)
 			req.Header.Set("x-cnc-timestamp", timestampString)
 			req.Header.Set("x-cnc-auth-method", "AKSK")
 			req.Header.Set("Authorization", fmt.Sprintf("%s Credential=%s, SignedHeaders=%s, Signature=%s", SignAlgorithmHeader, accessKey, signedHeaders, signHex))
@@ -178,8 +178,11 @@ func (c *Client) SendRequestWithResult(method string, path string, params interf
 		return resp, err
 	}
 
-	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return resp, fmt.Errorf("wangsu api error: failed to parse response: %w", err)
+	respBody := resp.Body()
+	if len(respBody) != 0 {
+		if err := json.Unmarshal(respBody, &result); err != nil {
+			return resp, fmt.Errorf("wangsu api error: failed to parse response: %w", err)
+		}
 	}
 
 	result.SetRequestId(resp.Header().Get("x-cnc-request-id"))
