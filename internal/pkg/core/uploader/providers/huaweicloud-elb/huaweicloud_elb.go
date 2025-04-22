@@ -18,8 +18,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type UploaderConfig struct {
@@ -78,7 +78,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	var listCertificatesMarker *string = nil
 	for {
 		listCertificatesReq := &hcelbmodel.ListCertificatesRequest{
-			Limit:  hwsdk.Int32Ptr(listCertificatesLimit),
+			Limit:  typeutil.ToPtr(listCertificatesLimit),
 			Marker: listCertificatesMarker,
 			Type:   &[]string{"server"},
 		}
@@ -136,10 +136,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateReq := &hcelbmodel.CreateCertificateRequest{
 		Body: &hcelbmodel.CreateCertificateRequestBody{
 			Certificate: &hcelbmodel.CreateCertificateOption{
-				ProjectId:   hwsdk.StringPtr(projectId),
-				Name:        hwsdk.StringPtr(certName),
-				Certificate: hwsdk.StringPtr(certPEM),
-				PrivateKey:  hwsdk.StringPtr(privkeyPEM),
+				ProjectId:   typeutil.ToPtr(projectId),
+				Name:        typeutil.ToPtr(certName),
+				Certificate: typeutil.ToPtr(certPEM),
+				PrivateKey:  typeutil.ToPtr(privkeyPEM),
 			},
 		},
 	}

@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -102,9 +102,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	updateDomainMultiCertificatesReqBodyContent := &hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent{}
 	updateDomainMultiCertificatesReqBodyContent.DomainName = d.config.Domain
 	updateDomainMultiCertificatesReqBodyContent.HttpsSwitch = 1
-	updateDomainMultiCertificatesReqBodyContent.CertificateType = hwsdk.Int32Ptr(2)
-	updateDomainMultiCertificatesReqBodyContent.ScmCertificateId = hwsdk.StringPtr(upres.CertId)
-	updateDomainMultiCertificatesReqBodyContent.CertName = hwsdk.StringPtr(upres.CertName)
+	updateDomainMultiCertificatesReqBodyContent.CertificateType = typeutil.ToPtr(int32(2))
+	updateDomainMultiCertificatesReqBodyContent.ScmCertificateId = typeutil.ToPtr(upres.CertId)
+	updateDomainMultiCertificatesReqBodyContent.CertName = typeutil.ToPtr(upres.CertName)
 	updateDomainMultiCertificatesReqBodyContent = assign(updateDomainMultiCertificatesReqBodyContent, showDomainFullConfigResp.Configs)
 	updateDomainMultiCertificatesReq := &hccdnmodel.UpdateDomainMultiCertificatesRequest{
 		Body: &hccdnmodel.UpdateDomainMultiCertificatesRequestBody{
@@ -159,11 +159,11 @@ func assign(source *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent, 
 	}
 
 	if *target.OriginProtocol == "follow" {
-		source.AccessOriginWay = hwsdk.Int32Ptr(1)
+		source.AccessOriginWay = typeutil.ToPtr(int32(1))
 	} else if *target.OriginProtocol == "http" {
-		source.AccessOriginWay = hwsdk.Int32Ptr(2)
+		source.AccessOriginWay = typeutil.ToPtr(int32(2))
 	} else if *target.OriginProtocol == "https" {
-		source.AccessOriginWay = hwsdk.Int32Ptr(3)
+		source.AccessOriginWay = typeutil.ToPtr(int32(3))
 	}
 
 	if target.ForceRedirect != nil {
@@ -181,7 +181,7 @@ func assign(source *hccdnmodel.UpdateDomainMultiCertificatesRequestBodyContent, 
 
 	if target.Https != nil {
 		if *target.Https.Http2Status == "on" {
-			source.Http2 = hwsdk.Int32Ptr(1)
+			source.Http2 = typeutil.ToPtr(int32(1))
 		}
 	}
 

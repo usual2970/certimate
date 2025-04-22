@@ -20,7 +20,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -125,8 +125,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 		CertificateId: d.config.CertificateId,
 		Body: &hcelbmodel.UpdateCertificateRequestBody{
 			Certificate: &hcelbmodel.UpdateCertificateOption{
-				Certificate: hwsdk.StringPtr(certPEM),
-				PrivateKey:  hwsdk.StringPtr(privkeyPEM),
+				Certificate: typeutil.ToPtr(certPEM),
+				PrivateKey:  typeutil.ToPtr(privkeyPEM),
 			},
 		},
 	}
@@ -162,7 +162,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 	var listListenersMarker *string = nil
 	for {
 		listListenersReq := &hcelbmodel.ListListenersRequest{
-			Limit:          hwsdk.Int32Ptr(listListenersLimit),
+			Limit:          typeutil.ToPtr(listListenersLimit),
 			Marker:         listListenersMarker,
 			Protocol:       &[]string{"HTTPS", "TERMINATED_HTTPS"},
 			LoadbalancerId: &[]string{showLoadBalancerResp.Loadbalancer.Id},
@@ -254,7 +254,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		ListenerId: cloudListenerId,
 		Body: &hcelbmodel.UpdateListenerRequestBody{
 			Listener: &hcelbmodel.UpdateListenerOption{
-				DefaultTlsContainerRef: hwsdk.StringPtr(cloudCertId),
+				DefaultTlsContainerRef: typeutil.ToPtr(cloudCertId),
 			},
 		},
 	}
@@ -303,7 +303,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		}
 
 		if showListenerResp.Listener.SniMatchAlgo != "" {
-			updateListenerReq.Body.Listener.SniMatchAlgo = hwsdk.StringPtr(showListenerResp.Listener.SniMatchAlgo)
+			updateListenerReq.Body.Listener.SniMatchAlgo = typeutil.ToPtr(showListenerResp.Listener.SniMatchAlgo)
 		}
 	}
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)

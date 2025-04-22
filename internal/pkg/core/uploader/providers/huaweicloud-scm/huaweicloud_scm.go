@@ -13,8 +13,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type UploaderConfig struct {
@@ -74,10 +74,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertificatesOffset := int32(0)
 	for {
 		listCertificatesReq := &hcscmmodel.ListCertificatesRequest{
-			Limit:   hwsdk.Int32Ptr(listCertificatesLimit),
-			Offset:  hwsdk.Int32Ptr(listCertificatesOffset),
-			SortDir: hwsdk.StringPtr("DESC"),
-			SortKey: hwsdk.StringPtr("certExpiredTime"),
+			Limit:   typeutil.ToPtr(listCertificatesLimit),
+			Offset:  typeutil.ToPtr(listCertificatesOffset),
+			SortDir: typeutil.ToPtr("DESC"),
+			SortKey: typeutil.ToPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'scm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))

@@ -18,8 +18,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type UploaderConfig struct {
@@ -79,8 +79,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertificatesPageSize := int32(100)
 	for {
 		listCertificatesReq := &hcwafmodel.ListCertificatesRequest{
-			Page:     hwsdk.Int32Ptr(listCertificatesPage),
-			Pagesize: hwsdk.Int32Ptr(listCertificatesPageSize),
+			Page:     typeutil.ToPtr(listCertificatesPage),
+			Pagesize: typeutil.ToPtr(listCertificatesPageSize),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))

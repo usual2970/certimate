@@ -20,7 +20,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-waf"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -141,8 +141,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 		CertificateId: d.config.CertificateId,
 		Body: &hcwafmodel.UpdateCertificateRequestBody{
 			Name:    *showCertificateResp.Name,
-			Content: hwsdk.StringPtr(certPEM),
-			Key:     hwsdk.StringPtr(privkeyPEM),
+			Content: typeutil.ToPtr(certPEM),
+			Key:     typeutil.ToPtr(privkeyPEM),
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
@@ -174,9 +174,9 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	listHostPageSize := int32(100)
 	for {
 		listHostReq := &hcwafmodel.ListHostRequest{
-			Hostname: hwsdk.StringPtr(strings.TrimPrefix(d.config.Domain, "*")),
-			Page:     hwsdk.Int32Ptr(listHostPage),
-			Pagesize: hwsdk.Int32Ptr(listHostPageSize),
+			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
+			Page:     typeutil.ToPtr(listHostPage),
+			Pagesize: typeutil.ToPtr(listHostPageSize),
 		}
 		listHostResp, err := d.sdkClient.ListHost(listHostReq)
 		d.logger.Debug("sdk request 'waf.ListHost'", slog.Any("request", listHostReq), slog.Any("response", listHostResp))
@@ -208,8 +208,8 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	updateHostReq := &hcwafmodel.UpdateHostRequest{
 		InstanceId: hostId,
 		Body: &hcwafmodel.UpdateHostRequestBody{
-			Certificateid:   hwsdk.StringPtr(upres.CertId),
-			Certificatename: hwsdk.StringPtr(upres.CertName),
+			Certificateid:   typeutil.ToPtr(upres.CertId),
+			Certificatename: typeutil.ToPtr(upres.CertName),
 		},
 	}
 	updateHostResp, err := d.sdkClient.UpdateHost(updateHostReq)
@@ -241,9 +241,9 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	listPremiumHostPageSize := int32(100)
 	for {
 		listPremiumHostReq := &hcwafmodel.ListPremiumHostRequest{
-			Hostname: hwsdk.StringPtr(strings.TrimPrefix(d.config.Domain, "*")),
-			Page:     hwsdk.StringPtr(fmt.Sprintf("%d", listPremiumHostPage)),
-			Pagesize: hwsdk.StringPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
+			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
+			Page:     typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPage)),
+			Pagesize: typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
 		}
 		listPremiumHostResp, err := d.sdkClient.ListPremiumHost(listPremiumHostReq)
 		d.logger.Debug("sdk request 'waf.ListPremiumHost'", slog.Any("request", listPremiumHostReq), slog.Any("response", listPremiumHostResp))
@@ -275,8 +275,8 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	updatePremiumHostReq := &hcwafmodel.UpdatePremiumHostRequest{
 		HostId: hostId,
 		Body: &hcwafmodel.UpdatePremiumHostRequestBody{
-			Certificateid:   hwsdk.StringPtr(upres.CertId),
-			Certificatename: hwsdk.StringPtr(upres.CertName),
+			Certificateid:   typeutil.ToPtr(upres.CertId),
+			Certificatename: typeutil.ToPtr(upres.CertName),
 		},
 	}
 	updatePremiumHostResp, err := d.sdkClient.UpdatePremiumHost(updatePremiumHostReq)
