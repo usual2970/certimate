@@ -3,9 +3,8 @@ package upyunssl
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	upyunsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/upyun/console"
@@ -33,7 +32,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.Username, config.Password)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -61,7 +60,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadHttpsCertificateResp, err := u.sdkClient.UploadHttpsCertificate(uploadHttpsCertificateReq)
 	u.logger.Debug("sdk request 'console.UploadHttpsCertificate'", slog.Any("response", uploadHttpsCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'console.UploadHttpsCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'console.UploadHttpsCertificate': %w", err)
 	}
 
 	return &uploader.UploadResult{

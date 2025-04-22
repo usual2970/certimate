@@ -2,9 +2,9 @@ package tencentcloudscf
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcscf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
@@ -41,7 +41,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.SecretId, config.SecretKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -49,7 +49,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SecretKey: config.SecretKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -78,13 +78,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getCustomDomainResp, err := d.sdkClient.GetCustomDomain(getCustomDomainReq)
 	d.logger.Debug("sdk request 'scf.GetCustomDomain'", slog.Any("request", getCustomDomainReq), slog.Any("response", getCustomDomainResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.GetCustomDomain'")
+		return nil, fmt.Errorf("failed to execute sdk request 'scf.GetCustomDomain': %w", err)
 	}
 
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -100,7 +100,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	updateCustomDomainResp, err := d.sdkClient.UpdateCustomDomain(updateCustomDomainReq)
 	d.logger.Debug("sdk request 'scf.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scf.UpdateCustomDomain'")
+		return nil, fmt.Errorf("failed to execute sdk request 'scf.UpdateCustomDomain': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

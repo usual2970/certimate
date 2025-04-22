@@ -3,11 +3,11 @@ package bytepluscdn
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
 
 	bpcdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -46,7 +46,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SecretKey: config.SecretKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -71,7 +71,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -86,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		describeCertConfigResp, err := d.sdkClient.DescribeCertConfig(describeCertConfigReq)
 		d.logger.Debug("sdk request 'cdn.DescribeCertConfig'", slog.Any("request", describeCertConfigReq), slog.Any("response", describeCertConfigResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.DescribeCertConfig'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.DescribeCertConfig': %w", err)
 		}
 
 		if describeCertConfigResp.Result.CertNotConfig != nil {

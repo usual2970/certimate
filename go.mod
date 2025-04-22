@@ -11,8 +11,10 @@ require (
 	github.com/Edgio/edgio-api v0.0.0-workspace
 	github.com/G-Core/gcorelabscdn-go v1.0.28
 	github.com/alibabacloud-go/alb-20200616/v2 v2.2.8
+	github.com/alibabacloud-go/apig-20240327/v3 v3.2.2
 	github.com/alibabacloud-go/cas-20200407/v3 v3.0.4
 	github.com/alibabacloud-go/cdn-20180510/v5 v5.2.2
+	github.com/alibabacloud-go/cloudapi-20160714/v5 v5.7.2
 	github.com/alibabacloud-go/darabonba-openapi/v2 v2.1.4
 	github.com/alibabacloud-go/esa-20240910/v2 v2.23.0
 	github.com/alibabacloud-go/fc-20230330/v4 v4.1.7
@@ -73,8 +75,6 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resourcegraph/armresourcegraph v0.9.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.3.3 // indirect
 	github.com/alibabacloud-go/alibabacloud-gateway-fc-util v0.0.7 // indirect
-	github.com/alibabacloud-go/apig-20240327/v3 v3.2.2 // indirect
-	github.com/alibabacloud-go/cloudapi-20160714/v5 v5.7.2 // indirect
 	github.com/alibabacloud-go/openplatform-20191219/v2 v2.0.1 // indirect
 	github.com/alibabacloud-go/tea-fileform v1.1.1 // indirect
 	github.com/alibabacloud-go/tea-oss-sdk v1.1.3 // indirect

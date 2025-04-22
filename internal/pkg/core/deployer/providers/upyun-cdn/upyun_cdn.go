@@ -3,9 +3,9 @@ package upyuncdn
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 
-	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -39,7 +39,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.Username, config.Password)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -47,7 +47,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Password: config.Password,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -72,7 +72,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -81,7 +81,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getHttpsServiceManagerResp, err := d.sdkClient.GetHttpsServiceManager(d.config.Domain)
 	d.logger.Debug("sdk request 'console.GetHttpsServiceManager'", slog.String("request.domain", d.config.Domain), slog.Any("response", getHttpsServiceManagerResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'console.GetHttpsServiceManager'")
+		return nil, fmt.Errorf("failed to execute sdk request 'console.GetHttpsServiceManager': %w", err)
 	}
 
 	// 判断域名是否已启用 HTTPS。如果已启用，迁移域名证书；否则，设置新证书
@@ -98,7 +98,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		updateHttpsCertificateManagerResp, err := d.sdkClient.UpdateHttpsCertificateManager(updateHttpsCertificateManagerReq)
 		d.logger.Debug("sdk request 'console.EnableDomainHttps'", slog.Any("request", updateHttpsCertificateManagerReq), slog.Any("response", updateHttpsCertificateManagerResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'console.UpdateHttpsCertificateManager'")
+			return nil, fmt.Errorf("failed to execute sdk request 'console.UpdateHttpsCertificateManager': %w", err)
 		}
 	} else if getHttpsServiceManagerResp.Data.Domains[lastCertIndex].CertificateId != upres.CertId {
 		migrateHttpsDomainReq := &upyunsdk.MigrateHttpsDomainRequest{
@@ -108,7 +108,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		migrateHttpsDomainResp, err := d.sdkClient.MigrateHttpsDomain(migrateHttpsDomainReq)
 		d.logger.Debug("sdk request 'console.MigrateHttpsDomain'", slog.Any("request", migrateHttpsDomainReq), slog.Any("response", migrateHttpsDomainResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'console.MigrateHttpsDomain'")
+			return nil, fmt.Errorf("failed to execute sdk request 'console.MigrateHttpsDomain': %w", err)
 		}
 	}
 

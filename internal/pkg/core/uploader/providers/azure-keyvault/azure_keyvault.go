@@ -12,7 +12,6 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/keyvault/azcertificates"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
@@ -47,7 +46,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.TenantId, config.ClientId, config.ClientSecret, config.CloudName, config.KeyVaultName)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -85,7 +84,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	for listCertificatesPager.More() {
 		page, err := listCertificatesPager.NextPage(context.TODO())
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.GetCertificates'")
+			return nil, fmt.Errorf("failed to execute sdk request 'keyvault.GetCertificates': %w", err)
 		}
 
 		for _, certItem := range page.Value {
@@ -118,7 +117,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), certItem.ID.Name(), certItem.ID.Version(), nil)
 			u.logger.Debug("sdk request 'keyvault.GetCertificate'", slog.String("request.certificateName", certItem.ID.Name()), slog.String("request.certificateVersion", certItem.ID.Version()), slog.Any("response", getCertificateResp))
 			if err != nil {
-				return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.GetCertificate'")
+				return nil, fmt.Errorf("failed to execute sdk request 'keyvault.GetCertificate': %w", err)
 			} else {
 				oldCertX509, err := x509.ParseCertificate(getCertificateResp.CER)
 				if err != nil {
@@ -147,7 +146,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 暂时的解决方法是，将 PEM 证书转换成 PFX 格式，然后再导入。
 	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
+		return nil, fmt.Errorf("failed to transform certificate from PEM to PFX: %w", err)
 	}
 
 	// 导入证书
@@ -167,7 +166,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), certName, importCertificateParams, nil)
 	u.logger.Debug("sdk request 'keyvault.ImportCertificate'", slog.String("request.certificateName", certName), slog.Any("request.parameters", importCertificateParams), slog.Any("response", importCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.ImportCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'keyvault.ImportCertificate': %w", err)
 	}
 
 	return &uploader.UploadResult{

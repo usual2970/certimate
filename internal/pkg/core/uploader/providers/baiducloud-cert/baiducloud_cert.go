@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	bdsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/baiducloud/cert"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -36,7 +34,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -67,7 +65,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertDetail, err := u.sdkClient.ListCertDetail()
 	u.logger.Debug("sdk request 'cert.ListCertDetail'", slog.Any("response", listCertDetail))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cert.ListCertDetail'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cert.ListCertDetail': %w", err)
 	} else {
 		for _, certDetail := range listCertDetail.Certs {
 			// 先对比证书通用名称
@@ -91,7 +89,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			getCertDetailResp, err := u.sdkClient.GetCertRawData(certDetail.CertId)
 			u.logger.Debug("sdk request 'cert.GetCertRawData'", slog.Any("certId", certDetail.CertId), slog.Any("response", getCertDetailResp))
 			if err != nil {
-				return nil, xerrors.Wrap(err, "failed to execute sdk request 'cert.GetCertRawData'")
+				return nil, fmt.Errorf("failed to execute sdk request 'cert.GetCertRawData': %w", err)
 			} else {
 				oldCertX509, err := certutil.ParseCertificateFromPEM(getCertDetailResp.CertServerData)
 				if err != nil {
@@ -120,7 +118,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertResp, err := u.sdkClient.CreateCert(createCertReq)
 	u.logger.Debug("sdk request 'cert.CreateCert'", slog.Any("request", createCertReq), slog.Any("response", createCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cert.CreateCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cert.CreateCert': %w", err)
 	}
 
 	return &uploader.UploadResult{

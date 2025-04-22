@@ -9,8 +9,6 @@ import (
 	"strings"
 	"time"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
@@ -37,7 +35,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -78,7 +76,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadWebsiteSSLResp, err := u.sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
 	u.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request '1panel.UploadWebsiteSSL'")
+		return nil, fmt.Errorf("failed to execute sdk request '1panel.UploadWebsiteSSL': %w", err)
 	}
 
 	// 遍历证书列表，获取刚刚上传证书 ID
@@ -102,7 +100,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 		searchWebsiteSSLResp, err := u.sdkClient.SearchWebsiteSSL(searchWebsiteSSLReq)
 		u.logger.Debug("sdk request '1panel.SearchWebsiteSSL'", slog.Any("request", searchWebsiteSSLReq), slog.Any("response", searchWebsiteSSLResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request '1panel.SearchWebsiteSSL'")
+			return nil, fmt.Errorf("failed to execute sdk request '1panel.SearchWebsiteSSL': %w", err)
 		}
 
 		for _, sslItem := range searchWebsiteSSLResp.Data.Items {

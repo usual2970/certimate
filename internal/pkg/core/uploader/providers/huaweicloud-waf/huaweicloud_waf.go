@@ -15,7 +15,6 @@ import (
 	hcwaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
 	hcwafmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
 	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
@@ -46,7 +45,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -85,7 +84,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ListCertificates'")
+			return nil, fmt.Errorf("failed to execute sdk request 'waf.ListCertificates': %w", err)
 		}
 
 		if listCertificatesResp.Items != nil {
@@ -96,7 +95,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				showCertificateResp, err := u.sdkClient.ShowCertificate(showCertificateReq)
 				u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
 				if err != nil {
-					return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.ShowCertificate'")
+					return nil, fmt.Errorf("failed to execute sdk request 'waf.ShowCertificate': %w", err)
 				}
 
 				var isSameCert bool
@@ -145,7 +144,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
 	u.logger.Debug("sdk request 'waf.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'waf.CreateCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'waf.CreateCertificate': %w", err)
 	}
 
 	certId = *createCertificateResp.Id

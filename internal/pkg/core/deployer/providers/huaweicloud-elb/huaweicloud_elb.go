@@ -14,7 +14,6 @@ import (
 	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
 	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
-	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -59,7 +58,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -68,7 +67,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Region:          config.Region,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -108,7 +107,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -133,7 +132,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	d.logger.Debug("sdk request 'elb.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'elb.UpdateCertificate': %w", err)
 	}
 
 	return nil
@@ -152,7 +151,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 	showLoadBalancerResp, err := d.sdkClient.ShowLoadBalancer(showLoadBalancerReq)
 	d.logger.Debug("sdk request 'elb.ShowLoadBalancer'", slog.Any("request", showLoadBalancerReq), slog.Any("response", showLoadBalancerResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowLoadBalancer'")
+		return fmt.Errorf("failed to execute sdk request 'elb.ShowLoadBalancer': %w", err)
 	}
 
 	// 查询监听器列表
@@ -170,7 +169,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'elb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListListeners'")
+			return fmt.Errorf("failed to execute sdk request 'elb.ListListeners': %w", err)
 		}
 
 		if listListenersResp.Listeners != nil {
@@ -189,7 +188,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -223,7 +222,7 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, certPEM string,
 	// 上传证书到 SCM
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -245,7 +244,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	showListenerResp, err := d.sdkClient.ShowListener(showListenerReq)
 	d.logger.Debug("sdk request 'elb.ShowListener'", slog.Any("request", showListenerReq), slog.Any("response", showListenerResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowListener'")
+		return fmt.Errorf("failed to execute sdk request 'elb.ShowListener': %w", err)
 	}
 
 	// 更新监听器
@@ -270,7 +269,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 			listOldCertificateResp, err := d.sdkClient.ListCertificates(listOldCertificateReq)
 			d.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listOldCertificateReq), slog.Any("response", listOldCertificateResp))
 			if err != nil {
-				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
+				return fmt.Errorf("failed to execute sdk request 'elb.ListCertificates': %w", err)
 			}
 
 			showNewCertificateReq := &hcelbmodel.ShowCertificateRequest{
@@ -279,7 +278,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 			showNewCertificateResp, err := d.sdkClient.ShowCertificate(showNewCertificateReq)
 			d.logger.Debug("sdk request 'elb.ShowCertificate'", slog.Any("request", showNewCertificateReq), slog.Any("response", showNewCertificateResp))
 			if err != nil {
-				return xerrors.Wrap(err, "failed to execute sdk request 'elb.ShowCertificate'")
+				return fmt.Errorf("failed to execute sdk request 'elb.ShowCertificate': %w", err)
 			}
 
 			for _, certificate := range *listOldCertificateResp.Certificates {
@@ -309,7 +308,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)
 	d.logger.Debug("sdk request 'elb.UpdateListener'", slog.Any("request", updateListenerReq), slog.Any("response", updateListenerResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'elb.UpdateListener'")
+		return fmt.Errorf("failed to execute sdk request 'elb.UpdateListener': %w", err)
 	}
 
 	return nil

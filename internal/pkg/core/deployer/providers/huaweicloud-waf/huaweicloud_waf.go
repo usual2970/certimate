@@ -15,7 +15,6 @@ import (
 	hcwaf "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1"
 	hcwafmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/model"
 	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -56,7 +55,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -65,7 +64,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Region:          config.Region,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -90,7 +89,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 WAF
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -113,7 +112,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -132,7 +131,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	showCertificateResp, err := d.sdkClient.ShowCertificate(showCertificateReq)
 	d.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'waf.ShowCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'waf.ShowCertificate': %w", err)
 	}
 
 	// 更新证书
@@ -148,7 +147,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	d.logger.Debug("sdk request 'waf.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdateCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'waf.UpdateCertificate': %w", err)
 	}
 
 	return nil
@@ -162,7 +161,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	// 上传证书到 WAF
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -181,7 +180,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 		listHostResp, err := d.sdkClient.ListHost(listHostReq)
 		d.logger.Debug("sdk request 'waf.ListHost'", slog.Any("request", listHostReq), slog.Any("response", listHostResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ListHost'")
+			return fmt.Errorf("failed to execute sdk request 'waf.ListHost': %w", err)
 		}
 
 		if listHostResp.Items != nil {
@@ -215,7 +214,7 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	updateHostResp, err := d.sdkClient.UpdateHost(updateHostReq)
 	d.logger.Debug("sdk request 'waf.UpdateHost'", slog.Any("request", updateHostReq), slog.Any("response", updateHostResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdateHost'")
+		return fmt.Errorf("failed to execute sdk request 'waf.UpdateHost': %w", err)
 	}
 
 	return nil
@@ -229,7 +228,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	// 上传证书到 WAF
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -248,7 +247,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 		listPremiumHostResp, err := d.sdkClient.ListPremiumHost(listPremiumHostReq)
 		d.logger.Debug("sdk request 'waf.ListPremiumHost'", slog.Any("request", listPremiumHostReq), slog.Any("response", listPremiumHostResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ListPremiumHost'")
+			return fmt.Errorf("failed to execute sdk request 'waf.ListPremiumHost': %w", err)
 		}
 
 		if listPremiumHostResp.Items != nil {
@@ -282,7 +281,7 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	updatePremiumHostResp, err := d.sdkClient.UpdatePremiumHost(updatePremiumHostReq)
 	d.logger.Debug("sdk request 'waf.UpdatePremiumHost'", slog.Any("request", updatePremiumHostReq), slog.Any("response", updatePremiumHostResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'waf.UpdatePremiumHost'")
+		return fmt.Errorf("failed to execute sdk request 'waf.UpdatePremiumHost': %w", err)
 	}
 
 	return nil

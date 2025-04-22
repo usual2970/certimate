@@ -7,9 +7,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"fmt"
 
 	"github.com/go-acme/lego/v4/certcrypto"
-	xerrors "github.com/pkg/errors"
 )
 
 // 从 PEM 编码的证书字符串解析并返回一个 x509.Certificate 对象。
@@ -31,7 +31,7 @@ func ParseCertificateFromPEM(certPEM string) (cert *x509.Certificate, err error)
 
 	cert, err = x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to parse certificate")
+		return nil, fmt.Errorf("failed to parse certificate: %w", err)
 	}
 
 	return cert, nil
@@ -68,7 +68,7 @@ func ParseECPrivateKeyFromPEM(privkeyPEM string) (privkey *ecdsa.PrivateKey, err
 
 	privkey, err = x509.ParseECPrivateKey(block.Bytes)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to parse private key")
+		return nil, fmt.Errorf("failed to parse private key: %w", err)
 	}
 
 	return privkey, nil
@@ -92,7 +92,7 @@ func ParsePKCS1PrivateKeyFromPEM(privkeyPEM string) (privkey *rsa.PrivateKey, er
 
 	privkey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to parse private key")
+		return nil, fmt.Errorf("failed to parse private key: %w", err)
 	}
 
 	return privkey, nil

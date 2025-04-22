@@ -10,7 +10,6 @@ import (
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	aliwaf "github.com/alibabacloud-go/waf-openapi-20211001/v5/client"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -49,12 +48,12 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -87,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, xerrors.Errorf("unsupported service version: %s", d.config.ServiceVersion)
+		return nil, fmt.Errorf("unsupported service version '%s'", d.config.ServiceVersion)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -97,7 +96,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 	// 上传证书到 CAS
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -114,7 +113,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		describeDefaultHttpsResp, err := d.sdkClient.DescribeDefaultHttps(describeDefaultHttpsReq)
 		d.logger.Debug("sdk request 'waf.DescribeDefaultHttps'", slog.Any("request", describeDefaultHttpsReq), slog.Any("response", describeDefaultHttpsResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDefaultHttps'")
+			return fmt.Errorf("failed to execute sdk request 'waf.DescribeDefaultHttps': %w", err)
 		}
 
 		// 修改默认 SSL/TLS 设置
@@ -133,7 +132,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		modifyDefaultHttpsResp, err := d.sdkClient.ModifyDefaultHttps(modifyDefaultHttpsReq)
 		d.logger.Debug("sdk request 'waf.ModifyDefaultHttps'", slog.Any("request", modifyDefaultHttpsReq), slog.Any("response", modifyDefaultHttpsResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDefaultHttps'")
+			return fmt.Errorf("failed to execute sdk request 'waf.ModifyDefaultHttps': %w", err)
 		}
 	} else {
 		// 指定接入域名
@@ -148,7 +147,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		describeDomainDetailResp, err := d.sdkClient.DescribeDomainDetail(describeDomainDetailReq)
 		d.logger.Debug("sdk request 'waf.DescribeDomainDetail'", slog.Any("request", describeDomainDetailReq), slog.Any("response", describeDomainDetailResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.DescribeDomainDetail'")
+			return fmt.Errorf("failed to execute sdk request 'waf.DescribeDomainDetail': %w", err)
 		}
 
 		// 修改 CNAME 接入资源
@@ -164,7 +163,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		modifyDomainResp, err := d.sdkClient.ModifyDomain(modifyDomainReq)
 		d.logger.Debug("sdk request 'waf.ModifyDomain'", slog.Any("request", modifyDomainReq), slog.Any("response", modifyDomainResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'waf.ModifyDomain'")
+			return fmt.Errorf("failed to execute sdk request 'waf.ModifyDomain': %w", err)
 		}
 	}
 

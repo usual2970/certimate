@@ -2,10 +2,10 @@ package qiniucdn
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -44,7 +44,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SecretKey: config.SecretKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -69,7 +69,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -82,7 +82,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getDomainInfoResp, err := d.sdkClient.GetDomainInfo(context.TODO(), domain)
 	d.logger.Debug("sdk request 'cdn.GetDomainInfo'", slog.String("request.domain", domain), slog.Any("response", getDomainInfoResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDomainInfo'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.GetDomainInfo': %w", err)
 	}
 
 	// 判断域名是否已启用 HTTPS。如果已启用，修改域名证书；否则，启用 HTTPS
@@ -91,13 +91,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		enableDomainHttpsResp, err := d.sdkClient.EnableDomainHttps(context.TODO(), domain, upres.CertId, true, true)
 		d.logger.Debug("sdk request 'cdn.EnableDomainHttps'", slog.String("request.domain", domain), slog.String("request.certId", upres.CertId), slog.Any("response", enableDomainHttpsResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.EnableDomainHttps'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.EnableDomainHttps': %w", err)
 		}
 	} else if getDomainInfoResp.Https.CertID != upres.CertId {
 		modifyDomainHttpsConfResp, err := d.sdkClient.ModifyDomainHttpsConf(context.TODO(), domain, upres.CertId, getDomainInfoResp.Https.ForceHttps, getDomainInfoResp.Https.Http2Enable)
 		d.logger.Debug("sdk request 'cdn.ModifyDomainHttpsConf'", slog.String("request.domain", domain), slog.String("request.certId", upres.CertId), slog.Any("response", modifyDomainHttpsConfResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ModifyDomainHttpsConf'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.ModifyDomainHttpsConf': %w", err)
 		}
 	}
 

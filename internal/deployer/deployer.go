@@ -28,7 +28,7 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 },
 ) (Deployer, error) {
 	if node.Type != domain.WorkflowNodeTypeDeploy {
-		return nil, fmt.Errorf("node type is not deploy")
+		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeDeploy))
 	}
 
 	nodeConfig := node.GetConfigForDeploy()

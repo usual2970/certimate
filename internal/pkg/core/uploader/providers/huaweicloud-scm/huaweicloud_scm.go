@@ -10,7 +10,6 @@ import (
 	hcscm "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3"
 	hcscmmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
 	hcscmregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
@@ -41,7 +40,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -82,7 +81,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'scm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ListCertificates'")
+			return nil, fmt.Errorf("failed to execute sdk request 'scm.ListCertificates': %w", err)
 		}
 
 		if listCertificatesResp.Certificates != nil {
@@ -96,7 +95,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 					if exportCertificateResp != nil && exportCertificateResp.HttpStatusCode == 404 {
 						continue
 					}
-					return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ExportCertificate'")
+					return nil, fmt.Errorf("failed to execute sdk request 'scm.ExportCertificate': %w", err)
 				}
 
 				var isSameCert bool
@@ -145,7 +144,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)
 	u.logger.Debug("sdk request 'scm.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'scm.ImportCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'scm.ImportCertificate': %w", err)
 	}
 
 	certId = *importCertificateResp.CertificateId

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/volcengine/ve-tos-golang-sdk/v2/tos"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -43,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -52,7 +51,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Region:          config.Region,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -84,7 +83,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到证书中心
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -101,7 +100,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	putBucketCustomDomainResp, err := d.sdkClient.PutBucketCustomDomain(context.TODO(), putBucketCustomDomainReq)
 	d.logger.Debug("sdk request 'tos.PutBucketCustomDomain'", slog.Any("request", putBucketCustomDomainReq), slog.Any("response", putBucketCustomDomainResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'tos.PutBucketCustomDomain'")
+		return nil, fmt.Errorf("failed to execute sdk request 'tos.PutBucketCustomDomain': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

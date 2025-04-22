@@ -4,10 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/url"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
@@ -39,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -74,7 +73,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	updateSystemSSLResp, err := d.sdkClient.UpdateSystemSSL(updateSystemSSLReq)
 	d.logger.Debug("sdk request '1panel.UpdateSystemSSL'", slog.Any("request", updateSystemSSLReq), slog.Any("response", updateSystemSSLResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request '1panel.UpdateSystemSSL'")
+		return nil, fmt.Errorf("failed to execute sdk request '1panel.UpdateSystemSSL': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

@@ -146,7 +146,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 		}
 
 	default:
-		err = fmt.Errorf("unsupported ca provider: %s", user.CA)
+		err = fmt.Errorf("unsupported ca provider '%s'", user.CA)
 	}
 	if err != nil {
 		return nil, err

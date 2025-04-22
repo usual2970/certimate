@@ -3,9 +3,8 @@ package cachefly
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cachefly"
@@ -31,7 +30,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiToken)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -59,7 +58,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'cachefly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cachefly.CreateCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cachefly.CreateCertificate': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

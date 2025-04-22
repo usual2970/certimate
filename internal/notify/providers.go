@@ -102,5 +102,5 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 		})
 	}
 
-	return nil, fmt.Errorf("unsupported notifier channel: %s", channelConfig)
+	return nil, fmt.Errorf("unsupported notifier channel '%s'", channelConfig)
 }

@@ -3,12 +3,12 @@ package gcorecdn
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strconv"
 
 	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
 	gresources "github.com/G-Core/gcorelabscdn-go/resources"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -39,14 +39,14 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiToken)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		ApiToken: config.ApiToken,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -75,7 +75,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -85,7 +85,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getResourceResp, err := d.sdkClient.Get(context.TODO(), d.config.ResourceId)
 	d.logger.Debug("sdk request 'resources.Get'", slog.Any("resourceId", d.config.ResourceId), slog.Any("response", getResourceResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'resources.Get'")
+		return nil, fmt.Errorf("failed to execute sdk request 'resources.Get': %w", err)
 	}
 
 	// 更新 CDN 资源详情
@@ -113,7 +113,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	updateResourceResp, err := d.sdkClient.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
 	d.logger.Debug("sdk request 'resources.Update'", slog.Int64("resourceId", d.config.ResourceId), slog.Any("request", updateResourceReq), slog.Any("response", updateResourceResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'resources.Update'")
+		return nil, fmt.Errorf("failed to execute sdk request 'resources.Update': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

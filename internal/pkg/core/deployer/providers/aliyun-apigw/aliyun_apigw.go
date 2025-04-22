@@ -12,7 +12,6 @@ import (
 	alicloudapi "github.com/alibabacloud-go/cloudapi-20160714/v5/client"
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -59,12 +58,12 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
 	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -97,7 +96,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, xerrors.Errorf("unsupported service type: %s", string(d.config.ServiceType))
+		return nil, fmt.Errorf("unsupported service type '%s'", string(d.config.ServiceType))
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -123,7 +122,7 @@ func (d *DeployerProvider) deployToTraditional(ctx context.Context, certPEM stri
 	setDomainCertificateResp, err := d.sdkClients.TraditionalAPIGateway.SetDomainCertificate(setDomainCertificateReq)
 	d.logger.Debug("sdk request 'apigateway.SetDomainCertificate'", slog.Any("request", setDomainCertificateReq), slog.Any("response", setDomainCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'apigateway.SetDomainCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'apigateway.SetDomainCertificate': %w", err)
 	}
 
 	return nil
@@ -152,7 +151,7 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 		listDomainsResp, err := d.sdkClients.CloudNativeAPIGateway.ListDomains(listDomainsReq)
 		d.logger.Debug("sdk request 'apig.ListDomains'", slog.Any("request", listDomainsReq), slog.Any("response", listDomainsResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'apig.ListDomains'")
+			return fmt.Errorf("failed to execute sdk request 'apig.ListDomains': %w", err)
 		}
 
 		if listDomainsResp.Body.Data.Items != nil {
@@ -184,13 +183,13 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 	getDomainResp, err := d.sdkClients.CloudNativeAPIGateway.GetDomain(tea.String(domainId), getDomainReq)
 	d.logger.Debug("sdk request 'apig.GetDomain'", slog.Any("domainId", domainId), slog.Any("request", getDomainReq), slog.Any("response", getDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'apig.GetDomain'")
+		return fmt.Errorf("failed to execute sdk request 'apig.GetDomain': %w", err)
 	}
 
 	// 上传证书到 CAS
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -210,7 +209,7 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 	updateDomainResp, err := d.sdkClients.CloudNativeAPIGateway.UpdateDomain(tea.String(domainId), updateDomainReq)
 	d.logger.Debug("sdk request 'apig.UpdateDomain'", slog.Any("domainId", domainId), slog.Any("request", updateDomainReq), slog.Any("response", updateDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'apig.UpdateDomain'")
+		return fmt.Errorf("failed to execute sdk request 'apig.UpdateDomain': %w", err)
 	}
 
 	return nil

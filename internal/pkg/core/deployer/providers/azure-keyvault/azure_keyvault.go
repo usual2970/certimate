@@ -12,7 +12,6 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/keyvault/azcertificates"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -53,7 +52,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.TenantId, config.ClientId, config.ClientSecret, config.CloudName, config.KeyVaultName)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -64,7 +63,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		KeyVaultName: config.KeyVaultName,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -95,14 +94,14 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 转换证书格式
 	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
+		return nil, fmt.Errorf("failed to transform certificate from PEM to PFX: %w", err)
 	}
 
 	if d.config.CertificateName == "" {
 		// 上传证书到 KeyVault
 		upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to upload certificate file")
+			return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 		} else {
 			d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 		}
@@ -114,7 +113,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		if err != nil {
 			var respErr *azcore.ResponseError
 			if !errors.As(err, &respErr) || (respErr.ErrorCode != "ResourceNotFound" && respErr.ErrorCode != "CertificateNotFound") {
-				return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.GetCertificate'")
+				return nil, fmt.Errorf("failed to execute sdk request 'keyvault.GetCertificate': %w", err)
 			}
 		} else {
 			oldCertX509, err := x509.ParseCertificate(getCertificateResp.CER)
@@ -142,7 +141,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		importCertificateResp, err := d.sdkClient.ImportCertificate(context.TODO(), d.config.CertificateName, importCertificateParams, nil)
 		d.logger.Debug("sdk request 'keyvault.ImportCertificate'", slog.String("request.certificateName", d.config.CertificateName), slog.Any("request.parameters", importCertificateParams), slog.Any("response", importCertificateResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'keyvault.ImportCertificate'")
+			return nil, fmt.Errorf("failed to execute sdk request 'keyvault.ImportCertificate': %w", err)
 		}
 	}
 

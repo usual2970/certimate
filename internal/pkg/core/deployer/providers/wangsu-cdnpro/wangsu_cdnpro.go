@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
@@ -58,7 +57,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -92,13 +91,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getHostnameDetailResp, err := d.sdkClient.GetHostnameDetail(d.config.Domain)
 	d.logger.Debug("sdk request 'cdn.GetHostnameDetail'", slog.String("hostname", d.config.Domain), slog.Any("response", getHostnameDetailResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetHostnameDetail'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.GetHostnameDetail': %w", err)
 	}
 
 	// 生成网宿云证书参数
 	encryptedPrivateKey, err := encryptPrivateKey(privkeyPEM, d.config.ApiKey, time.Now().Unix())
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to encrypt private key")
+		return nil, fmt.Errorf("failed to encrypt private key: %w", err)
 	}
 	certificateNewVersionInfo := &wangsucdn.CertificateVersion{
 		PrivateKey:  tea.String(encryptedPrivateKey),
@@ -130,7 +129,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 		d.logger.Debug("sdk request 'cdn.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.CreateCertificate'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.CreateCertificate': %w", err)
 		}
 
 		wangsuCertUrl = createCertificateResp.CertificateUrl
@@ -153,7 +152,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		updateCertificateResp, err := d.sdkClient.UpdateCertificate(d.config.CertificateId, updateCertificateReq)
 		d.logger.Debug("sdk request 'cdn.CreateCertificate'", slog.Any("certificateId", d.config.CertificateId), slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UpdateCertificate'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.UpdateCertificate': %w", err)
 		}
 
 		wangsuCertUrl = updateCertificateResp.CertificateUrl
@@ -190,7 +189,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	createDeploymentTaskResp, err := d.sdkClient.CreateDeploymentTask(createDeploymentTaskReq)
 	d.logger.Debug("sdk request 'cdn.CreateCertificate'", slog.Any("request", createDeploymentTaskReq), slog.Any("response", createDeploymentTaskResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.CreateDeploymentTask'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.CreateDeploymentTask': %w", err)
 	}
 
 	// 循环获取部署任务详细信息，等待任务状态变更
@@ -208,7 +207,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		getDeploymentTaskDetailResp, err := d.sdkClient.GetDeploymentTaskDetail(wangsuTaskId)
 		d.logger.Info("sdk request 'cdn.GetDeploymentTaskDetail'", slog.Any("taskId", wangsuTaskId), slog.Any("response", getDeploymentTaskDetailResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.GetDeploymentTaskDetail'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.GetDeploymentTaskDetail': %w", err)
 		}
 
 		if getDeploymentTaskDetailResp.Status == "failed" {
