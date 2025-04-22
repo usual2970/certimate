@@ -1,4 +1,4 @@
-﻿package baotapanelsite_test
+package baotapanelsite_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package huaweicloudcdn
+package huaweicloudcdn
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-scm"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 )
 
 type DeployerConfig struct {
@@ -76,9 +76,9 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书到 SCM
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

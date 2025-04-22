@@ -1,4 +1,4 @@
-﻿package onepanelconsole
+package onepanelconsole
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	opsdk "github.com/usual2970/certimate/internal/pkg/vendors/1panel-sdk"
+	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
 
 type DeployerConfig struct {
@@ -58,11 +58,11 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
 	updateSystemSSLReq := &opsdk.UpdateSystemSSLRequest{
-		Cert:    certPem,
-		Key:     privkeyPem,
+		Cert:    certPEM,
+		Key:     privkeyPEM,
 		SSL:     "enable",
 		SSLType: "import-paste",
 	}

@@ -1,4 +1,4 @@
-﻿package aliyunwaf
+package aliyunwaf
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
-	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
+	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
 type DeployerConfig struct {
@@ -75,14 +75,14 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	if d.config.InstanceId == "" {
 		return nil, errors.New("config `instanceId` is required")
 	}
 
 	switch d.config.ServiceVersion {
 	case "3", "3.0":
-		if err := d.deployToWAF3(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToWAF3(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -93,9 +93,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, privkeyPEM string) error {
 	// 上传证书到 CAS
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

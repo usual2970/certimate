@@ -1,4 +1,4 @@
-﻿package aliyunfc_test
+package aliyunfc_test
 
 import (
 	"context"

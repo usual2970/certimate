@@ -1,4 +1,4 @@
-﻿package qiniucdn_test
+package qiniucdn_test
 
 import (
 	"context"

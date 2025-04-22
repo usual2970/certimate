@@ -1,4 +1,4 @@
-﻿package huaweicloudcdn_test
+package huaweicloudcdn_test
 
 import (
 	"context"

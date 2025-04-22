@@ -12,7 +12,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -61,8 +61,8 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to parse x509")
 	}
@@ -76,8 +76,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
 	replaceJsonValueRecursively(webhookData, "${DOMAINS}", strings.Join(certX509.DNSNames, ";"))
 	replaceJsonValueRecursively(webhookData, "${SUBJECT_ALT_NAMES}", strings.Join(certX509.DNSNames, ";"))
-	replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPem)
-	replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPem)
+	replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPEM)
+	replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPEM)
 
 	resp, err := d.httpClient.R().
 		SetContext(ctx).

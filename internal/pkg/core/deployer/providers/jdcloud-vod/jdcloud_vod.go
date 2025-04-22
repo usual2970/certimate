@@ -1,4 +1,4 @@
-﻿package jdcloudvod
+package jdcloudvod
 
 import (
 	"context"
@@ -58,7 +58,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 查询域名列表
 	// REF: https://docs.jdcloud.com/cn/video-on-demand/api/listdomains
 	var domainId int
@@ -104,8 +104,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.jdcloud.com/cn/video-on-demand/api/sethttpssl
 	setHttpSslReq := jdvodapi.NewSetHttpSslRequest(domainId)
 	setHttpSslReq.SetTitle(fmt.Sprintf("certimate-%d", time.Now().UnixMilli()))
-	setHttpSslReq.SetSslCert(certPem)
-	setHttpSslReq.SetSslKey(privkeyPem)
+	setHttpSslReq.SetSslCert(certPEM)
+	setHttpSslReq.SetSslKey(privkeyPEM)
 	setHttpSslReq.SetSource("default")
 	setHttpSslReq.SetJumpType(getHttpSslResp.Result.JumpType)
 	setHttpSslReq.SetEnabled(true)

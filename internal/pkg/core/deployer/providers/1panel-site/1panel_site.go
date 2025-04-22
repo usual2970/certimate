@@ -1,4 +1,4 @@
-﻿package onepanelsite
+package onepanelsite
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/1panel-ssl"
-	opsdk "github.com/usual2970/certimate/internal/pkg/vendors/1panel-sdk"
+	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
 
 type DeployerConfig struct {
@@ -79,16 +79,16 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_WEBSITE:
-		if err := d.deployToWebsite(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToWebsite(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_CERTIFICATE:
-		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCertificate(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -99,7 +99,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.WebsiteId == 0 {
 		return errors.New("config `websiteId` is required")
 	}
@@ -115,7 +115,7 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPem string, 
 	}
 
 	// 上传证书到面板
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
@@ -143,7 +143,7 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPem string, 
 	return nil
 }
 
-func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.CertificateId == 0 {
 		return errors.New("config `certificateId` is required")
 	}
@@ -163,8 +163,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		Type:        "paste",
 		SSLID:       d.config.CertificateId,
 		Description: getWebsiteSSLResp.Data.Description,
-		Certificate: certPem,
-		PrivateKey:  privkeyPem,
+		Certificate: certPEM,
+		PrivateKey:  privkeyPEM,
 	}
 	uploadWebsiteSSLResp, err := d.sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
 	d.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))

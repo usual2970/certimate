@@ -1,4 +1,4 @@
-﻿package uploader
+package uploader
 
 import (
 	"context"
@@ -15,13 +15,13 @@ type Uploader interface {
 	//
 	// 入参：
 	//   - ctx：上下文。
-	//   - certPem：证书 PEM 内容。
-	//   - privkeyPem：私钥 PEM 内容。
+	//   - certPEM：证书 PEM 内容。
+	//   - privkeyPEM：私钥 PEM 内容。
 	//
 	// 出参：
 	//   - res：上传结果。
 	//   - err: 错误。
-	Upload(ctx context.Context, certPem string, privkeyPem string) (res *UploadResult, err error)
+	Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *UploadResult, err error)
 }
 
 // 表示证书上传结果的数据结构，包含上传后的证书 ID、名称和其他数据。

@@ -1,4 +1,4 @@
-﻿package baishancdn
+package baishancdn
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	bssdk "github.com/usual2970/certimate/internal/pkg/vendors/baishan-sdk"
+	bssdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/baishan"
 )
 
 type DeployerConfig struct {
@@ -60,7 +60,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	if d.config.Domain == "" {
 		return nil, errors.New("config `domain` is required")
 	}
@@ -70,8 +70,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
 		certificateId := ""
 		createCertificateReq := &bssdk.CreateCertificateRequest{
-			Certificate: certPem,
-			Key:         privkeyPem,
+			Certificate: certPEM,
+			Key:         privkeyPEM,
 			Name:        fmt.Sprintf("certimate_%d", time.Now().UnixMilli()),
 		}
 		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
@@ -129,8 +129,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
 		createCertificateReq := &bssdk.CreateCertificateRequest{
 			CertificateId: &d.config.CertificateId,
-			Certificate:   certPem,
-			Key:           privkeyPem,
+			Certificate:   certPEM,
+			Key:           privkeyPEM,
 			Name:          fmt.Sprintf("certimate_%d", time.Now().UnixMilli()),
 		}
 		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)

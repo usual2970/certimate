@@ -1,4 +1,4 @@
-﻿package lark_test
+package lark_test
 
 import (
 	"context"

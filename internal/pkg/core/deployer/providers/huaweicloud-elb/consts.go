@@ -1,4 +1,4 @@
-﻿package huaweicloudelb
+package huaweicloudelb
 
 type ResourceType string
 

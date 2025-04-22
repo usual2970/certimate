@@ -1,4 +1,4 @@
-﻿package volcenginetos_test
+package volcenginetos_test
 
 import (
 	"context"

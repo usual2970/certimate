@@ -1,4 +1,4 @@
-﻿package gcorecdn
+package gcorecdn
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	gcoresdk "github.com/usual2970/certimate/internal/pkg/vendors/gcore-sdk/common"
+	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore/common"
 )
 
 type UploaderConfig struct {
@@ -54,7 +54,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 生成新证书名（需符合 Gcore 命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
@@ -63,8 +63,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// REF: https://api.gcore.com/docs/cdn#tag/CA-certificates/operation/ca_certificates-add
 	createCertificateReq := &gsslcerts.CreateRequest{
 		Name:           certName,
-		Cert:           certPem,
-		PrivateKey:     privkeyPem,
+		Cert:           certPEM,
+		PrivateKey:     privkeyPEM,
 		Automated:      false,
 		ValidateRootCA: false,
 	}

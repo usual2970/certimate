@@ -1,4 +1,4 @@
-﻿package deployer
+package deployer
 
 import (
 	"context"
@@ -14,13 +14,13 @@ type Deployer interface {
 	//
 	// 入参：
 	//   - ctx：上下文。
-	//   - certPem：证书 PEM 内容。
-	//   - privkeyPem：私钥 PEM 内容。
+	//   - certPEM：证书 PEM 内容。
+	//   - privkeyPEM：私钥 PEM 内容。
 	//
 	// 出参：
 	//   - res：部署结果。
 	//   - err: 错误。
-	Deploy(ctx context.Context, certPem string, privkeyPem string) (res *DeployResult, err error)
+	Deploy(ctx context.Context, certPEM string, privkeyPEM string) (res *DeployResult, err error)
 }
 
 // 表示证书部署结果的数据结构。

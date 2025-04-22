@@ -1,4 +1,4 @@
-﻿package email_test
+package email_test
 
 import (
 	"context"

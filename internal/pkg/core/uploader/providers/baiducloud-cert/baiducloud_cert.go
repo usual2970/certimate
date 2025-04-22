@@ -1,4 +1,4 @@
-﻿package baiducloudcert
+package baiducloudcert
 
 import (
 	"context"
@@ -10,8 +10,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	bdsdk "github.com/usual2970/certimate/internal/pkg/vendors/baiducloud-sdk/cert"
+	bdsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/baiducloud/cert"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -55,9 +55,9 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -115,8 +115,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// REF: https://cloud.baidu.com/doc/Reference/s/Gjwvz27xu#31-%E5%88%9B%E5%BB%BA%E8%AF%81%E4%B9%A6
 	createCertReq := &bdsdk.CreateCertArgs{}
 	createCertReq.CertName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
-	createCertReq.CertServerData = certPem
-	createCertReq.CertPrivateData = privkeyPem
+	createCertReq.CertServerData = certPEM
+	createCertReq.CertPrivateData = privkeyPEM
 	createCertResp, err := u.sdkClient.CreateCert(createCertReq)
 	u.logger.Debug("sdk request 'cert.CreateCert'", slog.Any("request", createCertReq), slog.Any("response", createCertResp))
 	if err != nil {

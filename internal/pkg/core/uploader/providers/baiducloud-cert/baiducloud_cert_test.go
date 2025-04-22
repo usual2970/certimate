@@ -1,4 +1,4 @@
-﻿package baiducloudcert_test
+package baiducloudcert_test
 
 import (
 	"context"

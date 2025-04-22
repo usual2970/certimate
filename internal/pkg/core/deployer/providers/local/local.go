@@ -1,4 +1,4 @@
-﻿package local
+package local
 
 import (
 	"bytes"
@@ -11,8 +11,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	"github.com/usual2970/certimate/internal/pkg/utils/fileutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	fileutil "github.com/usual2970/certimate/internal/pkg/utils/file"
 )
 
 type DeployerConfig struct {
@@ -70,7 +70,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 执行前置命令
 	if d.config.PreCommand != "" {
 		stdout, stderr, err := execCommand(d.config.ShellEnv, d.config.PreCommand)
@@ -83,18 +83,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 写入证书和私钥文件
 	switch d.config.OutputFormat {
 	case OUTPUT_FORMAT_PEM:
-		if err := fileutil.WriteString(d.config.OutputCertPath, certPem); err != nil {
+		if err := fileutil.WriteString(d.config.OutputCertPath, certPEM); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save certificate file")
 		}
 		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
-		if err := fileutil.WriteString(d.config.OutputKeyPath, privkeyPem); err != nil {
+		if err := fileutil.WriteString(d.config.OutputKeyPath, privkeyPEM); err != nil {
 			return nil, xerrors.Wrap(err, "failed to save private key file")
 		}
 		d.logger.Info("ssl private key file saved", slog.String("path", d.config.OutputKeyPath))
 
 	case OUTPUT_FORMAT_PFX:
-		pfxData, err := certutil.TransformCertificateFromPEMToPFX(certPem, privkeyPem, d.config.PfxPassword)
+		pfxData, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, d.config.PfxPassword)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to PFX")
 		}
@@ -106,7 +106,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 	case OUTPUT_FORMAT_JKS:
-		jksData, err := certutil.TransformCertificateFromPEMToJKS(certPem, privkeyPem, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
+		jksData, err := certutil.TransformCertificateFromPEMToJKS(certPEM, privkeyPEM, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to transform certificate to JKS")
 		}

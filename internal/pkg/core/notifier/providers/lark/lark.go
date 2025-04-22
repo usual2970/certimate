@@ -1,4 +1,4 @@
-﻿package lark
+package lark
 
 import (
 	"context"

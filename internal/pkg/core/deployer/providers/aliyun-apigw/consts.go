@@ -1,4 +1,4 @@
-﻿package aliyunapigw
+package aliyunapigw
 
 type ServiceType string
 

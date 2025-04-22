@@ -1,4 +1,4 @@
-﻿package volcenginelive_test
+package volcenginelive_test
 
 import (
 	"context"

@@ -10,8 +10,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	rainyunsdk "github.com/usual2970/certimate/internal/pkg/vendors/rainyun-sdk"
+	rainyunsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/rainyun"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -53,8 +53,8 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
-	if res, err := u.getCertIfExists(ctx, certPem); err != nil {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+	if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res != nil {
 		u.logger.Info("ssl certificate already exists")
@@ -64,8 +64,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// SSL 证书上传
 	// REF: https://apifox.com/apidoc/shared/a4595cc8-44c5-4678-a2a3-eed7738dab03/api-69943046
 	sslCenterCreateReq := &rainyunsdk.SslCenterCreateRequest{
-		Cert: certPem,
-		Key:  privkeyPem,
+		Cert: certPEM,
+		Key:  privkeyPEM,
 	}
 	sslCenterCreateResp, err := u.sdkClient.SslCenterCreate(sslCenterCreateReq)
 	u.logger.Debug("sdk request 'sslcenter.Create'", slog.Any("request", sslCenterCreateReq), slog.Any("response", sslCenterCreateResp))
@@ -73,7 +73,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'sslcenter.Create'")
 	}
 
-	if res, err := u.getCertIfExists(ctx, certPem); err != nil {
+	if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res == nil {
 		return nil, errors.New("rainyun sslcenter: no certificate found")
@@ -82,9 +82,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	}
 }
 
-func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPem string) 
 
 				var isSameCert bool
 				if sslCenterGetResp.Data != nil {
-					if sslCenterGetResp.Data.Cert == certPem {
+					if sslCenterGetResp.Data.Cert == certPEM {
 						isSameCert = true
 					} else {
 						oldCertX509, err := certutil.ParseCertificateFromPEM(sslCenterGetResp.Data.Cert)

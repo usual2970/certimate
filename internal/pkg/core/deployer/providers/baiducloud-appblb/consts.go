@@ -1,4 +1,4 @@
-﻿package baiducloudappblb
+package baiducloudappblb
 
 type ResourceType string
 

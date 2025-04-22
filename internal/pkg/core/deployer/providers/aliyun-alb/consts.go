@@ -1,4 +1,4 @@
-﻿package aliyunalb
+package aliyunalb
 
 type ResourceType string
 

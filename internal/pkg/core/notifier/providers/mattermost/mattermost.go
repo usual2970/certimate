@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/nikoksr/notify/service/mattermost"
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	"io"
 	"log/slog"
 	"net/http"
+
+	"github.com/nikoksr/notify/service/mattermost"
+	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {

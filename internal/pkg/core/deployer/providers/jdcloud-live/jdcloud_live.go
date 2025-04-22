@@ -1,4 +1,4 @@
-﻿package jdcloudlive
+package jdcloudlive
 
 import (
 	"context"
@@ -55,12 +55,12 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置直播证书
 	// REF: https://docs.jdcloud.com/cn/live-video/api/setlivedomaincertificate
 	setLiveDomainCertificateReq := jdliveapi.NewSetLiveDomainCertificateRequest(d.config.Domain, "on")
-	setLiveDomainCertificateReq.SetCert(certPem)
-	setLiveDomainCertificateReq.SetKey(privkeyPem)
+	setLiveDomainCertificateReq.SetCert(certPEM)
+	setLiveDomainCertificateReq.SetKey(privkeyPEM)
 	setLiveDomainCertificateResp, err := d.sdkClient.SetLiveDomainCertificate(setLiveDomainCertificateReq)
 	d.logger.Debug("sdk request 'live.SetLiveDomainCertificate'", slog.Any("request", setLiveDomainCertificateReq), slog.Any("response", setLiveDomainCertificateResp))
 	if err != nil {

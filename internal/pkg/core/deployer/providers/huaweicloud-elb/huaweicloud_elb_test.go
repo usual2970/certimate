@@ -1,4 +1,4 @@
-﻿package huaweicloudelb_test
+package huaweicloudelb_test
 
 import (
 	"context"

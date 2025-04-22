@@ -1,4 +1,4 @@
-﻿package k8ssecret_test
+package k8ssecret_test
 
 import (
 	"context"

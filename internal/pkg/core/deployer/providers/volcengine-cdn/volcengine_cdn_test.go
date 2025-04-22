@@ -1,4 +1,4 @@
-﻿package volcenginecdn_test
+package volcenginecdn_test
 
 import (
 	"context"

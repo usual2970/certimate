@@ -1,4 +1,4 @@
-﻿package rainyunrcdn_test
+package rainyunrcdn_test
 
 import (
 	"context"

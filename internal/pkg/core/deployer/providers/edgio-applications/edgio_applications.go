@@ -1,4 +1,4 @@
-﻿package edgioapplications
+package edgioapplications
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -55,9 +55,9 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 提取 Edgio 所需的服务端证书和中间证书内容
-	privateCertPem, intermediateCertPem, err := certutil.ExtractCertificatesFromPEM(certPem)
+	privateCertPEM, intermediateCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +66,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.edg.io/rest_api/#tag/tls-certs/operation/postConfigV01TlsCerts
 	uploadTlsCertReq := edgiodtos.UploadTlsCertRequest{
 		EnvironmentID:    d.config.EnvironmentId,
-		PrimaryCert:      privateCertPem,
-		IntermediateCert: intermediateCertPem,
-		PrivateKey:       privkeyPem,
+		PrimaryCert:      privateCertPEM,
+		IntermediateCert: intermediateCertPEM,
+		PrivateKey:       privkeyPEM,
 	}
 	uploadTlsCertResp, err := d.sdkClient.UploadTlsCert(uploadTlsCertReq)
 	d.logger.Debug("sdk request 'edgio.UploadTlsCert'", slog.Any("request", uploadTlsCertReq), slog.Any("response", uploadTlsCertResp))

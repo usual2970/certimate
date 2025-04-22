@@ -1,4 +1,4 @@
-﻿package lego_gname
+package lego_gname
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/platform/config/env"
 
-	gnamesdk "github.com/usual2970/certimate/internal/pkg/vendors/gname-sdk"
+	gnamesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gname"
 )
 
 const (

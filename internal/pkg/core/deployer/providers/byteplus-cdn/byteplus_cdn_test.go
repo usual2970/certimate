@@ -1,4 +1,4 @@
-﻿package bytepluscdn_test
+package bytepluscdn_test
 
 import (
 	"context"

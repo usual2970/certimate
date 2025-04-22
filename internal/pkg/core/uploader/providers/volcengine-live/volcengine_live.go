@@ -12,7 +12,7 @@ import (
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -55,9 +55,9 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 
 			var isSameCert bool
 			certificate := strings.Join(describeCertDetailSecretResp.Result.SSL.Chain, "\n\n")
-			if certificate == certPem {
+			if certificate == certPEM {
 				isSameCert = true
 			} else {
 				oldCertX509, err := certutil.ParseCertificateFromPEM(certificate)
@@ -118,8 +118,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 		UseWay:      "https",
 		ProjectName: ve.String("default"),
 		Rsa: velive.CreateCertBodyRsa{
-			Prikey: privkeyPem,
-			Pubkey: certPem,
+			Prikey: privkeyPEM,
+			Pubkey: certPEM,
 		},
 	}
 	createCertResp, err := u.sdkClient.CreateCert(ctx, createCertReq)

@@ -1,4 +1,4 @@
-﻿package aliyunoss_test
+package aliyunoss_test
 
 import (
 	"context"

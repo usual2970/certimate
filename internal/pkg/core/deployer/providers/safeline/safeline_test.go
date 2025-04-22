@@ -1,4 +1,4 @@
-﻿package safeline_test
+package safeline_test
 
 import (
 	"context"

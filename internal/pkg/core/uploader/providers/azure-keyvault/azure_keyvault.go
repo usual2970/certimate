@@ -1,4 +1,4 @@
-﻿package azurekeyvault
+package azurekeyvault
 
 import (
 	"context"
@@ -15,8 +15,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	azcommon "github.com/usual2970/certimate/internal/pkg/vendors/azure-sdk/common"
+	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -66,9 +66,9 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +145,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// Azure Key Vault 不支持导入带有 Certificiate Chain 的 PEM 证书。
 	// Issue Link: https://github.com/Azure/azure-cli/issues/19017
 	// 暂时的解决方法是，将 PEM 证书转换成 PFX 格式，然后再导入。
-	certPfx, err := certutil.TransformCertificateFromPEMToPFX(certPem, privkeyPem, "")
+	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
 	}
@@ -153,7 +153,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 导入证书
 	// REF: https://learn.microsoft.com/en-us/rest/api/keyvault/certificates/import-certificate/import-certificate
 	importCertificateParams := azcertificates.ImportCertificateParameters{
-		Base64EncodedCertificate: to.Ptr(base64.StdEncoding.EncodeToString(certPfx)),
+		Base64EncodedCertificate: to.Ptr(base64.StdEncoding.EncodeToString(certPFX)),
 		CertificatePolicy: &azcertificates.CertificatePolicy{
 			SecretProperties: &azcertificates.SecretProperties{
 				ContentType: to.Ptr("application/x-pkcs12"),

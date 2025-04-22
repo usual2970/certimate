@@ -17,7 +17,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	if config == nil {
 		panic("config is nil")
 	}
-	
+
 	providerConfig := bunny.NewDefaultConfig()
 	providerConfig.APIKey = config.ApiKey
 	if config.DnsPropagationTimeout != 0 {

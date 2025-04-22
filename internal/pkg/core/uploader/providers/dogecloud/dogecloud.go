@@ -1,4 +1,4 @@
-﻿package dogecloud
+package dogecloud
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	dogesdk "github.com/usual2970/certimate/internal/pkg/vendors/dogecloud-sdk"
+	dogesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/dogecloud"
 )
 
 type UploaderConfig struct {
@@ -53,14 +53,14 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 生成新证书名（需符合多吉云命名规则）
 	var certId, certName string
 	certName = fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
 
 	// 上传新证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-upload
-	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPem, privkeyPem)
+	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPEM, privkeyPEM)
 	u.logger.Debug("sdk request 'cdn.UploadCdnCert'", slog.Any("response", uploadSslCertResp))
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadCdnCert'")

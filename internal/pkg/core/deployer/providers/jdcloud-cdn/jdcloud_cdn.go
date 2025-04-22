@@ -1,4 +1,4 @@
-﻿package jdcloudcdn
+package jdcloudcdn
 
 import (
 	"context"
@@ -68,7 +68,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 查询域名配置信息
 	// REF: https://docs.jdcloud.com/cn/cdn/api/querydomainconfig
 	queryDomainConfigReq := jdcdnapi.NewQueryDomainConfigRequest(d.config.Domain)
@@ -79,7 +79,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 上传证书到 SSL
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
@@ -90,8 +90,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// REF: https://docs.jdcloud.com/cn/cdn/api/sethttptype
 	setHttpTypeReq := jdcdnapi.NewSetHttpTypeRequest(d.config.Domain)
 	setHttpTypeReq.SetHttpType("https")
-	setHttpTypeReq.SetCertificate(certPem)
-	setHttpTypeReq.SetRsaKey(privkeyPem)
+	setHttpTypeReq.SetCertificate(certPEM)
+	setHttpTypeReq.SetRsaKey(privkeyPEM)
 	setHttpTypeReq.SetCertFrom("ssl")
 	setHttpTypeReq.SetSslCertId(upres.CertId)
 	setHttpTypeReq.SetJumpType(queryDomainConfigResp.Result.HttpsJumpType)

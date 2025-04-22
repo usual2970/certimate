@@ -1,4 +1,4 @@
-﻿package jdcloudvod_test
+package jdcloudvod_test
 
 import (
 	"context"

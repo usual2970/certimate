@@ -1,4 +1,4 @@
-﻿package tencentcloudeo
+package tencentcloudeo
 
 import (
 	"context"
@@ -77,13 +77,13 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	if d.config.ZoneId == "" {
 		return nil, errors.New("config `zoneId` is required")
 	}
 
 	// 上传证书到 SSL
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

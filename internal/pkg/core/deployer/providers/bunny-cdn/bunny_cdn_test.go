@@ -1,4 +1,4 @@
-﻿package bunnycdn_test
+package bunnycdn_test
 
 import (
 	"context"
@@ -55,7 +55,7 @@ func TestDeploy(t *testing.T) {
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiKey:     fApiKey,
 			PullZoneId: fPullZoneId,
-			HostName:   fHostName,
+			Hostname:   fHostName,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

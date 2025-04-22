@@ -1,4 +1,4 @@
-﻿package azurekeyvault_test
+package azurekeyvault_test
 
 import (
 	"context"

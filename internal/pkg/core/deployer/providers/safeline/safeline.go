@@ -1,4 +1,4 @@
-﻿package safeline
+package safeline
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	safelinesdk "github.com/usual2970/certimate/internal/pkg/vendors/safeline-sdk"
+	safelinesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/safeline"
 )
 
 type DeployerConfig struct {
@@ -62,11 +62,11 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:
-		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCertificate(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -77,7 +77,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.CertificateId == 0 {
 		return errors.New("config `certificateId` is required")
 	}
@@ -87,8 +87,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		Id:   d.config.CertificateId,
 		Type: 2,
 		Manual: &safelinesdk.UpdateCertificateRequestBodyManul{
-			Crt: certPem,
-			Key: privkeyPem,
+			Crt: certPEM,
+			Key: privkeyPEM,
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)

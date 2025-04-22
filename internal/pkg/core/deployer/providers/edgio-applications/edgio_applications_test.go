@@ -1,4 +1,4 @@
-﻿package edgioapplications_test
+package edgioapplications_test
 
 import (
 	"context"
