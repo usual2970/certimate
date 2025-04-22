@@ -53,12 +53,12 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 上传新证书
 	// REF: https://cloud.tencent.com/document/product/400/41665
 	uploadCertificateReq := tcssl.NewUploadCertificateRequest()
-	uploadCertificateReq.CertificatePublicKey = common.StringPtr(certPem)
-	uploadCertificateReq.CertificatePrivateKey = common.StringPtr(privkeyPem)
+	uploadCertificateReq.CertificatePublicKey = common.StringPtr(certPEM)
+	uploadCertificateReq.CertificatePrivateKey = common.StringPtr(privkeyPEM)
 	uploadCertificateReq.Repeatable = common.BoolPtr(false)
 	uploadCertificateResp, err := u.sdkClient.UploadCertificate(uploadCertificateReq)
 	u.logger.Debug("sdk request 'ssl.UploadCertificate'", slog.Any("request", uploadCertificateReq), slog.Any("response", uploadCertificateResp))

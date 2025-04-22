@@ -35,7 +35,7 @@ import (
 	pVercel "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/vercel"
 	pVolcEngine "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/volcengine"
 	pWestcn "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/westcn"
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
 func createApplicant(options *applicantOptions) (challenge.Provider, error) {

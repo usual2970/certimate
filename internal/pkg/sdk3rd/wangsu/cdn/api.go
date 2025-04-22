@@ -23,7 +23,7 @@ func (c *Client) CreateCertificate(req *CreateCertificateRequest) (*CreateCertif
 
 func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateRequest) (*UpdateCertificateResponse, error) {
 	if certificateId == "" {
-		return nil, fmt.Errorf("invalid parameter: certificateId")
+		return nil, fmt.Errorf("wangsu api error: invalid parameter: certificateId")
 	}
 
 	resp := &UpdateCertificateResponse{}
@@ -40,7 +40,7 @@ func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateR
 
 func (c *Client) GetHostnameDetail(hostname string) (*GetHostnameDetailResponse, error) {
 	if hostname == "" {
-		return nil, fmt.Errorf("invalid parameter: hostname")
+		return nil, fmt.Errorf("wangsu api error: invalid parameter: hostname")
 	}
 
 	resp := &GetHostnameDetailResponse{}
@@ -61,7 +61,7 @@ func (c *Client) CreateDeploymentTask(req *CreateDeploymentTaskRequest) (*Create
 
 func (c *Client) GetDeploymentTaskDetail(deploymentTaskId string) (*GetDeploymentTaskDetailResponse, error) {
 	if deploymentTaskId == "" {
-		return nil, fmt.Errorf("invalid parameter: deploymentTaskId")
+		return nil, fmt.Errorf("wangsu api error: invalid parameter: deploymentTaskId")
 	}
 
 	resp := &GetDeploymentTaskDetailResponse{}

@@ -15,9 +15,9 @@ import (
 //   - cert: x509.Certificate 对象。
 //
 // 出参:
-//   - certPem: 证书 PEM 内容。
+//   - certPEM: 证书 PEM 内容。
 //   - err: 错误。
-func ConvertCertificateToPEM(cert *x509.Certificate) (certPem string, err error) {
+func ConvertCertificateToPEM(cert *x509.Certificate) (certPEM string, err error) {
 	if cert == nil {
 		return "", errors.New("`cert` is nil")
 	}
@@ -36,9 +36,9 @@ func ConvertCertificateToPEM(cert *x509.Certificate) (certPem string, err error)
 //   - privkey: ecdsa.PrivateKey 对象。
 //
 // 出参:
-//   - privkeyPem: 私钥 PEM 内容。
+//   - privkeyPEM: 私钥 PEM 内容。
 //   - err: 错误。
-func ConvertECPrivateKeyToPEM(privkey *ecdsa.PrivateKey) (privkeyPem string, err error) {
+func ConvertECPrivateKeyToPEM(privkey *ecdsa.PrivateKey) (privkeyPEM string, err error) {
 	if privkey == nil {
 		return "", errors.New("`privkey` is nil")
 	}

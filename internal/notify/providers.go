@@ -17,7 +17,7 @@ import (
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
 func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]any) (notifier.Notifier, error) {
@@ -67,7 +67,7 @@ func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]a
 			ChannelId: maputil.GetString(channelConfig, "channelId"),
 			Username:  maputil.GetString(channelConfig, "username"),
 			Password:  maputil.GetString(channelConfig, "password"),
-    })
+		})
 	case domain.NotifyChannelTypePushover:
 		return pPushover.NewNotifier(&pPushover.NotifierConfig{
 			Token: maputil.GetString(channelConfig, "token"),

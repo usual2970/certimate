@@ -84,15 +84,15 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	switch d.config.ServiceType {
 	case SERVICE_TYPE_TRADITIONAL:
-		if err := d.deployToTraditional(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToTraditional(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case SERVICE_TYPE_CLOUDNATIVE:
-		if err := d.deployToCloudNative(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCloudNative(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -103,7 +103,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToTraditional(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToTraditional(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.GroupId == "" {
 		return errors.New("config `groupId` is required")
 	}
@@ -117,8 +117,8 @@ func (d *DeployerProvider) deployToTraditional(ctx context.Context, certPem stri
 		GroupId:               tea.String(d.config.GroupId),
 		DomainName:            tea.String(d.config.Domain),
 		CertificateName:       tea.String(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-		CertificateBody:       tea.String(certPem),
-		CertificatePrivateKey: tea.String(privkeyPem),
+		CertificateBody:       tea.String(certPEM),
+		CertificatePrivateKey: tea.String(privkeyPEM),
 	}
 	setDomainCertificateResp, err := d.sdkClients.TraditionalAPIGateway.SetDomainCertificate(setDomainCertificateReq)
 	d.logger.Debug("sdk request 'apigateway.SetDomainCertificate'", slog.Any("request", setDomainCertificateReq), slog.Any("response", setDomainCertificateResp))
@@ -129,7 +129,7 @@ func (d *DeployerProvider) deployToTraditional(ctx context.Context, certPem stri
 	return nil
 }
 
-func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.GatewayId == "" {
 		return errors.New("config `gatewayId` is required")
 	}
@@ -188,7 +188,7 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPem stri
 	}
 
 	// 上传证书到 CAS
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

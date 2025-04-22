@@ -1,7 +1,7 @@
 package cdn
 
 import (
-	"github.com/usual2970/certimate/internal/pkg/vendors/wangsu-sdk/openapi"
+	"github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/openapi"
 )
 
 type baseResponse struct {
@@ -46,7 +46,7 @@ type CreateCertificateRequest struct {
 
 type CreateCertificateResponse struct {
 	baseResponse
-	CertificateUrl string `json:"-"`
+	CertificateUrl string `json:"location,omitempty"`
 }
 
 type UpdateCertificateRequest struct {
@@ -60,7 +60,7 @@ type UpdateCertificateRequest struct {
 
 type UpdateCertificateResponse struct {
 	baseResponse
-	CertificateUrl string `json:"-"`
+	CertificateUrl string `json:"location,omitempty"`
 }
 
 type HostnameProperty struct {
@@ -92,7 +92,7 @@ type CreateDeploymentTaskRequest struct {
 
 type CreateDeploymentTaskResponse struct {
 	baseResponse
-	DeploymentTaskUrl string `json:"-"`
+	DeploymentTaskUrl string `json:"location,omitempty"`
 }
 
 type GetDeploymentTaskDetailResponse struct {

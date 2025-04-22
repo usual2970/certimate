@@ -56,15 +56,15 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 修改域名证书
 	// REF: https://cloud.baidu.com/doc/CDN/s/qjzuz2hp8
 	putCertResp, err := d.sdkClient.PutCert(
 		d.config.Domain,
 		&bcecdnapi.UserCertificate{
 			CertName:    fmt.Sprintf("certimate-%d", time.Now().UnixMilli()),
-			ServerData:  certPem,
-			PrivateData: privkeyPem,
+			ServerData:  certPEM,
+			PrivateData: privkeyPEM,
 		},
 		"ON",
 	)

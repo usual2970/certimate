@@ -78,8 +78,8 @@ import (
 	pVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
 	pWangsuCDNPro "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdnpro"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
-	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
+	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
 func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
@@ -443,7 +443,7 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 			deployer, err := pBunnyCDN.NewDeployer(&pBunnyCDN.DeployerConfig{
 				ApiKey:     access.ApiKey,
 				PullZoneId: maputil.GetString(options.ProviderDeployConfig, "pullZoneId"),
-				HostName:   maputil.GetString(options.ProviderDeployConfig, "hostName"),
+				Hostname:   maputil.GetString(options.ProviderDeployConfig, "hostname"),
 			})
 			return deployer, err
 		}

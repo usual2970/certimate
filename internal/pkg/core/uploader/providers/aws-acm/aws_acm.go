@@ -12,7 +12,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -58,16 +58,16 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
 	// 生成 AWS 业务参数
-	scertPem, _ := certutil.ConvertCertificateToPEM(certX509)
-	bcertPem := certPem
+	scertPEM, _ := certutil.ConvertCertificateToPEM(certX509)
+	bcertPEM := certPEM
 
 	// 获取证书列表，避免重复上传
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListCertificates.html
@@ -107,12 +107,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 			if err != nil {
 				return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.GetCertificate'")
 			} else {
-				oldCertPem := aws.ToString(getCertificateResp.CertificateChain)
-				if oldCertPem == "" {
-					oldCertPem = aws.ToString(getCertificateResp.Certificate)
+				oldCertPEM := aws.ToString(getCertificateResp.CertificateChain)
+				if oldCertPEM == "" {
+					oldCertPEM = aws.ToString(getCertificateResp.Certificate)
 				}
 
-				oldCertX509, err := certutil.ParseCertificateFromPEM(oldCertPem)
+				oldCertX509, err := certutil.ParseCertificateFromPEM(oldCertPEM)
 				if err != nil {
 					continue
 				}
@@ -139,9 +139,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPe
 	// 导入证书
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ImportCertificate.html
 	importCertificateReq := &awsacm.ImportCertificateInput{
-		Certificate:      ([]byte)(scertPem),
-		CertificateChain: ([]byte)(bcertPem),
-		PrivateKey:       ([]byte)(privkeyPem),
+		Certificate:      ([]byte)(scertPEM),
+		CertificateChain: ([]byte)(bcertPEM),
+		PrivateKey:       ([]byte)(privkeyPEM),
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), importCertificateReq)
 	u.logger.Debug("sdk request 'acm.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))

@@ -9,7 +9,7 @@ import (
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	veccsdk "github.com/usual2970/certimate/internal/pkg/vendors/volcengine-sdk/certcenter"
+	veccsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/volcengine/certcenter"
 )
 
 type UploaderConfig struct {
@@ -55,13 +55,13 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 上传证书
 	// REF: https://www.volcengine.com/docs/6638/1365580
 	importCertificateReq := &veccsdk.ImportCertificateInput{
 		CertificateInfo: &veccsdk.ImportCertificateInputCertificateInfo{
-			CertificateChain: ve.String(certPem),
-			PrivateKey:       ve.String(privkeyPem),
+			CertificateChain: ve.String(certPEM),
+			PrivateKey:       ve.String(privkeyPEM),
 		},
 		Repeatable: ve.Bool(false),
 	}

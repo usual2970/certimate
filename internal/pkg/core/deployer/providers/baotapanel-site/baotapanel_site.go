@@ -11,8 +11,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
-	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
+	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btpanel"
+	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
 type DeployerConfig struct {
@@ -64,7 +64,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	switch d.config.SiteType {
 	case "php":
 		{
@@ -76,8 +76,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			siteSetSSLReq := &btsdk.SiteSetSSLRequest{
 				SiteName:    d.config.SiteName,
 				Type:        "0",
-				Certificate: certPem,
-				PrivateKey:  privkeyPem,
+				Certificate: certPEM,
+				PrivateKey:  privkeyPEM,
 			}
 			siteSetSSLResp, err := d.sdkClient.SiteSetSSL(siteSetSSLReq)
 			d.logger.Debug("sdk request 'bt.SiteSetSSL'", slog.Any("request", siteSetSSLReq), slog.Any("response", siteSetSSLResp))
@@ -94,8 +94,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 
 			// 上传证书
 			sslCertSaveCertReq := &btsdk.SSLCertSaveCertRequest{
-				Certificate: certPem,
-				PrivateKey:  privkeyPem,
+				Certificate: certPEM,
+				PrivateKey:  privkeyPEM,
 			}
 			sslCertSaveCertResp, err := d.sdkClient.SSLCertSaveCert(sslCertSaveCertReq)
 			d.logger.Debug("sdk request 'bt.SSLCertSaveCert'", slog.Any("request", sslCertSaveCertReq), slog.Any("response", sslCertSaveCertResp))

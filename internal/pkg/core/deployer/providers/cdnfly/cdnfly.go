@@ -12,7 +12,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cdnfly-sdk"
+	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cdnfly"
 )
 
 type DeployerConfig struct {
@@ -66,16 +66,16 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_SITE:
-		if err := d.deployToSite(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToSite(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_CERTIFICATE:
-		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCertificate(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -86,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.SiteId == "" {
 		return errors.New("config `siteId` is required")
 	}
@@ -107,8 +107,8 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, pri
 	createCertificateReq := &cfsdk.CreateCertificateRequest{
 		Name: fmt.Sprintf("certimate-%d", time.Now().UnixMilli()),
 		Type: "custom",
-		Cert: certPem,
-		Key:  privkeyPem,
+		Cert: certPEM,
+		Key:  privkeyPEM,
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'cdnfly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
@@ -136,7 +136,7 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPem string, pri
 	return nil
 }
 
-func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}
@@ -147,8 +147,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 	updateCertificateReq := &cfsdk.UpdateCertificateRequest{
 		Id:   d.config.CertificateId,
 		Type: &updateCertificateType,
-		Cert: &certPem,
-		Key:  &privkeyPem,
+		Cert: &certPEM,
+		Key:  &privkeyPEM,
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	d.logger.Debug("sdk request 'cdnfly.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))

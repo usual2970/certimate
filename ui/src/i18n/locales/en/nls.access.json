@@ -85,7 +85,7 @@
   "access.form.baiducloud_secret_access_key.label": "Baidu Cloud SecretAccessKey",
   "access.form.baiducloud_secret_access_key.placeholder": "Please enter Baidu Cloud SecretAccessKey",
   "access.form.baiducloud_secret_access_key.tooltip": "For more information, see <a href=\"https://intl.cloud.baidu.com/doc/Reference/s/jjwvz2e3p-en\" target=\"_blank\">https://intl.cloud.baidu.com/doc/Reference/s/jjwvz2e3p-en</a>",
-  "access.form.bunny_api_key.label": "Bunny API Key",
+  "access.form.bunny_api_key.label": "Bunny API key",
   "access.form.bunny_api_key.placeholder": "Please enter Bunny API key",
   "access.form.bunny_api_key.tooltip": "For more information, see <a href=\"https://docs.bunny.net/reference/bunnynet-api-overview\" target=\"_blank\">https://docs.bunny.net/reference/bunnynet-api-overview</a>",
   "access.form.upyun_username.label": "UPYUN subaccount username",

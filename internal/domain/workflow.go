@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
 const CollectionNameWorkflow = "workflow"

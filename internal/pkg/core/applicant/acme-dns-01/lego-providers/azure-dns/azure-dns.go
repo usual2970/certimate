@@ -6,7 +6,7 @@ import (
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/providers/dns/azuredns"
 
-	azcommon "github.com/usual2970/certimate/internal/pkg/vendors/azure-sdk/common"
+	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
 )
 
 type ChallengeProviderConfig struct {

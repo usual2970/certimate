@@ -6,7 +6,7 @@ import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormBunnyCDNConfigFieldValues = Nullish<{
   pullZoneId: string | number;
-  hostName: string;
+  hostname: string;
 }>;
 
 export type DeployNodeConfigFormBunnyCDNConfigProps = {
@@ -30,11 +30,11 @@ const DeployNodeConfigFormBunnyCDNConfig = ({ form: formInst, formName, disabled
       .refine((v) => {
         return /^\d+$/.test(v + "") && +v! > 0;
       }, t("workflow_node.deploy.form.bunny_cdn_pull_zone_id.placeholder")),
-    hostName: z
-      .string({ message: t("workflow_node.deploy.form.bunny_cdn_host_name.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.bunny_cdn_host_name.placeholder"))
+    hostname: z
+      .string({ message: t("workflow_node.deploy.form.bunny_cdn_hostname.placeholder") })
+      .nonempty(t("workflow_node.deploy.form.bunny_cdn_hostname.placeholder"))
       .refine((v) => {
-        return !v || validDomainName(v!, { allowWildcard: true });
+        return validDomainName(v!, { allowWildcard: true });
       }, t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -62,12 +62,12 @@ const DeployNodeConfigFormBunnyCDNConfig = ({ form: formInst, formName, disabled
       </Form.Item>
 
       <Form.Item
-        name="hostName"
-        label={t("workflow_node.deploy.form.bunny_cdn_host_name.label")}
+        name="hostname"
+        label={t("workflow_node.deploy.form.bunny_cdn_hostname.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.bunny_cdn_host_name.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.bunny_cdn_hostname.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.bunny_cdn_host_name.placeholder")} />
+        <Input placeholder={t("workflow_node.deploy.form.bunny_cdn_hostname.placeholder")} />
       </Form.Item>
     </Form>
   );

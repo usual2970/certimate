@@ -67,15 +67,15 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	switch d.config.ServiceVersion {
 	case "3", "3.0":
-		if err := d.deployToFC3(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToFC3(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case "2", "2.0":
-		if err := d.deployToFC2(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToFC2(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -86,7 +86,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToFC3(ctx context.Context, certPEM string, privkeyPEM string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-3-0/developer-reference/api-fc-2023-03-30-getcustomdomain
 	getCustomDomainResp, err := d.sdkClients.FC3.GetCustomDomain(tea.String(d.config.Domain))
@@ -101,8 +101,8 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 		Body: &alifc3.UpdateCustomDomainInput{
 			CertConfig: &alifc3.CertConfig{
 				CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
-				Certificate: tea.String(certPem),
-				PrivateKey:  tea.String(privkeyPem),
+				Certificate: tea.String(certPEM),
+				PrivateKey:  tea.String(privkeyPEM),
 			},
 			Protocol:  getCustomDomainResp.Body.Protocol,
 			TlsConfig: getCustomDomainResp.Body.TlsConfig,
@@ -117,7 +117,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPem string, priv
 	return nil
 }
 
-func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToFC2(ctx context.Context, certPEM string, privkeyPEM string) error {
 	// 获取自定义域名
 	// REF: https://help.aliyun.com/zh/functioncompute/fc-2-0/developer-reference/api-fc-open-2021-04-06-getcustomdomain
 	getCustomDomainResp, err := d.sdkClients.FC2.GetCustomDomain(tea.String(d.config.Domain))
@@ -131,8 +131,8 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPem string, priv
 	updateCustomDomainReq := &alifc2.UpdateCustomDomainRequest{
 		CertConfig: &alifc2.CertConfig{
 			CertName:    tea.String(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
-			Certificate: tea.String(certPem),
-			PrivateKey:  tea.String(privkeyPem),
+			Certificate: tea.String(certPEM),
+			PrivateKey:  tea.String(privkeyPEM),
 		},
 		Protocol:  getCustomDomainResp.Body.Protocol,
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,

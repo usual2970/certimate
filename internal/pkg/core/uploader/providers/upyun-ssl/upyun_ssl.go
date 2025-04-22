@@ -8,7 +8,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	upyunsdk "github.com/usual2970/certimate/internal/pkg/vendors/upyun-sdk/console"
+	upyunsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/upyun/console"
 )
 
 type UploaderConfig struct {
@@ -52,11 +52,11 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPem string, privkeyPem string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
 	// 上传证书
 	uploadHttpsCertificateReq := &upyunsdk.UploadHttpsCertificateRequest{
-		Certificate: certPem,
-		PrivateKey:  privkeyPem,
+		Certificate: certPEM,
+		PrivateKey:  privkeyPEM,
 	}
 	uploadHttpsCertificateResp, err := u.sdkClient.UploadHttpsCertificate(uploadHttpsCertificateReq)
 	u.logger.Debug("sdk request 'console.UploadHttpsCertificate'", slog.Any("response", uploadHttpsCertificateResp))

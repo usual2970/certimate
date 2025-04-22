@@ -13,20 +13,20 @@ import (
 // 将 PEM 编码的证书字符串转换为 PFX 格式。
 //
 // 入参:
-//   - certPem: 证书 PEM 内容。
-//   - privkeyPem: 私钥 PEM 内容。
+//   - certPEM: 证书 PEM 内容。
+//   - privkeyPEM: 私钥 PEM 内容。
 //   - pfxPassword: PFX 导出密码。
 //
 // 出参:
 //   - data: PFX 格式的证书数据。
 //   - err: 错误。
-func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPassword string) ([]byte, error) {
-	cert, err := ParseCertificateFromPEM(certPem)
+func TransformCertificateFromPEMToPFX(certPEM string, privkeyPEM string, pfxPassword string) ([]byte, error) {
+	cert, err := ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
-	privkey, err := ParsePrivateKeyFromPEM(privkeyPem)
+	privkey, err := ParsePrivateKeyFromPEM(privkeyPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -42,8 +42,8 @@ func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPass
 // 将 PEM 编码的证书字符串转换为 JKS 格式。
 //
 // 入参:
-//   - certPem: 证书 PEM 内容。
-//   - privkeyPem: 私钥 PEM 内容。
+//   - certPEM: 证书 PEM 内容。
+//   - privkeyPEM: 私钥 PEM 内容。
 //   - jksAlias: JKS 别名。
 //   - jksKeypass: JKS 密钥密码。
 //   - jksStorepass: JKS 存储密码。
@@ -51,13 +51,13 @@ func TransformCertificateFromPEMToPFX(certPem string, privkeyPem string, pfxPass
 // 出参:
 //   - data: JKS 格式的证书数据。
 //   - err: 错误。
-func TransformCertificateFromPEMToJKS(certPem string, privkeyPem string, jksAlias string, jksKeypass string, jksStorepass string) ([]byte, error) {
-	certBlock, _ := pem.Decode([]byte(certPem))
+func TransformCertificateFromPEMToJKS(certPEM string, privkeyPEM string, jksAlias string, jksKeypass string, jksStorepass string) ([]byte, error) {
+	certBlock, _ := pem.Decode([]byte(certPEM))
 	if certBlock == nil {
 		return nil, errors.New("failed to decode certificate PEM")
 	}
 
-	privkeyBlock, _ := pem.Decode([]byte(privkeyPem))
+	privkeyBlock, _ := pem.Decode([]byte(privkeyPEM))
 	if privkeyBlock == nil {
 		return nil, errors.New("failed to decode private key PEM")
 	}

@@ -13,8 +13,8 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 	"github.com/usual2970/certimate/internal/repository"
 )
 

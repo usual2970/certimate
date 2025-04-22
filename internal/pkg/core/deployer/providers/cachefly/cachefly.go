@@ -8,7 +8,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	cfsdk "github.com/usual2970/certimate/internal/pkg/vendors/cachefly-sdk"
+	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cachefly"
 )
 
 type DeployerConfig struct {
@@ -50,11 +50,11 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书
 	createCertificateReq := &cfsdk.CreateCertificateRequest{
-		Certificate:    certPem,
-		CertificateKey: privkeyPem,
+		Certificate:    certPEM,
+		CertificateKey: privkeyPEM,
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'cachefly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))

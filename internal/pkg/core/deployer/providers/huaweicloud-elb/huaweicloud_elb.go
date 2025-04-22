@@ -20,7 +20,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 )
 
 type DeployerConfig struct {
@@ -89,21 +89,21 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:
-		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCertificate(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_LOADBALANCER:
-		if err := d.deployToLoadbalancer(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToLoadbalancer(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_LISTENER:
-		if err := d.deployToListener(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToListener(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -114,7 +114,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}
@@ -125,8 +125,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		CertificateId: d.config.CertificateId,
 		Body: &hcelbmodel.UpdateCertificateRequestBody{
 			Certificate: &hcelbmodel.UpdateCertificateOption{
-				Certificate: hwsdk.StringPtr(certPem),
-				PrivateKey:  hwsdk.StringPtr(privkeyPem),
+				Certificate: hwsdk.StringPtr(certPEM),
+				PrivateKey:  hwsdk.StringPtr(privkeyPEM),
 			},
 		},
 	}
@@ -139,7 +139,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 	return nil
 }
 
-func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.LoadbalancerId == "" {
 		return errors.New("config `loadbalancerId` is required")
 	}
@@ -187,7 +187,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 	}
 
 	// 上传证书到 SCM
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
@@ -215,13 +215,13 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPem str
 	return nil
 }
 
-func (d *DeployerProvider) deployToListener(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToListener(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.ListenerId == "" {
 		return errors.New("config `listenerId` is required")
 	}
 
 	// 上传证书到 SCM
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

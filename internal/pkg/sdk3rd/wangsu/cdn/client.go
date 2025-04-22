@@ -3,7 +3,7 @@
 import (
 	"time"
 
-	"github.com/usual2970/certimate/internal/pkg/vendors/wangsu-sdk/openapi"
+	"github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/openapi"
 )
 
 type Client struct {

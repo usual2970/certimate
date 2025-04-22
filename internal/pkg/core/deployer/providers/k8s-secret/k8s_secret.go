@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -59,7 +59,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	if d.config.Namespace == "" {
 		return nil, errors.New("config `namespace` is required")
 	}
@@ -76,7 +76,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		return nil, errors.New("config `secretDataKeyForKey` is required")
 	}
 
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -111,8 +111,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 			Type: k8score.SecretType(d.config.SecretType),
 		}
 		secretPayload.Data = make(map[string][]byte)
-		secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPem)
-		secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPem)
+		secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
+		secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
 
 		secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Create(context.TODO(), secretPayload, k8smeta.CreateOptions{})
 		d.logger.Debug("k8s operate 'Secrets.Create'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
@@ -135,8 +135,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	if secretPayload.Data == nil {
 		secretPayload.Data = make(map[string][]byte)
 	}
-	secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPem)
-	secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPem)
+	secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
+	secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
 	secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Update(context.TODO(), secretPayload, k8smeta.UpdateOptions{})
 	d.logger.Debug("k8s operate 'Secrets.Update'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
 	if err != nil {

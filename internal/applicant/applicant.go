@@ -18,7 +18,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/utils/sliceutil"
+	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 	"github.com/usual2970/certimate/internal/repository"
 )
 

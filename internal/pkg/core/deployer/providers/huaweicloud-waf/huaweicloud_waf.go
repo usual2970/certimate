@@ -20,7 +20,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-waf"
-	hwsdk "github.com/usual2970/certimate/internal/pkg/vendors/huaweicloud-sdk"
+	hwsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/huaweicloud"
 )
 
 type DeployerConfig struct {
@@ -86,9 +86,9 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书到 WAF
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
@@ -98,17 +98,17 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	// 根据部署资源类型决定部署方式
 	switch d.config.ResourceType {
 	case RESOURCE_TYPE_CERTIFICATE:
-		if err := d.deployToCertificate(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCertificate(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_CLOUDSERVER:
-		if err := d.deployToCloudServer(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToCloudServer(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
 	case RESOURCE_TYPE_PREMIUMHOST:
-		if err := d.deployToPremiumHost(ctx, certPem, privkeyPem); err != nil {
+		if err := d.deployToPremiumHost(ctx, certPEM, privkeyPEM); err != nil {
 			return nil, err
 		}
 
@@ -119,7 +119,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	return &deployer.DeployResult{}, nil
 }
 
-func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.CertificateId == "" {
 		return errors.New("config `certificateId` is required")
 	}
@@ -141,8 +141,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 		CertificateId: d.config.CertificateId,
 		Body: &hcwafmodel.UpdateCertificateRequestBody{
 			Name:    *showCertificateResp.Name,
-			Content: hwsdk.StringPtr(certPem),
-			Key:     hwsdk.StringPtr(privkeyPem),
+			Content: hwsdk.StringPtr(certPEM),
+			Key:     hwsdk.StringPtr(privkeyPEM),
 		},
 	}
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
@@ -154,13 +154,13 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPem stri
 	return nil
 }
 
-func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.Domain == "" {
 		return errors.New("config `domain` is required")
 	}
 
 	// 上传证书到 WAF
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {
@@ -221,13 +221,13 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPem stri
 	return nil
 }
 
-func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPem string, privkeyPem string) error {
+func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM string, privkeyPEM string) error {
 	if d.config.Domain == "" {
 		return errors.New("config `domain` is required")
 	}
 
 	// 上传证书到 WAF
-	upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return xerrors.Wrap(err, "failed to upload certificate file")
 	} else {

@@ -8,16 +8,16 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	bunnysdk "github.com/usual2970/certimate/internal/pkg/vendors/bunny-sdk"
+	bunnysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/bunny"
 )
 
 type DeployerConfig struct {
-	// Bunny API Key
+	// Bunny API Key。
 	ApiKey string `json:"apiKey"`
-	// Bunny Pull Zone ID
+	// Bunny Pull Zone ID。
 	PullZoneId string `json:"pullZoneId"`
-	// Bunny CDN Hostname（支持泛域名）
-	HostName string `json:"hostName"`
+	// Bunny CDN Hostname（支持泛域名）。
+	Hostname string `json:"hostname"`
 }
 
 type DeployerProvider struct {
@@ -49,21 +49,18 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
-	// Prepare
-	certPemBase64 := base64.StdEncoding.EncodeToString([]byte(certPem))
-	privkeyPemBase64 := base64.StdEncoding.EncodeToString([]byte(privkeyPem))
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书
 	createCertificateReq := &bunnysdk.AddCustomCertificateRequest{
-		Hostname:       d.config.HostName,
+		Hostname:       d.config.Hostname,
 		PullZoneId:     d.config.PullZoneId,
-		Certificate:    certPemBase64,
-		CertificateKey: privkeyPemBase64,
+		Certificate:    base64.StdEncoding.EncodeToString([]byte(certPEM)),
+		CertificateKey: base64.StdEncoding.EncodeToString([]byte(privkeyPEM)),
 	}
 	createCertificateResp, err := d.sdkClient.AddCustomCertificate(createCertificateReq)
-	d.logger.Debug("sdk request 'bunny-cdn.AddCustomCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
+	d.logger.Debug("sdk request 'bunny.AddCustomCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bunny-cdn.AddCustomCertificate'")
+		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bunny.AddCustomCertificate'")
 	}
 
 	return &deployer.DeployResult{}, nil

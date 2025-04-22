@@ -9,7 +9,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	"github.com/usual2970/certimate/internal/pkg/utils/maputil"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 	"github.com/usual2970/certimate/internal/repository"
 )
 

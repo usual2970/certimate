@@ -17,8 +17,8 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/azure-keyvault"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	azcommon "github.com/usual2970/certimate/internal/pkg/vendors/azure-sdk/common"
+	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -85,22 +85,22 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
 	// 转换证书格式
-	certPfx, err := certutil.TransformCertificateFromPEMToPFX(certPem, privkeyPem, "")
+	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to transform certificate from PEM to PFX")
 	}
 
 	if d.config.CertificateName == "" {
 		// 上传证书到 KeyVault
-		upres, err := d.sslUploader.Upload(ctx, certPem, privkeyPem)
+		upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 		if err != nil {
 			return nil, xerrors.Wrap(err, "failed to upload certificate file")
 		} else {
@@ -128,7 +128,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 		// 导入证书
 		// REF: https://learn.microsoft.com/en-us/rest/api/keyvault/certificates/import-certificate/import-certificate
 		importCertificateParams := azcertificates.ImportCertificateParameters{
-			Base64EncodedCertificate: to.Ptr(base64.StdEncoding.EncodeToString(certPfx)),
+			Base64EncodedCertificate: to.Ptr(base64.StdEncoding.EncodeToString(certPFX)),
 			CertificatePolicy: &azcertificates.CertificatePolicy{
 				SecretProperties: &azcertificates.SecretProperties{
 					ContentType: to.Ptr("application/x-pkcs12"),

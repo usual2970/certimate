@@ -20,8 +20,8 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	"github.com/usual2970/certimate/internal/pkg/utils/certutil"
-	wangsucdn "github.com/usual2970/certimate/internal/pkg/vendors/wangsu-sdk/cdn"
+	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
+	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -77,13 +77,13 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	if d.config.Domain == "" {
 		return nil, errors.New("config `domain` is required")
 	}
 
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPem)
+	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -96,13 +96,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPe
 	}
 
 	// 生成网宿云证书参数
-	encryptedPrivateKey, err := encryptPrivateKey(privkeyPem, d.config.ApiKey, time.Now().Unix())
+	encryptedPrivateKey, err := encryptPrivateKey(privkeyPEM, d.config.ApiKey, time.Now().Unix())
 	if err != nil {
 		return nil, xerrors.Wrap(err, "failed to encrypt private key")
 	}
 	certificateNewVersionInfo := &wangsucdn.CertificateVersion{
 		PrivateKey:  tea.String(encryptedPrivateKey),
-		Certificate: tea.String(certPem),
+		Certificate: tea.String(certPEM),
 		IdentificationInfo: &wangsucdn.CertificateVersionIdentificationInfo{
 			CommonName:              tea.String(certX509.Subject.CommonName),
 			SubjectAlternativeNames: &certX509.DNSNames,
@@ -236,7 +236,7 @@ func createSdkClient(accessKeyId, accessKeySecret string) (*wangsucdn.Client, er
 	return wangsucdn.NewClient(accessKeyId, accessKeySecret), nil
 }
 
-func encryptPrivateKey(privkeyPem string, apiKey string, timestamp int64) (string, error) {
+func encryptPrivateKey(privkeyPEM string, apiKey string, timestamp int64) (string, error) {
 	date := time.Unix(timestamp, 0).UTC()
 	dateStr := date.Format("Mon, 02 Jan 2006 15:04:05 GMT")
 
@@ -266,7 +266,7 @@ func encryptPrivateKey(privkeyPem string, apiKey string, timestamp int64) (strin
 		return "", err
 	}
 
-	plainBytes := []byte(privkeyPem)
+	plainBytes := []byte(privkeyPEM)
 	padlen := aes.BlockSize - len(plainBytes)%aes.BlockSize
 	if padlen > 0 {
 		paddata := bytes.Repeat([]byte{byte(padlen)}, padlen)

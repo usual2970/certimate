@@ -10,7 +10,7 @@ import (
 	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	btsdk "github.com/usual2970/certimate/internal/pkg/vendors/btpanel-sdk"
+	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btpanel"
 )
 
 type DeployerConfig struct {
@@ -58,11 +58,11 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	return d
 }
 
-func (d *DeployerProvider) Deploy(ctx context.Context, certPem string, privkeyPem string) (*deployer.DeployResult, error) {
+func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
 	configSavePanelSSLReq := &btsdk.ConfigSavePanelSSLRequest{
-		PrivateKey:  privkeyPem,
-		Certificate: certPem,
+		PrivateKey:  privkeyPEM,
+		Certificate: certPEM,
 	}
 	configSavePanelSSLResp, err := d.sdkClient.ConfigSavePanelSSL(configSavePanelSSLReq)
 	d.logger.Debug("sdk request 'bt.ConfigSavePanelSSL'", slog.Any("request", configSavePanelSSLReq), slog.Any("response", configSavePanelSSLResp))

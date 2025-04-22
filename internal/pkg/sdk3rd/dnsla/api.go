@@ -31,6 +31,10 @@ func (c *Client) UpdateRecord(req *UpdateRecordRequest) (*UpdateRecordResponse, 
 }
 
 func (c *Client) DeleteRecord(req *DeleteRecordRequest) (*DeleteRecordResponse, error) {
+	if req.Id == "" {
+		return nil, fmt.Errorf("dnsla api error: invalid parameter: Id")
+	}
+
 	resp := &DeleteRecordResponse{}
 	err := c.sendRequestWithResult(http.MethodDelete, fmt.Sprintf("/record?id=%s", url.QueryEscape(req.Id)), req, resp)
 	return resp, err
