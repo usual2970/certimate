@@ -1,4 +1,4 @@
-﻿package serverchan
+package serverchan
 
 import (
 	"context"

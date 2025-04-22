@@ -1,4 +1,4 @@
-﻿package awscloudfront_test
+package awscloudfront_test
 
 import (
 	"context"

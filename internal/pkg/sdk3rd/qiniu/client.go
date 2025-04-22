@@ -1,4 +1,4 @@
-﻿package qiniusdk
+package qiniusdk
 
 import (
 	"context"

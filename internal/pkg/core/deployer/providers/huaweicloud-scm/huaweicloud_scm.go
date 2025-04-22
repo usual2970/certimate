@@ -1,4 +1,4 @@
-﻿package huaweicloudscm
+package huaweicloudscm
 
 import (
 	"context"

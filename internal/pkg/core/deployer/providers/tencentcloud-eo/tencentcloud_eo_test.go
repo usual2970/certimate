@@ -1,4 +1,4 @@
-﻿package tencentcloudeo_test
+package tencentcloudeo_test
 
 import (
 	"context"

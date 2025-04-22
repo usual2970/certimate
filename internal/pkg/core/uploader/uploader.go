@@ -1,4 +1,4 @@
-﻿package uploader
+package uploader
 
 import (
 	"context"

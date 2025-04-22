@@ -4,17 +4,15 @@
 
 package model
 
-
 type DeleteRecordResponseBodyCodeEnum string
 
 // List of Code
 const (
-    DeleteRecordResponseBodyCodeEnumError DeleteRecordResponseBodyCodeEnum = "ERROR"
-    DeleteRecordResponseBodyCodeEnumSuccess DeleteRecordResponseBodyCodeEnum = "SUCCESS"
+	DeleteRecordResponseBodyCodeEnumError   DeleteRecordResponseBodyCodeEnum = "ERROR"
+	DeleteRecordResponseBodyCodeEnumSuccess DeleteRecordResponseBodyCodeEnum = "SUCCESS"
 )
 
 type DeleteRecordResponseBody struct {
-
 	// 结果说明
 	Msg string `json:"msg,omitempty"`
 

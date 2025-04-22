@@ -1,4 +1,4 @@
-﻿package wangsucdnpro_test
+package wangsucdnpro_test
 
 import (
 	"context"

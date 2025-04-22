@@ -1,4 +1,4 @@
-﻿package local_test
+package local_test
 
 import (
 	"context"

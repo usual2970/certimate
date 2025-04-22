@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type ModifyRecordRequest struct {
-
 	ModifyRecordBody *ModifyRecordBody `json:"modifyRecordBody,omitempty"`
 }

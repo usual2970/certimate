@@ -1,4 +1,4 @@
-﻿package aliyunwaf_test
+package aliyunwaf_test
 
 import (
 	"context"

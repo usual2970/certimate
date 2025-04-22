@@ -1,4 +1,4 @@
-﻿package tencentcloudssldeploy
+package tencentcloudssldeploy
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package tencentcloudscf
+package tencentcloudscf
 
 import (
 	"context"

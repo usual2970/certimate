@@ -1,4 +1,4 @@
-﻿package k8ssecret
+package k8ssecret
 
 import (
 	"context"

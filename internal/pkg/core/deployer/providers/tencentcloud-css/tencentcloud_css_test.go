@@ -1,4 +1,4 @@
-﻿package tencentcloudcss_test
+package tencentcloudcss_test
 
 import (
 	"context"

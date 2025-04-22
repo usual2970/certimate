@@ -1,4 +1,4 @@
-﻿package tencentcloudwaf_test
+package tencentcloudwaf_test
 
 import (
 	"context"

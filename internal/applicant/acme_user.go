@@ -1,4 +1,4 @@
-﻿package applicant
+package applicant
 
 import (
 	"context"

@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type DeleteRecordOpenapiRequest struct {
-
 	DeleteRecordOpenapiBody *DeleteRecordOpenapiBody `json:"deleteRecordOpenapiBody,omitempty"`
 }

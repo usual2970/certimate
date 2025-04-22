@@ -4,43 +4,43 @@
 
 package model
 
-
 type CreateRecordResponseBodyTypeEnum string
 
 // List of Type
 const (
-    CreateRecordResponseBodyTypeEnumA CreateRecordResponseBodyTypeEnum = "A"
-    CreateRecordResponseBodyTypeEnumAaaa CreateRecordResponseBodyTypeEnum = "AAAA"
-    CreateRecordResponseBodyTypeEnumCaa CreateRecordResponseBodyTypeEnum = "CAA"
-    CreateRecordResponseBodyTypeEnumCmauth CreateRecordResponseBodyTypeEnum = "CMAUTH"
-    CreateRecordResponseBodyTypeEnumCname CreateRecordResponseBodyTypeEnum = "CNAME"
-    CreateRecordResponseBodyTypeEnumMx CreateRecordResponseBodyTypeEnum = "MX"
-    CreateRecordResponseBodyTypeEnumNs CreateRecordResponseBodyTypeEnum = "NS"
-    CreateRecordResponseBodyTypeEnumPtr CreateRecordResponseBodyTypeEnum = "PTR"
-    CreateRecordResponseBodyTypeEnumRp CreateRecordResponseBodyTypeEnum = "RP"
-    CreateRecordResponseBodyTypeEnumSpf CreateRecordResponseBodyTypeEnum = "SPF"
-    CreateRecordResponseBodyTypeEnumSrv CreateRecordResponseBodyTypeEnum = "SRV"
-    CreateRecordResponseBodyTypeEnumTxt CreateRecordResponseBodyTypeEnum = "TXT"
-    CreateRecordResponseBodyTypeEnumUrl CreateRecordResponseBodyTypeEnum = "URL"
+	CreateRecordResponseBodyTypeEnumA      CreateRecordResponseBodyTypeEnum = "A"
+	CreateRecordResponseBodyTypeEnumAaaa   CreateRecordResponseBodyTypeEnum = "AAAA"
+	CreateRecordResponseBodyTypeEnumCaa    CreateRecordResponseBodyTypeEnum = "CAA"
+	CreateRecordResponseBodyTypeEnumCmauth CreateRecordResponseBodyTypeEnum = "CMAUTH"
+	CreateRecordResponseBodyTypeEnumCname  CreateRecordResponseBodyTypeEnum = "CNAME"
+	CreateRecordResponseBodyTypeEnumMx     CreateRecordResponseBodyTypeEnum = "MX"
+	CreateRecordResponseBodyTypeEnumNs     CreateRecordResponseBodyTypeEnum = "NS"
+	CreateRecordResponseBodyTypeEnumPtr    CreateRecordResponseBodyTypeEnum = "PTR"
+	CreateRecordResponseBodyTypeEnumRp     CreateRecordResponseBodyTypeEnum = "RP"
+	CreateRecordResponseBodyTypeEnumSpf    CreateRecordResponseBodyTypeEnum = "SPF"
+	CreateRecordResponseBodyTypeEnumSrv    CreateRecordResponseBodyTypeEnum = "SRV"
+	CreateRecordResponseBodyTypeEnumTxt    CreateRecordResponseBodyTypeEnum = "TXT"
+	CreateRecordResponseBodyTypeEnumUrl    CreateRecordResponseBodyTypeEnum = "URL"
 )
+
 type CreateRecordResponseBodyTimedStatusEnum string
 
 // List of TimedStatus
 const (
-    CreateRecordResponseBodyTimedStatusEnumDisabled CreateRecordResponseBodyTimedStatusEnum = "DISABLED"
-    CreateRecordResponseBodyTimedStatusEnumEnabled CreateRecordResponseBodyTimedStatusEnum = "ENABLED"
-    CreateRecordResponseBodyTimedStatusEnumTimed CreateRecordResponseBodyTimedStatusEnum = "TIMED"
+	CreateRecordResponseBodyTimedStatusEnumDisabled CreateRecordResponseBodyTimedStatusEnum = "DISABLED"
+	CreateRecordResponseBodyTimedStatusEnumEnabled  CreateRecordResponseBodyTimedStatusEnum = "ENABLED"
+	CreateRecordResponseBodyTimedStatusEnumTimed    CreateRecordResponseBodyTimedStatusEnum = "TIMED"
 )
+
 type CreateRecordResponseBodyStateEnum string
 
 // List of State
 const (
-    CreateRecordResponseBodyStateEnumDisabled CreateRecordResponseBodyStateEnum = "DISABLED"
-    CreateRecordResponseBodyStateEnumEnabled CreateRecordResponseBodyStateEnum = "ENABLED"
+	CreateRecordResponseBodyStateEnumDisabled CreateRecordResponseBodyStateEnum = "DISABLED"
+	CreateRecordResponseBodyStateEnumEnabled  CreateRecordResponseBodyStateEnum = "ENABLED"
 )
 
 type CreateRecordResponseBody struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

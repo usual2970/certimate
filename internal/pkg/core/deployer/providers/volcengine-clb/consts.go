@@ -1,4 +1,4 @@
-﻿package volcengineclb
+package volcengineclb
 
 type ResourceType string
 

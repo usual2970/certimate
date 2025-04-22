@@ -1,4 +1,4 @@
-﻿package maputil
+package maputil
 
 import (
 	mapstructure "github.com/go-viper/mapstructure/v2"

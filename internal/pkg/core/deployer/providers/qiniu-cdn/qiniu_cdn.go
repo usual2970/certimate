@@ -1,4 +1,4 @@
-﻿package qiniucdn
+package qiniucdn
 
 import (
 	"context"

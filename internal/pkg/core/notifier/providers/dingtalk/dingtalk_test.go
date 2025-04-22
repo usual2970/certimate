@@ -1,4 +1,4 @@
-﻿package dingtalk_test
+package dingtalk_test
 
 import (
 	"context"

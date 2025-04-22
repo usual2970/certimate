@@ -1,4 +1,4 @@
-﻿package dogecloudsdk
+package dogecloudsdk
 
 import (
 	"crypto/hmac"

@@ -1,4 +1,4 @@
-﻿package tencentcloudclb
+package tencentcloudclb
 
 type ResourceType string
 

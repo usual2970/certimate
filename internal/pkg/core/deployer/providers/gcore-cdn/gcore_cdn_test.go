@@ -1,4 +1,4 @@
-﻿package gcorecdn_test
+package gcorecdn_test
 
 import (
 	"context"

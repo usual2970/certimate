@@ -4,35 +4,34 @@
 
 package model
 
-
 type ModifyRecordResponseBodyTypeEnum string
 
 // List of Type
 const (
-    ModifyRecordResponseBodyTypeEnumA ModifyRecordResponseBodyTypeEnum = "A"
-    ModifyRecordResponseBodyTypeEnumAaaa ModifyRecordResponseBodyTypeEnum = "AAAA"
-    ModifyRecordResponseBodyTypeEnumCaa ModifyRecordResponseBodyTypeEnum = "CAA"
-    ModifyRecordResponseBodyTypeEnumCmauth ModifyRecordResponseBodyTypeEnum = "CMAUTH"
-    ModifyRecordResponseBodyTypeEnumCname ModifyRecordResponseBodyTypeEnum = "CNAME"
-    ModifyRecordResponseBodyTypeEnumMx ModifyRecordResponseBodyTypeEnum = "MX"
-    ModifyRecordResponseBodyTypeEnumNs ModifyRecordResponseBodyTypeEnum = "NS"
-    ModifyRecordResponseBodyTypeEnumPtr ModifyRecordResponseBodyTypeEnum = "PTR"
-    ModifyRecordResponseBodyTypeEnumRp ModifyRecordResponseBodyTypeEnum = "RP"
-    ModifyRecordResponseBodyTypeEnumSpf ModifyRecordResponseBodyTypeEnum = "SPF"
-    ModifyRecordResponseBodyTypeEnumSrv ModifyRecordResponseBodyTypeEnum = "SRV"
-    ModifyRecordResponseBodyTypeEnumTxt ModifyRecordResponseBodyTypeEnum = "TXT"
-    ModifyRecordResponseBodyTypeEnumUrl ModifyRecordResponseBodyTypeEnum = "URL"
+	ModifyRecordResponseBodyTypeEnumA      ModifyRecordResponseBodyTypeEnum = "A"
+	ModifyRecordResponseBodyTypeEnumAaaa   ModifyRecordResponseBodyTypeEnum = "AAAA"
+	ModifyRecordResponseBodyTypeEnumCaa    ModifyRecordResponseBodyTypeEnum = "CAA"
+	ModifyRecordResponseBodyTypeEnumCmauth ModifyRecordResponseBodyTypeEnum = "CMAUTH"
+	ModifyRecordResponseBodyTypeEnumCname  ModifyRecordResponseBodyTypeEnum = "CNAME"
+	ModifyRecordResponseBodyTypeEnumMx     ModifyRecordResponseBodyTypeEnum = "MX"
+	ModifyRecordResponseBodyTypeEnumNs     ModifyRecordResponseBodyTypeEnum = "NS"
+	ModifyRecordResponseBodyTypeEnumPtr    ModifyRecordResponseBodyTypeEnum = "PTR"
+	ModifyRecordResponseBodyTypeEnumRp     ModifyRecordResponseBodyTypeEnum = "RP"
+	ModifyRecordResponseBodyTypeEnumSpf    ModifyRecordResponseBodyTypeEnum = "SPF"
+	ModifyRecordResponseBodyTypeEnumSrv    ModifyRecordResponseBodyTypeEnum = "SRV"
+	ModifyRecordResponseBodyTypeEnumTxt    ModifyRecordResponseBodyTypeEnum = "TXT"
+	ModifyRecordResponseBodyTypeEnumUrl    ModifyRecordResponseBodyTypeEnum = "URL"
 )
+
 type ModifyRecordResponseBodyStateEnum string
 
 // List of State
 const (
-    ModifyRecordResponseBodyStateEnumDisabled ModifyRecordResponseBodyStateEnum = "DISABLED"
-    ModifyRecordResponseBodyStateEnumEnabled ModifyRecordResponseBodyStateEnum = "ENABLED"
+	ModifyRecordResponseBodyStateEnumDisabled ModifyRecordResponseBodyStateEnum = "DISABLED"
+	ModifyRecordResponseBodyStateEnumEnabled  ModifyRecordResponseBodyStateEnum = "ENABLED"
 )
 
 type ModifyRecordResponseBody struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

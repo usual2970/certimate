@@ -1,4 +1,4 @@
-﻿package edgioapplications
+package edgioapplications
 
 import (
 	"context"

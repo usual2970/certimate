@@ -4,32 +4,31 @@
 
 package model
 
-
 type CreateRecordOpenapiResponseBodyTypeEnum string
 
 // List of Type
 const (
-    CreateRecordOpenapiResponseBodyTypeEnumA CreateRecordOpenapiResponseBodyTypeEnum = "A"
-    CreateRecordOpenapiResponseBodyTypeEnumAaaa CreateRecordOpenapiResponseBodyTypeEnum = "AAAA"
-    CreateRecordOpenapiResponseBodyTypeEnumCname CreateRecordOpenapiResponseBodyTypeEnum = "CNAME"
-    CreateRecordOpenapiResponseBodyTypeEnumMx CreateRecordOpenapiResponseBodyTypeEnum = "MX"
-    CreateRecordOpenapiResponseBodyTypeEnumTxt CreateRecordOpenapiResponseBodyTypeEnum = "TXT"
-    CreateRecordOpenapiResponseBodyTypeEnumNs CreateRecordOpenapiResponseBodyTypeEnum = "NS"
-    CreateRecordOpenapiResponseBodyTypeEnumSpf CreateRecordOpenapiResponseBodyTypeEnum = "SPF"
-    CreateRecordOpenapiResponseBodyTypeEnumSrv CreateRecordOpenapiResponseBodyTypeEnum = "SRV"
-    CreateRecordOpenapiResponseBodyTypeEnumCaa CreateRecordOpenapiResponseBodyTypeEnum = "CAA"
-    CreateRecordOpenapiResponseBodyTypeEnumCmauth CreateRecordOpenapiResponseBodyTypeEnum = "CMAUTH"
+	CreateRecordOpenapiResponseBodyTypeEnumA      CreateRecordOpenapiResponseBodyTypeEnum = "A"
+	CreateRecordOpenapiResponseBodyTypeEnumAaaa   CreateRecordOpenapiResponseBodyTypeEnum = "AAAA"
+	CreateRecordOpenapiResponseBodyTypeEnumCname  CreateRecordOpenapiResponseBodyTypeEnum = "CNAME"
+	CreateRecordOpenapiResponseBodyTypeEnumMx     CreateRecordOpenapiResponseBodyTypeEnum = "MX"
+	CreateRecordOpenapiResponseBodyTypeEnumTxt    CreateRecordOpenapiResponseBodyTypeEnum = "TXT"
+	CreateRecordOpenapiResponseBodyTypeEnumNs     CreateRecordOpenapiResponseBodyTypeEnum = "NS"
+	CreateRecordOpenapiResponseBodyTypeEnumSpf    CreateRecordOpenapiResponseBodyTypeEnum = "SPF"
+	CreateRecordOpenapiResponseBodyTypeEnumSrv    CreateRecordOpenapiResponseBodyTypeEnum = "SRV"
+	CreateRecordOpenapiResponseBodyTypeEnumCaa    CreateRecordOpenapiResponseBodyTypeEnum = "CAA"
+	CreateRecordOpenapiResponseBodyTypeEnumCmauth CreateRecordOpenapiResponseBodyTypeEnum = "CMAUTH"
 )
+
 type CreateRecordOpenapiResponseBodyStateEnum string
 
 // List of State
 const (
-    CreateRecordOpenapiResponseBodyStateEnumDisabled CreateRecordOpenapiResponseBodyStateEnum = "DISABLED"
-    CreateRecordOpenapiResponseBodyStateEnumEnabled CreateRecordOpenapiResponseBodyStateEnum = "ENABLED"
+	CreateRecordOpenapiResponseBodyStateEnumDisabled CreateRecordOpenapiResponseBodyStateEnum = "DISABLED"
+	CreateRecordOpenapiResponseBodyStateEnumEnabled  CreateRecordOpenapiResponseBodyStateEnum = "ENABLED"
 )
 
 type CreateRecordOpenapiResponseBody struct {
-
 	// 主机头
 	Rr string `json:"rr,omitempty"`
 

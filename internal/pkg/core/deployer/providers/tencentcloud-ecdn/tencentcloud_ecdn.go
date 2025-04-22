@@ -1,4 +1,4 @@
-﻿package tencentcloudecdn
+package tencentcloudecdn
 
 import (
 	"context"

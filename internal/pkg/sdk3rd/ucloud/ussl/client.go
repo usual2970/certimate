@@ -1,4 +1,4 @@
-﻿package ussl
+package ussl
 
 import (
 	"github.com/ucloud/ucloud-sdk-go/ucloud"

@@ -1,4 +1,4 @@
-﻿package uclouducdn
+package uclouducdn
 
 import (
 	"context"

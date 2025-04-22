@@ -4,9 +4,6 @@
 
 package model
 
-
-
 type CreateRecordOpenapiRequest struct {
-
 	CreateRecordOpenapiBody *CreateRecordOpenapiBody `json:"createRecordOpenapiBody,omitempty"`
 }

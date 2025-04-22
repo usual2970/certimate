@@ -1,13 +1,9 @@
 package position
 
-type Body struct {
-}
+type Body struct{}
 
-type Query struct {
-}
+type Query struct{}
 
-type Path struct {
-}
+type Path struct{}
 
-type Header struct {
-}
+type Header struct{}

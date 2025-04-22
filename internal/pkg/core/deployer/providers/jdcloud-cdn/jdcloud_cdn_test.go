@@ -1,4 +1,4 @@
-﻿package jdcloudcdn_test
+package jdcloudcdn_test
 
 import (
 	"context"

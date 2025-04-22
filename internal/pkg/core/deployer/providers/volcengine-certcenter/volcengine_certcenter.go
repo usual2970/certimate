@@ -1,4 +1,4 @@
-﻿package volcenginecertcenter
+package volcenginecertcenter
 
 import (
 	"context"

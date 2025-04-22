@@ -1,4 +1,4 @@
-﻿package bunnycdn_test
+package bunnycdn_test
 
 import (
 	"context"

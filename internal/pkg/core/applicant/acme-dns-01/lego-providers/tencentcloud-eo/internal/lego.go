@@ -1,4 +1,4 @@
-﻿package lego_tencentcloudeo
+package lego_tencentcloudeo
 
 import (
 	"errors"

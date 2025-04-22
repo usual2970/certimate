@@ -5,26 +5,27 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
+
 type ModifyRecordOpenapiBodyTypeEnum string
 
 // List of Type
 const (
-    ModifyRecordOpenapiBodyTypeEnumA ModifyRecordOpenapiBodyTypeEnum = "A"
-    ModifyRecordOpenapiBodyTypeEnumAaaa ModifyRecordOpenapiBodyTypeEnum = "AAAA"
-    ModifyRecordOpenapiBodyTypeEnumCname ModifyRecordOpenapiBodyTypeEnum = "CNAME"
-    ModifyRecordOpenapiBodyTypeEnumMx ModifyRecordOpenapiBodyTypeEnum = "MX"
-    ModifyRecordOpenapiBodyTypeEnumTxt ModifyRecordOpenapiBodyTypeEnum = "TXT"
-    ModifyRecordOpenapiBodyTypeEnumNs ModifyRecordOpenapiBodyTypeEnum = "NS"
-    ModifyRecordOpenapiBodyTypeEnumSpf ModifyRecordOpenapiBodyTypeEnum = "SPF"
-    ModifyRecordOpenapiBodyTypeEnumSrv ModifyRecordOpenapiBodyTypeEnum = "SRV"
-    ModifyRecordOpenapiBodyTypeEnumCaa ModifyRecordOpenapiBodyTypeEnum = "CAA"
-    ModifyRecordOpenapiBodyTypeEnumCmauth ModifyRecordOpenapiBodyTypeEnum = "CMAUTH"
+	ModifyRecordOpenapiBodyTypeEnumA      ModifyRecordOpenapiBodyTypeEnum = "A"
+	ModifyRecordOpenapiBodyTypeEnumAaaa   ModifyRecordOpenapiBodyTypeEnum = "AAAA"
+	ModifyRecordOpenapiBodyTypeEnumCname  ModifyRecordOpenapiBodyTypeEnum = "CNAME"
+	ModifyRecordOpenapiBodyTypeEnumMx     ModifyRecordOpenapiBodyTypeEnum = "MX"
+	ModifyRecordOpenapiBodyTypeEnumTxt    ModifyRecordOpenapiBodyTypeEnum = "TXT"
+	ModifyRecordOpenapiBodyTypeEnumNs     ModifyRecordOpenapiBodyTypeEnum = "NS"
+	ModifyRecordOpenapiBodyTypeEnumSpf    ModifyRecordOpenapiBodyTypeEnum = "SPF"
+	ModifyRecordOpenapiBodyTypeEnumSrv    ModifyRecordOpenapiBodyTypeEnum = "SRV"
+	ModifyRecordOpenapiBodyTypeEnumCaa    ModifyRecordOpenapiBodyTypeEnum = "CAA"
+	ModifyRecordOpenapiBodyTypeEnumCmauth ModifyRecordOpenapiBodyTypeEnum = "CMAUTH"
 )
 
 type ModifyRecordOpenapiBody struct {
-    position.Body
+	position.Body
 	// 解析记录ID
 	RecordId string `json:"recordId"`
 

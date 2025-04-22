@@ -1,4 +1,4 @@
-﻿package baiducloudappblb_test
+package baiducloudappblb_test
 
 import (
 	"context"

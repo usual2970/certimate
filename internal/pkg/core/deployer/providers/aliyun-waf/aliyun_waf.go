@@ -1,4 +1,4 @@
-﻿package aliyunwaf
+package aliyunwaf
 
 import (
 	"context"

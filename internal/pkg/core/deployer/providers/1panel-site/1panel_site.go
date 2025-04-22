@@ -1,4 +1,4 @@
-﻿package onepanelsite
+package onepanelsite
 
 import (
 	"context"

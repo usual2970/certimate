@@ -1,4 +1,4 @@
-﻿package volcenginelive
+package volcenginelive
 
 import (
 	"context"

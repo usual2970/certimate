@@ -4,10 +4,7 @@
 
 package model
 
-
-
 type ListRecordResponseBody struct {
-
 	// 总页数
 	TotalPages *int32 `json:"totalPages,omitempty"`
 

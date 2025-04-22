@@ -1,4 +1,4 @@
-﻿package lego_baiducloud
+package lego_baiducloud
 
 import (
 	"errors"

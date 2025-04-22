@@ -1,4 +1,4 @@
-﻿package ssh
+package ssh
 
 type OutputFormatType string
 

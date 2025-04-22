@@ -1,4 +1,4 @@
-﻿package tencentcloudwaf
+package tencentcloudwaf
 
 import (
 	"context"

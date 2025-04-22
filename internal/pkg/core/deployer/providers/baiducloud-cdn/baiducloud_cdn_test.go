@@ -1,4 +1,4 @@
-﻿package baiducloudcdn_test
+package baiducloudcdn_test
 
 import (
 	"context"

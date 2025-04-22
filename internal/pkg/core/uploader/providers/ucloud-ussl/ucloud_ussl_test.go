@@ -1,4 +1,4 @@
-﻿package ucloudussl_test
+package ucloudussl_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package jdcloudalb_test
+package jdcloudalb_test
 
 import (
 	"context"

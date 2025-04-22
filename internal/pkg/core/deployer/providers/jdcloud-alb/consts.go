@@ -1,4 +1,4 @@
-﻿package jdcloudalb
+package jdcloudalb
 
 type ResourceType string
 

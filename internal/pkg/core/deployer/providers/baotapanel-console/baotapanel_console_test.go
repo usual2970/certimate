@@ -1,4 +1,4 @@
-﻿package baotapanelconsole_test
+package baotapanelconsole_test
 
 import (
 	"context"

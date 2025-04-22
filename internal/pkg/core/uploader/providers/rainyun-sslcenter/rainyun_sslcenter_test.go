@@ -1,4 +1,4 @@
-﻿package rainyunsslcenter_test
+package rainyunsslcenter_test
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package certutil
+package certutil
 
 import (
 	"encoding/pem"

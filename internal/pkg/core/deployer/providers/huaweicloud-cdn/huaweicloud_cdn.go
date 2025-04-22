@@ -1,4 +1,4 @@
-﻿package huaweicloudcdn
+package huaweicloudcdn
 
 import (
 	"context"

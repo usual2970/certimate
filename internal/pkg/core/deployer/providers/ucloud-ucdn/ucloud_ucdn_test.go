@@ -1,4 +1,4 @@
-﻿package uclouducdn_test
+package uclouducdn_test
 
 import (
 	"context"

@@ -5,11 +5,11 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
 
 type DeleteRecordBody struct {
-    position.Body
+	position.Body
 	// 解析记录ID列表
 	RecordIdList []string `json:"recordIdList"`
 }

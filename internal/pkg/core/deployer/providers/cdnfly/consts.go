@@ -1,4 +1,4 @@
-﻿package cdnfly
+package cdnfly
 
 type ResourceType string
 

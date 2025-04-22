@@ -5,11 +5,11 @@
 package model
 
 import (
-    "gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
+	"gitlab.ecloud.com/ecloud/ecloudsdkcore/position"
 )
 
 type ListRecordOpenapiBody struct {
-    position.Body
+	position.Body
 	// 域名
 	DomainName string `json:"domainName"`
 }

@@ -1,4 +1,4 @@
-﻿package huaweicloudwaf_test
+package huaweicloudwaf_test
 
 import (
 	"context"

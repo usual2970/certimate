@@ -1,4 +1,4 @@
-﻿package upyuncdn_test
+package upyuncdn_test
 
 import (
 	"context"

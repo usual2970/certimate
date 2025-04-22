@@ -1,4 +1,4 @@
-﻿package aliyunapigw_test
+package aliyunapigw_test
 
 import (
 	"context"

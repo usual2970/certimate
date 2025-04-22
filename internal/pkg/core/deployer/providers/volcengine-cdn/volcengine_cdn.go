@@ -1,4 +1,4 @@
-﻿package volcenginecdn
+package volcenginecdn
 
 import (
 	"context"

@@ -1,4 +1,4 @@
-﻿package aliyunclb_test
+package aliyunclb_test
 
 import (
 	"context"

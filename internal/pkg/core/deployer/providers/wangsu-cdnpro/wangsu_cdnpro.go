@@ -1,4 +1,4 @@
-﻿package wangsucdnpro
+package wangsucdnpro
 
 import (
 	"bytes"

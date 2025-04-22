@@ -1,4 +1,4 @@
-﻿package tencentcloudcss
+package tencentcloudcss
 
 import (
 	"context"

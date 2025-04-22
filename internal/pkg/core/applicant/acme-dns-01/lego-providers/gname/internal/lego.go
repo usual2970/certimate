@@ -1,4 +1,4 @@
-﻿package lego_gname
+package lego_gname
 
 import (
 	"errors"
