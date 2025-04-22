@@ -5,8 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-
-	xerrors "github.com/pkg/errors"
+	"fmt"
 )
 
 // 将 x509.Certificate 对象转换为 PEM 编码的字符串。
@@ -45,7 +44,7 @@ func ConvertECPrivateKeyToPEM(privkey *ecdsa.PrivateKey) (privkeyPEM string, err
 
 	data, err := x509.MarshalECPrivateKey(privkey)
 	if err != nil {
-		return "", xerrors.Wrap(err, "failed to marshal EC private key")
+		return "", fmt.Errorf("failed to marshal EC private key: %w", err)
 	}
 
 	block := &pem.Block{

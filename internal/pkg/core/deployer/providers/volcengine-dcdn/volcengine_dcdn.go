@@ -2,10 +2,10 @@ package volcenginedcdn
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	xerrors "github.com/pkg/errors"
 	vedcdn "github.com/volcengine/volcengine-go-sdk/service/dcdn"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
@@ -42,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -51,7 +51,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Region:          config.Region,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -76,7 +76,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到证书中心
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -94,7 +94,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	createCertBindResp, err := d.sdkClient.CreateCertBind(createCertBindReq)
 	d.logger.Debug("sdk request 'dcdn.CreateCertBind'", slog.Any("request", createCertBindReq), slog.Any("response", createCertBindResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'dcdn.CreateCertBind'")
+		return nil, fmt.Errorf("failed to execute sdk request 'dcdn.CreateCertBind': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

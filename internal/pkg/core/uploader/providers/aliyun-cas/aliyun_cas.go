@@ -10,7 +10,6 @@ import (
 	alicas "github.com/alibabacloud-go/cas-20200407/v3/client"
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -40,7 +39,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -80,7 +79,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listUserCertificateOrderResp, err := u.sdkClient.ListUserCertificateOrder(listUserCertificateOrderReq)
 		u.logger.Debug("sdk request 'cas.ListUserCertificateOrder'", slog.Any("request", listUserCertificateOrderReq), slog.Any("response", listUserCertificateOrderResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.ListUserCertificateOrder'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cas.ListUserCertificateOrder': %w", err)
 		}
 
 		if listUserCertificateOrderResp.Body.CertificateOrderList != nil {
@@ -95,7 +94,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
 				u.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
 				if err != nil {
-					return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
+					return nil, fmt.Errorf("failed to execute sdk request 'cas.GetUserCertificateDetail': %w", err)
 				}
 
 				var isSameCert bool
@@ -145,7 +144,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadUserCertificateResp, err := u.sdkClient.UploadUserCertificate(uploadUserCertificateReq)
 	u.logger.Debug("sdk request 'cas.UploadUserCertificate'", slog.Any("request", uploadUserCertificateReq), slog.Any("response", uploadUserCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.UploadUserCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cas.UploadUserCertificate': %w", err)
 	}
 
 	// 获取证书详情
@@ -157,7 +156,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	getUserCertificateDetailResp, err := u.sdkClient.GetUserCertificateDetail(getUserCertificateDetailReq)
 	u.logger.Debug("sdk request 'cas.GetUserCertificateDetail'", slog.Any("request", getUserCertificateDetailReq), slog.Any("response", getUserCertificateDetailResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cas.GetUserCertificateDetail'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cas.GetUserCertificateDetail': %w", err)
 	}
 
 	return &uploader.UploadResult{

@@ -12,7 +12,6 @@ import (
 	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdsslapi "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/apis"
 	jdsslclient "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/client"
-	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -41,7 +40,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -85,7 +84,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		describeCertsResp, err := u.sdkClient.DescribeCerts(describeCertsReq)
 		u.logger.Debug("sdk request 'ssl.DescribeCerts'", slog.Any("request", describeCertsReq), slog.Any("response", describeCertsResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.DescribeCerts'")
+			return nil, fmt.Errorf("failed to execute sdk request 'ssl.DescribeCerts': %w", err)
 		}
 
 		for _, certDetail := range describeCertsResp.Result.CertListDetails {
@@ -137,7 +136,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadCertResp, err := u.sdkClient.UploadCert(uploadCertReq)
 	u.logger.Debug("sdk request 'ssl.UploadCertificate'", slog.Any("request", uploadCertReq), slog.Any("response", uploadCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ssl.UploadCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'ssl.UploadCertificate': %w", err)
 	}
 
 	return &uploader.UploadResult{

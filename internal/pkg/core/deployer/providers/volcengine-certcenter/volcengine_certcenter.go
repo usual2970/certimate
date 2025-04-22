@@ -2,9 +2,8 @@ package volcenginecertcenter
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -39,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		Region:          config.Region,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -63,7 +62,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到证书中心
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}

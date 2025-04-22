@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	xerrors "github.com/pkg/errors"
 	vecdn "github.com/volcengine/volc-sdk-golang/service/cdn"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
@@ -79,7 +78,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listCertInfoResp, err := u.sdkClient.ListCertInfo(listCertInfoReq)
 		u.logger.Debug("sdk request 'cdn.ListCertInfo'", slog.Any("request", listCertInfoReq), slog.Any("response", listCertInfoResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.ListCertInfo'")
+			return nil, fmt.Errorf("failed to execute sdk request 'cdn.ListCertInfo': %w", err)
 		}
 
 		if listCertInfoResp.Result.CertInfo != nil {
@@ -123,7 +122,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	addCertificateResp, err := u.sdkClient.AddCertificate(addCertificateReq)
 	u.logger.Debug("sdk request 'cdn.AddCertificate'", slog.Any("request", addCertificateResp), slog.Any("response", addCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.AddCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.AddCertificate': %w", err)
 	}
 
 	certId = addCertificateResp.Result.CertId

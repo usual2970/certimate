@@ -10,7 +10,6 @@ import (
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	alinlb "github.com/alibabacloud-go/nlb-20220430/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -50,12 +49,12 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -80,7 +79,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 CAS
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -98,7 +97,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -117,7 +116,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	getLoadBalancerAttributeResp, err := d.sdkClient.GetLoadBalancerAttribute(getLoadBalancerAttributeReq)
 	d.logger.Debug("sdk request 'nlb.GetLoadBalancerAttribute'", slog.Any("request", getLoadBalancerAttributeReq), slog.Any("response", getLoadBalancerAttributeResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetLoadBalancerAttribute'")
+		return fmt.Errorf("failed to execute sdk request 'nlb.GetLoadBalancerAttribute': %w", err)
 	}
 
 	// 查询 TCPSSL 监听列表
@@ -135,7 +134,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'nlb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
-			return xerrors.Wrap(err, "failed to execute sdk request 'nlb.ListListeners'")
+			return fmt.Errorf("failed to execute sdk request 'nlb.ListListeners': %w", err)
 		}
 
 		if listListenersResp.Body.Listeners != nil {
@@ -194,7 +193,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	getListenerAttributeResp, err := d.sdkClient.GetListenerAttribute(getListenerAttributeReq)
 	d.logger.Debug("sdk request 'nlb.GetListenerAttribute'", slog.Any("request", getListenerAttributeReq), slog.Any("response", getListenerAttributeResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.GetListenerAttribute'")
+		return fmt.Errorf("failed to execute sdk request 'nlb.GetListenerAttribute': %w", err)
 	}
 
 	// 修改监听的属性
@@ -206,7 +205,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	updateListenerAttributeResp, err := d.sdkClient.UpdateListenerAttribute(updateListenerAttributeReq)
 	d.logger.Debug("sdk request 'nlb.UpdateListenerAttribute'", slog.Any("request", updateListenerAttributeReq), slog.Any("response", updateListenerAttributeResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'nlb.UpdateListenerAttribute'")
+		return fmt.Errorf("failed to execute sdk request 'nlb.UpdateListenerAttribute': %w", err)
 	}
 
 	return nil

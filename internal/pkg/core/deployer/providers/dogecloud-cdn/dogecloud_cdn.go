@@ -2,10 +2,9 @@ package dogecloudcdn
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strconv"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -43,7 +42,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SecretKey: config.SecretKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -68,7 +67,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -79,7 +78,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	bindCdnCertResp, err := d.sdkClient.BindCdnCertWithDomain(bindCdnCertId, d.config.Domain)
 	d.logger.Debug("sdk request 'cdn.BindCdnCert'", slog.Int64("request.certId", bindCdnCertId), slog.String("request.domain", d.config.Domain), slog.Any("response", bindCdnCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.BindCdnCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.BindCdnCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

@@ -4,10 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/url"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btpanel"
@@ -39,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -67,7 +66,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	configSavePanelSSLResp, err := d.sdkClient.ConfigSavePanelSSL(configSavePanelSSLReq)
 	d.logger.Debug("sdk request 'bt.ConfigSavePanelSSL'", slog.Any("request", configSavePanelSSLReq), slog.Any("response", configSavePanelSSLResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bt.ConfigSavePanelSSL'")
+		return nil, fmt.Errorf("failed to execute sdk request 'bt.ConfigSavePanelSSL': %w", err)
 	}
 
 	if d.config.AutoRestart {

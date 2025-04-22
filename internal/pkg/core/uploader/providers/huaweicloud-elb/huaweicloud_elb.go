@@ -15,7 +15,6 @@ import (
 	hciam "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3"
 	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -46,7 +45,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -85,7 +84,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.ListCertificates'")
+			return nil, fmt.Errorf("failed to execute sdk request 'elb.ListCertificates': %w", err)
 		}
 
 		if listCertificatesResp.Certificates != nil {
@@ -124,7 +123,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// REF: https://support.huaweicloud.com/api-iam/iam_06_0001.html
 	projectId, err := getSdkProjectId(u.config.AccessKeyId, u.config.SecretAccessKey, u.config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to get SDK project id")
+		return nil, fmt.Errorf("failed to get SDK project id: %w", err)
 	}
 
 	// 生成新证书名（需符合华为云命名规则）
@@ -146,7 +145,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
 	u.logger.Debug("sdk request 'elb.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'elb.CreateCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'elb.CreateCertificate': %w", err)
 	}
 
 	certId = createCertificateResp.Certificate.Id

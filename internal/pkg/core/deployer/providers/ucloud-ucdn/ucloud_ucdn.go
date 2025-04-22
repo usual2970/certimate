@@ -3,10 +3,10 @@ package uclouducdn
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strconv"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/ucloud/ucloud-sdk-go/services/ucdn"
 	"github.com/ucloud/ucloud-sdk-go/ucloud"
 	"github.com/ucloud/ucloud-sdk-go/ucloud/auth"
@@ -43,7 +43,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -52,7 +52,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		ProjectId:  config.ProjectId,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -77,7 +77,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 USSL
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -92,7 +92,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	getUcdnDomainConfigResp, err := d.sdkClient.GetUcdnDomainConfig(getUcdnDomainConfigReq)
 	d.logger.Debug("sdk request 'ucdn.GetUcdnDomainConfig'", slog.Any("request", getUcdnDomainConfigReq), slog.Any("response", getUcdnDomainConfigResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ucdn.GetUcdnDomainConfig'")
+		return nil, fmt.Errorf("failed to execute sdk request 'ucdn.GetUcdnDomainConfig': %w", err)
 	} else if len(getUcdnDomainConfigResp.DomainList) == 0 {
 		return nil, errors.New("no domain found")
 	}
@@ -114,7 +114,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	updateUcdnDomainHttpsConfigV2Resp, err := d.sdkClient.UpdateUcdnDomainHttpsConfigV2(updateUcdnDomainHttpsConfigV2Req)
 	d.logger.Debug("sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2'", slog.Any("request", updateUcdnDomainHttpsConfigV2Req), slog.Any("response", updateUcdnDomainHttpsConfigV2Resp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2'")
+		return nil, fmt.Errorf("failed to execute sdk request 'ucdn.UpdateUcdnDomainHttpsConfigV2': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

@@ -1077,5 +1077,5 @@ func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("unsupported deployer provider: %s", string(options.Provider))
+	return nil, fmt.Errorf("unsupported deployer provider '%s'", string(options.Provider))
 }

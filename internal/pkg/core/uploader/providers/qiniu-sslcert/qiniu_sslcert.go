@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"time"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -37,7 +36,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKey, config.SecretKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -72,7 +71,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadSslCertResp, err := u.sdkClient.UploadSslCert(context.TODO(), certName, certX509.Subject.CommonName, certPEM, privkeyPEM)
 	u.logger.Debug("sdk request 'cdn.UploadSslCert'", slog.Any("response", uploadSslCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadSslCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.UploadSslCert': %w", err)
 	}
 
 	certId = uploadSslCertResp.CertID

@@ -8,8 +8,6 @@ import (
 	"log/slog"
 	"net/url"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	safelinesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/safeline"
 )
@@ -43,7 +41,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiToken, config.AllowInsecureConnections)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -71,7 +69,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -94,7 +92,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	d.logger.Debug("sdk request 'safeline.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'safeline.UpdateCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'safeline.UpdateCertificate': %w", err)
 	}
 
 	return nil

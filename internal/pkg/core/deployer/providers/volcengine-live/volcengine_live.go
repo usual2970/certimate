@@ -3,10 +3,10 @@ package volcenginelive
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	xerrors "github.com/pkg/errors"
 	velive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
@@ -47,7 +47,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		AccessKeySecret: config.AccessKeySecret,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -72,7 +72,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 Live
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -92,7 +92,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			listDomainDetailResp, err := d.sdkClient.ListDomainDetail(ctx, listDomainDetailReq)
 			d.logger.Debug("sdk request 'live.ListDomainDetail'", slog.Any("request", listDomainDetailReq), slog.Any("response", listDomainDetailResp))
 			if err != nil {
-				return nil, xerrors.Wrap(err, "failed to execute sdk request 'live.ListDomainDetail'")
+				return nil, fmt.Errorf("failed to execute sdk request 'live.ListDomainDetail': %w", err)
 			}
 
 			if listDomainDetailResp.Result.DomainList != nil {

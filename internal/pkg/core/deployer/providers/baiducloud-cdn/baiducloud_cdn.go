@@ -8,7 +8,6 @@ import (
 
 	bcecdn "github.com/baidubce/bce-sdk-go/services/cdn"
 	bcecdnapi "github.com/baidubce/bce-sdk-go/services/cdn/api"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 )
@@ -37,7 +36,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -70,7 +69,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	)
 	d.logger.Debug("sdk request 'cdn.PutCert'", slog.String("request.domain", d.config.Domain), slog.Any("response", putCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.PutCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.PutCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

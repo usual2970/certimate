@@ -3,9 +3,8 @@ package bunnycdn
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"log/slog"
-
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	bunnysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/bunny"
@@ -60,7 +59,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	createCertificateResp, err := d.sdkClient.AddCustomCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'bunny.AddCustomCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'bunny.AddCustomCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'bunny.AddCustomCertificate': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

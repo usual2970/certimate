@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log/slog"
 
-	xerrors "github.com/pkg/errors"
 	tcclb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb/v20180317"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
@@ -58,7 +57,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	clients, err := createSdkClients(config.SecretId, config.SecretKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -66,7 +65,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		SecretKey: config.SecretKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -91,7 +90,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书到 SSL
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to upload certificate file")
+		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -119,7 +118,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -149,7 +148,7 @@ func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId 
 	deployCertificateInstanceResp, err := d.sdkClients.SSL.DeployCertificateInstance(deployCertificateInstanceReq)
 	d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'ssl.DeployCertificateInstance'")
+		return fmt.Errorf("failed to execute sdk request 'ssl.DeployCertificateInstance': %w", err)
 	}
 
 	return nil
@@ -168,7 +167,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	describeListenersResp, err := d.sdkClients.CLB.DescribeListeners(describeListenersReq)
 	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
+		return fmt.Errorf("failed to execute sdk request 'clb.DescribeListeners': %w", err)
 	} else {
 		if describeListenersResp.Response.Listeners != nil {
 			for _, listener := range describeListenersResp.Response.Listeners {
@@ -242,7 +241,7 @@ func (d *DeployerProvider) deployToRuleDomain(ctx context.Context, cloudCertId s
 	modifyDomainAttributesResp, err := d.sdkClients.CLB.ModifyDomainAttributes(modifyDomainAttributesReq)
 	d.logger.Debug("sdk request 'clb.ModifyDomainAttributes'", slog.Any("request", modifyDomainAttributesReq), slog.Any("response", modifyDomainAttributesResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyDomainAttributes'")
+		return fmt.Errorf("failed to execute sdk request 'clb.ModifyDomainAttributes': %w", err)
 	}
 
 	return nil
@@ -257,7 +256,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	describeListenersResp, err := d.sdkClients.CLB.DescribeListeners(describeListenersReq)
 	d.logger.Debug("sdk request 'clb.DescribeListeners'", slog.Any("request", describeListenersReq), slog.Any("response", describeListenersResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.DescribeListeners'")
+		return fmt.Errorf("failed to execute sdk request 'clb.DescribeListeners': %w", err)
 	} else if len(describeListenersResp.Response.Listeners) == 0 {
 		return errors.New("listener not found")
 	}
@@ -277,7 +276,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 	modifyListenerResp, err := d.sdkClients.CLB.ModifyListener(modifyListenerReq)
 	d.logger.Debug("sdk request 'clb.ModifyListener'", slog.Any("request", modifyListenerReq), slog.Any("response", modifyListenerResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'clb.ModifyListener'")
+		return fmt.Errorf("failed to execute sdk request 'clb.ModifyListener': %w", err)
 	}
 
 	return nil

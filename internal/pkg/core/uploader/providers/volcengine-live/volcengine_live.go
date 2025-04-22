@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	xerrors "github.com/pkg/errors"
 	velive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
@@ -68,7 +67,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertResp, err := u.sdkClient.ListCertV2(ctx, listCertReq)
 	u.logger.Debug("sdk request 'live.ListCertV2'", slog.Any("request", listCertReq), slog.Any("response", listCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'live.ListCertV2'")
+		return nil, fmt.Errorf("failed to execute sdk request 'live.ListCertV2': %w", err)
 	}
 	if listCertResp.Result.CertList != nil {
 		for _, certDetail := range listCertResp.Result.CertList {
@@ -125,7 +124,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertResp, err := u.sdkClient.CreateCert(ctx, createCertReq)
 	u.logger.Debug("sdk request 'live.CreateCert'", slog.Any("request", createCertReq), slog.Any("response", createCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'live.CreateCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'live.CreateCert': %w", err)
 	}
 
 	certId = *createCertResp.Result.ChainID

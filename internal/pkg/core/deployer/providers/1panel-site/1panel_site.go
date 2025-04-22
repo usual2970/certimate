@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"strconv"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/1panel-ssl"
@@ -50,7 +48,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -58,7 +56,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		ApiKey: config.ApiKey,
 	})
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create ssl uploader")
+		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -93,7 +91,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -111,13 +109,13 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 	getHttpsConfResp, err := d.sdkClient.GetHttpsConf(getHttpsConfReq)
 	d.logger.Debug("sdk request '1panel.GetHttpsConf'", slog.Any("request", getHttpsConfReq), slog.Any("response", getHttpsConfResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request '1panel.GetHttpsConf'")
+		return fmt.Errorf("failed to execute sdk request '1panel.GetHttpsConf': %w", err)
 	}
 
 	// 上传证书到面板
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
-		return xerrors.Wrap(err, "failed to upload certificate file")
+		return fmt.Errorf("failed to upload certificate file: %w", err)
 	} else {
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
@@ -137,7 +135,7 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 	updateHttpsConfResp, err := d.sdkClient.UpdateHttpsConf(updateHttpsConfReq)
 	d.logger.Debug("sdk request '1panel.UpdateHttpsConf'", slog.Any("request", updateHttpsConfReq), slog.Any("response", updateHttpsConfResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request '1panel.UpdateHttpsConf'")
+		return fmt.Errorf("failed to execute sdk request '1panel.UpdateHttpsConf': %w", err)
 	}
 
 	return nil
@@ -155,7 +153,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	getWebsiteSSLResp, err := d.sdkClient.GetWebsiteSSL(getWebsiteSSLReq)
 	d.logger.Debug("sdk request '1panel.GetWebsiteSSL'", slog.Any("request", getWebsiteSSLReq), slog.Any("response", getWebsiteSSLResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request '1panel.GetWebsiteSSL'")
+		return fmt.Errorf("failed to execute sdk request '1panel.GetWebsiteSSL': %w", err)
 	}
 
 	// 更新证书
@@ -169,7 +167,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	uploadWebsiteSSLResp, err := d.sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
 	d.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request '1panel.UploadWebsiteSSL'")
+		return fmt.Errorf("failed to execute sdk request '1panel.UploadWebsiteSSL': %w", err)
 	}
 
 	return nil

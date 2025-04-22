@@ -4,12 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"strings"
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -64,13 +64,13 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to parse x509")
+		return nil, fmt.Errorf("failed to parse x509: %w", err)
 	}
 
 	var webhookData interface{}
 	err = json.Unmarshal([]byte(d.config.WebhookData), &webhookData)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to unmarshall webhook data")
+		return nil, fmt.Errorf("failed to unmarshall webhook data: %w", err)
 	}
 
 	replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
@@ -85,9 +85,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		SetBody(webhookData).
 		Post(d.config.WebhookUrl)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to send webhook request")
+		return nil, fmt.Errorf("failed to send webhook request: %w", err)
 	} else if resp.StatusCode() != 200 {
-		return nil, xerrors.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
+		return nil, fmt.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
 	}
 
 	d.logger.Debug("webhook responded", slog.Any("response", resp.String()))

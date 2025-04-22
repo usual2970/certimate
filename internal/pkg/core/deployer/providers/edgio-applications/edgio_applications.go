@@ -2,11 +2,11 @@ package edgioapplications
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	edgio "github.com/Edgio/edgio-api/applications/v7"
 	edgiodtos "github.com/Edgio/edgio-api/applications/v7/dtos"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -36,7 +36,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ClientId, config.ClientSecret)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -73,7 +73,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	uploadTlsCertResp, err := d.sdkClient.UploadTlsCert(uploadTlsCertReq)
 	d.logger.Debug("sdk request 'edgio.UploadTlsCert'", slog.Any("request", uploadTlsCertReq), slog.Any("response", uploadTlsCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'edgio.UploadTlsCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'edgio.UploadTlsCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

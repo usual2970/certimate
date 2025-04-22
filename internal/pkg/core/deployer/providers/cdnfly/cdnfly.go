@@ -9,8 +9,6 @@ import (
 	"net/url"
 	"time"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cdnfly"
 )
@@ -47,7 +45,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.ApiSecret)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -80,7 +78,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, fmt.Errorf("unsupported resource type: %s", d.config.ResourceType)
+		return nil, fmt.Errorf("unsupported resource type '%s'", d.config.ResourceType)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -99,7 +97,7 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, pri
 	getSiteResp, err := d.sdkClient.GetSite(getSiteReq)
 	d.logger.Debug("sdk request 'cdnfly.GetSite'", slog.Any("request", getSiteReq), slog.Any("response", getSiteResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.GetSite'")
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.GetSite': %w", err)
 	}
 
 	// 添加单个证书
@@ -113,7 +111,7 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, pri
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'cdnfly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.CreateCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.CreateCertificate': %w", err)
 	}
 
 	// 修改单个网站
@@ -130,7 +128,7 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, pri
 	updateSiteResp, err := d.sdkClient.UpdateSite(updateSiteReq)
 	d.logger.Debug("sdk request 'cdnfly.UpdateSite'", slog.Any("request", updateSiteReq), slog.Any("response", updateSiteResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.UpdateSite'")
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.UpdateSite': %w", err)
 	}
 
 	return nil
@@ -153,7 +151,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
 	d.logger.Debug("sdk request 'cdnfly.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'cdnfly.UpdateCertificate'")
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.UpdateCertificate': %w", err)
 	}
 
 	return nil

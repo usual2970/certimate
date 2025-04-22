@@ -6,8 +6,6 @@ import (
 	"log/slog"
 	"time"
 
-	xerrors "github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	dogesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/dogecloud"
 )
@@ -34,7 +32,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKey, config.SecretKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -63,7 +61,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPEM, privkeyPEM)
 	u.logger.Debug("sdk request 'cdn.UploadCdnCert'", slog.Any("response", uploadSslCertResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'cdn.UploadCdnCert'")
+		return nil, fmt.Errorf("failed to execute sdk request 'cdn.UploadCdnCert': %w", err)
 	}
 
 	certId = fmt.Sprintf("%d", uploadSslCertResp.Data.Id)

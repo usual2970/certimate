@@ -3,10 +3,10 @@ package k8ssecret
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
 
-	xerrors "github.com/pkg/errors"
 	k8score "k8s.io/api/core/v1"
 	k8smeta "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -84,7 +84,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 连接
 	client, err := createK8sClient(d.config.KubeConfig)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create k8s client")
+		return nil, fmt.Errorf("failed to create k8s client: %w", err)
 	}
 
 	var secretPayload *k8score.Secret
@@ -117,7 +117,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Create(context.TODO(), secretPayload, k8smeta.CreateOptions{})
 		d.logger.Debug("k8s operate 'Secrets.Create'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to create k8s secret")
+			return nil, fmt.Errorf("failed to create k8s secret: %w", err)
 		} else {
 			return &deployer.DeployResult{}, nil
 		}
@@ -140,7 +140,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Update(context.TODO(), secretPayload, k8smeta.UpdateOptions{})
 	d.logger.Debug("k8s operate 'Secrets.Update'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to update k8s secret")
+		return nil, fmt.Errorf("failed to update k8s secret: %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil

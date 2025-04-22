@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	xerrors "github.com/pkg/errors"
 	"github.com/ucloud/ucloud-sdk-go/ucloud"
 	ucloudauth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
@@ -45,7 +44,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.PrivateKey, config.PublicKey)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -99,7 +98,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			}
 		}
 
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'ussl.UploadNormalCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'ussl.UploadNormalCertificate': %w", err)
 	}
 
 	certId = fmt.Sprintf("%d", uploadNormalCertificateResp.CertificateID)
@@ -137,7 +136,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) 
 		getCertificateListResp, err := u.sdkClient.GetCertificateList(getCertificateListReq)
 		u.logger.Debug("sdk request 'ussl.GetCertificateList'", slog.Any("request", getCertificateListReq), slog.Any("response", getCertificateListResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'ussl.GetCertificateList'")
+			return nil, fmt.Errorf("failed to execute sdk request 'ussl.GetCertificateList': %w", err)
 		}
 
 		if getCertificateListResp.CertificateList != nil {
@@ -164,7 +163,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) 
 				}
 				getCertificateDetailInfoResp, err := u.sdkClient.GetCertificateDetailInfo(getCertificateDetailInfoReq)
 				if err != nil {
-					return nil, xerrors.Wrap(err, "failed to execute sdk request 'ussl.GetCertificateDetailInfo'")
+					return nil, fmt.Errorf("failed to execute sdk request 'ussl.GetCertificateDetailInfo': %w", err)
 				}
 
 				switch certX509.SignatureAlgorithm {

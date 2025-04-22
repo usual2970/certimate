@@ -13,7 +13,6 @@ import (
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	alislb "github.com/alibabacloud-go/slb-20140515/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
@@ -43,7 +42,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -77,7 +76,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificates(describeServerCertificatesReq)
 	u.logger.Debug("sdk request 'slb.DescribeServerCertificates'", slog.Any("request", describeServerCertificatesReq), slog.Any("response", describeServerCertificatesResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'slb.DescribeServerCertificates'")
+		return nil, fmt.Errorf("failed to execute sdk request 'slb.DescribeServerCertificates': %w", err)
 	}
 
 	if describeServerCertificatesResp.Body.ServerCertificates != nil && describeServerCertificatesResp.Body.ServerCertificates.ServerCertificate != nil {
@@ -119,7 +118,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	uploadServerCertificateResp, err := u.sdkClient.UploadServerCertificate(uploadServerCertificateReq)
 	u.logger.Debug("sdk request 'slb.UploadServerCertificate'", slog.Any("request", uploadServerCertificateReq), slog.Any("response", uploadServerCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'slb.UploadServerCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'slb.UploadServerCertificate': %w", err)
 	}
 
 	certId = *uploadServerCertificateResp.Body.ServerCertificateId

@@ -9,7 +9,6 @@ import (
 
 	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
 	gsslcerts "github.com/G-Core/gcorelabscdn-go/sslcerts"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore/common"
@@ -35,7 +34,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.ApiToken)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -71,7 +70,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateResp, err := u.sdkClient.Create(context.TODO(), createCertificateReq)
 	u.logger.Debug("sdk request 'sslcerts.Create'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'sslcerts.Create'")
+		return nil, fmt.Errorf("failed to execute sdk request 'sslcerts.Create': %w", err)
 	}
 
 	certId = fmt.Sprintf("%d", createCertificateResp.ID)

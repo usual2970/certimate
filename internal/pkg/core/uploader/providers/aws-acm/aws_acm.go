@@ -2,13 +2,13 @@ package awsacm
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	aws "github.com/aws/aws-sdk-go-v2/aws"
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	awscred "github.com/aws/aws-sdk-go-v2/credentials"
 	awsacm "github.com/aws/aws-sdk-go-v2/service/acm"
-	xerrors "github.com/pkg/errors"
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -39,7 +39,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.SecretAccessKey, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -81,7 +81,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		listCertificatesResp, err := u.sdkClient.ListCertificates(context.TODO(), listCertificatesReq)
 		u.logger.Debug("sdk request 'acm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 		if err != nil {
-			return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ListCertificates'")
+			return nil, fmt.Errorf("failed to execute sdk request 'acm.ListCertificates': %w", err)
 		}
 
 		for _, certSummary := range listCertificatesResp.CertificateSummaryList {
@@ -105,7 +105,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			}
 			getCertificateResp, err := u.sdkClient.GetCertificate(context.TODO(), getCertificateReq)
 			if err != nil {
-				return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.GetCertificate'")
+				return nil, fmt.Errorf("failed to execute sdk request 'acm.GetCertificate': %w", err)
 			} else {
 				oldCertPEM := aws.ToString(getCertificateResp.CertificateChain)
 				if oldCertPEM == "" {
@@ -146,7 +146,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), importCertificateReq)
 	u.logger.Debug("sdk request 'acm.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'acm.ImportCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'acm.ImportCertificate': %w", err)
 	}
 
 	return &uploader.UploadResult{

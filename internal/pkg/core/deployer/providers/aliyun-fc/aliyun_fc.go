@@ -10,7 +10,6 @@ import (
 	alifc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
 	alifc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	xerrors "github.com/pkg/errors"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 )
@@ -48,7 +47,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 	clients, err := createSdkClients(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk clients")
+		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
 	return &DeployerProvider{
@@ -80,7 +79,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 	default:
-		return nil, xerrors.Errorf("unsupported service version: %s", d.config.ServiceVersion)
+		return nil, fmt.Errorf("unsupported service version '%s'", d.config.ServiceVersion)
 	}
 
 	return &deployer.DeployResult{}, nil
@@ -92,7 +91,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPEM string, priv
 	getCustomDomainResp, err := d.sdkClients.FC3.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
+		return fmt.Errorf("failed to execute sdk request 'fc.GetCustomDomain': %w", err)
 	}
 
 	// 更新自定义域名
@@ -111,7 +110,7 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPEM string, priv
 	updateCustomDomainResp, err := d.sdkClients.FC3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
+		return fmt.Errorf("failed to execute sdk request 'fc.UpdateCustomDomain': %w", err)
 	}
 
 	return nil
@@ -123,7 +122,7 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPEM string, priv
 	getCustomDomainResp, err := d.sdkClients.FC2.GetCustomDomain(tea.String(d.config.Domain))
 	d.logger.Debug("sdk request 'fc.GetCustomDomain'", slog.Any("response", getCustomDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'fc.GetCustomDomain'")
+		return fmt.Errorf("failed to execute sdk request 'fc.GetCustomDomain': %w", err)
 	}
 
 	// 更新自定义域名
@@ -140,7 +139,7 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPEM string, priv
 	updateCustomDomainResp, err := d.sdkClients.FC2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
-		return xerrors.Wrap(err, "failed to execute sdk request 'fc.UpdateCustomDomain'")
+		return fmt.Errorf("failed to execute sdk request 'fc.UpdateCustomDomain': %w", err)
 	}
 
 	return nil

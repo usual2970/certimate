@@ -509,5 +509,5 @@ func createApplicant(options *applicantOptions) (challenge.Provider, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("unsupported applicant provider: %s", string(options.Provider))
+	return nil, fmt.Errorf("unsupported applicant provider '%s'", string(options.Provider))
 }

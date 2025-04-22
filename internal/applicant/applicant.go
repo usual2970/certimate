@@ -56,7 +56,7 @@ type applicantOptions struct {
 
 func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 	if node.Type != domain.WorkflowNodeTypeApply {
-		return nil, fmt.Errorf("node type is not apply")
+		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeApply))
 	}
 
 	nodeConfig := node.GetConfigForApply()
@@ -181,7 +181,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	if !user.hasRegistration() {
 		reg, err := registerAcmeUserWithSingleFlight(client, user, options.CAProviderAccessConfig)
 		if err != nil {
-			return nil, fmt.Errorf("failed to register: %w", err)
+			return nil, fmt.Errorf("failed to register acme user: %w", err)
 		}
 		user.Registration = reg
 	}

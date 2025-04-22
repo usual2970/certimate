@@ -2,9 +2,10 @@ package volcenginecertcenter
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log/slog"
 
-	xerrors "github.com/pkg/errors"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
@@ -36,7 +37,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 	client, err := createSdkClient(config.AccessKeyId, config.AccessKeySecret, config.Region)
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to create sdk client")
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &UploaderProvider{
@@ -68,7 +69,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)
 	u.logger.Debug("sdk request 'certcenter.ImportCertificate'", slog.Any("request", importCertificateReq), slog.Any("response", importCertificateResp))
 	if err != nil {
-		return nil, xerrors.Wrap(err, "failed to execute sdk request 'certcenter.ImportCertificate'")
+		return nil, fmt.Errorf("failed to execute sdk request 'certcenter.ImportCertificate': %w", err)
 	}
 
 	var certId string
@@ -80,7 +81,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	if certId == "" {
-		return nil, xerrors.New("failed to get certificate id, both `InstanceId` and `RepeatId` are empty")
+		return nil, errors.New("failed to get certificate id from response, both `InstanceId` and `RepeatId` are empty")
 	}
 
 	return &uploader.UploadResult{
