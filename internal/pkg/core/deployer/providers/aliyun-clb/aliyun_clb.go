@@ -132,6 +132,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	describeLoadBalancerListenersLimit := int32(100)
 	var describeLoadBalancerListenersToken *string = nil
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		describeLoadBalancerListenersReq := &alislb.DescribeLoadBalancerListenersRequest{
 			RegionId:         tea.String(d.config.Region),
 			MaxResults:       tea.Int32(describeLoadBalancerListenersLimit),
@@ -166,8 +172,14 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		var errs []error
 
 		for _, listenerPort := range listenerPorts {
-			if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listenerPort, cloudCertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+
+			default:
+				if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listenerPort, cloudCertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

@@ -137,6 +137,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	listListenersLimit := int32(100)
 	var listListenersToken *string = nil
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listListenersReq := &alialb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
@@ -166,6 +172,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	// REF: https://help.aliyun.com/zh/slb/application-load-balancer/developer-reference/api-alb-2020-06-16-listlisteners
 	listListenersToken = nil
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listListenersReq := &alialb.ListListenersRequest{
 			MaxResults:       tea.Int32(listListenersLimit),
 			NextToken:        listListenersToken,
@@ -262,6 +274,12 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		listListenerCertificatesLimit := int32(100)
 		var listListenerCertificatesToken *string = nil
 		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+			}
+
 			listListenerCertificatesReq := &alialb.ListListenerCertificatesRequest{
 				NextToken:       listListenerCertificatesToken,
 				MaxResults:      tea.Int32(listListenerCertificatesLimit),

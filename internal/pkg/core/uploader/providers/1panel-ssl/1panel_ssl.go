@@ -93,6 +93,12 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 	searchWebsiteSSLPageNumber := int32(1)
 	searchWebsiteSSLPageSize := int32(100)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		searchWebsiteSSLReq := &opsdk.SearchWebsiteSSLRequest{
 			Page:     searchWebsiteSSLPageNumber,
 			PageSize: searchWebsiteSSLPageSize,

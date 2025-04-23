@@ -152,8 +152,14 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		var errs []error
 
 		for _, listener := range listeners {
-			if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listener.Type, listener.Port, cloudCertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+
+			default:
+				if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listener.Type, listener.Port, cloudCertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 
@@ -209,8 +215,14 @@ func (d *DeployerProvider) deployToListener(ctx context.Context, cloudCertId str
 		var errs []error
 
 		for _, listener := range listeners {
-			if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listener.Type, listener.Port, cloudCertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+
+			default:
+				if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listener.Type, listener.Port, cloudCertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

@@ -132,6 +132,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 	describeListenersPageSize := int64(100)
 	describeListenersPageNumber := int64(1)
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		describeListenersReq := &vealb.DescribeListenersInput{
 			LoadBalancerId: ve.String(d.config.LoadbalancerId),
 			Protocol:       ve.String("HTTPS"),
@@ -163,8 +169,13 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		var errs []error
 
 		for _, listenerId := range listenerIds {
-			if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

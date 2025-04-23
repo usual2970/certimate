@@ -74,6 +74,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	var listCertificatesNextToken *string = nil
 	listCertificatesMaxItems := int32(1000)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listCertificatesReq := &awsacm.ListCertificatesInput{
 			NextToken: listCertificatesNextToken,
 			MaxItems:  aws.Int32(listCertificatesMaxItems),

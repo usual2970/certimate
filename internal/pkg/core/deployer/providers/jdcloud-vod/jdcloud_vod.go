@@ -65,6 +65,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	listDomainsPageNumber := 1
 	listDomainsPageSize := 100
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listDomainsReq := jdvodapi.NewListDomainsRequest()
 		listDomainsReq.SetPageNumber(1)
 		listDomainsReq.SetPageSize(100)

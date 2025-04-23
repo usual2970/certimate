@@ -172,6 +172,12 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	listHostPage := int32(1)
 	listHostPageSize := int32(100)
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listHostReq := &hcwafmodel.ListHostRequest{
 			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
 			Page:     typeutil.ToPtr(listHostPage),
@@ -239,6 +245,12 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	listPremiumHostPage := int32(1)
 	listPremiumHostPageSize := int32(100)
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listPremiumHostReq := &hcwafmodel.ListPremiumHostRequest{
 			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
 			Page:     typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPage)),

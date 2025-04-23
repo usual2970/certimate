@@ -93,6 +93,12 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) 
 	sslCenterListPage := int32(1)
 	sslCenterListPerPage := int32(100)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		sslCenterListReq := &rainyunsdk.SslCenterListRequest{
 			Filters: &rainyunsdk.SslCenterListFilters{
 				Domain: &certX509.Subject.CommonName,
