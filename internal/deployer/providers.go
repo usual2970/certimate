@@ -82,7 +82,13 @@ import (
 	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
-func createDeployer(options *deployerOptions) (deployer.Deployer, error) {
+type deployerProviderOptions struct {
+	Provider             domain.DeployProviderType
+	ProviderAccessConfig map[string]any
+	ProviderDeployConfig map[string]any
+}
+
+func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.

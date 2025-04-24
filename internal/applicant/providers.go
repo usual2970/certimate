@@ -38,7 +38,25 @@ import (
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
-func createApplicant(options *applicantOptions) (challenge.Provider, error) {
+type applicantProviderOptions struct {
+	Domains                  []string
+	ContactEmail             string
+	Provider                 domain.ApplyDNSProviderType
+	ProviderAccessConfig     map[string]any
+	ProviderExtendedConfig   map[string]any
+	CAProvider               domain.ApplyCAProviderType
+	CAProviderAccessConfig   map[string]any
+	CAProviderExtendedConfig map[string]any
+	KeyAlgorithm             string
+	Nameservers              []string
+	DnsPropagationTimeout    int32
+	DnsTTL                   int32
+	DisableFollowCNAME       bool
+	ReplacedARIAcct          string
+	ReplacedARICert          string
+}
+
+func createApplicantProvider(options *applicantProviderOptions) (challenge.Provider, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
