@@ -116,6 +116,16 @@ type AccessConfigForEdgio struct {
 	ClientSecret string `json:"clientSecret"`
 }
 
+type AccessConfigForEmail struct {
+	SmtpHost               string `json:"smtpHost"`
+	SmtpPort               int32  `json:"smtpPort"`
+	SmtpTls                bool   `json:"smtpTls"`
+	Username               string `json:"username"`
+	Password               string `json:"password"`
+	DefaultSenderAddress   string `json:"defaultSenderAddress,omitempty"`
+	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
+}
+
 type AccessConfigForGcore struct {
 	ApiToken string `json:"apiToken"`
 }
@@ -147,6 +157,13 @@ type AccessConfigForJDCloud struct {
 
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
+}
+
+type AccessConfigForMattermost struct {
+	ServerUrl        string `json:"serverUrl"`
+	Username         string `json:"username"`
+	Password         string `json:"password"`
+	DefaultChannelId string `json:"defaultChannelId,omitempty"`
 }
 
 type AccessConfigForNamecheap struct {
@@ -204,6 +221,11 @@ type AccessConfigForSSH struct {
 type AccessConfigForSSLCom struct {
 	EabKid     string `json:"eabKid"`
 	EabHmacKey string `json:"eabHmacKey"`
+}
+
+type AccessConfigForTelegram struct {
+	BotToken      string `json:"botToken"`
+	DefaultChatId int64  `json:"defaultChatId,omitempty"`
 }
 
 type AccessConfigForTencentCloud struct {

@@ -2,19 +2,19 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { type AcmeDns01Provider, acmeDns01ProvidersMap } from "@/domain/provider";
+import { type ACMEDns01Provider, acmeDns01ProvidersMap } from "@/domain/provider";
 
-export type AcmeDns01ProviderSelectProps = Omit<
+export type ACMEDns01ProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
-  filter?: (record: AcmeDns01Provider) => boolean;
+  filter?: (record: ACMEDns01Provider) => boolean;
 };
 
-const AcmeDns01ProviderSelect = ({ filter, ...props }: AcmeDns01ProviderSelectProps) => {
+const ACMEDns01ProviderSelect = ({ filter, ...props }: ACMEDns01ProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AcmeDns01Provider }>>([]);
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ACMEDns01Provider }>>([]);
   useEffect(() => {
     const allItems = Array.from(acmeDns01ProvidersMap.values());
     const filteredItems = filter != null ? allItems.filter(filter) : allItems;
@@ -64,4 +64,4 @@ const AcmeDns01ProviderSelect = ({ filter, ...props }: AcmeDns01ProviderSelectPr
   );
 };
 
-export default memo(AcmeDns01ProviderSelect);
+export default memo(ACMEDns01ProviderSelect);

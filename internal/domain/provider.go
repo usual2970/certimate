@@ -33,6 +33,7 @@ const (
 	AccessProviderTypeDogeCloud           = AccessProviderType("dogecloud")
 	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
 	AccessProviderTypeEdgio               = AccessProviderType("edgio")
+	AccessProviderTypeEmail               = AccessProviderType("email")
 	AccessProviderTypeFastly              = AccessProviderType("fastly") // Fastly（预留）
 	AccessProviderTypeGname               = AccessProviderType("gname")
 	AccessProviderTypeGcore               = AccessProviderType("gcore")
@@ -45,6 +46,7 @@ const (
 	AccessProviderTypeLetsEncrypt         = AccessProviderType("letsencrypt")
 	AccessProviderTypeLetsEncryptStaging  = AccessProviderType("letsencryptstaging")
 	AccessProviderTypeLocal               = AccessProviderType("local")
+	AccessProviderTypeMattermost          = AccessProviderType("mattermost")
 	AccessProviderTypeNamecheap           = AccessProviderType("namecheap")
 	AccessProviderTypeNameDotCom          = AccessProviderType("namedotcom")
 	AccessProviderTypeNameSilo            = AccessProviderType("namesilo")
@@ -57,6 +59,7 @@ const (
 	AccessProviderTypeSafeLine            = AccessProviderType("safeline")
 	AccessProviderTypeSSH                 = AccessProviderType("ssh")
 	AccessProviderTypeSSLCOM              = AccessProviderType("sslcom")
+	AccessProviderTypeTelegram            = AccessProviderType("telegram")
 	AccessProviderTypeTencentCloud        = AccessProviderType("tencentcloud")
 	AccessProviderTypeUCloud              = AccessProviderType("ucloud")
 	AccessProviderTypeUpyun               = AccessProviderType("upyun")
@@ -86,7 +89,7 @@ const (
 	CAProviderTypeZeroSSL             = CAProviderType(AccessProviderTypeZeroSSL)
 )
 
-type AcmeDns01ProviderType string
+type ACMEDns01ProviderType string
 
 /*
 ACME DNS-01 提供商常量值。
@@ -96,43 +99,43 @@ ACME DNS-01 提供商常量值。
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	AcmeDns01ProviderTypeACMEHttpReq     = AcmeDns01ProviderType(AccessProviderTypeACMEHttpReq)
-	AcmeDns01ProviderTypeAliyun          = AcmeDns01ProviderType(AccessProviderTypeAliyun) // 兼容旧值，等同于 [AcmeDns01ProviderTypeAliyunDNS]
-	AcmeDns01ProviderTypeAliyunDNS       = AcmeDns01ProviderType(AccessProviderTypeAliyun + "-dns")
-	AcmeDns01ProviderTypeAWS             = AcmeDns01ProviderType(AccessProviderTypeAWS) // 兼容旧值，等同于 [AcmeDns01ProviderTypeAWSRoute53]
-	AcmeDns01ProviderTypeAWSRoute53      = AcmeDns01ProviderType(AccessProviderTypeAWS + "-route53")
-	AcmeDns01ProviderTypeAzure           = AcmeDns01ProviderType(AccessProviderTypeAzure) // 兼容旧值，等同于 [AcmeDns01ProviderTypeAzure]
-	AcmeDns01ProviderTypeAzureDNS        = AcmeDns01ProviderType(AccessProviderTypeAzure + "-dns")
-	AcmeDns01ProviderTypeBaiduCloud      = AcmeDns01ProviderType(AccessProviderTypeBaiduCloud) // 兼容旧值，等同于 [AcmeDns01ProviderTypeBaiduCloudDNS]
-	AcmeDns01ProviderTypeBaiduCloudDNS   = AcmeDns01ProviderType(AccessProviderTypeBaiduCloud + "-dns")
-	AcmeDns01ProviderTypeBunny           = AcmeDns01ProviderType(AccessProviderTypeBunny)
-	AcmeDns01ProviderTypeCloudflare      = AcmeDns01ProviderType(AccessProviderTypeCloudflare)
-	AcmeDns01ProviderTypeClouDNS         = AcmeDns01ProviderType(AccessProviderTypeClouDNS)
-	AcmeDns01ProviderTypeCMCCCloud       = AcmeDns01ProviderType(AccessProviderTypeCMCCCloud)
-	AcmeDns01ProviderTypeDeSEC           = AcmeDns01ProviderType(AccessProviderTypeDeSEC)
-	AcmeDns01ProviderTypeDNSLA           = AcmeDns01ProviderType(AccessProviderTypeDNSLA)
-	AcmeDns01ProviderTypeDynv6           = AcmeDns01ProviderType(AccessProviderTypeDynv6)
-	AcmeDns01ProviderTypeGcore           = AcmeDns01ProviderType(AccessProviderTypeGcore)
-	AcmeDns01ProviderTypeGname           = AcmeDns01ProviderType(AccessProviderTypeGname)
-	AcmeDns01ProviderTypeGoDaddy         = AcmeDns01ProviderType(AccessProviderTypeGoDaddy)
-	AcmeDns01ProviderTypeHuaweiCloud     = AcmeDns01ProviderType(AccessProviderTypeHuaweiCloud) // 兼容旧值，等同于 [AcmeDns01ProviderTypeHuaweiCloudDNS]
-	AcmeDns01ProviderTypeHuaweiCloudDNS  = AcmeDns01ProviderType(AccessProviderTypeHuaweiCloud + "-dns")
-	AcmeDns01ProviderTypeJDCloud         = AcmeDns01ProviderType(AccessProviderTypeJDCloud) // 兼容旧值，等同于 [AcmeDns01ProviderTypeJDCloudDNS]
-	AcmeDns01ProviderTypeJDCloudDNS      = AcmeDns01ProviderType(AccessProviderTypeJDCloud + "-dns")
-	AcmeDns01ProviderTypeNamecheap       = AcmeDns01ProviderType(AccessProviderTypeNamecheap)
-	AcmeDns01ProviderTypeNameDotCom      = AcmeDns01ProviderType(AccessProviderTypeNameDotCom)
-	AcmeDns01ProviderTypeNameSilo        = AcmeDns01ProviderType(AccessProviderTypeNameSilo)
-	AcmeDns01ProviderTypeNS1             = AcmeDns01ProviderType(AccessProviderTypeNS1)
-	AcmeDns01ProviderTypePorkbun         = AcmeDns01ProviderType(AccessProviderTypePorkbun)
-	AcmeDns01ProviderTypePowerDNS        = AcmeDns01ProviderType(AccessProviderTypePowerDNS)
-	AcmeDns01ProviderTypeRainYun         = AcmeDns01ProviderType(AccessProviderTypeRainYun)
-	AcmeDns01ProviderTypeTencentCloud    = AcmeDns01ProviderType(AccessProviderTypeTencentCloud) // 兼容旧值，等同于 [AcmeDns01ProviderTypeTencentCloudDNS]
-	AcmeDns01ProviderTypeTencentCloudDNS = AcmeDns01ProviderType(AccessProviderTypeTencentCloud + "-dns")
-	AcmeDns01ProviderTypeTencentCloudEO  = AcmeDns01ProviderType(AccessProviderTypeTencentCloud + "-eo")
-	AcmeDns01ProviderTypeVercel          = AcmeDns01ProviderType(AccessProviderTypeVercel)
-	AcmeDns01ProviderTypeVolcEngine      = AcmeDns01ProviderType(AccessProviderTypeVolcEngine) // 兼容旧值，等同于 [AcmeDns01ProviderTypeVolcEngineDNS]
-	AcmeDns01ProviderTypeVolcEngineDNS   = AcmeDns01ProviderType(AccessProviderTypeVolcEngine + "-dns")
-	AcmeDns01ProviderTypeWestcn          = AcmeDns01ProviderType(AccessProviderTypeWestcn)
+	ACMEDns01ProviderTypeACMEHttpReq     = ACMEDns01ProviderType(AccessProviderTypeACMEHttpReq)
+	ACMEDns01ProviderTypeAliyun          = ACMEDns01ProviderType(AccessProviderTypeAliyun) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAliyunDNS]
+	ACMEDns01ProviderTypeAliyunDNS       = ACMEDns01ProviderType(AccessProviderTypeAliyun + "-dns")
+	ACMEDns01ProviderTypeAWS             = ACMEDns01ProviderType(AccessProviderTypeAWS) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAWSRoute53]
+	ACMEDns01ProviderTypeAWSRoute53      = ACMEDns01ProviderType(AccessProviderTypeAWS + "-route53")
+	ACMEDns01ProviderTypeAzure           = ACMEDns01ProviderType(AccessProviderTypeAzure) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAzure]
+	ACMEDns01ProviderTypeAzureDNS        = ACMEDns01ProviderType(AccessProviderTypeAzure + "-dns")
+	ACMEDns01ProviderTypeBaiduCloud      = ACMEDns01ProviderType(AccessProviderTypeBaiduCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeBaiduCloudDNS]
+	ACMEDns01ProviderTypeBaiduCloudDNS   = ACMEDns01ProviderType(AccessProviderTypeBaiduCloud + "-dns")
+	ACMEDns01ProviderTypeBunny           = ACMEDns01ProviderType(AccessProviderTypeBunny)
+	ACMEDns01ProviderTypeCloudflare      = ACMEDns01ProviderType(AccessProviderTypeCloudflare)
+	ACMEDns01ProviderTypeClouDNS         = ACMEDns01ProviderType(AccessProviderTypeClouDNS)
+	ACMEDns01ProviderTypeCMCCCloud       = ACMEDns01ProviderType(AccessProviderTypeCMCCCloud)
+	ACMEDns01ProviderTypeDeSEC           = ACMEDns01ProviderType(AccessProviderTypeDeSEC)
+	ACMEDns01ProviderTypeDNSLA           = ACMEDns01ProviderType(AccessProviderTypeDNSLA)
+	ACMEDns01ProviderTypeDynv6           = ACMEDns01ProviderType(AccessProviderTypeDynv6)
+	ACMEDns01ProviderTypeGcore           = ACMEDns01ProviderType(AccessProviderTypeGcore)
+	ACMEDns01ProviderTypeGname           = ACMEDns01ProviderType(AccessProviderTypeGname)
+	ACMEDns01ProviderTypeGoDaddy         = ACMEDns01ProviderType(AccessProviderTypeGoDaddy)
+	ACMEDns01ProviderTypeHuaweiCloud     = ACMEDns01ProviderType(AccessProviderTypeHuaweiCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeHuaweiCloudDNS]
+	ACMEDns01ProviderTypeHuaweiCloudDNS  = ACMEDns01ProviderType(AccessProviderTypeHuaweiCloud + "-dns")
+	ACMEDns01ProviderTypeJDCloud         = ACMEDns01ProviderType(AccessProviderTypeJDCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeJDCloudDNS]
+	ACMEDns01ProviderTypeJDCloudDNS      = ACMEDns01ProviderType(AccessProviderTypeJDCloud + "-dns")
+	ACMEDns01ProviderTypeNamecheap       = ACMEDns01ProviderType(AccessProviderTypeNamecheap)
+	ACMEDns01ProviderTypeNameDotCom      = ACMEDns01ProviderType(AccessProviderTypeNameDotCom)
+	ACMEDns01ProviderTypeNameSilo        = ACMEDns01ProviderType(AccessProviderTypeNameSilo)
+	ACMEDns01ProviderTypeNS1             = ACMEDns01ProviderType(AccessProviderTypeNS1)
+	ACMEDns01ProviderTypePorkbun         = ACMEDns01ProviderType(AccessProviderTypePorkbun)
+	ACMEDns01ProviderTypePowerDNS        = ACMEDns01ProviderType(AccessProviderTypePowerDNS)
+	ACMEDns01ProviderTypeRainYun         = ACMEDns01ProviderType(AccessProviderTypeRainYun)
+	ACMEDns01ProviderTypeTencentCloud    = ACMEDns01ProviderType(AccessProviderTypeTencentCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeTencentCloudDNS]
+	ACMEDns01ProviderTypeTencentCloudDNS = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-dns")
+	ACMEDns01ProviderTypeTencentCloudEO  = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-eo")
+	ACMEDns01ProviderTypeVercel          = ACMEDns01ProviderType(AccessProviderTypeVercel)
+	ACMEDns01ProviderTypeVolcEngine      = ACMEDns01ProviderType(AccessProviderTypeVolcEngine) // 兼容旧值，等同于 [ACMEDns01ProviderTypeVolcEngineDNS]
+	ACMEDns01ProviderTypeVolcEngineDNS   = ACMEDns01ProviderType(AccessProviderTypeVolcEngine + "-dns")
+	ACMEDns01ProviderTypeWestcn          = ACMEDns01ProviderType(AccessProviderTypeWestcn)
 )
 
 type DeploymentProviderType string
@@ -231,5 +234,8 @@ type NotificationProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	NotificationProviderTypeWebhook = NotificationProviderType(AccessProviderTypeWebhook)
+	NotificationProviderTypeEmail      = NotificationProviderType(AccessProviderTypeEmail)
+	NotificationProviderTypeMattermost = NotificationProviderType(AccessProviderTypeMattermost)
+	NotificationProviderTypeTelegram   = NotificationProviderType(AccessProviderTypeTelegram)
+	NotificationProviderTypeWebhook    = NotificationProviderType(AccessProviderTypeWebhook)
 )

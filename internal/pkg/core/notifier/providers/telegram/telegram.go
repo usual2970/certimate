@@ -10,8 +10,8 @@ import (
 )
 
 type NotifierConfig struct {
-	// Telegram API Token。
-	ApiToken string `json:"apiToken"`
+	// Telegram Bot API Token。
+	BotToken string `json:"botToken"`
 	// Telegram Chat ID。
 	ChatId int64 `json:"chatId"`
 }
@@ -43,7 +43,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv, err := telegram.New(n.config.ApiToken)
+	srv, err := telegram.New(n.config.BotToken)
 	if err != nil {
 		return nil, err
 	}

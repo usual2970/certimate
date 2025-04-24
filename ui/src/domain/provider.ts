@@ -25,6 +25,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   DOGECLOUD: "dogecloud",
   DYNV6: "dynv6",
   EDGIO: "edgio",
+  EMAIL: "email",
   GCORE: "gcore",
   GNAME: "gname",
   GODADDY: "godaddy",
@@ -35,6 +36,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   LETSENCRYPT: "letsencrypt",
   LETSENCRYPTSTAGING: "letsencryptstaging",
   LOCAL: "local",
+  MATTERMOST: "mattermost",
   NAMECHEAP: "namecheap",
   NAMEDOTCOM: "namedotcom",
   NAMESILO: "namesilo",
@@ -46,6 +48,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   SAFELINE: "safeline",
   SSH: "ssh",
   SSLCOM: "sslcom",
+  TELEGRAM: "telegram",
   TENCENTCLOUD: "tencentcloud",
   UCLOUD: "ucloud",
   UPYUN: "upyun",
@@ -137,6 +140,10 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.GOOGLETRUSTSERVICES, "provider.googletrustservices", "/imgs/providers/google.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.SSLCOM, "provider.sslcom", "/imgs/providers/sslcom.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
+
+    [ACCESS_PROVIDERS.EMAIL, "provider.email", "/imgs/providers/email.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.TELEGRAM, "provider.telegram", "/imgs/providers/telegram.svg", [ACCESS_USAGES.NOTIFICATION]],
   ].map((e) => [
     e[0] as string,
     {
@@ -244,16 +251,16 @@ export const ACME_DNS01_PROVIDERS = Object.freeze({
   WESTCN: `${ACCESS_PROVIDERS.WESTCN}`,
 } as const);
 
-export type AcmeDns01ProviderType = (typeof ACME_DNS01_PROVIDERS)[keyof typeof ACME_DNS01_PROVIDERS];
+export type ACMEDns01ProviderType = (typeof ACME_DNS01_PROVIDERS)[keyof typeof ACME_DNS01_PROVIDERS];
 
-export type AcmeDns01Provider = {
-  type: AcmeDns01ProviderType;
+export type ACMEDns01Provider = {
+  type: ACMEDns01ProviderType;
   name: string;
   icon: string;
   provider: AccessProviderType;
 };
 
-export const acmeDns01ProvidersMap: Map<AcmeDns01Provider["type"] | string, AcmeDns01Provider> = new Map(
+export const acmeDns01ProvidersMap: Map<ACMEDns01Provider["type"] | string, ACMEDns01Provider> = new Map(
   /*
     注意：此处的顺序决定显示在前端的顺序。
     NOTICE: The following order determines the order displayed at the frontend.
@@ -291,7 +298,7 @@ export const acmeDns01ProvidersMap: Map<AcmeDns01Provider["type"] | string, Acme
   ].map(([type, name]) => [
     type,
     {
-      type: type as AcmeDns01ProviderType,
+      type: type as ACMEDns01ProviderType,
       name: name,
       icon: accessProvidersMap.get(type.split("-")[0])!.icon,
       provider: type.split("-")[0] as AccessProviderType,
@@ -507,6 +514,9 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const NOTIFICATION_PROVIDERS = Object.freeze({
+  EMAIL: `${ACCESS_PROVIDERS.EMAIL}`,
+  MATTERMOST: `${ACCESS_PROVIDERS.MATTERMOST}`,
+  TELEGRAM: `${ACCESS_PROVIDERS.TELEGRAM}`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
 } as const);
 
@@ -524,7 +534,7 @@ export const notificationProvidersMap: Map<NotificationProvider["type"] | string
     注意：此处的顺序决定显示在前端的顺序。
     NOTICE: The following order determines the order displayed at the frontend.
    */
-  [[NOTIFICATION_PROVIDERS.WEBHOOK]].map(([type]) => [
+  [[NOTIFICATION_PROVIDERS.EMAIL], [NOTIFICATION_PROVIDERS.WEBHOOK], [NOTIFICATION_PROVIDERS.MATTERMOST], [NOTIFICATION_PROVIDERS.TELEGRAM]].map(([type]) => [
     type,
     {
       type: type as CAProviderType,

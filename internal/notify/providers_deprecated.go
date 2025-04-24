@@ -43,7 +43,7 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 		return pEmail.NewNotifier(&pEmail.NotifierConfig{
 			SmtpHost:        maputil.GetString(channelConfig, "smtpHost"),
 			SmtpPort:        maputil.GetInt32(channelConfig, "smtpPort"),
-			SmtpTLS:         maputil.GetOrDefaultBool(channelConfig, "smtpTLS", true),
+			SmtpTls:         maputil.GetOrDefaultBool(channelConfig, "smtpTLS", true),
 			Username:        maputil.GetOrDefaultString(channelConfig, "username", maputil.GetString(channelConfig, "senderAddress")),
 			Password:        maputil.GetString(channelConfig, "password"),
 			SenderAddress:   maputil.GetString(channelConfig, "senderAddress"),
@@ -88,7 +88,7 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 
 	case domain.NotifyChannelTypeTelegram:
 		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
-			ApiToken: maputil.GetString(channelConfig, "apiToken"),
+			BotToken: maputil.GetString(channelConfig, "apiToken"),
 			ChatId:   maputil.GetInt64(channelConfig, "chatId"),
 		})
 

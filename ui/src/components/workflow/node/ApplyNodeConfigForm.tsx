@@ -31,7 +31,7 @@ import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import ModalForm from "@/components/ModalForm";
 import MultipleInput from "@/components/MultipleInput";
-import AcmeDns01ProviderSelect from "@/components/provider/AcmeDns01ProviderSelect";
+import ACMEDns01ProviderSelect from "@/components/provider/ACMEDns01ProviderSelect";
 import CAProviderSelect from "@/components/provider/CAProviderSelect";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, ACME_DNS01_PROVIDERS, accessProvidersMap, acmeDns01ProvidersMap, caProvidersMap } from "@/domain/provider";
@@ -328,7 +328,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
 
           <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden={!showProvider} rules={[formRule]}>
-            <AcmeDns01ProviderSelect
+            <ACMEDns01ProviderSelect
               disabled={!showProvider}
               filter={(record) => {
                 if (fieldProviderAccessId) {

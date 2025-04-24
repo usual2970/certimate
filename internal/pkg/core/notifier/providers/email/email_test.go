@@ -67,7 +67,7 @@ func TestNotify(t *testing.T) {
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			SmtpHost:        fSmtpHost,
 			SmtpPort:        int32(fSmtpPort),
-			SmtpTLS:         fSmtpTLS,
+			SmtpTls:         fSmtpTLS,
 			Username:        fUsername,
 			Password:        fPassword,
 			SenderAddress:   fSenderAddress,

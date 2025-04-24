@@ -7,20 +7,21 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/nikoksr/notify/service/mattermost"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// Mattermost 服务地址。
+	// 服务地址。
 	ServerUrl string `json:"serverUrl"`
-	// 频道ID
-	ChannelId string `json:"channelId"`
-	// 用户名
+	// 用户名。
 	Username string `json:"username"`
-	// 密码
+	// 密码。
 	Password string `json:"password"`
+	// 频道 ID。
+	ChannelId string `json:"channelId"`
 }
 
 type NotifierProvider struct {
@@ -50,7 +51,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := mattermost.New(n.config.ServerUrl)
+	srv := mattermost.New(strings.TrimRight(n.config.ServerUrl, "/"))
 
 	if err := srv.LoginWithCredentials(ctx, n.config.Username, n.config.Password); err != nil {
 		return nil, err

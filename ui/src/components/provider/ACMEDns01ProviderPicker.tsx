@@ -5,7 +5,7 @@ import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography }
 import Show from "@/components/Show";
 import { acmeDns01ProvidersMap } from "@/domain/provider";
 
-export type AcmeDns01ProviderPickerProps = {
+export type ACMEDns01ProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
@@ -13,7 +13,7 @@ export type AcmeDns01ProviderPickerProps = {
   onSelect?: (value: string) => void;
 };
 
-const AcmeDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: AcmeDns01ProviderPickerProps) => {
+const ACMEDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ACMEDns01ProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
@@ -72,4 +72,4 @@ const AcmeDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onS
   );
 };
 
-export default memo(AcmeDns01ProviderPicker);
+export default memo(ACMEDns01ProviderPicker);

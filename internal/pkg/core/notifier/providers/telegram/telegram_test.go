@@ -45,7 +45,7 @@ func TestNotify(t *testing.T) {
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
-			ApiToken: fApiToken,
+			BotToken: fApiToken,
 			ChatId:   fChartId,
 		})
 		if err != nil {

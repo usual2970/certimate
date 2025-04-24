@@ -19,7 +19,7 @@ type NotifierConfig struct {
 	// 零值时根据是否启用 TLS 决定。
 	SmtpPort int32 `json:"smtpPort"`
 	// 是否启用 TLS。
-	SmtpTLS bool `json:"smtpTLS"`
+	SmtpTls bool `json:"smtpTls"`
 	// 用户名。
 	Username string `json:"username"`
 	// 密码。
@@ -64,7 +64,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	var smtpAddr string
 	if n.config.SmtpPort == 0 {
-		if n.config.SmtpTLS {
+		if n.config.SmtpTls {
 			smtpAddr = fmt.Sprintf("%s:465", n.config.SmtpHost)
 		} else {
 			smtpAddr = fmt.Sprintf("%s:25", n.config.SmtpHost)
@@ -74,7 +74,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	}
 
 	var yak *mailyak.MailYak
-	if n.config.SmtpTLS {
+	if n.config.SmtpTls {
 		yak, err = mailyak.NewWithTLS(smtpAddr, smtpAuth, newTlsConfig())
 		if err != nil {
 			return nil, err

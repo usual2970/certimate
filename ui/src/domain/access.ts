@@ -26,6 +26,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForDogeCloud
       | AccessConfigForDynv6
       | AccessConfigForEdgio
+      | AccessConfigForEmail
       | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
@@ -33,6 +34,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
+      | AccessConfigForMattermost
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
@@ -43,6 +45,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForSSLCom
+      | AccessConfigForTelegram
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
@@ -158,6 +161,16 @@ export type AccessConfigForEdgio = {
   clientSecret: string;
 };
 
+export type AccessConfigForEmail = {
+  smtpHost: string;
+  smtpPort: number;
+  smtpTls: boolean;
+  username: string;
+  password: string;
+  defaultSenderAddress?: string;
+  defaultReceiverAddress?: string;
+};
+
 export type AccessConfigForGcore = {
   apiToken: string;
 };
@@ -189,6 +202,13 @@ export type AccessConfigForJDCloud = {
 
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
+};
+
+export type AccessConfigForMattermost = {
+  serverUrl: string;
+  username: string;
+  password: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForNamecheap = {
@@ -246,6 +266,11 @@ export type AccessConfigForSSH = {
 export type AccessConfigForSSLCom = {
   eabKid: string;
   eabHmacKey: string;
+};
+
+export type AccessConfigForTelegram = {
+  botToken: string;
+  defaultChatId?: number;
 };
 
 export type AccessConfigForTencentCloud = {

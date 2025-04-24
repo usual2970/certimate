@@ -54,7 +54,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 	options := &applicantProviderOptions{
 		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
 		ContactEmail:             nodeConfig.ContactEmail,
-		Provider:                 domain.AcmeDns01ProviderType(nodeConfig.Provider),
+		Provider:                 domain.ACMEDns01ProviderType(nodeConfig.Provider),
 		ProviderAccessConfig:     make(map[string]any),
 		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
 		CAProvider:               domain.CAProviderType(nodeConfig.CAProvider),
