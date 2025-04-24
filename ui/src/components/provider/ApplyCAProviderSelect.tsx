@@ -22,7 +22,7 @@ const ApplyCAProviderSelect = ({ filter, ...props }: ApplyCAProviderSelectProps)
       {
         key: "",
         value: "",
-        label: "provider.default_ca_provider.label",
+        label: t("provider.default_ca_provider.label"),
         data: {} as ApplyCAProvider,
       },
       ...filteredItems.map((item) => ({

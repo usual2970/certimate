@@ -33,6 +33,7 @@ import ModalForm from "@/components/ModalForm";
 import MultipleInput from "@/components/MultipleInput";
 import ApplyCAProviderSelect from "@/components/provider/ApplyCAProviderSelect";
 import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
+import Show from "@/components/Show";
 import { ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyCAProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
@@ -400,12 +401,14 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
               <div className="flex w-full items-center justify-between gap-4">
                 <div className="max-w-full grow truncate">{t("workflow_node.apply.form.ca_provider.label")}</div>
                 <div className="text-right">
-                  <Link className="ant-typography" to="/settings/ssl-provider" target="_blank">
-                    <Button size="small" type="link">
-                      {t("workflow_node.apply.form.ca_provider.button")}
-                      <RightOutlinedIcon className="text-xs" />
-                    </Button>
-                  </Link>
+                  <Show when={!fieldCAProvider}>
+                    <Link className="ant-typography" to="/settings/ssl-provider" target="_blank">
+                      <Button size="small" type="link">
+                        {t("workflow_node.apply.form.ca_provider.button")}
+                        <RightOutlinedIcon className="text-xs" />
+                      </Button>
+                    </Link>
+                  </Show>
                 </div>
               </div>
             </label>
