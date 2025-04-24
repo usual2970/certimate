@@ -31,13 +31,11 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    host: z
-      .string({ message: t("access.form.ssh_host.placeholder") })
-      .refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
+    host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
     port: z.preprocess(
       (v) => Number(v),
       z
-        .number({ message: t("access.form.ssh_port.placeholder") })
+        .number()
         .int(t("access.form.ssh_port.placeholder"))
         .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
     ),
