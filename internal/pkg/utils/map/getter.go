@@ -207,7 +207,7 @@ func GetOrDefaultBool(dict map[string]any, key string, defaultValue bool) bool {
 //
 // 出参：
 //   - 字典中键对应的 `map[string]any` 对象。
-func GetAnyMap(dict map[string]any, key string) map[string]any {
+func GetMap(dict map[string]any, key string) map[string]any {
 	if dict == nil {
 		return make(map[string]any)
 	}

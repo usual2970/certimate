@@ -201,9 +201,9 @@ export const applyCAProvidersMap: Map<ApplyCAProvider["type"] | string, ApplyCAP
 
 // #region ApplyDNSProvider
 /*
-    注意：如果追加新的常量值，请保持以 ASCII 排序。
-    NOTICE: If you add new constant, please keep ASCII order.
-   */
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
 export const APPLY_DNS_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
   ALIYUN: `${ACCESS_PROVIDERS.ALIYUN}`, // 兼容旧值，等同于 `ALIYUN_DNS`
@@ -255,9 +255,9 @@ export type ApplyDNSProvider = {
 
 export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyDNSProvider> = new Map(
   /*
-     注意：此处的顺序决定显示在前端的顺序。
-     NOTICE: The following order determines the order displayed at the frontend.
-    */
+    注意：此处的顺序决定显示在前端的顺序。
+    NOTICE: The following order determines the order displayed at the frontend.
+   */
   [
     [APPLY_DNS_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
     [APPLY_DNS_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
@@ -302,9 +302,9 @@ export const applyDNSProvidersMap: Map<ApplyDNSProvider["type"] | string, ApplyD
 
 // #region DeployProvider
 /*
-    注意：如果追加新的常量值，请保持以 ASCII 排序。
-    NOTICE: If you add new constant, please keep ASCII order.
-   */
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
 export const DEPLOY_PROVIDERS = Object.freeze({
   ["1PANEL_CONSOLE"]: `${ACCESS_PROVIDERS["1PANEL"]}-console`,
   ["1PANEL_SITE"]: `${ACCESS_PROVIDERS["1PANEL"]}-site`,
@@ -496,6 +496,41 @@ export const deployProvidersMap: Map<DeployProvider["type"] | string, DeployProv
       provider: type.split("-")[0] as AccessProviderType,
       category: category as DeployCategoryType,
       builtin: builtin === "builtin",
+    },
+  ])
+);
+// #endregion
+
+// #region NotifyProvider
+/*
+  注意：如果追加新的常量值，请保持以 ASCII 排序。
+  NOTICE: If you add new constant, please keep ASCII order.
+ */
+export const NOTIFY_PROVIDERS = Object.freeze({
+  WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
+} as const);
+
+export type NotifyProviderType = (typeof APPLY_CA_PROVIDERS)[keyof typeof APPLY_CA_PROVIDERS];
+
+export type NotifyProvider = {
+  type: NotifyProviderType;
+  name: string;
+  icon: string;
+  provider: AccessProviderType;
+};
+
+export const notifyProvidersMap: Map<NotifyProvider["type"] | string, NotifyProvider> = new Map(
+  /*
+    注意：此处的顺序决定显示在前端的顺序。
+    NOTICE: The following order determines the order displayed at the frontend.
+   */
+  [[NOTIFY_PROVIDERS.WEBHOOK]].map(([type]) => [
+    type,
+    {
+      type: type as ApplyCAProviderType,
+      name: accessProvidersMap.get(type.split("-")[0])!.name,
+      icon: accessProvidersMap.get(type.split("-")[0])!.icon,
+      provider: type.split("-")[0] as AccessProviderType,
     },
   ])
 );

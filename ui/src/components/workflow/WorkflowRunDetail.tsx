@@ -193,6 +193,7 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
     const NEWLINE = "\n";
     const logstr = listData
       .map((group) => {
+        const escape = (str: string) => str.replaceAll("\r", "\\r").replaceAll("\n", "\\n");
         return (
           group.name +
           NEWLINE +
@@ -200,8 +201,9 @@ const WorkflowRunLogs = ({ runId, runStatus }: { runId: string; runStatus: strin
             .map((record) => {
               const datetime = dayjs(record.timestamp).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
               const level = record.level;
-              const message = record.message.trim().replaceAll("\r", "\\r").replaceAll("\n", "\\n");
-              return `[${datetime}] [${level}] ${message}`;
+              const message = record.message;
+              const data = record.data && Object.keys(record.data).length > 0 ? JSON.stringify(record.data) : "";
+              return `[${datetime}] [${level}] ${escape(message)} ${escape(data)}`.trim();
             })
             .join(NEWLINE)
         );

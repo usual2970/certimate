@@ -3,6 +3,9 @@ import { type ApplyCAProviderType } from "./provider";
 export const SETTINGS_NAMES = Object.freeze({
   EMAILS: "emails",
   NOTIFY_TEMPLATES: "notifyTemplates",
+  /**
+   * @deprecated
+   */
   NOTIFY_CHANNELS: "notifyChannels",
   SSL_PROVIDER: "sslProvider",
   PERSISTENCE: "persistence",
@@ -38,6 +41,9 @@ export const defaultNotifyTemplate: NotifyTemplate = {
 // #endregion
 
 // #region Settings: NotifyChannels
+/**
+ * @deprecated
+ */
 export const NOTIFY_CHANNELS = Object.freeze({
   BARK: "bark",
   DINGTALK: "dingtalk",
@@ -53,8 +59,14 @@ export const NOTIFY_CHANNELS = Object.freeze({
   WECOM: "wecom",
 } as const);
 
+/**
+ * @deprecated
+ */
 export type NotifyChannels = (typeof NOTIFY_CHANNELS)[keyof typeof NOTIFY_CHANNELS];
 
+/**
+ * @deprecated
+ */
 export type NotifyChannelsSettingsContent = {
   /*
     注意：如果追加新的类型，请保持以 ASCII 排序。
@@ -116,7 +128,7 @@ export type MattermostNotifyChannelConfig = {
   username: string;
   password: string;
   enabled?: boolean;
-}
+};
 
 export type PushoverNotifyChannelConfig = {
   token: string;
@@ -155,6 +167,9 @@ export type NotifyChannel = {
   name: string;
 };
 
+/**
+ * @deprecated
+ */
 export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new Map(
   [
     [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],

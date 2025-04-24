@@ -185,10 +185,12 @@ const AccessList = () => {
 
   const handleTabChange = (key: string) => {
     setFilters((prev) => ({ ...prev, range: key }));
+    setPage(1);
   };
 
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, keyword: value }));
+    setPage(1);
   };
 
   const handleReloadClick = () => {
@@ -251,10 +253,10 @@ const AccessList = () => {
             key: "ca-only",
             label: t("access.props.range.ca_only"),
           },
-          // {
-          //   key: "notify-only",
-          //   label: t("access.props.range.notify_only"),
-          // },
+          {
+            key: "notify-only",
+            label: t("access.props.range.notify_only"),
+          },
         ]}
         activeTabKey={filters["range"] as string}
         onTabChange={(key) => handleTabChange(key)}

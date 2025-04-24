@@ -154,9 +154,15 @@ export type WorkflowNodeConfigForDeploy = {
 };
 
 export type WorkflowNodeConfigForNotify = {
-  channel: string;
   subject: string;
   message: string;
+  /**
+   * @deprecated
+   */
+  channel?: string;
+  provider: string;
+  providerAccessId: string;
+  providerConfig?: Record<string, unknown>;
 };
 
 export type WorkflowNodeConfigForBranch = never;

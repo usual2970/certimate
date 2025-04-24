@@ -63,17 +63,18 @@ func (n *deployNode) Process(ctx context.Context) error {
 	}
 
 	// 初始化部署器
-	deployer, err := deployer.NewWithDeployNode(n.node, struct {
-		Certificate string
-		PrivateKey  string
-	}{Certificate: certificate.Certificate, PrivateKey: certificate.PrivateKey})
+	deployer, err := deployer.NewWithWorkflowNode(deployer.DeployerWithWorkflowNodeConfig{
+		Node:           n.node,
+		Logger:         n.logger,
+		CertificatePEM: certificate.Certificate,
+		PrivateKeyPEM:  certificate.PrivateKey,
+	})
 	if err != nil {
 		n.logger.Warn("failed to create deployer provider")
 		return err
 	}
 
 	// 部署证书
-	deployer.SetLogger(n.logger)
 	if err := deployer.Deploy(ctx); err != nil {
 		n.logger.Warn("failed to deploy")
 		return err

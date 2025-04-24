@@ -8,6 +8,7 @@ type NotifyChannelType string
 	注意：如果追加新的常量值，请保持以 ASCII 排序。
 	NOTICE: If you add new constant, please keep ASCII order.
 */
+// Deprecated: v0.4.x 将废弃
 const (
 	NotifyChannelTypeBark       = NotifyChannelType("bark")
 	NotifyChannelTypeDingTalk   = NotifyChannelType("dingtalk")

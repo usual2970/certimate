@@ -49,14 +49,17 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 初始化申请器
-	applicant, err := applicant.NewWithApplyNode(n.node)
+	applicant, err := applicant.NewWithWorkflowNode(applicant.ApplicantWithWorkflowNodeConfig{
+		Node:   n.node,
+		Logger: n.logger,
+	})
 	if err != nil {
 		n.logger.Warn("failed to create applicant provider")
 		return err
 	}
 
 	// 申请证书
-	applyResult, err := applicant.Apply()
+	applyResult, err := applicant.Apply(ctx)
 	if err != nil {
 		n.logger.Warn("failed to apply")
 		return err

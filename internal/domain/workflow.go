@@ -71,7 +71,7 @@ type WorkflowNodeConfigForApply struct {
 	CAProvider            string         `json:"caProvider,omitempty"`            // CA 提供商（零值将使用全局配置）
 	CAProviderAccessId    string         `json:"caProviderAccessId,omitempty"`    // CA 提供商授权记录 ID
 	CAProviderConfig      map[string]any `json:"caProviderConfig,omitempty"`      // CA 提供商额外配置
-	KeyAlgorithm          string         `json:"keyAlgorithm"`                    // 密钥算法
+	KeyAlgorithm          string         `json:"keyAlgorithm"`                    // 证书算法
 	Nameservers           string         `json:"nameservers,omitempty"`           // DNS 服务器列表，以半角分号分隔
 	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout,omitempty"` // DNS 传播超时时间（零值取决于提供商的默认值）
 	DnsTTL                int32          `json:"dnsTTL,omitempty"`                // DNS TTL（零值取决于提供商的默认值）
@@ -95,9 +95,12 @@ type WorkflowNodeConfigForDeploy struct {
 }
 
 type WorkflowNodeConfigForNotify struct {
-	Channel string `json:"channel"` // 通知渠道
-	Subject string `json:"subject"` // 通知主题
-	Message string `json:"message"` // 通知内容
+	Channel          string         `json:"channel,omitempty"`        // Deprecated: v0.4.x 将废弃
+	Provider         string         `json:"provider"`                 // 通知提供商
+	ProviderAccessId string         `json:"providerAccessId"`         // 通知提供商授权记录 ID
+	ProviderConfig   map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
+	Subject          string         `json:"subject"`                  // 通知主题
+	Message          string         `json:"message"`                  // 通知内容
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -111,10 +114,10 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		ContactEmail:          maputil.GetString(n.Config, "contactEmail"),
 		Provider:              maputil.GetString(n.Config, "provider"),
 		ProviderAccessId:      maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:        maputil.GetAnyMap(n.Config, "providerConfig"),
+		ProviderConfig:        maputil.GetMap(n.Config, "providerConfig"),
 		CAProvider:            maputil.GetString(n.Config, "caProvider"),
 		CAProviderAccessId:    maputil.GetString(n.Config, "caProviderAccessId"),
-		CAProviderConfig:      maputil.GetAnyMap(n.Config, "caProviderConfig"),
+		CAProviderConfig:      maputil.GetMap(n.Config, "caProviderConfig"),
 		KeyAlgorithm:          maputil.GetString(n.Config, "keyAlgorithm"),
 		Nameservers:           maputil.GetString(n.Config, "nameservers"),
 		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
@@ -138,16 +141,19 @@ func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 		Certificate:         maputil.GetString(n.Config, "certificate"),
 		Provider:            maputil.GetString(n.Config, "provider"),
 		ProviderAccessId:    maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:      maputil.GetAnyMap(n.Config, "providerConfig"),
+		ProviderConfig:      maputil.GetMap(n.Config, "providerConfig"),
 		SkipOnLastSucceeded: maputil.GetBool(n.Config, "skipOnLastSucceeded"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	return WorkflowNodeConfigForNotify{
-		Channel: maputil.GetString(n.Config, "channel"),
-		Subject: maputil.GetString(n.Config, "subject"),
-		Message: maputil.GetString(n.Config, "message"),
+		Channel:          maputil.GetString(n.Config, "channel"),
+		Provider:         maputil.GetString(n.Config, "provider"),
+		ProviderAccessId: maputil.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:   maputil.GetMap(n.Config, "providerConfig"),
+		Subject:          maputil.GetString(n.Config, "subject"),
+		Message:          maputil.GetString(n.Config, "message"),
 	}
 }
 
