@@ -10,7 +10,7 @@ import (
 )
 
 type notifierProviderOptions struct {
-	Provider             domain.NotifyProviderType
+	Provider             domain.NotificationProviderType
 	ProviderAccessConfig map[string]any
 	ProviderNotifyConfig map[string]any
 }
@@ -21,7 +21,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.NotifyProviderTypeWebhook:
+	case domain.NotificationProviderTypeWebhook:
 		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
 			Url:                      maputil.GetString(options.ProviderAccessConfig, "url"),
 			AllowInsecureConnections: maputil.GetBool(options.ProviderAccessConfig, "allowInsecureConnections"),

@@ -2,14 +2,14 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useState } from "reac
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { PlusOutlined as PlusOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
-import { Alert, Button, Form, type FormInstance, Input, Select } from "antd";
+import { Button, Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import NotifyProviderSelect from "@/components/provider/NotifyProviderSelect";
-import { ACCESS_USAGES, accessProvidersMap, notifyProvidersMap } from "@/domain/provider";
+import NotificationProviderSelect from "@/components/provider/NotificationProviderSelect";
+import { ACCESS_USAGES, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNodeConfigForNotify } from "@/domain/workflow";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
@@ -81,7 +81,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
       // 如果对应多个，则显示。
       if (fieldProviderAccessId) {
         const access = accesses.find((e) => e.id === fieldProviderAccessId);
-        const providers = Array.from(notifyProvidersMap.values()).filter((e) => e.provider === access?.provider);
+        const providers = Array.from(notificationProvidersMap.values()).filter((e) => e.provider === access?.provider);
         setShowProvider(providers.length > 1);
       } else {
         setShowProvider(false);
@@ -96,7 +96,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         formInst.setFieldValue("providerAccessId", initialValues?.providerAccessId);
         onValuesChange?.(formInst.getFieldsValue(true));
       } else {
-        if (notifyProvidersMap.get(fieldProvider)?.provider !== notifyProvidersMap.get(value)?.provider) {
+        if (notificationProvidersMap.get(fieldProvider)?.provider !== notificationProvidersMap.get(value)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -108,7 +108,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
 
       // 切换授权信息时联动消息通知提供商
       const access = accesses.find((access) => access.id === value);
-      const provider = Array.from(notifyProvidersMap.values()).find((provider) => provider.provider === access?.provider);
+      const provider = Array.from(notificationProvidersMap.values()).find((provider) => provider.provider === access?.provider);
       if (fieldProvider !== provider?.type) {
         formInst.setFieldValue("provider", provider?.type);
         onValuesChange?.(formInst.getFieldsValue(true));
@@ -172,7 +172,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         </Form.Item>
 
         <Form.Item name="provider" label={t("workflow_node.notify.form.provider.label")} hidden={!showProvider} rules={[formRule]}>
-          <NotifyProviderSelect
+          <NotificationProviderSelect
             disabled={!showProvider}
             filter={(record) => {
               if (fieldProviderAccessId) {

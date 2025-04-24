@@ -2,50 +2,34 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { type ApplyCAProvider, applyCAProvidersMap } from "@/domain/provider";
+import { type NotificationProvider, notificationProvidersMap } from "@/domain/provider";
 
-export type ApplyCAProviderSelectProps = Omit<
+export type NotificationProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
-  filter?: (record: ApplyCAProvider) => boolean;
+  filter?: (record: NotificationProvider) => boolean;
 };
 
-const ApplyCAProviderSelect = ({ filter, ...props }: ApplyCAProviderSelectProps) => {
+const NotificationProviderSelect = ({ filter, ...props }: NotificationProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyCAProvider }>>([]);
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: NotificationProvider }>>([]);
   useEffect(() => {
-    const allItems = Array.from(applyCAProvidersMap.values());
+    const allItems = Array.from(notificationProvidersMap.values());
     const filteredItems = filter != null ? allItems.filter(filter) : allItems;
-    setOptions([
-      {
-        key: "",
-        value: "",
-        label: t("provider.default_ca_provider.label"),
-        data: {} as ApplyCAProvider,
-      },
-      ...filteredItems.map((item) => ({
+    setOptions(
+      filteredItems.map((item) => ({
         key: item.type,
         value: item.type,
         label: t(item.name),
         data: item,
-      })),
-    ]);
+      }))
+    );
   }, [filter]);
 
   const renderOption = (key: string) => {
-    if (key === "") {
-      return (
-        <Space className="max-w-full grow overflow-hidden truncate" size={4}>
-          <Typography.Text className="italic leading-loose" type="secondary" ellipsis italic>
-            {t("provider.default_ca_provider.label")}
-          </Typography.Text>
-        </Space>
-      );
-    }
-
-    const provider = applyCAProvidersMap.get(key);
+    const provider = notificationProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
@@ -67,7 +51,7 @@ const ApplyCAProviderSelect = ({ filter, ...props }: ApplyCAProviderSelectProps)
       }}
       labelRender={({ label, value }) => {
         if (!label) {
-          return <Typography.Text type="secondary">{props.placeholder || t("provider.default_ca_provider.label")}</Typography.Text>;
+          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
         }
 
         return renderOption(value as string);
@@ -80,4 +64,4 @@ const ApplyCAProviderSelect = ({ filter, ...props }: ApplyCAProviderSelectProps)
   );
 };
 
-export default memo(ApplyCAProviderSelect);
+export default memo(NotificationProviderSelect);

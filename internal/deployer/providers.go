@@ -83,7 +83,7 @@ import (
 )
 
 type deployerProviderOptions struct {
-	Provider             domain.DeployProviderType
+	Provider             domain.DeploymentProviderType
 	ProviderAccessConfig map[string]any
 	ProviderDeployConfig map[string]any
 }
@@ -94,7 +94,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
-	case domain.DeployProviderType1PanelConsole, domain.DeployProviderType1PanelSite:
+	case domain.DeploymentProviderType1PanelConsole, domain.DeploymentProviderType1PanelSite:
 		{
 			access := domain.AccessConfigFor1Panel{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -102,7 +102,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderType1PanelConsole:
+			case domain.DeploymentProviderType1PanelConsole:
 				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
@@ -111,7 +111,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderType1PanelSite:
+			case domain.DeploymentProviderType1PanelSite:
 				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
@@ -127,7 +127,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeAliyunALB, domain.DeployProviderTypeAliyunAPIGW, domain.DeployProviderTypeAliyunCAS, domain.DeployProviderTypeAliyunCASDeploy, domain.DeployProviderTypeAliyunCDN, domain.DeployProviderTypeAliyunCLB, domain.DeployProviderTypeAliyunDCDN, domain.DeployProviderTypeAliyunESA, domain.DeployProviderTypeAliyunFC, domain.DeployProviderTypeAliyunLive, domain.DeployProviderTypeAliyunNLB, domain.DeployProviderTypeAliyunOSS, domain.DeployProviderTypeAliyunVOD, domain.DeployProviderTypeAliyunWAF:
+	case domain.DeploymentProviderTypeAliyunALB, domain.DeploymentProviderTypeAliyunAPIGW, domain.DeploymentProviderTypeAliyunCAS, domain.DeploymentProviderTypeAliyunCASDeploy, domain.DeploymentProviderTypeAliyunCDN, domain.DeploymentProviderTypeAliyunCLB, domain.DeploymentProviderTypeAliyunDCDN, domain.DeploymentProviderTypeAliyunESA, domain.DeploymentProviderTypeAliyunFC, domain.DeploymentProviderTypeAliyunLive, domain.DeploymentProviderTypeAliyunNLB, domain.DeploymentProviderTypeAliyunOSS, domain.DeploymentProviderTypeAliyunVOD, domain.DeploymentProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -135,7 +135,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeAliyunALB:
+			case domain.DeploymentProviderTypeAliyunALB:
 				deployer, err := pAliyunALB.NewDeployer(&pAliyunALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -147,7 +147,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunAPIGW:
+			case domain.DeploymentProviderTypeAliyunAPIGW:
 				deployer, err := pAliyunAPIGW.NewDeployer(&pAliyunAPIGW.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -159,7 +159,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunCAS:
+			case domain.DeploymentProviderTypeAliyunCAS:
 				deployer, err := pAliyunCAS.NewDeployer(&pAliyunCAS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -167,7 +167,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunCASDeploy:
+			case domain.DeploymentProviderTypeAliyunCASDeploy:
 				deployer, err := pAliyunCASDeploy.NewDeployer(&pAliyunCASDeploy.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -177,7 +177,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunCDN:
+			case domain.DeploymentProviderTypeAliyunCDN:
 				deployer, err := pAliyunCDN.NewDeployer(&pAliyunCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -185,7 +185,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunCLB:
+			case domain.DeploymentProviderTypeAliyunCLB:
 				deployer, err := pAliyunCLB.NewDeployer(&pAliyunCLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -197,7 +197,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunDCDN:
+			case domain.DeploymentProviderTypeAliyunDCDN:
 				deployer, err := pAliyunDCDN.NewDeployer(&pAliyunDCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -205,7 +205,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunESA:
+			case domain.DeploymentProviderTypeAliyunESA:
 				deployer, err := pAliyunESA.NewDeployer(&pAliyunESA.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -214,7 +214,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunFC:
+			case domain.DeploymentProviderTypeAliyunFC:
 				deployer, err := pAliyunFC.NewDeployer(&pAliyunFC.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -224,7 +224,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunLive:
+			case domain.DeploymentProviderTypeAliyunLive:
 				deployer, err := pAliyunLive.NewDeployer(&pAliyunLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -233,7 +233,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunNLB:
+			case domain.DeploymentProviderTypeAliyunNLB:
 				deployer, err := pAliyunNLB.NewDeployer(&pAliyunNLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -244,7 +244,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunOSS:
+			case domain.DeploymentProviderTypeAliyunOSS:
 				deployer, err := pAliyunOSS.NewDeployer(&pAliyunOSS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -254,7 +254,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunVOD:
+			case domain.DeploymentProviderTypeAliyunVOD:
 				deployer, err := pAliyunVOD.NewDeployer(&pAliyunVOD.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -263,7 +263,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAliyunWAF:
+			case domain.DeploymentProviderTypeAliyunWAF:
 				deployer, err := pAliyunWAF.NewDeployer(&pAliyunWAF.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -279,7 +279,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeAWSACM, domain.DeployProviderTypeAWSCloudFront:
+	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront:
 		{
 			access := domain.AccessConfigForAWS{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -287,7 +287,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeAWSACM:
+			case domain.DeploymentProviderTypeAWSACM:
 				deployer, err := pAWSACM.NewDeployer(&pAWSACM.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -295,7 +295,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeAWSCloudFront:
+			case domain.DeploymentProviderTypeAWSCloudFront:
 				deployer, err := pAWSCloudFront.NewDeployer(&pAWSCloudFront.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -309,7 +309,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeAzureKeyVault:
+	case domain.DeploymentProviderTypeAzureKeyVault:
 		{
 			access := domain.AccessConfigForAzure{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -317,7 +317,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeAzureKeyVault:
+			case domain.DeploymentProviderTypeAzureKeyVault:
 				deployer, err := pAzureKeyVault.NewDeployer(&pAzureKeyVault.DeployerConfig{
 					TenantId:        access.TenantId,
 					ClientId:        access.ClientId,
@@ -333,7 +333,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeBaiduCloudAppBLB, domain.DeployProviderTypeBaiduCloudBLB, domain.DeployProviderTypeBaiduCloudCDN, domain.DeployProviderTypeBaiduCloudCert:
+	case domain.DeploymentProviderTypeBaiduCloudAppBLB, domain.DeploymentProviderTypeBaiduCloudBLB, domain.DeploymentProviderTypeBaiduCloudCDN, domain.DeploymentProviderTypeBaiduCloudCert:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -341,7 +341,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeBaiduCloudAppBLB:
+			case domain.DeploymentProviderTypeBaiduCloudAppBLB:
 				deployer, err := pBaiduCloudAppBLB.NewDeployer(&pBaiduCloudAppBLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -353,7 +353,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeBaiduCloudBLB:
+			case domain.DeploymentProviderTypeBaiduCloudBLB:
 				deployer, err := pBaiduCloudBLB.NewDeployer(&pBaiduCloudBLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -365,7 +365,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeBaiduCloudCDN:
+			case domain.DeploymentProviderTypeBaiduCloudCDN:
 				deployer, err := pBaiduCloudCDN.NewDeployer(&pBaiduCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -373,7 +373,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeBaiduCloudCert:
+			case domain.DeploymentProviderTypeBaiduCloudCert:
 				deployer, err := pBaiduCloudCert.NewDeployer(&pBaiduCloudCert.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -385,7 +385,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeBaishanCDN:
+	case domain.DeploymentProviderTypeBaishanCDN:
 		{
 			access := domain.AccessConfigForBaishan{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -393,7 +393,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeBaishanCDN:
+			case domain.DeploymentProviderTypeBaishanCDN:
 				deployer, err := pBaishanCDN.NewDeployer(&pBaishanCDN.DeployerConfig{
 					ApiToken:      access.ApiToken,
 					Domain:        maputil.GetString(options.ProviderDeployConfig, "domain"),
@@ -406,7 +406,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeBaotaPanelConsole, domain.DeployProviderTypeBaotaPanelSite:
+	case domain.DeploymentProviderTypeBaotaPanelConsole, domain.DeploymentProviderTypeBaotaPanelSite:
 		{
 			access := domain.AccessConfigForBaotaPanel{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -414,7 +414,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeBaotaPanelConsole:
+			case domain.DeploymentProviderTypeBaotaPanelConsole:
 				deployer, err := pBaotaPanelConsole.NewDeployer(&pBaotaPanelConsole.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
@@ -423,7 +423,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeBaotaPanelSite:
+			case domain.DeploymentProviderTypeBaotaPanelSite:
 				deployer, err := pBaotaPanelSite.NewDeployer(&pBaotaPanelSite.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
@@ -439,7 +439,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeBunnyCDN:
+	case domain.DeploymentProviderTypeBunnyCDN:
 		{
 			access := domain.AccessConfigForBunny{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -454,7 +454,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeBytePlusCDN:
+	case domain.DeploymentProviderTypeBytePlusCDN:
 		{
 			access := domain.AccessConfigForBytePlus{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -462,7 +462,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeBytePlusCDN:
+			case domain.DeploymentProviderTypeBytePlusCDN:
 				deployer, err := pBytePlusCDN.NewDeployer(&pBytePlusCDN.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
@@ -475,7 +475,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeCacheFly:
+	case domain.DeploymentProviderTypeCacheFly:
 		{
 			access := domain.AccessConfigForCacheFly{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -488,7 +488,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeCdnfly:
+	case domain.DeploymentProviderTypeCdnfly:
 		{
 			access := domain.AccessConfigForCdnfly{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -506,7 +506,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeDogeCloudCDN:
+	case domain.DeploymentProviderTypeDogeCloudCDN:
 		{
 			access := domain.AccessConfigForDogeCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -521,7 +521,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeEdgioApplications:
+	case domain.DeploymentProviderTypeEdgioApplications:
 		{
 			access := domain.AccessConfigForEdgio{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -536,7 +536,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeGcoreCDN:
+	case domain.DeploymentProviderTypeGcoreCDN:
 		{
 			access := domain.AccessConfigForGcore{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -544,7 +544,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeGcoreCDN:
+			case domain.DeploymentProviderTypeGcoreCDN:
 				deployer, err := pGcoreCDN.NewDeployer(&pGcoreCDN.DeployerConfig{
 					ApiToken:   access.ApiToken,
 					ResourceId: maputil.GetInt64(options.ProviderDeployConfig, "resourceId"),
@@ -556,7 +556,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeHuaweiCloudCDN, domain.DeployProviderTypeHuaweiCloudELB, domain.DeployProviderTypeHuaweiCloudSCM, domain.DeployProviderTypeHuaweiCloudWAF:
+	case domain.DeploymentProviderTypeHuaweiCloudCDN, domain.DeploymentProviderTypeHuaweiCloudELB, domain.DeploymentProviderTypeHuaweiCloudSCM, domain.DeploymentProviderTypeHuaweiCloudWAF:
 		{
 			access := domain.AccessConfigForHuaweiCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -564,7 +564,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeHuaweiCloudCDN:
+			case domain.DeploymentProviderTypeHuaweiCloudCDN:
 				deployer, err := pHuaweiCloudCDN.NewDeployer(&pHuaweiCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -573,7 +573,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeHuaweiCloudELB:
+			case domain.DeploymentProviderTypeHuaweiCloudELB:
 				deployer, err := pHuaweiCloudELB.NewDeployer(&pHuaweiCloudELB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -585,14 +585,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeHuaweiCloudSCM:
+			case domain.DeploymentProviderTypeHuaweiCloudSCM:
 				deployer, err := pHuaweiCloudSCM.NewDeployer(&pHuaweiCloudSCM.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeHuaweiCloudWAF:
+			case domain.DeploymentProviderTypeHuaweiCloudWAF:
 				deployer, err := pHuaweiCloudWAF.NewDeployer(&pHuaweiCloudWAF.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
@@ -608,7 +608,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeJDCloudALB, domain.DeployProviderTypeJDCloudCDN, domain.DeployProviderTypeJDCloudLive, domain.DeployProviderTypeJDCloudVOD:
+	case domain.DeploymentProviderTypeJDCloudALB, domain.DeploymentProviderTypeJDCloudCDN, domain.DeploymentProviderTypeJDCloudLive, domain.DeploymentProviderTypeJDCloudVOD:
 		{
 			access := domain.AccessConfigForJDCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -616,7 +616,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeJDCloudALB:
+			case domain.DeploymentProviderTypeJDCloudALB:
 				deployer, err := pJDCloudALB.NewDeployer(&pJDCloudALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -627,7 +627,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeJDCloudCDN:
+			case domain.DeploymentProviderTypeJDCloudCDN:
 				deployer, err := pJDCloudCDN.NewDeployer(&pJDCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -635,7 +635,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeJDCloudLive:
+			case domain.DeploymentProviderTypeJDCloudLive:
 				deployer, err := pJDCloudLive.NewDeployer(&pJDCloudLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -643,7 +643,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeJDCloudVOD:
+			case domain.DeploymentProviderTypeJDCloudVOD:
 				deployer, err := pJDCloudVOD.NewDeployer(&pJDCloudVOD.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -656,7 +656,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeLocal:
+	case domain.DeploymentProviderTypeLocal:
 		{
 			deployer, err := pLocal.NewDeployer(&pLocal.DeployerConfig{
 				ShellEnv:       pLocal.ShellEnvType(maputil.GetString(options.ProviderDeployConfig, "shellEnv")),
@@ -673,7 +673,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeKubernetesSecret:
+	case domain.DeploymentProviderTypeKubernetesSecret:
 		{
 			access := domain.AccessConfigForKubernetes{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -691,7 +691,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuKodo, domain.DeployProviderTypeQiniuPili:
+	case domain.DeploymentProviderTypeQiniuCDN, domain.DeploymentProviderTypeQiniuKodo, domain.DeploymentProviderTypeQiniuPili:
 		{
 			access := domain.AccessConfigForQiniu{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -699,7 +699,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeQiniuCDN, domain.DeployProviderTypeQiniuKodo:
+			case domain.DeploymentProviderTypeQiniuCDN, domain.DeploymentProviderTypeQiniuKodo:
 				deployer, err := pQiniuCDN.NewDeployer(&pQiniuCDN.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
@@ -707,7 +707,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeQiniuPili:
+			case domain.DeploymentProviderTypeQiniuPili:
 				deployer, err := pQiniuPili.NewDeployer(&pQiniuPili.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
@@ -721,7 +721,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeRainYunRCDN:
+	case domain.DeploymentProviderTypeRainYunRCDN:
 		{
 			access := domain.AccessConfigForRainYun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -729,7 +729,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeTencentCloudCDN:
+			case domain.DeploymentProviderTypeTencentCloudCDN:
 				deployer, err := pRainYunRCDN.NewDeployer(&pRainYunRCDN.DeployerConfig{
 					ApiKey:     access.ApiKey,
 					InstanceId: maputil.GetInt32(options.ProviderDeployConfig, "instanceId"),
@@ -742,7 +742,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeSafeLine:
+	case domain.DeploymentProviderTypeSafeLine:
 		{
 			access := domain.AccessConfigForSafeLine{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -759,7 +759,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeSSH:
+	case domain.DeploymentProviderTypeSSH:
 		{
 			access := domain.AccessConfigForSSH{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -787,7 +787,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeployProviderTypeTencentCloudCDN, domain.DeployProviderTypeTencentCloudCLB, domain.DeployProviderTypeTencentCloudCOS, domain.DeployProviderTypeTencentCloudCSS, domain.DeployProviderTypeTencentCloudECDN, domain.DeployProviderTypeTencentCloudEO, domain.DeployProviderTypeTencentCloudSCF, domain.DeployProviderTypeTencentCloudSSL, domain.DeployProviderTypeTencentCloudSSLDeploy, domain.DeployProviderTypeTencentCloudVOD, domain.DeployProviderTypeTencentCloudWAF:
+	case domain.DeploymentProviderTypeTencentCloudCDN, domain.DeploymentProviderTypeTencentCloudCLB, domain.DeploymentProviderTypeTencentCloudCOS, domain.DeploymentProviderTypeTencentCloudCSS, domain.DeploymentProviderTypeTencentCloudECDN, domain.DeploymentProviderTypeTencentCloudEO, domain.DeploymentProviderTypeTencentCloudSCF, domain.DeploymentProviderTypeTencentCloudSSL, domain.DeploymentProviderTypeTencentCloudSSLDeploy, domain.DeploymentProviderTypeTencentCloudVOD, domain.DeploymentProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -795,7 +795,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeTencentCloudCDN:
+			case domain.DeploymentProviderTypeTencentCloudCDN:
 				deployer, err := pTencentCloudCDN.NewDeployer(&pTencentCloudCDN.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -803,7 +803,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudCLB:
+			case domain.DeploymentProviderTypeTencentCloudCLB:
 				deployer, err := pTencentCloudCLB.NewDeployer(&pTencentCloudCLB.DeployerConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
@@ -815,7 +815,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudCOS:
+			case domain.DeploymentProviderTypeTencentCloudCOS:
 				deployer, err := pTencentCloudCOS.NewDeployer(&pTencentCloudCOS.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -825,7 +825,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudCSS:
+			case domain.DeploymentProviderTypeTencentCloudCSS:
 				deployer, err := pTencentCloudCSS.NewDeployer(&pTencentCloudCSS.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -833,7 +833,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudECDN:
+			case domain.DeploymentProviderTypeTencentCloudECDN:
 				deployer, err := pTencentCloudECDN.NewDeployer(&pTencentCloudECDN.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -841,7 +841,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudEO:
+			case domain.DeploymentProviderTypeTencentCloudEO:
 				deployer, err := pTencentCloudEO.NewDeployer(&pTencentCloudEO.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -850,7 +850,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudSCF:
+			case domain.DeploymentProviderTypeTencentCloudSCF:
 				deployer, err := pTencentCloudSCF.NewDeployer(&pTencentCloudSCF.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -859,14 +859,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudSSL:
+			case domain.DeploymentProviderTypeTencentCloudSSL:
 				deployer, err := pTencentCloudSSL.NewDeployer(&pTencentCloudSSL.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudSSLDeploy:
+			case domain.DeploymentProviderTypeTencentCloudSSLDeploy:
 				deployer, err := pTencentCloudSSLDeploy.NewDeployer(&pTencentCloudSSLDeploy.DeployerConfig{
 					SecretId:     access.SecretId,
 					SecretKey:    access.SecretKey,
@@ -876,7 +876,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudVOD:
+			case domain.DeploymentProviderTypeTencentCloudVOD:
 				deployer, err := pTencentCloudVOD.NewDeployer(&pTencentCloudVOD.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
@@ -885,7 +885,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeTencentCloudWAF:
+			case domain.DeploymentProviderTypeTencentCloudWAF:
 				deployer, err := pTencentCloudWAF.NewDeployer(&pTencentCloudWAF.DeployerConfig{
 					SecretId:   access.SecretId,
 					SecretKey:  access.SecretKey,
@@ -900,7 +900,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeUCloudUCDN, domain.DeployProviderTypeUCloudUS3:
+	case domain.DeploymentProviderTypeUCloudUCDN, domain.DeploymentProviderTypeUCloudUS3:
 		{
 			access := domain.AccessConfigForUCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -908,7 +908,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeUCloudUCDN:
+			case domain.DeploymentProviderTypeUCloudUCDN:
 				deployer, err := pUCloudUCDN.NewDeployer(&pUCloudUCDN.DeployerConfig{
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
@@ -917,7 +917,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeUCloudUS3:
+			case domain.DeploymentProviderTypeUCloudUS3:
 				deployer, err := pUCloudUS3.NewDeployer(&pUCloudUS3.DeployerConfig{
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
@@ -933,7 +933,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeUpyunCDN, domain.DeployProviderTypeUpyunFile:
+	case domain.DeploymentProviderTypeUpyunCDN, domain.DeploymentProviderTypeUpyunFile:
 		{
 			access := domain.AccessConfigForUpyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -941,7 +941,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeUpyunCDN, domain.DeployProviderTypeUpyunFile:
+			case domain.DeploymentProviderTypeUpyunCDN, domain.DeploymentProviderTypeUpyunFile:
 				deployer, err := pUpyunCDN.NewDeployer(&pUpyunCDN.DeployerConfig{
 					Username: access.Username,
 					Password: access.Password,
@@ -954,7 +954,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeVolcEngineALB, domain.DeployProviderTypeVolcEngineCDN, domain.DeployProviderTypeVolcEngineCertCenter, domain.DeployProviderTypeVolcEngineCLB, domain.DeployProviderTypeVolcEngineDCDN, domain.DeployProviderTypeVolcEngineImageX, domain.DeployProviderTypeVolcEngineLive, domain.DeployProviderTypeVolcEngineTOS:
+	case domain.DeploymentProviderTypeVolcEngineALB, domain.DeploymentProviderTypeVolcEngineCDN, domain.DeploymentProviderTypeVolcEngineCertCenter, domain.DeploymentProviderTypeVolcEngineCLB, domain.DeploymentProviderTypeVolcEngineDCDN, domain.DeploymentProviderTypeVolcEngineImageX, domain.DeploymentProviderTypeVolcEngineLive, domain.DeploymentProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -962,7 +962,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeVolcEngineALB:
+			case domain.DeploymentProviderTypeVolcEngineALB:
 				deployer, err := pVolcEngineALB.NewDeployer(&pVolcEngineALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -974,7 +974,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineCDN:
+			case domain.DeploymentProviderTypeVolcEngineCDN:
 				deployer, err := pVolcEngineCDN.NewDeployer(&pVolcEngineCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -982,7 +982,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineCertCenter:
+			case domain.DeploymentProviderTypeVolcEngineCertCenter:
 				deployer, err := pVolcEngineCertCenter.NewDeployer(&pVolcEngineCertCenter.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -990,7 +990,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineCLB:
+			case domain.DeploymentProviderTypeVolcEngineCLB:
 				deployer, err := pVolcEngineCLB.NewDeployer(&pVolcEngineCLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -1001,7 +1001,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineDCDN:
+			case domain.DeploymentProviderTypeVolcEngineDCDN:
 				deployer, err := pVolcEngineDCDN.NewDeployer(&pVolcEngineDCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -1009,7 +1009,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineImageX:
+			case domain.DeploymentProviderTypeVolcEngineImageX:
 				deployer, err := pVolcEngineImageX.NewDeployer(&pVolcEngineImageX.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -1019,7 +1019,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineLive:
+			case domain.DeploymentProviderTypeVolcEngineLive:
 				deployer, err := pVolcEngineLive.NewDeployer(&pVolcEngineLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -1027,7 +1027,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				})
 				return deployer, err
 
-			case domain.DeployProviderTypeVolcEngineTOS:
+			case domain.DeploymentProviderTypeVolcEngineTOS:
 				deployer, err := pVolcEngineTOS.NewDeployer(&pVolcEngineTOS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
@@ -1042,7 +1042,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeWangsuCDNPro:
+	case domain.DeploymentProviderTypeWangsuCDNPro:
 		{
 			access := domain.AccessConfigForWangsu{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -1050,7 +1050,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
-			case domain.DeployProviderTypeWangsuCDNPro:
+			case domain.DeploymentProviderTypeWangsuCDNPro:
 				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
@@ -1067,7 +1067,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeployProviderTypeWebhook:
+	case domain.DeploymentProviderTypeWebhook:
 		{
 			access := domain.AccessConfigForWebhook{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {

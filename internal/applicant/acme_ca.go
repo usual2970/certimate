@@ -3,12 +3,12 @@ package applicant
 import "github.com/usual2970/certimate/internal/domain"
 
 const (
-	sslProviderLetsEncrypt         = string(domain.ApplyCAProviderTypeLetsEncrypt)
-	sslProviderLetsEncryptStaging  = string(domain.ApplyCAProviderTypeLetsEncryptStaging)
-	sslProviderBuypass             = string(domain.ApplyCAProviderTypeBuypass)
-	sslProviderGoogleTrustServices = string(domain.ApplyCAProviderTypeGoogleTrustServices)
-	sslProviderSSLCom              = string(domain.ApplyCAProviderTypeSSLCom)
-	sslProviderZeroSSL             = string(domain.ApplyCAProviderTypeZeroSSL)
+	sslProviderLetsEncrypt         = string(domain.CAProviderTypeLetsEncrypt)
+	sslProviderLetsEncryptStaging  = string(domain.CAProviderTypeLetsEncryptStaging)
+	sslProviderBuypass             = string(domain.CAProviderTypeBuypass)
+	sslProviderGoogleTrustServices = string(domain.CAProviderTypeGoogleTrustServices)
+	sslProviderSSLCom              = string(domain.CAProviderTypeSSLCom)
+	sslProviderZeroSSL             = string(domain.CAProviderTypeZeroSSL)
 
 	sslProviderDefault = sslProviderLetsEncrypt
 )
@@ -25,6 +25,6 @@ var sslProviderUrls = map[string]string{
 }
 
 type acmeSSLProviderConfig struct {
-	Config   map[domain.ApplyCAProviderType]map[string]any `json:"config"`
-	Provider string                                        `json:"provider"`
+	Config   map[domain.CAProviderType]map[string]any `json:"config"`
+	Provider string                                   `json:"provider"`
 }

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Tabs, Tooltip, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { DEPLOY_CATEGORIES, deployProvidersMap } from "@/domain/provider";
+import { DEPLOYMENT_CATEGORIES, deploymentProvidersMap } from "@/domain/provider";
 
-export type DeployProviderPickerProps = {
+export type DeploymentProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
@@ -13,10 +13,10 @@ export type DeployProviderPickerProps = {
   onSelect?: (value: string) => void;
 };
 
-const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DeployProviderPickerProps) => {
+const DeploymentProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DeploymentProviderPickerProps) => {
   const { t } = useTranslation();
 
-  const [category, setCategory] = useState<string>(DEPLOY_CATEGORIES.ALL);
+  const [category, setCategory] = useState<string>(DEPLOYMENT_CATEGORIES.ALL);
 
   const [keyword, setKeyword] = useState<string>();
   const keywordInputRef = useRef<InputRef>(null);
@@ -27,9 +27,9 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
   }, []);
 
   const providers = useMemo(() => {
-    return Array.from(deployProvidersMap.values())
+    return Array.from(deploymentProvidersMap.values())
       .filter((provider) => {
-        if (category && category !== DEPLOY_CATEGORIES.ALL) {
+        if (category && category !== DEPLOYMENT_CATEGORIES.ALL) {
           return provider.category === category;
         }
 
@@ -56,17 +56,17 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
       <div className="mt-4">
         <Flex>
           <Tabs
-            defaultActiveKey={DEPLOY_CATEGORIES.ALL}
+            defaultActiveKey={DEPLOYMENT_CATEGORIES.ALL}
             items={[
-              DEPLOY_CATEGORIES.ALL,
-              DEPLOY_CATEGORIES.CDN,
-              DEPLOY_CATEGORIES.STORAGE,
-              DEPLOY_CATEGORIES.LOADBALANCE,
-              DEPLOY_CATEGORIES.FIREWALL,
-              DEPLOY_CATEGORIES.AV,
-              DEPLOY_CATEGORIES.SERVERLESS,
-              DEPLOY_CATEGORIES.WEBSITE,
-              DEPLOY_CATEGORIES.OTHER,
+              DEPLOYMENT_CATEGORIES.ALL,
+              DEPLOYMENT_CATEGORIES.CDN,
+              DEPLOYMENT_CATEGORIES.STORAGE,
+              DEPLOYMENT_CATEGORIES.LOADBALANCE,
+              DEPLOYMENT_CATEGORIES.FIREWALL,
+              DEPLOYMENT_CATEGORIES.AV,
+              DEPLOYMENT_CATEGORIES.SERVERLESS,
+              DEPLOYMENT_CATEGORIES.WEBSITE,
+              DEPLOYMENT_CATEGORIES.OTHER,
             ].map((key) => ({
               key: key,
               label: t(`provider.category.${key}`),
@@ -110,4 +110,4 @@ const DeployProviderPicker = ({ className, style, autoFocus, placeholder, onSele
   );
 };
 
-export default memo(DeployProviderPicker);
+export default memo(DeploymentProviderPicker);

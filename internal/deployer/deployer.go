@@ -31,7 +31,7 @@ func NewWithWorkflowNode(config DeployerWithWorkflowNodeConfig) (Deployer, error
 
 	nodeConfig := config.Node.GetConfigForDeploy()
 	options := &deployerProviderOptions{
-		Provider:             domain.DeployProviderType(nodeConfig.Provider),
+		Provider:             domain.DeploymentProviderType(nodeConfig.Provider),
 		ProviderAccessConfig: make(map[string]any),
 		ProviderDeployConfig: nodeConfig.ProviderConfig,
 	}

@@ -31,7 +31,7 @@ func NewWithWorkflowNode(config NotifierWithWorkflowNodeConfig) (Notifier, error
 
 	nodeConfig := config.Node.GetConfigForNotify()
 	options := &notifierProviderOptions{
-		Provider:             domain.NotifyProviderType(nodeConfig.Provider),
+		Provider:             domain.NotificationProviderType(nodeConfig.Provider),
 		ProviderAccessConfig: make(map[string]any),
 		ProviderNotifyConfig: nodeConfig.ProviderConfig,
 	}

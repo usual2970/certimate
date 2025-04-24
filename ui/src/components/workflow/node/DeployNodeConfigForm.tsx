@@ -7,10 +7,10 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import DeployProviderPicker from "@/components/provider/DeployProviderPicker.tsx";
-import DeployProviderSelect from "@/components/provider/DeployProviderSelect.tsx";
+import DeploymentProviderPicker from "@/components/provider/DeploymentProviderPicker.tsx";
+import DeploymentProviderSelect from "@/components/provider/DeploymentProviderSelect.tsx";
 import Show from "@/components/Show";
-import { ACCESS_USAGES, DEPLOY_PROVIDERS, accessProvidersMap, deployProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, DEPLOYMENT_PROVIDERS, accessProvidersMap, deploymentProvidersMap } from "@/domain/provider";
 import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -133,7 +133,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         .refine((v) => {
           if (!fieldProvider) return true;
 
-          const provider = deployProvidersMap.get(fieldProvider);
+          const provider = deploymentProvidersMap.get(fieldProvider);
           return !!provider?.builtin || !!v;
         }, t("workflow_node.deploy.form.provider_access.placeholder")),
       providerConfig: z.any().nullish(),
@@ -151,7 +151,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     useEffect(() => {
       // 内置的部署提供商（如本地部署）无需显示授权信息字段
       if (fieldProvider) {
-        const provider = deployProvidersMap.get(fieldProvider);
+        const provider = deploymentProvidersMap.get(fieldProvider);
         setShowProviderAccess(!provider?.builtin);
       } else {
         setShowProviderAccess(false);
@@ -173,145 +173,145 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
-        case DEPLOY_PROVIDERS["1PANEL_CONSOLE"]:
+        case DEPLOYMENT_PROVIDERS["1PANEL_CONSOLE"]:
           return <DeployNodeConfigForm1PanelConsoleConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS["1PANEL_SITE"]:
+        case DEPLOYMENT_PROVIDERS["1PANEL_SITE"]:
           return <DeployNodeConfigForm1PanelSiteConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_ALB:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_ALB:
           return <DeployNodeConfigFormAliyunALBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_APIGW:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_APIGW:
           return <DeployNodeConfigFormAliyunAPIGWConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_CAS:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_CAS:
           return <DeployNodeConfigFormAliyunCASConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_CAS_DEPLOY:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_CAS_DEPLOY:
           return <DeployNodeConfigFormAliyunCASDeployConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_CLB:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_CLB:
           return <DeployNodeConfigFormAliyunCLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_CDN:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_CDN:
           return <DeployNodeConfigFormAliyunCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_DCDN:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_DCDN:
           return <DeployNodeConfigFormAliyunDCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_ESA:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_ESA:
           return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_FC:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_FC:
           return <DeployNodeConfigFormAliyunFCConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_LIVE:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_NLB:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_NLB:
           return <DeployNodeConfigFormAliyunNLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_OSS:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_OSS:
           return <DeployNodeConfigFormAliyunOSSConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_VOD:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_VOD:
           return <DeployNodeConfigFormAliyunVODConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.ALIYUN_WAF:
+        case DEPLOYMENT_PROVIDERS.ALIYUN_WAF:
           return <DeployNodeConfigFormAliyunWAFConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.AWS_ACM:
+        case DEPLOYMENT_PROVIDERS.AWS_ACM:
           return <DeployNodeConfigFormAWSACMConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.AWS_CLOUDFRONT:
+        case DEPLOYMENT_PROVIDERS.AWS_CLOUDFRONT:
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.AZURE_KEYVAULT:
+        case DEPLOYMENT_PROVIDERS.AZURE_KEYVAULT:
           return <DeployNodeConfigFormAzureKeyVaultConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAIDUCLOUD_APPBLB:
+        case DEPLOYMENT_PROVIDERS.BAIDUCLOUD_APPBLB:
           return <DeployNodeConfigFormBaiduCloudAppBLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAIDUCLOUD_BLB:
+        case DEPLOYMENT_PROVIDERS.BAIDUCLOUD_BLB:
           return <DeployNodeConfigFormBaiduCloudBLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAIDUCLOUD_CDN:
+        case DEPLOYMENT_PROVIDERS.BAIDUCLOUD_CDN:
           return <DeployNodeConfigFormBaiduCloudCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAISHAN_CDN:
+        case DEPLOYMENT_PROVIDERS.BAISHAN_CDN:
           return <DeployNodeConfigFormBaishanCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAOTAPANEL_CONSOLE:
+        case DEPLOYMENT_PROVIDERS.BAOTAPANEL_CONSOLE:
           return <DeployNodeConfigFormBaotaPanelConsoleConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BAOTAPANEL_SITE:
+        case DEPLOYMENT_PROVIDERS.BAOTAPANEL_SITE:
           return <DeployNodeConfigFormBaotaPanelSiteConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BUNNY_CDN:
+        case DEPLOYMENT_PROVIDERS.BUNNY_CDN:
           return <DeployNodeConfigFormBunnyCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.BYTEPLUS_CDN:
+        case DEPLOYMENT_PROVIDERS.BYTEPLUS_CDN:
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.CDNFLY:
+        case DEPLOYMENT_PROVIDERS.CDNFLY:
           return <DeployNodeConfigFormCdnflyConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.DOGECLOUD_CDN:
+        case DEPLOYMENT_PROVIDERS.DOGECLOUD_CDN:
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.EDGIO_APPLICATIONS:
+        case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:
           return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.GCORE_CDN:
+        case DEPLOYMENT_PROVIDERS.GCORE_CDN:
           return <DeployNodeConfigFormGcoreCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.HUAWEICLOUD_CDN:
+        case DEPLOYMENT_PROVIDERS.HUAWEICLOUD_CDN:
           return <DeployNodeConfigFormHuaweiCloudCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.HUAWEICLOUD_ELB:
+        case DEPLOYMENT_PROVIDERS.HUAWEICLOUD_ELB:
           return <DeployNodeConfigFormHuaweiCloudELBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.HUAWEICLOUD_WAF:
+        case DEPLOYMENT_PROVIDERS.HUAWEICLOUD_WAF:
           return <DeployNodeConfigFormHuaweiCloudWAFConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.JDCLOUD_ALB:
+        case DEPLOYMENT_PROVIDERS.JDCLOUD_ALB:
           return <DeployNodeConfigFormJDCloudALBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.JDCLOUD_CDN:
+        case DEPLOYMENT_PROVIDERS.JDCLOUD_CDN:
           return <DeployNodeConfigFormJDCloudCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.JDCLOUD_LIVE:
+        case DEPLOYMENT_PROVIDERS.JDCLOUD_LIVE:
           return <DeployNodeConfigFormJDCloudLiveConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.JDCLOUD_VOD:
+        case DEPLOYMENT_PROVIDERS.JDCLOUD_VOD:
           return <DeployNodeConfigFormJDCloudVODConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.KUBERNETES_SECRET:
+        case DEPLOYMENT_PROVIDERS.KUBERNETES_SECRET:
           return <DeployNodeConfigFormKubernetesSecretConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.LOCAL:
+        case DEPLOYMENT_PROVIDERS.LOCAL:
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.QINIU_CDN:
+        case DEPLOYMENT_PROVIDERS.QINIU_CDN:
           return <DeployNodeConfigFormQiniuCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.QINIU_KODO:
+        case DEPLOYMENT_PROVIDERS.QINIU_KODO:
           return <DeployNodeConfigFormQiniuKodoConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.QINIU_PILI:
+        case DEPLOYMENT_PROVIDERS.QINIU_PILI:
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.RAINYUN_RCDN:
+        case DEPLOYMENT_PROVIDERS.RAINYUN_RCDN:
           return <DeployNodeConfigFormRainYunRCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.SAFELINE:
+        case DEPLOYMENT_PROVIDERS.SAFELINE:
           return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.SSH:
+        case DEPLOYMENT_PROVIDERS.SSH:
           return <DeployNodeConfigFormSSHConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_CDN:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_CDN:
           return <DeployNodeConfigFormTencentCloudCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_CLB:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_CLB:
           return <DeployNodeConfigFormTencentCloudCLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_COS:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_COS:
           return <DeployNodeConfigFormTencentCloudCOSConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_CSS:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_CSS:
           return <DeployNodeConfigFormTencentCloudCSSConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_ECDN:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_ECDN:
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_EO:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_EO:
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_SCF:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_SCF:
           return <DeployNodeConfigFormTencentCloudSCFConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:
           return <DeployNodeConfigFormTencentCloudSSLDeployConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_VOD:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_VOD:
           return <DeployNodeConfigFormTencentCloudVODConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.TENCENTCLOUD_WAF:
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_WAF:
           return <DeployNodeConfigFormTencentCloudWAFConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.UCLOUD_UCDN:
+        case DEPLOYMENT_PROVIDERS.UCLOUD_UCDN:
           return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.UCLOUD_US3:
+        case DEPLOYMENT_PROVIDERS.UCLOUD_US3:
           return <DeployNodeConfigFormUCloudUS3Config {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.UPYUN_CDN:
+        case DEPLOYMENT_PROVIDERS.UPYUN_CDN:
           return <DeployNodeConfigFormUpyunCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.UPYUN_FILE:
+        case DEPLOYMENT_PROVIDERS.UPYUN_FILE:
           return <DeployNodeConfigFormUpyunFileConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_ALB:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_ALB:
           return <DeployNodeConfigFormVolcEngineALBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_CDN:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_CDN:
           return <DeployNodeConfigFormVolcEngineCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_CERTCENTER:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_CERTCENTER:
           return <DeployNodeConfigFormVolcEngineCertCenterConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_CLB:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_CLB:
           return <DeployNodeConfigFormVolcEngineCLBConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_DCDN:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_DCDN:
           return <DeployNodeConfigFormVolcEngineDCDNConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_IMAGEX:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_IMAGEX:
           return <DeployNodeConfigFormVolcEngineImageXConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_LIVE:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_LIVE:
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.VOLCENGINE_TOS:
+        case DEPLOYMENT_PROVIDERS.VOLCENGINE_TOS:
           return <DeployNodeConfigFormVolcEngineTOSConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.WANGSU_CDNPRO:
+        case DEPLOYMENT_PROVIDERS.WANGSU_CDNPRO:
           return <DeployNodeConfigFormWangsuCDNProConfig {...nestedFormProps} />;
-        case DEPLOY_PROVIDERS.WEBHOOK:
+        case DEPLOYMENT_PROVIDERS.WEBHOOK:
           return <DeployNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }
     }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
@@ -339,7 +339,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         }
         formInst.setFieldsValue(newValues);
 
-        if (deployProvidersMap.get(fieldProvider)?.provider !== deployProvidersMap.get(value!)?.provider) {
+        if (deploymentProvidersMap.get(fieldProvider)?.provider !== deploymentProvidersMap.get(value!)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -384,10 +384,10 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Show
             when={!!fieldProvider}
-            fallback={<DeployProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+            fallback={<DeploymentProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
-              <DeployProviderSelect
+              <DeploymentProviderSelect
                 allowClear
                 disabled={!!initialValues?.provider}
                 placeholder={t("workflow_node.deploy.form.provider.placeholder")}
@@ -410,7 +410,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                   </div>
                   <div className="text-right">
                     <AccessEditModal
-                      data={{ provider: deployProvidersMap.get(fieldProvider!)?.provider }}
+                      data={{ provider: deploymentProvidersMap.get(fieldProvider!)?.provider }}
                       range="both-dns-hosting"
                       scene="add"
                       trigger={
@@ -433,7 +433,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 <AccessSelect
                   filter={(record) => {
                     if (fieldProvider) {
-                      return deployProvidersMap.get(fieldProvider)?.provider === record.provider;
+                      return deploymentProvidersMap.get(fieldProvider)?.provider === record.provider;
                     }
 
                     const provider = accessProvidersMap.get(record.provider);
@@ -444,7 +444,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               </Form.Item>
             </Form.Item>
 
-            <Show when={fieldProvider === DEPLOY_PROVIDERS.LOCAL}>
+            <Show when={fieldProvider === DEPLOYMENT_PROVIDERS.LOCAL}>
               <Form.Item>
                 <Alert
                   type="info"

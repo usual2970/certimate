@@ -1,4 +1,4 @@
-import { type ApplyCAProviderType } from "./provider";
+import { type CAProviderType } from "./provider";
 
 export const SETTINGS_NAMES = Object.freeze({
   EMAILS: "emails",
@@ -190,7 +190,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 
 // #region Settings: SSLProvider
 export type SSLProviderSettingsContent = {
-  provider: ApplyCAProviderType;
+  provider: CAProviderType;
   config: {
     [key: string]: Record<string, unknown> | undefined;
   };

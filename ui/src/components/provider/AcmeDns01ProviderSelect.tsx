@@ -2,21 +2,21 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { type ApplyDNSProvider, applyDNSProvidersMap } from "@/domain/provider";
+import { type AcmeDns01Provider, acmeDns01ProvidersMap } from "@/domain/provider";
 
-export type ApplyDNSProviderSelectProps = Omit<
+export type AcmeDns01ProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
-  filter?: (record: ApplyDNSProvider) => boolean;
+  filter?: (record: AcmeDns01Provider) => boolean;
 };
 
-const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProps) => {
+const AcmeDns01ProviderSelect = ({ filter, ...props }: AcmeDns01ProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyDNSProvider }>>([]);
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AcmeDns01Provider }>>([]);
   useEffect(() => {
-    const allItems = Array.from(applyDNSProvidersMap.values());
+    const allItems = Array.from(acmeDns01ProvidersMap.values());
     const filteredItems = filter != null ? allItems.filter(filter) : allItems;
     setOptions(
       filteredItems.map((item) => ({
@@ -29,7 +29,7 @@ const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProp
   }, [filter]);
 
   const renderOption = (key: string) => {
-    const provider = applyDNSProvidersMap.get(key);
+    const provider = acmeDns01ProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
@@ -64,4 +64,4 @@ const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProp
   );
 };
 
-export default memo(ApplyDNSProviderSelect);
+export default memo(AcmeDns01ProviderSelect);

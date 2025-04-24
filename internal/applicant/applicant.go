@@ -54,10 +54,10 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 	options := &applicantProviderOptions{
 		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
 		ContactEmail:             nodeConfig.ContactEmail,
-		Provider:                 domain.ApplyDNSProviderType(nodeConfig.Provider),
+		Provider:                 domain.AcmeDns01ProviderType(nodeConfig.Provider),
 		ProviderAccessConfig:     make(map[string]any),
 		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
-		CAProvider:               domain.ApplyCAProviderType(nodeConfig.CAProvider),
+		CAProvider:               domain.CAProviderType(nodeConfig.CAProvider),
 		CAProviderAccessConfig:   make(map[string]any),
 		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
 		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
@@ -88,7 +88,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 		settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
 
 		sslProviderConfig := &acmeSSLProviderConfig{
-			Config:   make(map[domain.ApplyCAProviderType]map[string]any),
+			Config:   make(map[domain.CAProviderType]map[string]any),
 			Provider: sslProviderDefault,
 		}
 		if settings != nil {
@@ -99,7 +99,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 			}
 		}
 
-		options.CAProvider = domain.ApplyCAProviderType(sslProviderConfig.Provider)
+		options.CAProvider = domain.CAProviderType(sslProviderConfig.Provider)
 		options.CAProviderAccessConfig = sslProviderConfig.Config[options.CAProvider]
 	}
 

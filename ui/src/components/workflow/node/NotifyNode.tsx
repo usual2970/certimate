@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Flex, Typography } from "antd";
 import { produce } from "immer";
 
-import { notifyProvidersMap } from "@/domain/provider";
+import { notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNodeConfigForNotify, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
@@ -40,7 +40,7 @@ const NotifyNode = ({ node, disabled }: NotifyNodeProps) => {
 
     const config = (node.config as WorkflowNodeConfigForNotify) ?? {};
     const channel = notifyChannelsMap.get(config.channel as string);
-    const provider = notifyProvidersMap.get(config.provider);
+    const provider = notificationProvidersMap.get(config.provider);
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
         <Avatar src={provider?.icon} size="small" />

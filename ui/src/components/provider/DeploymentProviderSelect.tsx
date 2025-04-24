@@ -2,21 +2,21 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { type NotifyProvider, notifyProvidersMap } from "@/domain/provider";
+import { type DeploymentProvider, deploymentProvidersMap } from "@/domain/provider";
 
-export type NotifyProviderSelectProps = Omit<
+export type DeploymentProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
-  filter?: (record: NotifyProvider) => boolean;
+  filter?: (record: DeploymentProvider) => boolean;
 };
 
-const NotifyProviderSelect = ({ filter, ...props }: NotifyProviderSelectProps) => {
+const DeploymentProviderSelect = ({ filter, ...props }: DeploymentProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: NotifyProvider }>>([]);
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: DeploymentProvider }>>([]);
   useEffect(() => {
-    const allItems = Array.from(notifyProvidersMap.values());
+    const allItems = Array.from(deploymentProvidersMap.values());
     const filteredItems = filter != null ? allItems.filter(filter) : allItems;
     setOptions(
       filteredItems.map((item) => ({
@@ -29,7 +29,7 @@ const NotifyProviderSelect = ({ filter, ...props }: NotifyProviderSelectProps) =
   }, [filter]);
 
   const renderOption = (key: string) => {
-    const provider = notifyProvidersMap.get(key);
+    const provider = deploymentProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
@@ -64,4 +64,4 @@ const NotifyProviderSelect = ({ filter, ...props }: NotifyProviderSelectProps) =
   );
 };
 
-export default memo(NotifyProviderSelect);
+export default memo(DeploymentProviderSelect);
