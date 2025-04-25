@@ -322,8 +322,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
     };
 
     const handleProviderSelect = (value?: string | undefined) => {
-      if (fieldProvider === value) return;
-
       // 切换部署目标时重置表单，避免其他部署目标的配置字段影响当前部署目标
       if (initialValues?.provider === value) {
         formInst.resetFields();

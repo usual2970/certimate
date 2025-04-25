@@ -1,4 +1,4 @@
-import { forwardRef, memo, useEffect, useImperativeHandle, useState } from "react";
+import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { PlusOutlined as PlusOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
@@ -9,12 +9,16 @@ import { z } from "zod";
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import NotificationProviderSelect from "@/components/provider/NotificationProviderSelect";
-import { ACCESS_USAGES, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
+import { ACCESS_USAGES, NOTIFICATION_PROVIDERS, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNodeConfigForNotify } from "@/domain/workflow";
-import { useAntdForm, useZustandShallowSelector } from "@/hooks";
+import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useNotifyChannelsStore } from "@/stores/notify";
+
+import NotifyNodeConfigFormEmailConfig from "./NotifyNodeConfigFormEmailConfig";
+import NotifyNodeConfigFormMattermostConfig from "./NotifyNodeConfigFormMattermostConfig";
+import NotifyNodeConfigFormTelegramConfig from "./NotifyNodeConfigFormTelegramConfig";
 
 type NotifyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForNotify>;
 
@@ -65,6 +69,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
       providerAccessId: z
         .string({ message: t("workflow_node.notify.form.provider_access.placeholder") })
         .nonempty(t("workflow_node.notify.form.provider_access.placeholder")),
+      providerConfig: z.any().nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -88,9 +93,31 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
       }
     }, [accesses, fieldProviderAccessId]);
 
-    const handleProviderSelect = (value: string) => {
-      if (fieldProvider === value) return;
+    const [nestedFormInst] = Form.useForm();
+    const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeNotifyConfigFormProviderConfigForm" });
+    const nestedFormEl = useMemo(() => {
+      const nestedFormProps = {
+        form: nestedFormInst,
+        formName: nestedFormName,
+        disabled: disabled,
+        initialValues: initialValues?.providerConfig,
+      };
 
+      /*
+        注意：如果追加新的子组件，请保持以 ASCII 排序。
+        NOTICE: If you add new child component, please keep ASCII order.
+       */
+      switch (fieldProvider) {
+        case NOTIFICATION_PROVIDERS.EMAIL:
+          return <NotifyNodeConfigFormEmailConfig {...nestedFormProps} />;
+        case NOTIFICATION_PROVIDERS.MATTERMOST:
+          return <NotifyNodeConfigFormMattermostConfig {...nestedFormProps} />;
+        case NOTIFICATION_PROVIDERS.TELEGRAM:
+          return <NotifyNodeConfigFormTelegramConfig {...nestedFormProps} />;
+      }
+    }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
+
+    const handleProviderSelect = (value: string) => {
       // 切换消息通知提供商时联动授权信息
       if (initialValues?.provider === value) {
         formInst.setFieldValue("providerAccessId", initialValues?.providerAccessId);
@@ -104,8 +131,6 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
     };
 
     const handleProviderAccessSelect = (value: string) => {
-      if (fieldProviderAccessId === value) return;
-
       // 切换授权信息时联动消息通知提供商
       const access = accesses.find((access) => access.id === value);
       const provider = Array.from(notificationProvidersMap.values()).find((provider) => provider.provider === access?.provider);
@@ -122,13 +147,21 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
     useImperativeHandle(ref, () => {
       return {
         getFieldsValue: () => {
-          return formInst.getFieldsValue(true);
+          const values = formInst.getFieldsValue(true);
+          values.providerConfig = nestedFormInst.getFieldsValue();
+          return values;
         },
         resetFields: (fields) => {
-          return formInst.resetFields(fields as (keyof NotifyNodeConfigFormFieldValues)[]);
+          formInst.resetFields(fields);
+
+          if (!!fields && fields.includes("providerConfig")) {
+            nestedFormInst.resetFields(fields);
+          }
         },
         validateFields: (nameList, config) => {
-          return formInst.validateFields(nameList, config);
+          const t1 = formInst.validateFields(nameList, config);
+          const t2 = nestedFormInst.validateFields(undefined, config);
+          return Promise.all([t1, t2]).then(() => t1);
         },
       } as NotifyNodeConfigFormInstance;
     });
@@ -207,6 +240,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
                     const provider = accessProvidersMap.get(record.provider);
                     if (provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION)) {
                       formInst.setFieldValue("providerAccessId", record.id);
+                      handleProviderAccessSelect(record.id);
                     }
                   }}
                 />
@@ -224,6 +258,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
             />
           </Form.Item>
         </Form.Item>
+
+        {nestedFormEl}
       </Form>
     );
   }

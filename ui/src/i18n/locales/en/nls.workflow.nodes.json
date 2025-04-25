@@ -720,6 +720,18 @@
   "workflow_node.notify.form.provider_access.label": "Notification provider authorization",
   "workflow_node.notify.form.provider_access.placeholder": "Please select an authorization of notification provider",
   "workflow_node.notify.form.provider_access.button": "Create",
+  "workflow_node.notify.form.email_sender_address.label": "Sender email address (Optional)",
+  "workflow_node.notify.form.email_sender_address.placeholder": "Please enter sender email address",
+  "workflow_node.notify.form.email_sender_address.tooltip": "Leave it blank to use the default sender email address provided by the authorization.",
+  "workflow_node.notify.form.email_receiver_address.label": "Receiver email address (Optional)",
+  "workflow_node.notify.form.email_receiver_address.placeholder": "Please enter receiver email address",
+  "workflow_node.notify.form.email_receiver_address.tooltip": "Leave it blank to use the default receiver email address provided by the selected authorization.",
+  "workflow_node.notify.form.mattermost_channel_id.label": "Mattermost channel ID (Optional)",
+  "workflow_node.notify.form.mattermost_channel_id.placeholder": "Please enter Mattermost channel ID",
+  "workflow_node.notify.form.mattermost_channel_id.tooltip": "Leave it blank to use the default channel ID provided by the authorization.",
+  "workflow_node.notify.form.telegram_chat_id.label": "Telegram chat ID (Optional)",
+  "workflow_node.notify.form.telegram_chat_id.placeholder": "Please enter Telegram chat ID",
+  "workflow_node.notify.form.telegram_chat_id.tooltip": "Leave it blank to use the default chat ID provided by the selected authorization.",
 
   "workflow_node.end.label": "End",
 

@@ -86,7 +86,7 @@ const AccessFormEmailConfig = ({ form: formInst, formName, disabled, initialValu
       onValuesChange={handleFormChange}
     >
       <div className="flex space-x-2">
-        <div className="w-2/5">
+        <div className="w-3/5">
           <Form.Item name="smtpHost" label={t("access.form.email_smtp_host.label")} rules={[formRule]}>
             <Input placeholder={t("access.form.email_smtp_host.placeholder")} />
           </Form.Item>
@@ -97,13 +97,11 @@ const AccessFormEmailConfig = ({ form: formInst, formName, disabled, initialValu
             <InputNumber className="w-full" placeholder={t("access.form.email_smtp_port.placeholder")} min={1} max={65535} />
           </Form.Item>
         </div>
-
-        <div className="w-1/5">
-          <Form.Item name="smtpTls" label={t("access.form.email_smtp_tls.label")} rules={[formRule]}>
-            <Switch onChange={handleTlsSwitchChange} />
-          </Form.Item>
-        </div>
       </div>
+
+      <Form.Item name="smtpTls" label={t("access.form.email_smtp_tls.label")} rules={[formRule]}>
+        <Switch onChange={handleTlsSwitchChange} />
+      </Form.Item>
 
       <Form.Item name="username" label={t("access.form.email_username.label")} rules={[formRule]}>
         <Input autoComplete="new-password" placeholder={t("access.form.email_username.placeholder")} />

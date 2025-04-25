@@ -218,8 +218,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     };
 
     const handleProviderAccessSelect = (value: string) => {
-      if (fieldProviderAccessId === value) return;
-
       // 切换授权信息时联动 DNS 提供商
       const access = accesses.find((access) => access.id === value);
       const provider = Array.from(acmeDns01ProvidersMap.values()).find((provider) => provider.provider === access?.provider);
@@ -230,8 +228,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     };
 
     const handleCAProviderSelect = (value?: string | undefined) => {
-      if (fieldCAProvider === value) return;
-
       // 切换 CA 提供商时联动授权信息
       if (value === "") {
         setTimeout(() => {
@@ -368,6 +364,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                       const provider = accessProvidersMap.get(record.provider);
                       if (provider?.usages?.includes(ACCESS_USAGES.DNS)) {
                         formInst.setFieldValue("providerAccessId", record.id);
+                        handleProviderAccessSelect(record.id);
                       }
                     }}
                   />

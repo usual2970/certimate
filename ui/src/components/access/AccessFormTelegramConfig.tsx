@@ -31,7 +31,7 @@ const AccessFormTelegramConfig = ({ form: formInst, formName, disabled, initialV
       .max(256, t("common.errmsg.string_max", { max: 256 })),
     defaultChatId: z
       .preprocess(
-        (v) => Number(v),
+        (v) => (v == null || v === "" ? undefined : Number(v)),
         z
           .number()
           .nullish()

@@ -222,7 +222,7 @@
   "access.form.mattermost_username.placeholder": "Please enter Mattermost username",
   "access.form.mattermost_password.label": "Mattermost password",
   "access.form.mattermost_password.placeholder": "Please enter Mattermost password",
-  "access.form.mattermost_default_channel_id.label": "Default Mattermost channel ID",
+  "access.form.mattermost_default_channel_id.label": "Default Mattermost channel ID (Optional)",
   "access.form.mattermost_default_channel_id.placeholder": "Please enter default Mattermost channel ID",
   "access.form.mattermost_default_channel_id.tooltip": "How to get the channel ID? Select the target channel from the left sidebar, click on the channel name at the top, and choose ”Channel Details.” You can directly see the channel ID on the pop-up page.",
   "access.form.namecheap_username.label": "Namecheap username",
