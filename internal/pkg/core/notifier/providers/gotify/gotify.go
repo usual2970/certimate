@@ -9,25 +9,21 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// Gotify 服务地址
-	// 示例：https://gotify.example.com
+	// Gotify 服务地址。
 	Url string `json:"url"`
-	// Gotify Token
+	// Gotify Token。
 	Token string `json:"token"`
-	// Gotify 消息优先级
-	Priority int64 `json:"priority"`
+	// Gotify 消息优先级。
+	Priority int64 `json:"priority,omitempty"`
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
-	// 未来将移除
+	config     *NotifierConfig
+	logger     *slog.Logger
 	httpClient *http.Client
 }
 
@@ -40,6 +36,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config:     config,
+		logger:     slog.Default(),
 		httpClient: http.DefaultClient,
 	}, nil
 }
@@ -54,7 +51,6 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	// Gotify 原生实现, notify 库没有实现, 等待合并
 	reqBody := &struct {
 		Title    string `json:"title"`
 		Message  string `json:"message"`
@@ -65,10 +61,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		Priority: n.config.Priority,
 	}
 
-	// Make request
 	body, err := json.Marshal(reqBody)
 	if err != nil {
-		return nil, errors.Wrap(err, "encode message body")
+		return nil, fmt.Errorf("gotify api error: failed to encode message body: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -78,27 +73,24 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		bytes.NewReader(body),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "create new request")
+		return nil, fmt.Errorf("gotify api error: failed to create new request: %w", err)
 	}
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", n.config.Token))
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
-	// Send request to gotify service
 	resp, err := n.httpClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "send request to gotify server")
+		return nil, fmt.Errorf("gotify api error: failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Read response and verify success
 	result, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read response")
+		return nil, fmt.Errorf("gotify api error: failed to read response: %w", err)
+	} else if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("gotify api error: unexpected status code: %d, resp: %s", resp.StatusCode, string(result))
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("gotify returned status code %d: %s", resp.StatusCode, string(result))
-	}
 	return &notifier.NotifyResult{}, nil
 }
