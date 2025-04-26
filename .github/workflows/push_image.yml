@@ -21,59 +21,62 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            andyf21/certimate
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern=v0.3.9
-            type=semver,pattern=v0.3
-
       - name: Log in to DOCKERHUB
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      #   - name: Docker meta
+      #     id: meta
+      #     uses: docker/metadata-action@v5
+      #     with:
+      #       images: |
+      #         andyf21/certimate
+      #       tags: |
+      #         type=ref,event=branch
+      #         type=ref,event=pr
+      #         type=semver,pattern=v0.3.9
+      #         type=semver,pattern=v0.3
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/arm,linux/arm64
-          push: false
-          tags: latest
-      - name: Save Docker image
-        run: |
-          mkdir -p dist
-          docker save andyf21/certimate:latest > dist/certimate.tar
-      # New step to create a GitHub Release
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: latest
-          release_name: Release all
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/certimate.tar
-          asset_name: certimate.tar
-          asset_content_type: application/tar
+          platforms: linux/amd64
+          push: true
+          tags: andyf21/certimate
+
+    #   - name: Save Docker image
+    #     run: |
+    #       mkdir -p dist
+    #       docker save andyf21/certimate:latest > dist/certimate.tar
+
+    #   #New step to create a GitHub Release
+    #   - name: Create Release
+    #     id: create_release
+    #     uses: actions/create-release@v1
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     with:
+    #       tag_name: latest
+    #       release_name: Release all
+    #       draft: false
+    #       prerelease: false
+
+    #   - name: Upload Release Asset
+    #     uses: actions/upload-release-asset@v1
+    #     env:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     with:
+    #       upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #       asset_path: dist/certimate.tar
+    #       asset_name: certimate.tar
+    #       asset_content_type: application/tar
