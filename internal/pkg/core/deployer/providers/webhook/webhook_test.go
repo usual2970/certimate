@@ -12,10 +12,11 @@ import (
 )
 
 var (
-	fInputCertPath string
-	fInputKeyPath  string
-	fWebhookUrl    string
-	fWebhookData   string
+	fInputCertPath      string
+	fInputKeyPath       string
+	fWebhookUrl         string
+	fWebhookContentType string
+	fWebhookData        string
 )
 
 func init() {
@@ -24,6 +25,7 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fWebhookUrl, argsPrefix+"URL", "", "")
+	flag.StringVar(&fWebhookContentType, argsPrefix+"CONTENTTYPE", "application/json", "")
 	flag.StringVar(&fWebhookData, argsPrefix+"DATA", "", "")
 }
 
@@ -34,7 +36,8 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_WEBHOOK_URL="https://example.com/your-webhook-url" \
-	--CERTIMATE_DEPLOYER_WEBHOOK_DATA="{\"certificate\":\"${Certificate}\",\"privateKey\":\"${PrivateKey}\"}"
+	--CERTIMATE_DEPLOYER_WEBHOOK_CONTENTTYPE="application/json" \
+	--CERTIMATE_DEPLOYER_WEBHOOK_DATA="{\"certificate\":\"${CERTIFICATE}\",\"privateKey\":\"${PRIVATE_KEY}\"}"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -45,12 +48,17 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("WEBHOOKURL: %v", fWebhookUrl),
+			fmt.Sprintf("WEBHOOKCONTENTTYPE: %v", fWebhookContentType),
 			fmt.Sprintf("WEBHOOKDATA: %v", fWebhookData),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			WebhookUrl:               fWebhookUrl,
-			WebhookData:              fWebhookData,
+			WebhookUrl:  fWebhookUrl,
+			WebhookData: fWebhookData,
+			Method:      "POST",
+			Headers: map[string]string{
+				"Content-Type": fWebhookContentType,
+			},
 			AllowInsecureConnections: true,
 		})
 		if err != nil {

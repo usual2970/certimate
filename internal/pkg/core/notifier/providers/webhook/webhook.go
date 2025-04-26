@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -67,35 +68,97 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+	// 处理 Webhook URL
+	webhookUrl, err := url.Parse(n.config.WebhookUrl)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse webhook url: %w", err)
+	} else if webhookUrl.Scheme != "http" && webhookUrl.Scheme != "https" {
+		return nil, fmt.Errorf("unsupported webhook url scheme: %s", webhookUrl.Scheme)
+	}
+
+	// 处理 Webhook 请求谓词
+	webhookMethod := strings.ToUpper(n.config.Method)
+	if webhookMethod == "" {
+		webhookMethod = http.MethodPost
+	} else if webhookMethod != http.MethodGet &&
+		webhookMethod != http.MethodPost &&
+		webhookMethod != http.MethodPut &&
+		webhookMethod != http.MethodPatch &&
+		webhookMethod != http.MethodDelete {
+		return nil, fmt.Errorf("unsupported webhook request method: %s", webhookMethod)
+	}
+
+	// 处理 Webhook 请求标头
+	webhookHeaders := make(http.Header)
+	for k, v := range n.config.Headers {
+		webhookHeaders.Set(k, v)
+	}
+
+	// 处理 Webhook 请求内容类型
+	const CONTENT_TYPE_JSON = "application/json"
+	const CONTENT_TYPE_FORM = "application/x-www-form-urlencoded"
+	const CONTENT_TYPE_MULTIPART = "multipart/form-data"
+	webhookContentType := webhookHeaders.Get("Content-Type")
+	if webhookContentType == "" {
+		webhookContentType = CONTENT_TYPE_JSON
+		webhookHeaders.Set("Content-Type", CONTENT_TYPE_JSON)
+	} else if strings.HasPrefix(webhookContentType, CONTENT_TYPE_JSON) &&
+		strings.HasPrefix(webhookContentType, CONTENT_TYPE_FORM) &&
+		strings.HasPrefix(webhookContentType, CONTENT_TYPE_MULTIPART) {
+		return nil, fmt.Errorf("unsupported webhook content type: %s", webhookContentType)
+	}
+
+	// 处理 Webhook 请求数据
 	var webhookData interface{}
 	if n.config.WebhookData == "" {
-		webhookData = map[string]any{
+		webhookData = map[string]string{
 			"subject": subject,
 			"message": message,
 		}
 	} else {
 		err = json.Unmarshal([]byte(n.config.WebhookData), &webhookData)
 		if err != nil {
-			return nil, fmt.Errorf("failed to unmarshall webhook data: %w", err)
+			return nil, fmt.Errorf("failed to unmarshal webhook data: %w", err)
 		}
 
 		replaceJsonValueRecursively(webhookData, "${SUBJECT}", subject)
 		replaceJsonValueRecursively(webhookData, "${MESSAGE}", message)
+
+		if webhookMethod == http.MethodGet || webhookContentType == CONTENT_TYPE_FORM || webhookContentType == CONTENT_TYPE_MULTIPART {
+			temp := make(map[string]string)
+			jsonb, err := json.Marshal(webhookData)
+			if err != nil {
+				return nil, fmt.Errorf("failed to unmarshal webhook data: %w", err)
+			} else if err := json.Unmarshal(jsonb, &temp); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal webhook data: %w", err)
+			} else {
+				webhookData = temp
+			}
+		}
 	}
 
+	// 生成请求
+	// 其中 GET 请求需转换为查询参数
 	req := n.httpClient.R().
 		SetContext(ctx).
-		SetHeaders(n.config.Headers)
-	req.URL = n.config.WebhookUrl
-	req.Method = n.config.Method
-	if req.Method == "" {
-		req.Method = http.MethodPost
+		SetHeaderMultiValues(webhookHeaders)
+	req.URL = webhookUrl.String()
+	req.Method = webhookMethod
+	if webhookMethod == http.MethodGet {
+		req.SetQueryParams(webhookData.(map[string]string))
+	} else {
+		switch webhookContentType {
+		case CONTENT_TYPE_JSON:
+			req.SetBody(webhookData)
+		case CONTENT_TYPE_FORM:
+			req.SetFormData(webhookData.(map[string]string))
+		case CONTENT_TYPE_MULTIPART:
+			req.SetMultipartFormData(webhookData.(map[string]string))
+		}
 	}
 
-	resp, err := req.
-		SetHeader("Content-Type", "application/json").
-		SetBody(webhookData).
-		Send()
+	// 发送请求
+	resp, err := req.Send()
 	if err != nil {
 		return nil, fmt.Errorf("failed to send webhook request: %w", err)
 	} else if resp.IsError() {
