@@ -39,7 +39,7 @@ func TestNotify(t *testing.T) {
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
-			Url:                      fUrl,
+			WebhookUrl:               fUrl,
 			AllowInsecureConnections: true,
 		})
 		if err != nil {

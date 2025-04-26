@@ -114,10 +114,10 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		ContactEmail:          maputil.GetString(n.Config, "contactEmail"),
 		Provider:              maputil.GetString(n.Config, "provider"),
 		ProviderAccessId:      maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:        maputil.GetMap(n.Config, "providerConfig"),
+		ProviderConfig:        maputil.GetKVMapAny(n.Config, "providerConfig"),
 		CAProvider:            maputil.GetString(n.Config, "caProvider"),
 		CAProviderAccessId:    maputil.GetString(n.Config, "caProviderAccessId"),
-		CAProviderConfig:      maputil.GetMap(n.Config, "caProviderConfig"),
+		CAProviderConfig:      maputil.GetKVMapAny(n.Config, "caProviderConfig"),
 		KeyAlgorithm:          maputil.GetString(n.Config, "keyAlgorithm"),
 		Nameservers:           maputil.GetString(n.Config, "nameservers"),
 		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
@@ -141,7 +141,7 @@ func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 		Certificate:         maputil.GetString(n.Config, "certificate"),
 		Provider:            maputil.GetString(n.Config, "provider"),
 		ProviderAccessId:    maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:      maputil.GetMap(n.Config, "providerConfig"),
+		ProviderConfig:      maputil.GetKVMapAny(n.Config, "providerConfig"),
 		SkipOnLastSucceeded: maputil.GetBool(n.Config, "skipOnLastSucceeded"),
 	}
 }
@@ -151,7 +151,7 @@ func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 		Channel:          maputil.GetString(n.Config, "channel"),
 		Provider:         maputil.GetString(n.Config, "provider"),
 		ProviderAccessId: maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:   maputil.GetMap(n.Config, "providerConfig"),
+		ProviderConfig:   maputil.GetKVMapAny(n.Config, "providerConfig"),
 		Subject:          maputil.GetString(n.Config, "subject"),
 		Message:          maputil.GetString(n.Config, "message"),
 	}

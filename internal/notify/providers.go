@@ -2,6 +2,7 @@ package notify
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
@@ -9,13 +10,14 @@ import (
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
 type notifierProviderOptions struct {
-	Provider             domain.NotificationProviderType
-	ProviderAccessConfig map[string]any
-	ProviderNotifyConfig map[string]any
+	Provider               domain.NotificationProviderType
+	ProviderAccessConfig   map[string]any
+	ProviderExtendedConfig map[string]any
 }
 
 func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier, error) {
@@ -37,8 +39,8 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				SmtpTls:         access.SmtpTls,
 				Username:        access.Username,
 				Password:        access.Password,
-				SenderAddress:   maputil.GetOrDefaultString(options.ProviderNotifyConfig, "senderAddress", access.DefaultSenderAddress),
-				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderNotifyConfig, "receiverAddress", access.DefaultReceiverAddress),
+				SenderAddress:   maputil.GetOrDefaultString(options.ProviderExtendedConfig, "senderAddress", access.DefaultSenderAddress),
+				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "receiverAddress", access.DefaultReceiverAddress),
 			})
 		}
 
@@ -53,7 +55,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				ServerUrl: access.ServerUrl,
 				Username:  access.Username,
 				Password:  access.Password,
-				ChannelId: maputil.GetOrDefaultString(options.ProviderNotifyConfig, "channelId", access.DefaultChannelId),
+				ChannelId: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "channelId", access.DefaultChannelId),
 			})
 		}
 
@@ -66,7 +68,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 
 			return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
 				BotToken: access.BotToken,
-				ChatId:   maputil.GetOrDefaultInt64(options.ProviderNotifyConfig, "chatId", access.DefaultChatId),
+				ChatId:   maputil.GetOrDefaultInt64(options.ProviderExtendedConfig, "chatId", access.DefaultChatId),
 			})
 		}
 
@@ -77,8 +79,31 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
+			mergedHeaders := make(map[string]string)
+			if defaultHeadersString := access.HeadersString; defaultHeadersString != "" {
+				h, err := httputil.ParseHeaders(defaultHeadersString)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
+				}
+				for key := range h {
+					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
+				}
+			}
+			if extendedHeadersString := maputil.GetString(options.ProviderExtendedConfig, "headers"); extendedHeadersString != "" {
+				h, err := httputil.ParseHeaders(extendedHeadersString)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
+				}
+				for key := range h {
+					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
+				}
+			}
+
 			return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
-				Url:                      access.Url,
+				WebhookUrl:               access.Url,
+				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.TemplateDataForNotification),
+				Method:                   access.Method,
+				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,
 			})
 		}

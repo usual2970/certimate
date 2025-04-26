@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"strings"
 	"time"
 
@@ -18,8 +19,13 @@ import (
 type DeployerConfig struct {
 	// Webhook URL。
 	WebhookUrl string `json:"webhookUrl"`
-	// Webhook 回调数据（JSON 格式）。
+	// Webhook 回调数据（application/json 或 application/x-www-form-urlencoded 格式）。
 	WebhookData string `json:"webhookData,omitempty"`
+	// 请求谓词。
+	// 零值时默认为 "POST"。
+	Method string `json:"method,omitempty"`
+	// 请求标头。
+	Headers map[string]string `json:"headers,omitempty"`
 	// 是否允许不安全的连接。
 	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 }
@@ -68,25 +74,41 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	var webhookData interface{}
-	err = json.Unmarshal([]byte(d.config.WebhookData), &webhookData)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshall webhook data: %w", err)
+	if d.config.WebhookData == "" {
+		webhookData = map[string]any{
+			"name":    strings.Join(certX509.DNSNames, ";"),
+			"cert":    certPEM,
+			"privkey": privkeyPEM,
+		}
+	} else {
+		err = json.Unmarshal([]byte(d.config.WebhookData), &webhookData)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshall webhook data: %w", err)
+		}
+
+		replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
+		replaceJsonValueRecursively(webhookData, "${DOMAINS}", strings.Join(certX509.DNSNames, ";"))
+		replaceJsonValueRecursively(webhookData, "${SUBJECT_ALT_NAMES}", strings.Join(certX509.DNSNames, ";"))
+		replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPEM)
+		replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPEM)
 	}
 
-	replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
-	replaceJsonValueRecursively(webhookData, "${DOMAINS}", strings.Join(certX509.DNSNames, ";"))
-	replaceJsonValueRecursively(webhookData, "${SUBJECT_ALT_NAMES}", strings.Join(certX509.DNSNames, ";"))
-	replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPEM)
-	replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPEM)
-
-	resp, err := d.httpClient.R().
+	req := d.httpClient.R().
 		SetContext(ctx).
+		SetHeaders(d.config.Headers)
+	req.URL = d.config.WebhookUrl
+	req.Method = d.config.Method
+	if req.Method == "" {
+		req.Method = http.MethodPost
+	}
+
+	resp, err := req.
 		SetHeader("Content-Type", "application/json").
 		SetBody(webhookData).
-		Post(d.config.WebhookUrl)
+		Send()
 	if err != nil {
 		return nil, fmt.Errorf("failed to send webhook request: %w", err)
-	} else if resp.StatusCode() != 200 {
+	} else if resp.IsError() {
 		return nil, fmt.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
 	}
 

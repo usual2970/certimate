@@ -94,7 +94,7 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 
 	case domain.NotifyChannelTypeWebhook:
 		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
-			Url:                      maputil.GetString(channelConfig, "url"),
+			WebhookUrl:               maputil.GetString(channelConfig, "url"),
 			AllowInsecureConnections: maputil.GetBool(channelConfig, "allowInsecureConnections"),
 		})
 

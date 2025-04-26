@@ -307,7 +307,11 @@ export type AccessConfigForWangsu = {
 
 export type AccessConfigForWebhook = {
   url: string;
+  method: string;
+  headers?: string;
   allowInsecureConnections?: boolean;
+  templateDataForDeployment?: string;
+  templateDataForNotification?: string;
 };
 
 export type AccessConfigForWestcn = {

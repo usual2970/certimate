@@ -261,8 +261,12 @@ type AccessConfigForWangsu struct {
 }
 
 type AccessConfigForWebhook struct {
-	Url                      string `json:"url"`
-	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+	Url                         string `json:"url"`
+	Method                      string `json:"method,omitempty"`
+	HeadersString               string `json:"headers,omitempty"`
+	AllowInsecureConnections    bool   `json:"allowInsecureConnections,omitempty"`
+	TemplateDataForDeployment   string `json:"templateDataForDeployment,omitempty"`   // TODO:
+	TemplateDataForNotification string `json:"templateDataForNotification,omitempty"` // TODO:
 }
 
 type AccessConfigForWestcn struct {
