@@ -25,6 +25,7 @@ import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
 import AccessFormDeSECConfig from "./AccessFormDeSECConfig";
+import AccessFormDingTalkBotConfig from "./AccessFormDingTalkBotConfig";
 import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormDynv6Config from "./AccessFormDynv6Config";
@@ -37,6 +38,7 @@ import AccessFormGoogleTrustServicesConfig from "./AccessFormGoogleTrustServices
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
+import AccessFormLarkBotConfig from "./AccessFormLarkBotConfig";
 import AccessFormMattermostConfig from "./AccessFormMattermostConfig";
 import AccessFormNamecheapConfig from "./AccessFormNamecheapConfig";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
@@ -57,6 +59,7 @@ import AccessFormVercelConfig from "./AccessFormVercelConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
 import AccessFormWangsuConfig from "./AccessFormWangsuConfig";
 import AccessFormWebhookConfig from "./AccessFormWebhookConfig";
+import AccessFormWeComBotConfig from "./AccessFormWeComBotConfig";
 import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 import AccessFormZeroSSLConfig from "./AccessFormZeroSSLConfig";
 
@@ -183,6 +186,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormCMCCCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DESEC:
         return <AccessFormDeSECConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DINGTALKBOT:
+        return <AccessFormDingTalkBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DNSLA:
         return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
@@ -207,6 +212,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormJDCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.KUBERNETES:
         return <AccessFormKubernetesConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.LARKBOT:
+        return <AccessFormLarkBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.MATTERMOST:
         return <AccessFormMattermostConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.NAMECHEAP:
@@ -252,6 +259,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
             {...nestedFormProps}
           />
         );
+      case ACCESS_PROVIDERS.WECOMBOT:
+        return <AccessFormWeComBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WESTCN:
         return <AccessFormWestcnConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ZEROSSL:

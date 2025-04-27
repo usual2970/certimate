@@ -52,6 +52,7 @@
   "provider.ctcccloud": "联通云",
   "provider.cucccloud": "天翼云",
   "provider.desec": "deSEC",
+  "provider.dingtalkbot": "钉钉群机器人",
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "多吉云",
   "provider.dogecloud.cdn": "多吉云 - 内容分发网络 CDN",
@@ -81,6 +82,7 @@
   "provider.jdcloud.vod": "京东云 - 视频点播",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
+  "provider.larkbot": "飞书群机器人",
   "provider.letsencrypt": "Let's Encrypt",
   "provider.letsencryptstaging": "Let's Encrypt 测试环境",
   "provider.local": "本地部署",
@@ -134,6 +136,7 @@
   "provider.wangsu": "网宿云",
   "provider.wangsu.cdnpro": "网宿云 - CDN Pro",
   "provider.webhook": "Webhook",
+  "provider.wecombot": "企业微信群机器人",
   "provider.westcn": "西部数码",
   "provider.zerossl": "ZeroSSL",
 

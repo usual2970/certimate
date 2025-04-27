@@ -21,6 +21,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   CLOUDNS: "cloudns",
   CMCCCLOUD: "cmcccloud",
   DESEC: "desec",
+  DINGTALKBOT: "dingtalkbot",
   DNSLA: "dnsla",
   DOGECLOUD: "dogecloud",
   DYNV6: "dynv6",
@@ -33,6 +34,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   HUAWEICLOUD: "huaweicloud",
   JDCLOUD: "jdcloud",
   KUBERNETES: "k8s",
+  LARKBOT: "larkbot",
   LETSENCRYPT: "letsencrypt",
   LETSENCRYPTSTAGING: "letsencryptstaging",
   LOCAL: "local",
@@ -56,6 +58,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   VOLCENGINE: "volcengine",
   WANGSU: "wangsu",
   WEBHOOK: "webhook",
+  WECOMBOT: "wecombot",
   WESTCN: "westcn",
   ZEROSSL: "zerossl",
 } as const);
@@ -142,6 +145,9 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
 
     [ACCESS_PROVIDERS.EMAIL, "provider.email", "/imgs/providers/email.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.DINGTALKBOT, "provider.dingtalkbot", "/imgs/providers/dingtalk.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.LARKBOT, "provider.larkbot", "/imgs/providers/lark.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.WECOMBOT, "provider.wecombot", "/imgs/providers/wecom.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.TELEGRAM, "provider.telegram", "/imgs/providers/telegram.svg", [ACCESS_USAGES.NOTIFICATION]],
   ].map((e) => [
@@ -514,10 +520,13 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const NOTIFICATION_PROVIDERS = Object.freeze({
+  DINGTALKBOT: `${ACCESS_PROVIDERS.DINGTALKBOT}`,
   EMAIL: `${ACCESS_PROVIDERS.EMAIL}`,
+  LARKBOT: `${ACCESS_PROVIDERS.LARKBOT}`,
   MATTERMOST: `${ACCESS_PROVIDERS.MATTERMOST}`,
   TELEGRAM: `${ACCESS_PROVIDERS.TELEGRAM}`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
+  WECOMBOT: `${ACCESS_PROVIDERS.WECOMBOT}`,
 } as const);
 
 export type NotificationProviderType = (typeof CA_PROVIDERS)[keyof typeof CA_PROVIDERS];
@@ -534,7 +543,15 @@ export const notificationProvidersMap: Map<NotificationProvider["type"] | string
     注意：此处的顺序决定显示在前端的顺序。
     NOTICE: The following order determines the order displayed at the frontend.
    */
-  [[NOTIFICATION_PROVIDERS.EMAIL], [NOTIFICATION_PROVIDERS.WEBHOOK], [NOTIFICATION_PROVIDERS.MATTERMOST], [NOTIFICATION_PROVIDERS.TELEGRAM]].map(([type]) => [
+  [
+    [NOTIFICATION_PROVIDERS.EMAIL],
+    [NOTIFICATION_PROVIDERS.WEBHOOK],
+    [NOTIFICATION_PROVIDERS.DINGTALKBOT],
+    [NOTIFICATION_PROVIDERS.LARKBOT],
+    [NOTIFICATION_PROVIDERS.WECOMBOT],
+    [NOTIFICATION_PROVIDERS.MATTERMOST],
+    [NOTIFICATION_PROVIDERS.TELEGRAM],
+  ].map(([type]) => [
     type,
     {
       type: type as CAProviderType,

@@ -52,6 +52,7 @@
   "provider.ctcccloud": "China Telecom Cloud (State Cloud)",
   "provider.cucccloud": "China Unicom Cloud",
   "provider.desec": "deSEC",
+  "provider.dingtalkbot": "DingTalk Bot",
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "Doge Cloud",
   "provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",
@@ -81,6 +82,7 @@
   "provider.jdcloud.vod": "JD Cloud - VOD (Video on Demand)",
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
+  "provider.larkbot": "Lark Bot",
   "provider.letsencrypt": "Let's Encrypt",
   "provider.letsencryptstaging": "Let's Encrypt Staging Environment",
   "provider.local": "Local deployment",
@@ -134,6 +136,7 @@
   "provider.wangsu": "Wangsu Cloud",
   "provider.wangsu.cdnpro": "Wangsu Cloud - CDN Pro",
   "provider.webhook": "Webhook",
+  "provider.wecombot": "WeCom Bot",
   "provider.westcn": "West.cn",
   "provider.zerossl": "ZeroSSL",
 

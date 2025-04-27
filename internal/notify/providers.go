@@ -6,10 +6,13 @@ import (
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
+	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
+	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
 	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
@@ -26,6 +29,19 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch options.Provider {
+	case domain.NotificationProviderTypeDingTalkBot:
+		{
+			access := domain.AccessConfigForDingTalkBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
+				Secret:     access.Secret,
+			})
+		}
+
 	case domain.NotificationProviderTypeEmail:
 		{
 			access := domain.AccessConfigForEmail{}
@@ -41,6 +57,18 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				Password:        access.Password,
 				SenderAddress:   maputil.GetOrDefaultString(options.ProviderExtendedConfig, "senderAddress", access.DefaultSenderAddress),
 				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "receiverAddress", access.DefaultReceiverAddress),
+			})
+		}
+
+	case domain.NotificationProviderTypeLarkBot:
+		{
+			access := domain.AccessConfigForLarkBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pLark.NewNotifier(&pLark.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
 			})
 		}
 
@@ -105,6 +133,18 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,
+			})
+		}
+
+	case domain.NotificationProviderTypeWeComBot:
+		{
+			access := domain.AccessConfigForWeComBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
 			})
 		}
 	}

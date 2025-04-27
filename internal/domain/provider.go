@@ -29,6 +29,7 @@ const (
 	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 联通云（预留）
 	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 天翼云（预留）
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
+	AccessProviderTypeDingTalkBot         = AccessProviderType("dingtalkbot")
 	AccessProviderTypeDNSLA               = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud           = AccessProviderType("dogecloud")
 	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
@@ -43,6 +44,7 @@ const (
 	AccessProviderTypeHuaweiCloud         = AccessProviderType("huaweicloud")
 	AccessProviderTypeJDCloud             = AccessProviderType("jdcloud")
 	AccessProviderTypeKubernetes          = AccessProviderType("k8s")
+	AccessProviderTypeLarkBot             = AccessProviderType("larkbot")
 	AccessProviderTypeLetsEncrypt         = AccessProviderType("letsencrypt")
 	AccessProviderTypeLetsEncryptStaging  = AccessProviderType("letsencryptstaging")
 	AccessProviderTypeLocal               = AccessProviderType("local")
@@ -67,6 +69,7 @@ const (
 	AccessProviderTypeVolcEngine          = AccessProviderType("volcengine")
 	AccessProviderTypeWangsu              = AccessProviderType("wangsu")
 	AccessProviderTypeWebhook             = AccessProviderType("webhook")
+	AccessProviderTypeWeComBot            = AccessProviderType("wecombot")
 	AccessProviderTypeWestcn              = AccessProviderType("westcn")
 	AccessProviderTypeZeroSSL             = AccessProviderType("zerossl")
 )
@@ -234,8 +237,11 @@ type NotificationProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
-	NotificationProviderTypeEmail      = NotificationProviderType(AccessProviderTypeEmail)
-	NotificationProviderTypeMattermost = NotificationProviderType(AccessProviderTypeMattermost)
-	NotificationProviderTypeTelegram   = NotificationProviderType(AccessProviderTypeTelegram)
-	NotificationProviderTypeWebhook    = NotificationProviderType(AccessProviderTypeWebhook)
+	NotificationProviderTypeDingTalkBot = NotificationProviderType(AccessProviderTypeDingTalkBot)
+	NotificationProviderTypeEmail       = NotificationProviderType(AccessProviderTypeEmail)
+	NotificationProviderTypeLarkBot     = NotificationProviderType(AccessProviderTypeLarkBot)
+	NotificationProviderTypeMattermost  = NotificationProviderType(AccessProviderTypeMattermost)
+	NotificationProviderTypeTelegram    = NotificationProviderType(AccessProviderTypeTelegram)
+	NotificationProviderTypeWebhook     = NotificationProviderType(AccessProviderTypeWebhook)
+	NotificationProviderTypeWeComBot    = NotificationProviderType(AccessProviderTypeWeComBot)
 )

@@ -35,8 +35,8 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 
 	case domain.NotifyChannelTypeDingTalk:
 		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
-			AccessToken: maputil.GetString(channelConfig, "accessToken"),
-			Secret:      maputil.GetString(channelConfig, "secret"),
+			WebhookUrl: "https://oapi.dingtalk.com/robot/send?access_token=" + maputil.GetString(channelConfig, "accessToken"),
+			Secret:     maputil.GetString(channelConfig, "secret"),
 		})
 
 	case domain.NotifyChannelTypeEmail:

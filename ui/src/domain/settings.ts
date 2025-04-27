@@ -87,12 +87,18 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.WECOM]?: WeComNotifyChannelConfig;
 };
 
+/**
+ * @deprecated
+ */
 export type BarkNotifyChannelConfig = {
   deviceKey: string;
   serverUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type EmailNotifyChannelConfig = {
   smtpHost: string;
   smtpPort: number;
@@ -104,12 +110,18 @@ export type EmailNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type DingTalkNotifyChannelConfig = {
   accessToken: string;
   secret: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type GotifyNotifyChannelConfig = {
   url: string;
   token: string;
@@ -117,11 +129,17 @@ export type GotifyNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type LarkNotifyChannelConfig = {
   webhookUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type MattermostNotifyChannelConfig = {
   serverUrl: string;
   channel: string;
@@ -130,38 +148,59 @@ export type MattermostNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type PushoverNotifyChannelConfig = {
   token: string;
   user: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type PushPlusNotifyChannelConfig = {
   token: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type ServerChanNotifyChannelConfig = {
   url: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type TelegramNotifyChannelConfig = {
   apiToken: string;
   chatId: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type WebhookNotifyChannelConfig = {
   url: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type WeComNotifyChannelConfig = {
   webhookUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type NotifyChannel = {
   type: string;
   name: string;

@@ -22,6 +22,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForDeSEC
+      | AccessConfigForDingTalkBot
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForDynv6
@@ -34,6 +35,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
+      | AccessConfigForLarkBot
       | AccessConfigForMattermost
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
@@ -53,6 +55,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForVolcEngine
       | AccessConfigForWangsu
       | AccessConfigForWebhook
+      | AccessConfigForWeComBot
       | AccessConfigForWestcn
       | AccessConfigForZeroSSL
     );
@@ -143,6 +146,11 @@ export type AccessConfigForDeSEC = {
   token: string;
 };
 
+export type AccessConfigForDingTalkBot = {
+  webhookUrl: string;
+  secret?: string;
+};
+
 export type AccessConfigForDNSLA = {
   apiId: string;
   apiSecret: string;
@@ -203,6 +211,10 @@ export type AccessConfigForJDCloud = {
 
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
+};
+
+export type AccessConfigForLarkBot = {
+  webhookUrl: string;
 };
 
 export type AccessConfigForMattermost = {
@@ -313,6 +325,10 @@ export type AccessConfigForWebhook = {
   allowInsecureConnections?: boolean;
   defaultDataForDeployment?: string;
   defaultDataForNotification?: string;
+};
+
+export type AccessConfigForWeComBot = {
+  webhookUrl: string;
 };
 
 export type AccessConfigForWestcn = {

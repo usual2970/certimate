@@ -98,6 +98,11 @@ type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }
 
+type AccessConfigForDingTalkBot struct {
+	WebhookUrl string `json:"webhookUrl"`
+	Secret     string `json:"secret"`
+}
+
 type AccessConfigForDNSLA struct {
 	ApiId     string `json:"apiId"`
 	ApiSecret string `json:"apiSecret"`
@@ -158,6 +163,10 @@ type AccessConfigForJDCloud struct {
 
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
+}
+
+type AccessConfigForLarkBot struct {
+	WebhookUrl string `json:"webhookUrl"`
 }
 
 type AccessConfigForMattermost struct {
@@ -268,6 +277,10 @@ type AccessConfigForWebhook struct {
 	AllowInsecureConnections   bool   `json:"allowInsecureConnections,omitempty"`
 	DefaultDataForDeployment   string `json:"defaultDataForDeployment,omitempty"`
 	DefaultDataForNotification string `json:"defaultDataForNotification,omitempty"`
+}
+
+type AccessConfigForWeComBot struct {
+	WebhookUrl string `json:"webhookUrl"`
 }
 
 type AccessConfigForWestcn struct {
