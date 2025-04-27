@@ -452,7 +452,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             <Form.Item name="caProviderAccessId" rules={[formRule]}>
               <AccessSelect
                 filter={(record) => {
-                  if (!!record.reserve && record.reserve !== "ca") return false;
+                  if (record.reserve !== "ca") return false;
                   if (fieldCAProvider) return caProvidersMap.get(fieldCAProvider)?.provider === record.provider;
 
                   const provider = accessProvidersMap.get(record.provider);

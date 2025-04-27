@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input, Select, Switch } from "antd";
+import { Alert, Button, Form, type FormInstance, Input, Select, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import Show from "@/components/Show";
 import { type AccessConfigForWebhook } from "@/domain/access";
 
 type AccessFormWebhookConfigFieldValues = Nullish<AccessConfigForWebhook>;
@@ -12,6 +13,7 @@ export type AccessFormWebhookConfigProps = {
   formName: string;
   disabled?: boolean;
   initialValues?: AccessFormWebhookConfigFieldValues;
+  usage?: "deployment" | "notification" | "none";
   onValuesChange?: (values: AccessFormWebhookConfigFieldValues) => void;
 };
 
@@ -21,10 +23,27 @@ const initFormModel = (): AccessFormWebhookConfigFieldValues => {
     method: "POST",
     headers: "Content-Type: application/json",
     allowInsecureConnections: false,
+    defaultDataForDeployment: JSON.stringify(
+      {
+        name: "${DOMAINS}",
+        cert: "${CERTIFICATE}",
+        privkey: "${PRIVATE_KEY}",
+      },
+      null,
+      2
+    ),
+    defaultDataForNotification: JSON.stringify(
+      {
+        subject: "${SUBJECT}",
+        message: "${MESSAGE}",
+      },
+      null,
+      2
+    ),
   };
 };
 
-const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: AccessFormWebhookConfigProps) => {
+const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialValues, usage, onValuesChange }: AccessFormWebhookConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -47,6 +66,34 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         return true;
       }, t("access.form.webhook_headers.errmsg.invalid")),
     allowInsecureConnections: z.boolean().nullish(),
+    defaultDataForDeployment: z
+      .string()
+      .nullish()
+      .refine((v) => {
+        if (usage && usage !== "deployment") return true;
+        if (!v) return true;
+
+        try {
+          const obj = JSON.parse(v);
+          return typeof obj === "object" && !Array.isArray(obj);
+        } catch {
+          return false;
+        }
+      }, t("access.form.webhook_default_data.errmsg.json_invalid")),
+    defaultDataForNotification: z
+      .string()
+      .nullish()
+      .refine((v) => {
+        if (usage && usage !== "notification") return true;
+        if (!v) return true;
+
+        try {
+          const obj = JSON.parse(v);
+          return typeof obj === "object" && !Array.isArray(obj);
+        } catch {
+          return false;
+        }
+      }, t("access.form.webhook_default_data.errmsg.json_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -55,6 +102,34 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
     value = value.trim();
     value = value.replace(/(?<!\r)\n/g, "\r\n");
     formInst.setFieldValue("headers", value);
+  };
+
+  const handleWebhookDataForDeploymentBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    try {
+      const json = JSON.stringify(JSON.parse(value), null, 2);
+      formInst.setFieldValue("defaultDataForDeployment", json);
+    } catch {
+      return;
+    }
+  };
+
+  const handleWebhookDataForNotificationBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    try {
+      const json = JSON.stringify(JSON.parse(value), null, 2);
+      formInst.setFieldValue("defaultDataForNotification", json);
+    } catch {
+      return;
+    }
+  };
+
+  const handlePresetDataForDeploymentClick = () => {
+    formInst.setFieldValue("defaultDataForDeployment", initFormModel().defaultDataForDeployment);
+  };
+
+  const handlePresetDataForNotificationClick = () => {
+    formInst.setFieldValue("defaultDataForNotification", initFormModel().defaultDataForNotification);
   };
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
@@ -89,6 +164,60 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
       >
         <Input.TextArea autoSize={{ minRows: 3, maxRows: 5 }} placeholder={t("access.form.webhook_headers.placeholder")} onBlur={handleWebhookHeadersBlur} />
       </Form.Item>
+
+      <Show when={!usage || usage === "deployment"}>
+        <Form.Item className="mb-0">
+          <label className="mb-1 block">
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="max-w-full grow truncate">{t("access.form.webhook_default_data_for_deployment.label")}</div>
+              <div className="text-right">
+                <Button size="small" type="link" onClick={handlePresetDataForDeploymentClick}>
+                  {t("access.form.webhook_default_data_preset.button")}
+                </Button>
+              </div>
+            </div>
+          </label>
+          <Form.Item name="defaultDataForDeployment" rules={[formRule]}>
+            <Input.TextArea
+              allowClear
+              autoSize={{ minRows: 3, maxRows: 10 }}
+              placeholder={t("access.form.webhook_default_data_for_deployment.placeholder")}
+              onBlur={handleWebhookDataForDeploymentBlur}
+            />
+          </Form.Item>
+        </Form.Item>
+
+        <Form.Item>
+          <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("access.form.webhook_default_data_for_deployment.guide") }}></span>} />
+        </Form.Item>
+      </Show>
+
+      <Show when={!usage || usage === "notification"}>
+        <Form.Item className="mb-0">
+          <label className="mb-1 block">
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="max-w-full grow truncate">{t("access.form.webhook_default_data_for_notification.label")}</div>
+              <div className="text-right">
+                <Button size="small" type="link" onClick={handlePresetDataForNotificationClick}>
+                  {t("access.form.webhook_default_data_preset.button")}
+                </Button>
+              </div>
+            </div>
+          </label>
+          <Form.Item name="defaultDataForNotification" rules={[formRule]}>
+            <Input.TextArea
+              allowClear
+              autoSize={{ minRows: 3, maxRows: 10 }}
+              placeholder={t("access.form.webhook_default_data_for_notification.placeholder")}
+              onBlur={handleWebhookDataForNotificationBlur}
+            />
+          </Form.Item>
+        </Form.Item>
+
+        <Form.Item>
+          <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("access.form.webhook_default_data_for_notification.guide") }}></span>} />
+        </Form.Item>
+      </Show>
 
       <Form.Item
         name="allowInsecureConnections"

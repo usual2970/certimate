@@ -72,7 +72,7 @@ const AccessFormTelegramConfig = ({ form: formInst, formName, disabled, initialV
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_default_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" placeholder={t("access.form.telegram_default_chat_id.placeholder")} />
+        <Input type="number" allowClear placeholder={t("access.form.telegram_default_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );

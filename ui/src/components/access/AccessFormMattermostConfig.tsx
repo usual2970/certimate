@@ -70,7 +70,7 @@ const AccessFormMattermostConfig = ({ form: formInst, formName, disabled, initia
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.mattermost_default_channel_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.mattermost_default_channel_id.placeholder")} />
+        <Input allowClear placeholder={t("access.form.mattermost_default_channel_id.placeholder")} />
       </Form.Item>
     </Form>
   );

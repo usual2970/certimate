@@ -3,23 +3,23 @@ import { Alert, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-type DeployNodeConfigFormWebhookConfigFieldValues = Nullish<{
+type NotifyNodeConfigFormWebhookConfigFieldValues = Nullish<{
   webhookData: string;
 }>;
 
-export type DeployNodeConfigFormWebhookConfigProps = {
+export type NotifyNodeConfigFormWebhookConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  initialValues?: DeployNodeConfigFormWebhookConfigFieldValues;
-  onValuesChange?: (values: DeployNodeConfigFormWebhookConfigFieldValues) => void;
+  initialValues?: NotifyNodeConfigFormWebhookConfigFieldValues;
+  onValuesChange?: (values: NotifyNodeConfigFormWebhookConfigFieldValues) => void;
 };
 
-const initFormModel = (): DeployNodeConfigFormWebhookConfigFieldValues => {
+const initFormModel = (): NotifyNodeConfigFormWebhookConfigFieldValues => {
   return {};
 };
 
-const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormWebhookConfigProps) => {
+const NotifyNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: NotifyNodeConfigFormWebhookConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -35,7 +35,7 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
         } catch {
           return false;
         }
-      }, t("workflow_node.deploy.form.webhook_data.errmsg.json_invalid")),
+      }, t("workflow_node.notify.form.webhook_data.errmsg.json_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -64,23 +64,23 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
     >
       <Form.Item
         name="webhookData"
-        label={t("workflow_node.deploy.form.webhook_data.label")}
+        label={t("workflow_node.notify.form.webhook_data.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.webhook_data.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.webhook_data.tooltip") }}></span>}
       >
         <Input.TextArea
           allowClear
           autoSize={{ minRows: 3, maxRows: 10 }}
-          placeholder={t("workflow_node.deploy.form.webhook_data.placeholder")}
+          placeholder={t("workflow_node.notify.form.webhook_data.placeholder")}
           onBlur={handleWebhookDataBlur}
         />
       </Form.Item>
 
       <Form.Item>
-        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.webhook_data.guide") }}></span>} />
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.webhook_data.guide") }}></span>} />
       </Form.Item>
     </Form>
   );
 };
 
-export default DeployNodeConfigFormWebhookConfig;
+export default NotifyNodeConfigFormWebhookConfig;

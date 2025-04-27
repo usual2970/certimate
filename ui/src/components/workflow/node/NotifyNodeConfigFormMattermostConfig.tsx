@@ -52,7 +52,7 @@ const NotifyNodeConfigFormMattermostConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.mattermost_channel_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.notify.form.mattermost_channel_id.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.notify.form.mattermost_channel_id.placeholder")} />
       </Form.Item>
     </Form>
   );

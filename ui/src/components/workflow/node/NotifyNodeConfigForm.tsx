@@ -2,13 +2,14 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } f
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { PlusOutlined as PlusOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
-import { Button, Form, type FormInstance, Input, Select } from "antd";
+import { Button, Divider, Form, type FormInstance, Input, Select, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import NotificationProviderSelect from "@/components/provider/NotificationProviderSelect";
+import Show from "@/components/Show";
 import { ACCESS_USAGES, NOTIFICATION_PROVIDERS, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
 import { type WorkflowNodeConfigForNotify } from "@/domain/workflow";
@@ -19,6 +20,7 @@ import { useNotifyChannelsStore } from "@/stores/notify";
 import NotifyNodeConfigFormEmailConfig from "./NotifyNodeConfigFormEmailConfig";
 import NotifyNodeConfigFormMattermostConfig from "./NotifyNodeConfigFormMattermostConfig";
 import NotifyNodeConfigFormTelegramConfig from "./NotifyNodeConfigFormTelegramConfig";
+import NotifyNodeConfigFormWebhookConfig from "./NotifyNodeConfigFormWebhookConfig";
 
 type NotifyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForNotify>;
 
@@ -114,6 +116,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           return <NotifyNodeConfigFormMattermostConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.TELEGRAM:
           return <NotifyNodeConfigFormTelegramConfig {...nestedFormProps} />;
+        case NOTIFICATION_PROVIDERS.WEBHOOK:
+          return <NotifyNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }
     }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
 
@@ -250,7 +254,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           <Form.Item name="providerAccessId" rules={[formRule]}>
             <AccessSelect
               filter={(record) => {
-                if (!!record.reserve && record.reserve !== "notification") return false;
+                if (record.reserve !== "notification") return false;
 
                 const provider = accessProvidersMap.get(record.provider);
                 return !!provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION);
@@ -261,7 +265,15 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           </Form.Item>
         </Form.Item>
 
-        {nestedFormEl}
+        <Show when={!!nestedFormEl}>
+          <Divider className="my-1">
+            <Typography.Text className="text-xs font-normal" type="secondary">
+              {t("workflow_node.notify.form.params_config.label")}
+            </Typography.Text>
+          </Divider>
+
+          {nestedFormEl}
+        </Show>
       </Form>
     );
   }

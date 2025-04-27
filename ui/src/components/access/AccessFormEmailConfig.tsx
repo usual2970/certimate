@@ -112,11 +112,11 @@ const AccessFormEmailConfig = ({ form: formInst, formName, disabled, initialValu
       </Form.Item>
 
       <Form.Item name="defaultSenderAddress" label={t("access.form.email_default_sender_address.label")} rules={[formRule]}>
-        <Input type="email" placeholder={t("access.form.email_default_sender_address.placeholder")} />
+        <Input type="email" allowClear placeholder={t("access.form.email_default_sender_address.placeholder")} />
       </Form.Item>
 
       <Form.Item name="defaultReceiverAddress" label={t("access.form.email_default_receiver_address.label")} rules={[formRule]}>
-        <Input type="email" placeholder={t("access.form.email_default_receiver_address.placeholder")} />
+        <Input type="email" allowClear placeholder={t("access.form.email_default_receiver_address.placeholder")} />
       </Form.Item>
     </Form>
   );

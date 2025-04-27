@@ -57,7 +57,7 @@ const NotifyNodeConfigFormTelegramConfig = ({ form: formInst, formName, disabled
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegram_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" placeholder={t("workflow_node.notify.form.telegram_chat_id.placeholder")} />
+        <Input type="number" allowClear placeholder={t("workflow_node.notify.form.telegram_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );

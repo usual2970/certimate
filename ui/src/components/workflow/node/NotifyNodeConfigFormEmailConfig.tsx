@@ -62,7 +62,7 @@ const NotifyNodeConfigFormEmailConfig = ({ form: formInst, formName, disabled, i
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.email_sender_address.tooltip") }}></span>}
       >
-        <Input type="email" placeholder={t("workflow_node.notify.form.email_sender_address.placeholder")} />
+        <Input type="email" allowClear placeholder={t("workflow_node.notify.form.email_sender_address.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -71,7 +71,7 @@ const NotifyNodeConfigFormEmailConfig = ({ form: formInst, formName, disabled, i
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.email_receiver_address.tooltip") }}></span>}
       >
-        <Input type="email" placeholder={t("workflow_node.notify.form.email_receiver_address.placeholder")} />
+        <Input type="email" allowClear placeholder={t("workflow_node.notify.form.email_receiver_address.placeholder")} />
       </Form.Item>
     </Form>
   );

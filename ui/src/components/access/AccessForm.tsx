@@ -246,7 +246,12 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       case ACCESS_PROVIDERS.WANGSU:
         return <AccessFormWangsuConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.WEBHOOK:
-        return <AccessFormWebhookConfig {...nestedFormProps} />;
+        return (
+          <AccessFormWebhookConfig
+            usage={usage === "notification-only" ? "notification" : usage === "both-dns-hosting" ? "deployment" : "none"}
+            {...nestedFormProps}
+          />
+        );
       case ACCESS_PROVIDERS.WESTCN:
         return <AccessFormWestcnConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ZEROSSL:
