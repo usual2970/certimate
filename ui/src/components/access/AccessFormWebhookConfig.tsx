@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Form, type FormInstance, Input, Select, Switch } from "antd";
+import { DownOutlined as DownOutlinedIcon } from "@ant-design/icons";
+import { Alert, Button, Dropdown, Form, type FormInstance, Input, Select, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -128,8 +129,124 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
     formInst.setFieldValue("defaultDataForDeployment", initFormModel().defaultDataForDeployment);
   };
 
-  const handlePresetDataForNotificationClick = () => {
-    formInst.setFieldValue("defaultDataForNotification", initFormModel().defaultDataForNotification);
+  const handlePresetDataForNotificationClick = (key: string) => {
+    switch (key) {
+      case "bark":
+        formInst.setFieldValue("url", "https://api.day.app/push");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json\r\nAuthorization: Bearer <your-gotify-token>");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              title: "${SUBJECT}",
+              body: "${MESSAGE}",
+              group: "<your-bark-group>",
+              device_keys: "<your-bark-device-key>",
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "gotify":
+        formInst.setFieldValue("url", "https://<your-gotify-server>/");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json\r\nAuthorization: Bearer <your-gotify-token>");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              title: "${SUBJECT}",
+              message: "${MESSAGE}",
+              priority: 1,
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "ntfy":
+        formInst.setFieldValue("url", "https://<your-ntfy-server>/");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              topic: "<your-ntfy-topic>",
+              title: "${SUBJECT}",
+              message: "${MESSAGE}",
+              priority: 1,
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "pushover":
+        formInst.setFieldValue("url", "https://api.pushover.net/1/messages.json");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              token: "<your-pushover-token>",
+              user: "<your-pushover-user>",
+              title: "${SUBJECT}",
+              message: "${MESSAGE}",
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "pushplus":
+        formInst.setFieldValue("url", "https://www.pushplus.plus/send");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              token: "<your-pushplus-token>",
+              title: "${SUBJECT}",
+              content: "${MESSAGE}",
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "serverchan":
+        formInst.setFieldValue("url", "https://sctapi.ftqq.com/<your-serverchan-key>.send");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              text: "${SUBJECT}",
+              desp: "${MESSAGE}",
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      default:
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue("defaultDataForNotification", initFormModel().defaultDataForNotification);
+        break;
+    }
   };
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
@@ -169,10 +286,12 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         <Form.Item className="mb-0">
           <label className="mb-1 block">
             <div className="flex w-full items-center justify-between gap-4">
-              <div className="max-w-full grow truncate">{t("access.form.webhook_default_data_for_deployment.label")}</div>
+              <div className="max-w-full grow truncate">
+                <span>{t("access.form.webhook_default_data_for_deployment.label")}</span>
+              </div>
               <div className="text-right">
                 <Button size="small" type="link" onClick={handlePresetDataForDeploymentClick}>
-                  {t("access.form.webhook_default_data_preset.button")}
+                  {t("access.form.webhook_preset_data.button")}
                 </Button>
               </div>
             </div>
@@ -196,11 +315,25 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         <Form.Item className="mb-0">
           <label className="mb-1 block">
             <div className="flex w-full items-center justify-between gap-4">
-              <div className="max-w-full grow truncate">{t("access.form.webhook_default_data_for_notification.label")}</div>
+              <div className="max-w-full grow truncate">
+                <span>{t("access.form.webhook_default_data_for_notification.label")}</span>
+              </div>
               <div className="text-right">
-                <Button size="small" type="link" onClick={handlePresetDataForNotificationClick}>
-                  {t("access.form.webhook_default_data_preset.button")}
-                </Button>
+                <Dropdown
+                  menu={{
+                    items: ["bark", "ntfy", "gotify", "pushover", "pushplus", "serverchan"].map((key) => ({
+                      key,
+                      label: t(`access.form.webhook_preset_data.option.${key}.label`),
+                      onClick: () => handlePresetDataForNotificationClick(key),
+                    })),
+                  }}
+                  trigger={["click"]}
+                >
+                  <Button size="small" type="link">
+                    {t("access.form.webhook_preset_data.button")}
+                    <DownOutlinedIcon />
+                  </Button>
+                </Dropdown>
               </div>
             </div>
           </label>

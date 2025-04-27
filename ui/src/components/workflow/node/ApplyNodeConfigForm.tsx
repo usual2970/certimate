@@ -398,7 +398,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           <Form.Item className="mb-0">
             <label className="mb-1 block">
               <div className="flex w-full items-center justify-between gap-4">
-                <div className="max-w-full grow truncate">{t("workflow_node.apply.form.ca_provider.label")}</div>
+                <div className="max-w-full grow truncate">
+                  <span>{t("workflow_node.apply.form.ca_provider.label")}</span>
+                </div>
                 <div className="text-right">
                   <Show when={!fieldCAProvider}>
                     <Link className="ant-typography" to="/settings/ssl-provider" target="_blank">
