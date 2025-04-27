@@ -352,7 +352,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 </div>
                 <div className="text-right">
                   <AccessEditModal
-                    range="both-dns-hosting"
                     scene="add"
                     trigger={
                       <Button size="small" type="link">
@@ -360,6 +359,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                         <PlusOutlinedIcon className="text-xs" />
                       </Button>
                     }
+                    usage="both-dns-hosting"
                     afterSubmit={(record) => {
                       const provider = accessProvidersMap.get(record.provider);
                       if (provider?.usages?.includes(ACCESS_USAGES.DNS)) {
@@ -374,6 +374,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             <Form.Item name="providerAccessId" rules={[formRule]}>
               <AccessSelect
                 filter={(record) => {
+                  if (record.reserve) return false;
+
                   const provider = accessProvidersMap.get(record.provider);
                   return !!provider?.usages?.includes(ACCESS_USAGES.DNS);
                 }}
@@ -429,7 +431,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 <div className="text-right">
                   <AccessEditModal
                     data={{ provider: caProvidersMap.get(fieldCAProvider!)?.provider }}
-                    range="ca-only"
                     scene="add"
                     trigger={
                       <Button size="small" type="link">
@@ -437,6 +438,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                         <PlusOutlinedIcon className="text-xs" />
                       </Button>
                     }
+                    usage="ca-only"
                     afterSubmit={(record) => {
                       const provider = accessProvidersMap.get(record.provider);
                       if (provider?.usages?.includes(ACCESS_USAGES.CA)) {
@@ -450,9 +452,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             <Form.Item name="caProviderAccessId" rules={[formRule]}>
               <AccessSelect
                 filter={(record) => {
-                  if (fieldCAProvider) {
-                    return caProvidersMap.get(fieldCAProvider)?.provider === record.provider;
-                  }
+                  if (!!record.reserve && record.reserve !== "ca") return false;
+                  if (fieldCAProvider) return caProvidersMap.get(fieldCAProvider)?.provider === record.provider;
 
                   const provider = accessProvidersMap.get(record.provider);
                   return !!provider?.usages?.includes(ACCESS_USAGES.CA);

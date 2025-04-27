@@ -101,7 +101,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 
 			return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
 				WebhookUrl:               access.Url,
-				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.TemplateDataForNotification),
+				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.DefaultDataForNotification),
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,

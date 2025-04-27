@@ -409,7 +409,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                   <div className="text-right">
                     <AccessEditModal
                       data={{ provider: deploymentProvidersMap.get(fieldProvider!)?.provider }}
-                      range="both-dns-hosting"
                       scene="add"
                       trigger={
                         <Button size="small" type="link">
@@ -417,6 +416,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                           <PlusOutlinedIcon className="text-xs" />
                         </Button>
                       }
+                      usage="both-dns-hosting"
                       afterSubmit={(record) => {
                         const provider = accessProvidersMap.get(record.provider);
                         if (provider?.usages?.includes(ACCESS_USAGES.HOSTING)) {
@@ -430,9 +430,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               <Form.Item name="providerAccessId" rules={[formRule]}>
                 <AccessSelect
                   filter={(record) => {
-                    if (fieldProvider) {
-                      return deploymentProvidersMap.get(fieldProvider)?.provider === record.provider;
-                    }
+                    if (record.reserve) return false;
+                    if (fieldProvider) return deploymentProvidersMap.get(fieldProvider)?.provider === record.provider;
 
                     const provider = accessProvidersMap.get(record.provider);
                     return !!provider?.usages?.includes(ACCESS_USAGES.HOSTING);

@@ -18,9 +18,9 @@
   "access.props.provider.usage.ca": "证书颁发机构",
   "access.props.provider.usage.notification": "通知渠道",
   "access.props.provider.builtin": "内置",
-  "access.props.range.both_dns_hosting": "提供商",
-  "access.props.range.ca_only": "证书颁发机构",
-  "access.props.range.notify_only": "通知渠道",
+  "access.props.usage.both_dns_hosting": "提供商",
+  "access.props.usage.ca_only": "证书颁发机构",
+  "access.props.usage.notification_only": "通知渠道",
   "access.props.created_at": "创建时间",
   "access.props.updated_at": "更新时间",
 

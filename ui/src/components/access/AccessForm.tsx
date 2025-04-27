@@ -61,16 +61,16 @@ import AccessFormWestcnConfig from "./AccessFormWestcnConfig";
 import AccessFormZeroSSLConfig from "./AccessFormZeroSSLConfig";
 
 type AccessFormFieldValues = Partial<MaybeModelRecord<AccessModel>>;
-type AccessFormRanges = "both-dns-hosting" | "ca-only" | "notify-only";
 type AccessFormScenes = "add" | "edit";
+type AccessFormUsages = "both-dns-hosting" | "ca-only" | "notification-only";
 
 export type AccessFormProps = {
   className?: string;
   style?: React.CSSProperties;
   disabled?: boolean;
   initialValues?: AccessFormFieldValues;
-  range?: AccessFormRanges;
   scene: AccessFormScenes;
+  usage?: AccessFormUsages;
   onValuesChange?: (values: AccessFormFieldValues) => void;
 };
 
@@ -80,7 +80,7 @@ export type AccessFormInstance = {
   validateFields: FormInstance<AccessFormFieldValues>["validateFields"];
 };
 
-const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className, style, disabled, initialValues, range, scene, onValuesChange }, ref) => {
+const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className, style, disabled, initialValues, usage, scene, onValuesChange }, ref) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -91,13 +91,14 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       .trim(),
     provider: z.nativeEnum(ACCESS_PROVIDERS, {
       message:
-        range === "ca-only"
+        usage === "ca-only"
           ? t("access.form.certificate_authority.placeholder")
-          : range === "notify-only"
+          : usage === "notification-only"
             ? t("access.form.notification_channel.placeholder")
             : t("access.form.provider.placeholder"),
     }),
     config: z.any(),
+    reserve: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm({
@@ -105,33 +106,33 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
   });
 
   const providerLabel = useMemo(() => {
-    switch (range) {
+    switch (usage) {
       case "ca-only":
         return t("access.form.certificate_authority.label");
-      case "notify-only":
+      case "notification-only":
         return t("access.form.notification_channel.label");
     }
 
     return t("access.form.provider.label");
-  }, [range]);
+  }, [usage]);
   const providerPlaceholder = useMemo(() => {
-    switch (range) {
+    switch (usage) {
       case "ca-only":
         return t("access.form.certificate_authority.placeholder");
-      case "notify-only":
+      case "notification-only":
         return t("access.form.notification_channel.placeholder");
     }
 
     return t("access.form.provider.placeholder");
-  }, [range]);
+  }, [usage]);
   const providerTooltip = useMemo(() => {
-    switch (range) {
+    switch (usage) {
       case "both-dns-hosting":
         return <span dangerouslySetInnerHTML={{ __html: t("access.form.provider.tooltip") }}></span>;
     }
 
     return undefined;
-  }, [range]);
+  }, [usage]);
 
   const fieldProvider = Form.useWatch("provider", formInst);
 
@@ -269,6 +270,7 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       getFieldsValue: () => {
         const values = formInst.getFieldsValue(true);
         values.config = nestedFormInst.getFieldsValue();
+        values.reserve = usage === "ca-only" ? "ca" : usage === "notification-only" ? "notification" : undefined;
         return values;
       },
       resetFields: (fields) => {
@@ -297,20 +299,20 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
           <Form.Item name="provider" label={providerLabel} rules={[formRule]} tooltip={providerTooltip}>
             <AccessProviderSelect
               filter={(record) => {
-                if (range == null) return true;
+                if (usage == null) return true;
 
-                switch (range) {
+                switch (usage) {
                   case "both-dns-hosting":
                     return record.usages.includes(ACCESS_USAGES.DNS) || record.usages.includes(ACCESS_USAGES.HOSTING);
                   case "ca-only":
                     return record.usages.includes(ACCESS_USAGES.CA);
-                  case "notify-only":
+                  case "notification-only":
                     return record.usages.includes(ACCESS_USAGES.NOTIFICATION);
                 }
               }}
               disabled={scene !== "add"}
               placeholder={providerPlaceholder}
-              showOptionTags={range == null || (range === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
+              showOptionTags={usage == null || (usage === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
               showSearch={!disabled}
             />
           </Form.Item>

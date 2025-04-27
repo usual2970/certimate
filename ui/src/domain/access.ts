@@ -56,6 +56,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForWestcn
       | AccessConfigForZeroSSL
     );
+  reserve?: "ca" | "notification";
 }
 
 // #region AccessConfig
@@ -310,8 +311,8 @@ export type AccessConfigForWebhook = {
   method: string;
   headers?: string;
   allowInsecureConnections?: boolean;
-  templateDataForDeployment?: string;
-  templateDataForNotification?: string;
+  defaultDataForDeployment?: string;
+  defaultDataForNotification?: string;
 };
 
 export type AccessConfigForWestcn = {

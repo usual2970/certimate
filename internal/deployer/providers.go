@@ -1098,7 +1098,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pWebhook.NewDeployer(&pWebhook.DeployerConfig{
 				WebhookUrl:               access.Url,
-				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.TemplateDataForDeployment),
+				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.DefaultDataForDeployment),
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,

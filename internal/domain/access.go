@@ -11,6 +11,7 @@ type Access struct {
 	Name      string         `json:"name" db:"name"`
 	Provider  string         `json:"provider" db:"provider"`
 	Config    map[string]any `json:"config" db:"config"`
+	Reserve   string         `json:"reserve,omitempty" db:"reserve"`
 	DeletedAt *time.Time     `json:"deleted" db:"deleted"`
 }
 
@@ -261,12 +262,12 @@ type AccessConfigForWangsu struct {
 }
 
 type AccessConfigForWebhook struct {
-	Url                         string `json:"url"`
-	Method                      string `json:"method,omitempty"`
-	HeadersString               string `json:"headers,omitempty"`
-	AllowInsecureConnections    bool   `json:"allowInsecureConnections,omitempty"`
-	TemplateDataForDeployment   string `json:"templateDataForDeployment,omitempty"`   // TODO:
-	TemplateDataForNotification string `json:"templateDataForNotification,omitempty"` // TODO:
+	Url                        string `json:"url"`
+	Method                     string `json:"method,omitempty"`
+	HeadersString              string `json:"headers,omitempty"`
+	AllowInsecureConnections   bool   `json:"allowInsecureConnections,omitempty"`
+	DefaultDataForDeployment   string `json:"defaultDataForDeployment,omitempty"`
+	DefaultDataForNotification string `json:"defaultDataForNotification,omitempty"`
 }
 
 type AccessConfigForWestcn struct {

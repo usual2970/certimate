@@ -14,14 +14,14 @@ export type AccessEditModalProps = {
   data?: AccessFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
-  range?: AccessFormProps["range"];
+  usage?: AccessFormProps["usage"];
   scene: AccessFormProps["scene"];
   trigger?: React.ReactNode;
   onOpenChange?: (open: boolean) => void;
   afterSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ...props }: AccessEditModalProps) => {
+const AccessEditModal = ({ data, loading, trigger, scene, usage, afterSubmit, ...props }: AccessEditModalProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -105,7 +105,7 @@ const AccessEditModal = ({ data, loading, trigger, scene, range, afterSubmit, ..
         onCancel={handleCancelClick}
       >
         <div className="pb-2 pt-4">
-          <AccessForm ref={formRef} initialValues={data} range={range} scene={scene === "add" ? "add" : "edit"} />
+          <AccessForm ref={formRef} initialValues={data} scene={scene === "add" ? "add" : "edit"} usage={usage} />
         </div>
       </Modal>
     </>

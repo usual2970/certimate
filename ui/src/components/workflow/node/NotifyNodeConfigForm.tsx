@@ -228,7 +228,6 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
               </div>
               <div className="text-right">
                 <AccessEditModal
-                  range="notify-only"
                   scene="add"
                   trigger={
                     <Button size="small" type="link">
@@ -236,6 +235,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
                       <PlusOutlinedIcon className="text-xs" />
                     </Button>
                   }
+                  usage="notification-only"
                   afterSubmit={(record) => {
                     const provider = accessProvidersMap.get(record.provider);
                     if (provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION)) {
@@ -250,6 +250,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           <Form.Item name="providerAccessId" rules={[formRule]}>
             <AccessSelect
               filter={(record) => {
+                if (!!record.reserve && record.reserve !== "notification") return false;
+
                 const provider = accessProvidersMap.get(record.provider);
                 return !!provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION);
               }}

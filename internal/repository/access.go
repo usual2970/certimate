@@ -53,6 +53,7 @@ func (r *AccessRepository) castRecordToModel(record *core.Record) (*domain.Acces
 		Name:     record.GetString("name"),
 		Provider: record.GetString("provider"),
 		Config:   config,
+		Reserve:  record.GetString("reserve"),
 	}
 	return access, nil
 }

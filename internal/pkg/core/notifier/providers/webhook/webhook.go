@@ -73,7 +73,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse webhook url: %w", err)
 	} else if webhookUrl.Scheme != "http" && webhookUrl.Scheme != "https" {
-		return nil, fmt.Errorf("unsupported webhook url scheme: %s", webhookUrl.Scheme)
+		return nil, fmt.Errorf("unsupported webhook url scheme '%s'", webhookUrl.Scheme)
 	}
 
 	// 处理 Webhook 请求谓词
@@ -85,7 +85,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		webhookMethod != http.MethodPut &&
 		webhookMethod != http.MethodPatch &&
 		webhookMethod != http.MethodDelete {
-		return nil, fmt.Errorf("unsupported webhook request method: %s", webhookMethod)
+		return nil, fmt.Errorf("unsupported webhook request method '%s'", webhookMethod)
 	}
 
 	// 处理 Webhook 请求标头
@@ -105,7 +105,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	} else if strings.HasPrefix(webhookContentType, CONTENT_TYPE_JSON) &&
 		strings.HasPrefix(webhookContentType, CONTENT_TYPE_FORM) &&
 		strings.HasPrefix(webhookContentType, CONTENT_TYPE_MULTIPART) {
-		return nil, fmt.Errorf("unsupported webhook content type: %s", webhookContentType)
+		return nil, fmt.Errorf("unsupported webhook content type '%s'", webhookContentType)
 	}
 
 	// 处理 Webhook 请求数据
