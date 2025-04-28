@@ -41,11 +41,11 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 检测是否可以跳过本次执行
-	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.logger.Info(fmt.Sprintf("skip this application, because %s", skipReason))
+	if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
+		n.logger.Info(fmt.Sprintf("skip this application, because %s", reason))
 		return nil
-	} else if skipReason != "" {
-		n.logger.Info(fmt.Sprintf("re-apply, because %s", skipReason))
+	} else if reason != "" {
+		n.logger.Info(fmt.Sprintf("re-apply, because %s", reason))
 	}
 
 	// 初始化申请器
