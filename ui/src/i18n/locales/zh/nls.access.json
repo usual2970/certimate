@@ -369,6 +369,7 @@
   "access.form.webhook_preset_data.option.pushover.label": "Pushover",
   "access.form.webhook_preset_data.option.pushplus.label": "PushPlus 推送加",
   "access.form.webhook_preset_data.option.serverchan.label": "Server 酱",
+  "access.form.webhook_preset_data.option.common.label": "通用模板",
   "access.form.webhook_allow_insecure_conns.label": "忽略 SSL/TLS 证书错误",
   "access.form.webhook_allow_insecure_conns.tooltip": "忽略 SSL/TLS 证书错误可能导致数据泄露或被篡改。建议仅在可信网络下启用。",
   "access.form.webhook_allow_insecure_conns.switch.on": "允许",

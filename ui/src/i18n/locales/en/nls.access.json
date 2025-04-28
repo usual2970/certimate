@@ -369,6 +369,7 @@
   "access.form.webhook_preset_data.option.pushover.label": "Pushover",
   "access.form.webhook_preset_data.option.pushplus.label": "PushPlus",
   "access.form.webhook_preset_data.option.serverchan.label": "ServerChan",
+  "access.form.webhook_preset_data.option.common.label": "General template",
   "access.form.webhook_allow_insecure_conns.label": "Insecure SSL/TLS connections",
   "access.form.webhook_allow_insecure_conns.tooltip": "Allowing insecure connections may lead to data leak or tampering. Use this option only when under trusted networks.",
   "access.form.webhook_allow_insecure_conns.switch.on": "Allow",

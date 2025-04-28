@@ -321,7 +321,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
               <div className="text-right">
                 <Dropdown
                   menu={{
-                    items: ["bark", "ntfy", "gotify", "pushover", "pushplus", "serverchan"].map((key) => ({
+                    items: ["bark", "ntfy", "gotify", "pushover", "pushplus", "serverchan", "common"].map((key) => ({
                       key,
                       label: t(`access.form.webhook_preset_data.option.${key}.label`),
                       onClick: () => handlePresetDataForNotificationClick(key),
