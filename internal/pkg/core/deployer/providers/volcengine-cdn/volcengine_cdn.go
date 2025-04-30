@@ -117,16 +117,21 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		var errs []error
 
 		for _, domain := range domains {
-			// 关联证书与加速域名
-			// REF: https://www.volcengine.com/docs/6454/125712
-			batchDeployCertReq := &vecdn.BatchDeployCertRequest{
-				CertId: upres.CertId,
-				Domain: domain,
-			}
-			batchDeployCertResp, err := d.sdkClient.BatchDeployCert(batchDeployCertReq)
-			d.logger.Debug("sdk request 'cdn.BatchDeployCert'", slog.Any("request", batchDeployCertReq), slog.Any("response", batchDeployCertResp))
-			if err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			default:
+				// 关联证书与加速域名
+				// REF: https://www.volcengine.com/docs/6454/125712
+				batchDeployCertReq := &vecdn.BatchDeployCertRequest{
+					CertId: upres.CertId,
+					Domain: domain,
+				}
+				batchDeployCertResp, err := d.sdkClient.BatchDeployCert(batchDeployCertReq)
+				d.logger.Debug("sdk request 'cdn.BatchDeployCert'", slog.Any("request", batchDeployCertReq), slog.Any("response", batchDeployCertResp))
+				if err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

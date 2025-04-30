@@ -31,9 +31,10 @@ import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
 import ModalForm from "@/components/ModalForm";
 import MultipleInput from "@/components/MultipleInput";
-import ApplyCAProviderSelect from "@/components/provider/ApplyCAProviderSelect";
-import ApplyDNSProviderSelect from "@/components/provider/ApplyDNSProviderSelect";
-import { ACCESS_USAGES, APPLY_DNS_PROVIDERS, accessProvidersMap, applyCAProvidersMap, applyDNSProvidersMap } from "@/domain/provider";
+import ACMEDns01ProviderSelect from "@/components/provider/ACMEDns01ProviderSelect";
+import CAProviderSelect from "@/components/provider/CAProviderSelect";
+import Show from "@/components/Show";
+import { ACCESS_USAGES, ACME_DNS01_PROVIDERS, accessProvidersMap, acmeDns01ProvidersMap, caProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
@@ -98,7 +99,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         .refine((v) => {
           if (!fieldCAProvider) return true;
 
-          const provider = applyCAProvidersMap.get(fieldCAProvider);
+          const provider = caProvidersMap.get(fieldCAProvider);
           return !!provider?.builtin || !!v;
         }, t("workflow_node.apply.form.ca_provider_access.placeholder")),
       caProviderConfig: z.any().nullish(),
@@ -154,7 +155,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       // 如果对应多个（如 AWS 的 Route53、Lightsail，腾讯云的 DNS、EdgeOne 等），则显示。
       if (fieldProviderAccessId) {
         const access = accesses.find((e) => e.id === fieldProviderAccessId);
-        const providers = Array.from(applyDNSProvidersMap.values()).filter((e) => e.provider === access?.provider);
+        const providers = Array.from(acmeDns01ProvidersMap.values()).filter((e) => e.provider === access?.provider);
         setShowProvider(providers.length > 1);
       } else {
         setShowProvider(false);
@@ -165,7 +166,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     useEffect(() => {
       // 内置的 CA 提供商（如 Let's Encrypt）无需显示授权信息字段
       if (fieldCAProvider) {
-        const provider = applyCAProvidersMap.get(fieldCAProvider);
+        const provider = caProvidersMap.get(fieldCAProvider);
         setShowCAProviderAccess(!provider?.builtin);
       } else {
         setShowCAProviderAccess(false);
@@ -187,16 +188,16 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
-        case APPLY_DNS_PROVIDERS.AWS:
-        case APPLY_DNS_PROVIDERS.AWS_ROUTE53:
+        case ACME_DNS01_PROVIDERS.AWS:
+        case ACME_DNS01_PROVIDERS.AWS_ROUTE53:
           return <ApplyNodeConfigFormAWSRoute53Config {...nestedFormProps} />;
-        case APPLY_DNS_PROVIDERS.HUAWEICLOUD:
-        case APPLY_DNS_PROVIDERS.HUAWEICLOUD_DNS:
+        case ACME_DNS01_PROVIDERS.HUAWEICLOUD:
+        case ACME_DNS01_PROVIDERS.HUAWEICLOUD_DNS:
           return <ApplyNodeConfigFormHuaweiCloudDNSConfig {...nestedFormProps} />;
-        case APPLY_DNS_PROVIDERS.JDCLOUD:
-        case APPLY_DNS_PROVIDERS.JDCLOUD_DNS:
+        case ACME_DNS01_PROVIDERS.JDCLOUD:
+        case ACME_DNS01_PROVIDERS.JDCLOUD_DNS:
           return <ApplyNodeConfigFormJDCloudDNSConfig {...nestedFormProps} />;
-        case APPLY_DNS_PROVIDERS.TENCENTCLOUD_EO:
+        case ACME_DNS01_PROVIDERS.TENCENTCLOUD_EO:
           return <ApplyNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
       }
     }, [disabled, initialValues?.providerConfig, fieldProvider, nestedFormInst, nestedFormName]);
@@ -209,7 +210,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         formInst.setFieldValue("providerAccessId", initialValues?.providerAccessId);
         onValuesChange?.(formInst.getFieldsValue(true));
       } else {
-        if (applyDNSProvidersMap.get(fieldProvider)?.provider !== applyDNSProvidersMap.get(value)?.provider) {
+        if (acmeDns01ProvidersMap.get(fieldProvider)?.provider !== acmeDns01ProvidersMap.get(value)?.provider) {
           formInst.setFieldValue("providerAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -217,11 +218,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     };
 
     const handleProviderAccessSelect = (value: string) => {
-      if (fieldProviderAccessId === value) return;
-
       // 切换授权信息时联动 DNS 提供商
       const access = accesses.find((access) => access.id === value);
-      const provider = Array.from(applyDNSProvidersMap.values()).find((provider) => provider.provider === access?.provider);
+      const provider = Array.from(acmeDns01ProvidersMap.values()).find((provider) => provider.provider === access?.provider);
       if (fieldProvider !== provider?.type) {
         formInst.setFieldValue("provider", provider?.type);
         onValuesChange?.(formInst.getFieldsValue(true));
@@ -229,8 +228,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     };
 
     const handleCAProviderSelect = (value?: string | undefined) => {
-      if (fieldCAProvider === value) return;
-
       // 切换 CA 提供商时联动授权信息
       if (value === "") {
         setTimeout(() => {
@@ -242,7 +239,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         formInst.setFieldValue("caProviderAccessId", initialValues?.caProviderAccessId);
         onValuesChange?.(formInst.getFieldsValue(true));
       } else {
-        if (applyCAProvidersMap.get(fieldCAProvider)?.provider !== applyCAProvidersMap.get(value!)?.provider) {
+        if (caProvidersMap.get(fieldCAProvider)?.provider !== caProvidersMap.get(value!)?.provider) {
           formInst.setFieldValue("caProviderAccessId", undefined);
           onValuesChange?.(formInst.getFieldsValue(true));
         }
@@ -327,7 +324,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
 
           <Form.Item name="provider" label={t("workflow_node.apply.form.provider.label")} hidden={!showProvider} rules={[formRule]}>
-            <ApplyDNSProviderSelect
+            <ACMEDns01ProviderSelect
               disabled={!showProvider}
               filter={(record) => {
                 if (fieldProviderAccessId) {
@@ -355,7 +352,6 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 </div>
                 <div className="text-right">
                   <AccessEditModal
-                    range="both-dns-hosting"
                     scene="add"
                     trigger={
                       <Button size="small" type="link">
@@ -363,10 +359,12 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                         <PlusOutlinedIcon className="text-xs" />
                       </Button>
                     }
+                    usage="both-dns-hosting"
                     afterSubmit={(record) => {
                       const provider = accessProvidersMap.get(record.provider);
                       if (provider?.usages?.includes(ACCESS_USAGES.DNS)) {
                         formInst.setFieldValue("providerAccessId", record.id);
+                        handleProviderAccessSelect(record.id);
                       }
                     }}
                   />
@@ -376,6 +374,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             <Form.Item name="providerAccessId" rules={[formRule]}>
               <AccessSelect
                 filter={(record) => {
+                  if (record.reserve) return false;
+
                   const provider = accessProvidersMap.get(record.provider);
                   return !!provider?.usages?.includes(ACCESS_USAGES.DNS);
                 }}
@@ -398,19 +398,23 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           <Form.Item className="mb-0">
             <label className="mb-1 block">
               <div className="flex w-full items-center justify-between gap-4">
-                <div className="max-w-full grow truncate">{t("workflow_node.apply.form.ca_provider.label")}</div>
+                <div className="max-w-full grow truncate">
+                  <span>{t("workflow_node.apply.form.ca_provider.label")}</span>
+                </div>
                 <div className="text-right">
-                  <Link className="ant-typography" to="/settings/ssl-provider" target="_blank">
-                    <Button size="small" type="link">
-                      {t("workflow_node.apply.form.ca_provider.button")}
-                      <RightOutlinedIcon className="text-xs" />
-                    </Button>
-                  </Link>
+                  <Show when={!fieldCAProvider}>
+                    <Link className="ant-typography" to="/settings/ssl-provider" target="_blank">
+                      <Button size="small" type="link">
+                        {t("workflow_node.apply.form.ca_provider.button")}
+                        <RightOutlinedIcon className="text-xs" />
+                      </Button>
+                    </Link>
+                  </Show>
                 </div>
               </div>
             </label>
             <Form.Item name="caProvider" rules={[formRule]}>
-              <ApplyCAProviderSelect
+              <CAProviderSelect
                 allowClear
                 placeholder={t("workflow_node.apply.form.ca_provider.placeholder")}
                 showSearch
@@ -428,8 +432,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 </div>
                 <div className="text-right">
                   <AccessEditModal
-                    data={{ provider: applyCAProvidersMap.get(fieldCAProvider!)?.provider }}
-                    range="ca-only"
+                    data={{ provider: caProvidersMap.get(fieldCAProvider!)?.provider }}
                     scene="add"
                     trigger={
                       <Button size="small" type="link">
@@ -437,6 +440,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                         <PlusOutlinedIcon className="text-xs" />
                       </Button>
                     }
+                    usage="ca-only"
                     afterSubmit={(record) => {
                       const provider = accessProvidersMap.get(record.provider);
                       if (provider?.usages?.includes(ACCESS_USAGES.CA)) {
@@ -450,9 +454,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             <Form.Item name="caProviderAccessId" rules={[formRule]}>
               <AccessSelect
                 filter={(record) => {
-                  if (fieldCAProvider) {
-                    return applyCAProvidersMap.get(fieldCAProvider)?.provider === record.provider;
-                  }
+                  if (record.reserve !== "ca") return false;
+                  if (fieldCAProvider) return caProvidersMap.get(fieldCAProvider)?.provider === record.provider;
 
                   const provider = accessProvidersMap.get(record.provider);
                   return !!provider?.usages?.includes(ACCESS_USAGES.CA);

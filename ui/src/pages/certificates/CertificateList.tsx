@@ -251,6 +251,7 @@ const CertificateList = () => {
 
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, keyword: value.trim() }));
+    setPage(1);
   };
 
   const handleReloadClick = () => {

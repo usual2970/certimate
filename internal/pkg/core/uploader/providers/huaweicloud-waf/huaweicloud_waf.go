@@ -77,6 +77,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertificatesPage := int32(1)
 	listCertificatesPageSize := int32(100)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listCertificatesReq := &hcwafmodel.ListCertificatesRequest{
 			Page:     typeutil.ToPtr(listCertificatesPage),
 			Pagesize: typeutil.ToPtr(listCertificatesPageSize),

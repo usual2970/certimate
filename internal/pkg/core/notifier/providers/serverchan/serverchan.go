@@ -29,6 +29,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config: config,
+		logger: slog.Default(),
 	}, nil
 }
 

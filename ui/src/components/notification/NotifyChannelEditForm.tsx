@@ -34,6 +34,9 @@ export type NotifyChannelEditFormInstance = {
   validateFields: FormInstance<NotifyChannelEditFormFieldValues>["validateFields"];
 };
 
+/**
+ * @deprecated
+ */
 const NotifyChannelEditForm = forwardRef<NotifyChannelEditFormInstance, NotifyChannelEditFormProps>(
   ({ className, style, channel, disabled, initialValues, onValuesChange }, ref) => {
     const { form: formInst, formProps } = useAntdForm({

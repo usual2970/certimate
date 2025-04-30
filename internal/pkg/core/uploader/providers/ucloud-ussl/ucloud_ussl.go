@@ -124,6 +124,12 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) 
 	getCertificateListPage := int(1)
 	getCertificateListLimit := int(1000)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		getCertificateListReq := u.sdkClient.NewGetCertificateListRequest()
 		getCertificateListReq.Mode = ucloud.String("trust")
 		getCertificateListReq.Domain = ucloud.String(certX509.Subject.CommonName)

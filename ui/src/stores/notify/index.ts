@@ -4,6 +4,9 @@ import { create } from "zustand";
 import { type NotifyChannelsSettingsContent, SETTINGS_NAMES, type SettingsModel } from "@/domain/settings";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
 
+/**
+ * @deprecated
+ */
 export interface NotifyChannelsState {
   channels: NotifyChannelsSettingsContent;
   loading: boolean;
@@ -14,6 +17,9 @@ export interface NotifyChannelsState {
   setChannels: (channels: NotifyChannelsSettingsContent) => Promise<void>;
 }
 
+/**
+ * @deprecated
+ */
 export const useNotifyChannelsStore = create<NotifyChannelsState>((set, get) => {
   let fetcher: Promise<SettingsModel<NotifyChannelsSettingsContent>> | null = null; // 防止多次重复请求
   let settings: SettingsModel<NotifyChannelsSettingsContent>; // 记录当前设置的其他字段，保存回数据库时用

@@ -14,14 +14,14 @@ export type AccessEditDrawerProps = {
   data?: AccessFormProps["initialValues"];
   loading?: boolean;
   open?: boolean;
-  range?: AccessFormProps["range"];
   scene: AccessFormProps["scene"];
   trigger?: React.ReactNode;
+  usage?: AccessFormProps["usage"];
   onOpenChange?: (open: boolean) => void;
   afterSubmit?: (record: AccessModel) => void;
 };
 
-const AccessEditDrawer = ({ data, loading, trigger, scene, range, afterSubmit, ...props }: AccessEditDrawerProps) => {
+const AccessEditDrawer = ({ data, loading, trigger, scene, usage, afterSubmit, ...props }: AccessEditDrawerProps) => {
   const { t } = useTranslation();
 
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
@@ -109,7 +109,7 @@ const AccessEditDrawer = ({ data, loading, trigger, scene, range, afterSubmit, .
         width={720}
         onClose={() => setOpen(false)}
       >
-        <AccessForm ref={formRef} initialValues={data} range={range} scene={scene === "add" ? "add" : "edit"} />
+        <AccessForm ref={formRef} initialValues={data} scene={scene === "add" ? "add" : "edit"} usage={usage} />
       </Drawer>
     </>
   );

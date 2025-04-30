@@ -82,7 +82,6 @@
   "settings.notification.channel.form.pushover_user.placeholder": "Please enter User/Group Key",
   "settings.notification.channel.form.pushover_user.label": "User/Group Key",
   "settings.notification.channel.form.pushover_user.tooltip": "For more information, see <a href=\"https://pushover.net/api#identifiers\" target=\"_blank\">https://pushover.net/api#identifiers</a>",
-  "settings.notification.channel.form.pushplus_token.placeholder": "Please enter Token",
   "settings.notification.channel.form.pushplus_token.label": "Token",
   "settings.notification.channel.form.pushplus_token.placeholder": "Please enter token",
   "settings.notification.channel.form.pushplus_token.tooltip": "For more information, see <a href=\"https://www.pushplus.plus/push1.html\" target=\"_blank\">https://www.pushplus.plus/push1.html</a>",

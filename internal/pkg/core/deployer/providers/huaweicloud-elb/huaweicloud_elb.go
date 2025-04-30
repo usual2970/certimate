@@ -160,6 +160,12 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 	listListenersLimit := int32(2000)
 	var listListenersMarker *string = nil
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listListenersReq := &hcelbmodel.ListListenersRequest{
 			Limit:          typeutil.ToPtr(listListenersLimit),
 			Marker:         listListenersMarker,
@@ -201,8 +207,14 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 		var errs []error
 
 		for _, listenerId := range listenerIds {
-			if err := d.modifyListenerCertificate(ctx, listenerId, upres.CertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+
+			default:
+				if err := d.modifyListenerCertificate(ctx, listenerId, upres.CertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

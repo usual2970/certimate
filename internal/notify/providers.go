@@ -2,105 +2,152 @@ package notify
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	pBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
 	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
-	pGotify "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/gotify"
 	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
-	pPushover "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushover"
-	pPushPlus "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushplus"
-	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
+	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
-func createNotifier(channel domain.NotifyChannelType, channelConfig map[string]any) (notifier.Notifier, error) {
+type notifierProviderOptions struct {
+	Provider               domain.NotificationProviderType
+	ProviderAccessConfig   map[string]any
+	ProviderExtendedConfig map[string]any
+}
+
+func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
-	switch channel {
-	case domain.NotifyChannelTypeBark:
-		return pBark.NewNotifier(&pBark.NotifierConfig{
-			DeviceKey: maputil.GetString(channelConfig, "deviceKey"),
-			ServerUrl: maputil.GetString(channelConfig, "serverUrl"),
-		})
+	switch options.Provider {
+	case domain.NotificationProviderTypeDingTalkBot:
+		{
+			access := domain.AccessConfigForDingTalkBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
 
-	case domain.NotifyChannelTypeDingTalk:
-		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
-			AccessToken: maputil.GetString(channelConfig, "accessToken"),
-			Secret:      maputil.GetString(channelConfig, "secret"),
-		})
+			return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
+				Secret:     access.Secret,
+			})
+		}
 
-	case domain.NotifyChannelTypeEmail:
-		return pEmail.NewNotifier(&pEmail.NotifierConfig{
-			SmtpHost:        maputil.GetString(channelConfig, "smtpHost"),
-			SmtpPort:        maputil.GetInt32(channelConfig, "smtpPort"),
-			SmtpTLS:         maputil.GetOrDefaultBool(channelConfig, "smtpTLS", true),
-			Username:        maputil.GetOrDefaultString(channelConfig, "username", maputil.GetString(channelConfig, "senderAddress")),
-			Password:        maputil.GetString(channelConfig, "password"),
-			SenderAddress:   maputil.GetString(channelConfig, "senderAddress"),
-			ReceiverAddress: maputil.GetString(channelConfig, "receiverAddress"),
-		})
+	case domain.NotificationProviderTypeEmail:
+		{
+			access := domain.AccessConfigForEmail{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
 
-	case domain.NotifyChannelTypeGotify:
-		return pGotify.NewNotifier(&pGotify.NotifierConfig{
-			Url:      maputil.GetString(channelConfig, "url"),
-			Token:    maputil.GetString(channelConfig, "token"),
-			Priority: maputil.GetOrDefaultInt64(channelConfig, "priority", 1),
-		})
+			return pEmail.NewNotifier(&pEmail.NotifierConfig{
+				SmtpHost:        access.SmtpHost,
+				SmtpPort:        access.SmtpPort,
+				SmtpTls:         access.SmtpTls,
+				Username:        access.Username,
+				Password:        access.Password,
+				SenderAddress:   maputil.GetOrDefaultString(options.ProviderExtendedConfig, "senderAddress", access.DefaultSenderAddress),
+				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "receiverAddress", access.DefaultReceiverAddress),
+			})
+		}
 
-	case domain.NotifyChannelTypeLark:
-		return pLark.NewNotifier(&pLark.NotifierConfig{
-			WebhookUrl: maputil.GetString(channelConfig, "webhookUrl"),
-		})
+	case domain.NotificationProviderTypeLarkBot:
+		{
+			access := domain.AccessConfigForLarkBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
 
-	case domain.NotifyChannelTypeMattermost:
-		return pMattermost.NewNotifier(&pMattermost.NotifierConfig{
-			ServerUrl: maputil.GetString(channelConfig, "serverUrl"),
-			ChannelId: maputil.GetString(channelConfig, "channelId"),
-			Username:  maputil.GetString(channelConfig, "username"),
-			Password:  maputil.GetString(channelConfig, "password"),
-		})
-	case domain.NotifyChannelTypePushover:
-		return pPushover.NewNotifier(&pPushover.NotifierConfig{
-			Token: maputil.GetString(channelConfig, "token"),
-			User:  maputil.GetString(channelConfig, "user"),
-		})
+			return pLark.NewNotifier(&pLark.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
+			})
+		}
 
-	case domain.NotifyChannelTypePushPlus:
-		return pPushPlus.NewNotifier(&pPushPlus.NotifierConfig{
-			Token: maputil.GetString(channelConfig, "token"),
-		})
+	case domain.NotificationProviderTypeMattermost:
+		{
+			access := domain.AccessConfigForMattermost{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
 
-	case domain.NotifyChannelTypeServerChan:
-		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
-			Url: maputil.GetString(channelConfig, "url"),
-		})
+			return pMattermost.NewNotifier(&pMattermost.NotifierConfig{
+				ServerUrl: access.ServerUrl,
+				Username:  access.Username,
+				Password:  access.Password,
+				ChannelId: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "channelId", access.DefaultChannelId),
+			})
+		}
 
-	case domain.NotifyChannelTypeTelegram:
-		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
-			ApiToken: maputil.GetString(channelConfig, "apiToken"),
-			ChatId:   maputil.GetInt64(channelConfig, "chatId"),
-		})
+	case domain.NotificationProviderTypeTelegram:
+		{
+			access := domain.AccessConfigForTelegram{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
 
-	case domain.NotifyChannelTypeWebhook:
-		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
-			Url:                      maputil.GetString(channelConfig, "url"),
-			AllowInsecureConnections: maputil.GetBool(channelConfig, "allowInsecureConnections"),
-		})
+			return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
+				BotToken: access.BotToken,
+				ChatId:   maputil.GetOrDefaultInt64(options.ProviderExtendedConfig, "chatId", access.DefaultChatId),
+			})
+		}
 
-	case domain.NotifyChannelTypeWeCom:
-		return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
-			WebhookUrl: maputil.GetString(channelConfig, "webhookUrl"),
-		})
+	case domain.NotificationProviderTypeWebhook:
+		{
+			access := domain.AccessConfigForWebhook{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			mergedHeaders := make(map[string]string)
+			if defaultHeadersString := access.HeadersString; defaultHeadersString != "" {
+				h, err := httputil.ParseHeaders(defaultHeadersString)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
+				}
+				for key := range h {
+					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
+				}
+			}
+			if extendedHeadersString := maputil.GetString(options.ProviderExtendedConfig, "headers"); extendedHeadersString != "" {
+				h, err := httputil.ParseHeaders(extendedHeadersString)
+				if err != nil {
+					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
+				}
+				for key := range h {
+					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
+				}
+			}
+
+			return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
+				WebhookUrl:               access.Url,
+				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.DefaultDataForNotification),
+				Method:                   access.Method,
+				Headers:                  mergedHeaders,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+			})
+		}
+
+	case domain.NotificationProviderTypeWeComBot:
+		{
+			access := domain.AccessConfigForWeComBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
+				WebhookUrl: access.WebhookUrl,
+			})
+		}
 	}
 
-	return nil, fmt.Errorf("unsupported notifier channel '%s'", channelConfig)
+	return nil, fmt.Errorf("unsupported notifier provider '%s'", options.Provider)
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -22,7 +23,7 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
-type ApplyCertResult struct {
+type ApplyResult struct {
 	CertificateFullChain string
 	IssuerCertificate    string
 	PrivateKey           string
@@ -33,40 +34,30 @@ type ApplyCertResult struct {
 }
 
 type Applicant interface {
-	Apply() (*ApplyCertResult, error)
+	Apply(ctx context.Context) (*ApplyResult, error)
 }
 
-type applicantOptions struct {
-	Domains                  []string
-	ContactEmail             string
-	Provider                 domain.ApplyDNSProviderType
-	ProviderAccessConfig     map[string]any
-	ProviderExtendedConfig   map[string]any
-	CAProvider               domain.ApplyCAProviderType
-	CAProviderAccessConfig   map[string]any
-	CAProviderExtendedConfig map[string]any
-	KeyAlgorithm             string
-	Nameservers              []string
-	DnsPropagationTimeout    int32
-	DnsTTL                   int32
-	DisableFollowCNAME       bool
-	ReplacedARIAcct          string
-	ReplacedARICert          string
+type ApplicantWithWorkflowNodeConfig struct {
+	Node   *domain.WorkflowNode
+	Logger *slog.Logger
 }
 
-func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
-	if node.Type != domain.WorkflowNodeTypeApply {
+func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, error) {
+	if config.Node == nil {
+		return nil, fmt.Errorf("node is nil")
+	}
+	if config.Node.Type != domain.WorkflowNodeTypeApply {
 		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeApply))
 	}
 
-	nodeConfig := node.GetConfigForApply()
-	options := &applicantOptions{
+	nodeConfig := config.Node.GetConfigForApply()
+	options := &applicantProviderOptions{
 		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
 		ContactEmail:             nodeConfig.ContactEmail,
-		Provider:                 domain.ApplyDNSProviderType(nodeConfig.Provider),
+		Provider:                 domain.ACMEDns01ProviderType(nodeConfig.Provider),
 		ProviderAccessConfig:     make(map[string]any),
 		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
-		CAProvider:               domain.ApplyCAProviderType(nodeConfig.CAProvider),
+		CAProvider:               domain.CAProviderType(nodeConfig.CAProvider),
 		CAProviderAccessConfig:   make(map[string]any),
 		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
 		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
@@ -97,7 +88,7 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		settings, _ := settingsRepo.GetByName(context.Background(), "sslProvider")
 
 		sslProviderConfig := &acmeSSLProviderConfig{
-			Config:   make(map[domain.ApplyCAProviderType]map[string]any),
+			Config:   make(map[domain.CAProviderType]map[string]any),
 			Provider: sslProviderDefault,
 		}
 		if settings != nil {
@@ -108,12 +99,12 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 			}
 		}
 
-		options.CAProvider = domain.ApplyCAProviderType(sslProviderConfig.Provider)
+		options.CAProvider = domain.CAProviderType(sslProviderConfig.Provider)
 		options.CAProviderAccessConfig = sslProviderConfig.Config[options.CAProvider]
 	}
 
 	certRepo := repository.NewCertificateRepository()
-	lastCertificate, _ := certRepo.GetByWorkflowNodeId(context.Background(), node.Id)
+	lastCertificate, _ := certRepo.GetByWorkflowNodeId(context.Background(), config.Node.Id)
 	if lastCertificate != nil {
 		newCertSan := slices.Clone(options.Domains)
 		oldCertSan := strings.Split(lastCertificate.SubjectAltNames, ";")
@@ -130,18 +121,46 @@ func NewWithApplyNode(node *domain.WorkflowNode) (Applicant, error) {
 		}
 	}
 
-	applicant, err := createApplicant(options)
+	applicant, err := createApplicantProvider(options)
 	if err != nil {
 		return nil, err
 	}
 
-	return &proxyApplicant{
+	return &applicantImpl{
 		applicant: applicant,
 		options:   options,
 	}, nil
 }
 
-func apply(challengeProvider challenge.Provider, options *applicantOptions) (*ApplyCertResult, error) {
+type applicantImpl struct {
+	applicant challenge.Provider
+	options   *applicantProviderOptions
+}
+
+var _ Applicant = (*applicantImpl)(nil)
+
+func (d *applicantImpl) Apply(ctx context.Context) (*ApplyResult, error) {
+	limiter := getLimiter(fmt.Sprintf("apply_%s", d.options.ContactEmail))
+	if err := limiter.Wait(ctx); err != nil {
+		return nil, err
+	}
+
+	return applyUseLego(d.applicant, d.options)
+}
+
+const (
+	limitBurst         = 300
+	limitRate  float64 = float64(1) / float64(36)
+)
+
+var limiters sync.Map
+
+func getLimiter(key string) *rate.Limiter {
+	limiter, _ := limiters.LoadOrStore(key, rate.NewLimiter(rate.Limit(limitRate), 300))
+	return limiter.(*rate.Limiter)
+}
+
+func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOptions) (*ApplyResult, error) {
 	user, err := newAcmeUser(string(options.CAProvider), options.ContactEmail)
 	if err != nil {
 		return nil, err
@@ -153,7 +172,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 
 	// Create an ACME client config
 	config := lego.NewConfig(user)
-	config.Certificate.KeyType = parseKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
+	config.Certificate.KeyType = parseLegoKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
 	config.CADirURL = sslProviderUrls[user.CA]
 	if user.CA == sslProviderSSLCom {
 		if strings.HasPrefix(options.KeyAlgorithm, "RSA") {
@@ -175,7 +194,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(dns01.ParseNameservers(options.Nameservers)))
 		challengeOptions = append(challengeOptions, dns01.DisableAuthoritativeNssPropagationRequirement())
 	}
-	client.Challenge.SetDNS01Provider(challengeProvider, challengeOptions...)
+	client.Challenge.SetDNS01Provider(legoProvider, challengeOptions...)
 
 	// New users need to register first
 	if !user.hasRegistration() {
@@ -199,7 +218,7 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 		return nil, err
 	}
 
-	return &ApplyCertResult{
+	return &ApplyResult{
 		CertificateFullChain: strings.TrimSpace(string(certResource.Certificate)),
 		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
 		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
@@ -210,47 +229,20 @@ func apply(challengeProvider challenge.Provider, options *applicantOptions) (*Ap
 	}, nil
 }
 
-func parseKeyAlgorithm(algo domain.CertificateKeyAlgorithmType) certcrypto.KeyType {
-	switch algo {
-	case domain.CertificateKeyAlgorithmTypeRSA2048:
-		return certcrypto.RSA2048
-	case domain.CertificateKeyAlgorithmTypeRSA3072:
-		return certcrypto.RSA3072
-	case domain.CertificateKeyAlgorithmTypeRSA4096:
-		return certcrypto.RSA4096
-	case domain.CertificateKeyAlgorithmTypeRSA8192:
-		return certcrypto.RSA8192
-	case domain.CertificateKeyAlgorithmTypeEC256:
-		return certcrypto.EC256
-	case domain.CertificateKeyAlgorithmTypeEC384:
-		return certcrypto.EC384
-	case domain.CertificateKeyAlgorithmTypeEC512:
-		return certcrypto.KeyType("P512")
+func parseLegoKeyAlgorithm(algo domain.CertificateKeyAlgorithmType) certcrypto.KeyType {
+	alogMap := map[domain.CertificateKeyAlgorithmType]certcrypto.KeyType{
+		domain.CertificateKeyAlgorithmTypeRSA2048: certcrypto.RSA2048,
+		domain.CertificateKeyAlgorithmTypeRSA3072: certcrypto.RSA3072,
+		domain.CertificateKeyAlgorithmTypeRSA4096: certcrypto.RSA4096,
+		domain.CertificateKeyAlgorithmTypeRSA8192: certcrypto.RSA8192,
+		domain.CertificateKeyAlgorithmTypeEC256:   certcrypto.EC256,
+		domain.CertificateKeyAlgorithmTypeEC384:   certcrypto.EC384,
+		domain.CertificateKeyAlgorithmTypeEC512:   certcrypto.KeyType("P512"),
+	}
+
+	if keyType, ok := alogMap[algo]; ok {
+		return keyType
 	}
 
 	return certcrypto.RSA2048
-}
-
-// TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
-type proxyApplicant struct {
-	applicant challenge.Provider
-	options   *applicantOptions
-}
-
-var limiters sync.Map
-
-const (
-	limitBurst         = 300
-	limitRate  float64 = float64(1) / float64(36)
-)
-
-func getLimiter(key string) *rate.Limiter {
-	limiter, _ := limiters.LoadOrStore(key, rate.NewLimiter(rate.Limit(limitRate), 300))
-	return limiter.(*rate.Limiter)
-}
-
-func (d *proxyApplicant) Apply() (*ApplyCertResult, error) {
-	limiter := getLimiter(fmt.Sprintf("apply_%s", d.options.ContactEmail))
-	limiter.Wait(context.Background())
-	return apply(d.applicant, d.options)
 }

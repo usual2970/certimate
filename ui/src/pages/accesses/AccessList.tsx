@@ -21,7 +21,7 @@ import { useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { getErrMsg } from "@/utils/error";
 
-type AccessRanges = AccessEditDrawerProps["range"];
+type AccessUsageProp = AccessEditDrawerProps["usage"];
 
 const AccessList = () => {
   const [searchParams] = useSearchParams();
@@ -87,7 +87,7 @@ const AccessList = () => {
         <Space.Compact>
           <AccessEditDrawer
             data={record}
-            range={filters["range"] as AccessRanges}
+            usage={filters["usage"] as AccessUsageProp}
             scene="edit"
             trigger={
               <Tooltip title={t("access.action.edit")}>
@@ -98,7 +98,7 @@ const AccessList = () => {
 
           <AccessEditDrawer
             data={{ ...record, id: undefined, name: `${record.name}-copy` }}
-            range={filters["range"] as AccessRanges}
+            usage={filters["usage"] as AccessUsageProp}
             scene="add"
             trigger={
               <Tooltip title={t("access.action.duplicate")}>
@@ -126,7 +126,7 @@ const AccessList = () => {
 
   const [filters, setFilters] = useState<Record<string, unknown>>(() => {
     return {
-      range: "both-dns-hosting" satisfies AccessRanges,
+      usage: "both-dns-hosting" satisfies AccessUsageProp,
       keyword: searchParams.get("keyword"),
     };
   });
@@ -160,13 +160,13 @@ const AccessList = () => {
         })
         .filter((e) => {
           const provider = accessProvidersMap.get(e.provider);
-          switch (filters["range"] as AccessRanges) {
+          switch (filters["usage"] as AccessUsageProp) {
             case "both-dns-hosting":
-              return provider?.usages?.includes(ACCESS_USAGES.DNS) || provider?.usages?.includes(ACCESS_USAGES.HOSTING);
+              return !e.reserve && (provider?.usages?.includes(ACCESS_USAGES.DNS) || provider?.usages?.includes(ACCESS_USAGES.HOSTING));
             case "ca-only":
-              return provider?.usages?.includes(ACCESS_USAGES.CA);
-            case "notify-only":
-              return provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION);
+              return e.reserve === "ca" && provider?.usages?.includes(ACCESS_USAGES.CA);
+            case "notification-only":
+              return e.reserve === "notification" && provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION);
           }
         });
       return Promise.resolve({
@@ -184,11 +184,13 @@ const AccessList = () => {
   );
 
   const handleTabChange = (key: string) => {
-    setFilters((prev) => ({ ...prev, range: key }));
+    setFilters((prev) => ({ ...prev, usage: key }));
+    setPage(1);
   };
 
   const handleSearch = (value: string) => {
     setFilters((prev) => ({ ...prev, keyword: value }));
+    setPage(1);
   };
 
   const handleReloadClick = () => {
@@ -224,7 +226,7 @@ const AccessList = () => {
         extra={[
           <AccessEditDrawer
             key="create"
-            range={filters["range"] as AccessRanges}
+            usage={filters["usage"] as AccessUsageProp}
             scene="add"
             trigger={
               <Button type="primary" icon={<PlusOutlinedIcon />}>
@@ -245,18 +247,18 @@ const AccessList = () => {
         tabList={[
           {
             key: "both-dns-hosting",
-            label: t("access.props.range.both_dns_hosting"),
+            label: t("access.props.usage.both_dns_hosting"),
           },
           {
             key: "ca-only",
-            label: t("access.props.range.ca_only"),
+            label: t("access.props.usage.ca_only"),
           },
-          // {
-          //   key: "notify-only",
-          //   label: t("access.props.range.notify_only"),
-          // },
+          {
+            key: "notification-only",
+            label: t("access.props.usage.notification_only"),
+          },
         ]}
-        activeTabKey={filters["range"] as string}
+        activeTabKey={filters["usage"] as string}
         onTabChange={(key) => handleTabChange(key)}
       />
 

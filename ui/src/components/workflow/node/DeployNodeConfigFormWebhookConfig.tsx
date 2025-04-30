@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Form, type FormInstance, Input } from "antd";
+import { Alert, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -16,31 +16,26 @@ export type DeployNodeConfigFormWebhookConfigProps = {
 };
 
 const initFormModel = (): DeployNodeConfigFormWebhookConfigFieldValues => {
-  return {
-    webhookData: JSON.stringify(
-      {
-        name: "${DOMAINS}",
-        cert: "${CERTIFICATE}",
-        privkey: "${PRIVATE_KEY}",
-      },
-      null,
-      2
-    ),
-  };
+  return {};
 };
 
 const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormWebhookConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    webhookData: z.string({ message: t("workflow_node.deploy.form.webhook_data.placeholder") }).refine((v) => {
-      try {
-        JSON.parse(v);
-        return true;
-      } catch {
-        return false;
-      }
-    }, t("workflow_node.deploy.form.webhook_data.errmsg.json_invalid")),
+    webhookData: z
+      .string()
+      .nullish()
+      .refine((v) => {
+        if (!v) return true;
+
+        try {
+          const obj = JSON.parse(v);
+          return typeof obj === "object" && !Array.isArray(obj);
+        } catch {
+          return false;
+        }
+      }, t("workflow_node.deploy.form.webhook_data.errmsg.json_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -52,10 +47,6 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
     } catch {
       return;
     }
-  };
-
-  const handlePresetDataClick = () => {
-    formInst.setFieldValue("webhookData", initFormModel().webhookData);
   };
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
@@ -71,24 +62,18 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item className="mb-0">
-        <label className="mb-1 block">
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="max-w-full grow truncate">{t("workflow_node.deploy.form.webhook_data.label")}</div>
-            <div className="text-right">
-              <Button size="small" type="link" onClick={handlePresetDataClick}>
-                {t("workflow_node.deploy.form.webhook_data_preset.button")}
-              </Button>
-            </div>
-          </div>
-        </label>
-        <Form.Item name="webhookData" rules={[formRule]}>
-          <Input.TextArea
-            autoSize={{ minRows: 3, maxRows: 10 }}
-            placeholder={t("workflow_node.deploy.form.webhook_data.placeholder")}
-            onBlur={handleWebhookDataBlur}
-          />
-        </Form.Item>
+      <Form.Item
+        name="webhookData"
+        label={t("workflow_node.deploy.form.webhook_data.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.webhook_data.tooltip") }}></span>}
+      >
+        <Input.TextArea
+          allowClear
+          autoSize={{ minRows: 3, maxRows: 10 }}
+          placeholder={t("workflow_node.deploy.form.webhook_data.placeholder")}
+          onBlur={handleWebhookDataBlur}
+        />
       </Form.Item>
 
       <Form.Item>

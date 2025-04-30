@@ -76,6 +76,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertificatesLimit := int32(2000)
 	var listCertificatesMarker *string = nil
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listCertificatesReq := &hcelbmodel.ListCertificatesRequest{
 			Limit:  typeutil.ToPtr(listCertificatesLimit),
 			Marker: listCertificatesMarker,

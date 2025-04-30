@@ -13,6 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/repository"
 )
 
+// Deprecated: v0.4.x 将废弃
 func SendToAllChannels(subject, message string) error {
 	notifiers, err := getEnabledNotifiers()
 	if err != nil {
@@ -38,8 +39,9 @@ func SendToAllChannels(subject, message string) error {
 	return err
 }
 
+// Deprecated: v0.4.x 将废弃
 func SendToChannel(subject, message string, channel string, channelConfig map[string]any) error {
-	notifier, err := createNotifier(domain.NotifyChannelType(channel), channelConfig)
+	notifier, err := createNotifierProviderUseGlobalSettings(domain.NotifyChannelType(channel), channelConfig)
 	if err != nil {
 		return err
 	}
@@ -48,6 +50,7 @@ func SendToChannel(subject, message string, channel string, channelConfig map[st
 	return err
 }
 
+// Deprecated: v0.4.x 将废弃
 func getEnabledNotifiers() ([]notifier.Notifier, error) {
 	settingsRepo := repository.NewSettingsRepository()
 	settings, err := settingsRepo.GetByName(context.Background(), "notifyChannels")
@@ -66,7 +69,7 @@ func getEnabledNotifiers() ([]notifier.Notifier, error) {
 			continue
 		}
 
-		notifier, err := createNotifier(domain.NotifyChannelType(k), v)
+		notifier, err := createNotifierProviderUseGlobalSettings(domain.NotifyChannelType(k), v)
 		if err != nil {
 			continue
 		}

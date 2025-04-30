@@ -2,34 +2,50 @@ import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
 
-import { type ApplyDNSProvider, applyDNSProvidersMap } from "@/domain/provider";
+import { type CAProvider, caProvidersMap } from "@/domain/provider";
 
-export type ApplyDNSProviderSelectProps = Omit<
+export type CAProviderSelectProps = Omit<
   SelectProps,
   "filterOption" | "filterSort" | "labelRender" | "options" | "optionFilterProp" | "optionLabelProp" | "optionRender"
 > & {
-  filter?: (record: ApplyDNSProvider) => boolean;
+  filter?: (record: CAProvider) => boolean;
 };
 
-const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProps) => {
+const CAProviderSelect = ({ filter, ...props }: CAProviderSelectProps) => {
   const { t } = useTranslation();
 
-  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: ApplyDNSProvider }>>([]);
+  const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: CAProvider }>>([]);
   useEffect(() => {
-    const allItems = Array.from(applyDNSProvidersMap.values());
+    const allItems = Array.from(caProvidersMap.values());
     const filteredItems = filter != null ? allItems.filter(filter) : allItems;
-    setOptions(
-      filteredItems.map((item) => ({
+    setOptions([
+      {
+        key: "",
+        value: "",
+        label: t("provider.default_ca_provider.label"),
+        data: {} as CAProvider,
+      },
+      ...filteredItems.map((item) => ({
         key: item.type,
         value: item.type,
         label: t(item.name),
         data: item,
-      }))
-    );
+      })),
+    ]);
   }, [filter]);
 
   const renderOption = (key: string) => {
-    const provider = applyDNSProvidersMap.get(key);
+    if (key === "") {
+      return (
+        <Space className="max-w-full grow overflow-hidden truncate" size={4}>
+          <Typography.Text className="italic leading-loose" type="secondary" ellipsis italic>
+            {t("provider.default_ca_provider.label")}
+          </Typography.Text>
+        </Space>
+      );
+    }
+
+    const provider = caProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
         <Avatar src={provider?.icon} size="small" />
@@ -51,7 +67,7 @@ const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProp
       }}
       labelRender={({ label, value }) => {
         if (!label) {
-          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+          return <Typography.Text type="secondary">{props.placeholder || t("provider.default_ca_provider.label")}</Typography.Text>;
         }
 
         return renderOption(value as string);
@@ -64,4 +80,4 @@ const ApplyDNSProviderSelect = ({ filter, ...props }: ApplyDNSProviderSelectProp
   );
 };
 
-export default memo(ApplyDNSProviderSelect);
+export default memo(CAProviderSelect);

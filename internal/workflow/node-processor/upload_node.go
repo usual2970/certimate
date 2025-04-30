@@ -39,11 +39,11 @@ func (n *uploadNode) Process(ctx context.Context) error {
 	}
 
 	// 检测是否可以跳过本次执行
-	if skippable, skipReason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.logger.Info(fmt.Sprintf("skip this upload, because %s", skipReason))
+	if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
+		n.logger.Info(fmt.Sprintf("skip this upload, because %s", reason))
 		return nil
-	} else if skipReason != "" {
-		n.logger.Info(fmt.Sprintf("re-upload, because %s", skipReason))
+	} else if reason != "" {
+		n.logger.Info(fmt.Sprintf("re-upload, because %s", reason))
 	}
 
 	// 生成证书实体

@@ -72,6 +72,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listCertificatesLimit := int32(50)
 	listCertificatesOffset := int32(0)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listCertificatesReq := &hcscmmodel.ListCertificatesRequest{
 			Limit:   typeutil.ToPtr(listCertificatesLimit),
 			Offset:  typeutil.ToPtr(listCertificatesOffset),

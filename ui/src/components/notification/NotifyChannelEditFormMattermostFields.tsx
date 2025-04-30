@@ -7,9 +7,7 @@ const NotifyChannelEditFormMattermostFields = () => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    serverUrl: z
-      .string({ message: t("settings.notification.channel.form.mattermost_server_url.placeholder") })
-      .url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string({ message: t("settings.notification.channel.form.mattermost_server_url.placeholder") }).url(t("common.errmsg.url_invalid")),
     channelId: z
       .string({ message: t("settings.notification.channel.form.mattermost_channel_id.placeholder") })
       .nonempty(t("settings.notification.channel.form.mattermost_channel_id.placeholder")),
@@ -42,19 +40,11 @@ const NotifyChannelEditFormMattermostFields = () => {
         <Input placeholder={t("settings.notification.channel.form.mattermost_channel_id.placeholder")} />
       </Form.Item>
 
-      <Form.Item
-        name="username"
-        label={t("settings.notification.channel.form.mattermost_username.label")}
-        rules={[formRule]}
-      >
+      <Form.Item name="username" label={t("settings.notification.channel.form.mattermost_username.label")} rules={[formRule]}>
         <Input placeholder={t("settings.notification.channel.form.mattermost_username.placeholder")} />
       </Form.Item>
 
-      <Form.Item
-        name="password"
-        label={t("settings.notification.channel.form.mattermost_password.label")}
-        rules={[formRule]}
-      >
+      <Form.Item name="password" label={t("settings.notification.channel.form.mattermost_password.label")} rules={[formRule]}>
         <Input.Password placeholder={t("settings.notification.channel.form.mattermost_password.placeholder")} />
       </Form.Item>
     </>

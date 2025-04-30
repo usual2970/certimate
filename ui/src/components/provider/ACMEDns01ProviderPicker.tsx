@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { applyDNSProvidersMap } from "@/domain/provider";
+import { acmeDns01ProvidersMap } from "@/domain/provider";
 
-export type ApplyDNSProviderPickerProps = {
+export type ACMEDns01ProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
@@ -13,7 +13,7 @@ export type ApplyDNSProviderPickerProps = {
   onSelect?: (value: string) => void;
 };
 
-const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ApplyDNSProviderPickerProps) => {
+const ACMEDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ACMEDns01ProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
@@ -25,7 +25,7 @@ const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSe
   }, []);
 
   const providers = useMemo(() => {
-    return Array.from(applyDNSProvidersMap.values()).filter((provider) => {
+    return Array.from(acmeDns01ProvidersMap.values()).filter((provider) => {
       if (keyword) {
         const value = keyword.toLowerCase();
         return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
@@ -72,4 +72,4 @@ const ApplyDNSProviderPicker = ({ className, style, autoFocus, placeholder, onSe
   );
 };
 
-export default memo(ApplyDNSProviderPicker);
+export default memo(ACMEDns01ProviderPicker);

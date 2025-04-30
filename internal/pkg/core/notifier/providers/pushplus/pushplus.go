@@ -9,20 +9,17 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// PushPlus Token
+	// PushPlus Token。
 	Token string `json:"token"`
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
-	// 未来将移除
+	config     *NotifierConfig
+	logger     *slog.Logger
 	httpClient *http.Client
 }
 
@@ -35,6 +32,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config:     config,
+		logger:     slog.Default(),
 		httpClient: http.DefaultClient,
 	}, nil
 }
@@ -48,10 +46,8 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	return n
 }
 
-// Notify 发送通知
-// 参考文档：https://pushplus.plus/doc/guide/api.html
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	// 请求体
+	// REF: https://pushplus.plus/doc/guide/api.html
 	reqBody := &struct {
 		Token   string `json:"token"`
 		Title   string `json:"title"`
@@ -62,10 +58,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		Content: message,
 	}
 
-	// Make request
 	body, err := json.Marshal(reqBody)
 	if err != nil {
-		return nil, errors.Wrap(err, "encode message body")
+		return nil, fmt.Errorf("pushplus api error: failed to encode message body: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -75,38 +70,32 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		bytes.NewReader(body),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "create new request")
+		return nil, fmt.Errorf("pushplus api error: failed to create new request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
-	// Send request to pushplus service
 	resp, err := n.httpClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "send request to pushplus server")
+		return nil, fmt.Errorf("pushplus api error: failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	result, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read response")
+		return nil, fmt.Errorf("pushplus api error: failed to read response: %w", err)
+	} else if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("pushplus api error: unexpected status code: %d, resp: %s", resp.StatusCode, string(result))
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("pushplus returned status code %d: %s", resp.StatusCode, string(result))
-	}
-
-	// 解析响应
 	var errorResponse struct {
 		Code int    `json:"code"`
 		Msg  string `json:"msg"`
 	}
 	if err := json.Unmarshal(result, &errorResponse); err != nil {
-		return nil, errors.Wrap(err, "decode response")
-	}
-
-	if errorResponse.Code != 200 {
-		return nil, fmt.Errorf("pushplus returned error: %s", errorResponse.Msg)
+		return nil, fmt.Errorf("pushplus api error: failed to decode response: %w", err)
+	} else if errorResponse.Code != 200 {
+		return nil, fmt.Errorf("pushplus api error: unexpected response code: %d, msg: %s", errorResponse.Code, errorResponse.Msg)
 	}
 
 	return &notifier.NotifyResult{}, nil

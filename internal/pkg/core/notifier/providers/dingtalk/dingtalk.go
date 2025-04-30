@@ -2,7 +2,9 @@ package dingtalk
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"net/url"
 
 	"github.com/nikoksr/notify/service/dingding"
 
@@ -10,8 +12,8 @@ import (
 )
 
 type NotifierConfig struct {
-	// 钉钉机器人的 Token。
-	AccessToken string `json:"accessToken"`
+	// 钉钉机器人的 Webhook 地址。
+	WebhookUrl string `json:"webhookUrl"`
 	// 钉钉机器人的 Secret。
 	Secret string `json:"secret"`
 }
@@ -30,6 +32,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config: config,
+		logger: slog.Default(),
 	}, nil
 }
 
@@ -43,8 +46,13 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+	webhookUrl, err := url.Parse(n.config.WebhookUrl)
+	if err != nil {
+		return nil, fmt.Errorf("invalid webhook url: %w", err)
+	}
+
 	srv := dingding.New(&dingding.Config{
-		Token:  n.config.AccessToken,
+		Token:  webhookUrl.Query().Get("access_token"),
 		Secret: n.config.Secret,
 	})
 

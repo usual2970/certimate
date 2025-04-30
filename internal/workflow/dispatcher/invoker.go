@@ -47,8 +47,10 @@ func (w *workflowInvoker) GetLogs() domain.WorkflowLogs {
 func (w *workflowInvoker) processNode(ctx context.Context, node *domain.WorkflowNode) error {
 	current := node
 	for current != nil {
-		if ctx.Err() != nil {
+		select {
+		case <-ctx.Done():
 			return ctx.Err()
+		default:
 		}
 
 		if current.Type == domain.WorkflowNodeTypeBranch || current.Type == domain.WorkflowNodeTypeExecuteResultBranch {

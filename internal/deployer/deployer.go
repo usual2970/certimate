@@ -11,31 +11,29 @@ import (
 )
 
 type Deployer interface {
-	SetLogger(*slog.Logger)
-
 	Deploy(ctx context.Context) error
 }
 
-type deployerOptions struct {
-	Provider             domain.DeployProviderType
-	ProviderAccessConfig map[string]any
-	ProviderDeployConfig map[string]any
+type DeployerWithWorkflowNodeConfig struct {
+	Node           *domain.WorkflowNode
+	Logger         *slog.Logger
+	CertificatePEM string
+	PrivateKeyPEM  string
 }
 
-func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
-	Certificate string
-	PrivateKey  string
-},
-) (Deployer, error) {
-	if node.Type != domain.WorkflowNodeTypeDeploy {
+func NewWithWorkflowNode(config DeployerWithWorkflowNodeConfig) (Deployer, error) {
+	if config.Node == nil {
+		return nil, fmt.Errorf("node is nil")
+	}
+	if config.Node.Type != domain.WorkflowNodeTypeDeploy {
 		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeDeploy))
 	}
 
-	nodeConfig := node.GetConfigForDeploy()
-	options := &deployerOptions{
-		Provider:             domain.DeployProviderType(nodeConfig.Provider),
-		ProviderAccessConfig: make(map[string]any),
-		ProviderDeployConfig: nodeConfig.ProviderConfig,
+	nodeConfig := config.Node.GetConfigForDeploy()
+	options := &deployerProviderOptions{
+		Provider:               domain.DeploymentProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:   make(map[string]any),
+		ProviderExtendedConfig: nodeConfig.ProviderConfig,
 	}
 
 	accessRepo := repository.NewAccessRepository()
@@ -48,34 +46,27 @@ func NewWithDeployNode(node *domain.WorkflowNode, certdata struct {
 		}
 	}
 
-	deployer, err := createDeployer(options)
+	deployerProvider, err := createDeployerProvider(options)
 	if err != nil {
 		return nil, err
 	}
 
-	return &proxyDeployer{
-		deployer:          deployer,
-		deployCertificate: certdata.Certificate,
-		deployPrivateKey:  certdata.PrivateKey,
+	return &deployerImpl{
+		provider:   deployerProvider.WithLogger(config.Logger),
+		certPEM:    config.CertificatePEM,
+		privkeyPEM: config.PrivateKeyPEM,
 	}, nil
 }
 
-// TODO: 暂时使用代理模式以兼容之前版本代码，后续重新实现此处逻辑
-type proxyDeployer struct {
-	deployer          deployer.Deployer
-	deployCertificate string
-	deployPrivateKey  string
+type deployerImpl struct {
+	provider   deployer.Deployer
+	certPEM    string
+	privkeyPEM string
 }
 
-func (d *proxyDeployer) SetLogger(logger *slog.Logger) {
-	if logger == nil {
-		panic("logger is nil")
-	}
+var _ Deployer = (*deployerImpl)(nil)
 
-	d.deployer.WithLogger(logger)
-}
-
-func (d *proxyDeployer) Deploy(ctx context.Context) error {
-	_, err := d.deployer.Deploy(ctx, d.deployCertificate, d.deployPrivateKey)
+func (d *deployerImpl) Deploy(ctx context.Context) error {
+	_, err := d.provider.Deploy(ctx, d.certPEM, d.privkeyPEM)
 	return err
 }

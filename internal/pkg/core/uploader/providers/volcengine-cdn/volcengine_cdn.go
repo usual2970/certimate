@@ -75,6 +75,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		Source:   "volc_cert_center",
 	}
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listCertInfoResp, err := u.sdkClient.ListCertInfo(listCertInfoReq)
 		u.logger.Debug("sdk request 'cdn.ListCertInfo'", slog.Any("request", listCertInfoReq), slog.Any("response", listCertInfoResp))
 		if err != nil {

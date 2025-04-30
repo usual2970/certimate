@@ -108,8 +108,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 循环获取部署任务详情，等待任务状态变更
 	// REF: https://cloud.tencent.com.cn/document/api/400/91658
 	for {
-		if ctx.Err() != nil {
+		select {
+		case <-ctx.Done():
 			return nil, ctx.Err()
+		default:
 		}
 
 		describeHostDeployRecordDetailReq := tcssl.NewDescribeHostDeployRecordDetailRequest()

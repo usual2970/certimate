@@ -77,6 +77,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	describeCertsPageNumber := 1
 	describeCertsPageSize := 10
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		describeCertsReq := jdsslapi.NewDescribeCertsRequest()
 		describeCertsReq.SetDomainName(certX509.Subject.CommonName)
 		describeCertsReq.SetPageNumber(describeCertsPageNumber)

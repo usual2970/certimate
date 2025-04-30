@@ -7,7 +7,7 @@ import { produce } from "immer";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { APPLY_CA_PROVIDERS, type ApplyCAProviderType } from "@/domain/provider";
+import { type CAProviderType, CA_PROVIDERS } from "@/domain/provider";
 import { SETTINGS_NAMES, type SSLProviderSettingsContent, type SettingsModel } from "@/domain/settings";
 import { useAntdForm } from "@/hooks";
 import { get as getSettings, save as saveSettings } from "@/repository/settings";
@@ -27,14 +27,14 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
   const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.LETSENCRYPT],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.LETSENCRYPT],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.LETSENCRYPT;
+        draft.content.provider = CA_PROVIDERS.LETSENCRYPT;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.LETSENCRYPT] = values;
+        draft.content.config[CA_PROVIDERS.LETSENCRYPT] = values;
       });
       await updateSettings(newSettings);
 
@@ -44,7 +44,7 @@ const SSLProviderEditFormLetsEncryptConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPT);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.LETSENCRYPT);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -68,14 +68,14 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
   const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.LETSENCRYPTSTAGING],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING;
+        draft.content.provider = CA_PROVIDERS.LETSENCRYPTSTAGING;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING] = values;
+        draft.content.config[CA_PROVIDERS.LETSENCRYPTSTAGING] = values;
       });
       await updateSettings(newSettings);
 
@@ -85,7 +85,7 @@ const SSLProviderEditFormLetsEncryptStagingConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.LETSENCRYPTSTAGING);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -113,14 +113,14 @@ const SSLProviderEditFormBuypassConfig = () => {
   const { pending, settings, updateSettings } = useContext(SSLProviderContext);
 
   const { form: formInst, formProps } = useAntdForm<NonNullable<unknown>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.BUYPASS],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.BUYPASS],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.BUYPASS;
+        draft.content.provider = CA_PROVIDERS.BUYPASS;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.BUYPASS] = values;
+        draft.content.config[CA_PROVIDERS.BUYPASS] = values;
       });
       await updateSettings(newSettings);
 
@@ -130,7 +130,7 @@ const SSLProviderEditFormBuypassConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.LETSENCRYPTSTAGING);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -165,14 +165,14 @@ const SSLProviderEditFormGoogleTrustServicesConfig = () => {
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.GOOGLETRUSTSERVICES],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES;
+        draft.content.provider = CA_PROVIDERS.GOOGLETRUSTSERVICES;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES] = values;
+        draft.content.config[CA_PROVIDERS.GOOGLETRUSTSERVICES] = values;
       });
       await updateSettings(newSettings);
 
@@ -182,7 +182,7 @@ const SSLProviderEditFormGoogleTrustServicesConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.GOOGLETRUSTSERVICES);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -235,14 +235,14 @@ const SSLProviderEditFormSSLComConfig = () => {
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.SSLCOM],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.SSLCOM],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.SSLCOM;
+        draft.content.provider = CA_PROVIDERS.SSLCOM;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.SSLCOM] = values;
+        draft.content.config[CA_PROVIDERS.SSLCOM] = values;
       });
       await updateSettings(newSettings);
 
@@ -252,7 +252,7 @@ const SSLProviderEditFormSSLComConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.SSLCOM);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.SSLCOM);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -305,14 +305,14 @@ const SSLProviderEditFormZeroSSLConfig = () => {
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm<z.infer<typeof formSchema>>({
-    initialValues: settings?.content?.config?.[APPLY_CA_PROVIDERS.ZEROSSL],
+    initialValues: settings?.content?.config?.[CA_PROVIDERS.ZEROSSL],
     onSubmit: async (values) => {
       const newSettings = produce(settings, (draft) => {
         draft.content ??= {} as SSLProviderSettingsContent;
-        draft.content.provider = APPLY_CA_PROVIDERS.ZEROSSL;
+        draft.content.provider = CA_PROVIDERS.ZEROSSL;
 
         draft.content.config ??= {} as SSLProviderSettingsContent["config"];
-        draft.content.config[APPLY_CA_PROVIDERS.ZEROSSL] = values;
+        draft.content.config[CA_PROVIDERS.ZEROSSL] = values;
       });
       await updateSettings(newSettings);
 
@@ -322,7 +322,7 @@ const SSLProviderEditFormZeroSSLConfig = () => {
 
   const [formChanged, setFormChanged] = useState(false);
   useEffect(() => {
-    setFormChanged(settings?.content?.provider !== APPLY_CA_PROVIDERS.ZEROSSL);
+    setFormChanged(settings?.content?.provider !== CA_PROVIDERS.ZEROSSL);
   }, [settings?.content?.provider]);
 
   const handleFormChange = () => {
@@ -383,20 +383,20 @@ const SettingsSSLProvider = () => {
     fetchData();
   }, []);
 
-  const [providerType, setProviderType] = useState<ApplyCAProviderType>(APPLY_CA_PROVIDERS.LETSENCRYPT);
+  const [providerType, setProviderType] = useState<CAProviderType>(CA_PROVIDERS.LETSENCRYPT);
   const providerFormEl = useMemo(() => {
     switch (providerType) {
-      case APPLY_CA_PROVIDERS.LETSENCRYPT:
+      case CA_PROVIDERS.LETSENCRYPT:
         return <SSLProviderEditFormLetsEncryptConfig />;
-      case APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING:
+      case CA_PROVIDERS.LETSENCRYPTSTAGING:
         return <SSLProviderEditFormLetsEncryptStagingConfig />;
-      case APPLY_CA_PROVIDERS.BUYPASS:
+      case CA_PROVIDERS.BUYPASS:
         return <SSLProviderEditFormBuypassConfig />;
-      case APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES:
+      case CA_PROVIDERS.GOOGLETRUSTSERVICES:
         return <SSLProviderEditFormGoogleTrustServicesConfig />;
-      case APPLY_CA_PROVIDERS.SSLCOM:
+      case CA_PROVIDERS.SSLCOM:
         return <SSLProviderEditFormSSLComConfig />;
-      case APPLY_CA_PROVIDERS.ZEROSSL:
+      case CA_PROVIDERS.ZEROSSL:
         return <SSLProviderEditFormZeroSSLConfig />;
     }
   }, [providerType]);
@@ -431,48 +431,48 @@ const SettingsSSLProvider = () => {
       <Show when={!loading} fallback={<Skeleton active />}>
         <Form form={formInst} disabled={formPending} layout="vertical" initialValues={{ provider: providerType }}>
           <Form.Item className="mb-2" name="provider" label={t("settings.sslprovider.form.provider.label")}>
-            <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as ApplyCAProviderType)}>
+            <CheckCard.Group className="w-full" onChange={(value) => setProviderType(value as CAProviderType)}>
               <CheckCard
                 avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("provider.letsencrypt")}
                 description="letsencrypt.org"
-                value={APPLY_CA_PROVIDERS.LETSENCRYPT}
+                value={CA_PROVIDERS.LETSENCRYPT}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/letsencrypt.svg"} className="size-8" />}
                 size="small"
                 title={t("provider.letsencryptstaging")}
                 description="letsencrypt.org"
-                value={APPLY_CA_PROVIDERS.LETSENCRYPTSTAGING}
+                value={CA_PROVIDERS.LETSENCRYPTSTAGING}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/buypass.png"} className="size-8" />}
                 size="small"
                 title={t("provider.buypass")}
                 description="buypass.com"
-                value={APPLY_CA_PROVIDERS.BUYPASS}
+                value={CA_PROVIDERS.BUYPASS}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/google.svg"} className="size-8" />}
                 size="small"
                 title={t("provider.googletrustservices")}
                 description="pki.goog"
-                value={APPLY_CA_PROVIDERS.GOOGLETRUSTSERVICES}
+                value={CA_PROVIDERS.GOOGLETRUSTSERVICES}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/sslcom.svg"} className="size-8" />}
                 size="small"
                 title={t("provider.sslcom")}
                 description="ssl.com"
-                value={APPLY_CA_PROVIDERS.SSLCOM}
+                value={CA_PROVIDERS.SSLCOM}
               />
               <CheckCard
                 avatar={<img src={"/imgs/providers/zerossl.svg"} className="size-8" />}
                 size="small"
                 title={t("provider.zerossl")}
                 description="zerossl.com"
-                value={APPLY_CA_PROVIDERS.ZEROSSL}
+                value={CA_PROVIDERS.ZEROSSL}
               />
             </CheckCard.Group>
           </Form.Item>

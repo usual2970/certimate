@@ -9,20 +9,19 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/pkg/errors"
-
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	Token string `json:"token"` // 应用 API Token
-	User  string `json:"user"`  // 用户/分组 Key
+	// Pushover API Token。
+	Token string `json:"token"`
+	// 用户或分组标识。
+	User string `json:"user"`
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
-	// 未来将移除
+	config     *NotifierConfig
+	logger     *slog.Logger
 	httpClient *http.Client
 }
 
@@ -35,6 +34,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config:     config,
+		logger:     slog.Default(),
 		httpClient: http.DefaultClient,
 	}, nil
 }
@@ -48,10 +48,8 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	return n
 }
 
-// Notify 发送通知
-// 参考文档：https://pushover.net/api
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	// 请求体
+	// REF: https://pushover.net/api
 	reqBody := &struct {
 		Token   string `json:"token"`
 		User    string `json:"user"`
@@ -64,10 +62,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		Message: message,
 	}
 
-	// Make request
 	body, err := json.Marshal(reqBody)
 	if err != nil {
-		return nil, errors.Wrap(err, "encode message body")
+		return nil, fmt.Errorf("pushover api error: failed to encode message body: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(
@@ -77,25 +74,22 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		bytes.NewReader(body),
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "create new request")
+		return nil, fmt.Errorf("pushover api error: failed to create new request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
-	// Send request to pushover service
 	resp, err := n.httpClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "send request to pushover server")
+		return nil, fmt.Errorf("pushover api error: failed to send request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	result, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read response")
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("pushover returned status code %d: %s", resp.StatusCode, string(result))
+		return nil, fmt.Errorf("pushover api error: failed to read response: %w", err)
+	} else if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("pushover api error: unexpected status code: %d, resp: %s", resp.StatusCode, string(result))
 	}
 
 	return &notifier.NotifyResult{}, nil

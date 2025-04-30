@@ -22,10 +22,12 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForDeSEC
+      | AccessConfigForDingTalkBot
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForDynv6
       | AccessConfigForEdgio
+      | AccessConfigForEmail
       | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
@@ -33,6 +35,8 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
+      | AccessConfigForLarkBot
+      | AccessConfigForMattermost
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
       | AccessConfigForNameSilo
@@ -43,6 +47,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForSSLCom
+      | AccessConfigForTelegram
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
@@ -50,9 +55,11 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForVolcEngine
       | AccessConfigForWangsu
       | AccessConfigForWebhook
+      | AccessConfigForWeComBot
       | AccessConfigForWestcn
       | AccessConfigForZeroSSL
     );
+  reserve?: "ca" | "notification";
 }
 
 // #region AccessConfig
@@ -139,6 +146,11 @@ export type AccessConfigForDeSEC = {
   token: string;
 };
 
+export type AccessConfigForDingTalkBot = {
+  webhookUrl: string;
+  secret?: string;
+};
+
 export type AccessConfigForDNSLA = {
   apiId: string;
   apiSecret: string;
@@ -156,6 +168,16 @@ export type AccessConfigForDynv6 = {
 export type AccessConfigForEdgio = {
   clientId: string;
   clientSecret: string;
+};
+
+export type AccessConfigForEmail = {
+  smtpHost: string;
+  smtpPort: number;
+  smtpTls: boolean;
+  username: string;
+  password: string;
+  defaultSenderAddress?: string;
+  defaultReceiverAddress?: string;
 };
 
 export type AccessConfigForGcore = {
@@ -189,6 +211,17 @@ export type AccessConfigForJDCloud = {
 
 export type AccessConfigForKubernetes = {
   kubeConfig?: string;
+};
+
+export type AccessConfigForLarkBot = {
+  webhookUrl: string;
+};
+
+export type AccessConfigForMattermost = {
+  serverUrl: string;
+  username: string;
+  password: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForNamecheap = {
@@ -248,6 +281,11 @@ export type AccessConfigForSSLCom = {
   eabHmacKey: string;
 };
 
+export type AccessConfigForTelegram = {
+  botToken: string;
+  defaultChatId?: number;
+};
+
 export type AccessConfigForTencentCloud = {
   secretId: string;
   secretKey: string;
@@ -282,7 +320,15 @@ export type AccessConfigForWangsu = {
 
 export type AccessConfigForWebhook = {
   url: string;
+  method: string;
+  headers?: string;
   allowInsecureConnections?: boolean;
+  defaultDataForDeployment?: string;
+  defaultDataForNotification?: string;
+};
+
+export type AccessConfigForWeComBot = {
+  webhookUrl: string;
 };
 
 export type AccessConfigForWestcn = {

@@ -11,6 +11,7 @@ type Access struct {
 	Name      string         `json:"name" db:"name"`
 	Provider  string         `json:"provider" db:"provider"`
 	Config    map[string]any `json:"config" db:"config"`
+	Reserve   string         `json:"reserve,omitempty" db:"reserve"`
 	DeletedAt *time.Time     `json:"deleted" db:"deleted"`
 }
 
@@ -97,6 +98,11 @@ type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }
 
+type AccessConfigForDingTalkBot struct {
+	WebhookUrl string `json:"webhookUrl"`
+	Secret     string `json:"secret"`
+}
+
 type AccessConfigForDNSLA struct {
 	ApiId     string `json:"apiId"`
 	ApiSecret string `json:"apiSecret"`
@@ -114,6 +120,16 @@ type AccessConfigForDynv6 struct {
 type AccessConfigForEdgio struct {
 	ClientId     string `json:"clientId"`
 	ClientSecret string `json:"clientSecret"`
+}
+
+type AccessConfigForEmail struct {
+	SmtpHost               string `json:"smtpHost"`
+	SmtpPort               int32  `json:"smtpPort"`
+	SmtpTls                bool   `json:"smtpTls"`
+	Username               string `json:"username"`
+	Password               string `json:"password"`
+	DefaultSenderAddress   string `json:"defaultSenderAddress,omitempty"`
+	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
 }
 
 type AccessConfigForGcore struct {
@@ -147,6 +163,17 @@ type AccessConfigForJDCloud struct {
 
 type AccessConfigForKubernetes struct {
 	KubeConfig string `json:"kubeConfig,omitempty"`
+}
+
+type AccessConfigForLarkBot struct {
+	WebhookUrl string `json:"webhookUrl"`
+}
+
+type AccessConfigForMattermost struct {
+	ServerUrl        string `json:"serverUrl"`
+	Username         string `json:"username"`
+	Password         string `json:"password"`
+	DefaultChannelId string `json:"defaultChannelId,omitempty"`
 }
 
 type AccessConfigForNamecheap struct {
@@ -206,6 +233,11 @@ type AccessConfigForSSLCom struct {
 	EabHmacKey string `json:"eabHmacKey"`
 }
 
+type AccessConfigForTelegram struct {
+	BotToken      string `json:"botToken"`
+	DefaultChatId int64  `json:"defaultChatId,omitempty"`
+}
+
 type AccessConfigForTencentCloud struct {
 	SecretId  string `json:"secretId"`
 	SecretKey string `json:"secretKey"`
@@ -239,8 +271,16 @@ type AccessConfigForWangsu struct {
 }
 
 type AccessConfigForWebhook struct {
-	Url                      string `json:"url"`
-	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+	Url                        string `json:"url"`
+	Method                     string `json:"method,omitempty"`
+	HeadersString              string `json:"headers,omitempty"`
+	AllowInsecureConnections   bool   `json:"allowInsecureConnections,omitempty"`
+	DefaultDataForDeployment   string `json:"defaultDataForDeployment,omitempty"`
+	DefaultDataForNotification string `json:"defaultDataForNotification,omitempty"`
+}
+
+type AccessConfigForWeComBot struct {
+	WebhookUrl string `json:"webhookUrl"`
 }
 
 type AccessConfigForWestcn struct {

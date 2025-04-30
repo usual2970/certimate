@@ -125,17 +125,22 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		var errs []error
 
 		for _, domain := range domains {
-			// 绑定证书
-			// REF: https://www.volcengine.com/docs/6469/1186278#%E7%BB%91%E5%AE%9A%E8%AF%81%E4%B9%A6
-			bindCertReq := &velive.BindCertBody{
-				ChainID: upres.CertId,
-				Domain:  domain,
-				HTTPS:   ve.Bool(true),
-			}
-			bindCertResp, err := d.sdkClient.BindCert(ctx, bindCertReq)
-			d.logger.Debug("sdk request 'live.BindCert'", slog.Any("request", bindCertReq), slog.Any("response", bindCertResp))
-			if err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			default:
+				// 绑定证书
+				// REF: https://www.volcengine.com/docs/6469/1186278#%E7%BB%91%E5%AE%9A%E8%AF%81%E4%B9%A6
+				bindCertReq := &velive.BindCertBody{
+					ChainID: upres.CertId,
+					Domain:  domain,
+					HTTPS:   ve.Bool(true),
+				}
+				bindCertResp, err := d.sdkClient.BindCert(ctx, bindCertReq)
+				d.logger.Debug("sdk request 'live.BindCert'", slog.Any("request", bindCertReq), slog.Any("response", bindCertResp))
+				if err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

@@ -1,8 +1,11 @@
-import { type ApplyCAProviderType } from "./provider";
+import { type CAProviderType } from "./provider";
 
 export const SETTINGS_NAMES = Object.freeze({
   EMAILS: "emails",
   NOTIFY_TEMPLATES: "notifyTemplates",
+  /**
+   * @deprecated
+   */
   NOTIFY_CHANNELS: "notifyChannels",
   SSL_PROVIDER: "sslProvider",
   PERSISTENCE: "persistence",
@@ -38,6 +41,9 @@ export const defaultNotifyTemplate: NotifyTemplate = {
 // #endregion
 
 // #region Settings: NotifyChannels
+/**
+ * @deprecated
+ */
 export const NOTIFY_CHANNELS = Object.freeze({
   BARK: "bark",
   DINGTALK: "dingtalk",
@@ -53,8 +59,14 @@ export const NOTIFY_CHANNELS = Object.freeze({
   WECOM: "wecom",
 } as const);
 
+/**
+ * @deprecated
+ */
 export type NotifyChannels = (typeof NOTIFY_CHANNELS)[keyof typeof NOTIFY_CHANNELS];
 
+/**
+ * @deprecated
+ */
 export type NotifyChannelsSettingsContent = {
   /*
     注意：如果追加新的类型，请保持以 ASCII 排序。
@@ -75,12 +87,18 @@ export type NotifyChannelsSettingsContent = {
   [NOTIFY_CHANNELS.WECOM]?: WeComNotifyChannelConfig;
 };
 
+/**
+ * @deprecated
+ */
 export type BarkNotifyChannelConfig = {
   deviceKey: string;
   serverUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type EmailNotifyChannelConfig = {
   smtpHost: string;
   smtpPort: number;
@@ -92,12 +110,18 @@ export type EmailNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type DingTalkNotifyChannelConfig = {
   accessToken: string;
   secret: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type GotifyNotifyChannelConfig = {
   url: string;
   token: string;
@@ -105,56 +129,86 @@ export type GotifyNotifyChannelConfig = {
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type LarkNotifyChannelConfig = {
   webhookUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type MattermostNotifyChannelConfig = {
   serverUrl: string;
   channel: string;
   username: string;
   password: string;
   enabled?: boolean;
-}
+};
 
+/**
+ * @deprecated
+ */
 export type PushoverNotifyChannelConfig = {
   token: string;
   user: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type PushPlusNotifyChannelConfig = {
   token: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type ServerChanNotifyChannelConfig = {
   url: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type TelegramNotifyChannelConfig = {
   apiToken: string;
   chatId: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type WebhookNotifyChannelConfig = {
   url: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type WeComNotifyChannelConfig = {
   webhookUrl: string;
   enabled?: boolean;
 };
 
+/**
+ * @deprecated
+ */
 export type NotifyChannel = {
   type: string;
   name: string;
 };
 
+/**
+ * @deprecated
+ */
 export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new Map(
   [
     [NOTIFY_CHANNELS.EMAIL, "common.notifier.email"],
@@ -175,7 +229,7 @@ export const notifyChannelsMap: Map<NotifyChannel["type"], NotifyChannel> = new 
 
 // #region Settings: SSLProvider
 export type SSLProviderSettingsContent = {
-  provider: ApplyCAProviderType;
+  provider: CAProviderType;
   config: {
     [key: string]: Record<string, unknown> | undefined;
   };

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Flex, Typography } from "antd";
 import { produce } from "immer";
 
-import { deployProvidersMap } from "@/domain/provider";
+import { deploymentProvidersMap } from "@/domain/provider";
 import { type WorkflowNodeConfigForDeploy, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
@@ -43,7 +43,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     }
 
     const config = (node.config as WorkflowNodeConfigForDeploy) ?? {};
-    const provider = deployProvidersMap.get(config.provider);
+    const provider = deploymentProvidersMap.get(config.provider);
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
         <Avatar src={provider?.icon} size="small" />

@@ -71,6 +71,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	listUserCertificateOrderPage := int64(1)
 	listUserCertificateOrderLimit := int64(50)
 	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		default:
+		}
+
 		listUserCertificateOrderReq := &alicas.ListUserCertificateOrderRequest{
 			CurrentPage: tea.Int64(listUserCertificateOrderPage),
 			ShowSize:    tea.Int64(listUserCertificateOrderLimit),

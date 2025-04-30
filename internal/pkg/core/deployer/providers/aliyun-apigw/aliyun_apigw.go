@@ -142,6 +142,12 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 	listDomainsPageNumber := int32(1)
 	listDomainsPageSize := int32(10)
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		listDomainsReq := &aliapig.ListDomainsRequest{
 			GatewayId:  tea.String(d.config.GatewayId),
 			NameLike:   tea.String(d.config.Domain),
