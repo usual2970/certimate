@@ -206,6 +206,8 @@
   "access.form.googletrustservices_eab_hmac_key.label": "ACME EAB HMAC key",
   "access.form.googletrustservices_eab_hmac_key.placeholder": "Please enter ACME EAB HMAC key",
   "access.form.googletrustservices_eab_hmac_key.tooltip": "For more information, see <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
+  "access.form.googletrustservices_proxy.label": "Proxy address (Optional)",
+  "access.form.googletrustservices_proxy.tooltip": "Optional proxy address name for certificate requests, see <a href=\"https://github.com/bigbugcc/Acme-CFWorker\" target=\"_blank\">https://github.com/bigbugcc/Acme-CFWorker</a>",
   "access.form.huaweicloud_access_key_id.label": "Huawei Cloud AccessKeyId",
   "access.form.huaweicloud_access_key_id.placeholder": "Please enter Huawei Cloud AccessKeyId",
   "access.form.huaweicloud_access_key_id.tooltip": "For more information, see <a href=\"https://support.huaweicloud.com/intl/en-us/usermanual-ca/ca_01_0003.html\" target=\"_blank\">https://support.huaweicloud.com/intl/en-us/usermanual-ca/ca_01_0003.html</a>",

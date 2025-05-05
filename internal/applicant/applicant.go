@@ -173,7 +173,8 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 	// Create an ACME client config
 	config := lego.NewConfig(user)
 	config.Certificate.KeyType = parseLegoKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
-	config.CADirURL = sslProviderUrls[user.CA]
+	//config.CADirURL = sslProviderUrls[user.CA]
+	config.CADirURL = getCAProviderURL(user.CA, options.CAProviderAccessConfig)
 	if user.CA == sslProviderSSLCom {
 		if strings.HasPrefix(options.KeyAlgorithm, "RSA") {
 			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"RSA"]

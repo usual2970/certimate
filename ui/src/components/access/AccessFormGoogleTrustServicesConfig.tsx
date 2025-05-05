@@ -4,6 +4,7 @@ import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 import { type AccessConfigForGoogleTrustServices } from "@/domain/access";
+import { validDomainName } from "@/utils/validators";
 
 type AccessFormGoogleTrustServicesConfigFieldValues = Nullish<AccessConfigForGoogleTrustServices>;
 
@@ -19,6 +20,7 @@ const initFormModel = (): AccessFormGoogleTrustServicesConfigFieldValues => {
   return {
     eabKid: "",
     eabHmacKey: "",
+    proxyDomain: "",
   };
 };
 
@@ -42,6 +44,11 @@ const AccessFormGoogleTrustServicesConfig = ({
       .min(1, t("access.form.googletrustservices_eab_hmac_key.placeholder"))
       .max(256, t("common.errmsg.string_max", { max: 256 }))
       .trim(),
+    proxyDomain: z
+      .string()
+      .trim()
+      .refine((v) => v === "" ||v.startsWith("https://") && validDomainName(v.split('/')[2], { allowWildcard: true }), t("common.errmsg.domain_invalid"))
+      .optional(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -75,6 +82,17 @@ const AccessFormGoogleTrustServicesConfig = ({
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.googletrustservices_eab_hmac_key.placeholder")} />
       </Form.Item>
+
+      <Form.Item
+            name="proxyDomain"
+            label={t("access.form.googletrustservices_proxy.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.googletrustservices_proxy.tooltip") }}></span>}
+            required={false}
+          >
+            <Input placeholder="https://acme.example.com/directory" />
+      </Form.Item>
+
     </Form>
   );
 };

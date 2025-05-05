@@ -199,6 +199,8 @@
   "access.form.googletrustservices_eab_kid.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
   "access.form.googletrustservices_eab_hmac_key.label": "ACME EAB HMAC Key",
   "access.form.googletrustservices_eab_hmac_key.placeholder": "请输入 ACME EAB HMAC Key",
+  "access.form.googletrustservices_proxy.label": "代理地址（可选）",
+  "access.form.googletrustservices_proxy.tooltip": "用于证书请求的可选代理地址，请参阅 <a href=\"https://github.com/bigbugcc/Acme-CFWorker\" target=\"_blank\">https://github.com/bigbugcc/Acme-CFWorker</a>",
   "access.form.googletrustservices_eab_hmac_key.tooltip": "这是什么？请参阅 <a href=\"https://cloud.google.com/certificate-manager/docs/public-ca-tutorial\" target=\"_blank\">https://cloud.google.com/certificate-manager/docs/public-ca-tutorial</a>",
   "access.form.huaweicloud_access_key_id.label": "华为云 AccessKeyId",
   "access.form.huaweicloud_access_key_id.placeholder": "请输入华为云 AccessKeyId",
