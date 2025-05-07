@@ -1,4 +1,4 @@
-package aliyunesa
+package aliyunddos
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
-	aliesa "github.com/alibabacloud-go/esa-20240910/v2/client"
+	aliddos "github.com/alibabacloud-go/ddoscoo-20200101/v4/client"
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-slb"
 )
 
 type DeployerConfig struct {
@@ -24,14 +24,14 @@ type DeployerConfig struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 	// 阿里云地域。
 	Region string `json:"region"`
-	// 阿里云 ESA 站点 ID。
-	SiteId int64 `json:"siteId"`
+	// 网站域名（支持泛域名）。
+	Domain string `json:"domain"`
 }
 
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *aliesa.Client
+	sdkClient   *aliddos.Client
 	sslUploader uploader.Uploader
 }
 
@@ -71,8 +71,8 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
-	if d.config.SiteId == 0 {
-		return nil, errors.New("config `siteId` is required")
+	if d.config.Domain == "" {
+		return nil, errors.New("config `domain` is required")
 	}
 
 	// 上传证书到 CAS
@@ -83,32 +83,31 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
-	// 配置站点证书
-	// REF: https://help.aliyun.com/zh/edge-security-acceleration/esa/api-esa-2024-09-10-setcertificate
-	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	setCertificateReq := &aliesa.SetCertificateRequest{
-		SiteId: tea.Int64(d.config.SiteId),
-		Type:   tea.String("cas"),
-		CasId:  tea.Int64(certId),
+	// 为网站业务转发规则关联 SSL 证书
+	// REF: https://help.aliyun.com/zh/anti-ddos/anti-ddos-pro-and-premium/developer-reference/api-ddoscoo-2020-01-01-associatewebcert
+	certId, _ := strconv.Atoi(upres.CertId)
+	associateWebCertReq := &aliddos.AssociateWebCertRequest{
+		Domain: tea.String(d.config.Domain),
+		CertId: tea.Int32(int32(certId)),
 	}
-	setCertificateResp, err := d.sdkClient.SetCertificate(setCertificateReq)
-	d.logger.Debug("sdk request 'esa.SetCertificate'", slog.Any("request", setCertificateReq), slog.Any("response", setCertificateResp))
+	associateWebCertResp, err := d.sdkClient.AssociateWebCert(associateWebCertReq)
+	d.logger.Debug("sdk request 'dcdn.AssociateWebCert'", slog.Any("request", associateWebCertReq), slog.Any("response", associateWebCertResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'esa.SetCertificate': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'dcdn.AssociateWebCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliesa.Client, error) {
-	// 接入点一览 https://api.aliyun.com/product/ESA
+func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliddos.Client, error) {
+	// 接入点一览 https://api.aliyun.com/product/ddoscoo
 	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
-		Endpoint:        tea.String(fmt.Sprintf("esa.%s.aliyuncs.com", region)),
+		Endpoint:        tea.String(fmt.Sprintf("ddoscoo.%s.aliyuncs.com", region)),
 	}
 
-	client, err := aliesa.NewClient(config)
+	client, err := aliddos.NewClient(config)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +118,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliesa.Clien
 func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
 	casRegion := region
 	if casRegion != "" {
-		// 阿里云 CAS 服务接入点是独立于 ESA 服务的
+		// 阿里云 CAS 服务接入点是独立于 Anti-DDoS 服务的
 		// 国内版固定接入点：华东一杭州
 		// 国际版固定接入点：亚太东南一新加坡
 		if !strings.HasPrefix(casRegion, "cn-") {

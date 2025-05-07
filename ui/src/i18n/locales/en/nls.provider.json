@@ -11,6 +11,7 @@
   "provider.aliyun.cdn": "Alibaba Cloud - CDN (Content Delivery Network)",
   "provider.aliyun.clb": "Alibaba Cloud - CLB (Classic Load Balancer)",
   "provider.aliyun.dcdn": "Alibaba Cloud - DCDN (Dynamic Route for Content Delivery Network)",
+  "provider.aliyun.ddos": "Alibaba Cloud - Anti-DDoS Proxy",
   "provider.aliyun.dns": "Alibaba Cloud - DNS (Domain Name Service)",
   "provider.aliyun.esa": "Alibaba Cloud - ESA (Edge Security Acceleration)",
   "provider.aliyun.fc": "Alibaba Cloud - FC (Function Compute)",
