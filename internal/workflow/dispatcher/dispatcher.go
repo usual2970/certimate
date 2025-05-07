@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -14,7 +15,7 @@ import (
 	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
-var maxWorkers = 16
+var maxWorkers = runtime.NumCPU()
 
 func init() {
 	envMaxWorkers := os.Getenv("CERTIMATE_WORKFLOW_MAX_WORKERS")
