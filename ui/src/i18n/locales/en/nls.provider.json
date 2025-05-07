@@ -67,7 +67,6 @@
   "provider.gname": "GNAME",
   "provider.godaddy": "GoDaddy",
   "provider.goedge": "GoEdge",
-  "provider.goedge.cdn": "GoEdge - CDN (Content Delivery Network)",
   "provider.googletrustservices": "Google Trust Services",
   "provider.huaweicloud": "Huawei Cloud",
   "provider.huaweicloud.cdn": "Huawei Cloud - CDN (Content Delivery Network)",

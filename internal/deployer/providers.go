@@ -41,6 +41,7 @@ import (
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pGcoreCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/gcore-cdn"
+	pGoEdge "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/goedge"
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
 	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
 	pHuaweiCloudSCM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-scm"
@@ -566,6 +567,23 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			default:
 				break
 			}
+		}
+
+	case domain.DeploymentProviderTypeGoEdge:
+		{
+			access := domain.AccessConfigForGoEdge{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
+				ApiUrl:        access.ApiUrl,
+				AccessKeyId:   access.AccessKeyId,
+				AccessKey:     access.AccessKey,
+				ResourceType:  pGoEdge.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
+				CertificateId: maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeHuaweiCloudCDN, domain.DeploymentProviderTypeHuaweiCloudELB, domain.DeploymentProviderTypeHuaweiCloudSCM, domain.DeploymentProviderTypeHuaweiCloudWAF:

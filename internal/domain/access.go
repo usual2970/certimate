@@ -146,6 +146,12 @@ type AccessConfigForGoDaddy struct {
 	ApiSecret string `json:"apiSecret"`
 }
 
+type AccessConfigForGoEdge struct {
+	ApiUrl      string `json:"apiUrl"`
+	AccessKeyId string `json:"accessKeyId"`
+	AccessKey   string `json:"accessKey"`
+}
+
 type AccessConfigForGoogleTrustServices struct {
 	EabKid     string `json:"eabKid"`
 	EabHmacKey string `json:"eabHmacKey"`
