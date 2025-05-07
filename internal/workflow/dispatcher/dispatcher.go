@@ -15,12 +15,17 @@ import (
 	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
-var maxWorkers = runtime.NumCPU()
+var maxWorkers = 1
 
 func init() {
 	envMaxWorkers := os.Getenv("CERTIMATE_WORKFLOW_MAX_WORKERS")
 	if n, err := strconv.Atoi(envMaxWorkers); err != nil && n > 0 {
 		maxWorkers = n
+	} else {
+		maxWorkers = runtime.GOMAXPROCS(0)
+		if maxWorkers == 0 {
+			maxWorkers = max(1, runtime.NumCPU())
+		}
 	}
 }
 
