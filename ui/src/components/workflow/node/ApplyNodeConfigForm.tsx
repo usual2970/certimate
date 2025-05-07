@@ -115,6 +115,14 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             .split(MULTIPLE_INPUT_DELIMITER)
             .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         }, t("common.errmsg.host_invalid")),
+      dnsPropagationWait: z.preprocess(
+        (v) => (v == null || v === "" ? undefined : Number(v)),
+        z
+          .number()
+          .int(t("workflow_node.apply.form.dns_propagation_wait.placeholder"))
+          .gte(0, t("workflow_node.apply.form.dns_propagation_wait.placeholder"))
+          .nullish()
+      ),
       dnsPropagationTimeout: z.preprocess(
         (v) => (v == null || v === "" ? undefined : Number(v)),
         z
@@ -132,7 +140,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       skipBeforeExpiryDays: z.preprocess(
         (v) => Number(v),
         z
-          .number({ message: t("workflow_node.apply.form.skip_before_expiry_days.placeholder") })
+          .number()
           .int(t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
           .gte(1, t("workflow_node.apply.form.skip_before_expiry_days.placeholder"))
       ),
@@ -390,7 +398,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
         <Divider className="my-1">
           <Typography.Text className="text-xs font-normal" type="secondary">
-            {t("workflow_node.apply.form.advanced_config.label")}
+            {t("workflow_node.apply.form.certificate_config.label")}
           </Typography.Text>
         </Divider>
 
@@ -474,7 +482,15 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
               placeholder={t("workflow_node.apply.form.key_algorithm.placeholder")}
             />
           </Form.Item>
+        </Form>
 
+        <Divider className="my-1">
+          <Typography.Text className="text-xs font-normal" type="secondary">
+            {t("workflow_node.apply.form.advanced_config.label")}
+          </Typography.Text>
+        </Divider>
+
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Form.Item
             label={t("workflow_node.apply.form.nameservers.label")}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.nameservers.tooltip") }}></span>}
@@ -506,6 +522,22 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                 }}
               />
             </Space.Compact>
+          </Form.Item>
+
+          <Form.Item
+            name="dnsPropagationWait"
+            label={t("workflow_node.apply.form.dns_propagation_wait.label")}
+            rules={[formRule]}
+            tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.dns_propagation_wait.tooltip") }}></span>}
+          >
+            <Input
+              type="number"
+              allowClear
+              min={0}
+              max={3600}
+              placeholder={t("workflow_node.apply.form.dns_propagation_wait.placeholder")}
+              addonAfter={t("workflow_node.apply.form.dns_propagation_wait.unit")}
+            />
           </Form.Item>
 
           <Form.Item
@@ -574,7 +606,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
               <div>{t("workflow_node.apply.form.skip_before_expiry_days.prefix")}</div>
               <Form.Item name="skipBeforeExpiryDays" noStyle rules={[formRule]}>
                 <InputNumber
-                  className="w-36"
+                  className="w-24"
                   min={1}
                   max={365}
                   placeholder={t("workflow_node.apply.form.skip_before_expiry_days.placeholder")}
