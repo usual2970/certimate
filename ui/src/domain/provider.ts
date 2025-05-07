@@ -221,6 +221,7 @@ export const ACME_DNS01_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
   ALIYUN: `${ACCESS_PROVIDERS.ALIYUN}`, // 兼容旧值，等同于 `ALIYUN_DNS`
   ALIYUN_DNS: `${ACCESS_PROVIDERS.ALIYUN}-dns`,
+  ALIYUN_ESA: `${ACCESS_PROVIDERS.ALIYUN}-esa`,
   AWS: `${ACCESS_PROVIDERS.AWS}`, // 兼容旧值，等同于 `AWS_ROUTE53`
   AWS_ROUTE53: `${ACCESS_PROVIDERS.AWS}-route53`,
   AZURE: `${ACCESS_PROVIDERS.AZURE}`, // 兼容旧值，等同于 `AZURE_DNS`
@@ -273,6 +274,7 @@ export const acmeDns01ProvidersMap: Map<ACMEDns01Provider["type"] | string, ACME
    */
   [
     [ACME_DNS01_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
+    [ACME_DNS01_PROVIDERS.ALIYUN_ESA, "provider.aliyun.esa"],
     [ACME_DNS01_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
     [ACME_DNS01_PROVIDERS.TENCENTCLOUD_EO, "provider.tencentcloud.eo"],
     [ACME_DNS01_PROVIDERS.BAIDUCLOUD_DNS, "provider.baiducloud.dns"],

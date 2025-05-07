@@ -121,7 +121,7 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*gnamesdk.ResolutionRecord, error) {
+func (d *DNSProvider) findDNSRecord(zoneName, subDomain string) (*gnamesdk.ResolutionRecord, error) {
 	page := int32(1)
 	pageSize := int32(20)
 	for {
@@ -155,7 +155,7 @@ func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*gnamesdk.Resolu
 }
 
 func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) error {
-	record, err := d.getDNSRecord(zoneName, subDomain)
+	record, err := d.findDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 }
 
 func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
-	record, err := d.getDNSRecord(zoneName, subDomain)
+	record, err := d.findDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}

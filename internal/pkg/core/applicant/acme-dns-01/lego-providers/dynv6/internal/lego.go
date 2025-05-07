@@ -115,7 +115,7 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*libdns.Record, error) {
+func (d *DNSProvider) findDNSRecord(zoneName, subDomain string) (*libdns.Record, error) {
 	records, err := d.client.GetRecords(context.Background(), zoneName)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,7 @@ func (d *DNSProvider) getDNSRecord(zoneName, subDomain string) (*libdns.Record, 
 }
 
 func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) error {
-	record, err := d.getDNSRecord(zoneName, subDomain)
+	record, err := d.findDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 }
 
 func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
-	record, err := d.getDNSRecord(zoneName, subDomain)
+	record, err := d.findDNSRecord(zoneName, subDomain)
 	if err != nil {
 		return err
 	}

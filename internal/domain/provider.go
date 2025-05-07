@@ -105,6 +105,7 @@ const (
 	ACMEDns01ProviderTypeACMEHttpReq     = ACMEDns01ProviderType(AccessProviderTypeACMEHttpReq)
 	ACMEDns01ProviderTypeAliyun          = ACMEDns01ProviderType(AccessProviderTypeAliyun) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAliyunDNS]
 	ACMEDns01ProviderTypeAliyunDNS       = ACMEDns01ProviderType(AccessProviderTypeAliyun + "-dns")
+	ACMEDns01ProviderTypeAliyunESA       = ACMEDns01ProviderType(AccessProviderTypeAliyun + "-esa")
 	ACMEDns01ProviderTypeAWS             = ACMEDns01ProviderType(AccessProviderTypeAWS) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAWSRoute53]
 	ACMEDns01ProviderTypeAWSRoute53      = ACMEDns01ProviderType(AccessProviderTypeAWS + "-route53")
 	ACMEDns01ProviderTypeAzure           = ACMEDns01ProviderType(AccessProviderTypeAzure) // 兼容旧值，等同于 [ACMEDns01ProviderTypeAzure]

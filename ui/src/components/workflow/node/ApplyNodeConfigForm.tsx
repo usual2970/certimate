@@ -41,6 +41,7 @@ import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
 import { validDomainName, validIPv4Address, validIPv6Address } from "@/utils/validators";
 
+import ApplyNodeConfigFormAliyunESAConfig from "./ApplyNodeConfigFormAliyunESAConfig";
 import ApplyNodeConfigFormAWSRoute53Config from "./ApplyNodeConfigFormAWSRoute53Config";
 import ApplyNodeConfigFormHuaweiCloudDNSConfig from "./ApplyNodeConfigFormHuaweiCloudDNSConfig";
 import ApplyNodeConfigFormJDCloudDNSConfig from "./ApplyNodeConfigFormJDCloudDNSConfig";
@@ -152,7 +153,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
     const [showProvider, setShowProvider] = useState(false);
     useEffect(() => {
       // 通常情况下每个授权信息只对应一个 DNS 提供商，此时无需显示 DNS 提供商字段；
-      // 如果对应多个（如 AWS 的 Route53、Lightsail，腾讯云的 DNS、EdgeOne 等），则显示。
+      // 如果对应多个（如 AWS 的 Route53、Lightsail，阿里云的 DNS、ESA，腾讯云的 DNS、EdgeOne 等），则显示。
       if (fieldProviderAccessId) {
         const access = accesses.find((e) => e.id === fieldProviderAccessId);
         const providers = Array.from(acmeDns01ProvidersMap.values()).filter((e) => e.provider === access?.provider);
@@ -188,6 +189,8 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
+        case ACME_DNS01_PROVIDERS.ALIYUN_ESA:
+          return <ApplyNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
         case ACME_DNS01_PROVIDERS.AWS:
         case ACME_DNS01_PROVIDERS.AWS_ROUTE53:
           return <ApplyNodeConfigFormAWSRoute53Config {...nestedFormProps} />;
