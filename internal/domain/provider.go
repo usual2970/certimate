@@ -26,8 +26,8 @@ const (
 	AccessProviderTypeCloudflare          = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS             = AccessProviderType("cloudns")
 	AccessProviderTypeCMCCCloud           = AccessProviderType("cmcccloud")
-	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 联通云（预留）
-	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 天翼云（预留）
+	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 天翼云（预留）
+	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 联通云（预留）
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
 	AccessProviderTypeDingTalkBot         = AccessProviderType("dingtalkbot")
 	AccessProviderTypeDNSLA               = AccessProviderType("dnsla")
