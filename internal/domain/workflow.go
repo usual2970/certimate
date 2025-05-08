@@ -73,8 +73,9 @@ type WorkflowNodeConfigForApply struct {
 	CAProviderConfig      map[string]any `json:"caProviderConfig,omitempty"`      // CA 提供商额外配置
 	KeyAlgorithm          string         `json:"keyAlgorithm"`                    // 证书算法
 	Nameservers           string         `json:"nameservers,omitempty"`           // DNS 服务器列表，以半角分号分隔
-	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout,omitempty"` // DNS 传播超时时间（零值取决于提供商的默认值）
-	DnsTTL                int32          `json:"dnsTTL,omitempty"`                // DNS TTL（零值取决于提供商的默认值）
+	DnsPropagationWait    int32          `json:"dnsPropagationWait,omitempty"`    // DNS 传播等待时间，等同于 lego 的 `--dns-propagation-wait` 参数
+	DnsPropagationTimeout int32          `json:"dnsPropagationTimeout,omitempty"` // DNS 传播检查超时时间（零值取决于提供商的默认值）
+	DnsTTL                int32          `json:"dnsTTL,omitempty"`                // DNS 解析记录 TTL（零值取决于提供商的默认值）
 	DisableFollowCNAME    bool           `json:"disableFollowCNAME,omitempty"`    // 是否关闭 CNAME 跟随
 	DisableARI            bool           `json:"disableARI,omitempty"`            // 是否关闭 ARI
 	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays,omitempty"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
@@ -120,6 +121,7 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		CAProviderConfig:      maputil.GetKVMapAny(n.Config, "caProviderConfig"),
 		KeyAlgorithm:          maputil.GetString(n.Config, "keyAlgorithm"),
 		Nameservers:           maputil.GetString(n.Config, "nameservers"),
+		DnsPropagationWait:    maputil.GetInt32(n.Config, "dnsPropagationWait"),
 		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
 		DnsTTL:                maputil.GetInt32(n.Config, "dnsTTL"),
 		DisableFollowCNAME:    maputil.GetBool(n.Config, "disableFollowCNAME"),

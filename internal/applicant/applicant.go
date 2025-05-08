@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/go-acme/lego/v4/certificate"
@@ -62,6 +63,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
 		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
 		Nameservers:              sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationWait:       nodeConfig.DnsPropagationWait,
 		DnsPropagationTimeout:    nodeConfig.DnsPropagationTimeout,
 		DnsTTL:                   nodeConfig.DnsTTL,
 		DisableFollowCNAME:       nodeConfig.DisableFollowCNAME,
@@ -189,12 +191,20 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 	}
 
 	// Set the DNS01 challenge provider
-	challengeOptions := make([]dns01.ChallengeOption, 0)
-	if len(options.Nameservers) > 0 {
-		challengeOptions = append(challengeOptions, dns01.AddRecursiveNameservers(dns01.ParseNameservers(options.Nameservers)))
-		challengeOptions = append(challengeOptions, dns01.DisableAuthoritativeNssPropagationRequirement())
-	}
-	client.Challenge.SetDNS01Provider(legoProvider, challengeOptions...)
+	client.Challenge.SetDNS01Provider(legoProvider,
+		dns01.CondOption(
+			len(options.Nameservers) > 0,
+			dns01.AddRecursiveNameservers(dns01.ParseNameservers(options.Nameservers)),
+		),
+		dns01.CondOption(
+			options.DnsPropagationWait > 0,
+			dns01.PropagationWait(time.Duration(options.DnsPropagationWait)*time.Second, true),
+		),
+		dns01.CondOption(
+			len(options.Nameservers) > 0 || options.DnsPropagationWait > 0,
+			dns01.DisableAuthoritativeNssPropagationRequirement(),
+		),
+	)
 
 	// New users need to register first
 	if !user.hasRegistration() {

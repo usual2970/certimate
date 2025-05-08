@@ -49,6 +49,7 @@ type applicantProviderOptions struct {
 	CAProviderExtendedConfig map[string]any
 	KeyAlgorithm             string
 	Nameservers              []string
+	DnsPropagationWait       int32
 	DnsPropagationTimeout    int32
 	DnsTTL                   int32
 	DisableFollowCNAME       bool
