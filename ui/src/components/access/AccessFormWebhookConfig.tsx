@@ -352,12 +352,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         </Form.Item>
       </Show>
 
-      <Form.Item
-        name="allowInsecureConnections"
-        label={t("access.form.webhook_allow_insecure_conns.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.webhook_allow_insecure_conns.tooltip") }}></span>}
-      >
+      <Form.Item name="allowInsecureConnections" label={t("access.form.webhook_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
           checkedChildren={t("access.form.webhook_allow_insecure_conns.switch.on")}
           unCheckedChildren={t("access.form.webhook_allow_insecure_conns.switch.off")}

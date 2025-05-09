@@ -74,9 +74,10 @@ type AccessConfigForCacheFly struct {
 }
 
 type AccessConfigForCdnfly struct {
-	ApiUrl    string `json:"apiUrl"`
-	ApiKey    string `json:"apiKey"`
-	ApiSecret string `json:"apiSecret"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	ApiSecret                string `json:"apiSecret"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForCloudflare struct {
@@ -147,9 +148,10 @@ type AccessConfigForGoDaddy struct {
 }
 
 type AccessConfigForGoEdge struct {
-	ApiUrl      string `json:"apiUrl"`
-	AccessKeyId string `json:"accessKeyId"`
-	AccessKey   string `json:"accessKey"`
+	ApiUrl                   string `json:"apiUrl"`
+	AccessKeyId              string `json:"accessKeyId"`
+	AccessKey                string `json:"accessKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForGoogleTrustServices struct {
@@ -206,8 +208,9 @@ type AccessConfigForPorkbun struct {
 }
 
 type AccessConfigForPowerDNS struct {
-	ApiUrl string `json:"apiUrl"`
-	ApiKey string `json:"apiKey"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
 type AccessConfigForQiniu struct {

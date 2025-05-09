@@ -1,6 +1,8 @@
 package powerdns
 
 import (
+	"crypto/tls"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -9,10 +11,11 @@ import (
 )
 
 type ChallengeProviderConfig struct {
-	ApiUrl                string `json:"apiUrl"`
-	ApiKey                string `json:"apiKey"`
-	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
-	DnsTTL                int32  `json:"dnsTTL,omitempty"`
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+	DnsPropagationTimeout    int32  `json:"dnsPropagationTimeout,omitempty"`
+	DnsTTL                   int32  `json:"dnsTTL,omitempty"`
 }
 
 func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, error) {
@@ -24,6 +27,13 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	providerConfig := pdns.NewDefaultConfig()
 	providerConfig.Host = host
 	providerConfig.APIKey = config.ApiKey
+	if config.AllowInsecureConnections {
+		providerConfig.HTTPClient.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+	}
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}

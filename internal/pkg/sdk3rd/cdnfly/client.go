@@ -1,6 +1,7 @@
 package cdnflysdk
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -31,6 +32,11 @@ func NewClient(apiHost, apiKey, apiSecret string) *Client {
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
+	return c
+}
+
+func (c *Client) WithTLSConfig(config *tls.Config) *Client {
+	c.client.SetTLSClientConfig(config)
 	return c
 }
 

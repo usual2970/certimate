@@ -82,7 +82,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string, allowInsecure bool) (*btsdk.Client, error) {
+func createSdkClient(apiUrl, apiKey string, skipTlsVerify bool) (*btsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid baota api url")
 	}
@@ -92,7 +92,7 @@ func createSdkClient(apiUrl, apiKey string, allowInsecure bool) (*btsdk.Client, 
 	}
 
 	client := btsdk.NewClient(apiUrl, apiKey)
-	if allowInsecure {
+	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 

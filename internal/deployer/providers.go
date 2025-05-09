@@ -509,12 +509,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pCdnfly.NewDeployer(&pCdnfly.DeployerConfig{
-				ApiUrl:        access.ApiUrl,
-				ApiKey:        access.ApiKey,
-				ApiSecret:     access.ApiSecret,
-				ResourceType:  pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
-				SiteId:        maputil.GetString(options.ProviderExtendedConfig, "siteId"),
-				CertificateId: maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
+				ApiUrl:                   access.ApiUrl,
+				ApiKey:                   access.ApiKey,
+				ApiSecret:                access.ApiSecret,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
+				SiteId:                   maputil.GetString(options.ProviderExtendedConfig, "siteId"),
+				CertificateId:            maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -577,11 +578,12 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
-				ApiUrl:        access.ApiUrl,
-				AccessKeyId:   access.AccessKeyId,
-				AccessKey:     access.AccessKey,
-				ResourceType:  pGoEdge.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-				CertificateId: maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+				ApiUrl:                   access.ApiUrl,
+				AccessKeyId:              access.AccessKeyId,
+				AccessKey:                access.AccessKey,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pGoEdge.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
+				CertificateId:            maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
 			})
 			return deployer, err
 		}

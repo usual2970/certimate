@@ -2,6 +2,7 @@ package cdnfly
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -20,6 +21,8 @@ type DeployerConfig struct {
 	ApiKey string `json:"apiKey"`
 	// Cdnfly 用户端 API Secret。
 	ApiSecret string `json:"apiSecret"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 	// 部署资源类型。
 	ResourceType ResourceType `json:"resourceType"`
 	// 网站 ID。
@@ -43,7 +46,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.ApiSecret)
+	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.ApiSecret, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -157,7 +160,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiKey, apiSecret string) (*cfsdk.Client, error) {
+func createSdkClient(apiUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cfsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid cachefly api url")
 	}
@@ -171,5 +174,9 @@ func createSdkClient(apiUrl, apiKey, apiSecret string) (*cfsdk.Client, error) {
 	}
 
 	client := cfsdk.NewClient(apiUrl, apiKey, apiSecret)
+	if skipTlsVerify {
+		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+	}
+
 	return client, nil
 }

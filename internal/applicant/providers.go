@@ -441,10 +441,11 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			}
 
 			applicant, err := pPowerDNS.NewChallengeProvider(&pPowerDNS.ChallengeProviderConfig{
-				ApiUrl:                access.ApiUrl,
-				ApiKey:                access.ApiKey,
-				DnsPropagationTimeout: options.DnsPropagationTimeout,
-				DnsTTL:                options.DnsTTL,
+				ApiUrl:                   access.ApiUrl,
+				ApiKey:                   access.ApiKey,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				DnsPropagationTimeout:    options.DnsPropagationTimeout,
+				DnsTTL:                   options.DnsTTL,
 			})
 			return applicant, err
 		}

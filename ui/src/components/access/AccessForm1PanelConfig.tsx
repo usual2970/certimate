@@ -67,12 +67,7 @@ const AccessForm1PanelConfig = ({ form: formInst, formName, disabled, initialVal
         <Input.Password autoComplete="new-password" placeholder={t("access.form.1panel_api_key.placeholder")} />
       </Form.Item>
 
-      <Form.Item
-        name="allowInsecureConnections"
-        label={t("access.form.1panel_allow_insecure_conns.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.1panel_allow_insecure_conns.tooltip") }}></span>}
-      >
+      <Form.Item name="allowInsecureConnections" label={t("access.form.1panel_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
           checkedChildren={t("access.form.1panel_allow_insecure_conns.switch.on")}
           unCheckedChildren={t("access.form.1panel_allow_insecure_conns.switch.off")}

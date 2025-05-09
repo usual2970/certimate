@@ -126,6 +126,7 @@ export type AccessConfigForCdnfly = {
   apiUrl: string;
   apiKey: string;
   apiSecret: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForCloudflare = {
@@ -199,6 +200,7 @@ export type AccessConfigForGoEdge = {
   apiUrl: string;
   accessKeyId: string;
   accessKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForGoogleTrustServices = {
@@ -257,6 +259,7 @@ export type AccessConfigForPorkbun = {
 export type AccessConfigForPowerDNS = {
   apiUrl: string;
   apiKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForQiniu = {
