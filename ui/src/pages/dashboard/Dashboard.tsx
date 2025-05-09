@@ -310,7 +310,7 @@ const StatisticCard = ({
   onClick?: () => void;
 }) => {
   return (
-    <Card className="size-full overflow-hidden" hoverable loading={loading} bordered={false} onClick={onClick}>
+    <Card className="size-full overflow-hidden" hoverable loading={loading} variant="borderless" onClick={onClick}>
       <Space size="middle">
         {icon}
         <Statistic

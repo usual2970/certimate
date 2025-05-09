@@ -1,31 +1,38 @@
-package console
+package goedge
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-resty/resty/v2"
 )
 
 type Client struct {
-	username string
-	password string
+	apiHost     string
+	apiUserType string
+	accessKeyId string
+	accessKey   string
 
-	loginCookie string
+	accessToken    string
+	accessTokenExp time.Time
+	accessTokenMtx sync.Mutex
 
 	client *resty.Client
 }
 
-func NewClient(username, password string) *Client {
+func NewClient(apiHost, apiUserType, accessKeyId, accessKey string) *Client {
 	client := resty.New()
 
 	return &Client{
-		username: username,
-		password: password,
-		client:   client,
+		apiHost:     strings.TrimRight(apiHost, "/"),
+		apiUserType: apiUserType,
+		accessKeyId: accessKeyId,
+		accessKey:   accessKey,
+		client:      client,
 	}
 }
 
@@ -35,9 +42,9 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().SetBasicAuth(c.username, c.password)
+	req := c.client.R().SetBasicAuth(c.accessKeyId, c.accessKey)
 	req.Method = method
-	req.URL = "https://console.upyun.com" + path
+	req.URL = c.apiHost + path
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -53,25 +60,25 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 		req = req.
 			SetQueryParams(qs).
-			SetHeader("Cookie", c.loginCookie)
+			SetHeader("X-Edge-Access-Token", c.accessToken)
 	} else {
 		req = req.
 			SetHeader("Content-Type", "application/json").
-			SetHeader("Cookie", c.loginCookie).
+			SetHeader("X-Edge-Access-Token", c.accessToken).
 			SetBody(params)
 	}
 
 	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("upyun api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("goedge api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("upyun api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("goedge api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result interface{}) error {
+func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
 	resp, err := c.sendRequest(method, path, params)
 	if err != nil {
 		if resp != nil {
@@ -81,16 +88,9 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("upyun api error: failed to parse response: %w", err)
-	}
-
-	tresp := &baseResponse{}
-	if err := json.Unmarshal(resp.Body(), &tresp); err != nil {
-		return fmt.Errorf("upyun api error: failed to parse response: %w", err)
-	} else if tdata := tresp.GetData(); tdata == nil {
-		return fmt.Errorf("upyun api error: empty data")
-	} else if errcode := tdata.GetErrorCode(); errcode > 0 {
-		return fmt.Errorf("upyun api error: %d - %s", errcode, tdata.GetErrorMessage())
+		return fmt.Errorf("goedge api error: failed to parse response: %w", err)
+	} else if errcode := result.GetCode(); errcode != 200 {
+		return fmt.Errorf("goedge api error: %d - %s", errcode, result.GetMessage())
 	}
 
 	return nil

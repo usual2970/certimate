@@ -30,6 +30,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   GCORE: "gcore",
   GNAME: "gname",
   GODADDY: "godaddy",
+  GOEDGE: "goedge",
   GOOGLETRUSTSERVICES: "googletrustservices",
   HUAWEICLOUD: "huaweicloud",
   JDCLOUD: "jdcloud",
@@ -118,6 +119,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.CACHEFLY, "provider.cachefly", "/imgs/providers/cachefly.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.HOSTING]],
+    [ACCESS_PROVIDERS.GOEDGE, "provider.goedge", "/imgs/providers/goedge.png", [ACCESS_USAGES.HOSTING]],
 
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.png", [ACCESS_USAGES.DNS]],
@@ -221,6 +223,7 @@ export const ACME_DNS01_PROVIDERS = Object.freeze({
   ACMEHTTPREQ: `${ACCESS_PROVIDERS.ACMEHTTPREQ}`,
   ALIYUN: `${ACCESS_PROVIDERS.ALIYUN}`, // 兼容旧值，等同于 `ALIYUN_DNS`
   ALIYUN_DNS: `${ACCESS_PROVIDERS.ALIYUN}-dns`,
+  ALIYUN_ESA: `${ACCESS_PROVIDERS.ALIYUN}-esa`,
   AWS: `${ACCESS_PROVIDERS.AWS}`, // 兼容旧值，等同于 `AWS_ROUTE53`
   AWS_ROUTE53: `${ACCESS_PROVIDERS.AWS}-route53`,
   AZURE: `${ACCESS_PROVIDERS.AZURE}`, // 兼容旧值，等同于 `AZURE_DNS`
@@ -273,6 +276,7 @@ export const acmeDns01ProvidersMap: Map<ACMEDns01Provider["type"] | string, ACME
    */
   [
     [ACME_DNS01_PROVIDERS.ALIYUN_DNS, "provider.aliyun.dns"],
+    [ACME_DNS01_PROVIDERS.ALIYUN_ESA, "provider.aliyun.esa"],
     [ACME_DNS01_PROVIDERS.TENCENTCLOUD_DNS, "provider.tencentcloud.dns"],
     [ACME_DNS01_PROVIDERS.TENCENTCLOUD_EO, "provider.tencentcloud.eo"],
     [ACME_DNS01_PROVIDERS.BAIDUCLOUD_DNS, "provider.baiducloud.dns"],
@@ -328,6 +332,7 @@ export const DEPLOYMENT_PROVIDERS = Object.freeze({
   ALIYUN_CDN: `${ACCESS_PROVIDERS.ALIYUN}-cdn`,
   ALIYUN_CLB: `${ACCESS_PROVIDERS.ALIYUN}-clb`,
   ALIYUN_DCDN: `${ACCESS_PROVIDERS.ALIYUN}-dcdn`,
+  ALIYUN_DDOS: `${ACCESS_PROVIDERS.ALIYUN}-ddospro`,
   ALIYUN_ESA: `${ACCESS_PROVIDERS.ALIYUN}-esa`,
   ALIYUN_FC: `${ACCESS_PROVIDERS.ALIYUN}-fc`,
   ALIYUN_LIVE: `${ACCESS_PROVIDERS.ALIYUN}-live`,
@@ -352,6 +357,7 @@ export const DEPLOYMENT_PROVIDERS = Object.freeze({
   DOGECLOUD_CDN: `${ACCESS_PROVIDERS.DOGECLOUD}-cdn`,
   EDGIO_APPLICATIONS: `${ACCESS_PROVIDERS.EDGIO}-applications`,
   GCORE_CDN: `${ACCESS_PROVIDERS.GCORE}-cdn`,
+  GOEDGE: `${ACCESS_PROVIDERS.GOEDGE}`,
   HUAWEICLOUD_CDN: `${ACCESS_PROVIDERS.HUAWEICLOUD}-cdn`,
   HUAWEICLOUD_ELB: `${ACCESS_PROVIDERS.HUAWEICLOUD}-elb`,
   HUAWEICLOUD_SCM: `${ACCESS_PROVIDERS.HUAWEICLOUD}-scm`,
@@ -438,6 +444,7 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
     [DEPLOYMENT_PROVIDERS.ALIYUN_ALB, "provider.aliyun.alb", DEPLOYMENT_CATEGORIES.LOADBALANCE],
     [DEPLOYMENT_PROVIDERS.ALIYUN_NLB, "provider.aliyun.nlb", DEPLOYMENT_CATEGORIES.LOADBALANCE],
     [DEPLOYMENT_PROVIDERS.ALIYUN_WAF, "provider.aliyun.waf", DEPLOYMENT_CATEGORIES.FIREWALL],
+    [DEPLOYMENT_PROVIDERS.ALIYUN_DDOS, "provider.aliyun.ddos", DEPLOYMENT_CATEGORIES.FIREWALL],
     [DEPLOYMENT_PROVIDERS.ALIYUN_LIVE, "provider.aliyun.live", DEPLOYMENT_CATEGORIES.AV],
     [DEPLOYMENT_PROVIDERS.ALIYUN_VOD, "provider.aliyun.vod", DEPLOYMENT_CATEGORIES.AV],
     [DEPLOYMENT_PROVIDERS.ALIYUN_FC, "provider.aliyun.fc", DEPLOYMENT_CATEGORIES.SERVERLESS],
@@ -495,6 +502,7 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
     [DEPLOYMENT_PROVIDERS.CDNFLY, "provider.cdnfly", DEPLOYMENT_CATEGORIES.CDN],
     [DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS, "provider.edgio.applications", DEPLOYMENT_CATEGORIES.WEBSITE],
     [DEPLOYMENT_PROVIDERS.GCORE_CDN, "provider.gcore.cdn", DEPLOYMENT_CATEGORIES.CDN],
+    [DEPLOYMENT_PROVIDERS.GOEDGE, "provider.goedge", DEPLOYMENT_CATEGORIES.CDN],
     [DEPLOYMENT_PROVIDERS["1PANEL_SITE"], "provider.1panel.site", DEPLOYMENT_CATEGORIES.WEBSITE],
     [DEPLOYMENT_PROVIDERS["1PANEL_CONSOLE"], "provider.1panel.console", DEPLOYMENT_CATEGORIES.OTHER],
     [DEPLOYMENT_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOYMENT_CATEGORIES.WEBSITE],

@@ -20,7 +20,7 @@ const (
 
 	EnvSecretID  = envNamespace + "SECRET_ID"
 	EnvSecretKey = envNamespace + "SECRET_KEY"
-	EnvZoneId    = envNamespace + "ZONE_ID"
+	EnvZoneID    = envNamespace + "ZONE_ID"
 
 	EnvTTL                = envNamespace + "TTL"
 	EnvPropagationTimeout = envNamespace + "PROPAGATION_TIMEOUT"
@@ -33,7 +33,7 @@ var _ challenge.ProviderTimeout = (*DNSProvider)(nil)
 type Config struct {
 	SecretID  string
 	SecretKey string
-	ZoneId    string
+	ZoneID    string
 
 	PropagationTimeout time.Duration
 	PollingInterval    time.Duration
@@ -56,7 +56,7 @@ func NewDefaultConfig() *Config {
 }
 
 func NewDNSProvider() (*DNSProvider, error) {
-	values, err := env.Get(EnvSecretID, EnvSecretKey, EnvZoneId)
+	values, err := env.Get(EnvSecretID, EnvSecretKey, EnvZoneID)
 	if err != nil {
 		return nil, fmt.Errorf("tencentcloud-eo: %w", err)
 	}
@@ -64,7 +64,7 @@ func NewDNSProvider() (*DNSProvider, error) {
 	config := NewDefaultConfig()
 	config.SecretID = values[EnvSecretID]
 	config.SecretKey = values[EnvSecretKey]
-	config.ZoneId = values[EnvSecretKey]
+	config.ZoneID = values[EnvSecretKey]
 
 	return NewDNSProviderConfig(config)
 }
@@ -112,12 +112,12 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSRecord(effectiveFQDN string) (*teo.DnsRecord, error) {
+func (d *DNSProvider) findDNSRecord(effectiveFQDN string) (*teo.DnsRecord, error) {
 	pageOffset := 0
 	pageLimit := 1000
 	for {
 		request := teo.NewDescribeDnsRecordsRequest()
-		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.ZoneId = common.StringPtr(d.config.ZoneID)
 		request.Offset = common.Int64Ptr(int64(pageOffset))
 		request.Limit = common.Int64Ptr(int64(pageLimit))
 		request.Filters = []*teo.AdvancedFilter{
@@ -141,7 +141,7 @@ func (d *DNSProvider) getDNSRecord(effectiveFQDN string) (*teo.DnsRecord, error)
 				}
 			}
 
-			if len(response.Response.DnsRecords) < int(pageLimit) {
+			if len(response.Response.DnsRecords) < pageLimit {
 				break
 			}
 
@@ -153,14 +153,14 @@ func (d *DNSProvider) getDNSRecord(effectiveFQDN string) (*teo.DnsRecord, error)
 }
 
 func (d *DNSProvider) addOrUpdateDNSRecord(effectiveFQDN, value string) error {
-	record, err := d.getDNSRecord(effectiveFQDN)
+	record, err := d.findDNSRecord(effectiveFQDN)
 	if err != nil {
 		return err
 	}
 
 	if record == nil {
 		request := teo.NewCreateDnsRecordRequest()
-		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.ZoneId = common.StringPtr(d.config.ZoneID)
 		request.Name = common.StringPtr(effectiveFQDN)
 		request.Type = common.StringPtr("TXT")
 		request.Content = common.StringPtr(value)
@@ -169,8 +169,9 @@ func (d *DNSProvider) addOrUpdateDNSRecord(effectiveFQDN, value string) error {
 		return err
 	} else {
 		record.Content = common.StringPtr(value)
+		record.TTL = common.Int64Ptr(int64(d.config.TTL))
 		request := teo.NewModifyDnsRecordsRequest()
-		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.ZoneId = common.StringPtr(d.config.ZoneID)
 		request.DnsRecords = []*teo.DnsRecord{record}
 		if _, err := d.client.ModifyDnsRecords(request); err != nil {
 			return err
@@ -178,7 +179,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(effectiveFQDN, value string) error {
 
 		if *record.Status == "disable" {
 			request := teo.NewModifyDnsRecordsStatusRequest()
-			request.ZoneId = common.StringPtr(d.config.ZoneId)
+			request.ZoneId = common.StringPtr(d.config.ZoneID)
 			request.RecordsToEnable = []*string{record.RecordId}
 			if _, err = d.client.ModifyDnsRecordsStatus(request); err != nil {
 				return err
@@ -190,7 +191,7 @@ func (d *DNSProvider) addOrUpdateDNSRecord(effectiveFQDN, value string) error {
 }
 
 func (d *DNSProvider) removeDNSRecord(effectiveFQDN string) error {
-	record, err := d.getDNSRecord(effectiveFQDN)
+	record, err := d.findDNSRecord(effectiveFQDN)
 	if err != nil {
 		return err
 	}
@@ -199,7 +200,7 @@ func (d *DNSProvider) removeDNSRecord(effectiveFQDN string) error {
 		return nil
 	} else {
 		request := teo.NewDeleteDnsRecordsRequest()
-		request.ZoneId = common.StringPtr(d.config.ZoneId)
+		request.ZoneId = common.StringPtr(d.config.ZoneID)
 		request.RecordIds = []*string{record.RecordId}
 		_, err = d.client.DeleteDnsRecords(request)
 		return err

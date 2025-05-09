@@ -45,6 +45,108 @@ const initFormModel = (): DeployNodeConfigFormLocalConfigFieldValues => {
   };
 };
 
+export const initPresetScript = (
+  key: "sh_backup_files" | "ps_backup_files" | "sh_reload_nginx" | "ps_binding_iis" | "ps_binding_netsh" | "ps_binding_rdp",
+  params?: {
+    certPath?: string;
+    keyPath?: string;
+    pfxPassword?: string;
+    jksAlias?: string;
+    jksKeypass?: string;
+    jksStorepass?: string;
+  }
+) => {
+  switch (key) {
+    case "sh_backup_files":
+      return `# 请将以下路径替换为实际值
+cp "${params?.certPath || "<your-cert-path>"}" "${params?.certPath || "<your-cert-path>"}.bak" 2>/dev/null || :
+cp "${params?.keyPath || "<your-key-path>"}" "${params?.keyPath || "<your-key-path>"}.bak" 2>/dev/null || :
+      `.trim();
+
+    case "ps_backup_files":
+      return `# 请将以下路径替换为实际值
+if (Test-Path -Path "${params?.certPath || "<your-cert-path>"}" -PathType Leaf) {
+  Copy-Item -Path "${params?.certPath || "<your-cert-path>"}" -Destination "${params?.certPath || "<your-cert-path>"}.bak" -Force
+}
+if (Test-Path -Path "${params?.keyPath || "<your-key-path>"}" -PathType Leaf) {
+  Copy-Item -Path "${params?.keyPath || "<your-key-path>"}" -Destination "${params?.keyPath || "<your-key-path>"}.bak" -Force
+}
+      `.trim();
+
+    case "sh_reload_nginx":
+      return `sudo service nginx reload`;
+
+    case "ps_binding_iis":
+      return `# 需要管理员权限
+# 请将以下变量替换为实际值
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
+$siteName = "<your-site-name>" # IIS 网站名称
+$domain = "<your-domain-name>" # 域名
+$ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
+$port = "<your-binding-port>"  # 绑定端口
+
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 导入 WebAdministration 模块
+Import-Module WebAdministration
+# 检查是否已存在 HTTPS 绑定
+$existingBinding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -HostHeader "$domain" -ErrorAction SilentlyContinue
+if (!$existingBinding) {
+    # 添加新的 HTTPS 绑定
+  New-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
+}
+# 获取绑定对象
+$binding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
+# 绑定 SSL 证书
+$binding.AddSslCertificate($thumbprint, "My")
+# 删除目录下的证书文件
+Remove-Item -Path "$pfxPath" -Force
+      `.trim();
+
+    case "ps_binding_netsh":
+      return `# 需要管理员权限
+# 请将以下变量替换为实际值
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
+$ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
+$port = "<your-binding-port>"  # 绑定端口
+
+$addr = $ipaddr + ":" + $port
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 检测端口是否绑定证书，如绑定则删除绑定
+$isExist = netsh http show sslcert ipport=$addr
+if ($isExist -like "*$addr*"){ netsh http delete sslcert ipport=$addr }
+# 绑定到端口
+netsh http add sslcert ipport=$addr certhash=$thumbprint
+# 删除目录下的证书文件
+Remove-Item -Path "$pfxPath" -Force
+      `.trim();
+
+    case "ps_binding_rdp":
+      return `# 需要管理员权限
+# 请将以下变量替换为实际值
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
+
+# 导入证书到本地计算机的个人存储区
+$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
+# 获取 Thumbprint
+$thumbprint = $cert.Thumbprint
+# 绑定到 RDP
+$rdpCertPath = "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Terminal Server\\WinStations\\RDP-Tcp"
+Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thumbprint"
+      `.trim();
+  }
+};
+
 const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormLocalConfigProps) => {
   const { t } = useTranslation();
 
@@ -136,16 +238,15 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
 
   const handlePresetPreScriptClick = (key: string) => {
     switch (key) {
-      case "backup_files":
+      case "sh_backup_files":
+      case "ps_backup_files":
         {
+          const presetScriptParams = {
+            certPath: formInst.getFieldValue("certPath"),
+            keyPath: formInst.getFieldValue("keyPath"),
+          };
           formInst.setFieldValue("shellEnv", SHELLENV_SH);
-          formInst.setFieldValue(
-            "preCommand",
-            `# 请将以下路径替换为实际值
-cp "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" "${formInst.getFieldValue("certPath") || "<your-cert-path>"}.bak" 2>/dev/null || :
-cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFieldValue("keyPath") || "<your-key-path>"}.bak" 2>/dev/null || :
-            `.trim()
-          );
+          formInst.setFieldValue("preCommand", initPresetScript(key, presetScriptParams));
         }
         break;
     }
@@ -153,97 +254,23 @@ cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFi
 
   const handlePresetPostScriptClick = (key: string) => {
     switch (key) {
-      case "reload_nginx":
+      case "sh_reload_nginx":
         {
           formInst.setFieldValue("shellEnv", SHELLENV_SH);
-          formInst.setFieldValue("postCommand", "sudo service nginx reload");
+          formInst.setFieldValue("postCommand", initPresetScript(key));
         }
         break;
 
-      case "binding_iis":
+      case "ps_binding_iis":
+      case "ps_binding_netsh":
+      case "ps_binding_rdp":
         {
+          const presetScriptParams = {
+            certPath: formInst.getFieldValue("certPath"),
+            pfxPassword: formInst.getFieldValue("pfxPassword"),
+          };
           formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
-          formInst.setFieldValue(
-            "postCommand",
-            `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
-$siteName = "<your-site-name>" # IIS 网站名称
-$domain = "<your-domain-name>" # 域名
-$ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
-$port = "<your-binding-port>"  # 绑定端口
-
-
-# 导入证书到本地计算机的个人存储区
-$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
-# 获取 Thumbprint
-$thumbprint = $cert.Thumbprint
-# 导入 WebAdministration 模块
-Import-Module WebAdministration
-# 检查是否已存在 HTTPS 绑定
-$existingBinding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -HostHeader "$domain" -ErrorAction SilentlyContinue
-if (!$existingBinding) {
-    # 添加新的 HTTPS 绑定
-  New-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
-}
-# 获取绑定对象
-$binding = Get-WebBinding -Name "$siteName" -Protocol "https" -Port $port -IPAddress "$ipaddr" -HostHeader "$domain"
-# 绑定 SSL 证书
-$binding.AddSslCertificate($thumbprint, "My")
-# 删除目录下的证书文件
-Remove-Item -Path "$pfxPath" -Force
-            `.trim()
-          );
-        }
-        break;
-
-      case "binding_netsh":
-        {
-          formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
-          formInst.setFieldValue(
-            "postCommand",
-            `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
-$ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
-$port = "<your-binding-port>"  # 绑定端口
-
-$addr = $ipaddr + ":" + $port
-
-# 导入证书到本地计算机的个人存储区
-$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
-# 获取 Thumbprint
-$thumbprint = $cert.Thumbprint
-# 检测端口是否绑定证书，如绑定则删除绑定
-$isExist = netsh http show sslcert ipport=$addr
-if ($isExist -like "*$addr*"){ netsh http delete sslcert ipport=$addr }
-# 绑定到端口
-netsh http add sslcert ipport=$addr certhash=$thumbprint
-# 删除目录下的证书文件
-Remove-Item -Path "$pfxPath" -Force
-            `.trim()
-          );
-        }
-        break;
-
-      case "binding_rdp":
-        {
-          formInst.setFieldValue("shellEnv", SHELLENV_POWERSHELL);
-          formInst.setFieldValue(
-            "postCommand",
-            `# 请将以下变量替换为实际值
-$pfxPath = "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${formInst.getFieldValue("pfxPassword") || "<your-pfx-password>"}" # PFX 密码
-
-# 导入证书到本地计算机的个人存储区
-$cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
-# 获取 Thumbprint
-$thumbprint = $cert.Thumbprint
-# 绑定到 RDP
-$rdpCertPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp"
-Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thumbprint"
-            `.trim()
-          );
+          formInst.setFieldValue("postCommand", initPresetScript(key, presetScriptParams));
         }
         break;
     }
@@ -359,13 +386,11 @@ Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thum
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: [
-                    {
-                      key: "backup_files",
-                      label: t("workflow_node.deploy.form.local_preset_scripts.option.backup_files.label"),
-                      onClick: () => handlePresetPreScriptClick("backup_files"),
-                    },
-                  ],
+                  items: ["sh_backup_files", "ps_backup_files"].map((key) => ({
+                    key,
+                    label: t(`workflow_node.deploy.form.local_preset_scripts.option.${key}.label`),
+                    onClick: () => handlePresetPreScriptClick(key),
+                  })),
                 }}
                 trigger={["click"]}
               >
@@ -391,28 +416,11 @@ Set-ItemProperty -Path $rdpCertPath -Name "SSLCertificateSHA1Hash" -Value "$thum
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: [
-                    {
-                      key: "reload_nginx",
-                      label: t("workflow_node.deploy.form.local_preset_scripts.option.reload_nginx.label"),
-                      onClick: () => handlePresetPostScriptClick("reload_nginx"),
-                    },
-                    {
-                      key: "binding_iis",
-                      label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_iis.label"),
-                      onClick: () => handlePresetPostScriptClick("binding_iis"),
-                    },
-                    {
-                      key: "binding_netsh",
-                      label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_netsh.label"),
-                      onClick: () => handlePresetPostScriptClick("binding_netsh"),
-                    },
-                    {
-                      key: "binding_rdp",
-                      label: t("workflow_node.deploy.form.local_preset_scripts.option.binding_rdp.label"),
-                      onClick: () => handlePresetPostScriptClick("binding_rdp"),
-                    },
-                  ],
+                  items: ["sh_reload_nginx", "ps_binding_iis", "ps_binding_netsh", "ps_binding_rdp"].map((key) => ({
+                    key,
+                    label: t(`workflow_node.deploy.form.local_preset_scripts.option.${key}.label`),
+                    onClick: () => handlePresetPostScriptClick(key),
+                  })),
                 }}
                 trigger={["click"]}
               >

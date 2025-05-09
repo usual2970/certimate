@@ -7,6 +7,8 @@ import { z } from "zod";
 import Show from "@/components/Show";
 import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 
+import { initPresetScript } from "./DeployNodeConfigFormLocalConfig";
+
 type DeployNodeConfigFormSSHConfigFieldValues = Nullish<{
   format: string;
   certPath: string;
@@ -129,15 +131,14 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
 
   const handlePresetPreScriptClick = (key: string) => {
     switch (key) {
-      case "backup_files":
+      case "sh_backup_files":
+      case "ps_backup_files":
         {
-          formInst.setFieldValue(
-            "preCommand",
-            `# 请将以下路径替换为实际值
-cp "${formInst.getFieldValue("certPath") || "<your-cert-path>"}" "${formInst.getFieldValue("certPath") || "<your-cert-path>"}.bak" 2>/dev/null || :
-cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFieldValue("keyPath") || "<your-key-path>"}.bak" 2>/dev/null || :
-            `.trim()
-          );
+          const presetScriptParams = {
+            certPath: formInst.getFieldValue("certPath"),
+            keyPath: formInst.getFieldValue("keyPath"),
+          };
+          formInst.setFieldValue("preCommand", initPresetScript(key, presetScriptParams));
         }
         break;
     }
@@ -145,9 +146,16 @@ cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFi
 
   const handlePresetPostScriptClick = (key: string) => {
     switch (key) {
-      case "reload_nginx":
+      case "sh_reload_nginx":
+      case "ps_binding_iis":
+      case "ps_binding_netsh":
+      case "ps_binding_rdp":
         {
-          formInst.setFieldValue("postCommand", "sudo service nginx reload");
+          const presetScriptParams = {
+            certPath: formInst.getFieldValue("certPath"),
+            pfxPassword: formInst.getFieldValue("pfxPassword"),
+          };
+          formInst.setFieldValue("postCommand", initPresetScript(key, presetScriptParams));
         }
         break;
     }
@@ -253,13 +261,11 @@ cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFi
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: [
-                    {
-                      key: "backup_files",
-                      label: t("workflow_node.deploy.form.ssh_preset_scripts.option.backup_files.label"),
-                      onClick: () => handlePresetPreScriptClick("backup_files"),
-                    },
-                  ],
+                  items: ["sh_backup_files", "ps_backup_files"].map((key) => ({
+                    key,
+                    label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
+                    onClick: () => handlePresetPreScriptClick(key),
+                  })),
                 }}
                 trigger={["click"]}
               >
@@ -285,13 +291,11 @@ cp "${formInst.getFieldValue("keyPath") || "<your-key-path>"}" "${formInst.getFi
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: [
-                    {
-                      key: "reload_nginx",
-                      label: t("workflow_node.deploy.form.ssh_preset_scripts.option.reload_nginx.label"),
-                      onClick: () => handlePresetPostScriptClick("reload_nginx"),
-                    },
-                  ],
+                  items: ["sh_reload_nginx", "ps_binding_iis", "ps_binding_netsh", "ps_binding_rdp"].map((key) => ({
+                    key,
+                    label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
+                    onClick: () => handlePresetPostScriptClick(key),
+                  })),
                 }}
                 trigger={["click"]}
               >

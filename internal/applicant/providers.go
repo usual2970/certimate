@@ -8,6 +8,7 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 	pACMEHttpReq "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/acmehttpreq"
 	pAliyun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aliyun"
+	pAliyunESA "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aliyun-esa"
 	pAWSRoute53 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/aws-route53"
 	pAzureDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/azure-dns"
 	pBaiduCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/baiducloud"
@@ -80,20 +81,36 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			return applicant, err
 		}
 
-	case domain.ACMEDns01ProviderTypeAliyun, domain.ACMEDns01ProviderTypeAliyunDNS:
+	case domain.ACMEDns01ProviderTypeAliyun, domain.ACMEDns01ProviderTypeAliyunDNS, domain.ACMEDns01ProviderTypeAliyunESA:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			applicant, err := pAliyun.NewChallengeProvider(&pAliyun.ChallengeProviderConfig{
-				AccessKeyId:           access.AccessKeyId,
-				AccessKeySecret:       access.AccessKeySecret,
-				DnsPropagationTimeout: options.DnsPropagationTimeout,
-				DnsTTL:                options.DnsTTL,
-			})
-			return applicant, err
+			switch options.Provider {
+			case domain.ACMEDns01ProviderTypeAliyun, domain.ACMEDns01ProviderTypeAliyunDNS:
+				applicant, err := pAliyun.NewChallengeProvider(&pAliyun.ChallengeProviderConfig{
+					AccessKeyId:           access.AccessKeyId,
+					AccessKeySecret:       access.AccessKeySecret,
+					DnsPropagationTimeout: options.DnsPropagationTimeout,
+					DnsTTL:                options.DnsTTL,
+				})
+				return applicant, err
+
+			case domain.ACMEDns01ProviderTypeAliyunESA:
+				applicant, err := pAliyunESA.NewChallengeProvider(&pAliyunESA.ChallengeProviderConfig{
+					AccessKeyId:           access.AccessKeyId,
+					AccessKeySecret:       access.AccessKeySecret,
+					Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
+					DnsPropagationTimeout: options.DnsPropagationTimeout,
+					DnsTTL:                options.DnsTTL,
+				})
+				return applicant, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.ACMEDns01ProviderTypeAWS, domain.ACMEDns01ProviderTypeAWSRoute53:
