@@ -79,7 +79,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string, allowInsecure bool) (*opsdk.Client, error) {
+func createSdkClient(apiUrl, apiKey string, skipTlsVerify bool) (*opsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid 1panel api url")
 	}
@@ -89,7 +89,7 @@ func createSdkClient(apiUrl, apiKey string, allowInsecure bool) (*opsdk.Client, 
 	}
 
 	client := opsdk.NewClient(apiUrl, apiKey)
-	if allowInsecure {
+	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 

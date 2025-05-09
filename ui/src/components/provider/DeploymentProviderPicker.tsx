@@ -66,6 +66,7 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, placeholder, on
               DEPLOYMENT_CATEGORIES.AV,
               DEPLOYMENT_CATEGORIES.SERVERLESS,
               DEPLOYMENT_CATEGORIES.WEBSITE,
+              DEPLOYMENT_CATEGORIES.NAS,
               DEPLOYMENT_CATEGORIES.OTHER,
             ].map((key) => ({
               key: key,

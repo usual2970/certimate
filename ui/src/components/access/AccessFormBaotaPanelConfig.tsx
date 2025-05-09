@@ -49,12 +49,7 @@ const AccessFormBaotaPanelConfig = ({ form: formInst, formName, disabled, initia
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item
-        name="apiUrl"
-        label={t("access.form.baotapanel_api_url.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.baotapanel_api_url.tooltip") }}></span>}
-      >
+      <Form.Item name="apiUrl" label={t("access.form.baotapanel_api_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.baotapanel_api_url.placeholder")} />
       </Form.Item>
 
@@ -67,12 +62,7 @@ const AccessFormBaotaPanelConfig = ({ form: formInst, formName, disabled, initia
         <Input.Password autoComplete="new-password" placeholder={t("access.form.baotapanel_api_key.placeholder")} />
       </Form.Item>
 
-      <Form.Item
-        name="allowInsecureConnections"
-        label={t("access.form.baotapanel_allow_insecure_conns.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.baotapanel_allow_insecure_conns.tooltip") }}></span>}
-      >
+      <Form.Item name="allowInsecureConnections" label={t("access.form.baotapanel_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
           checkedChildren={t("access.form.baotapanel_allow_insecure_conns.switch.on")}
           unCheckedChildren={t("access.form.baotapanel_allow_insecure_conns.switch.off")}

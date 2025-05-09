@@ -57,11 +57,12 @@ func TestDeploy(t *testing.T) {
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:        fApiUrl,
-			AccessKeyId:   fAccessKeyId,
-			AccessKey:     fAccessKey,
-			ResourceType:  provider.RESOURCE_TYPE_CERTIFICATE,
-			CertificateId: int64(fCertificateId),
+			ApiUrl:                   fApiUrl,
+			AccessKeyId:              fAccessKeyId,
+			AccessKey:                fAccessKey,
+			AllowInsecureConnections: true,
+			ResourceType:             provider.RESOURCE_TYPE_CERTIFICATE,
+			CertificateId:            int64(fCertificateId),
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)
