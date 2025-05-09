@@ -213,6 +213,13 @@ type AccessConfigForPowerDNS struct {
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
+type AccessConfigForProxmoxVE struct {
+	ApiUrl                   string `json:"apiUrl"`
+	ApiToken                 string `json:"apiToken"`
+	ApiTokenSecret           string `json:"apiTokenSecret,omitempty"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForQiniu struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

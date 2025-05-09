@@ -49,12 +49,7 @@ const AccessFormSafeLineConfig = ({ form: formInst, formName, disabled, initialV
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item
-        name="apiUrl"
-        label={t("access.form.safeline_api_url.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.safeline_api_url.tooltip") }}></span>}
-      >
+      <Form.Item name="apiUrl" label={t("access.form.safeline_api_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.safeline_api_url.placeholder")} />
       </Form.Item>
 

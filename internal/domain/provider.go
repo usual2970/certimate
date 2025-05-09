@@ -55,6 +55,7 @@ const (
 	AccessProviderTypeNS1                 = AccessProviderType("ns1")
 	AccessProviderTypePorkbun             = AccessProviderType("porkbun")
 	AccessProviderTypePowerDNS            = AccessProviderType("powerdns")
+	AccessProviderTypeProxmoxVE           = AccessProviderType("proxmoxve")
 	AccessProviderTypeQiniu               = AccessProviderType("qiniu")
 	AccessProviderTypeQingCloud           = AccessProviderType("qingcloud") // 青云（预留）
 	AccessProviderTypeRainYun             = AccessProviderType("rainyun")
@@ -197,6 +198,7 @@ const (
 	DeploymentProviderTypeJDCloudVOD            = DeploymentProviderType(AccessProviderTypeJDCloud + "-vod")
 	DeploymentProviderTypeKubernetesSecret      = DeploymentProviderType(AccessProviderTypeKubernetes + "-secret")
 	DeploymentProviderTypeLocal                 = DeploymentProviderType(AccessProviderTypeLocal)
+	DeploymentProviderTypeProxmoxVE             = DeploymentProviderType(AccessProviderTypeProxmoxVE)
 	DeploymentProviderTypeQiniuCDN              = DeploymentProviderType(AccessProviderTypeQiniu + "-cdn")
 	DeploymentProviderTypeQiniuKodo             = DeploymentProviderType(AccessProviderTypeQiniu + "-kodo")
 	DeploymentProviderTypeQiniuPili             = DeploymentProviderType(AccessProviderTypeQiniu + "-pili")

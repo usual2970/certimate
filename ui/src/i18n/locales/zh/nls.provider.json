@@ -93,6 +93,7 @@
   "provider.ns1": "NS1 (IBM NS1 Connect)",
   "provider.porkbun": "Porkbun",
   "provider.powerdns": "PowerDNS",
+  "provider.proxmoxve": "Proxmox VE",
   "provider.qiniu": "七牛云",
   "provider.qiniu.cdn": "七牛云 - 内容分发网络 CDN",
   "provider.qiniu.kodo": "七牛云 - 对象存储 Kodo",
@@ -148,6 +149,7 @@
   "provider.category.av": "音视频",
   "provider.category.serverless": "Serverless",
   "provider.category.website": "网站托管",
+  "provider.category.nas": "NAS",
   "provider.category.other": "其他",
 
   "provider.default_ca_provider.label": "（默认）不指定，跟随全局设置"

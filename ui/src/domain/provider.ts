@@ -46,6 +46,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   NS1: "ns1",
   PORKBUN: "porkbun",
   POWERDNS: "powerdns",
+  PROXMOXVE: "proxmoxve",
   QINIU: "qiniu",
   RAINYUN: "rainyun",
   SAFELINE: "safeline",
@@ -120,6 +121,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.CDNFLY, "provider.cdnfly", "/imgs/providers/cdnfly.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.GOEDGE, "provider.goedge", "/imgs/providers/goedge.png", [ACCESS_USAGES.HOSTING]],
+    [ACCESS_PROVIDERS.PROXMOXVE, "provider.proxmoxve", "/imgs/providers/proxmoxve.svg", [ACCESS_USAGES.HOSTING]],
 
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.CLOUDNS, "provider.cloudns", "/imgs/providers/cloudns.png", [ACCESS_USAGES.DNS]],
@@ -368,6 +370,7 @@ export const DEPLOYMENT_PROVIDERS = Object.freeze({
   JDCLOUD_VOD: `${ACCESS_PROVIDERS.JDCLOUD}-vod`,
   KUBERNETES_SECRET: `${ACCESS_PROVIDERS.KUBERNETES}-secret`,
   LOCAL: `${ACCESS_PROVIDERS.LOCAL}`,
+  PROXMOXVE: `${ACCESS_PROVIDERS.PROXMOXVE}`,
   QINIU_CDN: `${ACCESS_PROVIDERS.QINIU}-cdn`,
   QINIU_KODO: `${ACCESS_PROVIDERS.QINIU}-kodo`,
   QINIU_PILI: `${ACCESS_PROVIDERS.QINIU}-pili`,
@@ -412,6 +415,7 @@ export const DEPLOYMENT_CATEGORIES = Object.freeze({
   AV: "av",
   SERVERLESS: "serverless",
   WEBSITE: "website",
+  NAS: "nas",
   OTHER: "other",
 } as const);
 
@@ -508,6 +512,7 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
     [DEPLOYMENT_PROVIDERS.BAOTAPANEL_SITE, "provider.baotapanel.site", DEPLOYMENT_CATEGORIES.WEBSITE],
     [DEPLOYMENT_PROVIDERS.BAOTAPANEL_CONSOLE, "provider.baotapanel.console", DEPLOYMENT_CATEGORIES.OTHER],
     [DEPLOYMENT_PROVIDERS.SAFELINE, "provider.safeline", DEPLOYMENT_CATEGORIES.FIREWALL],
+    [DEPLOYMENT_PROVIDERS.PROXMOXVE, "provider.proxmoxve", DEPLOYMENT_CATEGORIES.NAS],
   ].map(([type, name, category, builtin]) => [
     type,
     {

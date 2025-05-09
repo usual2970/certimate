@@ -49,12 +49,7 @@ const AccessForm1PanelConfig = ({ form: formInst, formName, disabled, initialVal
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item
-        name="apiUrl"
-        label={t("access.form.1panel_api_url.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.1panel_api_url.tooltip") }}></span>}
-      >
+      <Form.Item name="apiUrl" label={t("access.form.1panel_api_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.1panel_api_url.placeholder")} />
       </Form.Item>
 

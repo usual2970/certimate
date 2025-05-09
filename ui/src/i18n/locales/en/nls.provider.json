@@ -93,6 +93,7 @@
   "provider.ns1": "NS1 (IBM NS1 Connect)",
   "provider.porkbun": "Porkbun",
   "provider.powerdns": "PowerDNS",
+  "provider.proxmoxve": "Proxmox VE",
   "provider.qiniu": "Qiniu",
   "provider.qiniu.cdn": "Qiniu - CDN (Content Delivery Network)",
   "provider.qiniu.kodo": "Qiniu - Kodo",
@@ -148,6 +149,7 @@
   "provider.category.av": "Audio/Video",
   "provider.category.serverless": "Serverless",
   "provider.category.website": "Website",
+  "provider.category.nas": "NAS",
   "provider.category.other": "Other",
 
   "provider.default_ca_provider.label": "(Default) Follow global settings"

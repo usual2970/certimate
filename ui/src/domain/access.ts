@@ -43,6 +43,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForNameSilo
       | AccessConfigForPorkbun
       | AccessConfigForPowerDNS
+      | AccessConfigForProxmoxVE
       | AccessConfigForQiniu
       | AccessConfigForRainYun
       | AccessConfigForSafeLine
@@ -259,6 +260,13 @@ export type AccessConfigForPorkbun = {
 export type AccessConfigForPowerDNS = {
   apiUrl: string;
   apiKey: string;
+  allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForProxmoxVE = {
+  apiUrl: string;
+  apiToken: string;
+  apiTokenSecret?: string;
   allowInsecureConnections?: boolean;
 };
 
