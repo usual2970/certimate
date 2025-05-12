@@ -29,6 +29,7 @@
   "access.form.provider.label": "Provider",
   "access.form.provider.placeholder": "Please select a provider",
   "access.form.provider.tooltip": "DNS provider: The provider that hosts your domain names and manages your DNS records.<br>Hosting provider: The provider that hosts your servers or cloud services for deploying certificates.<br><br><i>Cannot be edited after saving.</i>",
+  "access.form.provider.search.placeholder": "Search provider ...",
   "access.form.certificate_authority.label": "Certificate authority",
   "access.form.certificate_authority.placeholder": "Please select a certificate authority",
   "access.form.notification_channel.label": "Notification channel",

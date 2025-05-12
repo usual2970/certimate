@@ -186,7 +186,7 @@ const ResourceIdsModalInput = memo(({ value, trigger, onChange }: { value?: stri
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"
@@ -226,7 +226,7 @@ const ContactIdsModalInput = memo(({ value, trigger, onChange }: { value?: strin
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"

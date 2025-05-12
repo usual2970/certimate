@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { DownOutlined as DownOutlinedIcon } from "@ant-design/icons";
-import { Button, Dropdown, Form, type FormInstance, Input, Select } from "antd";
+import { Alert, Button, Dropdown, Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -289,6 +289,10 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
       name={formName}
       onValuesChange={handleFormChange}
     >
+      <Form.Item>
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local.guide") }}></span>} />
+      </Form.Item>
+
       <Form.Item name="format" label={t("workflow_node.deploy.form.local_format.label")} rules={[formRule]}>
         <Select placeholder={t("workflow_node.deploy.form.local_format.placeholder")} onSelect={handleFormatSelect}>
           <Select.Option key={FORMAT_PEM} value={FORMAT_PEM}>
@@ -377,7 +381,7 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
         </Select>
       </Form.Item>
 
-      <Form.Item className="mb-0">
+      <Form.Item className="mb-0" htmlFor="null">
         <label className="mb-1 block">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="max-w-full grow truncate">
@@ -407,7 +411,7 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
         </Form.Item>
       </Form.Item>
 
-      <Form.Item className="mb-0">
+      <Form.Item className="mb-0" htmlFor="null">
         <label className="mb-1 block">
           <div className="flex w-full items-center justify-between gap-4">
             <div className="max-w-full grow truncate">

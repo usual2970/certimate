@@ -3,17 +3,18 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { acmeDns01ProvidersMap } from "@/domain/provider";
+import { type ACMEDns01Provider, acmeDns01ProvidersMap } from "@/domain/provider";
 
 export type ACMEDns01ProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
+  filter?: (record: ACMEDns01Provider) => boolean;
   placeholder?: string;
   onSelect?: (value: string) => void;
 };
 
-const ACMEDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: ACMEDns01ProviderPickerProps) => {
+const ACMEDns01ProviderPicker = ({ className, style, autoFocus, filter, placeholder, onSelect }: ACMEDns01ProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [keyword, setKeyword] = useState<string>();
@@ -25,15 +26,23 @@ const ACMEDns01ProviderPicker = ({ className, style, autoFocus, placeholder, onS
   }, []);
 
   const providers = useMemo(() => {
-    return Array.from(acmeDns01ProvidersMap.values()).filter((provider) => {
-      if (keyword) {
-        const value = keyword.toLowerCase();
-        return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
-      }
+    return Array.from(acmeDns01ProvidersMap.values())
+      .filter((provider) => {
+        if (filter) {
+          return filter(provider);
+        }
 
-      return true;
-    });
-  }, [keyword]);
+        return true;
+      })
+      .filter((provider) => {
+        if (keyword) {
+          const value = keyword.toLowerCase();
+          return provider.type.toLowerCase().includes(value) || t(provider.name).toLowerCase().includes(value);
+        }
+
+        return true;
+      });
+  }, [filter, keyword]);
 
   const handleProviderTypeSelect = (value: string) => {
     onSelect?.(value);

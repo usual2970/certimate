@@ -165,7 +165,7 @@ const WorkflowNew = () => {
           disabled={formPending}
           layout="vertical"
           form={formInst}
-          modalProps={{ destroyOnClose: true }}
+          modalProps={{ destroyOnHidden: true }}
           okText={t("common.button.submit")}
           open={formModalOpen}
           title={t(`workflow.new.modal.title`)}

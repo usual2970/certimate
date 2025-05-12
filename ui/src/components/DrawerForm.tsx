@@ -66,7 +66,7 @@ const DrawerForm = <T extends NonNullable<unknown> = any>({
   });
 
   const mergedFormProps: FormProps = {
-    clearOnDestroy: drawerProps?.destroyOnClose ? true : undefined,
+    clearOnDestroy: drawerProps?.destroyOnHidden ? true : undefined,
     ...formProps,
     ...props,
   };

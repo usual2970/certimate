@@ -173,7 +173,7 @@ const SiteNamesModalInput = memo(({ value, trigger, onChange }: { value?: string
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.deploy.form.baotapanel_site_names.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"

@@ -391,7 +391,9 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Show
             when={!!fieldProvider}
-            fallback={<DeploymentProviderPicker autoFocus placeholder={t("workflow_node.deploy.search.provider.placeholder")} onSelect={handleProviderPick} />}
+            fallback={
+              <DeploymentProviderPicker autoFocus placeholder={t("workflow_node.deploy.form.provider.search.placeholder")} onSelect={handleProviderPick} />
+            }
           >
             <Form.Item name="provider" label={t("workflow_node.deploy.form.provider.label")} rules={[formRule]}>
               <DeploymentProviderSelect
@@ -404,7 +406,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               />
             </Form.Item>
 
-            <Form.Item className="mb-0" hidden={!showProviderAccess}>
+            <Form.Item className="mb-0" htmlFor="null" hidden={!showProviderAccess}>
               <label className="mb-1 block">
                 <div className="flex w-full items-center justify-between gap-4">
                   <div className="max-w-full grow truncate">
@@ -449,15 +451,6 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                 />
               </Form.Item>
             </Form.Item>
-
-            <Show when={fieldProvider === DEPLOYMENT_PROVIDERS.LOCAL}>
-              <Form.Item>
-                <Alert
-                  type="info"
-                  message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.provider_access.guide_for_local") }}></span>}
-                />
-              </Form.Item>
-            </Show>
 
             <Form.Item
               name="certificate"

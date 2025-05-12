@@ -29,7 +29,7 @@ const CertificateDetailDrawer = ({ data, loading, trigger, ...props }: Certifica
 
       <Drawer
         afterOpenChange={setOpen}
-        destroyOnClose
+        destroyOnHidden
         open={open}
         loading={loading}
         placement="right"

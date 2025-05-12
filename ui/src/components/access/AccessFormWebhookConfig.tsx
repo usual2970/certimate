@@ -283,7 +283,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
       </Form.Item>
 
       <Show when={!usage || usage === "deployment"}>
-        <Form.Item className="mb-0">
+        <Form.Item className="mb-0" htmlFor="null">
           <label className="mb-1 block">
             <div className="flex w-full items-center justify-between gap-4">
               <div className="max-w-full grow truncate">
@@ -312,7 +312,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
       </Show>
 
       <Show when={!usage || usage === "notification"}>
-        <Form.Item className="mb-0">
+        <Form.Item className="mb-0" htmlFor="null">
           <label className="mb-1 block">
             <div className="flex w-full items-center justify-between gap-4">
               <div className="max-w-full grow truncate">
