@@ -91,6 +91,13 @@ const AccessEditModal = ({ data, loading, trigger, scene, usage, afterSubmit, ..
       {triggerEl}
 
       <Modal
+        styles={{
+          content: {
+            maxHeight: "calc(80vh - 64px)",
+            overflowX: "hidden",
+            overflowY: "auto",
+          },
+        }}
         afterClose={() => setOpen(false)}
         cancelButtonProps={{ disabled: formPending }}
         closable
