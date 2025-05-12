@@ -20,7 +20,6 @@
 
   "common.menu.theme": "切换主题",
   "common.menu.locale": "切换语言",
-  "common.menu.settings": "系统设置",
   "common.menu.logout": "退出登录",
   "common.menu.document": "文档",
 
