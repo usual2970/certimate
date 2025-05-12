@@ -31,10 +31,6 @@ const ConsoleLayout = () => {
     navigate("/login");
   };
 
-  const handleSettingsClick = () => {
-    navigate("/settings/account");
-  };
-
   const auth = getAuthStore();
   if (!auth.isValid || !auth.isSuperuser) {
     return <Navigate to="/login" />;
@@ -66,9 +62,6 @@ const ConsoleLayout = () => {
               <Tooltip title={t("common.menu.locale")} mouseEnterDelay={2}>
                 <LocaleToggleButton size="large" />
               </Tooltip>
-              <Tooltip title={t("common.menu.settings")} mouseEnterDelay={2}>
-                <Button icon={<SettingOutlinedIcon />} size="large" onClick={handleSettingsClick} />
-              </Tooltip>
               <Tooltip title={t("common.menu.logout")} mouseEnterDelay={2}>
                 <Button danger icon={<LogoutOutlinedIcon />} size="large" onClick={handleLogoutClick} />
               </Tooltip>
@@ -94,11 +87,13 @@ const SiderMenu = memo(({ onSelect }: { onSelect?: (key: string) => void }) => {
   const MENU_KEY_WORKFLOWS = "/workflows";
   const MENU_KEY_CERTIFICATES = "/certificates";
   const MENU_KEY_ACCESSES = "/accesses";
+  const MENU_KEY_SETTINGS = "/settings";
   const menuItems: Required<MenuProps>["items"] = [
     [MENU_KEY_HOME, <HomeOutlinedIcon />, t("dashboard.page.title")],
     [MENU_KEY_WORKFLOWS, <NodeIndexOutlinedIcon />, t("workflow.page.title")],
     [MENU_KEY_CERTIFICATES, <SafetyOutlinedIcon />, t("certificate.page.title")],
     [MENU_KEY_ACCESSES, <CloudServerOutlinedIcon />, t("access.page.title")],
+    [MENU_KEY_SETTINGS, <SettingOutlinedIcon />, t("settings.page.title")],
   ].map(([key, icon, label]) => {
     return {
       key: key as string,
