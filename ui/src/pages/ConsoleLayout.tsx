@@ -162,7 +162,7 @@ const SiderMenuDrawer = memo(({ trigger }: { trigger: React.ReactNode }) => {
 
       <Drawer
         closable={false}
-        destroyOnClose
+        destroyOnHidden
         open={siderOpen}
         placement="left"
         styles={{

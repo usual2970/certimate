@@ -29,6 +29,7 @@
   "access.form.provider.label": "提供商",
   "access.form.provider.placeholder": "请选择提供商",
   "access.form.provider.tooltip": "提供商分为两种类型：<br>【DNS 提供商】你的 DNS 托管方，通常等同于域名注册商，用于在申请证书时管理您的域名解析记录。<br>【主机提供商】你的服务器或云服务的托管方，用于部署签发的证书。<br><br>该字段保存后不可修改。",
+  "access.form.provider.search.placeholder": "搜索提供商……",
   "access.form.certificate_authority.label": "证书颁发机构",
   "access.form.certificate_authority.placeholder": "请选择证书颁发机构",
   "access.form.notification_channel.label": "通知渠道",

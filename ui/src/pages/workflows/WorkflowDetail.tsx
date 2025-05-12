@@ -374,7 +374,7 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
         disabled={formPending}
         layout="vertical"
         form={formInst}
-        modalProps={{ destroyOnClose: true }}
+        modalProps={{ destroyOnHidden: true }}
         okText={t("common.button.save")}
         title={t(`workflow.detail.baseinfo.modal.title`)}
         trigger={trigger}

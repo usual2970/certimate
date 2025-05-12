@@ -160,7 +160,7 @@ const ResourceIdsModalInput = memo(({ value, trigger, onChange }: { value?: stri
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"

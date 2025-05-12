@@ -3,17 +3,18 @@ import { useTranslation } from "react-i18next";
 import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Tabs, Tooltip, Typography } from "antd";
 
 import Show from "@/components/Show";
-import { DEPLOYMENT_CATEGORIES, deploymentProvidersMap } from "@/domain/provider";
+import { DEPLOYMENT_CATEGORIES, type DeploymentProvider, deploymentProvidersMap } from "@/domain/provider";
 
 export type DeploymentProviderPickerProps = {
   className?: string;
   style?: React.CSSProperties;
   autoFocus?: boolean;
+  filter?: (record: DeploymentProvider) => boolean;
   placeholder?: string;
   onSelect?: (value: string) => void;
 };
 
-const DeploymentProviderPicker = ({ className, style, autoFocus, placeholder, onSelect }: DeploymentProviderPickerProps) => {
+const DeploymentProviderPicker = ({ className, style, autoFocus, filter, placeholder, onSelect }: DeploymentProviderPickerProps) => {
   const { t } = useTranslation();
 
   const [category, setCategory] = useState<string>(DEPLOYMENT_CATEGORIES.ALL);
@@ -29,6 +30,13 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, placeholder, on
   const providers = useMemo(() => {
     return Array.from(deploymentProvidersMap.values())
       .filter((provider) => {
+        if (filter) {
+          return filter(provider);
+        }
+
+        return true;
+      })
+      .filter((provider) => {
         if (category && category !== DEPLOYMENT_CATEGORIES.ALL) {
           return provider.category === category;
         }
@@ -43,7 +51,7 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, placeholder, on
 
         return true;
       });
-  }, [category, keyword]);
+  }, [filter, category, keyword]);
 
   const handleProviderTypeSelect = (value: string) => {
     onSelect?.(value);

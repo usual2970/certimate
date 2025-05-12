@@ -1,12 +1,14 @@
-import { forwardRef, useImperativeHandle, useMemo } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import AccessProviderPicker from "@/components/provider/AccessProviderPicker";
 import AccessProviderSelect from "@/components/provider/AccessProviderSelect";
+import Show from "@/components/Show";
 import { type AccessModel } from "@/domain/access";
-import { ACCESS_PROVIDERS, ACCESS_USAGES } from "@/domain/provider";
+import { ACCESS_PROVIDERS, ACCESS_USAGES, type AccessProvider } from "@/domain/provider";
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
@@ -107,9 +109,22 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
   });
   const formRule = createSchemaFieldRule(formSchema);
   const { form: formInst, formProps } = useAntdForm({
+    name: "accessForm",
     initialValues: initialValues,
   });
 
+  const providerFilter = useMemo(() => {
+    switch (usage) {
+      case "both-dns-hosting":
+        return (record: AccessProvider) => record.usages.includes(ACCESS_USAGES.DNS) || record.usages.includes(ACCESS_USAGES.HOSTING);
+      case "ca-only":
+        return (record: AccessProvider) => record.usages.includes(ACCESS_USAGES.CA);
+      case "notification-only":
+        return (record: AccessProvider) => record.usages.includes(ACCESS_USAGES.NOTIFICATION);
+    }
+
+    return undefined;
+  }, [usage]);
   const providerLabel = useMemo(() => {
     switch (usage) {
       case "ca-only":
@@ -139,10 +154,11 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
     return undefined;
   }, [usage]);
 
-  const fieldProvider = Form.useWatch("provider", formInst);
+  const fieldProvider = Form.useWatch<z.infer<typeof formSchema>["provider"]>("provider", formInst);
+  const [fieldProviderPicked, setFieldProviderPicked] = useState<string>(initialValues?.provider); // bugfix: Form.useWatch 在条件渲染下不生效，这里用单独的变量存放 Picker 组件选择的值
 
   const [nestedFormInst] = Form.useForm();
-  const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "accessEditFormConfigForm" });
+  const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "accessConfigForm" });
   const nestedFormEl = useMemo(() => {
     const nestedFormProps = {
       form: nestedFormInst,
@@ -272,7 +288,13 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
       case ACCESS_PROVIDERS.ZEROSSL:
         return <AccessFormZeroSSLConfig {...nestedFormProps} />;
     }
-  }, [disabled, initialValues?.config, fieldProvider, nestedFormInst, nestedFormName]);
+  }, [usage, disabled, initialValues?.config, fieldProvider, nestedFormInst, nestedFormName]);
+
+  const handleProviderPick = (value: string) => {
+    setFieldProviderPicked(value);
+    formInst.setFieldValue("provider", value);
+    onValuesChange?.(formInst.getFieldsValue(true));
+  };
 
   const handleFormProviderChange = (name: string) => {
     if (name === nestedFormName) {
@@ -312,30 +334,32 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
     <Form.Provider onFormChange={handleFormProviderChange}>
       <div className={className} style={style}>
         <Form {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-          <Form.Item name="name" label={t("access.form.name.label")} rules={[formRule]}>
-            <Input placeholder={t("access.form.name.placeholder")} />
-          </Form.Item>
+          <Show
+            when={!!fieldProvider || !!fieldProviderPicked}
+            fallback={
+              <AccessProviderPicker
+                autoFocus
+                filter={providerFilter}
+                placeholder={t("access.form.provider.search.placeholder")}
+                showOptionTags={usage == null || (usage === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
+                onSelect={handleProviderPick}
+              />
+            }
+          >
+            <Form.Item name="name" label={t("access.form.name.label")} rules={[formRule]}>
+              <Input placeholder={t("access.form.name.placeholder")} />
+            </Form.Item>
 
-          <Form.Item name="provider" label={providerLabel} rules={[formRule]} tooltip={providerTooltip}>
-            <AccessProviderSelect
-              filter={(record) => {
-                if (usage == null) return true;
-
-                switch (usage) {
-                  case "both-dns-hosting":
-                    return record.usages.includes(ACCESS_USAGES.DNS) || record.usages.includes(ACCESS_USAGES.HOSTING);
-                  case "ca-only":
-                    return record.usages.includes(ACCESS_USAGES.CA);
-                  case "notification-only":
-                    return record.usages.includes(ACCESS_USAGES.NOTIFICATION);
-                }
-              }}
-              disabled={scene !== "add"}
-              placeholder={providerPlaceholder}
-              showOptionTags={usage == null || (usage === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
-              showSearch={!disabled}
-            />
-          </Form.Item>
+            <Form.Item name="provider" label={providerLabel} rules={[formRule]} tooltip={providerTooltip}>
+              <AccessProviderSelect
+                filter={providerFilter}
+                disabled={scene !== "add"}
+                placeholder={providerPlaceholder}
+                showOptionTags={usage == null || (usage === "both-dns-hosting" ? { [ACCESS_USAGES.DNS]: true, [ACCESS_USAGES.HOSTING]: true } : false)}
+                showSearch={!disabled}
+              />
+            </Form.Item>
+          </Show>
         </Form>
 
         {nestedFormEl}

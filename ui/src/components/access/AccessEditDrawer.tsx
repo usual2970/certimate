@@ -93,7 +93,7 @@ const AccessEditDrawer = ({ data, loading, trigger, scene, usage, afterSubmit, .
       <Drawer
         afterOpenChange={setOpen}
         closable={!formPending}
-        destroyOnClose
+        destroyOnHidden
         footer={
           <Space className="w-full justify-end">
             <Button onClick={handleCancelClick}>{t("common.button.cancel")}</Button>

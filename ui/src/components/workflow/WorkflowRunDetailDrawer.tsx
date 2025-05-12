@@ -30,7 +30,7 @@ const WorkflowRunDetailDrawer = ({ data, loading, trigger, ...props }: WorkflowR
 
       <Drawer
         afterOpenChange={setOpen}
-        destroyOnClose
+        destroyOnHidden
         open={open}
         loading={loading}
         placement="right"

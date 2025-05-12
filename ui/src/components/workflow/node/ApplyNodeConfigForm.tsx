@@ -350,7 +350,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             />
           </Form.Item>
 
-          <Form.Item className="mb-0">
+          <Form.Item className="mb-0" htmlFor="null">
             <label className="mb-1 block">
               <div className="flex w-full items-center justify-between gap-4">
                 <div className="max-w-full grow truncate">
@@ -406,7 +406,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         </Divider>
 
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-          <Form.Item className="mb-0">
+          <Form.Item className="mb-0" htmlFor="null">
             <label className="mb-1 block">
               <div className="flex w-full items-center justify-between gap-4">
                 <div className="max-w-full grow truncate">
@@ -435,7 +435,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
             </Form.Item>
           </Form.Item>
 
-          <Form.Item className="mb-0" hidden={!showCAProviderAccess}>
+          <Form.Item className="mb-0" htmlFor="null" hidden={!showCAProviderAccess}>
             <label className="mb-1 block">
               <div className="flex w-full items-center justify-between gap-4">
                 <div className="max-w-full grow truncate">
@@ -703,7 +703,7 @@ const DomainsModalInput = memo(({ value, trigger, onChange }: { value?: string; 
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.apply.form.domains.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"
@@ -743,7 +743,7 @@ const NameserversModalInput = memo(({ trigger, value, onChange }: { trigger?: Re
       {...formProps}
       layout="vertical"
       form={formInst}
-      modalProps={{ destroyOnClose: true }}
+      modalProps={{ destroyOnHidden: true }}
       title={t("workflow_node.apply.form.nameservers.multiple_input_modal.title")}
       trigger={trigger}
       validateTrigger="onSubmit"
