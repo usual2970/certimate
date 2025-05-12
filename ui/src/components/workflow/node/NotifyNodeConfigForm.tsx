@@ -266,7 +266,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         </Form.Item>
 
         <Show when={!!nestedFormEl}>
-          <Divider className="my-1">
+          <Divider size="small">
             <Typography.Text className="text-xs font-normal" type="secondary">
               {t("workflow_node.notify.form.params_config.label")}
             </Typography.Text>
