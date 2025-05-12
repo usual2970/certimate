@@ -448,6 +448,7 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
                     return !!provider?.usages?.includes(ACCESS_USAGES.HOSTING);
                   }}
                   placeholder={t("workflow_node.deploy.form.provider_access.placeholder")}
+                  showSearch
                 />
               </Form.Item>
             </Form.Item>
