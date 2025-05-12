@@ -399,7 +399,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
         {nestedFormEl}
 
-        <Divider className="my-1">
+        <Divider size="small">
           <Typography.Text className="text-xs font-normal" type="secondary">
             {t("workflow_node.apply.form.certificate_config.label")}
           </Typography.Text>
@@ -487,7 +487,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
         </Form>
 
-        <Divider className="my-1">
+        <Divider size="small">
           <Typography.Text className="text-xs font-normal" type="secondary">
             {t("workflow_node.apply.form.advanced_config.label")}
           </Typography.Text>
@@ -594,7 +594,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
           </Form.Item>
         </Form>
 
-        <Divider className="my-1">
+        <Divider size="small">
           <Typography.Text className="text-xs font-normal" type="secondary">
             {t("workflow_node.apply.form.strategy_config.label")}
           </Typography.Text>
