@@ -391,6 +391,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                   return !!provider?.usages?.includes(ACCESS_USAGES.DNS);
                 }}
                 placeholder={t("workflow_node.apply.form.provider_access.placeholder")}
+                showSearch
                 onChange={handleProviderAccessSelect}
               />
             </Form.Item>
@@ -472,6 +473,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
                   return !!provider?.usages?.includes(ACCESS_USAGES.CA);
                 }}
                 placeholder={t("workflow_node.apply.form.ca_provider_access.placeholder")}
+                showSearch
               />
             </Form.Item>
           </Form.Item>

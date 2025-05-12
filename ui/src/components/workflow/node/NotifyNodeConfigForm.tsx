@@ -260,6 +260,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
                 return !!provider?.usages?.includes(ACCESS_USAGES.NOTIFICATION);
               }}
               placeholder={t("workflow_node.notify.form.provider_access.placeholder")}
+              showSearch
               onChange={handleProviderAccessSelect}
             />
           </Form.Item>
