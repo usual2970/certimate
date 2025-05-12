@@ -54,7 +54,7 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
             {t(provider.name)}
           </Typography.Text>
         </Space>
-        <div>
+        <div className="origin-right scale-[80%]">
           <Show when={provider.builtin}>
             <Tag>{t("access.props.provider.builtin")}</Tag>
           </Show>

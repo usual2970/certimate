@@ -84,7 +84,7 @@ const AccessProviderPicker = ({ className, style, autoFocus, filter, placeholder
                       <Avatar src={provider.icon} size="small" />
                       <div className="flex-1 overflow-hidden">
                         <Typography.Text className="mb-1 line-clamp-1">{t(provider.name)}</Typography.Text>
-                        <div className="mx-[-30px] scale-[80%]">
+                        <div className="origin-left scale-[80%]">
                           <Show when={provider.builtin}>
                             <Tag>{t("access.props.provider.builtin")}</Tag>
                           </Show>
