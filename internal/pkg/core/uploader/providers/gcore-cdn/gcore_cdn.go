@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"time"
 
-	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
-	gsslcerts "github.com/G-Core/gcorelabscdn-go/sslcerts"
+	"github.com/G-Core/gcorelabscdn-go/gcore/provider"
+	"github.com/G-Core/gcorelabscdn-go/sslcerts"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore/common"
@@ -22,7 +22,7 @@ type UploaderConfig struct {
 type UploaderProvider struct {
 	config    *UploaderConfig
 	logger    *slog.Logger
-	sdkClient *gsslcerts.Service
+	sdkClient *sslcerts.Service
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -59,8 +59,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	certName = fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
 
 	// 新增证书
-	// REF: https://api.gcore.com/docs/cdn#tag/CA-certificates/operation/ca_certificates-add
-	createCertificateReq := &gsslcerts.CreateRequest{
+	// REF: https://api.gcore.com/docs/cdn#tag/SSL-certificates/operation/add_ssl_certificates
+	createCertificateReq := &sslcerts.CreateRequest{
 		Name:           certName,
 		Cert:           certPEM,
 		PrivateKey:     privkeyPEM,
@@ -81,15 +81,15 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}, nil
 }
 
-func createSdkClient(apiToken string) (*gsslcerts.Service, error) {
+func createSdkClient(apiToken string) (*sslcerts.Service, error) {
 	if apiToken == "" {
 		return nil, errors.New("invalid gcore api token")
 	}
 
-	requester := gprovider.NewClient(
+	requester := provider.NewClient(
 		gcoresdk.BASE_URL,
-		gprovider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),
+		provider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),
 	)
-	service := gsslcerts.NewService(requester)
+	service := sslcerts.NewService(requester)
 	return service, nil
 }

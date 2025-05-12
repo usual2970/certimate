@@ -561,8 +561,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderTypeGcoreCDN:
 				deployer, err := pGcoreCDN.NewDeployer(&pGcoreCDN.DeployerConfig{
-					ApiToken:   access.ApiToken,
-					ResourceId: maputil.GetInt64(options.ProviderExtendedConfig, "resourceId"),
+					ApiToken:      access.ApiToken,
+					ResourceId:    maputil.GetInt64(options.ProviderExtendedConfig, "resourceId"),
+					CertificateId: maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
 				})
 				return deployer, err
 
