@@ -7,8 +7,9 @@ import (
 	"log/slog"
 	"strconv"
 
+	"github.com/G-Core/gcorelabscdn-go/gcore"
 	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
-	gresources "github.com/G-Core/gcorelabscdn-go/resources"
+	"github.com/G-Core/gcorelabscdn-go/resources"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -26,7 +27,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *gresources.Service
+	sdkClient   *resources.Service
 	sslUploader uploader.Uploader
 }
 
@@ -91,7 +92,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 更新 CDN 资源详情
 	// REF: https://api.gcore.com/docs/cdn#tag/CDN-resources/operation/change_cdn_resource
 	updateResourceCertId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	updateResourceReq := &gresources.UpdateRequest{
+	updateResourceReq := &resources.UpdateRequest{
 		Description:        getResourceResp.Description,
 		Active:             getResourceResp.Active,
 		OriginGroup:        int(getResourceResp.OriginGroup),
@@ -100,15 +101,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		SSlEnabled:         true,
 		SSLData:            int(updateResourceCertId),
 		ProxySSLEnabled:    getResourceResp.ProxySSLEnabled,
+		Options:            &gcore.Options{},
 	}
 	if getResourceResp.ProxySSLCA != 0 {
 		updateResourceReq.ProxySSLCA = &getResourceResp.ProxySSLCA
 	}
 	if getResourceResp.ProxySSLData != 0 {
 		updateResourceReq.ProxySSLData = &getResourceResp.ProxySSLData
-	}
-	if getResourceResp.Options != nil {
-		updateResourceReq.Options = getResourceResp.Options
 	}
 	updateResourceResp, err := d.sdkClient.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
 	d.logger.Debug("sdk request 'resources.Update'", slog.Int64("resourceId", d.config.ResourceId), slog.Any("request", updateResourceReq), slog.Any("response", updateResourceResp))
@@ -119,7 +118,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiToken string) (*gresources.Service, error) {
+func createSdkClient(apiToken string) (*resources.Service, error) {
 	if apiToken == "" {
 		return nil, errors.New("invalid gcore api token")
 	}
@@ -128,6 +127,6 @@ func createSdkClient(apiToken string) (*gresources.Service, error) {
 		gcoresdk.BASE_URL,
 		gprovider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),
 	)
-	service := gresources.NewService(requester)
+	service := resources.NewService(requester)
 	return service, nil
 }
