@@ -5,6 +5,7 @@ import { z } from "zod";
 
 type DeployNodeConfigFormGcoreCDNConfigFieldValues = Nullish<{
   resourceId: string | number;
+  certificateId?: string | number;
 }>;
 
 export type DeployNodeConfigFormGcoreCDNConfigProps = {
@@ -28,6 +29,13 @@ const DeployNodeConfigFormGcoreCDNConfig = ({ form: formInst, formName, disabled
     resourceId: z.union([z.string(), z.number()]).refine((v) => {
       return /^\d+$/.test(v + "") && +v > 0;
     }, t("workflow_node.deploy.form.gcore_cdn_resource_id.placeholder")),
+    certificateId: z
+      .union([z.string(), z.number().int()])
+      .nullish()
+      .refine((v) => {
+        if (!v) return true;
+        return /^\d+$/.test(v + "") && +v > 0;
+      }, t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -51,6 +59,15 @@ const DeployNodeConfigFormGcoreCDNConfig = ({ form: formInst, formName, disabled
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.gcore_cdn_resource_id.tooltip") }}></span>}
       >
         <Input type="number" placeholder={t("workflow_node.deploy.form.gcore_cdn_resource_id.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="certificateId"
+        label={t("workflow_node.deploy.form.gcore_cdn_certificate_id.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.gcore_cdn_certificate_id.tooltip") }}></span>}
+      >
+        <Input type="number" placeholder={t("workflow_node.deploy.form.gcore_cdn_certificate_id.placeholder")} />
       </Form.Item>
     </Form>
   );

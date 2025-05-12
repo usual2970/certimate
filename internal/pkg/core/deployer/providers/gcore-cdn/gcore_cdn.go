@@ -8,8 +8,9 @@ import (
 	"strconv"
 
 	"github.com/G-Core/gcorelabscdn-go/gcore"
-	gprovider "github.com/G-Core/gcorelabscdn-go/gcore/provider"
+	"github.com/G-Core/gcorelabscdn-go/gcore/provider"
 	"github.com/G-Core/gcorelabscdn-go/resources"
+	"github.com/G-Core/gcorelabscdn-go/sslcerts"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
@@ -22,25 +23,33 @@ type DeployerConfig struct {
 	ApiToken string `json:"apiToken"`
 	// CDN 资源 ID。
 	ResourceId int64 `json:"resourceId"`
+	// 证书 ID。
+	// 选填。
+	CertificateId int64 `json:"certificateId,omitempty"`
 }
 
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *resources.Service
+	sdkClients  *wSdkClients
 	sslUploader uploader.Uploader
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
+
+type wSdkClients struct {
+	Resources *resources.Service
+	SSLCerts  *sslcerts.Service
+}
 
 func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiToken)
+	clients, err := createSdkClients(config.ApiToken)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
@@ -53,7 +62,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	return &DeployerProvider{
 		config:      config,
 		logger:      slog.Default(),
-		sdkClient:   client,
+		sdkClients:  clients,
 		sslUploader: uploader,
 	}, nil
 }
@@ -73,17 +82,47 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, errors.New("config `resourceId` is required")
 	}
 
-	// 上传证书到 CDN
-	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
-	if err != nil {
-		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
+	// 如果原证书 ID 为空，则创建证书；否则更新证书。
+	var cloudCertId int64
+	if d.config.CertificateId == 0 {
+		// 上传证书到 CDN
+		upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
+		if err != nil {
+			return nil, fmt.Errorf("failed to upload certificate file: %w", err)
+		} else {
+			d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
+		}
+
+		cloudCertId, _ = strconv.ParseInt(upres.CertId, 10, 64)
 	} else {
-		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
+		// 获取证书
+		// REF: https://api.gcore.com/docs/cdn#tag/SSL-certificates/paths/~1cdn~1sslData~1%7Bssl_id%7D/get
+		getCertificateDetailResp, err := d.sdkClients.SSLCerts.Get(context.TODO(), d.config.CertificateId)
+		d.logger.Debug("sdk request 'sslcerts.Get'", slog.Any("sslId", d.config.CertificateId), slog.Any("response", getCertificateDetailResp))
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute sdk request 'sslcerts.Get': %w", err)
+		}
+
+		// 更新证书
+		// REF: https://api.gcore.com/docs/cdn#tag/SSL-certificates/paths/~1cdn~1sslData~1%7Bssl_id%7D/get
+		changeCertificateReq := &sslcerts.UpdateRequest{
+			Name:           getCertificateDetailResp.Name,
+			Cert:           certPEM,
+			PrivateKey:     privkeyPEM,
+			ValidateRootCA: false,
+		}
+		changeCertificateResp, err := d.sdkClients.SSLCerts.Update(context.TODO(), getCertificateDetailResp.ID, changeCertificateReq)
+		d.logger.Debug("sdk request 'sslcerts.Create'", slog.Any("request", changeCertificateReq), slog.Any("response", changeCertificateResp))
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute sdk request 'sslcerts.Update': %w", err)
+		}
+
+		cloudCertId = changeCertificateResp.ID
 	}
 
 	// 获取 CDN 资源详情
 	// REF: https://api.gcore.com/docs/cdn#tag/CDN-resources/paths/~1cdn~1resources~1%7Bresource_id%7D/get
-	getResourceResp, err := d.sdkClient.Get(context.TODO(), d.config.ResourceId)
+	getResourceResp, err := d.sdkClients.Resources.Get(context.TODO(), d.config.ResourceId)
 	d.logger.Debug("sdk request 'resources.Get'", slog.Any("resourceId", d.config.ResourceId), slog.Any("response", getResourceResp))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'resources.Get': %w", err)
@@ -91,7 +130,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 	// 更新 CDN 资源详情
 	// REF: https://api.gcore.com/docs/cdn#tag/CDN-resources/operation/change_cdn_resource
-	updateResourceCertId, _ := strconv.ParseInt(upres.CertId, 10, 64)
 	updateResourceReq := &resources.UpdateRequest{
 		Description:        getResourceResp.Description,
 		Active:             getResourceResp.Active,
@@ -99,7 +137,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		OriginProtocol:     getResourceResp.OriginProtocol,
 		SecondaryHostnames: getResourceResp.SecondaryHostnames,
 		SSlEnabled:         true,
-		SSLData:            int(updateResourceCertId),
+		SSLData:            int(cloudCertId),
 		ProxySSLEnabled:    getResourceResp.ProxySSLEnabled,
 		Options:            &gcore.Options{},
 	}
@@ -109,7 +147,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	if getResourceResp.ProxySSLData != 0 {
 		updateResourceReq.ProxySSLData = &getResourceResp.ProxySSLData
 	}
-	updateResourceResp, err := d.sdkClient.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
+	updateResourceResp, err := d.sdkClients.Resources.Update(context.TODO(), d.config.ResourceId, updateResourceReq)
 	d.logger.Debug("sdk request 'resources.Update'", slog.Int64("resourceId", d.config.ResourceId), slog.Any("request", updateResourceReq), slog.Any("response", updateResourceResp))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'resources.Update': %w", err)
@@ -118,15 +156,19 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiToken string) (*resources.Service, error) {
+func createSdkClients(apiToken string) (*wSdkClients, error) {
 	if apiToken == "" {
 		return nil, errors.New("invalid gcore api token")
 	}
 
-	requester := gprovider.NewClient(
+	requester := provider.NewClient(
 		gcoresdk.BASE_URL,
-		gprovider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),
+		provider.WithSigner(gcoresdk.NewAuthRequestSigner(apiToken)),
 	)
-	service := resources.NewService(requester)
-	return service, nil
+	resourcesSrv := resources.NewService(requester)
+	sslCertsSrv := sslcerts.NewService(requester)
+	return &wSdkClients{
+		Resources: resourcesSrv,
+		SSLCerts:  sslCertsSrv,
+	}, nil
 }

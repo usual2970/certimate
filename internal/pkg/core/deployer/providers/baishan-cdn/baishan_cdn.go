@@ -63,6 +63,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, errors.New("config `domain` is required")
 	}
 
+	// 如果原证书 ID 为空，则新增证书；否则替换证书。
 	if d.config.CertificateId == "" {
 		// 新增证书
 		// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
