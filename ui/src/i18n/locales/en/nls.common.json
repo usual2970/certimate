@@ -11,6 +11,7 @@
   "common.button.submit": "Submit",
 
   "common.text.copied": "Copied",
+  "common.text.import_from_file": "Import from file ...",
   "common.text.nodata": "No data available",
   "common.text.operation_confirm": "Operation confirm",
   "common.text.operation_succeeded": "Operation succeeded",

@@ -11,6 +11,7 @@
   "common.button.submit": "提交",
 
   "common.text.copied": "已复制",
+  "common.text.import_from_file": "从文件导入 ……",
   "common.text.nodata": "暂无数据",
   "common.text.operation_confirm": "操作确认",
   "common.text.operation_succeeded": "操作成功",
