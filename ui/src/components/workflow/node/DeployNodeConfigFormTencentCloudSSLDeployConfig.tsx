@@ -51,7 +51,7 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
       if (!v) return false;
       return String(v)
         .split(MULTIPLE_INPUT_DELIMITER)
-        .every((e) => /^[A-Za-z0-9*._-]+$/.test(e));
+        .every((e) => /^[A-Za-z0-9*._-|]+$/.test(e));
     }, t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
@@ -138,7 +138,7 @@ const ResourceIdsModalInput = memo(({ value, trigger, onChange }: { value?: stri
 
   const formSchema = z.object({
     resourceIds: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || /^[A-Za-z0-9*._-]+$/.test(e));
+      return v.every((e) => !e?.trim() || /^[A-Za-z0-9*._-|]+$/.test(e));
     }, t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
