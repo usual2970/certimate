@@ -108,7 +108,7 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
             rules={[formRule]}
           >
             <Input.TextArea
-              autoSize={{ minRows: 3, maxRows: 5 }}
+              autoSize={{ minRows: 3, maxRows: 10 }}
               placeholder={t("settings.notification.template.form.message.placeholder")}
               onChange={handleInputChange}
             />

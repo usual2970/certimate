@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Alert, Form, type FormInstance, Input } from "antd";
+import { Alert, Form, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
+
+import CodeInput from "@/components/CodeInput";
 
 type DeployNodeConfigFormWebhookConfigFieldValues = Nullish<{
   webhookData: string;
@@ -39,8 +41,8 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
   });
   const formRule = createSchemaFieldRule(formSchema);
 
-  const handleWebhookDataBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
+  const handleWebhookDataBlur = () => {
+    const value = formInst.getFieldValue("webhookData");
     try {
       const json = JSON.stringify(JSON.parse(value), null, 2);
       formInst.setFieldValue("webhookData", json);
@@ -68,9 +70,11 @@ const DeployNodeConfigFormWebhookConfig = ({ form: formInst, formName, disabled,
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.webhook_data.tooltip") }}></span>}
       >
-        <Input.TextArea
-          allowClear
-          autoSize={{ minRows: 3, maxRows: 10 }}
+        <CodeInput
+          height="auto"
+          minHeight="64px"
+          maxHeight="256px"
+          language="json"
           placeholder={t("workflow_node.deploy.form.webhook_data.placeholder")}
           onBlur={handleWebhookDataBlur}
         />

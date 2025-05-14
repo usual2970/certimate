@@ -4,6 +4,7 @@ import { Button, Dropdown, Form, type FormInstance, Input, Select, Switch } from
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import CodeInput from "@/components/CodeInput";
 import Show from "@/components/Show";
 import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 
@@ -278,7 +279,13 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           </div>
         </label>
         <Form.Item name="preCommand" rules={[formRule]}>
-          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")} />
+          <CodeInput
+            height="auto"
+            minHeight="64px"
+            maxHeight="256px"
+            language={["shell", "powershell"]}
+            placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")}
+          />
         </Form.Item>
       </Form.Item>
 
@@ -308,7 +315,13 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           </div>
         </label>
         <Form.Item name="postCommand" rules={[formRule]}>
-          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_post_command.placeholder")} />
+          <CodeInput
+            height="auto"
+            minHeight="64px"
+            maxHeight="256px"
+            language={["shell", "powershell"]}
+            placeholder={t("workflow_node.deploy.form.ssh_post_command.placeholder")}
+          />
         </Form.Item>
       </Form.Item>
 
