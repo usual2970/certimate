@@ -13,13 +13,15 @@ import { initPresetScript } from "./DeployNodeConfigFormLocalConfig";
 type DeployNodeConfigFormSSHConfigFieldValues = Nullish<{
   format: string;
   certPath: string;
-  keyPath?: string | null;
-  pfxPassword?: string | null;
-  jksAlias?: string | null;
-  jksKeypass?: string | null;
-  jksStorepass?: string | null;
-  preCommand?: string | null;
-  postCommand?: string | null;
+  certPathForServerOnly?: string;
+  certPathForIntermediaOnly?: string;
+  keyPath?: string;
+  pfxPassword?: string;
+  jksAlias?: string;
+  jksKeypass?: string;
+  jksStorepass?: string;
+  preCommand?: string;
+  postCommand?: string;
   useSCP?: boolean;
 }>;
 
@@ -61,6 +63,16 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
       .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PEM || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_key_path.tooltip") }),
+    certPathForServerOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
+    certPathForIntermediaOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
     pfxPassword: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
@@ -207,6 +219,24 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
         >
           <Input placeholder={t("workflow_node.deploy.form.ssh_key_path.placeholder")} />
         </Form.Item>
+
+        <Form.Item
+          name="certPathForServerOnly"
+          label={t("workflow_node.deploy.form.ssh_servercert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_servercert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.ssh_servercert_path.placeholder")} />
+        </Form.Item>
+
+        <Form.Item
+          name="certPathForIntermediaOnly"
+          label={t("workflow_node.deploy.form.ssh_intermediacert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_intermediacert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.ssh_intermediacert_path.placeholder")} />
+        </Form.Item>
       </Show>
 
       <Show when={fieldFormat === FORMAT_PFX}>
@@ -248,10 +278,6 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           <Input placeholder={t("workflow_node.deploy.form.ssh_jks_storepass.placeholder")} />
         </Form.Item>
       </Show>
-
-      <Form.Item label={t("workflow_node.deploy.form.ssh_shell_env.label")}>
-        <Select options={[{ value: t("workflow_node.deploy.form.ssh_shell_env.value") }]} value={t("workflow_node.deploy.form.ssh_shell_env.value")} />
-      </Form.Item>
 
       <Form.Item className="mb-0" htmlFor="null">
         <label className="mb-1 block">

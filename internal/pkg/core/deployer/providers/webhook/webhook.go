@@ -75,6 +75,12 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, fmt.Errorf("failed to parse x509: %w", err)
 	}
 
+	// 提取服务器证书和中间证书
+	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract certs: %w", err)
+	}
+
 	// 处理 Webhook URL
 	webhookUrl, err := url.Parse(d.config.WebhookUrl)
 	if err != nil {
@@ -134,6 +140,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		replaceJsonValueRecursively(webhookData, "${DOMAIN}", certX509.Subject.CommonName)
 		replaceJsonValueRecursively(webhookData, "${DOMAINS}", strings.Join(certX509.DNSNames, ";"))
 		replaceJsonValueRecursively(webhookData, "${CERTIFICATE}", certPEM)
+		replaceJsonValueRecursively(webhookData, "${SERVER_CERTIFICATE}", serverCertPEM)
+		replaceJsonValueRecursively(webhookData, "${INTERMEDIA_CERTIFICATE}", intermediaCertPEM)
 		replaceJsonValueRecursively(webhookData, "${PRIVATE_KEY}", privkeyPEM)
 
 		if webhookMethod == http.MethodGet || webhookContentType == CONTENT_TYPE_FORM || webhookContentType == CONTENT_TYPE_MULTIPART {

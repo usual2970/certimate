@@ -11,14 +11,16 @@ import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 type DeployNodeConfigFormLocalConfigFieldValues = Nullish<{
   format: string;
   certPath: string;
-  keyPath?: string | null;
-  pfxPassword?: string | null;
-  jksAlias?: string | null;
-  jksKeypass?: string | null;
-  jksStorepass?: string | null;
-  shellEnv?: string | null;
-  preCommand?: string | null;
-  postCommand?: string | null;
+  certPathForServerOnly?: string;
+  certPathForIntermediaOnly?: string;
+  keyPath?: string;
+  pfxPassword?: string;
+  jksAlias?: string;
+  jksKeypass?: string;
+  jksStorepass?: string;
+  shellEnv?: string;
+  preCommand?: string;
+  postCommand?: string;
 }>;
 
 export type DeployNodeConfigFormLocalConfigProps = {
@@ -160,6 +162,16 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
       .min(1, t("workflow_node.deploy.form.local_cert_path.tooltip"))
       .max(256, t("common.errmsg.string_max", { max: 256 }))
       .trim(),
+    certPathForServerOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
+    certPathForIntermediaOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
     keyPath: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
@@ -325,6 +337,24 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_key_path.tooltip") }}></span>}
         >
           <Input placeholder={t("workflow_node.deploy.form.local_key_path.placeholder")} />
+        </Form.Item>
+
+        <Form.Item
+          name="certPathForServerOnly"
+          label={t("workflow_node.deploy.form.local_servercert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_servercert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.local_servercert_path.placeholder")} />
+        </Form.Item>
+
+        <Form.Item
+          name="certPathForIntermediaOnly"
+          label={t("workflow_node.deploy.form.local_intermediacert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_intermediacert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.local_intermediacert_path.placeholder")} />
         </Form.Item>
       </Show>
 
