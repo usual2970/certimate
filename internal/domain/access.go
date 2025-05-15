@@ -205,6 +205,10 @@ type AccessConfigForNetcup struct {
 	ApiPassword    string `json:"apiPassword"`
 }
 
+type AccessConfigForNetlify struct {
+	ApiToken string `json:"apiToken"`
+}
+
 type AccessConfigForNS1 struct {
 	ApiKey string `json:"apiKey"`
 }

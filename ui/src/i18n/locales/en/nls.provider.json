@@ -91,6 +91,7 @@
   "provider.namedotcom": "Name.com",
   "provider.namesilo": "NameSilo",
   "provider.netcup": "netcup",
+  "provider.netlify": "netlify",
   "provider.ns1": "NS1 (IBM NS1 Connect)",
   "provider.porkbun": "Porkbun",
   "provider.powerdns": "PowerDNS",
