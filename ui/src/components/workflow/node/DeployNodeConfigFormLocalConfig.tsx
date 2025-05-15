@@ -52,6 +52,8 @@ export const initPresetScript = (
   key: "sh_backup_files" | "ps_backup_files" | "sh_reload_nginx" | "ps_binding_iis" | "ps_binding_netsh" | "ps_binding_rdp",
   params?: {
     certPath?: string;
+    certPathForServerOnly?: string;
+    certPathForIntermediaOnly?: string;
     keyPath?: string;
     pfxPassword?: string;
     jksAlias?: string;
@@ -77,18 +79,21 @@ if (Test-Path -Path "${params?.keyPath || "<your-key-path>"}" -PathType Leaf) {
       `.trim();
 
     case "sh_reload_nginx":
-      return `sudo service nginx reload`;
+      return `# *** 需要 root 权限 ***
+
+sudo service nginx reload
+      `.trim();
 
     case "ps_binding_iis":
-      return `# 需要管理员权限
+      return `# *** 需要管理员权限 ***
+
 # 请将以下变量替换为实际值
-$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径（与表单中保持一致）
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码（与表单中保持一致）
 $siteName = "<your-site-name>" # IIS 网站名称
 $domain = "<your-domain-name>" # 域名
 $ipaddr = "<your-binding-ip>"  # 绑定 IP，“*”表示所有 IP 绑定
 $port = "<your-binding-port>"  # 绑定端口
-
 
 # 导入证书到本地计算机的个人存储区
 $cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
@@ -111,16 +116,16 @@ Remove-Item -Path "$pfxPath" -Force
       `.trim();
 
     case "ps_binding_netsh":
-      return `# 需要管理员权限
+      return `# *** 需要管理员权限 ***
+
 # 请将以下变量替换为实际值
-$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
-$ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名。
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径（与表单中保持一致）
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码（与表单中保持一致）
+$ipaddr = "<your-binding-ip>"  # 绑定 IP，“0.0.0.0”表示所有 IP 绑定，可填入域名
 $port = "<your-binding-port>"  # 绑定端口
 
-$addr = $ipaddr + ":" + $port
-
 # 导入证书到本地计算机的个人存储区
+$addr = $ipaddr + ":" + $port
 $cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
 # 获取 Thumbprint
 $thumbprint = $cert.Thumbprint
@@ -134,10 +139,11 @@ Remove-Item -Path "$pfxPath" -Force
       `.trim();
 
     case "ps_binding_rdp":
-      return `# 需要管理员权限
+      return `# *** 需要管理员权限 ***
+
 # 请将以下变量替换为实际值
-$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径
-$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码
+$pfxPath = "${params?.certPath || "<your-cert-path>"}" # PFX 文件路径（与表单中保持一致）
+$pfxPassword = "${params?.pfxPassword || "<your-pfx-password>"}" # PFX 密码（与表单中保持一致）
 
 # 导入证书到本地计算机的个人存储区
 $cert = Import-PfxCertificate -FilePath "$pfxPath" -CertStoreLocation Cert:\\LocalMachine\\My -Password (ConvertTo-SecureString -String "$pfxPassword" -AsPlainText -Force) -Exportable
