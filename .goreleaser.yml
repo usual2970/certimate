@@ -36,7 +36,7 @@ release:
 archives:
   - id: archive_noncgo
     builds: [build_noncgo]
-    format: zip
+    format: "zip"
     files:
       - CHANGELOG.md
       - LICENSE.md
