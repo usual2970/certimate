@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input, Switch } from "antd";
+import { Form, type FormInstance, Input, Radio, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -18,6 +18,7 @@ export type AccessFormGoEdgeConfigProps = {
 const initFormModel = (): AccessFormGoEdgeConfigFieldValues => {
   return {
     apiUrl: "http://<your-host-addr>:7788/",
+    apiRole: "user",
     accessKeyId: "",
     accessKey: "",
   };
@@ -28,6 +29,9 @@ const AccessFormGoEdgeConfig = ({ form: formInst, formName, disabled, initialVal
 
   const formSchema = z.object({
     apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    role: z.union([z.literal("user"), z.literal("admin")], {
+      message: t("access.form.goedge_api_role.placeholder"),
+    }),
     accessKeyId: z
       .string()
       .min(1, t("access.form.goedge_access_key_id.placeholder"))
@@ -57,6 +61,10 @@ const AccessFormGoEdgeConfig = ({ form: formInst, formName, disabled, initialVal
     >
       <Form.Item name="apiUrl" label={t("access.form.goedge_api_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.goedge_api_url.placeholder")} />
+      </Form.Item>
+
+      <Form.Item name="apiRole" label={t("access.form.goedge_api_role.label")} rules={[formRule]}>
+        <Radio.Group options={["user", "admin"].map((s) => ({ label: t(`access.form.goedge_api_role.option.${s}.label`), value: s }))} />
       </Form.Item>
 
       <Form.Item

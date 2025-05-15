@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { UploadOutlined as UploadOutlinedIcon } from "@ant-design/icons";
-import { Button, Form, type FormInstance, Input, InputNumber, Upload, type UploadFile, type UploadProps } from "antd";
+import { Form, type FormInstance, Input, InputNumber } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import TextFileInput from "@/components/TextFileInput";
 import { type AccessConfigForSSH } from "@/domain/access";
-import { readFileContent } from "@/utils/file";
 import { validDomainName, validIPv4Address, validIPv6Address, validPortNumber } from "@/utils/validators";
 
 type AccessFormSSHConfigFieldValues = Nullish<AccessConfigForSSH>;
@@ -59,24 +57,6 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
   });
   const formRule = createSchemaFieldRule(formSchema);
 
-  const fieldKey = Form.useWatch("key", formInst);
-  const [fieldKeyFileList, setFieldKeyFileList] = useState<UploadFile[]>([]);
-  useEffect(() => {
-    setFieldKeyFileList(initialValues?.key?.trim() ? [{ uid: "-1", name: "sshkey", status: "done" }] : []);
-  }, [initialValues?.key]);
-
-  const handleKeyFileChange: UploadProps["onChange"] = async ({ file }) => {
-    if (file && file.status !== "removed") {
-      formInst.setFieldValue("key", await readFileContent(file.originFileObj ?? (file as unknown as File)));
-      setFieldKeyFileList([file]);
-    } else {
-      formInst.setFieldValue("key", "");
-      setFieldKeyFileList([]);
-    }
-
-    onValuesChange?.(formInst.getFieldsValue(true));
-  };
-
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values);
   };
@@ -104,48 +84,36 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
         </div>
       </div>
 
-      <div className="flex space-x-2">
-        <div className="w-1/2">
-          <Form.Item name="username" label={t("access.form.ssh_username.label")} rules={[formRule]}>
-            <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
-          </Form.Item>
-        </div>
+      <Form.Item name="username" label={t("access.form.ssh_username.label")} rules={[formRule]}>
+        <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
+      </Form.Item>
 
-        <div className="w-1/2">
-          <Form.Item
-            name="password"
-            label={t("access.form.ssh_password.label")}
-            rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_password.tooltip") }}></span>}
-          >
-            <Input.Password autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
-          </Form.Item>
-        </div>
-      </div>
+      <Form.Item
+        name="password"
+        label={t("access.form.ssh_password.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_password.tooltip") }}></span>}
+      >
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
+      </Form.Item>
 
-      <div className="flex space-x-2">
-        <div className="w-1/2">
-          <Form.Item name="key" noStyle rules={[formRule]}>
-            <Input.TextArea autoComplete="new-password" hidden placeholder={t("access.form.ssh_key.placeholder")} value={fieldKey} />
-          </Form.Item>
-          <Form.Item label={t("access.form.ssh_key.label")} tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}>
-            <Upload beforeUpload={() => false} fileList={fieldKeyFileList} maxCount={1} onChange={handleKeyFileChange}>
-              <Button icon={<UploadOutlinedIcon />}>{t("access.form.ssh_key.upload")}</Button>
-            </Upload>
-          </Form.Item>
-        </div>
+      <Form.Item
+        name="key"
+        label={t("access.form.ssh_key.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}
+      >
+        <TextFileInput allowClear autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("access.form.ssh_key.placeholder")} />
+      </Form.Item>
 
-        <div className="w-1/2">
-          <Form.Item
-            name="keyPassphrase"
-            label={t("access.form.ssh_key_passphrase.label")}
-            rules={[formRule]}
-            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key_passphrase.tooltip") }}></span>}
-          >
-            <Input.Password autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
-          </Form.Item>
-        </div>
-      </div>
+      <Form.Item
+        name="keyPassphrase"
+        label={t("access.form.ssh_key_passphrase.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key_passphrase.tooltip") }}></span>}
+      >
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
+      </Form.Item>
     </Form>
   );
 };

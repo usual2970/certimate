@@ -9,7 +9,7 @@ import (
 
 func (c *Client) getAccessToken() error {
 	req := &getAPIAccessTokenRequest{
-		Type:        c.apiUserType,
+		Type:        c.apiRole,
 		AccessKeyId: c.accessKeyId,
 		AccessKey:   c.accessKey,
 	}

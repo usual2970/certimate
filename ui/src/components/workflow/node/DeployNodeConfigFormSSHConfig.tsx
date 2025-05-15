@@ -4,21 +4,24 @@ import { Button, Dropdown, Form, type FormInstance, Input, Select, Switch } from
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import CodeInput from "@/components/CodeInput";
 import Show from "@/components/Show";
 import { CERTIFICATE_FORMATS } from "@/domain/certificate";
 
-import { initPresetScript } from "./DeployNodeConfigFormLocalConfig";
+import { initPresetScript as _initPresetScript } from "./DeployNodeConfigFormLocalConfig";
 
 type DeployNodeConfigFormSSHConfigFieldValues = Nullish<{
   format: string;
   certPath: string;
-  keyPath?: string | null;
-  pfxPassword?: string | null;
-  jksAlias?: string | null;
-  jksKeypass?: string | null;
-  jksStorepass?: string | null;
-  preCommand?: string | null;
-  postCommand?: string | null;
+  certPathForServerOnly?: string;
+  certPathForIntermediaOnly?: string;
+  keyPath?: string;
+  pfxPassword?: string;
+  jksAlias?: string;
+  jksKeypass?: string;
+  jksStorepass?: string;
+  preCommand?: string;
+  postCommand?: string;
   useSCP?: boolean;
 }>;
 
@@ -42,6 +45,126 @@ const initFormModel = (): DeployNodeConfigFormSSHConfigFieldValues => {
   };
 };
 
+const initPresetScript = (
+  key: Parameters<typeof _initPresetScript>[0] | "sh_replace_synologydsm_ssl" | "sh_replace_fnos_ssl",
+  params?: Parameters<typeof _initPresetScript>[1]
+) => {
+  switch (key) {
+    case "sh_replace_synologydsm_ssl":
+      return `# *** 需要 root 权限 ***
+# 脚本参考 https://github.com/catchdave/ssl-certs/blob/main/replace_synology_ssl_certs.sh
+
+# 请将以下变量替换为实际值
+$tmpFullchainPath = "${params?.certPath || "<your-fullchain-cert-path>"}" # 证书文件路径（与表单中保持一致）
+$tmpCertPath = "${params?.certPathForServerOnly || "<your-server-cert-path>"}" # 服务器证书文件路径（与表单中保持一致）
+$tmpKeyPath = "${params?.keyPath || "<your-key-path>"}" # 私钥文件路径（与表单中保持一致）
+
+DEBUG=1
+error_exit() { echo "[ERROR] $1"; exit 1; }
+warn() { echo "[WARN] $1"; }
+info() { echo "[INFO] $1"; }
+debug() { [[ "\${DEBUG}" ]] && echo "[DEBUG] $1"; }
+
+certs_src_dir="/usr/syno/etc/certificate/system/default"
+target_cert_dirs=(
+  "/usr/syno/etc/certificate/system/FQDN"
+  "/usr/local/etc/certificate/ScsiTarget/pkg-scsi-plugin-server/"
+  "/usr/local/etc/certificate/SynologyDrive/SynologyDrive/"
+  "/usr/local/etc/certificate/WebDAVServer/webdav/"
+  "/usr/local/etc/certificate/ActiveBackup/ActiveBackup/"
+  "/usr/syno/etc/certificate/smbftpd/ftpd/")
+
+# 获取证书目录
+default_dir_name=$(</usr/syno/etc/certificate/_archive/DEFAULT)
+if [[ -n "$default_dir_name" ]]; then
+  target_cert_dirs+=("/usr/syno/etc/certificate/_archive/\${default_dir_name}")
+  debug "Default cert directory found: '/usr/syno/etc/certificate/_archive/\${default_dir_name}'"
+else
+  warn "No default directory found. Probably unusual? Check: 'cat /usr/syno/etc/certificate/_archive/DEFAULT'"
+fi
+
+# 获取反向代理证书目录
+for proxy in /usr/syno/etc/certificate/ReverseProxy/*/; do
+  debug "Found proxy dir: \${proxy}"
+  target_cert_dirs+=("\${proxy}")
+done
+
+[[ "\${DEBUG}" ]] && set -x
+
+# 复制文件
+cp -rf "$tmpFullchainPath" "\${certs_src_dir}/fullchain.pem" || error_exit "Halting because of error moving fullchain file"
+cp -rf "$tmpCertPath" "\${certs_src_dir}/cert.pem" || error_exit "Halting because of error moving cert file"
+cp -rf "$tmpKeyPath" "\${certs_src_dir}/privkey.pem" || error_exit "Halting because of error moving privkey file"
+chown root:root "\${certs_src_dir}/"{privkey,fullchain,cert}.pem || error_exit "Halting because of error chowning files"
+info "Certs moved from /tmp & chowned."
+
+# 替换证书
+for target_dir in "\${target_cert_dirs[@]}"; do
+  if [[ ! -d "$target_dir" ]]; then
+    debug "Target cert directory '$target_dir' not found, skipping..."
+    continue
+  fi
+  info "Copying certificates to '$target_dir'"
+  if ! (cp "\${certs_src_dir}/"{privkey,fullchain,cert}.pem "$target_dir/" && \
+    chown root:root "$target_dir/"{privkey,fullchain,cert}.pem); then
+      warn "Error copying or chowning certs to \${target_dir}"
+  fi
+done
+
+# 重启服务
+info "Rebooting all the things..."
+/usr/syno/bin/synosystemctl restart nmbd
+/usr/syno/bin/synosystemctl restart avahi
+/usr/syno/bin/synosystemctl restart ldap-server
+/usr/syno/bin/synopkg is_onoff ScsiTarget 1>/dev/null && /usr/syno/bin/synopkg restart ScsiTarget
+/usr/syno/bin/synopkg is_onoff SynologyDrive 1>/dev/null && /usr/syno/bin/synopkg restart SynologyDrive
+/usr/syno/bin/synopkg is_onoff WebDAVServer 1>/dev/null && /usr/syno/bin/synopkg restart WebDAVServer
+/usr/syno/bin/synopkg is_onoff ActiveBackup 1>/dev/null && /usr/syno/bin/synopkg restart ActiveBackup
+if ! /usr/syno/bin/synow3tool --gen-all && sudo /usr/syno/bin/synosystemctl restart nginx; then
+  warn "nginx failed to restart"
+fi
+
+info "Completed"
+      `.trim();
+
+    case "sh_replace_fnos_ssl":
+      return `# *** 需要 root 权限 ***
+# 脚本参考 https://github.com/lfgyx/fnos_certificate_update/blob/main/src/update_cert.sh
+
+
+# 请将以下变量替换为实际值
+# 飞牛证书实际存放路径请在 \`/usr/trim/etc/network_cert_all.conf\` 中查看，注意不要修改文件名
+$tmpFullchainPath = "${params?.certPath || "<your-fullchain-cert-path>"}" # 证书文件路径（与表单中保持一致）
+$tmpCertPath = "${params?.certPathForServerOnly || "<your-server-cert-path>"}" # 服务器证书文件路径（与表单中保持一致）
+$tmpKeyPath = "${params?.keyPath || "<your-key-path>"}" # 私钥文件路径（与表单中保持一致）
+$fnFullchainPath = "/usr/trim/var/trim_connect/ssls/example.com/1234567890/fullchain.crt" # 飞牛证书文件路径
+$fnCertPath = "/usr/trim/var/trim_connect/ssls/example.com/1234567890/example.com.crt" # 飞牛服务器证书文件路径
+$fnKeyPath = "/usr/trim/var/trim_connect/ssls/example.com/1234567890/example.com.key" # 飞牛私钥文件路径
+$domain = "<your-domain-name>" # 域名
+
+# 复制文件
+cp -rf "$tmpFullchainPath" "$fnFullchainPath"
+cp -rf "$tmpCertPath" "$fnCertPath"
+cp -rf "$tmpKeyPath" "$fnKeyPath"
+chmod 755 "$fnCertPath"
+chmod 755 "$fnKeyPath"
+chmod 755 "$fnFullchainPath"
+
+# 更新数据库
+NEW_EXPIRY_DATE=$(openssl x509 -enddate -noout -in "$fnCertPath" | sed "s/^.*=\\(.*\\)$/\\1/")
+NEW_EXPIRY_TIMESTAMP=$(date -d "$NEW_EXPIRY_DATE" +%s%3N)
+psql -U postgres -d trim_connect -c "UPDATE cert SET valid_to=$NEW_EXPIRY_TIMESTAMP WHERE domain='$domain'"
+
+# 重启服务
+systemctl restart webdav.service
+systemctl restart smbftpd.service
+systemctl restart trim_nginx.service
+      `.trim();
+  }
+
+  return _initPresetScript(key as Parameters<typeof _initPresetScript>[0], params);
+};
+
 const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormSSHConfigProps) => {
   const { t } = useTranslation();
 
@@ -60,6 +183,16 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
       .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PEM || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_key_path.tooltip") }),
+    certPathForServerOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
+    certPathForIntermediaOnly: z
+      .string()
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim()
+      .nullish(),
     pfxPassword: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
@@ -147,6 +280,24 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
   const handlePresetPostScriptClick = (key: string) => {
     switch (key) {
       case "sh_reload_nginx":
+        {
+          formInst.setFieldValue("postCommand", initPresetScript(key));
+        }
+        break;
+
+      case "sh_replace_synologydsm_ssl":
+      case "sh_replace_fnos_ssl":
+        {
+          const presetScriptParams = {
+            certPath: formInst.getFieldValue("certPath"),
+            certPathForServerOnly: formInst.getFieldValue("certPathForServerOnly"),
+            certPathForIntermediaOnly: formInst.getFieldValue("certPathForIntermediaOnly"),
+            keyPath: formInst.getFieldValue("keyPath"),
+          };
+          formInst.setFieldValue("postCommand", initPresetScript(key, presetScriptParams));
+        }
+        break;
+
       case "ps_binding_iis":
       case "ps_binding_netsh":
       case "ps_binding_rdp":
@@ -206,6 +357,24 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
         >
           <Input placeholder={t("workflow_node.deploy.form.ssh_key_path.placeholder")} />
         </Form.Item>
+
+        <Form.Item
+          name="certPathForServerOnly"
+          label={t("workflow_node.deploy.form.ssh_servercert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_servercert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.ssh_servercert_path.placeholder")} />
+        </Form.Item>
+
+        <Form.Item
+          name="certPathForIntermediaOnly"
+          label={t("workflow_node.deploy.form.ssh_intermediacert_path.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_intermediacert_path.tooltip") }}></span>}
+        >
+          <Input placeholder={t("workflow_node.deploy.form.ssh_intermediacert_path.placeholder")} />
+        </Form.Item>
       </Show>
 
       <Show when={fieldFormat === FORMAT_PFX}>
@@ -248,10 +417,6 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
         </Form.Item>
       </Show>
 
-      <Form.Item label={t("workflow_node.deploy.form.ssh_shell_env.label")}>
-        <Select options={[{ value: t("workflow_node.deploy.form.ssh_shell_env.value") }]} value={t("workflow_node.deploy.form.ssh_shell_env.value")} />
-      </Form.Item>
-
       <Form.Item className="mb-0" htmlFor="null">
         <label className="mb-1 block">
           <div className="flex w-full items-center justify-between gap-4">
@@ -278,7 +443,13 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           </div>
         </label>
         <Form.Item name="preCommand" rules={[formRule]}>
-          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")} />
+          <CodeInput
+            height="auto"
+            minHeight="64px"
+            maxHeight="256px"
+            language={["shell", "powershell"]}
+            placeholder={t("workflow_node.deploy.form.ssh_pre_command.placeholder")}
+          />
         </Form.Item>
       </Form.Item>
 
@@ -291,11 +462,13 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: ["sh_reload_nginx", "ps_binding_iis", "ps_binding_netsh", "ps_binding_rdp"].map((key) => ({
-                    key,
-                    label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
-                    onClick: () => handlePresetPostScriptClick(key),
-                  })),
+                  items: ["sh_reload_nginx", "sh_replace_synologydsm_ssl", "sh_replace_fnos_ssl", "ps_binding_iis", "ps_binding_netsh", "ps_binding_rdp"].map(
+                    (key) => ({
+                      key,
+                      label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
+                      onClick: () => handlePresetPostScriptClick(key),
+                    })
+                  ),
                 }}
                 trigger={["click"]}
               >
@@ -308,7 +481,13 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           </div>
         </label>
         <Form.Item name="postCommand" rules={[formRule]}>
-          <Input.TextArea autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("workflow_node.deploy.form.ssh_post_command.placeholder")} />
+          <CodeInput
+            height="auto"
+            minHeight="64px"
+            maxHeight="256px"
+            language={["shell", "powershell"]}
+            placeholder={t("workflow_node.deploy.form.ssh_post_command.placeholder")}
+          />
         </Form.Item>
       </Form.Item>
 

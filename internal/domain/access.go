@@ -149,6 +149,7 @@ type AccessConfigForGoDaddy struct {
 
 type AccessConfigForGoEdge struct {
 	ApiUrl                   string `json:"apiUrl"`
+	ApiRole                  string `json:"apiRole"`
 	AccessKeyId              string `json:"accessKeyId"`
 	AccessKey                string `json:"accessKey"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`

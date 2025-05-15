@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"strings"
 
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	alislb "github.com/alibabacloud-go/slb-20140515/v4/client"
@@ -310,22 +309,10 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alislb.Clien
 }
 
 func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
-	casRegion := region
-	if casRegion != "" {
-		// 阿里云 CAS 服务接入点是独立于 CLB 服务的
-		// 国内版固定接入点：华东一杭州
-		// 国际版固定接入点：亚太东南一新加坡
-		if !strings.HasPrefix(casRegion, "cn-") {
-			casRegion = "ap-southeast-1"
-		} else {
-			casRegion = "cn-hangzhou"
-		}
-	}
-
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
-		Region:          casRegion,
+		Region:          region,
 	})
 	return uploader, err
 }

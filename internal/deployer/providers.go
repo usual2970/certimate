@@ -581,6 +581,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
 				ApiUrl:                   access.ApiUrl,
+				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
@@ -693,16 +694,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeLocal:
 		{
 			deployer, err := pLocal.NewDeployer(&pLocal.DeployerConfig{
-				ShellEnv:       pLocal.ShellEnvType(maputil.GetString(options.ProviderExtendedConfig, "shellEnv")),
-				PreCommand:     maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
-				PostCommand:    maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
-				OutputFormat:   pLocal.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
-				OutputCertPath: maputil.GetString(options.ProviderExtendedConfig, "certPath"),
-				OutputKeyPath:  maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
-				PfxPassword:    maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
-				JksAlias:       maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
-				JksKeypass:     maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
-				JksStorepass:   maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
+				ShellEnv:                 pLocal.ShellEnvType(maputil.GetString(options.ProviderExtendedConfig, "shellEnv")),
+				PreCommand:               maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
+				PostCommand:              maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
+				OutputFormat:             pLocal.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           maputil.GetString(options.ProviderExtendedConfig, "certPath"),
+				OutputServerCertPath:     maputil.GetString(options.ProviderExtendedConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: maputil.GetString(options.ProviderExtendedConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
+				PfxPassword:              maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
+				JksAlias:                 maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
+				JksKeypass:               maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
+				JksStorepass:             maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}
@@ -819,22 +822,24 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pSSH.NewDeployer(&pSSH.DeployerConfig{
-				SshHost:          access.Host,
-				SshPort:          access.Port,
-				SshUsername:      access.Username,
-				SshPassword:      access.Password,
-				SshKey:           access.Key,
-				SshKeyPassphrase: access.KeyPassphrase,
-				UseSCP:           maputil.GetBool(options.ProviderExtendedConfig, "useSCP"),
-				PreCommand:       maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
-				PostCommand:      maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
-				OutputFormat:     pSSH.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:   maputil.GetString(options.ProviderExtendedConfig, "certPath"),
-				OutputKeyPath:    maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
-				PfxPassword:      maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
-				JksAlias:         maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
-				JksKeypass:       maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
-				JksStorepass:     maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
+				SshHost:                  access.Host,
+				SshPort:                  access.Port,
+				SshUsername:              access.Username,
+				SshPassword:              access.Password,
+				SshKey:                   access.Key,
+				SshKeyPassphrase:         access.KeyPassphrase,
+				UseSCP:                   maputil.GetBool(options.ProviderExtendedConfig, "useSCP"),
+				PreCommand:               maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
+				PostCommand:              maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
+				OutputFormat:             pSSH.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           maputil.GetString(options.ProviderExtendedConfig, "certPath"),
+				OutputServerCertPath:     maputil.GetString(options.ProviderExtendedConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: maputil.GetString(options.ProviderExtendedConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
+				PfxPassword:              maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
+				JksAlias:                 maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
+				JksKeypass:               maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
+				JksStorepass:             maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}

@@ -41,6 +41,12 @@ type DeployerConfig struct {
 	OutputFormat OutputFormatType `json:"outputFormat,omitempty"`
 	// 输出证书文件路径。
 	OutputCertPath string `json:"outputCertPath,omitempty"`
+	// 输出服务器证书文件路径。
+	// 选填。
+	OutputServerCertPath string `json:"outputServerCertPath,omitempty"`
+	// 输出中间证书文件路径。
+	// 选填。
+	OutputIntermediaCertPath string `json:"outputIntermediaCertPath,omitempty"`
 	// 输出私钥文件路径。
 	OutputKeyPath string `json:"outputKeyPath,omitempty"`
 	// PFX 导出密码。
@@ -85,6 +91,12 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
+	// 提取服务器证书和中间证书
+	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract certs: %w", err)
+	}
+
 	// 连接
 	client, err := createSshClient(
 		d.config.SshHost,
@@ -117,6 +129,20 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			return nil, fmt.Errorf("failed to upload certificate file: %w", err)
 		}
 		d.logger.Info("ssl certificate file uploaded", slog.String("path", d.config.OutputCertPath))
+
+		if d.config.OutputServerCertPath != "" {
+			if err := writeFileString(client, d.config.UseSCP, d.config.OutputServerCertPath, serverCertPEM); err != nil {
+				return nil, fmt.Errorf("failed to save server certificate file: %w", err)
+			}
+			d.logger.Info("ssl server certificate file uploaded", slog.String("path", d.config.OutputServerCertPath))
+		}
+
+		if d.config.OutputIntermediaCertPath != "" {
+			if err := writeFileString(client, d.config.UseSCP, d.config.OutputIntermediaCertPath, intermediaCertPEM); err != nil {
+				return nil, fmt.Errorf("failed to save intermedia certificate file: %w", err)
+			}
+			d.logger.Info("ssl intermedia certificate file uploaded", slog.String("path", d.config.OutputIntermediaCertPath))
+		}
 
 		if err := writeFileString(client, d.config.UseSCP, d.config.OutputKeyPath, privkeyPEM); err != nil {
 			return nil, fmt.Errorf("failed to upload private key file: %w", err)

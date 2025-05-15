@@ -4,6 +4,7 @@ import { Avatar, Card, Col, Empty, Flex, Input, type InputRef, Row, Tag, Typogra
 
 import Show from "@/components/Show";
 import { ACCESS_USAGES, type AccessProvider, type AccessUsageType, accessProvidersMap } from "@/domain/provider";
+import { mergeCls } from "@/utils/css";
 
 export type AccessProviderPickerProps = {
   className?: string;
@@ -73,17 +74,23 @@ const AccessProviderPicker = ({ className, style, autoFocus, filter, placeholder
               return (
                 <Col key={index} xs={24} md={12} span={8}>
                   <Card
-                    className="h-20 w-full overflow-hidden shadow-sm"
+                    className={mergeCls("h-20 w-full overflow-hidden shadow-sm", provider.builtin ? " cursor-not-allowed" : "")}
                     styles={{ body: { height: "100%", padding: "0.5rem 1rem" } }}
                     hoverable
                     onClick={() => {
+                      if (provider.builtin) {
+                        return;
+                      }
+
                       handleProviderTypeSelect(provider.type);
                     }}
                   >
                     <Flex className="size-full overflow-hidden" align="center" gap={8}>
                       <Avatar src={provider.icon} size="small" />
                       <div className="flex-1 overflow-hidden">
-                        <Typography.Text className="mb-1 line-clamp-1">{t(provider.name)}</Typography.Text>
+                        <Typography.Text className="mb-1 line-clamp-1" type={provider.builtin ? "secondary" : undefined}>
+                          {t(provider.name)}
+                        </Typography.Text>
                         <div className="origin-left scale-[80%]">
                           <Show when={provider.builtin}>
                             <Tag>{t("access.props.provider.builtin")}</Tag>

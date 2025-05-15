@@ -199,6 +199,7 @@ export type AccessConfigForGoDaddy = {
 
 export type AccessConfigForGoEdge = {
   apiUrl: string;
+  apiRole: string;
   accessKeyId: string;
   accessKey: string;
   allowInsecureConnections?: boolean;

@@ -75,7 +75,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               </CopyToClipboard>
             </Tooltip>
           </div>
-          <Input.TextArea value={data.certificate} variant="filled" rows={5} autoSize={{ maxRows: 5 }} readOnly />
+          <Input.TextArea value={data.certificate} variant="filled" autoSize={{ minRows: 5, maxRows: 5 }} readOnly />
         </Form.Item>
 
         <Form.Item>
@@ -92,7 +92,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
               </CopyToClipboard>
             </Tooltip>
           </div>
-          <Input.TextArea value={data.privateKey} variant="filled" rows={5} autoSize={{ maxRows: 5 }} readOnly />
+          <Input.TextArea value={data.privateKey} variant="filled" autoSize={{ minRows: 5, maxRows: 5 }} readOnly />
         </Form.Item>
       </Form>
 

@@ -13,11 +13,13 @@ import {
   SettingOutlined as SettingOutlinedIcon,
   SunOutlined as SunOutlinedIcon,
 } from "@ant-design/icons";
-import { Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProps, Tooltip, theme } from "antd";
+import { Alert, Button, type ButtonProps, Drawer, Dropdown, Layout, Menu, type MenuProps, Tooltip, theme } from "antd";
 
+import Show from "@/components/Show";
 import Version from "@/components/Version";
 import { useBrowserTheme, useTriggerElement } from "@/hooks";
 import { getAuthStore } from "@/repository/admin";
+import { isBrowserHappy } from "@/utils/browser";
 
 const ConsoleLayout = () => {
   const navigate = useNavigate();
@@ -50,6 +52,10 @@ const ConsoleLayout = () => {
       </Layout.Sider>
 
       <Layout className="flex flex-col overflow-hidden pl-[256px] max-md:pl-0">
+        <Show when={!isBrowserHappy()}>
+          <Alert message={t("common.text.happy_browser")} type="warning" showIcon closable />
+        </Show>
+
         <Layout.Header className="p-0 shadow-sm" style={{ background: themeToken.colorBgContainer }}>
           <div className="flex size-full items-center justify-between overflow-hidden px-4">
             <div className="flex items-center gap-4">
