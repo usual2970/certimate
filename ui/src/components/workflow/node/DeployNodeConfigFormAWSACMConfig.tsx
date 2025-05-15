@@ -5,6 +5,7 @@ import { z } from "zod";
 
 type DeployNodeConfigFormAWSACMConfigFieldValues = Nullish<{
   region: string;
+  certificateArn?: string;
 }>;
 
 export type DeployNodeConfigFormAWSACMConfigProps = {
@@ -27,6 +28,7 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
       .string({ message: t("workflow_node.deploy.form.aws_acm_region.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aws_acm_region.placeholder"))
       .trim(),
+    certificateArn: z.string({ message: t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder") }).nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -50,6 +52,15 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aws_acm_region.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.aws_acm_region.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="certificateArn"
+        label={t("workflow_node.deploy.form.aws_acm_certificate_arn.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aws_acm_certificate_arn.tooltip") }}></span>}
+      >
+        <Input placeholder={t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder")} />
       </Form.Item>
     </Form>
   );

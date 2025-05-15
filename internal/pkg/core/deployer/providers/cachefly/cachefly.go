@@ -51,6 +51,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书
+	// REF: https://api.cachefly.com/api/2.5/docs#tag/Certificates/paths/~1certificates/post
 	createCertificateReq := &cfsdk.CreateCertificateRequest{
 		Certificate:    certPEM,
 		CertificateKey: privkeyPEM,

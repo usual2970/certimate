@@ -57,6 +57,7 @@ import DeployNodeConfigFormJDCloudLiveConfig from "./DeployNodeConfigFormJDCloud
 import DeployNodeConfigFormJDCloudVODConfig from "./DeployNodeConfigFormJDCloudVODConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
+import DeployNodeConfigFormNetlifySiteConfig from "./DeployNodeConfigFormNetlifySiteConfig";
 import DeployNodeConfigFormProxmoxVEConfig from "./DeployNodeConfigFormProxmoxVEConfig";
 import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNConfig";
 import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
@@ -260,6 +261,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormKubernetesSecretConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.LOCAL:
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.NETLIFY_SITE:
+          return <DeployNodeConfigFormNetlifySiteConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.PROXMOXVE:
           return <DeployNodeConfigFormProxmoxVEConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.QINIU_CDN:

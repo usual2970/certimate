@@ -27,6 +27,8 @@ import (
 	pNamecheap "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namecheap"
 	pNameDotCom "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namedotcom"
 	pNameSilo "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namesilo"
+	pNetcup "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/netcup"
+	pNetlify "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/netlify"
 	pNS1 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ns1"
 	pPorkbun "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/porkbun"
 	pPowerDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/powerdns"
@@ -396,6 +398,38 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 
 			applicant, err := pNameSilo.NewChallengeProvider(&pNameSilo.ChallengeProviderConfig{
 				ApiKey:                access.ApiKey,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ACMEDns01ProviderTypeNetcup:
+		{
+			access := domain.AccessConfigForNetcup{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pNetcup.NewChallengeProvider(&pNetcup.ChallengeProviderConfig{
+				CustomerNumber:        access.CustomerNumber,
+				ApiKey:                access.ApiKey,
+				ApiPassword:           access.ApiPassword,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ACMEDns01ProviderTypeNetlify:
+		{
+			access := domain.AccessConfigForNetlify{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pNetlify.NewChallengeProvider(&pNetlify.ChallengeProviderConfig{
+				ApiToken:              access.ApiToken,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

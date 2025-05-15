@@ -20,11 +20,11 @@ type DeployerConfig struct {
 	ApiKey string `json:"apiKey"`
 	// 是否允许不安全的连接。
 	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
-	// 站点类型。
+	// 网站类型。
 	SiteType string `json:"siteType"`
-	// 站点名称（单个）。
+	// 网站名称（单个）。
 	SiteName string `json:"siteName,omitempty"`
-	// 站点名称（多个）。
+	// 网站名称（多个）。
 	SiteNames []string `json:"siteNames,omitempty"`
 }
 

@@ -65,9 +65,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		return nil, err
 	}
 
-	// 生成 AWS 业务参数
-	scertPEM, _ := certutil.ConvertCertificateToPEM(certX509)
-	bcertPEM := certPEM
+	// 提取服务器证书
+	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract certs: %w", err)
+	}
 
 	// 获取证书列表，避免重复上传
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListCertificates.html
@@ -145,8 +147,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 导入证书
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ImportCertificate.html
 	importCertificateReq := &awsacm.ImportCertificateInput{
-		Certificate:      ([]byte)(scertPEM),
-		CertificateChain: ([]byte)(bcertPEM),
+		Certificate:      ([]byte)(serverCertPEM),
+		CertificateChain: ([]byte)(intermediaCertPEM),
 		PrivateKey:       ([]byte)(privkeyPEM),
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(context.TODO(), importCertificateReq)

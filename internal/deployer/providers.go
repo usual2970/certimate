@@ -52,6 +52,7 @@ import (
 	pJDCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-vod"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
+	pNetlifySite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/netlify-site"
 	pProxmoxVE "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/proxmoxve"
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
@@ -306,6 +307,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
+					CertificateArn:  maputil.GetString(options.ProviderExtendedConfig, "certificateArn"),
 				})
 				return deployer, err
 
@@ -724,6 +726,20 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				SecretType:          maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretType", "kubernetes.io/tls"),
 				SecretDataKeyForCrt: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretDataKeyForCrt", "tls.crt"),
 				SecretDataKeyForKey: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretDataKeyForKey", "tls.key"),
+			})
+			return deployer, err
+		}
+
+	case domain.DeploymentProviderTypeNetlifySite:
+		{
+			access := domain.AccessConfigForNetlify{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pNetlifySite.NewDeployer(&pNetlifySite.DeployerConfig{
+				ApiToken: access.ApiToken,
+				SiteId:   maputil.GetString(options.ProviderExtendedConfig, "siteId"),
 			})
 			return deployer, err
 		}

@@ -32,7 +32,7 @@ type DeployerConfig struct {
 	// Key Vault 名称。
 	KeyVaultName string `json:"keyvaultName"`
 	// Key Vault 证书名称。
-	// 选填。
+	// 选填。零值时表示新建证书；否则表示更新证书。
 	CertificateName string `json:"certificateName,omitempty"`
 }
 
