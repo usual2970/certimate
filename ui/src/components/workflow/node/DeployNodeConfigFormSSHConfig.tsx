@@ -131,7 +131,6 @@ info "Completed"
       return `# *** 需要 root 权限 ***
 # 脚本参考 https://github.com/lfgyx/fnos_certificate_update/blob/main/src/update_cert.sh
 
-
 # 请将以下变量替换为实际值
 # 飞牛证书实际存放路径请在 \`/usr/trim/etc/network_cert_all.conf\` 中查看，注意不要修改文件名
 $tmpFullchainPath = "${params?.certPath || "<your-fullchain-cert-path>"}" # 证书文件路径（与表单中保持一致）

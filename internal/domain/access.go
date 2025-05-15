@@ -199,6 +199,12 @@ type AccessConfigForNameSilo struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForNetcup struct {
+	CustomerNumber string `json:"customerNumber"`
+	ApiKey         string `json:"apiKey"`
+	ApiPassword    string `json:"apiPassword"`
+}
+
 type AccessConfigForNS1 struct {
 	ApiKey string `json:"apiKey"`
 }

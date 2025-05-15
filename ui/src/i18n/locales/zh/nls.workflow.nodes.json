@@ -549,7 +549,7 @@
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_backup_files.label": "PowerShell - 备份原证书文件",
   "workflow_node.deploy.form.ssh_preset_scripts.option.sh_reload_nginx.label": "POSIX Bash - 重启 nginx 进程",
   "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_synologydsm_ssl.label": "POSIX Bash - 替换群晖 DSM 证书",
-  "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_fnos_ssl.label": "POSIX Bash - 替换飞牛 OS 证书",
+  "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_fnos_ssl.label": "POSIX Bash - 替换飞牛 fnOS 证书",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_iis.label": "PowerShell - 导入并绑定到 IIS",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_netsh.label": "PowerShell - 导入并绑定到 netsh",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_rdp.label": "PowerShell - 导入并绑定到 RDP",
