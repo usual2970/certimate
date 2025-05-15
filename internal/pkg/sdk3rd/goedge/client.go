@@ -14,7 +14,7 @@ import (
 
 type Client struct {
 	apiHost     string
-	apiUserType string
+	apiRole     string
 	accessKeyId string
 	accessKey   string
 
@@ -25,12 +25,12 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiUserType, accessKeyId, accessKey string) *Client {
+func NewClient(apiHost, apiRole, accessKeyId, accessKey string) *Client {
 	client := resty.New()
 
 	return &Client{
 		apiHost:     strings.TrimRight(apiHost, "/"),
-		apiUserType: apiUserType,
+		apiRole:     apiRole,
 		accessKeyId: accessKeyId,
 		accessKey:   accessKey,
 		client:      client,

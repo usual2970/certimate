@@ -581,6 +581,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
 				ApiUrl:                   access.ApiUrl,
+				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,

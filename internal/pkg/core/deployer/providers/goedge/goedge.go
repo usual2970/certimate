@@ -18,9 +18,11 @@ import (
 type DeployerConfig struct {
 	// GoEdge URL。
 	ApiUrl string `json:"apiUrl"`
-	// GoEdge 用户 AccessKeyId。
+	// GoEdge 用户角色。
+	ApiRole string `json:"apiRole"`
+	// GoEdge AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`
-	// GoEdge 用户 AccessKey。
+	// GoEdge AccessKey。
 	AccessKey string `json:"accessKey"`
 	// 是否允许不安全的连接。
 	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
@@ -44,7 +46,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.AccessKeyId, config.AccessKey, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ApiUrl, config.ApiRole, config.AccessKeyId, config.AccessKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -116,9 +118,13 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, accessKeyId, accessKey string, skipTlsVerify bool) (*goedgesdk.Client, error) {
+func createSdkClient(apiUrl, apiRole, accessKeyId, accessKey string, skipTlsVerify bool) (*goedgesdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid goedge api url")
+	}
+
+	if apiRole != "user" && apiRole != "admin" {
+		return nil, errors.New("invalid goedge api role")
 	}
 
 	if accessKeyId == "" {
@@ -129,7 +135,7 @@ func createSdkClient(apiUrl, accessKeyId, accessKey string, skipTlsVerify bool) 
 		return nil, errors.New("invalid goedge access key")
 	}
 
-	client := goedgesdk.NewClient(apiUrl, "user", accessKeyId, accessKey)
+	client := goedgesdk.NewClient(apiUrl, apiRole, accessKeyId, accessKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
