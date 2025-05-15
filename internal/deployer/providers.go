@@ -306,6 +306,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
+					CertificateArn:  maputil.GetString(options.ProviderExtendedConfig, "certificateArn"),
 				})
 				return deployer, err
 

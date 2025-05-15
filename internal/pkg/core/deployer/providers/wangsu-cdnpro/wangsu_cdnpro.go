@@ -34,7 +34,7 @@ type DeployerConfig struct {
 	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 	// 证书 ID。
-	// 选填。
+	// 选填。零值时表示新建证书；否则表示更新证书。
 	CertificateId string `json:"certificateId,omitempty"`
 	// Webhook ID。
 	// 选填。

@@ -56,10 +56,10 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
-	// 提取 Edgio 所需的服务端证书和中间证书内容
+	// 提取服务器证书和中间证书
 	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}
 
 	// 上传 TLS 证书
