@@ -240,6 +240,13 @@ type AccessConfigForRainYun struct {
 	ApiKey string `json:"apiKey"`
 }
 
+type AccessConfigForRatPanel struct {
+	ApiUrl                   string `json:"apiUrl"`
+	AccessTokenId            uint   `json:"accessTokenId"`
+	AccessToken              string `json:"accessToken"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForSafeLine struct {
 	ApiUrl                   string `json:"apiUrl"`
 	ApiToken                 string `json:"apiToken"`
