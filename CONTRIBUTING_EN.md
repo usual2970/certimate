@@ -9,7 +9,7 @@ Thank you for taking the time to improve Certimate! Below is a guide for submitt
 
 ## Prerequisites
 
-- Go 1.22+ (for Go code changes)
+- Go 1.24+ (for Go code changes)
 - Node 20+ (for Admin UI changes)
 
 If you haven't done so already, you can fork the Certimate repository and clone your fork to work locally:
