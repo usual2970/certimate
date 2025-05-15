@@ -14,12 +14,14 @@ body:
         2. 我**确认**已搜索过[已有的 Issues](https://github.com/usual2970/certimate/issues)（包括已关闭的），没有类似的问题。
         3. 我**确认**已阅读过[文档](https://docs.certimate.me/)，没有类似的问题。
         4. 请**务必**按照模板规范详细描述问题，否则 Issue 将会被直接关闭。
+        5. 请保持每个 Issue 只包含一个功能请求。如果有多个需求，请分别提交 Issue。
 
         **Before you submit the issue, please make sure of the following checklist**:
         1. Yes, I'm using the latest release.
         2. Yes, I've searched for [existing issues](https://github.com/usual2970/certimate/issues) (including closed ones) on GitHub and didn't find any similar.
         3. Yes, I've read the [documentation](https://docs.certimate.me/en/) and didn't find any similar.
         4. Please describe the problem in detail according to the template specification, otherwise the issue will be closed directly.
+        5. Please limit one request per issue.
 
   - type: textarea
     attributes:
@@ -38,7 +40,7 @@ body:
   - type: textarea
     attributes:
       label: 其他 / Miscellaneous
-      description: 在此处添加关于该 Issue 的任何其他信息。 / Add any other context about the problem here.
+      description: 在此处添加关于该 Issue 的任何其他信息（新增提供商请求请补充 API 文档链接等资料）。 / Add any other context about the problem here.
     validations:
       required: false
 
@@ -46,11 +48,5 @@ body:
     attributes:
       label: 贡献 / Contribution
       options:
-        - label: 我乐意为此贡献代码！ / I am interested in contributing to this feature!
+        - label: 我乐意为此贡献代码！ / I am interested in contributing to this issue!
           required: false
-
-  - type: markdown
-    attributes:
-      value: |
-        请保持每个 Issue 只包含一个功能请求。
-        Please limit one request per issue.
