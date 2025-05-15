@@ -25,7 +25,16 @@ jobs:
           go-version-file: "go.mod"
 
       - name: Build WebUI
-        run: npm --prefix=./ui ci && npm --prefix=./ui run build
+        run: |
+          npm --prefix=./ui ci
+          npm --prefix=./ui run build
+          npm cache clean --force
+          rm -rf ./ui/node_modules
+
+      - name: Check disk usage
+        run: |
+          df -h
+          du -sh /opt/hostedtoolcache/go/*
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
