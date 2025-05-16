@@ -3,25 +3,25 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type AccessConfigForTelegram } from "@/domain/access";
+import { type AccessConfigForTelegramBot } from "@/domain/access";
 
-type AccessFormTelegramConfigFieldValues = Nullish<AccessConfigForTelegram>;
+type AccessFormTelegramBotConfigFieldValues = Nullish<AccessConfigForTelegramBot>;
 
-export type AccessFormTelegramConfigProps = {
+export type AccessFormTelegramBotConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  initialValues?: AccessFormTelegramConfigFieldValues;
-  onValuesChange?: (values: AccessFormTelegramConfigFieldValues) => void;
+  initialValues?: AccessFormTelegramBotConfigFieldValues;
+  onValuesChange?: (values: AccessFormTelegramBotConfigFieldValues) => void;
 };
 
-const initFormModel = (): AccessFormTelegramConfigFieldValues => {
+const initFormModel = (): AccessFormTelegramBotConfigFieldValues => {
   return {
     botToken: "",
   };
 };
 
-const AccessFormTelegramConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: AccessFormTelegramConfigProps) => {
+const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: AccessFormTelegramBotConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -38,7 +38,7 @@ const AccessFormTelegramConfig = ({ form: formInst, formName, disabled, initialV
           .refine((v) => {
             if (v == null || v + "" === "") return true;
             return /^\d+$/.test(v + "") && +v! > 0;
-          }, t("access.form.telegram_default_chat_id.placeholder"))
+          }, t("access.form.telegram_bot_default_chat_id.placeholder"))
       )
       .nullish(),
   });
@@ -68,14 +68,14 @@ const AccessFormTelegramConfig = ({ form: formInst, formName, disabled, initialV
 
       <Form.Item
         name="defaultChatId"
-        label={t("access.form.telegram_default_chat_id.label")}
+        label={t("access.form.telegram_bot_default_chat_id.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_default_chat_id.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_bot_default_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" allowClear placeholder={t("access.form.telegram_default_chat_id.placeholder")} />
+        <Input type="number" allowClear placeholder={t("access.form.telegram_bot_default_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );
 };
 
-export default AccessFormTelegramConfig;
+export default AccessFormTelegramBotConfig;

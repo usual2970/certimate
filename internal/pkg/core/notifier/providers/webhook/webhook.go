@@ -139,9 +139,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// 生成请求
 	// 其中 GET 请求需转换为查询参数
-	req := n.httpClient.R().
-		SetContext(ctx).
-		SetHeaderMultiValues(webhookHeaders)
+	req := n.httpClient.R().SetHeaderMultiValues(webhookHeaders)
 	req.URL = webhookUrl.String()
 	req.Method = webhookMethod
 	if webhookMethod == http.MethodGet {
@@ -160,12 +158,12 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	// 发送请求
 	resp, err := req.Send()
 	if err != nil {
-		return nil, fmt.Errorf("failed to send webhook request: %w", err)
+		return nil, fmt.Errorf("webhook error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("unexpected webhook response status code: %d", resp.StatusCode())
+		return nil, fmt.Errorf("webhook error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
-	n.logger.Debug("webhook responded", slog.Any("response", resp.String()))
+	n.logger.Debug("webhook responded", slog.String("response", resp.String()))
 
 	return &notifier.NotifyResult{}, nil
 }

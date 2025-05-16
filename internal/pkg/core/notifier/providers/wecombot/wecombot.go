@@ -1,11 +1,10 @@
-package gotify
+package wecombot
 
 import (
 	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
-	"strings"
 
 	"github.com/go-resty/resty/v2"
 
@@ -13,12 +12,8 @@ import (
 )
 
 type NotifierConfig struct {
-	// Gotify 服务地址。
-	ServerUrl string `json:"serverUrl"`
-	// Gotify Token。
-	Token string `json:"token"`
-	// Gotify 消息优先级。
-	Priority int64 `json:"priority,omitempty"`
+	// 企业微信机器人 Webhook 地址。
+	WebhookUrl string `json:"webhookUrl"`
 }
 
 type NotifierProvider struct {
@@ -53,22 +48,20 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	serverUrl := strings.TrimRight(n.config.ServerUrl, "/")
-
-	// REF: https://gotify.net/api-docs#/message/createMessage
+	// REF: https://developer.work.weixin.qq.com/document/path/91770
 	req := n.httpClient.R().
 		SetHeader("Content-Type", "application/json").
-		SetHeader("Authorization", "Bearer "+n.config.Token).
 		SetBody(map[string]any{
-			"title":    subject,
-			"message":  message,
-			"priority": n.config.Priority,
+			"msgtype": "text",
+			"text": map[string]string{
+				"content": subject + "\n\n" + message,
+			},
 		})
-	resp, err := req.Execute(http.MethodPost, fmt.Sprintf("%s/message", serverUrl))
+	resp, err := req.Execute(http.MethodPost, n.config.WebhookUrl)
 	if err != nil {
-		return nil, fmt.Errorf("gotify api error: failed to send request: %w", err)
+		return nil, fmt.Errorf("wecom api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("gotify api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return nil, fmt.Errorf("wecom api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return &notifier.NotifyResult{}, nil

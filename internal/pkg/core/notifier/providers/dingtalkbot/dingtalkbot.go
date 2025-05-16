@@ -1,18 +1,21 @@
-package serverchan
+package dingtalkbot
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
-	"net/http"
+	"net/url"
 
-	notifyHttp "github.com/nikoksr/notify/service/http"
+	"github.com/blinkbean/dingtalk"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// 企业微信机器人 Webhook 地址。
+	// 钉钉机器人的 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
+	// 钉钉机器人的 Secret。
+	Secret string `json:"secret"`
 }
 
 type NotifierProvider struct {
@@ -29,6 +32,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 	return &NotifierProvider{
 		config: config,
+		logger: slog.Default(),
 	}, nil
 }
 
@@ -42,26 +46,20 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := notifyHttp.New()
-
-	srv.AddReceivers(&notifyHttp.Webhook{
-		URL:         n.config.WebhookUrl,
-		Header:      http.Header{},
-		ContentType: "application/json",
-		Method:      http.MethodPost,
-		BuildPayload: func(subject, message string) (payload any) {
-			return map[string]any{
-				"msgtype": "text",
-				"text": map[string]string{
-					"content": subject + "\n\n" + message,
-				},
-			}
-		},
-	})
-
-	err = srv.Send(ctx, subject, message)
+	webhookUrl, err := url.Parse(n.config.WebhookUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("dingtalk api error: invalid webhook url: %w", err)
+	}
+
+	var bot *dingtalk.DingTalk
+	if n.config.Secret == "" {
+		bot = dingtalk.InitDingTalk([]string{webhookUrl.Query().Get("access_token")}, "")
+	} else {
+		bot = dingtalk.InitDingTalkWithSecret(webhookUrl.Query().Get("access_token"), n.config.Secret)
+	}
+
+	if err := bot.SendTextMessage(subject + "\n" + message); err != nil {
+		return nil, fmt.Errorf("dingtalk api error: %w", err)
 	}
 
 	return &notifier.NotifyResult{}, nil

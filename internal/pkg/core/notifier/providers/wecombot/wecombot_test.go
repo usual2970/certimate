@@ -1,4 +1,4 @@
-package serverchan_test
+package wecombot_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
 )
 
 const (
@@ -18,7 +18,7 @@ const (
 var fWebhookUrl string
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_WECOM_"
+	argsPrefix := "CERTIMATE_NOTIFIER_WECOMBOT_"
 
 	flag.StringVar(&fWebhookUrl, argsPrefix+"WEBHOOKURL", "", "")
 }
@@ -26,8 +26,8 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./wecom_test.go -args \
-	--CERTIMATE_NOTIFIER_WECOM_WEBHOOKURL="https://example.com/your-webhook-url" \
+	go test -v ./wecombot_test.go -args \
+	--CERTIMATE_NOTIFIER_WECOMBOT_WEBHOOKURL="https://example.com/your-webhook-url" \
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()

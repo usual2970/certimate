@@ -2,10 +2,11 @@ package bark
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"net/http"
 
-	"github.com/nikoksr/notify"
-	"github.com/nikoksr/notify/service/bark"
+	"github.com/go-resty/resty/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
@@ -19,8 +20,9 @@ type NotifierConfig struct {
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
+	config     *NotifierConfig
+	logger     *slog.Logger
+	httpClient *resty.Client
 }
 
 var _ notifier.Notifier = (*NotifierProvider)(nil)
@@ -30,9 +32,12 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 		panic("config is nil")
 	}
 
+	client := resty.New()
+
 	return &NotifierProvider{
-		config: config,
-		logger: slog.Default(),
+		config:     config,
+		logger:     slog.Default(),
+		httpClient: client,
 	}, nil
 }
 
@@ -46,16 +51,25 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	var srv notify.Notifier
-	if n.config.ServerUrl == "" {
-		srv = bark.New(n.config.DeviceKey)
-	} else {
-		srv = bark.NewWithServers(n.config.DeviceKey, n.config.ServerUrl)
+	const defaultServerURL = "https://api.day.app/"
+	serverUrl := defaultServerURL
+	if n.config.ServerUrl != "" {
+		serverUrl = n.config.ServerUrl
 	}
 
-	err = srv.Send(ctx, subject, message)
+	// REF: https://bark.day.app/#/tutorial
+	req := n.httpClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]any{
+			"title":      subject,
+			"body":       message,
+			"device_key": n.config.DeviceKey,
+		})
+	resp, err := req.Execute(http.MethodPost, serverUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("bark api error: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("bark api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return &notifier.NotifyResult{}, nil

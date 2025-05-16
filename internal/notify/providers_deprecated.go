@@ -6,17 +6,17 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	pBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
-	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
+	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalkbot"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 	pGotify "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/gotify"
-	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
+	pLark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/larkbot"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
 	pPushover "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushover"
 	pPushPlus "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushplus"
 	pServerChan "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/serverchan"
-	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
+	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
-	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecom"
+	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
@@ -52,9 +52,9 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 
 	case domain.NotifyChannelTypeGotify:
 		return pGotify.NewNotifier(&pGotify.NotifierConfig{
-			Url:      maputil.GetString(channelConfig, "url"),
-			Token:    maputil.GetString(channelConfig, "token"),
-			Priority: maputil.GetOrDefaultInt64(channelConfig, "priority", 1),
+			ServerUrl: maputil.GetString(channelConfig, "url"),
+			Token:     maputil.GetString(channelConfig, "token"),
+			Priority:  maputil.GetOrDefaultInt64(channelConfig, "priority", 1),
 		})
 
 	case domain.NotifyChannelTypeLark:
@@ -83,7 +83,7 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 
 	case domain.NotifyChannelTypeServerChan:
 		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
-			Url: maputil.GetString(channelConfig, "url"),
+			ServerUrl: maputil.GetString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeTelegram:

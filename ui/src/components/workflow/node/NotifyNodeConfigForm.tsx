@@ -19,7 +19,7 @@ import { useNotifyChannelsStore } from "@/stores/notify";
 
 import NotifyNodeConfigFormEmailConfig from "./NotifyNodeConfigFormEmailConfig";
 import NotifyNodeConfigFormMattermostConfig from "./NotifyNodeConfigFormMattermostConfig";
-import NotifyNodeConfigFormTelegramConfig from "./NotifyNodeConfigFormTelegramConfig";
+import NotifyNodeConfigFormTelegramBotConfig from "./NotifyNodeConfigFormTelegramBotConfig";
 import NotifyNodeConfigFormWebhookConfig from "./NotifyNodeConfigFormWebhookConfig";
 
 type NotifyNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForNotify>;
@@ -114,8 +114,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           return <NotifyNodeConfigFormEmailConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.MATTERMOST:
           return <NotifyNodeConfigFormMattermostConfig {...nestedFormProps} />;
-        case NOTIFICATION_PROVIDERS.TELEGRAM:
-          return <NotifyNodeConfigFormTelegramConfig {...nestedFormProps} />;
+        case NOTIFICATION_PROVIDERS.TELEGRAMBOT:
+          return <NotifyNodeConfigFormTelegramBotConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.WEBHOOK:
           return <NotifyNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }

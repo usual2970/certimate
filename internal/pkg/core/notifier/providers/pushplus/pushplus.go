@@ -1,13 +1,13 @@
 package pushplus
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
+
+	"github.com/go-resty/resty/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
@@ -20,7 +20,7 @@ type NotifierConfig struct {
 type NotifierProvider struct {
 	config     *NotifierConfig
 	logger     *slog.Logger
-	httpClient *http.Client
+	httpClient *resty.Client
 }
 
 var _ notifier.Notifier = (*NotifierProvider)(nil)
@@ -30,10 +30,12 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 		panic("config is nil")
 	}
 
+	client := resty.New()
+
 	return &NotifierProvider{
 		config:     config,
 		logger:     slog.Default(),
-		httpClient: http.DefaultClient,
+		httpClient: client,
 	}, nil
 }
 
@@ -47,55 +49,29 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	// REF: https://pushplus.plus/doc/guide/api.html
-	reqBody := &struct {
-		Token   string `json:"token"`
-		Title   string `json:"title"`
-		Content string `json:"content"`
-	}{
-		Token:   n.config.Token,
-		Title:   subject,
-		Content: message,
-	}
-
-	body, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, fmt.Errorf("pushplus api error: failed to encode message body: %w", err)
-	}
-
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodPost,
-		"https://www.pushplus.plus/send",
-		bytes.NewReader(body),
-	)
-	if err != nil {
-		return nil, fmt.Errorf("pushplus api error: failed to create new request: %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-
-	resp, err := n.httpClient.Do(req)
+	// REF: https://pushplus.plus/doc/guide/api.html#%E4%B8%80%E3%80%81%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3
+	req := n.httpClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]any{
+			"title":   subject,
+			"content": message,
+			"token":   n.config.Token,
+		})
+	resp, err := req.Execute(http.MethodPost, "https://www.pushplus.plus/send")
 	if err != nil {
 		return nil, fmt.Errorf("pushplus api error: failed to send request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	result, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("pushplus api error: failed to read response: %w", err)
-	} else if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("pushplus api error: unexpected status code: %d, resp: %s", resp.StatusCode, string(result))
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("pushplus api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	var errorResponse struct {
-		Code int    `json:"code"`
-		Msg  string `json:"msg"`
+		Code    int    `json:"code"`
+		Message string `json:"msg"`
 	}
-	if err := json.Unmarshal(result, &errorResponse); err != nil {
-		return nil, fmt.Errorf("pushplus api error: failed to decode response: %w", err)
+	if err := json.Unmarshal(resp.Body(), &errorResponse); err != nil {
+		return nil, fmt.Errorf("pushplus api error: failed to unmarshal response: %w", err)
 	} else if errorResponse.Code != 200 {
-		return nil, fmt.Errorf("pushplus api error: unexpected response code: %d, msg: %s", errorResponse.Code, errorResponse.Msg)
+		return nil, fmt.Errorf("pushplus api error: code='%d', message='%s'", errorResponse.Code, errorResponse.Message)
 	}
 
 	return &notifier.NotifyResult{}, nil

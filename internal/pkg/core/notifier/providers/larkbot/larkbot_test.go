@@ -1,4 +1,4 @@
-package dingtalk_test
+package larkbot_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalk"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/larkbot"
 )
 
 const (
@@ -15,23 +15,19 @@ const (
 	mockMessage = "test_message"
 )
 
-var (
-	fAccessToken string
-	fSecret      string
-)
+var fWebhookUrl string
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_DINGTALK_"
+	argsPrefix := "CERTIMATE_NOTIFIER_LARKBOT_"
 
-	flag.StringVar(&fAccessToken, argsPrefix+"ACCESSTOKEN", "", "")
-	flag.StringVar(&fSecret, argsPrefix+"SECRET", "", "")
+	flag.StringVar(&fWebhookUrl, argsPrefix+"WEBHOOKURL", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./dingtalk_test.go -args \
-	--CERTIMATE_NOTIFIER_DINGTALK_URL="https://example.com/your-webhook-url"
+	go test -v ./larkbot_test.go -args \
+	--CERTIMATE_NOTIFIER_LARKBOT_WEBHOOKURL="https://example.com/your-webhook-url"
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
@@ -39,13 +35,11 @@ func TestNotify(t *testing.T) {
 	t.Run("Notify", func(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
-			fmt.Sprintf("ACCESSTOKEN: %v", fAccessToken),
-			fmt.Sprintf("SECRET: %v", fSecret),
+			fmt.Sprintf("WEBHOOKURL: %v", fWebhookUrl),
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
-			AccessToken: fAccessToken,
-			Secret:      fSecret,
+			WebhookUrl: fWebhookUrl,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

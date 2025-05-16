@@ -1,19 +1,18 @@
-package telegram
+package larkbot
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
-	"github.com/nikoksr/notify/service/telegram"
+	"github.com/go-lark/lark"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// Telegram Bot API Token。
-	BotToken string `json:"botToken"`
-	// Telegram Chat ID。
-	ChatId int64 `json:"chatId"`
+	// 飞书机器人 Webhook 地址。
+	WebhookUrl string `json:"webhookUrl"`
 }
 
 type NotifierProvider struct {
@@ -44,16 +43,17 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv, err := telegram.New(n.config.BotToken)
+	bot := lark.NewNotificationBot(n.config.WebhookUrl)
+	content := lark.NewPostBuilder().
+		Title(subject).
+		TextTag(message, 1, false).
+		Render()
+	msg := lark.NewMsgBuffer(lark.MsgPost).Post(content)
+	resp, err := bot.PostNotificationV2(msg.Build())
 	if err != nil {
-		return nil, err
-	}
-
-	srv.AddReceivers(n.config.ChatId)
-
-	err = srv.Send(ctx, subject, message)
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("lark api error: %w", err)
+	} else if resp.Code != 0 {
+		return nil, fmt.Errorf("lark api error: code='%d', message='%s'", resp.Code, resp.Msg)
 	}
 
 	return &notifier.NotifyResult{}, nil

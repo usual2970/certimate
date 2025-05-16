@@ -51,7 +51,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForSSLCom
-      | AccessConfigForTelegram
+      | AccessConfigForTelegramBot
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
       | AccessConfigForUpyun
@@ -312,7 +312,7 @@ export type AccessConfigForSSLCom = {
   eabHmacKey: string;
 };
 
-export type AccessConfigForTelegram = {
+export type AccessConfigForTelegramBot = {
   botToken: string;
   defaultChatId?: number;
 };

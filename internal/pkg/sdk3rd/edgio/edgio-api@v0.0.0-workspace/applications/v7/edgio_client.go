@@ -140,7 +140,7 @@ func (c *EdgioClient) GetProperties(page int, pageSize int, organizationID strin
 	}
 
 	if resp.IsError() {
-		return nil, fmt.Errorf("unexpected status code for getProperties: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("unexpected status code for getProperties: %d, %s", resp.StatusCode(), resp.String())
 	}
 
 	return &propertiesResp, nil
@@ -512,7 +512,7 @@ func (c *EdgioClient) UploadCdnConfiguration(config *dtos.CDNConfiguration) (*dt
 	}
 
 	if resp.IsError() {
-		return nil, fmt.Errorf("unexpected status code for uploadCdnConfiguration: %d, %s", resp.StatusCode(), resp.Body())
+		return nil, fmt.Errorf("unexpected status code for uploadCdnConfiguration: %d, %s", resp.StatusCode(), resp.String())
 	}
 
 	return &response, nil

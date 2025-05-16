@@ -1,15 +1,14 @@
 package mattermost
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"io"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
-	"github.com/nikoksr/notify/service/mattermost"
+	"github.com/go-resty/resty/v2"
+
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
@@ -25,8 +24,9 @@ type NotifierConfig struct {
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
+	config     *NotifierConfig
+	logger     *slog.Logger
+	httpClient *resty.Client
 }
 
 var _ notifier.Notifier = (*NotifierProvider)(nil)
@@ -36,9 +36,12 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 		panic("config is nil")
 	}
 
+	client := resty.New()
+
 	return &NotifierProvider{
-		config: config,
-		logger: slog.Default(),
+		config:     config,
+		logger:     slog.Default(),
+		httpClient: client,
 	}, nil
 }
 
@@ -52,17 +55,29 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := mattermost.New(strings.TrimRight(n.config.ServerUrl, "/"))
+	serverUrl := strings.TrimRight(n.config.ServerUrl, "/")
 
-	if err := srv.LoginWithCredentials(ctx, n.config.Username, n.config.Password); err != nil {
-		return nil, err
+	// REF: https://developers.mattermost.com/api-documentation/#/operations/Login
+	loginReq := n.httpClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]any{
+			"login_id": n.config.Username,
+			"password": n.config.Password,
+		})
+	loginResp, err := loginReq.Execute(http.MethodPost, fmt.Sprintf("%s/api/v4/users/login", serverUrl))
+	if err != nil {
+		return nil, fmt.Errorf("mattermost api error: failed to send request: %w", err)
+	} else if loginResp.IsError() {
+		return nil, fmt.Errorf("mattermost api error: unexpected status code: %d, resp: %s", loginResp.StatusCode(), loginResp.String())
+	} else if loginResp.Header().Get("Token") == "" {
+		return nil, fmt.Errorf("mattermost api error: received empty login token")
 	}
 
-	srv.AddReceivers(n.config.ChannelId)
-
-	// 复写消息样式
-	srv.PreSend(func(req *http.Request) error {
-		m := map[string]interface{}{
+	// REF: https://developers.mattermost.com/api-documentation/#/operations/CreatePost
+	postReq := n.httpClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("Authorization", "Bearer "+loginResp.Header().Get("Token")).
+		SetBody(map[string]any{
 			"channel_id": n.config.ChannelId,
 			"props": map[string]interface{}{
 				"attachments": []map[string]interface{}{
@@ -72,20 +87,12 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 					},
 				},
 			},
-		}
-
-		if body, err := json.Marshal(m); err != nil {
-			return err
-		} else {
-			req.ContentLength = int64(len(body))
-			req.Body = io.NopCloser(bytes.NewReader(body))
-		}
-
-		return nil
-	})
-
-	if err = srv.Send(ctx, subject, message); err != nil {
-		return nil, err
+		})
+	postResp, err := postReq.Execute(http.MethodPost, fmt.Sprintf("%s/api/v4/posts", serverUrl))
+	if err != nil {
+		return nil, fmt.Errorf("mattermost api error: failed to send request: %w", err)
+	} else if postResp.IsError() {
+		return nil, fmt.Errorf("mattermost api error: unexpected status code: %d, resp: %s", postResp.StatusCode(), postResp.String())
 	}
 
 	return &notifier.NotifyResult{}, nil
