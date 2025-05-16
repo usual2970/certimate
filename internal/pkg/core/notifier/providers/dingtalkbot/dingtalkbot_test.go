@@ -1,4 +1,4 @@
-package lark_test
+package dingtalkbot_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/lark"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalkbot"
 )
 
 const (
@@ -15,19 +15,24 @@ const (
 	mockMessage = "test_message"
 )
 
-var fWebhookUrl string
+var (
+	fWebhookUrl string
+	fSecret     string
+)
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_LARK_"
+	argsPrefix := "CERTIMATE_NOTIFIER_DINGTALKBOT_"
 
 	flag.StringVar(&fWebhookUrl, argsPrefix+"WEBHOOKURL", "", "")
+	flag.StringVar(&fSecret, argsPrefix+"SECRET", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./lark_test.go -args \
-	--CERTIMATE_NOTIFIER_LARK_WEBHOOKURL="https://example.com/your-webhook-url"
+	go test -v ./dingtalkbot_test.go -args \
+	--CERTIMATE_NOTIFIER_DINGTALKBOT_WEBHOOKURL="https://example.com/your-webhook-url" \
+	--CERTIMATE_NOTIFIER_DINGTALKBOT_SECRET="your-secret"
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
@@ -36,10 +41,12 @@ func TestNotify(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("WEBHOOKURL: %v", fWebhookUrl),
+			fmt.Sprintf("SECRET: %v", fSecret),
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			WebhookUrl: fWebhookUrl,
+			Secret:     fSecret,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

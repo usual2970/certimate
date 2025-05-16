@@ -1,4 +1,4 @@
-package serverchan
+package wecombot
 
 import (
 	"context"

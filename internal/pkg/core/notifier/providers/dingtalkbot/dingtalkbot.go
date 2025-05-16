@@ -1,17 +1,21 @@
-package lark
+package dingtalkbot
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"net/url"
 
-	"github.com/nikoksr/notify/service/lark"
+	"github.com/nikoksr/notify/service/dingding"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
 
 type NotifierConfig struct {
-	// 飞书机器人 Webhook 地址。
+	// 钉钉机器人的 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
+	// 钉钉机器人的 Secret。
+	Secret string `json:"secret"`
 }
 
 type NotifierProvider struct {
@@ -42,7 +46,15 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := lark.NewWebhookService(n.config.WebhookUrl)
+	webhookUrl, err := url.Parse(n.config.WebhookUrl)
+	if err != nil {
+		return nil, fmt.Errorf("invalid webhook url: %w", err)
+	}
+
+	srv := dingding.New(&dingding.Config{
+		Token:  webhookUrl.Query().Get("access_token"),
+		Secret: n.config.Secret,
+	})
 
 	err = srv.Send(ctx, subject, message)
 	if err != nil {
