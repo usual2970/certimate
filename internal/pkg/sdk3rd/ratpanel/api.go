@@ -1,4 +1,4 @@
-package btpanelsdk
+package ratpanelsdk
 
 import "net/http"
 

@@ -1,4 +1,4 @@
-package baotapanelsite_test
+package ratpanelsite_test
 
 import (
 	"context"
@@ -8,26 +8,26 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-site"
 )
 
 var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
-	fApiKey        string
-	fSiteType      string
+	fTokenId       uint
+	fToken         string
 	fSiteName      string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_BAOTAPANELSITE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_RATPANELSITE_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
-	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
-	flag.StringVar(&fSiteType, argsPrefix+"SITETYPE", "", "")
+	flag.UintVar(&fTokenId, argsPrefix+"TOKENID", 0, "")
+	flag.StringVar(&fToken, argsPrefix+"TOKEN", "", "")
 	flag.StringVar(&fSiteName, argsPrefix+"SITENAME", "", "")
 }
 
@@ -35,12 +35,12 @@ func init() {
 Shell command to run this test:
 
 	go test -v ./baotapanel_site_test.go -args \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_APIKEY="your-api-key" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITETYPE="php" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELSITE_SITENAME="your-site-name"
+	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKENID="your-access-token-id" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKEN="your-access-token" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_SITENAME="your-site-name"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -51,18 +51,17 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
-			fmt.Sprintf("APIKEY: %v", fApiKey),
-			fmt.Sprintf("SITETYPE: %v", fSiteType),
+			fmt.Sprintf("TOKENID: %v", fTokenId),
+			fmt.Sprintf("TOKEN: %v", fToken),
 			fmt.Sprintf("SITENAME: %v", fSiteName),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
-			ApiKey:                   fApiKey,
+			AccessTokenId:            fTokenId,
+			AccessToken:              fToken,
 			AllowInsecureConnections: true,
-			SiteType:                 fSiteType,
 			SiteName:                 fSiteName,
-			SiteNames:                []string{fSiteName},
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

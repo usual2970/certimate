@@ -1,4 +1,4 @@
-package baotapanelsite
+package ratpanelsite
 
 import (
 	"context"

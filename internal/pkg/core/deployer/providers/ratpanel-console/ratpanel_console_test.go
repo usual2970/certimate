@@ -1,4 +1,4 @@
-package baotapanelconsole_test
+package ratpanelconsole_test
 
 import (
 	"context"
@@ -8,33 +8,36 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-console"
 )
 
 var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
-	fApiKey        string
+	fTokenId       uint
+	fToken         string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_RATPANELCONSOLE_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
-	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
+	flag.UintVar(&fTokenId, argsPrefix+"TOKENID", 0, "")
+	flag.StringVar(&fToken, argsPrefix+"TOKEN", "", "")
 }
 
 /*
 Shell command to run this test:
 
 	go test -v ./baotapanel_console_test.go -args \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_BAOTAPANELCONSOLE_APIKEY="your-api-key"
+	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKENID="your-access-token-id" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKEN="your-access-token" \
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -45,14 +48,15 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
-			fmt.Sprintf("APIKEY: %v", fApiKey),
+			fmt.Sprintf("TOKENID: %v", fTokenId),
+			fmt.Sprintf("TOKEN: %v", fToken),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
-			ApiKey:                   fApiKey,
+			AccessTokenId:            fTokenId,
+			AccessToken:              fToken,
 			AllowInsecureConnections: true,
-			AutoRestart:              true,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

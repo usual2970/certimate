@@ -1,4 +1,4 @@
-package btpanelsdk
+package ratpanelsdk
 
 type BaseResponse interface {
 	GetMessage() string

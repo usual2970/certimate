@@ -1,4 +1,4 @@
-package baotapanelconsole
+package ratpanelconsole
 
 import (
 	"context"
