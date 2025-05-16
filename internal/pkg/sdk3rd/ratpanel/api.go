@@ -8,8 +8,8 @@ func (c *Client) SettingCert(req *SettingCertRequest) (*SettingCertResponse, err
 	return resp, err
 }
 
-func (c *Client) WebsiteCert(req *SiteCertRequest) (*SiteCertResponse, error) {
-	resp := &SiteCertResponse{}
+func (c *Client) WebsiteCert(req *WebsiteCertRequest) (*WebsiteCertResponse, error) {
+	resp := &WebsiteCertResponse{}
 	err := c.sendRequestWithResult(http.MethodPost, "/website/cert", req, resp)
 	return resp, err
 }

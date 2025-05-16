@@ -34,11 +34,11 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./baotapanel_site_test.go -args \
+	go test -v ./ratpanel_site_test.go -args \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKENID="your-access-token-id" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKENID=your-access-token-id \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKEN="your-access-token" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_SITENAME="your-site-name"
 */
