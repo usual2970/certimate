@@ -1,4 +1,4 @@
-package baishansdk
+package baishan
 
 import (
 	"encoding/json"
@@ -93,7 +93,7 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("baishan api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 0 {
-		return fmt.Errorf("baishan api error: %d - %s", errcode, result.GetMessage())
+		return fmt.Errorf("baishan api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

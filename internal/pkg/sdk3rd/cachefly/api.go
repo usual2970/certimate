@@ -1,4 +1,4 @@
-package cacheflysdk
+package cachefly
 
 import (
 	"net/http"

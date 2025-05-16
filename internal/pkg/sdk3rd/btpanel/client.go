@@ -1,4 +1,4 @@
-package btpanelsdk
+package btpanel
 
 import (
 	"crypto/md5"
@@ -104,7 +104,7 @@ func (c *Client) sendRequestWithResult(path string, params interface{}, result B
 		if result.GetMessage() == nil {
 			return fmt.Errorf("baota api error: unknown error")
 		} else {
-			return fmt.Errorf("baota api error: %s", *result.GetMessage())
+			return fmt.Errorf("baota api error: message='%s'", *result.GetMessage())
 		}
 	}
 

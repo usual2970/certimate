@@ -96,7 +96,7 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("goedge api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 200 {
-		return fmt.Errorf("goedge api error: %d - %s", errcode, result.GetMessage())
+		return fmt.Errorf("goedge api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

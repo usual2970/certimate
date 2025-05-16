@@ -1,4 +1,4 @@
-package cacheflysdk
+package cachefly
 
 type BaseResponse interface {
 	GetMessage() string

@@ -1,4 +1,4 @@
-package cdnflysdk
+package cdnfly
 
 import (
 	"crypto/tls"
@@ -89,7 +89,7 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("cdnfly api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode != "" && errcode != "0" {
-		return fmt.Errorf("cdnfly api error: %s - %s", errcode, result.GetMessage())
+		return fmt.Errorf("cdnfly api error: code='%s', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

@@ -1,4 +1,4 @@
-package bunnysdk
+package bunny
 
 import (
 	"fmt"

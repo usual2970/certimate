@@ -1,4 +1,4 @@
-package onepanelsdk
+package onepanel
 
 import (
 	"crypto/md5"
@@ -97,7 +97,7 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("1panel api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode/100 != 2 {
-		return fmt.Errorf("1panel api error: %d - %s", errcode, result.GetMessage())
+		return fmt.Errorf("1panel api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

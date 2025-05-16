@@ -1,4 +1,4 @@
-package dnslasdk
+package dnsla
 
 import (
 	"fmt"

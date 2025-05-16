@@ -1,4 +1,4 @@
-package dogecloudsdk
+package dogecloud
 
 type BaseResponse struct {
 	Code    *int    `json:"code,omitempty"`

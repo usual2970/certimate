@@ -1,4 +1,4 @@
-package dnslasdk
+package dnsla
 
 type BaseResponse interface {
 	GetCode() int32

@@ -1,4 +1,4 @@
-package rainyunsdk
+package rainyun
 
 type BaseResponse interface {
 	GetCode() int32
