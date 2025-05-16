@@ -63,6 +63,7 @@ import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNCo
 import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormRainYunRCDNConfig from "./DeployNodeConfigFormRainYunRCDNConfig";
+import DeployNodeConfigFormRatPanelSiteConfig from "./DeployNodeConfigFormRatPanelSiteConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
@@ -273,6 +274,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.RAINYUN_RCDN:
           return <DeployNodeConfigFormRainYunRCDNConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.RATPANEL_SITE:
+          return <DeployNodeConfigFormRatPanelSiteConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SAFELINE:
           return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SSH:

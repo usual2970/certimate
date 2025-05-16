@@ -20,7 +20,7 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost string, accessTokenId uint, accessToken string) *Client {
+func NewClient(apiHost string, accessTokenId int32, accessToken string) *Client {
 	client := resty.New().
 		SetBaseURL(strings.TrimRight(apiHost, "/")+"/api").
 		SetHeader("Accept", "application/json").
@@ -123,9 +123,9 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	if err = json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("ratpanel api error: failed to parse response: %w", err)
-	} else if errmessage := result.GetMessage(); errmessage != "success" {
-		return fmt.Errorf("ratpanel api error: %d - %s", resp.StatusCode(), errmessage)
+		return fmt.Errorf("ratpanel api error: failed to unmarshal response: %w", err)
+	} else if errmsg := result.GetMessage(); errmsg != "success" {
+		return fmt.Errorf("ratpanel api error: message='%s'", errmsg)
 	}
 
 	return nil

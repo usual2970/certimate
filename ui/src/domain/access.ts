@@ -48,6 +48,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForProxmoxVE
       | AccessConfigForQiniu
       | AccessConfigForRainYun
+      | AccessConfigForRatPanel
       | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForSSLCom
@@ -291,6 +292,13 @@ export type AccessConfigForQiniu = {
 
 export type AccessConfigForRainYun = {
   apiKey: string;
+};
+
+export type AccessConfigForRatPanel = {
+  apiUrl: string;
+  accessTokenId: number;
+  accessToken: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForSafeLine = {

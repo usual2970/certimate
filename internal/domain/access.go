@@ -243,7 +243,7 @@ type AccessConfigForRainYun struct {
 
 type AccessConfigForRatPanel struct {
 	ApiUrl                   string `json:"apiUrl"`
-	AccessTokenId            uint   `json:"accessTokenId"`
+	AccessTokenId            int32  `json:"accessTokenId"`
 	AccessToken              string `json:"accessToken"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }

@@ -54,6 +54,7 @@ import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormProxmoxVEConfig from "./AccessFormProxmoxVEConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
+import AccessFormRatPanelConfig from "./AccessFormRatPanelConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
@@ -260,6 +261,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormQiniuConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.RAINYUN:
         return <AccessFormRainYunConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.RATPANEL:
+        return <AccessFormRatPanelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SAFELINE:
         return <AccessFormSafeLineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:
