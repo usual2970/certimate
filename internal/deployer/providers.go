@@ -57,6 +57,8 @@ import (
 	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
 	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
 	pRainYunRCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/rainyun-rcdn"
+	pRatPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-console"
+	pRatPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-site"
 	pSafeLine "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/safeline"
 	pSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
 	pTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
@@ -807,6 +809,38 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ApiKey:     access.ApiKey,
 					InstanceId: maputil.GetInt32(options.ProviderExtendedConfig, "instanceId"),
 					Domain:     maputil.GetString(options.ProviderExtendedConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeploymentProviderTypeRatPanelConsole, domain.DeploymentProviderTypeRatPanelSite:
+		{
+			access := domain.AccessConfigForRatPanel{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeploymentProviderTypeRatPanelConsole:
+				deployer, err := pRatPanelConsole.NewDeployer(&pRatPanelConsole.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					AccessTokenId:            access.AccessTokenId,
+					AccessToken:              access.AccessToken,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeRatPanelSite:
+				deployer, err := pRatPanelSite.NewDeployer(&pRatPanelSite.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					AccessTokenId:            access.AccessTokenId,
+					AccessToken:              access.AccessToken,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					SiteName:                 maputil.GetString(options.ProviderExtendedConfig, "siteName"),
 				})
 				return deployer, err
 
