@@ -16,6 +16,7 @@
   "provider.aliyun.dns": "阿里云 - 云解析 DNS",
   "provider.aliyun.esa": "阿里云 - 边缘安全加速 ESA",
   "provider.aliyun.fc": "阿里云 - 函数计算 FC",
+  "provider.aliyun.ga": "阿里云 - 全球加速 GA",
   "provider.aliyun.live": "阿里云 - 视频直播 Live",
   "provider.aliyun.nlb": "阿里云 - 网络型负载均衡 NLB",
   "provider.aliyun.oss": "阿里云 - 对象存储 OSS",

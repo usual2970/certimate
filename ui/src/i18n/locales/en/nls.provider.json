@@ -16,6 +16,7 @@
   "provider.aliyun.dns": "Alibaba Cloud - DNS (Domain Name Service)",
   "provider.aliyun.esa": "Alibaba Cloud - ESA (Edge Security Acceleration)",
   "provider.aliyun.fc": "Alibaba Cloud - FC (Function Compute)",
+  "provider.aliyun.ga": "Alibaba Cloud - GA (Global Accelerator)",
   "provider.aliyun.live": "Alibaba Cloud - ApsaraVideo Live",
   "provider.aliyun.nlb": "Alibaba Cloud - NLB (Network Load Balancer)",
   "provider.aliyun.oss": "Alibaba Cloud - OSS (Object Storage Service)",

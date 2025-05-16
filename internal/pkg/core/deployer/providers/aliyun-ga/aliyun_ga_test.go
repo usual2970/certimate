@@ -1,4 +1,4 @@
-package aliyunalb_test
+package aliyunga_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-ga"
 )
 
 var (
@@ -16,21 +16,19 @@ var (
 	fInputKeyPath    string
 	fAccessKeyId     string
 	fAccessKeySecret string
-	fRegion          string
-	fLoadbalancerId  string
+	fAcceleratorId   string
 	fListenerId      string
 	fDomain          string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_ALIYUNALB_"
+	argsPrefix := "CERTIMATE_DEPLOYER_ALIYUNGA_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
-	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
-	flag.StringVar(&fLoadbalancerId, argsPrefix+"LOADBALANCERID", "", "")
+	flag.StringVar(&fAcceleratorId, argsPrefix+"ACCELERATORID", "", "")
 	flag.StringVar(&fListenerId, argsPrefix+"LISTENERID", "", "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
@@ -38,37 +36,34 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./aliyun_alb_test.go -args \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_ACCESSKEYSECRET="your-access-key-secret" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_REGION="cn-hangzhou" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_LOADBALANCERID="your-alb-instance-id" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_LISTENERID="your-alb-listener-id" \
-	--CERTIMATE_DEPLOYER_ALIYUNALB_DOMAIN="your-alb-sni-domain"
+	go test -v ./aliyun_ga_test.go -args \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_ACCESSKEYSECRET="your-access-key-secret" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_ACCELERATORID="your-ga-accelerator-id" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_LISTENERID="your-ga-listener-id" \
+	--CERTIMATE_DEPLOYER_ALIYUNGA_DOMAIN="your-ga-sni-domain"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
 
-	t.Run("Deploy_ToLoadbalancer", func(t *testing.T) {
+	t.Run("Deploy_ToAccelerator", func(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
-			fmt.Sprintf("REGION: %v", fRegion),
-			fmt.Sprintf("LOADBALANCERID: %v", fLoadbalancerId),
+			fmt.Sprintf("ACCELERATORID: %v", fAcceleratorId),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
-			Region:          fRegion,
-			ResourceType:    provider.RESOURCE_TYPE_LOADBALANCER,
-			LoadbalancerId:  fLoadbalancerId,
+			ResourceType:    provider.RESOURCE_TYPE_ACCELERATOR,
+			AcceleratorId:   fAcceleratorId,
 			Domain:          fDomain,
 		})
 		if err != nil {
@@ -94,7 +89,6 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
-			fmt.Sprintf("REGION: %v", fRegion),
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
@@ -102,7 +96,6 @@ func TestDeploy(t *testing.T) {
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			AccessKeySecret: fAccessKeySecret,
-			Region:          fRegion,
 			ResourceType:    provider.RESOURCE_TYPE_LISTENER,
 			ListenerId:      fListenerId,
 			Domain:          fDomain,

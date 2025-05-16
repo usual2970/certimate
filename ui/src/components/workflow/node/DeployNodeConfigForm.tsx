@@ -27,6 +27,7 @@ import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDC
 import DeployNodeConfigFormAliyunDDoSConfig from "./DeployNodeConfigFormAliyunDDoSConfig";
 import DeployNodeConfigFormAliyunESAConfig from "./DeployNodeConfigFormAliyunESAConfig";
 import DeployNodeConfigFormAliyunFCConfig from "./DeployNodeConfigFormAliyunFCConfig";
+import DeployNodeConfigFormAliyunGAConfig from "./DeployNodeConfigFormAliyunGAConfig";
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
@@ -203,6 +204,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_FC:
           return <DeployNodeConfigFormAliyunFCConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.ALIYUN_GA:
+          return <DeployNodeConfigFormAliyunGAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_NLB:

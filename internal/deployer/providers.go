@@ -19,6 +19,7 @@ import (
 	pAliyunDDoS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-ddos"
 	pAliyunESA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-esa"
 	pAliyunFC "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-fc"
+	pAliyunGA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-ga"
 	pAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
 	pAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
 	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
@@ -92,9 +93,9 @@ import (
 )
 
 type deployerProviderOptions struct {
-	Provider               domain.DeploymentProviderType
-	ProviderAccessConfig   map[string]any
-	ProviderExtendedConfig map[string]any
+	Provider              domain.DeploymentProviderType
+	ProviderAccessConfig  map[string]any
+	ProviderServiceConfig map[string]any
 }
 
 func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer, error) {
@@ -117,7 +118,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					AutoRestart:              maputil.GetBool(options.ProviderExtendedConfig, "autoRestart"),
+					AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
 				})
 				return deployer, err
 
@@ -127,9 +128,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
-					WebsiteId:                maputil.GetInt64(options.ProviderExtendedConfig, "websiteId"),
-					CertificateId:            maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
+					WebsiteId:                maputil.GetInt64(options.ProviderServiceConfig, "websiteId"),
+					CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -138,7 +139,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeploymentProviderTypeAliyunALB, domain.DeploymentProviderTypeAliyunAPIGW, domain.DeploymentProviderTypeAliyunCAS, domain.DeploymentProviderTypeAliyunCASDeploy, domain.DeploymentProviderTypeAliyunCDN, domain.DeploymentProviderTypeAliyunCLB, domain.DeploymentProviderTypeAliyunDCDN, domain.DeploymentProviderTypeAliyunDDoS, domain.DeploymentProviderTypeAliyunESA, domain.DeploymentProviderTypeAliyunFC, domain.DeploymentProviderTypeAliyunLive, domain.DeploymentProviderTypeAliyunNLB, domain.DeploymentProviderTypeAliyunOSS, domain.DeploymentProviderTypeAliyunVOD, domain.DeploymentProviderTypeAliyunWAF:
+	case domain.DeploymentProviderTypeAliyunALB, domain.DeploymentProviderTypeAliyunAPIGW, domain.DeploymentProviderTypeAliyunCAS, domain.DeploymentProviderTypeAliyunCASDeploy, domain.DeploymentProviderTypeAliyunCDN, domain.DeploymentProviderTypeAliyunCLB, domain.DeploymentProviderTypeAliyunDCDN, domain.DeploymentProviderTypeAliyunDDoS, domain.DeploymentProviderTypeAliyunESA, domain.DeploymentProviderTypeAliyunFC, domain.DeploymentProviderTypeAliyunGA, domain.DeploymentProviderTypeAliyunLive, domain.DeploymentProviderTypeAliyunNLB, domain.DeploymentProviderTypeAliyunOSS, domain.DeploymentProviderTypeAliyunVOD, domain.DeploymentProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -150,11 +151,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunALB.NewDeployer(&pAliyunALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pAliyunALB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -162,11 +163,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunAPIGW.NewDeployer(&pAliyunAPIGW.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ServiceType:     pAliyunAPIGW.ServiceType(maputil.GetString(options.ProviderExtendedConfig, "serviceType")),
-					GatewayId:       maputil.GetString(options.ProviderExtendedConfig, "gatewayId"),
-					GroupId:         maputil.GetString(options.ProviderExtendedConfig, "groupId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ServiceType:     pAliyunAPIGW.ServiceType(maputil.GetString(options.ProviderServiceConfig, "serviceType")),
+					GatewayId:       maputil.GetString(options.ProviderServiceConfig, "gatewayId"),
+					GroupId:         maputil.GetString(options.ProviderServiceConfig, "groupId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -174,7 +175,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunCAS.NewDeployer(&pAliyunCAS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
 				})
 				return deployer, err
 
@@ -182,9 +183,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunCASDeploy.NewDeployer(&pAliyunCASDeploy.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceIds:     sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderExtendedConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
-					ContactIds:      sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderExtendedConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceIds:     sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					ContactIds:      sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -192,7 +193,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunCDN.NewDeployer(&pAliyunCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -200,11 +201,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunCLB.NewDeployer(&pAliyunCLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pAliyunCLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetOrDefaultInt32(options.ProviderExtendedConfig, "listenerPort", 443),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    maputil.GetOrDefaultInt32(options.ProviderServiceConfig, "listenerPort", 443),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -212,7 +213,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunDCDN.NewDeployer(&pAliyunDCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -220,8 +221,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunDDoS.NewDeployer(&pAliyunDDoS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -229,8 +230,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunESA.NewDeployer(&pAliyunESA.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					SiteId:          maputil.GetInt64(options.ProviderExtendedConfig, "siteId"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					SiteId:          maputil.GetInt64(options.ProviderServiceConfig, "siteId"),
 				})
 				return deployer, err
 
@@ -238,9 +239,20 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunFC.NewDeployer(&pAliyunFC.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderExtendedConfig, "serviceVersion", "3.0"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeAliyunGA:
+				deployer, err := pAliyunGA.NewDeployer(&pAliyunGA.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					ResourceType:    pAliyunGA.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					AcceleratorId:   maputil.GetString(options.ProviderServiceConfig, "acceleratorId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -248,8 +260,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunLive.NewDeployer(&pAliyunLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -257,10 +269,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunNLB.NewDeployer(&pAliyunNLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pAliyunNLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunNLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
@@ -268,9 +280,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunOSS.NewDeployer(&pAliyunOSS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Bucket:          maputil.GetString(options.ProviderExtendedConfig, "bucket"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:          maputil.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -278,8 +290,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunVOD.NewDeployer(&pAliyunVOD.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -287,10 +299,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAliyunWAF.NewDeployer(&pAliyunWAF.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderExtendedConfig, "serviceVersion", "3.0"),
-					InstanceId:      maputil.GetString(options.ProviderExtendedConfig, "instanceId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
+					InstanceId:      maputil.GetString(options.ProviderServiceConfig, "instanceId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -311,8 +323,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAWSACM.NewDeployer(&pAWSACM.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					CertificateArn:  maputil.GetString(options.ProviderExtendedConfig, "certificateArn"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					CertificateArn:  maputil.GetString(options.ProviderServiceConfig, "certificateArn"),
 				})
 				return deployer, err
 
@@ -320,8 +332,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pAWSCloudFront.NewDeployer(&pAWSCloudFront.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					DistributionId:  maputil.GetString(options.ProviderExtendedConfig, "distributionId"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					DistributionId:  maputil.GetString(options.ProviderServiceConfig, "distributionId"),
 				})
 				return deployer, err
 
@@ -344,8 +356,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ClientId:        access.ClientId,
 					ClientSecret:    access.ClientSecret,
 					CloudName:       access.CloudName,
-					KeyVaultName:    maputil.GetString(options.ProviderExtendedConfig, "keyvaultName"),
-					CertificateName: maputil.GetString(options.ProviderExtendedConfig, "certificateName"),
+					KeyVaultName:    maputil.GetString(options.ProviderServiceConfig, "keyvaultName"),
+					CertificateName: maputil.GetString(options.ProviderServiceConfig, "certificateName"),
 				})
 				return deployer, err
 
@@ -366,11 +378,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pBaiduCloudAppBLB.NewDeployer(&pBaiduCloudAppBLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pBaiduCloudAppBLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetInt32(options.ProviderExtendedConfig, "listenerPort"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pBaiduCloudAppBLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    maputil.GetInt32(options.ProviderServiceConfig, "listenerPort"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -378,11 +390,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pBaiduCloudBLB.NewDeployer(&pBaiduCloudBLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pBaiduCloudBLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetInt32(options.ProviderExtendedConfig, "listenerPort"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pBaiduCloudBLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    maputil.GetInt32(options.ProviderServiceConfig, "listenerPort"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -390,7 +402,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pBaiduCloudCDN.NewDeployer(&pBaiduCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -417,8 +429,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			case domain.DeploymentProviderTypeBaishanCDN:
 				deployer, err := pBaishanCDN.NewDeployer(&pBaishanCDN.DeployerConfig{
 					ApiToken:      access.ApiToken,
-					Domain:        maputil.GetString(options.ProviderExtendedConfig, "domain"),
-					CertificateId: maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
+					Domain:        maputil.GetString(options.ProviderServiceConfig, "domain"),
+					CertificateId: maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -440,7 +452,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					AutoRestart:              maputil.GetBool(options.ProviderExtendedConfig, "autoRestart"),
+					AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
 				})
 				return deployer, err
 
@@ -449,9 +461,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					ApiUrl:                   access.ApiUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					SiteType:                 maputil.GetOrDefaultString(options.ProviderExtendedConfig, "siteType", "other"),
-					SiteName:                 maputil.GetString(options.ProviderExtendedConfig, "siteName"),
-					SiteNames:                sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderExtendedConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
+					SiteType:                 maputil.GetOrDefaultString(options.ProviderServiceConfig, "siteType", "other"),
+					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
+					SiteNames:                sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -469,8 +481,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pBunnyCDN.NewDeployer(&pBunnyCDN.DeployerConfig{
 				ApiKey:     access.ApiKey,
-				PullZoneId: maputil.GetString(options.ProviderExtendedConfig, "pullZoneId"),
-				Hostname:   maputil.GetString(options.ProviderExtendedConfig, "hostname"),
+				PullZoneId: maputil.GetString(options.ProviderServiceConfig, "pullZoneId"),
+				Hostname:   maputil.GetString(options.ProviderServiceConfig, "hostname"),
 			})
 			return deployer, err
 		}
@@ -487,7 +499,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pBytePlusCDN.NewDeployer(&pBytePlusCDN.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -521,9 +533,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				ApiKey:                   access.ApiKey,
 				ApiSecret:                access.ApiSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
-				SiteId:                   maputil.GetString(options.ProviderExtendedConfig, "siteId"),
-				CertificateId:            maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
+				ResourceType:             pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
+				SiteId:                   maputil.GetString(options.ProviderServiceConfig, "siteId"),
+				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -538,7 +550,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			deployer, err := pDogeCDN.NewDeployer(&pDogeCDN.DeployerConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
-				Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+				Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 			})
 			return deployer, err
 		}
@@ -553,7 +565,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			deployer, err := pEdgioApplications.NewDeployer(&pEdgioApplications.DeployerConfig{
 				ClientId:      access.ClientId,
 				ClientSecret:  access.ClientSecret,
-				EnvironmentId: maputil.GetString(options.ProviderExtendedConfig, "environmentId"),
+				EnvironmentId: maputil.GetString(options.ProviderServiceConfig, "environmentId"),
 			})
 			return deployer, err
 		}
@@ -571,8 +583,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pFlexCDN.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-				CertificateId:            maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+				ResourceType:             pFlexCDN.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -588,8 +600,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			case domain.DeploymentProviderTypeGcoreCDN:
 				deployer, err := pGcoreCDN.NewDeployer(&pGcoreCDN.DeployerConfig{
 					ApiToken:      access.ApiToken,
-					ResourceId:    maputil.GetInt64(options.ProviderExtendedConfig, "resourceId"),
-					CertificateId: maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+					ResourceId:    maputil.GetInt64(options.ProviderServiceConfig, "resourceId"),
+					CertificateId: maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -611,8 +623,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pGoEdge.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-				CertificateId:            maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
+				ResourceType:             pGoEdge.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -629,8 +641,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pHuaweiCloudCDN.NewDeployer(&pHuaweiCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -638,11 +650,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pHuaweiCloudELB.NewDeployer(&pHuaweiCloudELB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pHuaweiCloudELB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					CertificateId:   maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pHuaweiCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
@@ -657,10 +669,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pHuaweiCloudWAF.NewDeployer(&pHuaweiCloudWAF.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pHuaweiCloudWAF.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					CertificateId:   maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pHuaweiCloudWAF.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -681,10 +693,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pJDCloudALB.NewDeployer(&pJDCloudALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					RegionId:        maputil.GetString(options.ProviderExtendedConfig, "regionId"),
-					ResourceType:    pJDCloudALB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
+					RegionId:        maputil.GetString(options.ProviderServiceConfig, "regionId"),
+					ResourceType:    pJDCloudALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
@@ -692,7 +704,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pJDCloudCDN.NewDeployer(&pJDCloudCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -700,7 +712,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pJDCloudLive.NewDeployer(&pJDCloudLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -708,7 +720,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pJDCloudVOD.NewDeployer(&pJDCloudVOD.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -720,18 +732,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeLocal:
 		{
 			deployer, err := pLocal.NewDeployer(&pLocal.DeployerConfig{
-				ShellEnv:                 pLocal.ShellEnvType(maputil.GetString(options.ProviderExtendedConfig, "shellEnv")),
-				PreCommand:               maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
-				PostCommand:              maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
-				OutputFormat:             pLocal.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:           maputil.GetString(options.ProviderExtendedConfig, "certPath"),
-				OutputServerCertPath:     maputil.GetString(options.ProviderExtendedConfig, "certPathForServerOnly"),
-				OutputIntermediaCertPath: maputil.GetString(options.ProviderExtendedConfig, "certPathForIntermediaOnly"),
-				OutputKeyPath:            maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
-				PfxPassword:              maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
-				JksAlias:                 maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
-				JksKeypass:               maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
-				JksStorepass:             maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
+				ShellEnv:                 pLocal.ShellEnvType(maputil.GetString(options.ProviderServiceConfig, "shellEnv")),
+				PreCommand:               maputil.GetString(options.ProviderServiceConfig, "preCommand"),
+				PostCommand:              maputil.GetString(options.ProviderServiceConfig, "postCommand"),
+				OutputFormat:             pLocal.OutputFormatType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           maputil.GetString(options.ProviderServiceConfig, "certPath"),
+				OutputServerCertPath:     maputil.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: maputil.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            maputil.GetString(options.ProviderServiceConfig, "keyPath"),
+				PfxPassword:              maputil.GetString(options.ProviderServiceConfig, "pfxPassword"),
+				JksAlias:                 maputil.GetString(options.ProviderServiceConfig, "jksAlias"),
+				JksKeypass:               maputil.GetString(options.ProviderServiceConfig, "jksKeypass"),
+				JksStorepass:             maputil.GetString(options.ProviderServiceConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}
@@ -745,11 +757,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pK8sSecret.NewDeployer(&pK8sSecret.DeployerConfig{
 				KubeConfig:          access.KubeConfig,
-				Namespace:           maputil.GetOrDefaultString(options.ProviderExtendedConfig, "namespace", "default"),
-				SecretName:          maputil.GetString(options.ProviderExtendedConfig, "secretName"),
-				SecretType:          maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretType", "kubernetes.io/tls"),
-				SecretDataKeyForCrt: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretDataKeyForCrt", "tls.crt"),
-				SecretDataKeyForKey: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "secretDataKeyForKey", "tls.key"),
+				Namespace:           maputil.GetOrDefaultString(options.ProviderServiceConfig, "namespace", "default"),
+				SecretName:          maputil.GetString(options.ProviderServiceConfig, "secretName"),
+				SecretType:          maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretType", "kubernetes.io/tls"),
+				SecretDataKeyForCrt: maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForCrt", "tls.crt"),
+				SecretDataKeyForKey: maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForKey", "tls.key"),
 			})
 			return deployer, err
 		}
@@ -763,7 +775,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pNetlifySite.NewDeployer(&pNetlifySite.DeployerConfig{
 				ApiToken: access.ApiToken,
-				SiteId:   maputil.GetString(options.ProviderExtendedConfig, "siteId"),
+				SiteId:   maputil.GetString(options.ProviderServiceConfig, "siteId"),
 			})
 			return deployer, err
 		}
@@ -780,8 +792,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				ApiToken:                 access.ApiToken,
 				ApiTokenSecret:           access.ApiTokenSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				NodeName:                 maputil.GetString(options.ProviderExtendedConfig, "nodeName"),
-				AutoRestart:              maputil.GetBool(options.ProviderExtendedConfig, "autoRestart"),
+				NodeName:                 maputil.GetString(options.ProviderServiceConfig, "nodeName"),
+				AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
 			})
 			return deployer, err
 		}
@@ -798,7 +810,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pQiniuCDN.NewDeployer(&pQiniuCDN.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -806,8 +818,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pQiniuPili.NewDeployer(&pQiniuPili.DeployerConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Hub:       maputil.GetString(options.ProviderExtendedConfig, "hub"),
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Hub:       maputil.GetString(options.ProviderServiceConfig, "hub"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -827,8 +839,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			case domain.DeploymentProviderTypeTencentCloudCDN:
 				deployer, err := pRainYunRCDN.NewDeployer(&pRainYunRCDN.DeployerConfig{
 					ApiKey:     access.ApiKey,
-					InstanceId: maputil.GetInt32(options.ProviderExtendedConfig, "instanceId"),
-					Domain:     maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					InstanceId: maputil.GetInt32(options.ProviderServiceConfig, "instanceId"),
+					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -860,7 +872,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					AccessTokenId:            access.AccessTokenId,
 					AccessToken:              access.AccessToken,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					SiteName:                 maputil.GetString(options.ProviderExtendedConfig, "siteName"),
+					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
 				})
 				return deployer, err
 
@@ -880,8 +892,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				ApiUrl:                   access.ApiUrl,
 				ApiToken:                 access.ApiToken,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pSafeLine.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-				CertificateId:            maputil.GetInt32(options.ProviderExtendedConfig, "certificateId"),
+				ResourceType:             pSafeLine.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetInt32(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -900,18 +912,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				SshPassword:              access.Password,
 				SshKey:                   access.Key,
 				SshKeyPassphrase:         access.KeyPassphrase,
-				UseSCP:                   maputil.GetBool(options.ProviderExtendedConfig, "useSCP"),
-				PreCommand:               maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
-				PostCommand:              maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
-				OutputFormat:             pSSH.OutputFormatType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:           maputil.GetString(options.ProviderExtendedConfig, "certPath"),
-				OutputServerCertPath:     maputil.GetString(options.ProviderExtendedConfig, "certPathForServerOnly"),
-				OutputIntermediaCertPath: maputil.GetString(options.ProviderExtendedConfig, "certPathForIntermediaOnly"),
-				OutputKeyPath:            maputil.GetString(options.ProviderExtendedConfig, "keyPath"),
-				PfxPassword:              maputil.GetString(options.ProviderExtendedConfig, "pfxPassword"),
-				JksAlias:                 maputil.GetString(options.ProviderExtendedConfig, "jksAlias"),
-				JksKeypass:               maputil.GetString(options.ProviderExtendedConfig, "jksKeypass"),
-				JksStorepass:             maputil.GetString(options.ProviderExtendedConfig, "jksStorepass"),
+				UseSCP:                   maputil.GetBool(options.ProviderServiceConfig, "useSCP"),
+				PreCommand:               maputil.GetString(options.ProviderServiceConfig, "preCommand"),
+				PostCommand:              maputil.GetString(options.ProviderServiceConfig, "postCommand"),
+				OutputFormat:             pSSH.OutputFormatType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           maputil.GetString(options.ProviderServiceConfig, "certPath"),
+				OutputServerCertPath:     maputil.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: maputil.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            maputil.GetString(options.ProviderServiceConfig, "keyPath"),
+				PfxPassword:              maputil.GetString(options.ProviderServiceConfig, "pfxPassword"),
+				JksAlias:                 maputil.GetString(options.ProviderServiceConfig, "jksAlias"),
+				JksKeypass:               maputil.GetString(options.ProviderServiceConfig, "jksKeypass"),
+				JksStorepass:             maputil.GetString(options.ProviderServiceConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}
@@ -928,7 +940,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudCDN.NewDeployer(&pTencentCloudCDN.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -936,11 +948,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudCLB.NewDeployer(&pTencentCloudCLB.DeployerConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
-					Region:         maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:   pTencentCloudCLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId: maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:     maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
-					Domain:         maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:         maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:   pTencentCloudCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId: maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:     maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:         maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -948,9 +960,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudCOS.NewDeployer(&pTencentCloudCOS.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Region:    maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Bucket:    maputil.GetString(options.ProviderExtendedConfig, "bucket"),
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:    maputil.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:    maputil.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -958,7 +970,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudCSS.NewDeployer(&pTencentCloudCSS.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -966,7 +978,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudECDN.NewDeployer(&pTencentCloudECDN.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -974,8 +986,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudEO.NewDeployer(&pTencentCloudEO.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					ZoneId:    maputil.GetString(options.ProviderExtendedConfig, "zoneId"),
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					ZoneId:    maputil.GetString(options.ProviderServiceConfig, "zoneId"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -983,8 +995,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudSCF.NewDeployer(&pTencentCloudSCF.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Region:    maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:    maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -999,9 +1011,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudSSLDeploy.NewDeployer(&pTencentCloudSSLDeploy.DeployerConfig{
 					SecretId:     access.SecretId,
 					SecretKey:    access.SecretKey,
-					Region:       maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType: maputil.GetString(options.ProviderExtendedConfig, "resourceType"),
-					ResourceIds:  sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderExtendedConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					Region:       maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType: maputil.GetString(options.ProviderServiceConfig, "resourceType"),
+					ResourceIds:  sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -1009,8 +1021,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudVOD.NewDeployer(&pTencentCloudVOD.DeployerConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					SubAppId:  maputil.GetInt64(options.ProviderExtendedConfig, "subAppId"),
-					Domain:    maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					SubAppId:  maputil.GetInt64(options.ProviderServiceConfig, "subAppId"),
+					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1018,9 +1030,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pTencentCloudWAF.NewDeployer(&pTencentCloudWAF.DeployerConfig{
 					SecretId:   access.SecretId,
 					SecretKey:  access.SecretKey,
-					Domain:     maputil.GetString(options.ProviderExtendedConfig, "domain"),
-					DomainId:   maputil.GetString(options.ProviderExtendedConfig, "domainId"),
-					InstanceId: maputil.GetString(options.ProviderExtendedConfig, "instanceId"),
+					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
+					DomainId:   maputil.GetString(options.ProviderServiceConfig, "domainId"),
+					InstanceId: maputil.GetString(options.ProviderServiceConfig, "instanceId"),
 				})
 				return deployer, err
 
@@ -1042,7 +1054,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
 					ProjectId:  access.ProjectId,
-					DomainId:   maputil.GetString(options.ProviderExtendedConfig, "domainId"),
+					DomainId:   maputil.GetString(options.ProviderServiceConfig, "domainId"),
 				})
 				return deployer, err
 
@@ -1051,9 +1063,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
 					ProjectId:  access.ProjectId,
-					Region:     maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Bucket:     maputil.GetString(options.ProviderExtendedConfig, "bucket"),
-					Domain:     maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:     maputil.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:     maputil.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1074,7 +1086,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pUpyunCDN.NewDeployer(&pUpyunCDN.DeployerConfig{
 					Username: access.Username,
 					Password: access.Password,
-					Domain:   maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:   maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1095,11 +1107,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineALB.NewDeployer(&pVolcEngineALB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pVolcEngineALB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pVolcEngineALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1107,7 +1119,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineCDN.NewDeployer(&pVolcEngineCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1115,7 +1127,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineCertCenter.NewDeployer(&pVolcEngineCertCenter.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
 				})
 				return deployer, err
 
@@ -1123,10 +1135,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineCLB.NewDeployer(&pVolcEngineCLB.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ResourceType:    pVolcEngineCLB.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderExtendedConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderExtendedConfig, "listenerId"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pVolcEngineCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
@@ -1134,7 +1146,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineDCDN.NewDeployer(&pVolcEngineDCDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1142,9 +1154,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineImageX.NewDeployer(&pVolcEngineImageX.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					ServiceId:       maputil.GetString(options.ProviderExtendedConfig, "serviceId"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					ServiceId:       maputil.GetString(options.ProviderServiceConfig, "serviceId"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1152,7 +1164,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineLive.NewDeployer(&pVolcEngineLive.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1160,9 +1172,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pVolcEngineTOS.NewDeployer(&pVolcEngineTOS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderExtendedConfig, "region"),
-					Bucket:          maputil.GetString(options.ProviderExtendedConfig, "bucket"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
+					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:          maputil.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1184,10 +1196,10 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ApiKey:          access.ApiKey,
-					Environment:     maputil.GetOrDefaultString(options.ProviderExtendedConfig, "environment", "production"),
-					Domain:          maputil.GetString(options.ProviderExtendedConfig, "domain"),
-					CertificateId:   maputil.GetString(options.ProviderExtendedConfig, "certificateId"),
-					WebhookId:       maputil.GetString(options.ProviderExtendedConfig, "webhookId"),
+					Environment:     maputil.GetOrDefaultString(options.ProviderServiceConfig, "environment", "production"),
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					WebhookId:       maputil.GetString(options.ProviderServiceConfig, "webhookId"),
 				})
 				return deployer, err
 
@@ -1213,7 +1225,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
 				}
 			}
-			if extendedHeadersString := maputil.GetString(options.ProviderExtendedConfig, "headers"); extendedHeadersString != "" {
+			if extendedHeadersString := maputil.GetString(options.ProviderServiceConfig, "headers"); extendedHeadersString != "" {
 				h, err := httputil.ParseHeaders(extendedHeadersString)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
@@ -1225,7 +1237,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			deployer, err := pWebhook.NewDeployer(&pWebhook.DeployerConfig{
 				WebhookUrl:               access.Url,
-				WebhookData:              maputil.GetOrDefaultString(options.ProviderExtendedConfig, "webhookData", access.DefaultDataForDeployment),
+				WebhookData:              maputil.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForDeployment),
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,

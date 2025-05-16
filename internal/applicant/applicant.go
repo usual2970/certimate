@@ -54,20 +54,20 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 
 	nodeConfig := config.Node.GetConfigForApply()
 	options := &applicantProviderOptions{
-		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
-		ContactEmail:             nodeConfig.ContactEmail,
-		Provider:                 domain.ACMEDns01ProviderType(nodeConfig.Provider),
-		ProviderAccessConfig:     make(map[string]any),
-		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
-		CAProvider:               domain.CAProviderType(nodeConfig.CAProvider),
-		CAProviderAccessConfig:   make(map[string]any),
-		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
-		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
-		Nameservers:              sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
-		DnsPropagationWait:       nodeConfig.DnsPropagationWait,
-		DnsPropagationTimeout:    nodeConfig.DnsPropagationTimeout,
-		DnsTTL:                   nodeConfig.DnsTTL,
-		DisableFollowCNAME:       nodeConfig.DisableFollowCNAME,
+		Domains:                 sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:            nodeConfig.ContactEmail,
+		Provider:                domain.ACMEDns01ProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:    make(map[string]any),
+		ProviderServiceConfig:   nodeConfig.ProviderConfig,
+		CAProvider:              domain.CAProviderType(nodeConfig.CAProvider),
+		CAProviderAccessConfig:  make(map[string]any),
+		CAProviderServiceConfig: nodeConfig.CAProviderConfig,
+		KeyAlgorithm:            nodeConfig.KeyAlgorithm,
+		Nameservers:             sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationWait:      nodeConfig.DnsPropagationWait,
+		DnsPropagationTimeout:   nodeConfig.DnsPropagationTimeout,
+		DnsTTL:                  nodeConfig.DnsTTL,
+		DisableFollowCNAME:      nodeConfig.DisableFollowCNAME,
 	}
 
 	accessRepo := repository.NewAccessRepository()
