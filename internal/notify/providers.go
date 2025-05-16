@@ -10,7 +10,7 @@ import (
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 	pLarkBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/larkbot"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
-	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
+	pTelegramBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeComBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
 	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
@@ -87,14 +87,14 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 			})
 		}
 
-	case domain.NotificationProviderTypeTelegram:
+	case domain.NotificationProviderTypeTelegramBot:
 		{
-			access := domain.AccessConfigForTelegram{}
+			access := domain.AccessConfigForTelegramBot{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
+			return pTelegramBot.NewNotifier(&pTelegramBot.NotifierConfig{
 				BotToken: access.BotToken,
 				ChatId:   maputil.GetOrDefaultInt64(options.ProviderExtendedConfig, "chatId", access.DefaultChatId),
 			})

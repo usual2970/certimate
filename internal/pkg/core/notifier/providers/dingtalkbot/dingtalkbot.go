@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"net/url"
 
-	"github.com/nikoksr/notify/service/dingding"
+	"github.com/blinkbean/dingtalk"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
@@ -48,17 +48,18 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	webhookUrl, err := url.Parse(n.config.WebhookUrl)
 	if err != nil {
-		return nil, fmt.Errorf("invalid webhook url: %w", err)
+		return nil, fmt.Errorf("dingtalk api error: invalid webhook url: %w", err)
 	}
 
-	srv := dingding.New(&dingding.Config{
-		Token:  webhookUrl.Query().Get("access_token"),
-		Secret: n.config.Secret,
-	})
+	var bot *dingtalk.DingTalk
+	if n.config.Secret == "" {
+		bot = dingtalk.InitDingTalk([]string{webhookUrl.Query().Get("access_token")}, "")
+	} else {
+		bot = dingtalk.InitDingTalkWithSecret(webhookUrl.Query().Get("access_token"), n.config.Secret)
+	}
 
-	err = srv.Send(ctx, subject, message)
-	if err != nil {
-		return nil, err
+	if err := bot.SendTextMessage(subject + "\n" + message); err != nil {
+		return nil, fmt.Errorf("dingtalk api error: %w", err)
 	}
 
 	return &notifier.NotifyResult{}, nil

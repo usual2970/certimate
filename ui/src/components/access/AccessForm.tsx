@@ -57,7 +57,7 @@ import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
-import AccessFormTelegramConfig from "./AccessFormTelegramConfig";
+import AccessFormTelegramBotConfig from "./AccessFormTelegramBotConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
 import AccessFormUpyunConfig from "./AccessFormUpyunConfig";
@@ -264,8 +264,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormSafeLineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:
         return <AccessFormSSHConfig {...nestedFormProps} />;
-      case ACCESS_PROVIDERS.TELEGRAM:
-        return <AccessFormTelegramConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.TELEGRAMBOT:
+        return <AccessFormTelegramBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSLCOM:
         return <AccessFormSSLComConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.TENCENTCLOUD:

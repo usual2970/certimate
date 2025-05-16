@@ -142,8 +142,7 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
             {
               title: "${SUBJECT}",
               body: "${MESSAGE}",
-              group: "<your-bark-group>",
-              device_keys: "<your-bark-device-key>",
+              device_key: "<your-bark-device-key>",
             },
             null,
             2

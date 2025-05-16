@@ -106,7 +106,7 @@
   "provider.safeline": "雷池",
   "provider.ssh": "SSH 部署",
   "provider.sslcom": "SSL.com",
-  "provider.telegram": "Telegram",
+  "provider.telegrambot": "Telegram 群机器人",
   "provider.tencentcloud": "腾讯云",
   "provider.tencentcloud.cdn": "腾讯云 - 内容分发网络 CDN",
   "provider.tencentcloud.clb": "腾讯云 - 负载均衡 CLB",

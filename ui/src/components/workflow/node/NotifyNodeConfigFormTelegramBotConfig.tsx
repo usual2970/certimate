@@ -3,23 +3,29 @@ import { Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-type NotifyNodeConfigFormTelegramConfigFieldValues = Nullish<{
+type NotifyNodeConfigFormTelegramBotConfigFieldValues = Nullish<{
   chatId?: string | number;
 }>;
 
-export type NotifyNodeConfigFormTelegramConfigProps = {
+export type NotifyNodeConfigFormTelegramBotConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  initialValues?: NotifyNodeConfigFormTelegramConfigFieldValues;
-  onValuesChange?: (values: NotifyNodeConfigFormTelegramConfigFieldValues) => void;
+  initialValues?: NotifyNodeConfigFormTelegramBotConfigFieldValues;
+  onValuesChange?: (values: NotifyNodeConfigFormTelegramBotConfigFieldValues) => void;
 };
 
-const initFormModel = (): NotifyNodeConfigFormTelegramConfigFieldValues => {
+const initFormModel = (): NotifyNodeConfigFormTelegramBotConfigFieldValues => {
   return {};
 };
 
-const NotifyNodeConfigFormTelegramConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: NotifyNodeConfigFormTelegramConfigProps) => {
+const NotifyNodeConfigFormTelegramBotConfig = ({
+  form: formInst,
+  formName,
+  disabled,
+  initialValues,
+  onValuesChange,
+}: NotifyNodeConfigFormTelegramBotConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -32,7 +38,7 @@ const NotifyNodeConfigFormTelegramConfig = ({ form: formInst, formName, disabled
           .refine((v) => {
             if (v == null || v + "" === "") return true;
             return /^\d+$/.test(v + "") && +v! > 0;
-          }, t("workflow_node.notify.form.telegram_chat_id.placeholder"))
+          }, t("workflow_node.notify.form.telegram_bot_chat_id.placeholder"))
       )
       .nullish(),
   });
@@ -53,14 +59,14 @@ const NotifyNodeConfigFormTelegramConfig = ({ form: formInst, formName, disabled
     >
       <Form.Item
         name="chatId"
-        label={t("workflow_node.notify.form.telegram_chat_id.label")}
+        label={t("workflow_node.notify.form.telegram_bot_chat_id.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegram_chat_id.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegram_bot_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" allowClear placeholder={t("workflow_node.notify.form.telegram_chat_id.placeholder")} />
+        <Input type="number" allowClear placeholder={t("workflow_node.notify.form.telegram_bot_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );
 };
 
-export default NotifyNodeConfigFormTelegramConfig;
+export default NotifyNodeConfigFormTelegramBotConfig;

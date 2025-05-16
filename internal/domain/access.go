@@ -260,7 +260,7 @@ type AccessConfigForSSLCom struct {
 	EabHmacKey string `json:"eabHmacKey"`
 }
 
-type AccessConfigForTelegram struct {
+type AccessConfigForTelegramBot struct {
 	BotToken      string `json:"botToken"`
 	DefaultChatId int64  `json:"defaultChatId,omitempty"`
 }

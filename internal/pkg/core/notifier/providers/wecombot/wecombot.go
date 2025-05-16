@@ -2,10 +2,11 @@ package wecombot
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
-	notifyHttp "github.com/nikoksr/notify/service/http"
+	"github.com/go-resty/resty/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 )
@@ -16,8 +17,9 @@ type NotifierConfig struct {
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
-	logger *slog.Logger
+	config     *NotifierConfig
+	logger     *slog.Logger
+	httpClient *resty.Client
 }
 
 var _ notifier.Notifier = (*NotifierProvider)(nil)
@@ -27,8 +29,12 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 		panic("config is nil")
 	}
 
+	client := resty.New()
+
 	return &NotifierProvider{
-		config: config,
+		config:     config,
+		logger:     slog.Default(),
+		httpClient: client,
 	}, nil
 }
 
@@ -42,26 +48,20 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	srv := notifyHttp.New()
-
-	srv.AddReceivers(&notifyHttp.Webhook{
-		URL:         n.config.WebhookUrl,
-		Header:      http.Header{},
-		ContentType: "application/json",
-		Method:      http.MethodPost,
-		BuildPayload: func(subject, message string) (payload any) {
-			return map[string]any{
-				"msgtype": "text",
-				"text": map[string]string{
-					"content": subject + "\n\n" + message,
-				},
-			}
-		},
-	})
-
-	err = srv.Send(ctx, subject, message)
+	// REF: https://developer.work.weixin.qq.com/document/path/91770
+	req := n.httpClient.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]any{
+			"msgtype": "text",
+			"text": map[string]string{
+				"content": subject + "\n\n" + message,
+			},
+		})
+	resp, err := req.Execute(http.MethodPost, n.config.WebhookUrl)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("wecom api error: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return nil, fmt.Errorf("wecom api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return &notifier.NotifyResult{}, nil

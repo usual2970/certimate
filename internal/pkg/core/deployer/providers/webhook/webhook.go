@@ -159,9 +159,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 	// 生成请求
 	// 其中 GET 请求需转换为查询参数
-	req := d.httpClient.R().
-		SetContext(ctx).
-		SetHeaderMultiValues(webhookHeaders)
+	req := d.httpClient.R().SetHeaderMultiValues(webhookHeaders)
 	req.URL = webhookUrl.String()
 	req.Method = webhookMethod
 	if webhookMethod == http.MethodGet {

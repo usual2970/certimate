@@ -1,4 +1,4 @@
-package telegram_test
+package telegrambot_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegram"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 )
 
 const (
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_TELEGRAM_"
+	argsPrefix := "CERTIMATE_NOTIFIER_TELEGRAMBOT_"
 
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
 	flag.Int64Var(&fChartId, argsPrefix+"CHATID", 0, "")
@@ -30,9 +30,9 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./telegram_test.go -args \
-	--CERTIMATE_NOTIFIER_TELEGRAM_APITOKEN="your-api-token" \
-	--CERTIMATE_NOTIFIER_TELEGRAM_CHATID=123456
+	go test -v ./telegrambot_test.go -args \
+	--CERTIMATE_NOTIFIER_TELEGRAMBOT_APITOKEN="your-api-token" \
+	--CERTIMATE_NOTIFIER_TELEGRAMBOT_CHATID=123456
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
