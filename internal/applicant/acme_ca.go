@@ -24,6 +24,21 @@ var sslProviderUrls = map[string]string{
 	sslProviderZeroSSL:             "https://acme.zerossl.com/v2/DV90",
 }
 
+func getCAProviderURL(providerType string, config map[string]any) string {
+	baseURL, ok := sslProviderUrls[providerType]
+	if !ok {
+		return sslProviderUrls[sslProviderDefault]
+	}
+
+	if config != nil {
+		// 如果配置了代理域名，则替换URL
+		if proxyDomain, ok := config["proxyDomain"].(string); ok && proxyDomain != "" {
+			return proxyDomain
+		}
+	}
+	return baseURL
+}
+
 type acmeSSLProviderConfig struct {
 	Config   map[domain.CAProviderType]map[string]any `json:"config"`
 	Provider string                                   `json:"provider"`

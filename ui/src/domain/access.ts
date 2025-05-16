@@ -210,6 +210,7 @@ export type AccessConfigForGoEdge = {
 export type AccessConfigForGoogleTrustServices = {
   eabKid: string;
   eabHmacKey: string;
+  proxyDomain: string;
 };
 
 export type AccessConfigForHuaweiCloud = {

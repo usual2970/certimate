@@ -263,8 +263,9 @@ type AccessConfigForSSH struct {
 }
 
 type AccessConfigForSSLCom struct {
-	EabKid     string `json:"eabKid"`
-	EabHmacKey string `json:"eabHmacKey"`
+	EabKid      string `json:"eabKid"`
+	EabHmacKey  string `json:"eabHmacKey"`
+	ProxyDomain string `json:"proxyDomain"`
 }
 
 type AccessConfigForTelegramBot struct {
