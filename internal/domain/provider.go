@@ -64,6 +64,7 @@ const (
 	AccessProviderTypeQiniu               = AccessProviderType("qiniu")
 	AccessProviderTypeQingCloud           = AccessProviderType("qingcloud") // 青云（预留）
 	AccessProviderTypeRainYun             = AccessProviderType("rainyun")
+	AccessProviderTypeRatPanel            = AccessProviderType("ratpanel")
 	AccessProviderTypeSafeLine            = AccessProviderType("safeline")
 	AccessProviderTypeSSH                 = AccessProviderType("ssh")
 	AccessProviderTypeSSLCOM              = AccessProviderType("sslcom")
@@ -214,6 +215,8 @@ const (
 	DeploymentProviderTypeQiniuKodo             = DeploymentProviderType(AccessProviderTypeQiniu + "-kodo")
 	DeploymentProviderTypeQiniuPili             = DeploymentProviderType(AccessProviderTypeQiniu + "-pili")
 	DeploymentProviderTypeRainYunRCDN           = DeploymentProviderType(AccessProviderTypeRainYun + "-rcdn")
+	DeploymentProviderTypeRatPanelConsole       = DeploymentProviderType(AccessProviderTypeRatPanel + "-console")
+	DeploymentProviderTypeRatPanelSite          = DeploymentProviderType(AccessProviderTypeRatPanel + "-site")
 	DeploymentProviderTypeSafeLine              = DeploymentProviderType(AccessProviderTypeSafeLine)
 	DeploymentProviderTypeSSH                   = DeploymentProviderType(AccessProviderTypeSSH)
 	DeploymentProviderTypeTencentCloudCDN       = DeploymentProviderType(AccessProviderTypeTencentCloud + "-cdn")
