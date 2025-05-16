@@ -46,6 +46,7 @@ import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlu
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
+import DeployNodeConfigFormFlexCDNConfig from "./DeployNodeConfigFormFlexCDNConfig";
 import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNConfig";
 import DeployNodeConfigFormGoEdgeConfig from "./DeployNodeConfigFormGoEdgeConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
@@ -240,6 +241,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:
           return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.FLEXCDN:
+          return <DeployNodeConfigFormFlexCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GCORE_CDN:
           return <DeployNodeConfigFormGcoreCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GOEDGE:

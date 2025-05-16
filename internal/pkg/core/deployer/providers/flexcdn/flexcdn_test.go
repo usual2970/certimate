@@ -1,4 +1,4 @@
-package goedge_test
+package flexcdn_test
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/goedge"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
 )
 
 var (
@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_DEPLOYER_GOEDGE_"
+	argsPrefix := "CERTIMATE_DEPLOYER_FLEXCDN_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -34,13 +34,13 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./goedge_test.go -args \
-	--CERTIMATE_DEPLOYER_GOEDGE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_DEPLOYER_GOEDGE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_GOEDGE_APIURL="http://127.0.0.1:7788" \
-	--CERTIMATE_DEPLOYER_GOEDGE_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_GOEDGE_ACCESSKEY="your-access-key" \
-	--CERTIMATE_DEPLOYER_GOEDGE_CERTIFICATEID="your-cerficiate-id"
+	go test -v ./flexcdn_test.go -args \
+	--CERTIMATE_DEPLOYER_FLEXCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_FLEXCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_FLEXCDN_APIURL="http://127.0.0.1:7788" \
+	--CERTIMATE_DEPLOYER_FLEXCDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_FLEXCDN_ACCESSKEY="your-access-key" \
+	--CERTIMATE_DEPLOYER_FLEXCDN_CERTIFICATEID="your-cerficiate-id"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

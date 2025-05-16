@@ -36,8 +36,8 @@ const (
 	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
 	AccessProviderTypeEdgio               = AccessProviderType("edgio")
 	AccessProviderTypeEmail               = AccessProviderType("email")
-	AccessProviderTypeFastly              = AccessProviderType("fastly")  // Fastly（预留）
-	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn") // FlexCDN（预留）
+	AccessProviderTypeFastly              = AccessProviderType("fastly") // Fastly（预留）
+	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn")
 	AccessProviderTypeGname               = AccessProviderType("gname")
 	AccessProviderTypeGcore               = AccessProviderType("gcore")
 	AccessProviderTypeGoDaddy             = AccessProviderType("godaddy")
@@ -196,7 +196,7 @@ const (
 	DeploymentProviderTypeCdnfly                = DeploymentProviderType(AccessProviderTypeCdnfly)
 	DeploymentProviderTypeDogeCloudCDN          = DeploymentProviderType(AccessProviderTypeDogeCloud + "-cdn")
 	DeploymentProviderTypeEdgioApplications     = DeploymentProviderType(AccessProviderTypeEdgio + "-applications")
-	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN) // FlexCDN（预留）
+	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN)
 	DeploymentProviderTypeGcoreCDN              = DeploymentProviderType(AccessProviderTypeGcore + "-cdn")
 	DeploymentProviderTypeGoEdge                = DeploymentProviderType(AccessProviderTypeGoEdge)
 	DeploymentProviderTypeHuaweiCloudCDN        = DeploymentProviderType(AccessProviderTypeHuaweiCloud + "-cdn")

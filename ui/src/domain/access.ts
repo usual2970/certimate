@@ -29,6 +29,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForEmail
+      | AccessConfigForFlexCDN
       | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
@@ -192,6 +193,14 @@ export type AccessConfigForEmail = {
   password: string;
   defaultSenderAddress?: string;
   defaultReceiverAddress?: string;
+};
+
+export type AccessConfigForFlexCDN = {
+  apiUrl: string;
+  apiRole: string;
+  accessKeyId: string;
+  accessKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForGcore = {

@@ -5,34 +5,34 @@ import { z } from "zod";
 
 import Show from "@/components/Show";
 
-type DeployNodeConfigFormGoEdgeConfigFieldValues = Nullish<{
+type DeployNodeConfigFormFlexCDNConfigFieldValues = Nullish<{
   resourceType: string;
   certificateId?: string | number;
 }>;
 
-export type DeployNodeConfigFormGoEdgeConfigProps = {
+export type DeployNodeConfigFormFlexCDNConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  initialValues?: DeployNodeConfigFormGoEdgeConfigFieldValues;
-  onValuesChange?: (values: DeployNodeConfigFormGoEdgeConfigFieldValues) => void;
+  initialValues?: DeployNodeConfigFormFlexCDNConfigFieldValues;
+  onValuesChange?: (values: DeployNodeConfigFormFlexCDNConfigFieldValues) => void;
 };
 
 const RESOURCE_TYPE_CERTIFICATE = "certificate" as const;
 
-const initFormModel = (): DeployNodeConfigFormGoEdgeConfigFieldValues => {
+const initFormModel = (): DeployNodeConfigFormFlexCDNConfigFieldValues => {
   return {
     resourceType: RESOURCE_TYPE_CERTIFICATE,
     certificateId: "",
   };
 };
 
-const DeployNodeConfigFormGoEdgeConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormGoEdgeConfigProps) => {
+const DeployNodeConfigFormFlexCDNConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormFlexCDNConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
     resourceType: z.literal(RESOURCE_TYPE_CERTIFICATE, {
-      message: t("workflow_node.deploy.form.goedge_resource_type.placeholder"),
+      message: t("workflow_node.deploy.form.flexcdn_resource_type.placeholder"),
     }),
     certificateId: z
       .union([z.string(), z.number().int()])
@@ -40,7 +40,7 @@ const DeployNodeConfigFormGoEdgeConfig = ({ form: formInst, formName, disabled, 
       .refine((v) => {
         if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;
         return /^\d+$/.test(v + "") && +v! > 0;
-      }, t("workflow_node.deploy.form.goedge_certificate_id.placeholder")),
+      }, t("workflow_node.deploy.form.flexcdn_certificate_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -59,10 +59,10 @@ const DeployNodeConfigFormGoEdgeConfig = ({ form: formInst, formName, disabled, 
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="resourceType" label={t("workflow_node.deploy.form.goedge_resource_type.label")} rules={[formRule]}>
-        <Select placeholder={t("workflow_node.deploy.form.goedge_resource_type.placeholder")}>
+      <Form.Item name="resourceType" label={t("workflow_node.deploy.form.flexcdn_resource_type.label")} rules={[formRule]}>
+        <Select placeholder={t("workflow_node.deploy.form.flexcdn_resource_type.placeholder")}>
           <Select.Option key={RESOURCE_TYPE_CERTIFICATE} value={RESOURCE_TYPE_CERTIFICATE}>
-            {t("workflow_node.deploy.form.goedge_resource_type.option.certificate.label")}
+            {t("workflow_node.deploy.form.flexcdn_resource_type.option.certificate.label")}
           </Select.Option>
         </Select>
       </Form.Item>
@@ -70,15 +70,15 @@ const DeployNodeConfigFormGoEdgeConfig = ({ form: formInst, formName, disabled, 
       <Show when={fieldResourceType === RESOURCE_TYPE_CERTIFICATE}>
         <Form.Item
           name="certificateId"
-          label={t("workflow_node.deploy.form.goedge_certificate_id.label")}
+          label={t("workflow_node.deploy.form.flexcdn_certificate_id.label")}
           rules={[formRule]}
-          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.goedge_certificate_id.tooltip") }}></span>}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.flexcdn_certificate_id.tooltip") }}></span>}
         >
-          <Input type="number" placeholder={t("workflow_node.deploy.form.goedge_certificate_id.placeholder")} />
+          <Input type="number" placeholder={t("workflow_node.deploy.form.flexcdn_certificate_id.placeholder")} />
         </Form.Item>
       </Show>
     </Form>
   );
 };
 
-export default DeployNodeConfigFormGoEdgeConfig;
+export default DeployNodeConfigFormFlexCDNConfig;

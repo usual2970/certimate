@@ -34,6 +34,7 @@ import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormDynv6Config from "./AccessFormDynv6Config";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormEmailConfig from "./AccessFormEmailConfig";
+import AccessFormFlexCDNConfig from "./AccessFormFlexCDNConfig";
 import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
 import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
@@ -218,6 +219,12 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DYNV6:
         return <AccessFormDynv6Config {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EDGIO:
+        return <AccessFormEdgioConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EMAIL:
+        return <AccessFormEmailConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.FLEXCDN:
+        return <AccessFormFlexCDNConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GCORE:
         return <AccessFormGcoreConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GNAME:
@@ -228,10 +235,6 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormGoEdgeConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GOOGLETRUSTSERVICES:
         return <AccessFormGoogleTrustServicesConfig {...nestedFormProps} />;
-      case ACCESS_PROVIDERS.EDGIO:
-        return <AccessFormEdgioConfig {...nestedFormProps} />;
-      case ACCESS_PROVIDERS.EMAIL:
-        return <AccessFormEmailConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.JDCLOUD:

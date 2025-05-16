@@ -140,6 +140,14 @@ type AccessConfigForEmail struct {
 	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
 }
 
+type AccessConfigForFlexCDN struct {
+	ApiUrl                   string `json:"apiUrl"`
+	ApiRole                  string `json:"apiRole"`
+	AccessKeyId              string `json:"accessKeyId"`
+	AccessKey                string `json:"accessKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForGcore struct {
 	ApiToken string `json:"apiToken"`
 }

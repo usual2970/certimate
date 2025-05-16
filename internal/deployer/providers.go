@@ -40,6 +40,7 @@ import (
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
+	pFlexCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
 	pGcoreCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/gcore-cdn"
 	pGoEdge "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/goedge"
 	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
@@ -553,6 +554,25 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				ClientId:      access.ClientId,
 				ClientSecret:  access.ClientSecret,
 				EnvironmentId: maputil.GetString(options.ProviderExtendedConfig, "environmentId"),
+			})
+			return deployer, err
+		}
+
+	case domain.DeploymentProviderTypeFlexCDN:
+		{
+			access := domain.AccessConfigForFlexCDN{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pFlexCDN.NewDeployer(&pFlexCDN.DeployerConfig{
+				ApiUrl:                   access.ApiUrl,
+				ApiRole:                  access.ApiRole,
+				AccessKeyId:              access.AccessKeyId,
+				AccessKey:                access.AccessKey,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pFlexCDN.ResourceType(maputil.GetString(options.ProviderExtendedConfig, "resourceType")),
+				CertificateId:            maputil.GetInt64(options.ProviderExtendedConfig, "certificateId"),
 			})
 			return deployer, err
 		}

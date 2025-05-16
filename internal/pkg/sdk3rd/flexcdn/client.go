@@ -1,4 +1,4 @@
-package goedge
+package flexcdn
 
 import (
 	"crypto/tls"
@@ -65,20 +65,20 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 		}
 
 		req = req.
-			SetHeader("X-Edge-Access-Token", c.accessToken).
+			SetHeader("X-Cloud-Access-Token", c.accessToken).
 			SetQueryParams(qs)
 	} else {
 		req = req.
 			SetHeader("Content-Type", "application/json").
-			SetHeader("X-Edge-Access-Token", c.accessToken).
+			SetHeader("X-Cloud-Access-Token", c.accessToken).
 			SetBody(params)
 	}
 
 	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("goedge api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("flexcdn api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("goedge api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return resp, fmt.Errorf("flexcdn api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
@@ -94,9 +94,9 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("goedge api error: failed to unmarshal response: %w", err)
+		return fmt.Errorf("flexcdn api error: failed to unmarshal response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 200 {
-		return fmt.Errorf("goedge api error: code='%d', message='%s'", errcode, result.GetMessage())
+		return fmt.Errorf("flexcdn api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

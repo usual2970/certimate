@@ -63,6 +63,7 @@
   "provider.edgio.applications": "Edgio - Applications",
   "provider.email": "Email",
   "provider.fastly": "Fastly",
+  "provider.flexcdn": "FlexCDN",
   "provider.gcore": "Gcore",
   "provider.gcore.cdn": "Gcore - CDN (Content Delivery Network)",
   "provider.gname": "GNAME",
