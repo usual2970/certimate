@@ -162,7 +162,7 @@ func (c *Client) sendRequest(method string, path string, params interface{}, con
 	if err != nil {
 		return resp, fmt.Errorf("wangsu api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("wangsu api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("wangsu api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
@@ -181,7 +181,7 @@ func (c *Client) SendRequestWithResult(method string, path string, params interf
 	respBody := resp.Body()
 	if len(respBody) != 0 {
 		if err := json.Unmarshal(respBody, &result); err != nil {
-			return resp, fmt.Errorf("wangsu api error: failed to parse response: %w", err)
+			return resp, fmt.Errorf("wangsu api error: failed to unmarshal response: %w", err)
 		}
 	}
 

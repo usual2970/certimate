@@ -82,7 +82,7 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	if err != nil {
 		return resp, fmt.Errorf("gname api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("gname api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("gname api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
@@ -95,7 +95,7 @@ func (c *Client) sendRequestWithResult(path string, params interface{}, result B
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("gname api error: failed to parse response: %w", err)
+		return fmt.Errorf("gname api error: failed to unmarshal response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 1 {
 		return fmt.Errorf("gname api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}

@@ -65,7 +65,7 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 	if err != nil {
 		return resp, fmt.Errorf("upyun api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("upyun api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("upyun api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
@@ -81,12 +81,12 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("upyun api error: failed to parse response: %w", err)
+		return fmt.Errorf("upyun api error: failed to unmarshal response: %w", err)
 	}
 
 	tresp := &baseResponse{}
 	if err := json.Unmarshal(resp.Body(), &tresp); err != nil {
-		return fmt.Errorf("upyun api error: failed to parse response: %w", err)
+		return fmt.Errorf("upyun api error: failed to unmarshal response: %w", err)
 	} else if tdata := tresp.GetData(); tdata == nil {
 		return fmt.Errorf("upyun api error: empty data")
 	} else if errcode := tdata.GetErrorCode(); errcode > 0 {

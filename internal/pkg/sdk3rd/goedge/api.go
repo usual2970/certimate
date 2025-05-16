@@ -20,7 +20,7 @@ func (c *Client) getAccessToken() error {
 
 	resp := &getAPIAccessTokenResponse{}
 	if err := json.Unmarshal(res.Body(), &resp); err != nil {
-		return fmt.Errorf("goedge api error: failed to parse response: %w", err)
+		return fmt.Errorf("goedge api error: failed to unmarshal response: %w", err)
 	} else if resp.GetCode() != 200 {
 		return fmt.Errorf("goedge get access token failed: code: %d, message: %s", resp.GetCode(), resp.GetMessage())
 	}

@@ -16,7 +16,7 @@ func (c *Client) getCookie() error {
 
 	resp := &signinResponse{}
 	if err := json.Unmarshal(res.Body(), &resp); err != nil {
-		return fmt.Errorf("upyun api error: failed to parse response: %w", err)
+		return fmt.Errorf("upyun api error: failed to unmarshal response: %w", err)
 	} else if !resp.Data.Result {
 		return errors.New("upyun console signin failed")
 	}
