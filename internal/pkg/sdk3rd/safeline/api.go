@@ -1,4 +1,4 @@
-package safelinesdk
+package safeline
 
 func (c *Client) UpdateCertificate(req *UpdateCertificateRequest) (*UpdateCertificateResponse, error) {
 	resp := &UpdateCertificateResponse{}

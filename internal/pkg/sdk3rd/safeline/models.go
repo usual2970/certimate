@@ -1,4 +1,4 @@
-package safelinesdk
+package safeline
 
 type BaseResponse interface {
 	GetErrCode() *string

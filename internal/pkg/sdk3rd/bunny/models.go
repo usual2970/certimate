@@ -1,4 +1,4 @@
-package bunnysdk
+package bunny
 
 type AddCustomCertificateRequest struct {
 	Hostname       string `json:"Hostname"`

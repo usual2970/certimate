@@ -1,4 +1,4 @@
-package btpanelsdk
+package btpanel
 
 type BaseResponse interface {
 	GetStatus() *bool

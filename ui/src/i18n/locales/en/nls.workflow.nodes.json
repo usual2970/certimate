@@ -736,7 +736,7 @@
   "workflow_node.deploy.form.webhook_data.label": "Webhook data (Optional)",
   "workflow_node.deploy.form.webhook_data.placeholder": "Please enter Webhook data to override the default value",
   "workflow_node.deploy.form.webhook_data.tooltip": "Leave it blank to use the default Webhook data provided by the authorization.",
-  "workflow_node.deploy.form.webhook_data.guide": "Supported variables: <br><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${DOMAIN}</strong>: The primary domain of the certificate (<i>CommonName</i>).</li><li><strong>${DOMAINS}</strong>: The domain list of the certificate (<i>SubjectAltNames</i>).</li><li><strong>${CERTIFICATE}</strong>: The PEM format content of the certificate file.</li><li><strong>${SERVER_CERTIFICATE}</strong>: The PEM format content of the server certificate file.</li><li><strong>${INTERMEDIA_CERTIFICATE}</strong>: The PEM format content of the intermedia certificate file.</li><li><strong>${PRIVATE_KEY}</strong>: The PEM format content of the private key file.</li></ol><br>Please visit the authorization management page for addtional notes.",
+  "workflow_node.deploy.form.webhook_data.guide": "<details><summary>Supported variables: </summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${DOMAIN}</strong>: The primary domain of the certificate (<i>CommonName</i>).</li><li><strong>${DOMAINS}</strong>: The domain list of the certificate (<i>SubjectAltNames</i>).</li><li><strong>${CERTIFICATE}</strong>: The PEM format content of the certificate file.</li><li><strong>${SERVER_CERTIFICATE}</strong>: The PEM format content of the server certificate file.</li><li><strong>${INTERMEDIA_CERTIFICATE}</strong>: The PEM format content of the intermediate CA certificate file.</li><li><strong>${PRIVATE_KEY}</strong>: The PEM format content of the private key file.</li></ol></details><br>Please visit the authorization management page for addtional notes.",
   "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
   "workflow_node.deploy.form.strategy_config.label": "Strategy settings",
   "workflow_node.deploy.form.skip_on_last_succeeded.label": "Repeated deployment",
@@ -782,7 +782,7 @@
   "workflow_node.notify.form.webhook_data.label": "Webhook data (Optional)",
   "workflow_node.notify.form.webhook_data.placeholder": "Please enter Webhook data to override the default value",
   "workflow_node.notify.form.webhook_data.tooltip": "Leave it blank to use the default Webhook data provided by the authorization.",
-  "workflow_node.notify.form.webhook_data.guide": "Supported variables: <br><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>: The subject of notification.</li><li><strong>${MESSAGE}</strong>: The message of notification.</li></ol><br>Please visit the authorization management page for addtional notes.",
+  "workflow_node.notify.form.webhook_data.guide": "<details><summary>Supported variables: </summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>: The subject of notification.</li><li><strong>${MESSAGE}</strong>: The message of notification.</li></ol></details><br>Please visit the authorization management page for addtional notes.",
   "workflow_node.notify.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
 
   "workflow_node.end.label": "End",

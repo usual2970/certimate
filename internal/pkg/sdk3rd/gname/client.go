@@ -1,4 +1,4 @@
-package gnamesdk
+package gname
 
 import (
 	"crypto/md5"
@@ -97,7 +97,7 @@ func (c *Client) sendRequestWithResult(path string, params interface{}, result B
 	if err := json.Unmarshal(resp.Body(), &result); err != nil {
 		return fmt.Errorf("gname api error: failed to parse response: %w", err)
 	} else if errcode := result.GetCode(); errcode != 1 {
-		return fmt.Errorf("gname api error: %d - %s", errcode, result.GetMessage())
+		return fmt.Errorf("gname api error: code='%d', message='%s'", errcode, result.GetMessage())
 	}
 
 	return nil

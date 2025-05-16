@@ -1,4 +1,4 @@
-package btpanelsdk
+package btpanel
 
 func (c *Client) ConfigSavePanelSSL(req *ConfigSavePanelSSLRequest) (*ConfigSavePanelSSLResponse, error) {
 	resp := &ConfigSavePanelSSLResponse{}

@@ -90,7 +90,7 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	} else if tdata := tresp.GetData(); tdata == nil {
 		return fmt.Errorf("upyun api error: empty data")
 	} else if errcode := tdata.GetErrorCode(); errcode > 0 {
-		return fmt.Errorf("upyun api error: %d - %s", errcode, tdata.GetErrorMessage())
+		return fmt.Errorf("upyun api error: code='%d', message='%s'", errcode, tdata.GetErrorMessage())
 	}
 
 	return nil

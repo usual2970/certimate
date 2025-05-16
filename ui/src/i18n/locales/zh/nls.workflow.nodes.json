@@ -735,7 +735,7 @@
   "workflow_node.deploy.form.webhook_data.label": "Webhook 回调数据（可选）",
   "workflow_node.deploy.form.webhook_data.placeholder": "请输入 Webhook 回调数据以覆盖默认值",
   "workflow_node.deploy.form.webhook_data.tooltip": "不填写时，将使用所选部署目标授权的默认 Webhook 回调数据。",
-  "workflow_node.deploy.form.webhook_data.guide": "支持的变量：<br><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${DOMAIN}</strong>：证书的主域名（即 <i>CommonName</i>）。</li><li><strong>${DOMAINS}</strong>：证书的多域名列表（即 <i>SubjectAltNames</i>）。</li><li><strong>${CERTIFICATE}</strong>：证书文件 PEM 格式内容。</li><li><strong>${SERVER_CERTIFICATE}</strong>：证书文件（仅含服务器证书）PEM 格式内容。</li><li><strong>${INTERMEDIA_CERTIFICATE}</strong>：证书文件（仅含中间证书）PEM 格式内容。</li><li><strong>${PRIVATE_KEY}</strong>：私钥文件 PEM 格式内容。</li></ol><br>其他注意事项请前往授权管理页面查看。",
+  "workflow_node.deploy.form.webhook_data.guide": "<details><summary>支持的变量：</summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${DOMAIN}</strong>：证书的主域名（即 <i>CommonName</i>）。</li><li><strong>${DOMAINS}</strong>：证书的多域名列表（即 <i>SubjectAltNames</i>）。</li><li><strong>${CERTIFICATE}</strong>：证书文件 PEM 格式内容。</li><li><strong>${SERVER_CERTIFICATE}</strong>：证书文件（仅含服务器证书）PEM 格式内容。</li><li><strong>${INTERMEDIA_CERTIFICATE}</strong>：证书文件（仅含中间证书）PEM 格式内容。</li><li><strong>${PRIVATE_KEY}</strong>：私钥文件 PEM 格式内容。</li></ol></details><br>其他注意事项请前往授权管理页面查看。",
   "workflow_node.deploy.form.webhook_data.errmsg.json_invalid": "请输入有效的 JSON 格式字符串",
   "workflow_node.deploy.form.strategy_config.label": "执行策略",
   "workflow_node.deploy.form.skip_on_last_succeeded.label": "重复部署",
@@ -781,7 +781,7 @@
   "workflow_node.notify.form.webhook_data.label": "Webhook 回调数据（可选）",
   "workflow_node.notify.form.webhook_data.placeholder": "请输入 Webhook 回调数据以覆盖默认值",
   "workflow_node.notify.form.webhook_data.tooltip": "不填写时，将使用所选部署目标授权的默认 Webhook 回调数据。",
-  "workflow_node.notify.form.webhook_data.guide": "支持的变量：<br><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>：通知主题。</li><li><strong>${MESSAGE}</strong>：通知内容。</ol><br>其他注意事项请前往授权管理页面查看。",
+  "workflow_node.notify.form.webhook_data.guide": "<details><summary>支持的变量：</summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>：通知主题。</li><li><strong>${MESSAGE}</strong>：通知内容。</ol></details><br>其他注意事项请前往授权管理页面查看。",
   "workflow_node.notify.form.webhook_data.errmsg.json_invalid": "请输入有效的 JSON 格式字符串",
 
   "workflow_node.end.label": "结束",

@@ -1,4 +1,4 @@
-package gnamesdk
+package gname
 
 func (c *Client) AddDomainResolution(req *AddDomainResolutionRequest) (*AddDomainResolutionResponse, error) {
 	resp := &AddDomainResolutionResponse{}

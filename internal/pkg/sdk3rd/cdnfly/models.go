@@ -1,4 +1,4 @@
-package cdnflysdk
+package cdnfly
 
 import "fmt"
 

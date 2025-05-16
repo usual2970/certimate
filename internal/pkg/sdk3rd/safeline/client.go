@@ -1,4 +1,4 @@
-package safelinesdk
+package safeline
 
 import (
 	"crypto/tls"
@@ -66,9 +66,9 @@ func (c *Client) sendRequestWithResult(path string, params interface{}, result B
 		return fmt.Errorf("safeline api error: failed to parse response: %w", err)
 	} else if errcode := result.GetErrCode(); errcode != nil && *errcode != "" {
 		if result.GetErrMsg() == nil {
-			return fmt.Errorf("safeline api error: %s", *errcode)
+			return fmt.Errorf("safeline api error: code='%s'", *errcode)
 		} else {
-			return fmt.Errorf("safeline api error: %s - %s", *errcode, *result.GetErrMsg())
+			return fmt.Errorf("safeline api error: code='%s', message='%s'", *errcode, *result.GetErrMsg())
 		}
 	}
 

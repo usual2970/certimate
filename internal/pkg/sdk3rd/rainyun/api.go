@@ -1,4 +1,4 @@
-package rainyunsdk
+package rainyun
 
 import (
 	"fmt"

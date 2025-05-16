@@ -6,12 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
-	"github.com/netlify/open-api/v2/go/porcelain"
-	porcelainctx "github.com/netlify/open-api/v2/go/porcelain/context"
-
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	netlifysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/netlify"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
@@ -23,10 +19,9 @@ type DeployerConfig struct {
 }
 
 type DeployerProvider struct {
-	config          *DeployerConfig
-	logger          *slog.Logger
-	sdkClient       *porcelain.Netlify
-	sdkClientAuther runtime.ClientAuthInfoWriter
+	config    *DeployerConfig
+	logger    *slog.Logger
+	sdkClient *netlifysdk.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -36,16 +31,15 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, clientAuther, err := createSdkClient(config.ApiToken)
+	client, err := createSdkClient(config.ApiToken)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	return &DeployerProvider{
-		config:          config,
-		logger:          slog.Default(),
-		sdkClient:       client,
-		sdkClientAuther: clientAuther,
+		config:    config,
+		logger:    slog.Default(),
+		sdkClient: client,
 	}, nil
 }
 
@@ -71,14 +65,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 	// 上传网站证书
 	// REF: https://open-api.netlify.com/#tag/sniCertificate/operation/provisionSiteTLSCertificate
-	configureSiteTLSCertificateCtx := porcelainctx.WithAuthInfo(context.TODO(), d.sdkClientAuther)
-	configureSiteTLSCertificateReq := &porcelain.CustomTLSCertificate{
+	provisionSiteTLSCertificateReq := &netlifysdk.ProvisionSiteTLSCertificateParams{
 		Certificate:    serverCertPEM,
 		CACertificates: intermediaCertPEM,
 		Key:            privkeyPEM,
 	}
-	configureSiteTLSCertificateResp, err := d.sdkClient.ConfigureSiteTLSCertificate(configureSiteTLSCertificateCtx, d.config.SiteId, configureSiteTLSCertificateReq)
-	d.logger.Debug("sdk request 'netlify.provisionSiteTLSCertificate'", slog.String("siteId", d.config.SiteId), slog.Any("request", configureSiteTLSCertificateReq), slog.Any("response", configureSiteTLSCertificateResp))
+	provisionSiteTLSCertificateResp, err := d.sdkClient.ProvisionSiteTLSCertificate(d.config.SiteId, provisionSiteTLSCertificateReq)
+	d.logger.Debug("sdk request 'netlify.provisionSiteTLSCertificate'", slog.String("siteId", d.config.SiteId), slog.Any("request", provisionSiteTLSCertificateReq), slog.Any("response", provisionSiteTLSCertificateResp))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'netlify.provisionSiteTLSCertificate': %w", err)
 	}
@@ -86,16 +79,11 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiToken string) (*porcelain.Netlify, runtime.ClientAuthInfoWriter, error) {
+func createSdkClient(apiToken string) (*netlifysdk.Client, error) {
 	if apiToken == "" {
-		return nil, nil, errors.New("invalid netlify api token")
+		return nil, errors.New("invalid netlify api token")
 	}
 
-	creds := runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
-		r.SetHeaderParam("User-Agent", "Certimate")
-		r.SetHeaderParam("Authorization", "Bearer "+apiToken)
-		return nil
-	})
-
-	return porcelain.Default, creds, nil
+	client := netlifysdk.NewClient(apiToken)
+	return client, nil
 }

@@ -1,4 +1,4 @@
-package baishansdk
+package baishan
 
 import (
 	"net/http"

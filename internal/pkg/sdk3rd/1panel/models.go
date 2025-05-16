@@ -1,4 +1,4 @@
-package onepanelsdk
+package onepanel
 
 type BaseResponse interface {
 	GetCode() int32

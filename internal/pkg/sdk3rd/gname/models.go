@@ -1,4 +1,4 @@
-package gnamesdk
+package gname
 
 import "encoding/json"
 

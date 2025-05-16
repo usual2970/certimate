@@ -1,4 +1,4 @@
-package onepanelsdk
+package onepanel
 
 import (
 	"fmt"
