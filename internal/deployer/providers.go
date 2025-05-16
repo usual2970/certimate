@@ -111,6 +111,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			case domain.DeploymentProviderType1PanelConsole:
 				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
+					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 					AutoRestart:              maputil.GetBool(options.ProviderExtendedConfig, "autoRestart"),
@@ -120,6 +121,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			case domain.DeploymentProviderType1PanelSite:
 				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,
+					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderExtendedConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),

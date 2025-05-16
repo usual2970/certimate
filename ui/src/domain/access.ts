@@ -69,6 +69,7 @@ export interface AccessModel extends BaseModel {
 // #region AccessConfig
 export type AccessConfigFor1Panel = {
   apiUrl: string;
+  apiVersion: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
 };

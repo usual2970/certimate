@@ -17,6 +17,7 @@ type Access struct {
 
 type AccessConfigFor1Panel struct {
 	ApiUrl                   string `json:"apiUrl"`
+	ApiVersion               string `json:"apiVersion"`
 	ApiKey                   string `json:"apiKey"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
