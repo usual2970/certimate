@@ -15,6 +15,7 @@ var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
+	fApiVersion    string
 	fApiKey        string
 )
 
@@ -24,6 +25,7 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fApiVersion, argsPrefix+"APIVERSION", "v1", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
 }
 
@@ -34,6 +36,7 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_1PANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIURL="http://127.0.0.1:20410" \
+	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIVERSION="v1" \
 	--CERTIMATE_DEPLOYER_1PANELCONSOLE_APIKEY="your-api-key"
 */
 func TestDeploy(t *testing.T) {
@@ -45,11 +48,13 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("APIVERSION: %v", fApiVersion),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
+			ApiVersion:               fApiVersion,
 			ApiKey:                   fApiKey,
 			AllowInsecureConnections: true,
 			AutoRestart:              true,

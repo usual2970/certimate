@@ -15,8 +15,8 @@ var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
-	fTokenId       uint
-	fToken         string
+	fAccessTokenId int64
+	fAccessToken   string
 	fSiteName      string
 )
 
@@ -26,8 +26,8 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
-	flag.UintVar(&fTokenId, argsPrefix+"TOKENID", 0, "")
-	flag.StringVar(&fToken, argsPrefix+"TOKEN", "", "")
+	flag.Int64Var(&fAccessTokenId, argsPrefix+"ACCESSTOKENID", 0, "")
+	flag.StringVar(&fAccessToken, argsPrefix+"ACCESSTOKEN", "", "")
 	flag.StringVar(&fSiteName, argsPrefix+"SITENAME", "", "")
 }
 
@@ -38,8 +38,8 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKENID=your-access-token-id \
-	--CERTIMATE_DEPLOYER_RATPANELSITE_TOKEN="your-access-token" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_ACCESSTOKENID="your-access-token-id" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_ACCESSTOKEN="your-access-token" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_SITENAME="your-site-name"
 */
 func TestDeploy(t *testing.T) {
@@ -51,15 +51,15 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
-			fmt.Sprintf("TOKENID: %v", fTokenId),
-			fmt.Sprintf("TOKEN: %v", fToken),
+			fmt.Sprintf("ACCESSTOKENID: %v", fAccessTokenId),
+			fmt.Sprintf("ACCESSTOKEN: %v", fAccessToken),
 			fmt.Sprintf("SITENAME: %v", fSiteName),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
-			AccessTokenId:            fTokenId,
-			AccessToken:              fToken,
+			AccessTokenId:            int32(fAccessTokenId),
+			AccessToken:              fAccessToken,
 			AllowInsecureConnections: true,
 			SiteName:                 fSiteName,
 		})

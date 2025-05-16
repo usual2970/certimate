@@ -210,7 +210,6 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-
 			default:
 				if err := d.modifyListenerCertificate(ctx, listenerId, upres.CertId); err != nil {
 					errs = append(errs, err)

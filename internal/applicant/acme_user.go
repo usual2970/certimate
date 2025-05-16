@@ -7,6 +7,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"fmt"
+	"strings"
 
 	"github.com/go-acme/lego/v4/lego"
 	"github.com/go-acme/lego/v4/registration"
@@ -19,22 +20,31 @@ import (
 )
 
 type acmeUser struct {
-	CA           string
-	Email        string
+	// 证书颁发机构标识。
+	// 通常等同于 [CAProviderType] 的值。
+	// 对于自定义 ACME CA，值为 "custom#{access_id}"。
+	CA string
+	// 邮箱。
+	Email string
+	// 注册信息。
 	Registration *registration.Resource
 
+	// CSR 私钥。
 	privkey string
 }
 
-func newAcmeUser(ca, email string) (*acmeUser, error) {
+func newAcmeUser(ca, caAccessId, email string) (*acmeUser, error) {
 	repo := repository.NewAcmeAccountRepository()
 
 	applyUser := &acmeUser{
 		CA:    ca,
 		Email: email,
 	}
+	if ca == caCustom {
+		applyUser.CA = fmt.Sprintf("%s#%s", ca, caAccessId)
+	}
 
-	acmeAccount, err := repo.GetByCAAndEmail(ca, email)
+	acmeAccount, err := repo.GetByCAAndEmail(applyUser.CA, applyUser.Email)
 	if err != nil {
 		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 		if err != nil {
@@ -73,6 +83,10 @@ func (u *acmeUser) hasRegistration() bool {
 	return u.Registration != nil
 }
 
+func (u *acmeUser) getCAProvider() string {
+	return strings.Split(u.CA, "#")[0]
+}
+
 func (u *acmeUser) getPrivateKeyPEM() string {
 	return u.privkey
 }
@@ -94,16 +108,16 @@ func registerAcmeUserWithSingleFlight(client *lego.Client, user *acmeUser, userR
 func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions map[string]any) (*registration.Resource, error) {
 	var reg *registration.Resource
 	var err error
-	switch user.CA {
-	case sslProviderLetsEncrypt, sslProviderLetsEncryptStaging:
+	switch user.getCAProvider() {
+	case caLetsEncrypt, caLetsEncryptStaging:
 		reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 
-	case sslProviderBuypass:
+	case caBuypass:
 		{
 			reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 		}
 
-	case sslProviderGoogleTrustServices:
+	case caGoogleTrustServices:
 		{
 			access := domain.AccessConfigForGoogleTrustServices{}
 			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
@@ -117,7 +131,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 			})
 		}
 
-	case sslProviderSSLCom:
+	case caSSLCom:
 		{
 			access := domain.AccessConfigForSSLCom{}
 			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
@@ -131,7 +145,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 			})
 		}
 
-	case sslProviderZeroSSL:
+	case caZeroSSL:
 		{
 			access := domain.AccessConfigForZeroSSL{}
 			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
@@ -143,6 +157,26 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 				Kid:                  access.EabKid,
 				HmacEncoded:          access.EabHmacKey,
 			})
+		}
+
+	case caCustom:
+		{
+			access := domain.AccessConfigForACMECA{}
+			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			if access.EabKid == "" && access.EabHmacKey == "" {
+				reg, err = client.Registration.Register(registration.RegisterOptions{
+					TermsOfServiceAgreed: true,
+				})
+			} else {
+				reg, err = client.Registration.RegisterWithExternalAccountBinding(registration.RegisterEABOptions{
+					TermsOfServiceAgreed: true,
+					Kid:                  access.EabKid,
+					HmacEncoded:          access.EabHmacKey,
+				})
+			}
 		}
 
 	default:

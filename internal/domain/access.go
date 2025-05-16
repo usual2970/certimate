@@ -17,8 +17,15 @@ type Access struct {
 
 type AccessConfigFor1Panel struct {
 	ApiUrl                   string `json:"apiUrl"`
+	ApiVersion               string `json:"apiVersion"`
 	ApiKey                   string `json:"apiKey"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
+type AccessConfigForACMECA struct {
+	Endpoint   string `json:"endpoint"`
+	EabKid     string `json:"eabKid,omitempty"`
+	EabHmacKey string `json:"eabHmacKey,omitempty"`
 }
 
 type AccessConfigForACMEHttpReq struct {
@@ -133,6 +140,14 @@ type AccessConfigForEmail struct {
 	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
 }
 
+type AccessConfigForFlexCDN struct {
+	ApiUrl                   string `json:"apiUrl"`
+	ApiRole                  string `json:"apiRole"`
+	AccessKeyId              string `json:"accessKeyId"`
+	AccessKey                string `json:"accessKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForGcore struct {
 	ApiToken string `json:"apiToken"`
 }
@@ -242,7 +257,7 @@ type AccessConfigForRainYun struct {
 
 type AccessConfigForRatPanel struct {
 	ApiUrl                   string `json:"apiUrl"`
-	AccessTokenId            uint   `json:"accessTokenId"`
+	AccessTokenId            int32  `json:"accessTokenId"`
 	AccessToken              string `json:"accessToken"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }

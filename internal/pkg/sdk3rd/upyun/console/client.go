@@ -52,8 +52,8 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 		}
 
 		req = req.
-			SetQueryParams(qs).
-			SetHeader("Cookie", c.loginCookie)
+			SetHeader("Cookie", c.loginCookie).
+			SetQueryParams(qs)
 	} else {
 		req = req.
 			SetHeader("Content-Type", "application/json").

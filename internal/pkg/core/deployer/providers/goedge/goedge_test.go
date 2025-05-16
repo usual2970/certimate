@@ -58,6 +58,7 @@ func TestDeploy(t *testing.T) {
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
+			ApiRole:                  "user",
 			AccessKeyId:              fAccessKeyId,
 			AccessKey:                fAccessKey,
 			AllowInsecureConnections: true,

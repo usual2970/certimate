@@ -3,25 +3,26 @@ package applicant
 import "github.com/usual2970/certimate/internal/domain"
 
 const (
-	sslProviderLetsEncrypt         = string(domain.CAProviderTypeLetsEncrypt)
-	sslProviderLetsEncryptStaging  = string(domain.CAProviderTypeLetsEncryptStaging)
-	sslProviderBuypass             = string(domain.CAProviderTypeBuypass)
-	sslProviderGoogleTrustServices = string(domain.CAProviderTypeGoogleTrustServices)
-	sslProviderSSLCom              = string(domain.CAProviderTypeSSLCom)
-	sslProviderZeroSSL             = string(domain.CAProviderTypeZeroSSL)
+	caLetsEncrypt         = string(domain.CAProviderTypeLetsEncrypt)
+	caLetsEncryptStaging  = string(domain.CAProviderTypeLetsEncryptStaging)
+	caBuypass             = string(domain.CAProviderTypeBuypass)
+	caGoogleTrustServices = string(domain.CAProviderTypeGoogleTrustServices)
+	caSSLCom              = string(domain.CAProviderTypeSSLCom)
+	caZeroSSL             = string(domain.CAProviderTypeZeroSSL)
+	caCustom              = string(domain.CAProviderTypeACMECA)
 
-	sslProviderDefault = sslProviderLetsEncrypt
+	caDefault = caLetsEncrypt
 )
 
-var sslProviderUrls = map[string]string{
-	sslProviderLetsEncrypt:         "https://acme-v02.api.letsencrypt.org/directory",
-	sslProviderLetsEncryptStaging:  "https://acme-staging-v02.api.letsencrypt.org/directory",
-	sslProviderBuypass:             "https://api.buypass.com/acme/directory",
-	sslProviderGoogleTrustServices: "https://dv.acme-v02.api.pki.goog/directory",
-	sslProviderSSLCom:              "https://acme.ssl.com/sslcom-dv-rsa",
-	sslProviderSSLCom + "RSA":      "https://acme.ssl.com/sslcom-dv-rsa",
-	sslProviderSSLCom + "ECC":      "https://acme.ssl.com/sslcom-dv-ecc",
-	sslProviderZeroSSL:             "https://acme.zerossl.com/v2/DV90",
+var caDirUrls = map[string]string{
+	caLetsEncrypt:         "https://acme-v02.api.letsencrypt.org/directory",
+	caLetsEncryptStaging:  "https://acme-staging-v02.api.letsencrypt.org/directory",
+	caBuypass:             "https://api.buypass.com/acme/directory",
+	caGoogleTrustServices: "https://dv.acme-v02.api.pki.goog/directory",
+	caSSLCom:              "https://acme.ssl.com/sslcom-dv-rsa",
+	caSSLCom + "RSA":      "https://acme.ssl.com/sslcom-dv-rsa",
+	caSSLCom + "ECC":      "https://acme.ssl.com/sslcom-dv-ecc",
+	caZeroSSL:             "https://acme.zerossl.com/v2/DV90",
 }
 
 type acmeSSLProviderConfig struct {

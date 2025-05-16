@@ -31,9 +31,9 @@ func NewWithWorkflowNode(config DeployerWithWorkflowNodeConfig) (Deployer, error
 
 	nodeConfig := config.Node.GetConfigForDeploy()
 	options := &deployerProviderOptions{
-		Provider:               domain.DeploymentProviderType(nodeConfig.Provider),
-		ProviderAccessConfig:   make(map[string]any),
-		ProviderExtendedConfig: nodeConfig.ProviderConfig,
+		Provider:              domain.DeploymentProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:  make(map[string]any),
+		ProviderServiceConfig: nodeConfig.ProviderConfig,
 	}
 
 	accessRepo := repository.NewAccessRepository()

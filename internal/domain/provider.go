@@ -10,7 +10,7 @@ type AccessProviderType string
 */
 const (
 	AccessProviderType1Panel              = AccessProviderType("1panel")
-	AccessProviderTypeACMECA              = AccessProviderType("acmeca") // ACME CA（预留）
+	AccessProviderTypeACMECA              = AccessProviderType("acmeca")
 	AccessProviderTypeACMEHttpReq         = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAkamai              = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun              = AccessProviderType("aliyun")
@@ -36,8 +36,8 @@ const (
 	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
 	AccessProviderTypeEdgio               = AccessProviderType("edgio")
 	AccessProviderTypeEmail               = AccessProviderType("email")
-	AccessProviderTypeFastly              = AccessProviderType("fastly")  // Fastly（预留）
-	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn") // FlexCDN（预留）
+	AccessProviderTypeFastly              = AccessProviderType("fastly") // Fastly（预留）
+	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn")
 	AccessProviderTypeGname               = AccessProviderType("gname")
 	AccessProviderTypeGcore               = AccessProviderType("gcore")
 	AccessProviderTypeGoDaddy             = AccessProviderType("godaddy")
@@ -91,6 +91,7 @@ type CAProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	CAProviderTypeACMECA              = CAProviderType(AccessProviderTypeACMECA)
 	CAProviderTypeBuypass             = CAProviderType(AccessProviderTypeBuypass)
 	CAProviderTypeGoogleTrustServices = CAProviderType(AccessProviderTypeGoogleTrustServices)
 	CAProviderTypeLetsEncrypt         = CAProviderType(AccessProviderTypeLetsEncrypt)
@@ -173,7 +174,7 @@ const (
 	DeploymentProviderTypeAliyunDDoS            = DeploymentProviderType(AccessProviderTypeAliyun + "-ddos")
 	DeploymentProviderTypeAliyunESA             = DeploymentProviderType(AccessProviderTypeAliyun + "-esa")
 	DeploymentProviderTypeAliyunFC              = DeploymentProviderType(AccessProviderTypeAliyun + "-fc")
-	DeploymentProviderTypeAliyunGA              = DeploymentProviderType(AccessProviderTypeAliyun + "-ga") // 阿里云全球加速（预留）
+	DeploymentProviderTypeAliyunGA              = DeploymentProviderType(AccessProviderTypeAliyun + "-ga")
 	DeploymentProviderTypeAliyunLive            = DeploymentProviderType(AccessProviderTypeAliyun + "-live")
 	DeploymentProviderTypeAliyunNLB             = DeploymentProviderType(AccessProviderTypeAliyun + "-nlb")
 	DeploymentProviderTypeAliyunOSS             = DeploymentProviderType(AccessProviderTypeAliyun + "-oss")
@@ -195,7 +196,7 @@ const (
 	DeploymentProviderTypeCdnfly                = DeploymentProviderType(AccessProviderTypeCdnfly)
 	DeploymentProviderTypeDogeCloudCDN          = DeploymentProviderType(AccessProviderTypeDogeCloud + "-cdn")
 	DeploymentProviderTypeEdgioApplications     = DeploymentProviderType(AccessProviderTypeEdgio + "-applications")
-	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN) // FlexCDN（预留）
+	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN)
 	DeploymentProviderTypeGcoreCDN              = DeploymentProviderType(AccessProviderTypeGcore + "-cdn")
 	DeploymentProviderTypeGoEdge                = DeploymentProviderType(AccessProviderTypeGoEdge)
 	DeploymentProviderTypeHuaweiCloudCDN        = DeploymentProviderType(AccessProviderTypeHuaweiCloud + "-cdn")

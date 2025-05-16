@@ -171,7 +171,6 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-
 			default:
 				if err := d.updateListenerCertificate(ctx, d.config.LoadbalancerId, listenerPort, cloudCertId); err != nil {
 					errs = append(errs, err)

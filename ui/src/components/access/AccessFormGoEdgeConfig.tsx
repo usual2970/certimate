@@ -32,16 +32,8 @@ const AccessFormGoEdgeConfig = ({ form: formInst, formName, disabled, initialVal
     role: z.union([z.literal("user"), z.literal("admin")], {
       message: t("access.form.goedge_api_role.placeholder"),
     }),
-    accessKeyId: z
-      .string()
-      .min(1, t("access.form.goedge_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
-    accessKey: z
-      .string()
-      .min(1, t("access.form.goedge_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+    accessKeyId: z.string().nonempty(t("access.form.goedge_access_key_id.placeholder")).trim(),
+    accessKey: z.string().nonempty(t("access.form.goedge_access_key.placeholder")).trim(),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

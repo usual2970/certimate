@@ -14,19 +14,25 @@ import (
 )
 
 type Client struct {
-	apiHost string
-	apiKey  string
+	apiHost    string
+	apiVersion string
+	apiKey     string
 
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiKey string) *Client {
+func NewClient(apiHost, apiVersion, apiKey string) *Client {
 	client := resty.New()
 
+	if apiVersion == "" {
+		apiVersion = "v1"
+	}
+
 	return &Client{
-		apiHost: strings.TrimRight(apiHost, "/"),
-		apiKey:  apiKey,
-		client:  client,
+		apiHost:    strings.TrimRight(apiHost, "/"),
+		apiVersion: apiVersion,
+		apiKey:     apiKey,
+		client:     client,
 	}
 }
 
@@ -49,7 +55,7 @@ func (c *Client) generateToken(timestamp string) string {
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
 	req := c.client.R()
 	req.Method = method
-	req.URL = c.apiHost + "/api/v1" + path
+	req.URL = c.apiHost + "/api/" + c.apiVersion + path
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {

@@ -27,6 +27,7 @@ import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDC
 import DeployNodeConfigFormAliyunDDoSConfig from "./DeployNodeConfigFormAliyunDDoSConfig";
 import DeployNodeConfigFormAliyunESAConfig from "./DeployNodeConfigFormAliyunESAConfig";
 import DeployNodeConfigFormAliyunFCConfig from "./DeployNodeConfigFormAliyunFCConfig";
+import DeployNodeConfigFormAliyunGAConfig from "./DeployNodeConfigFormAliyunGAConfig";
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
@@ -46,6 +47,7 @@ import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlu
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
+import DeployNodeConfigFormFlexCDNConfig from "./DeployNodeConfigFormFlexCDNConfig";
 import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNConfig";
 import DeployNodeConfigFormGoEdgeConfig from "./DeployNodeConfigFormGoEdgeConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
@@ -63,6 +65,7 @@ import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNCo
 import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormRainYunRCDNConfig from "./DeployNodeConfigFormRainYunRCDNConfig";
+import DeployNodeConfigFormRatPanelSiteConfig from "./DeployNodeConfigFormRatPanelSiteConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
@@ -201,6 +204,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_FC:
           return <DeployNodeConfigFormAliyunFCConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.ALIYUN_GA:
+          return <DeployNodeConfigFormAliyunGAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_NLB:
@@ -239,6 +244,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:
           return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.FLEXCDN:
+          return <DeployNodeConfigFormFlexCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GCORE_CDN:
           return <DeployNodeConfigFormGcoreCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GOEDGE:
@@ -273,6 +280,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.RAINYUN_RCDN:
           return <DeployNodeConfigFormRainYunRCDNConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.RATPANEL_SITE:
+          return <DeployNodeConfigFormRatPanelSiteConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SAFELINE:
           return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SSH:

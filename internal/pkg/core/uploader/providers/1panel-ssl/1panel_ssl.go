@@ -10,12 +10,14 @@ import (
 	"time"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
+	onepanelsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
 
 type UploaderConfig struct {
 	// 1Panel 地址。
 	ApiUrl string `json:"apiUrl"`
+	// 1Panel 版本。
+	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
 	ApiKey string `json:"apiKey"`
 }
@@ -23,7 +25,7 @@ type UploaderConfig struct {
 type UploaderProvider struct {
 	config    *UploaderConfig
 	logger    *slog.Logger
-	sdkClient *opsdk.Client
+	sdkClient *onepanelsdk.Client
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -33,7 +35,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey)
+	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -67,7 +69,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	certName := fmt.Sprintf("certimate-%d", time.Now().UnixMilli())
 
 	// 上传证书
-	uploadWebsiteSSLReq := &opsdk.UploadWebsiteSSLRequest{
+	uploadWebsiteSSLReq := &onepanelsdk.UploadWebsiteSSLRequest{
 		Type:        "paste",
 		Description: certName,
 		Certificate: certPEM,
@@ -99,7 +101,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 		default:
 		}
 
-		searchWebsiteSSLReq := &opsdk.SearchWebsiteSSLRequest{
+		searchWebsiteSSLReq := &onepanelsdk.SearchWebsiteSSLRequest{
 			Page:     searchWebsiteSSLPageNumber,
 			PageSize: searchWebsiteSSLPageSize,
 		}
@@ -130,15 +132,19 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 	return nil, nil
 }
 
-func createSdkClient(apiUrl, apiKey string) (*opsdk.Client, error) {
+func createSdkClient(apiUrl, apiVersion, apiKey string) (*onepanelsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid 1panel api url")
+	}
+
+	if apiVersion == "" {
+		return nil, errors.New("invalid 1panel api version")
 	}
 
 	if apiKey == "" {
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := opsdk.NewClient(apiUrl, apiKey)
+	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
 	return client, nil
 }

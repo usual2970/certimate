@@ -20,12 +20,13 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
+	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
 type ApplyResult struct {
-	CertificateFullChain string
+	FullChainCertificate string
 	IssuerCertificate    string
 	PrivateKey           string
 	ACMEAccountUrl       string
@@ -53,20 +54,20 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 
 	nodeConfig := config.Node.GetConfigForApply()
 	options := &applicantProviderOptions{
-		Domains:                  sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
-		ContactEmail:             nodeConfig.ContactEmail,
-		Provider:                 domain.ACMEDns01ProviderType(nodeConfig.Provider),
-		ProviderAccessConfig:     make(map[string]any),
-		ProviderExtendedConfig:   nodeConfig.ProviderConfig,
-		CAProvider:               domain.CAProviderType(nodeConfig.CAProvider),
-		CAProviderAccessConfig:   make(map[string]any),
-		CAProviderExtendedConfig: nodeConfig.CAProviderConfig,
-		KeyAlgorithm:             nodeConfig.KeyAlgorithm,
-		Nameservers:              sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
-		DnsPropagationWait:       nodeConfig.DnsPropagationWait,
-		DnsPropagationTimeout:    nodeConfig.DnsPropagationTimeout,
-		DnsTTL:                   nodeConfig.DnsTTL,
-		DisableFollowCNAME:       nodeConfig.DisableFollowCNAME,
+		Domains:                 sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:            nodeConfig.ContactEmail,
+		Provider:                domain.ACMEDns01ProviderType(nodeConfig.Provider),
+		ProviderAccessConfig:    make(map[string]any),
+		ProviderServiceConfig:   nodeConfig.ProviderConfig,
+		CAProvider:              domain.CAProviderType(nodeConfig.CAProvider),
+		CAProviderAccessConfig:  make(map[string]any),
+		CAProviderServiceConfig: nodeConfig.CAProviderConfig,
+		KeyAlgorithm:            nodeConfig.KeyAlgorithm,
+		Nameservers:             sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationWait:      nodeConfig.DnsPropagationWait,
+		DnsPropagationTimeout:   nodeConfig.DnsPropagationTimeout,
+		DnsTTL:                  nodeConfig.DnsTTL,
+		DisableFollowCNAME:      nodeConfig.DisableFollowCNAME,
 	}
 
 	accessRepo := repository.NewAccessRepository()
@@ -81,6 +82,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 		if access, err := accessRepo.GetById(context.Background(), nodeConfig.CAProviderAccessId); err != nil {
 			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.CAProviderAccessId, err)
 		} else {
+			options.CAProviderAccessId = access.Id
 			options.CAProviderAccessConfig = access.Config
 		}
 	}
@@ -91,13 +93,13 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 
 		sslProviderConfig := &acmeSSLProviderConfig{
 			Config:   make(map[domain.CAProviderType]map[string]any),
-			Provider: sslProviderDefault,
+			Provider: caDefault,
 		}
 		if settings != nil {
 			if err := json.Unmarshal([]byte(settings.Content), sslProviderConfig); err != nil {
 				return nil, err
 			} else if sslProviderConfig.Provider == "" {
-				sslProviderConfig.Provider = sslProviderDefault
+				sslProviderConfig.Provider = caDefault
 			}
 		}
 
@@ -163,7 +165,7 @@ func getLimiter(key string) *rate.Limiter {
 }
 
 func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOptions) (*ApplyResult, error) {
-	user, err := newAcmeUser(string(options.CAProvider), options.ContactEmail)
+	user, err := newAcmeUser(string(options.CAProvider), options.CAProviderAccessId, options.ContactEmail)
 	if err != nil {
 		return nil, err
 	}
@@ -175,13 +177,26 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 	// Create an ACME client config
 	config := lego.NewConfig(user)
 	config.Certificate.KeyType = parseLegoKeyAlgorithm(domain.CertificateKeyAlgorithmType(options.KeyAlgorithm))
-	config.CADirURL = sslProviderUrls[user.CA]
-	if user.CA == sslProviderSSLCom {
+	switch user.getCAProvider() {
+	case caSSLCom:
 		if strings.HasPrefix(options.KeyAlgorithm, "RSA") {
-			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"RSA"]
+			config.CADirURL = caDirUrls[caSSLCom+"RSA"]
 		} else if strings.HasPrefix(options.KeyAlgorithm, "EC") {
-			config.CADirURL = sslProviderUrls[sslProviderSSLCom+"ECC"]
+			config.CADirURL = caDirUrls[caSSLCom+"ECC"]
+		} else {
+			config.CADirURL = caDirUrls[caSSLCom]
 		}
+
+	case caCustom:
+		caDirURL := maputil.GetString(options.CAProviderAccessConfig, "endpoint")
+		if caDirURL != "" {
+			config.CADirURL = caDirURL
+		} else {
+			return nil, fmt.Errorf("invalid ca provider endpoint")
+		}
+
+	default:
+		config.CADirURL = caDirUrls[user.CA]
 	}
 
 	// Create an ACME client
@@ -229,7 +244,7 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 	}
 
 	return &ApplyResult{
-		CertificateFullChain: strings.TrimSpace(string(certResource.Certificate)),
+		FullChainCertificate: strings.TrimSpace(string(certResource.Certificate)),
 		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
 		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
 		ACMEAccountUrl:       user.Registration.URI,

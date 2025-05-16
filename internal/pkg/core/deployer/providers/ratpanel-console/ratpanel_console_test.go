@@ -15,8 +15,8 @@ var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
-	fTokenId       uint
-	fToken         string
+	fAccessTokenId int64
+	fAccessToken   string
 )
 
 func init() {
@@ -25,8 +25,8 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
-	flag.UintVar(&fTokenId, argsPrefix+"TOKENID", 0, "")
-	flag.StringVar(&fToken, argsPrefix+"TOKEN", "", "")
+	flag.Int64Var(&fAccessTokenId, argsPrefix+"ACCESSTOKENID", 0, "")
+	flag.StringVar(&fAccessToken, argsPrefix+"ACCESSTOKEN", "", "")
 }
 
 /*
@@ -36,8 +36,8 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_APIURL="http://127.0.0.1:8888" \
-	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_TOKENID=your-access-token-id \
-	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_TOKEN="your-access-token"
+	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_ACCESSTOKENID="your-access-token-id" \
+	--CERTIMATE_DEPLOYER_RATPANELCONSOLE_ACCESSTOKEN="your-access-token"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -48,14 +48,14 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
-			fmt.Sprintf("TOKENID: %v", fTokenId),
-			fmt.Sprintf("TOKEN: %v", fToken),
+			fmt.Sprintf("ACCESSTOKENID: %v", fAccessTokenId),
+			fmt.Sprintf("ACCESSTOKEN: %v", fAccessToken),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
-			AccessTokenId:            fTokenId,
-			AccessToken:              fToken,
+			AccessTokenId:            int32(fAccessTokenId),
+			AccessToken:              fAccessToken,
 			AllowInsecureConnections: true,
 		})
 		if err != nil {

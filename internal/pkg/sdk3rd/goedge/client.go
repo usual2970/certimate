@@ -65,8 +65,8 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 		}
 
 		req = req.
-			SetQueryParams(qs).
-			SetHeader("X-Edge-Access-Token", c.accessToken)
+			SetHeader("X-Edge-Access-Token", c.accessToken).
+			SetQueryParams(qs)
 	} else {
 		req = req.
 			SetHeader("Content-Type", "application/json").

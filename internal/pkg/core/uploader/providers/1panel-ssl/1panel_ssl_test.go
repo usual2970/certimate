@@ -16,6 +16,7 @@ var (
 	fInputCertPath string
 	fInputKeyPath  string
 	fApiUrl        string
+	fApiVersion    string
 	fApiKey        string
 )
 
@@ -25,6 +26,7 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fApiVersion, argsPrefix+"APIVERSION", "v1", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
 }
 
@@ -35,6 +37,7 @@ Shell command to run this test:
 	--CERTIMATE_UPLOADER_1PANELSSL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_UPLOADER_1PANELSSL_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_UPLOADER_1PANELSSL_APIURL="http://127.0.0.1:20410" \
+	--CERTIMATE_UPLOADER_1PANELSSL_APIVERSION="v1" \
 	--CERTIMATE_UPLOADER_1PANELSSL_APIKEY="your-api-key"
 */
 func TestDeploy(t *testing.T) {
@@ -46,12 +49,14 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("APIVERSION: %v", fApiVersion),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 		}, "\n"))
 
 		uploader, err := provider.NewUploader(&provider.UploaderConfig{
-			ApiUrl: fApiUrl,
-			ApiKey: fApiKey,
+			ApiUrl:     fApiUrl,
+			ApiVersion: fApiVersion,
+			ApiKey:     fApiKey,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

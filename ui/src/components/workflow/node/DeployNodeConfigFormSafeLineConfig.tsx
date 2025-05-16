@@ -68,7 +68,12 @@ const DeployNodeConfigFormSafeLineConfig = ({ form: formInst, formName, disabled
       </Form.Item>
 
       <Show when={fieldResourceType === RESOURCE_TYPE_CERTIFICATE}>
-        <Form.Item name="certificateId" label={t("workflow_node.deploy.form.safeline_certificate_id.label")} rules={[formRule]}>
+        <Form.Item
+          name="certificateId"
+          label={t("workflow_node.deploy.form.safeline_certificate_id.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.safeline_certificate_id.tooltip") }}></span>}
+        >
           <Input type="number" placeholder={t("workflow_node.deploy.form.safeline_certificate_id.placeholder")} />
         </Form.Item>
       </Show>
