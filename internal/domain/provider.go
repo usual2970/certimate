@@ -10,7 +10,7 @@ type AccessProviderType string
 */
 const (
 	AccessProviderType1Panel              = AccessProviderType("1panel")
-	AccessProviderTypeACMECA              = AccessProviderType("acmeca") // ACME CA（预留）
+	AccessProviderTypeACMECA              = AccessProviderType("acmeca")
 	AccessProviderTypeACMEHttpReq         = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAkamai              = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun              = AccessProviderType("aliyun")
@@ -91,6 +91,7 @@ type CAProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	CAProviderTypeACMECA              = CAProviderType(AccessProviderTypeACMECA)
 	CAProviderTypeBuypass             = CAProviderType(AccessProviderTypeBuypass)
 	CAProviderTypeGoogleTrustServices = CAProviderType(AccessProviderTypeGoogleTrustServices)
 	CAProviderTypeLetsEncrypt         = CAProviderType(AccessProviderTypeLetsEncrypt)

@@ -7,6 +7,7 @@ export interface AccessModel extends BaseModel {
   */ Record<string, unknown> &
     (
       | AccessConfigFor1Panel
+      | AccessConfigForACMECA
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
       | AccessConfigForAWS
@@ -73,6 +74,12 @@ export type AccessConfigFor1Panel = {
   apiVersion: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForACMECA = {
+  endpoint: string;
+  eabKid?: string;
+  eabHmacKey?: string;
 };
 
 export type AccessConfigForACMEHttpReq = {

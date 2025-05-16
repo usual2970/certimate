@@ -48,6 +48,7 @@ type applicantProviderOptions struct {
 	ProviderAccessConfig     map[string]any
 	ProviderExtendedConfig   map[string]any
 	CAProvider               domain.CAProviderType
+	CAProviderAccessId       string
 	CAProviderAccessConfig   map[string]any
 	CAProviderExtendedConfig map[string]any
 	KeyAlgorithm             string

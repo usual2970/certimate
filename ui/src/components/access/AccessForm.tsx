@@ -12,6 +12,7 @@ import { ACCESS_PROVIDERS, ACCESS_USAGES, type AccessProvider } from "@/domain/p
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
+import AccessFormACMECAConfig from "./AccessFormACMECAConfig";
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
 import AccessFormAWSConfig from "./AccessFormAWSConfig";
@@ -177,6 +178,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
     switch (fieldProvider) {
       case ACCESS_PROVIDERS["1PANEL"]:
         return <AccessForm1PanelConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.ACMECA:
+        return <AccessFormACMECAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessFormACMEHttpReqConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:

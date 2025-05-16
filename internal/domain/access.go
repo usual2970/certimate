@@ -22,6 +22,12 @@ type AccessConfigFor1Panel struct {
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
+type AccessConfigForACMECA struct {
+	Endpoint   string `json:"endpoint"`
+	EabKid     string `json:"eabKid,omitempty"`
+	EabHmacKey string `json:"eabHmacKey,omitempty"`
+}
+
 type AccessConfigForACMEHttpReq struct {
 	Endpoint string `json:"endpoint"`
 	Mode     string `json:"mode,omitempty"`

@@ -5,6 +5,7 @@
  */
 export const ACCESS_PROVIDERS = Object.freeze({
   ["1PANEL"]: "1panel",
+  ACMECA: "acmeca",
   ACMEHTTPREQ: "acmehttpreq",
   ALIYUN: "aliyun",
   AWS: "aws",
@@ -153,6 +154,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.GOOGLETRUSTSERVICES, "provider.googletrustservices", "/imgs/providers/google.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.SSLCOM, "provider.sslcom", "/imgs/providers/sslcom.svg", [ACCESS_USAGES.CA]],
     [ACCESS_PROVIDERS.ZEROSSL, "provider.zerossl", "/imgs/providers/zerossl.svg", [ACCESS_USAGES.CA]],
+    [ACCESS_PROVIDERS.ACMECA, "provider.acmeca", "/imgs/providers/acmeca.svg", [ACCESS_USAGES.CA]],
 
     [ACCESS_PROVIDERS.EMAIL, "provider.email", "/imgs/providers/email.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.DINGTALKBOT, "provider.dingtalkbot", "/imgs/providers/dingtalk.svg", [ACCESS_USAGES.NOTIFICATION]],
@@ -179,6 +181,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
   NOTICE: If you add new constant, please keep ASCII order.
  */
 export const CA_PROVIDERS = Object.freeze({
+  ACMECA: `${ACCESS_PROVIDERS.ACMECA}`,
   BUYPASS: `${ACCESS_PROVIDERS.BUYPASS}`,
   GOOGLETRUSTSERVICES: `${ACCESS_PROVIDERS.GOOGLETRUSTSERVICES}`,
   LETSENCRYPT: `${ACCESS_PROVIDERS.LETSENCRYPT}`,
@@ -209,6 +212,7 @@ export const caProvidersMap: Map<CAProvider["type"] | string, CAProvider> = new 
     [CA_PROVIDERS.GOOGLETRUSTSERVICES],
     [CA_PROVIDERS.SSLCOM],
     [CA_PROVIDERS.ZEROSSL],
+    [CA_PROVIDERS.ACMECA],
   ].map(([type, builtin]) => [
     type,
     {
