@@ -871,6 +871,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
+			jumpServerConfig := make([]pSSH.JumpServerConfig, len(access.JumpServerConfig))
+			for i, jumpServer := range access.JumpServerConfig {
+				jumpServerConfig[i] = pSSH.JumpServerConfig{
+					SshHost:          jumpServer.Host,
+					SshPort:          jumpServer.Port,
+					SshUsername:      jumpServer.Username,
+					SshPassword:      jumpServer.Password,
+					SshKey:           jumpServer.Key,
+					SshKeyPassphrase: jumpServer.KeyPassphrase,
+				}
+			}
+
 			deployer, err := pSSH.NewDeployer(&pSSH.DeployerConfig{
 				SshHost:                  access.Host,
 				SshPort:                  access.Port,
@@ -878,6 +890,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				SshPassword:              access.Password,
 				SshKey:                   access.Key,
 				SshKeyPassphrase:         access.KeyPassphrase,
+				JumpServerConfig:         jumpServerConfig,
 				UseSCP:                   maputil.GetBool(options.ProviderExtendedConfig, "useSCP"),
 				PreCommand:               maputil.GetString(options.ProviderExtendedConfig, "preCommand"),
 				PostCommand:              maputil.GetString(options.ProviderExtendedConfig, "postCommand"),
