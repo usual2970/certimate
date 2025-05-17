@@ -52,6 +52,7 @@ import AccessFormNS1Config from "./AccessFormNS1Config";
 import AccessFormPorkbunConfig from "./AccessFormPorkbunConfig";
 import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormProxmoxVEConfig from "./AccessFormProxmoxVEConfig";
+import AccessFormPushoverConfig from "./AccessFormPushoverConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
@@ -256,6 +257,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormPowerDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.PROXMOXVE:
         return <AccessFormProxmoxVEConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.PUSHOVER:
+        return <AccessFormPushoverConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.QINIU:
         return <AccessFormQiniuConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.RAINYUN:

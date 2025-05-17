@@ -16,6 +16,8 @@ type NotifierConfig struct {
 	Token string `json:"token"`
 	// 用户或分组标识。
 	User string `json:"user"`
+	// 优先级。
+	Priority string `json:"priority,omitempty"`
 }
 
 type NotifierProvider struct {
@@ -54,10 +56,11 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	req := n.httpClient.R().
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]any{
-			"title":   subject,
-			"message": message,
-			"token":   n.config.Token,
-			"user":    n.config.User,
+			"title":    subject,
+			"message":  message,
+			"token":    n.config.Token,
+			"user":     n.config.User,
+			"priority": n.config.Priority,
 		})
 	resp, err := req.Execute(http.MethodPost, "https://api.pushover.net/1/messages.json")
 	if err != nil {

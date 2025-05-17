@@ -231,6 +231,11 @@ type AccessConfigForProxmoxVE struct {
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
+type AccessConfigForPushover struct {
+	Token string `json:"token"`
+	User  string `json:"user"`
+}
+
 type AccessConfigForQiniu struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

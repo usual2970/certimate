@@ -10,6 +10,7 @@ import (
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 	pLarkBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/larkbot"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
+	pPushover "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/pushover"
 	pTelegramBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeComBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
@@ -84,6 +85,20 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				Username:  access.Username,
 				Password:  access.Password,
 				ChannelId: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "channelId", access.DefaultChannelId),
+			})
+		}
+
+	case domain.NotificationProviderTypePushover:
+		{
+			access := domain.AccessConfigForPushover{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pPushover.NewNotifier(&pPushover.NotifierConfig{
+				Token:    access.Token,
+				User:     access.User,
+				Priority: maputil.GetOrDefaultString(options.ProviderExtendedConfig, "priority", "0"),
 			})
 		}
 

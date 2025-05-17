@@ -46,6 +46,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForPorkbun
       | AccessConfigForPowerDNS
       | AccessConfigForProxmoxVE
+      | AccessConfigForPushover
       | AccessConfigForQiniu
       | AccessConfigForRainYun
       | AccessConfigForSafeLine
@@ -281,6 +282,12 @@ export type AccessConfigForProxmoxVE = {
   apiToken: string;
   apiTokenSecret?: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForPushover = {
+  token: string;
+  user: string;
+  priority?: string;
 };
 
 export type AccessConfigForQiniu = {

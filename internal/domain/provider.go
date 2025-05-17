@@ -61,6 +61,7 @@ const (
 	AccessProviderTypePorkbun             = AccessProviderType("porkbun")
 	AccessProviderTypePowerDNS            = AccessProviderType("powerdns")
 	AccessProviderTypeProxmoxVE           = AccessProviderType("proxmoxve")
+	AccessProviderTypePushover            = AccessProviderType("pushover")
 	AccessProviderTypeQiniu               = AccessProviderType("qiniu")
 	AccessProviderTypeQingCloud           = AccessProviderType("qingcloud") // 青云（预留）
 	AccessProviderTypeRainYun             = AccessProviderType("rainyun")
@@ -262,6 +263,7 @@ const (
 	NotificationProviderTypeEmail       = NotificationProviderType(AccessProviderTypeEmail)
 	NotificationProviderTypeLarkBot     = NotificationProviderType(AccessProviderTypeLarkBot)
 	NotificationProviderTypeMattermost  = NotificationProviderType(AccessProviderTypeMattermost)
+	NotificationProviderTypePushover    = NotificationProviderType(AccessProviderTypePushover)
 	NotificationProviderTypeTelegramBot = NotificationProviderType(AccessProviderTypeTelegramBot)
 	NotificationProviderTypeWebhook     = NotificationProviderType(AccessProviderTypeWebhook)
 	NotificationProviderTypeWeComBot    = NotificationProviderType(AccessProviderTypeWeComBot)

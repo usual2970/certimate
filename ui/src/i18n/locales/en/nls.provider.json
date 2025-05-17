@@ -97,6 +97,7 @@
   "provider.porkbun": "Porkbun",
   "provider.powerdns": "PowerDNS",
   "provider.proxmoxve": "Proxmox VE",
+  "provider.pushover": "Pushover",
   "provider.qiniu": "Qiniu",
   "provider.qiniu.cdn": "Qiniu - CDN (Content Delivery Network)",
   "provider.qiniu.kodo": "Qiniu - Kodo",

@@ -49,6 +49,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   PORKBUN: "porkbun",
   POWERDNS: "powerdns",
   PROXMOXVE: "proxmoxve",
+  PUSHOVER: "pushover",
   QINIU: "qiniu",
   RAINYUN: "rainyun",
   SAFELINE: "safeline",
@@ -157,6 +158,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.LARKBOT, "provider.larkbot", "/imgs/providers/lark.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.WECOMBOT, "provider.wecombot", "/imgs/providers/wecom.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.PUSHOVER, "provider.pushover", "/imgs/providers/pushover.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.TELEGRAMBOT, "provider.telegrambot", "/imgs/providers/telegram.svg", [ACCESS_USAGES.NOTIFICATION]],
   ].map((e) => [
     e[0] as string,
@@ -547,6 +549,7 @@ export const NOTIFICATION_PROVIDERS = Object.freeze({
   EMAIL: `${ACCESS_PROVIDERS.EMAIL}`,
   LARKBOT: `${ACCESS_PROVIDERS.LARKBOT}`,
   MATTERMOST: `${ACCESS_PROVIDERS.MATTERMOST}`,
+  PUSHOVER: `${ACCESS_PROVIDERS.PUSHOVER}`,
   TELEGRAMBOT: `${ACCESS_PROVIDERS.TELEGRAMBOT}`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
   WECOMBOT: `${ACCESS_PROVIDERS.WECOMBOT}`,
@@ -574,6 +577,7 @@ export const notificationProvidersMap: Map<NotificationProvider["type"] | string
     [NOTIFICATION_PROVIDERS.WECOMBOT],
     [NOTIFICATION_PROVIDERS.MATTERMOST],
     [NOTIFICATION_PROVIDERS.TELEGRAMBOT],
+    [NOTIFICATION_PROVIDERS.PUSHOVER],
   ].map(([type]) => [
     type,
     {
