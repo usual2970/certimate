@@ -254,12 +254,20 @@ type AccessConfigForSafeLine struct {
 }
 
 type AccessConfigForSSH struct {
-	Host          string `json:"host"`
-	Port          int32  `json:"port"`
-	Username      string `json:"username"`
-	Password      string `json:"password,omitempty"`
-	Key           string `json:"key,omitempty"`
-	KeyPassphrase string `json:"keyPassphrase,omitempty"`
+	Host             string `json:"host"`
+	Port             int32  `json:"port"`
+	Username         string `json:"username"`
+	Password         string `json:"password,omitempty"`
+	Key              string `json:"key,omitempty"`
+	KeyPassphrase    string `json:"keyPassphrase,omitempty"`
+	JumpServerConfig []struct {
+		Host          string `json:"host"`
+		Port          int32  `json:"port"`
+		Username      string `json:"username"`
+		Password      string `json:"password,omitempty"`
+		Key           string `json:"key,omitempty"`
+		KeyPassphrase string `json:"keyPassphrase,omitempty"`
+	} `json:"jumpServerConfig,omitempty"`
 }
 
 type AccessConfigForSSLCom struct {
