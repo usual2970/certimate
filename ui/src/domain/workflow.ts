@@ -165,6 +165,10 @@ export type WorkflowNodeConfigForNotify = {
   providerConfig?: Record<string, unknown>;
 };
 
+export type WorkflowNodeConfigForCondition = {
+  expression: Expr;
+};
+
 export type WorkflowNodeConfigForBranch = never;
 
 export type WorkflowNodeConfigForEnd = never;
@@ -181,6 +185,32 @@ export type WorkflowNodeIO = {
 export type WorkflowNodeIOValueSelector = {
   id: string;
   name: string;
+};
+
+// #endregion
+
+// #region Condition expression
+
+type Value = string | number | boolean;
+
+export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=";
+
+export type LogicalOperator = "and" | "or" | "not";
+
+export type ConstExpr = { type: "const"; value: Value };
+export type VarExpr = { type: "var"; selector: WorkflowNodeIOValueSelector };
+export type CompareExpr = { type: "compare"; op: ComparisonOperator; left: Expr; right: Expr };
+export type LogicalExpr = { type: "logical"; op: LogicalOperator; left: Expr; right: Expr };
+export type NotExpr = { type: "not"; expr: Expr };
+
+export type Expr = ConstExpr | VarExpr | CompareExpr | LogicalExpr | NotExpr;
+
+export const isConstExpr = (expr: Expr): expr is ConstExpr => {
+  return expr.type === "const";
+};
+
+export const isVarExpr = (expr: Expr): expr is VarExpr => {
+  return expr.type === "var";
 };
 
 // #endregion
@@ -433,7 +463,17 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
   });
 };
 
-export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string): WorkflowNode[] => {
+const typeEqual = (a: WorkflowNodeIO, t: string) => {
+  if (t === "all") {
+    return true;
+  }
+  if (a.type === t) {
+    return true;
+  }
+  return false;
+};
+
+export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string = "all"): WorkflowNode[] => {
   // 某个分支的节点，不应该能获取到相邻分支上节点的输出
   const outputs: WorkflowNode[] = [];
 
@@ -445,10 +485,10 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
       return true;
     }
 
-    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => io.type === type)) {
+    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => typeEqual(io, type))) {
       output.push({
         ...current,
-        outputs: current.outputs.filter((io) => io.type === type),
+        outputs: current.outputs.filter((io) => typeEqual(io, type)),
       });
     }
 
@@ -501,3 +541,4 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
 
   return true;
 };
+
