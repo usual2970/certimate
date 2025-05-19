@@ -29,6 +29,42 @@ const initFormModel = (): AccessFormSSHConfigFieldValues => {
 const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: AccessFormSSHConfigProps) => {
   const { t } = useTranslation();
 
+  const jumpServerConfigItemSchema = z
+    .object({
+      host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
+      port: z.preprocess(
+        (v) => Number(v),
+        z
+          .number()
+          .int(t("access.form.ssh_port.placeholder"))
+          .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
+      ),
+      username: z
+        .string()
+        .min(1, t("access.form.ssh_username.placeholder"))
+        .max(64, t("common.errmsg.string_max", { max: 64 })),
+      password: z
+        .string()
+        .max(64, t("common.errmsg.string_max", { max: 64 }))
+        .nullish(),
+      key: z
+        .string()
+        .max(20480, t("common.errmsg.string_max", { max: 20480 }))
+        .nullish(),
+      keyPassphrase: z
+        .string()
+        .max(20480, t("common.errmsg.string_max", { max: 20480 }))
+        .nullish(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.keyPassphrase && !data.key) {
+        ctx.addIssue({
+          path: ["keyPassphrase"],
+          code: z.ZodIssueCode.custom,
+          message: t("access.form.ssh_key.placeholder"),
+        });
+      }
+    });
   const formSchema = z.object({
     host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
     port: z.preprocess(
@@ -40,7 +76,7 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
     ),
     username: z
       .string()
-      .min(1, "access.form.ssh_username.placeholder")
+      .min(1, t("access.form.ssh_username.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     password: z
       .string()
@@ -55,6 +91,7 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish()
       .refine((v) => !v || formInst.getFieldValue("key"), t("access.form.ssh_key.placeholder")),
+    jumpServerConfig: jumpServerConfigItemSchema.array().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
