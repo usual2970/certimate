@@ -7,6 +7,35 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		// update collection `certificate`
+		{
+			collection, err := app.FindCollectionByNameOrId("4szxr9x43tpj6np")
+			if err != nil {
+				return err
+			}
+
+			if err := collection.Fields.AddMarshaledJSONAt(6, []byte(`{
+				"autogeneratePattern": "",
+				"hidden": false,
+				"id": "text2910474005",
+				"max": 0,
+				"min": 0,
+				"name": "issuerOrg",
+				"pattern": "",
+				"presentable": false,
+				"primaryKey": false,
+				"required": false,
+				"system": false,
+				"type": "text"
+			}`)); err != nil {
+				return err
+			}
+
+			if err := app.Save(collection); err != nil {
+				return err
+			}
+		}
+
 		// migrate data
 		{
 			accesses, err := app.FindAllRecords("access")
