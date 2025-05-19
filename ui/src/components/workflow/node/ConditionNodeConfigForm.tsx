@@ -11,19 +11,20 @@ import {
   isConstExpr,
   isVarExpr,
   WorkflowNode,
+  workflowNodeIOOptions,
 } from "@/domain/workflow";
 import { FormInstance } from "antd";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
 // 表单内部使用的扁平结构 - 修改后只保留必要字段
-interface ConditionItem {
+export interface ConditionItem {
   leftSelector: WorkflowNodeIOValueSelector;
   operator: ComparisonOperator;
   rightValue: string;
 }
 
-type ConditionNodeConfigFormFieldValues = {
+export type ConditionNodeConfigFormFieldValues = {
   conditions: ConditionItem[];
   logicalOperator: LogicalOperator;
 };
@@ -56,41 +57,6 @@ const initFormModel = (): ConditionNodeConfigFormFieldValues => {
     ],
     logicalOperator: "and",
   };
-};
-
-// 将表单值转换为表达式结构
-const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
-  // 创建单个条件的表达式
-  const createComparisonExpr = (condition: ConditionItem): Expr => {
-    const left: Expr = { type: "var", selector: condition.leftSelector };
-    const right: Expr = { type: "const", value: condition.rightValue || "" };
-
-    return {
-      type: "compare",
-      op: condition.operator,
-      left,
-      right,
-    };
-  };
-
-  // 如果只有一个条件，直接返回比较表达式
-  if (values.conditions.length === 1) {
-    return createComparisonExpr(values.conditions[0]);
-  }
-
-  // 多个条件，通过逻辑运算符连接
-  let expr: Expr = createComparisonExpr(values.conditions[0]);
-
-  for (let i = 1; i < values.conditions.length; i++) {
-    expr = {
-      type: "logical",
-      op: values.logicalOperator,
-      left: expr,
-      right: createComparisonExpr(values.conditions[i]),
-    };
-  }
-
-  return expr;
 };
 
 // 递归提取表达式中的条件项
@@ -159,12 +125,8 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
     );
 
     // 表单值变更处理
-    const handleFormChange = (changedValues: any, values: ConditionNodeConfigFormFieldValues) => {
+    const handleFormChange = (_: undefined, values: ConditionNodeConfigFormFieldValues) => {
       setFormModel(values);
-
-      // 转换为表达式结构并通知父组件
-      const expression = formToExpression(values);
-      onValuesChange?.({ expression });
     };
 
     return (
@@ -186,15 +148,7 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                       <Select
                         placeholder="选择变量"
                         options={previousNodes.map((item) => {
-                          return {
-                            label: item.name,
-                            options: item.outputs?.map((output) => {
-                              return {
-                                label: `${item.name} - ${output.label}`,
-                                value: `${item.id}#${output.name}`,
-                              };
-                            }),
-                          };
+                          return workflowNodeIOOptions(item);
                         })}
                       ></Select>
                     </Form.Item>

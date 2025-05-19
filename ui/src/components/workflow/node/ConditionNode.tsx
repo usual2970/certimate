@@ -4,8 +4,8 @@ import { Button, Card, Popover } from "antd";
 
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
-import ConditionNodeConfigForm, { ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
-import { WorkflowNodeConfigForCondition } from "@/domain/workflow";
+import ConditionNodeConfigForm, { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
+import { Expr, WorkflowNodeConfigForCondition } from "@/domain/workflow";
 import { produce } from "immer";
 import { useWorkflowStore } from "@/stores/workflow";
 import { useZustandShallowSelector } from "@/hooks";
@@ -23,7 +23,42 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForCondition;
+  const getFormValues = () => formRef.current!.getFieldsValue() as ConditionNodeConfigFormFieldValues;
+
+  // 将表单值转换为表达式结构
+  const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
+    // 创建单个条件的表达式
+    const createComparisonExpr = (condition: ConditionItem): Expr => {
+      const left: Expr = { type: "var", selector: condition.leftSelector };
+      const right: Expr = { type: "const", value: condition.rightValue || "" };
+
+      return {
+        type: "compare",
+        op: condition.operator,
+        left,
+        right,
+      };
+    };
+
+    // 如果只有一个条件，直接返回比较表达式
+    if (values.conditions.length === 1) {
+      return createComparisonExpr(values.conditions[0]);
+    }
+
+    // 多个条件，通过逻辑运算符连接
+    let expr: Expr = createComparisonExpr(values.conditions[0]);
+
+    for (let i = 1; i < values.conditions.length; i++) {
+      expr = {
+        type: "logical",
+        op: values.logicalOperator,
+        left: expr,
+        right: createComparisonExpr(values.conditions[i]),
+      };
+    }
+
+    return expr;
+  };
 
   const handleDrawerConfirm = async () => {
     setFormPending(true);
@@ -36,9 +71,10 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
 
     try {
       const newValues = getFormValues();
+      const expression = formToExpression(newValues);
       const newNode = produce(node, (draft) => {
         draft.config = {
-          ...newValues,
+          expression,
         };
         draft.validated = true;
       });

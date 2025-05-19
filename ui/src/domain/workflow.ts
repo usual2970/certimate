@@ -187,27 +187,42 @@ export type WorkflowNodeIOValueSelector = {
   name: string;
 };
 
-export const workflowNodeIOOptions = (node: WorkflowNode, io: WorkflowNodeIO) => {
-  switch (io.type) {
-    case "certificate":
-      return [
-        {
-          label: "是否有效",
-          value: "valid",
-        },
-        {
-          label: "剩余有效天数",
-          value: "valid",
-        },
-      ];
-    default:
-      return [
-        {
-          label: `${node.name} - ${io.label}`,
-          value: `${node.id}#${io.name}`,
-        },
-      ];
+type WorkflowNodeIOOptions = {
+  label: string;
+  value: string;
+};
+
+export const workflowNodeIOOptions = (node: WorkflowNode) => {
+  const rs = {
+    label: node.name,
+    options: Array<WorkflowNodeIOOptions>(),
+  };
+
+  if (node.outputs) {
+    for (const output of node.outputs) {
+      switch (output.type) {
+        case "certificate":
+          rs.options.push({
+            label: `${node.name} - ${output.label} - 是否有效`,
+            value: `${node.id}#${output.name}.validated`,
+          });
+
+          rs.options.push({
+            label: `${node.name} - ${output.label} - 剩余天数`,
+            value: `${node.id}#${output.name}.daysLeft`,
+          });
+          break;
+        default:
+          rs.options.push({
+            label: `${node.name} - ${output.label}`,
+            value: `${node.id}#${output.name}`,
+          });
+          break;
+      }
+    }
   }
+
+  return rs;
 };
 
 // #endregion
