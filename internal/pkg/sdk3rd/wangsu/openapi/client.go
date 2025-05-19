@@ -154,8 +154,10 @@ func (c *Client) sendRequest(method string, path string, params interface{}, con
 		req = req.SetBody(params)
 	}
 
-	for _, fn := range configureReq {
-		fn(req)
+	if configureReq != nil {
+		for _, fn := range configureReq {
+			fn(req)
+		}
 	}
 
 	resp, err := req.Send()

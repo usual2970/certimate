@@ -245,7 +245,7 @@ const (
 	DeploymentProviderTypeVolcEngineTOS         = DeploymentProviderType(AccessProviderTypeVolcEngine + "-tos")
 	DeploymentProviderTypeWangsuCDN             = DeploymentProviderType(AccessProviderTypeWangsu + "-cdn") // 网宿 CDN（预留）
 	DeploymentProviderTypeWangsuCDNPro          = DeploymentProviderType(AccessProviderTypeWangsu + "-cdnpro")
-	DeploymentProviderTypeWangsuCert            = DeploymentProviderType(AccessProviderTypeWangsu + "-cert") // 网宿证书管理（预留）
+	DeploymentProviderTypeWangsuCertificate     = DeploymentProviderType(AccessProviderTypeWangsu + "-certificate")
 	DeploymentProviderTypeWebhook               = DeploymentProviderType(AccessProviderTypeWebhook)
 )
 

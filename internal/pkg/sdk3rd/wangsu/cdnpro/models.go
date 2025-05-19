@@ -1,11 +1,11 @@
-package cdn
+package cdnpro
 
 import (
 	"github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/openapi"
 )
 
 type baseResponse struct {
-	RequestId *string `json:"-"`
+	RequestId *string `json:"requestId,omitempty"`
 	Code      *string `json:"code,omitempty"`
 	Message   *string `json:"message,omitempty"`
 }

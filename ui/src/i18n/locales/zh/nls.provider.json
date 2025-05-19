@@ -146,6 +146,7 @@
   "provider.volcengine.tos": "火山引擎 - 对象存储 TOS",
   "provider.wangsu": "网宿云",
   "provider.wangsu.cdnpro": "网宿云 - CDN Pro",
+  "provider.wangsu.certificate_upload": "网宿云 - 上传到证书管理",
   "provider.webhook": "Webhook",
   "provider.wecombot": "企业微信群机器人",
   "provider.westcn": "西部数码",

@@ -14,6 +14,7 @@ func (c *Client) ensureAccessTokenExists() error {
 	}
 
 	req := &loginRequest{
+		Email:    c.username,
 		Username: c.username,
 		Password: c.password,
 	}

@@ -87,6 +87,7 @@ import (
 	pVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
 	pVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
 	pWangsuCDNPro "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdnpro"
+	pWangsuCertificate "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-certificate"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
 	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
@@ -1205,7 +1206,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeploymentProviderTypeWangsuCDNPro:
+	case domain.DeploymentProviderTypeWangsuCDNPro, domain.DeploymentProviderTypeWangsuCertificate:
 		{
 			access := domain.AccessConfigForWangsu{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -1222,6 +1223,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
 					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 					WebhookId:       maputil.GetString(options.ProviderServiceConfig, "webhookId"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeWangsuCertificate:
+				deployer, err := pWangsuCertificate.NewDeployer(&pWangsuCertificate.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					AccessKeySecret: access.AccessKeySecret,
+					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 

@@ -1,4 +1,4 @@
-package cdn
+package certificate
 
 import (
 	"time"

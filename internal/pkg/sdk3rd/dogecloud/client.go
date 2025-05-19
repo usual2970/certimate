@@ -174,10 +174,10 @@ func (c *Client) sendReq(method string, path string, data map[string]interface{}
 	}
 	defer resp.Body.Close()
 
-	r, err := io.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return bytes, nil
 }

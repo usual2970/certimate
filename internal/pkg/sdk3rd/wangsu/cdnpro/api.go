@@ -1,4 +1,4 @@
-package cdn
+package cdnpro
 
 import (
 	"fmt"
@@ -10,14 +10,14 @@ import (
 
 func (c *Client) CreateCertificate(req *CreateCertificateRequest) (*CreateCertificateResponse, error) {
 	resp := &CreateCertificateResponse{}
-	r, err := c.client.SendRequestWithResult(http.MethodPost, "/cdn/certificates", req, resp, func(r *resty.Request) {
+	rres, err := c.client.SendRequestWithResult(http.MethodPost, "/cdn/certificates", req, resp, func(r *resty.Request) {
 		r.SetHeader("x-cnc-timestamp", fmt.Sprintf("%d", req.Timestamp))
 	})
 	if err != nil {
 		return resp, err
 	}
 
-	resp.CertificateUrl = r.Header().Get("Location")
+	resp.CertificateUrl = rres.Header().Get("Location")
 	return resp, err
 }
 
@@ -27,14 +27,14 @@ func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateR
 	}
 
 	resp := &UpdateCertificateResponse{}
-	r, err := c.client.SendRequestWithResult(http.MethodPatch, fmt.Sprintf("/cdn/certificates/%s", url.PathEscape(certificateId)), req, resp, func(r *resty.Request) {
+	rres, err := c.client.SendRequestWithResult(http.MethodPatch, fmt.Sprintf("/cdn/certificates/%s", url.PathEscape(certificateId)), req, resp, func(r *resty.Request) {
 		r.SetHeader("x-cnc-timestamp", fmt.Sprintf("%d", req.Timestamp))
 	})
 	if err != nil {
 		return resp, err
 	}
 
-	resp.CertificateUrl = r.Header().Get("Location")
+	resp.CertificateUrl = rres.Header().Get("Location")
 	return resp, err
 }
 
@@ -50,12 +50,12 @@ func (c *Client) GetHostnameDetail(hostname string) (*GetHostnameDetailResponse,
 
 func (c *Client) CreateDeploymentTask(req *CreateDeploymentTaskRequest) (*CreateDeploymentTaskResponse, error) {
 	resp := &CreateDeploymentTaskResponse{}
-	r, err := c.client.SendRequestWithResult(http.MethodPost, "/cdn/deploymentTasks", req, resp)
+	rres, err := c.client.SendRequestWithResult(http.MethodPost, "/cdn/deploymentTasks", req, resp)
 	if err != nil {
 		return resp, err
 	}
 
-	resp.DeploymentTaskUrl = r.Header().Get("Location")
+	resp.DeploymentTaskUrl = rres.Header().Get("Location")
 	return resp, err
 }
 

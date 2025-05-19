@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
+	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdnpro"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
 	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )

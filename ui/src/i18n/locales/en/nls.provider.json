@@ -146,6 +146,7 @@
   "provider.volcengine.tos": "Volcengine - TOS (Tinder Object Storage)",
   "provider.wangsu": "Wangsu Cloud",
   "provider.wangsu.cdnpro": "Wangsu Cloud - CDN Pro",
+  "provider.wangsu.certificate_upload": "Wangsu Cloud - Upload to Certificate Management",
   "provider.webhook": "Webhook",
   "provider.wecombot": "WeCom Bot",
   "provider.westcn": "West.cn",

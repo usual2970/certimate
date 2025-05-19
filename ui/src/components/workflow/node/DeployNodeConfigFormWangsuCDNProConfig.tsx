@@ -5,37 +5,37 @@ import { z } from "zod";
 
 import { validDomainName } from "@/utils/validators";
 
-type DeployNodeConfigFormBaishanCDNConfigFieldValues = Nullish<{
+type DeployNodeConfigFormWangsuCDNProConfigFieldValues = Nullish<{
   environment: string;
   domain: string;
   certificateId?: string;
   webhookId?: string;
 }>;
 
-export type DeployNodeConfigFormBaishanCDNConfigProps = {
+export type DeployNodeConfigFormWangsuCDNProConfigProps = {
   form: FormInstance;
   formName: string;
   disabled?: boolean;
-  initialValues?: DeployNodeConfigFormBaishanCDNConfigFieldValues;
-  onValuesChange?: (values: DeployNodeConfigFormBaishanCDNConfigFieldValues) => void;
+  initialValues?: DeployNodeConfigFormWangsuCDNProConfigFieldValues;
+  onValuesChange?: (values: DeployNodeConfigFormWangsuCDNProConfigFieldValues) => void;
 };
 
 const ENVIRONMENT_PRODUCTION = "production" as const;
 const ENVIRONMENT_STAGING = "stating" as const;
 
-const initFormModel = (): DeployNodeConfigFormBaishanCDNConfigFieldValues => {
+const initFormModel = (): DeployNodeConfigFormWangsuCDNProConfigFieldValues => {
   return {
     environment: ENVIRONMENT_PRODUCTION,
   };
 };
 
-const DeployNodeConfigFormBaishanCDNConfig = ({
+const DeployNodeConfigFormWangsuCDNProConfig = ({
   form: formInst,
   formName,
   disabled,
   initialValues,
   onValuesChange,
-}: DeployNodeConfigFormBaishanCDNConfigProps) => {
+}: DeployNodeConfigFormWangsuCDNProConfigProps) => {
   const { t } = useTranslation();
 
   const formSchema = z.object({
@@ -104,4 +104,4 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
   );
 };
 
-export default DeployNodeConfigFormBaishanCDNConfig;
+export default DeployNodeConfigFormWangsuCDNProConfig;
