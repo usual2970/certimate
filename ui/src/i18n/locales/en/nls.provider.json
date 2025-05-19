@@ -86,6 +86,7 @@
   "provider.kubernetes": "Kubernetes",
   "provider.kubernetes.secret": "Kubernetes - Secret",
   "provider.larkbot": "Lark Bot",
+  "provider.lecdn": "LeCDN",
   "provider.letsencrypt": "Let's Encrypt",
   "provider.letsencryptstaging": "Let's Encrypt Staging Environment",
   "provider.local": "Local deployment",

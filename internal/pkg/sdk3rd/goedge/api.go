@@ -7,7 +7,13 @@ import (
 	"time"
 )
 
-func (c *Client) getAccessToken() error {
+func (c *Client) ensureAccessTokenExists() error {
+	c.accessTokenMtx.Lock()
+	defer c.accessTokenMtx.Unlock()
+	if c.accessToken != "" && c.accessTokenExp.After(time.Now()) {
+		return nil
+	}
+
 	req := &getAPIAccessTokenRequest{
 		Type:        c.apiRole,
 		AccessKeyId: c.accessKeyId,
@@ -22,22 +28,18 @@ func (c *Client) getAccessToken() error {
 	if err := json.Unmarshal(res.Body(), &resp); err != nil {
 		return fmt.Errorf("goedge api error: failed to unmarshal response: %w", err)
 	} else if resp.GetCode() != 200 {
-		return fmt.Errorf("goedge get access token failed: code: %d, message: %s", resp.GetCode(), resp.GetMessage())
+		return fmt.Errorf("goedge get access token failed: code='%d', message='%s'", resp.GetCode(), resp.GetMessage())
 	}
 
-	c.accessTokenMtx.Lock()
 	c.accessToken = resp.Data.Token
 	c.accessTokenExp = time.Unix(resp.Data.ExpiresAt, 0)
-	c.accessTokenMtx.Unlock()
 
 	return nil
 }
 
 func (c *Client) UpdateSSLCert(req *UpdateSSLCertRequest) (*UpdateSSLCertResponse, error) {
-	if c.accessToken == "" || c.accessTokenExp.Before(time.Now()) {
-		if err := c.getAccessToken(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureAccessTokenExists(); err != nil {
+		return nil, err
 	}
 
 	resp := &UpdateSSLCertResponse{}

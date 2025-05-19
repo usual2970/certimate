@@ -44,6 +44,7 @@ import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLarkBotConfig from "./AccessFormLarkBotConfig";
+import AccessFormLeCDNConfig from "./AccessFormLeCDNConfig";
 import AccessFormMattermostConfig from "./AccessFormMattermostConfig";
 import AccessFormNamecheapConfig from "./AccessFormNamecheapConfig";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
@@ -243,6 +244,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormKubernetesConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.LARKBOT:
         return <AccessFormLarkBotConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.LECDN:
+        return <AccessFormLeCDNConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.MATTERMOST:
         return <AccessFormMattermostConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.NAMECHEAP:

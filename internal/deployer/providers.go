@@ -53,6 +53,7 @@ import (
 	pJDCloudLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-live"
 	pJDCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-vod"
 	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
+	pLeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/lecdn"
 	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
 	pNetlifySite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/netlify-site"
 	pProxmoxVE "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/proxmoxve"
@@ -727,6 +728,27 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			default:
 				break
 			}
+		}
+
+	case domain.DeploymentProviderTypeLeCDN:
+		{
+			access := domain.AccessConfigForLeCDN{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pLeCDN.NewDeployer(&pLeCDN.DeployerConfig{
+				ApiUrl:                   access.ApiUrl,
+				ApiVersion:               access.ApiVersion,
+				ApiRole:                  access.ApiRole,
+				Username:                 access.Username,
+				Password:                 access.Password,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pLeCDN.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
+				ClientId:                 maputil.GetInt64(options.ProviderServiceConfig, "clientId"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeLocal:

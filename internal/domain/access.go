@@ -193,6 +193,15 @@ type AccessConfigForLarkBot struct {
 	WebhookUrl string `json:"webhookUrl"`
 }
 
+type AccessConfigForLeCDN struct {
+	ApiUrl                   string `json:"apiUrl"`
+	ApiVersion               string `json:"apiVersion"`
+	ApiRole                  string `json:"apiRole"`
+	Username                 string `json:"username"`
+	Password                 string `json:"password"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForMattermost struct {
 	ServerUrl        string `json:"serverUrl"`
 	Username         string `json:"username"`

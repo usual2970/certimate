@@ -49,7 +49,7 @@ const (
 	AccessProviderTypeLarkBot             = AccessProviderType("larkbot")
 	AccessProviderTypeLetsEncrypt         = AccessProviderType("letsencrypt")
 	AccessProviderTypeLetsEncryptStaging  = AccessProviderType("letsencryptstaging")
-	AccessProviderTypeLeCDN               = AccessProviderType("lecdn") // LeCDN（预留）
+	AccessProviderTypeLeCDN               = AccessProviderType("lecdn")
 	AccessProviderTypeLocal               = AccessProviderType("local")
 	AccessProviderTypeMattermost          = AccessProviderType("mattermost")
 	AccessProviderTypeNamecheap           = AccessProviderType("namecheap")
@@ -208,7 +208,7 @@ const (
 	DeploymentProviderTypeJDCloudLive           = DeploymentProviderType(AccessProviderTypeJDCloud + "-live")
 	DeploymentProviderTypeJDCloudVOD            = DeploymentProviderType(AccessProviderTypeJDCloud + "-vod")
 	DeploymentProviderTypeKubernetesSecret      = DeploymentProviderType(AccessProviderTypeKubernetes + "-secret")
-	DeploymentProviderTypeLeCDN                 = DeploymentProviderType(AccessProviderTypeLeCDN) // LeCDN（预留）
+	DeploymentProviderTypeLeCDN                 = DeploymentProviderType(AccessProviderTypeLeCDN)
 	DeploymentProviderTypeLocal                 = DeploymentProviderType(AccessProviderTypeLocal)
 	DeploymentProviderTypeNetlifySite           = DeploymentProviderType(AccessProviderTypeNetlify + "-site")
 	DeploymentProviderTypeProxmoxVE             = DeploymentProviderType(AccessProviderTypeProxmoxVE)

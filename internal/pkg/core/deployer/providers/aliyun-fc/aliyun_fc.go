@@ -22,6 +22,7 @@ type DeployerConfig struct {
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
+	// 可取值 "2.0"、"3.0"。
 	ServiceVersion string `json:"serviceVersion"`
 	// 自定义域名（支持泛域名）。
 	Domain string `json:"domain"`

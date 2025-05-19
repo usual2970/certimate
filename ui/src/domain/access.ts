@@ -39,6 +39,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
       | AccessConfigForLarkBot
+      | AccessConfigForLeCDN
       | AccessConfigForMattermost
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
@@ -246,6 +247,15 @@ export type AccessConfigForKubernetes = {
 
 export type AccessConfigForLarkBot = {
   webhookUrl: string;
+};
+
+export type AccessConfigForLeCDN = {
+  apiUrl: string;
+  apiVersion: string;
+  apiRole: string;
+  username: string;
+  password: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForMattermost = {

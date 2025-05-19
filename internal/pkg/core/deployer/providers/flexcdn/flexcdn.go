@@ -19,6 +19,7 @@ type DeployerConfig struct {
 	// FlexCDN URL。
 	ApiUrl string `json:"apiUrl"`
 	// FlexCDN 用户角色。
+	// 可取值 "user"、"admin"。
 	ApiRole string `json:"apiRole"`
 	// FlexCDN AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`

@@ -19,6 +19,7 @@ type DeployerConfig struct {
 	// 1Panel 地址。
 	ApiUrl string `json:"apiUrl"`
 	// 1Panel 版本。
+	// 可取值 "v1"、"v2"。
 	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
 	ApiKey string `json:"apiKey"`
