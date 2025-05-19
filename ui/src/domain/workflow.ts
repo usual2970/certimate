@@ -187,6 +187,29 @@ export type WorkflowNodeIOValueSelector = {
   name: string;
 };
 
+export const workflowNodeIOOptions = (node: WorkflowNode, io: WorkflowNodeIO) => {
+  switch (io.type) {
+    case "certificate":
+      return [
+        {
+          label: "是否有效",
+          value: "valid",
+        },
+        {
+          label: "剩余有效天数",
+          value: "valid",
+        },
+      ];
+    default:
+      return [
+        {
+          label: `${node.name} - ${io.label}`,
+          value: `${node.id}#${io.name}`,
+        },
+      ];
+  }
+};
+
 // #endregion
 
 // #region Condition expression

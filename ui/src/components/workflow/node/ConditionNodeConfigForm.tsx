@@ -183,13 +183,20 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                   <div className="flex items-center gap-2">
                     {/* 左侧变量选择器 */}
                     <Form.Item {...restField} name={[name, "leftSelector"]} className="mb-0 flex-1" rules={[{ required: true, message: "请选择变量" }]}>
-                      <Select placeholder="选择变量">
-                        {previousNodes.map((selector) => (
-                          <Select.Option key={selector.id} value={selector.name}>
-                            {selector.name}
-                          </Select.Option>
-                        ))}
-                      </Select>
+                      <Select
+                        placeholder="选择变量"
+                        options={previousNodes.map((item) => {
+                          return {
+                            label: item.name,
+                            options: item.outputs?.map((output) => {
+                              return {
+                                label: `${item.name} - ${output.label}`,
+                                value: `${item.id}#${output.name}`,
+                              };
+                            }),
+                          };
+                        })}
+                      ></Select>
                     </Form.Item>
 
                     {/* 操作符 */}
