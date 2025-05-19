@@ -89,7 +89,7 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.wangsu_cdnpro_certificate_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.wangsu_cdnpro_certificate_id.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.deploy.form.wangsu_cdnpro_certificate_id.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -98,7 +98,7 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.wangsu_cdnpro_webhook_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.wangsu_cdnpro_webhook_id.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.deploy.form.wangsu_cdnpro_webhook_id.placeholder")} />
       </Form.Item>
     </Form>
   );

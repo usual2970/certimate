@@ -81,7 +81,7 @@ const AccessFormUCloudConfig = ({ form: formInst, formName, disabled, initialVal
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ucloud_project_id.tooltip") }}></span>}
       >
-        <Input autoComplete="new-password" placeholder={t("access.form.ucloud_project_id.placeholder")} />
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.ucloud_project_id.placeholder")} />
       </Form.Item>
     </Form>
   );

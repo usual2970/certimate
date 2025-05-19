@@ -59,7 +59,7 @@ const AccessFormACMECAConfig = ({ form: formInst, formName, disabled, initialVal
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmeca_eab_kid.tooltip") }}></span>}
       >
-        <Input autoComplete="new-password" placeholder={t("access.form.acmeca_eab_kid.placeholder")} />
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.acmeca_eab_kid.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -68,7 +68,7 @@ const AccessFormACMECAConfig = ({ form: formInst, formName, disabled, initialVal
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmeca_eab_hmac_key.tooltip") }}></span>}
       >
-        <Input.Password autoComplete="new-password" placeholder={t("access.form.acmeca_eab_hmac_key.placeholder")} />
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.acmeca_eab_hmac_key.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -60,7 +60,7 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aws_acm_certificate_arn.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder")} />
       </Form.Item>
     </Form>
   );
