@@ -27,6 +27,7 @@ import DeployNodeConfigFormAliyunDCDNConfig from "./DeployNodeConfigFormAliyunDC
 import DeployNodeConfigFormAliyunDDoSConfig from "./DeployNodeConfigFormAliyunDDoSConfig";
 import DeployNodeConfigFormAliyunESAConfig from "./DeployNodeConfigFormAliyunESAConfig";
 import DeployNodeConfigFormAliyunFCConfig from "./DeployNodeConfigFormAliyunFCConfig";
+import DeployNodeConfigFormAliyunGAConfig from "./DeployNodeConfigFormAliyunGAConfig";
 import DeployNodeConfigFormAliyunLiveConfig from "./DeployNodeConfigFormAliyunLiveConfig";
 import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLBConfig";
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
@@ -41,11 +42,13 @@ import DeployNodeConfigFormBaiduCloudCDNConfig from "./DeployNodeConfigFormBaidu
 import DeployNodeConfigFormBaishanCDNConfig from "./DeployNodeConfigFormBaishanCDNConfig";
 import DeployNodeConfigFormBaotaPanelConsoleConfig from "./DeployNodeConfigFormBaotaPanelConsoleConfig";
 import DeployNodeConfigFormBaotaPanelSiteConfig from "./DeployNodeConfigFormBaotaPanelSiteConfig";
+import DeployNodeConfigFormBaotaWAFSiteConfig from "./DeployNodeConfigFormBaotaWAFSiteConfig";
 import DeployNodeConfigFormBunnyCDNConfig from "./DeployNodeConfigFormBunnyCDNConfig.tsx";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
+import DeployNodeConfigFormFlexCDNConfig from "./DeployNodeConfigFormFlexCDNConfig";
 import DeployNodeConfigFormGcoreCDNConfig from "./DeployNodeConfigFormGcoreCDNConfig";
 import DeployNodeConfigFormGoEdgeConfig from "./DeployNodeConfigFormGoEdgeConfig";
 import DeployNodeConfigFormHuaweiCloudCDNConfig from "./DeployNodeConfigFormHuaweiCloudCDNConfig";
@@ -56,6 +59,7 @@ import DeployNodeConfigFormJDCloudCDNConfig from "./DeployNodeConfigFormJDCloudC
 import DeployNodeConfigFormJDCloudLiveConfig from "./DeployNodeConfigFormJDCloudLiveConfig";
 import DeployNodeConfigFormJDCloudVODConfig from "./DeployNodeConfigFormJDCloudVODConfig";
 import DeployNodeConfigFormKubernetesSecretConfig from "./DeployNodeConfigFormKubernetesSecretConfig";
+import DeployNodeConfigFormLeCDNConfig from "./DeployNodeConfigFormLeCDNConfig";
 import DeployNodeConfigFormLocalConfig from "./DeployNodeConfigFormLocalConfig";
 import DeployNodeConfigFormNetlifySiteConfig from "./DeployNodeConfigFormNetlifySiteConfig";
 import DeployNodeConfigFormProxmoxVEConfig from "./DeployNodeConfigFormProxmoxVEConfig";
@@ -63,6 +67,7 @@ import DeployNodeConfigFormQiniuCDNConfig from "./DeployNodeConfigFormQiniuCDNCo
 import DeployNodeConfigFormQiniuKodoConfig from "./DeployNodeConfigFormQiniuKodoConfig";
 import DeployNodeConfigFormQiniuPiliConfig from "./DeployNodeConfigFormQiniuPiliConfig";
 import DeployNodeConfigFormRainYunRCDNConfig from "./DeployNodeConfigFormRainYunRCDNConfig";
+import DeployNodeConfigFormRatPanelSiteConfig from "./DeployNodeConfigFormRatPanelSiteConfig";
 import DeployNodeConfigFormSafeLineConfig from "./DeployNodeConfigFormSafeLineConfig";
 import DeployNodeConfigFormSSHConfig from "./DeployNodeConfigFormSSHConfig.tsx";
 import DeployNodeConfigFormTencentCloudCDNConfig from "./DeployNodeConfigFormTencentCloudCDNConfig.tsx";
@@ -87,7 +92,9 @@ import DeployNodeConfigFormVolcEngineDCDNConfig from "./DeployNodeConfigFormVolc
 import DeployNodeConfigFormVolcEngineImageXConfig from "./DeployNodeConfigFormVolcEngineImageXConfig.tsx";
 import DeployNodeConfigFormVolcEngineLiveConfig from "./DeployNodeConfigFormVolcEngineLiveConfig.tsx";
 import DeployNodeConfigFormVolcEngineTOSConfig from "./DeployNodeConfigFormVolcEngineTOSConfig.tsx";
+import DeployNodeConfigFormWangsuCDNConfig from "./DeployNodeConfigFormWangsuCDNConfig.tsx";
 import DeployNodeConfigFormWangsuCDNProConfig from "./DeployNodeConfigFormWangsuCDNProConfig.tsx";
+import DeployNodeConfigFormWangsuCertificateConfig from "./DeployNodeConfigFormWangsuCertificateConfig.tsx";
 import DeployNodeConfigFormWebhookConfig from "./DeployNodeConfigFormWebhookConfig.tsx";
 
 type DeployNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForDeploy>;
@@ -201,6 +208,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunESAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_FC:
           return <DeployNodeConfigFormAliyunFCConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.ALIYUN_GA:
+          return <DeployNodeConfigFormAliyunGAConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_LIVE:
           return <DeployNodeConfigFormAliyunLiveConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_NLB:
@@ -229,6 +238,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormBaotaPanelConsoleConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.BAOTAPANEL_SITE:
           return <DeployNodeConfigFormBaotaPanelSiteConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.BAOTAWAF_SITE:
+          return <DeployNodeConfigFormBaotaWAFSiteConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.BUNNY_CDN:
           return <DeployNodeConfigFormBunnyCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.BYTEPLUS_CDN:
@@ -239,6 +250,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:
           return <DeployNodeConfigFormEdgioApplicationsConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.FLEXCDN:
+          return <DeployNodeConfigFormFlexCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GCORE_CDN:
           return <DeployNodeConfigFormGcoreCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.GOEDGE:
@@ -259,6 +272,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormJDCloudVODConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.KUBERNETES_SECRET:
           return <DeployNodeConfigFormKubernetesSecretConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.LECDN:
+          return <DeployNodeConfigFormLeCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.LOCAL:
           return <DeployNodeConfigFormLocalConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.NETLIFY_SITE:
@@ -273,6 +288,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormQiniuPiliConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.RAINYUN_RCDN:
           return <DeployNodeConfigFormRainYunRCDNConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.RATPANEL_SITE:
+          return <DeployNodeConfigFormRatPanelSiteConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SAFELINE:
           return <DeployNodeConfigFormSafeLineConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.SSH:
@@ -321,8 +338,12 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormVolcEngineLiveConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.VOLCENGINE_TOS:
           return <DeployNodeConfigFormVolcEngineTOSConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.WANGSU_CDN:
+          return <DeployNodeConfigFormWangsuCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.WANGSU_CDNPRO:
           return <DeployNodeConfigFormWangsuCDNProConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.WANGSU_CERTIFICATE:
+          return <DeployNodeConfigFormWangsuCertificateConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.WEBHOOK:
           return <DeployNodeConfigFormWebhookConfig {...nestedFormProps} />;
       }

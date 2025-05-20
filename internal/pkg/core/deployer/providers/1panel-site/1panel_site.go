@@ -12,12 +12,15 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/1panel-ssl"
-	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
+	onepanelsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
 
 type DeployerConfig struct {
 	// 1Panel 地址。
 	ApiUrl string `json:"apiUrl"`
+	// 1Panel 版本。
+	// 可取值 "v1"、"v2"。
+	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
 	ApiKey string `json:"apiKey"`
 	// 是否允许不安全的连接。
@@ -35,7 +38,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *opsdk.Client
+	sdkClient   *onepanelsdk.Client
 	sslUploader uploader.Uploader
 }
 
@@ -46,14 +49,15 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		ApiUrl: config.ApiUrl,
-		ApiKey: config.ApiKey,
+		ApiUrl:     config.ApiUrl,
+		ApiVersion: config.ApiVersion,
+		ApiKey:     config.ApiKey,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
@@ -103,7 +107,7 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 	}
 
 	// 获取网站 HTTPS 配置
-	getHttpsConfReq := &opsdk.GetHttpsConfRequest{
+	getHttpsConfReq := &onepanelsdk.GetHttpsConfRequest{
 		WebsiteID: d.config.WebsiteId,
 	}
 	getHttpsConfResp, err := d.sdkClient.GetHttpsConf(getHttpsConfReq)
@@ -122,7 +126,7 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 
 	// 修改网站 HTTPS 配置
 	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	updateHttpsConfReq := &opsdk.UpdateHttpsConfRequest{
+	updateHttpsConfReq := &onepanelsdk.UpdateHttpsConfRequest{
 		WebsiteID:    d.config.WebsiteId,
 		Type:         "existed",
 		WebsiteSSLID: certId,
@@ -147,7 +151,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	}
 
 	// 获取证书详情
-	getWebsiteSSLReq := &opsdk.GetWebsiteSSLRequest{
+	getWebsiteSSLReq := &onepanelsdk.GetWebsiteSSLRequest{
 		SSLID: d.config.CertificateId,
 	}
 	getWebsiteSSLResp, err := d.sdkClient.GetWebsiteSSL(getWebsiteSSLReq)
@@ -157,7 +161,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	}
 
 	// 更新证书
-	uploadWebsiteSSLReq := &opsdk.UploadWebsiteSSLRequest{
+	uploadWebsiteSSLReq := &onepanelsdk.UploadWebsiteSSLRequest{
 		Type:        "paste",
 		SSLID:       d.config.CertificateId,
 		Description: getWebsiteSSLResp.Data.Description,
@@ -173,16 +177,20 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiKey string, skipTlsVerify bool) (*opsdk.Client, error) {
+func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid 1panel api url")
+	}
+
+	if apiVersion == "" {
+		return nil, errors.New("invalid 1panel api version")
 	}
 
 	if apiKey == "" {
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := opsdk.NewClient(apiUrl, apiKey)
+	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

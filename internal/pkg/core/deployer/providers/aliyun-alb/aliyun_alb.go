@@ -157,7 +157,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 		if listListenersResp.Body.Listeners != nil {
 			for _, listener := range listListenersResp.Body.Listeners {
-				listenerIds = append(listenerIds, *listener.ListenerId)
+				listenerIds = append(listenerIds, tea.StringValue(listener.ListenerId))
 			}
 		}
 
@@ -192,7 +192,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 		if listListenersResp.Body.Listeners != nil {
 			for _, listener := range listListenersResp.Body.Listeners {
-				listenerIds = append(listenerIds, *listener.ListenerId)
+				listenerIds = append(listenerIds, tea.StringValue(listener.ListenerId))
 			}
 		}
 
@@ -211,8 +211,13 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		d.logger.Info("found https/quic listeners to deploy", slog.Any("listenerIds", listenerIds))
 
 		for _, listenerId := range listenerIds {
-			if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
-				errs = append(errs, err)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
+					errs = append(errs, err)
+				}
 			}
 		}
 

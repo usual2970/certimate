@@ -176,7 +176,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 发送请求
-	resp, err := req.SetDebug(true).Send()
+	resp, err := req.Send()
 	if err != nil {
 		return nil, fmt.Errorf("failed to send webhook request: %w", err)
 	} else if resp.IsError() {

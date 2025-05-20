@@ -17,7 +17,7 @@ var (
 	fApiUrl        string
 	fAccessKeyId   string
 	fAccessKey     string
-	fCertificateId int
+	fCertificateId int64
 )
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKey, argsPrefix+"ACCESSKEY", "", "")
-	flag.IntVar(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
+	flag.Int64Var(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
 }
 
 /*
@@ -45,7 +45,7 @@ Shell command to run this test:
 func TestDeploy(t *testing.T) {
 	flag.Parse()
 
-	t.Run("Deploy", func(t *testing.T) {
+	t.Run("Deploy_ToCertificate", func(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
@@ -58,11 +58,12 @@ func TestDeploy(t *testing.T) {
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			ApiUrl:                   fApiUrl,
+			ApiRole:                  "user",
 			AccessKeyId:              fAccessKeyId,
 			AccessKey:                fAccessKey,
 			AllowInsecureConnections: true,
 			ResourceType:             provider.RESOURCE_TYPE_CERTIFICATE,
-			CertificateId:            int64(fCertificateId),
+			CertificateId:            fCertificateId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

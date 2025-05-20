@@ -15,7 +15,7 @@ var (
 	fInputCertPath  string
 	fInputKeyPath   string
 	fSshHost        string
-	fSshPort        int
+	fSshPort        int64
 	fSshUsername    string
 	fSshPassword    string
 	fOutputCertPath string
@@ -28,7 +28,7 @@ func init() {
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fSshHost, argsPrefix+"SSHHOST", "", "")
-	flag.IntVar(&fSshPort, argsPrefix+"SSHPORT", 0, "")
+	flag.Int64Var(&fSshPort, argsPrefix+"SSHPORT", 0, "")
 	flag.StringVar(&fSshUsername, argsPrefix+"SSHUSERNAME", "", "")
 	flag.StringVar(&fSshPassword, argsPrefix+"SSHPASSWORD", "", "")
 	flag.StringVar(&fOutputCertPath, argsPrefix+"OUTPUTCERTPATH", "", "")

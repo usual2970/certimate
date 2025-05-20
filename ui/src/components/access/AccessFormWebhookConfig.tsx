@@ -67,7 +67,6 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         }
         return true;
       }, t("access.form.webhook_headers.errmsg.invalid")),
-    allowInsecureConnections: z.boolean().nullish(),
     defaultDataForDeployment: z
       .string()
       .nullish()
@@ -96,11 +95,12 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
           return false;
         }
       }, t("access.form.webhook_default_data.errmsg.json_invalid")),
+    allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
-  const handleWebhookHeadersBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    let value = e.target.value;
+  const handleWebhookHeadersBlur = () => {
+    let value = formInst.getFieldValue("headers");
     value = value.trim();
     value = value.replace(/(?<!\r)\n/g, "\r\n");
     formInst.setFieldValue("headers", value);
@@ -279,7 +279,13 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.webhook_headers.tooltip") }}></span>}
       >
-        <Input.TextArea autoSize={{ minRows: 3, maxRows: 10 }} placeholder={t("access.form.webhook_headers.placeholder")} onBlur={handleWebhookHeadersBlur} />
+        <CodeInput
+          height="auto"
+          minHeight="64px"
+          maxHeight="256px"
+          placeholder={t("access.form.webhook_headers.placeholder")}
+          onBlur={handleWebhookHeadersBlur}
+        />
       </Form.Item>
 
       <Show when={!usage || usage === "deployment"}>

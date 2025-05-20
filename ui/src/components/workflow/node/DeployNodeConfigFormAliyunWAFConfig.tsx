@@ -102,7 +102,7 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_waf_domain.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.aliyun_waf_domain.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.deploy.form.aliyun_waf_domain.placeholder")} />
       </Form.Item>
     </Form>
   );

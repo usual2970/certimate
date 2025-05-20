@@ -101,7 +101,7 @@ func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Ce
 	record.Set("serialNumber", certificate.SerialNumber)
 	record.Set("certificate", certificate.Certificate)
 	record.Set("privateKey", certificate.PrivateKey)
-	record.Set("issuer", certificate.Issuer)
+	record.Set("issuerOrg", certificate.IssuerOrg)
 	record.Set("issuerCertificate", certificate.IssuerCertificate)
 	record.Set("keyAlgorithm", string(certificate.KeyAlgorithm))
 	record.Set("effectAt", certificate.EffectAt)
@@ -162,7 +162,7 @@ func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.
 		SerialNumber:      record.GetString("serialNumber"),
 		Certificate:       record.GetString("certificate"),
 		PrivateKey:        record.GetString("privateKey"),
-		Issuer:            record.GetString("issuer"),
+		IssuerOrg:         record.GetString("issuerOrg"),
 		IssuerCertificate: record.GetString("issuerCertificate"),
 		KeyAlgorithm:      domain.CertificateKeyAlgorithmType(record.GetString("keyAlgorithm")),
 		EffectAt:          record.GetDateTime("effectAt").Time(),

@@ -351,7 +351,7 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_servercert_path.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.local_servercert_path.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.local_servercert_path.placeholder")} />
         </Form.Item>
 
         <Form.Item
@@ -360,7 +360,7 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.local_intermediacert_path.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.local_intermediacert_path.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.local_intermediacert_path.placeholder")} />
         </Form.Item>
       </Show>
 

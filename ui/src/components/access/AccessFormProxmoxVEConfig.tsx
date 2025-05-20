@@ -65,7 +65,7 @@ const AccessFormProxmoxVEConfig = ({ form: formInst, formName, disabled, initial
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.proxmoxve_api_token_secret.tooltip") }}></span>}
       >
-        <Input.Password autoComplete="new-password" placeholder={t("access.form.proxmoxve_api_token_secret.placeholder")} />
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.proxmoxve_api_token_secret.placeholder")} />
       </Form.Item>
 
       <Form.Item name="allowInsecureConnections" label={t("access.form.proxmoxve_allow_insecure_conns.label")} rules={[formRule]}>

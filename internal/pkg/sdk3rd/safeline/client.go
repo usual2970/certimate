@@ -11,19 +11,16 @@ import (
 )
 
 type Client struct {
-	apiHost  string
-	apiToken string
-
 	client *resty.Client
 }
 
 func NewClient(apiHost, apiToken string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetHeader("X-SLCE-API-TOKEN", apiToken)
 
 	return &Client{
-		apiHost:  strings.TrimRight(apiHost, "/"),
-		apiToken: apiToken,
-		client:   client,
+		client: client,
 	}
 }
 
@@ -38,12 +35,10 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 }
 
 func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
-	url := c.apiHost + path
 	req := c.client.R().
 		SetHeader("Content-Type", "application/json").
-		SetHeader("X-SLCE-API-TOKEN", c.apiToken).
 		SetBody(params)
-	resp, err := req.Post(url)
+	resp, err := req.Post(path)
 	if err != nil {
 		return resp, fmt.Errorf("safeline api error: failed to send request: %w", err)
 	} else if resp.IsError() {

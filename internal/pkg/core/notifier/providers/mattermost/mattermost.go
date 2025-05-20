@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -64,7 +63,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"login_id": n.config.Username,
 			"password": n.config.Password,
 		})
-	loginResp, err := loginReq.Execute(http.MethodPost, fmt.Sprintf("%s/api/v4/users/login", serverUrl))
+	loginResp, err := loginReq.Post(fmt.Sprintf("%s/api/v4/users/login", serverUrl))
 	if err != nil {
 		return nil, fmt.Errorf("mattermost api error: failed to send request: %w", err)
 	} else if loginResp.IsError() {
@@ -88,7 +87,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 				},
 			},
 		})
-	postResp, err := postReq.Execute(http.MethodPost, fmt.Sprintf("%s/api/v4/posts", serverUrl))
+	postResp, err := postReq.Post(fmt.Sprintf("%s/api/v4/posts", serverUrl))
 	if err != nil {
 		return nil, fmt.Errorf("mattermost api error: failed to send request: %w", err)
 	} else if postResp.IsError() {

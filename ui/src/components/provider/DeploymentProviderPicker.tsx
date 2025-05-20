@@ -72,8 +72,10 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, filter, placeho
               DEPLOYMENT_CATEGORIES.LOADBALANCE,
               DEPLOYMENT_CATEGORIES.FIREWALL,
               DEPLOYMENT_CATEGORIES.AV,
+              DEPLOYMENT_CATEGORIES.APIGATEWAY,
               DEPLOYMENT_CATEGORIES.SERVERLESS,
               DEPLOYMENT_CATEGORIES.WEBSITE,
+              DEPLOYMENT_CATEGORIES.SSL,
               DEPLOYMENT_CATEGORIES.NAS,
               DEPLOYMENT_CATEGORIES.OTHER,
             ].map((key) => ({

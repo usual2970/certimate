@@ -126,11 +126,11 @@ const CertificateList = () => {
       },
     },
     {
-      key: "issuer",
+      key: "brand",
       title: t("certificate.props.brand"),
       render: (_, record) => (
         <Space className="max-w-full" direction="vertical" size={4}>
-          <Typography.Text>{record.issuer}</Typography.Text>
+          <Typography.Text>{record.issuerOrg}</Typography.Text>
           <Typography.Text>{record.keyAlgorithm}</Typography.Text>
         </Space>
       ),

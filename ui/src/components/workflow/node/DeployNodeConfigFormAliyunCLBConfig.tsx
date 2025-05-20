@@ -132,7 +132,7 @@ const DeployNodeConfigFormAliyunCLBConfig = ({
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_clb_snidomain.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.aliyun_clb_snidomain.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.aliyun_clb_snidomain.placeholder")} />
         </Form.Item>
       </Show>
     </Form>

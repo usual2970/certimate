@@ -19,6 +19,7 @@ type DeployerConfig struct {
 	// GoEdge URL。
 	ApiUrl string `json:"apiUrl"`
 	// GoEdge 用户角色。
+	// 可取值 "user"、"admin"。
 	ApiRole string `json:"apiRole"`
 	// GoEdge AccessKeyId。
 	AccessKeyId string `json:"accessKeyId"`

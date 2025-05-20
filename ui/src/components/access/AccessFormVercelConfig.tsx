@@ -66,7 +66,7 @@ const AccessFormVercelConfig = ({ form: formInst, formName, disabled, initialVal
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.vercel_team_id.tooltip") }}></span>}
       >
-        <Input placeholder={t("access.form.vercel_team_id.placeholder")} />
+        <Input allowClear placeholder={t("access.form.vercel_team_id.placeholder")} />
       </Form.Item>
     </Form>
   );

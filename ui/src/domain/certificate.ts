@@ -6,7 +6,7 @@ export interface CertificateModel extends BaseModel {
   serialNumber: string;
   certificate: string;
   privateKey: string;
-  issuer: string;
+  issuerOrg: string;
   keyAlgorithm: string;
   effectAt: ISO8601String;
   expireAt: ISO8601String;
