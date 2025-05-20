@@ -37,7 +37,7 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
           .nullish()
           .refine((v) => {
             if (v == null || v + "" === "") return true;
-            return /^\d+$/.test(v + "") && +v! > 0;
+            return !Number.isNaN(+v!) && +v! !== 0;
           }, t("access.form.telegram_bot_default_chat_id.placeholder"))
       )
       .nullish(),
@@ -72,7 +72,7 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_bot_default_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" allowClear placeholder={t("access.form.telegram_bot_default_chat_id.placeholder")} />
+        <Input allowClear placeholder={t("access.form.telegram_bot_default_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );

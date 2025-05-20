@@ -116,30 +116,35 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 		describeHostDeployRecordDetailReq := tcssl.NewDescribeHostDeployRecordDetailRequest()
 		describeHostDeployRecordDetailReq.DeployRecordId = common.StringPtr(fmt.Sprintf("%d", *deployCertificateInstanceResp.Response.DeployRecordId))
-		describeHostDeployRecordDetailReq.Limit = common.Uint64Ptr(100)
 		describeHostDeployRecordDetailResp, err := d.sdkClient.DescribeHostDeployRecordDetail(describeHostDeployRecordDetailReq)
 		d.logger.Debug("sdk request 'ssl.DescribeHostDeployRecordDetail'", slog.Any("request", describeHostDeployRecordDetailReq), slog.Any("response", describeHostDeployRecordDetailResp))
 		if err != nil {
 			return nil, fmt.Errorf("failed to execute sdk request 'ssl.DescribeHostDeployRecordDetail': %w", err)
 		}
 
+		var runningCount, succeededCount, failedCount, totalCount int64
 		if describeHostDeployRecordDetailResp.Response.TotalCount == nil {
 			return nil, errors.New("unexpected deployment job status")
 		} else {
-			acc := int64(0)
+			if describeHostDeployRecordDetailResp.Response.RunningTotalCount != nil {
+				runningCount = *describeHostDeployRecordDetailResp.Response.RunningTotalCount
+			}
 			if describeHostDeployRecordDetailResp.Response.SuccessTotalCount != nil {
-				acc += *describeHostDeployRecordDetailResp.Response.SuccessTotalCount
+				succeededCount = *describeHostDeployRecordDetailResp.Response.SuccessTotalCount
 			}
 			if describeHostDeployRecordDetailResp.Response.FailedTotalCount != nil {
-				acc += *describeHostDeployRecordDetailResp.Response.FailedTotalCount
+				failedCount = *describeHostDeployRecordDetailResp.Response.FailedTotalCount
+			}
+			if describeHostDeployRecordDetailResp.Response.TotalCount != nil {
+				totalCount = *describeHostDeployRecordDetailResp.Response.TotalCount
 			}
 
-			if acc == *describeHostDeployRecordDetailResp.Response.TotalCount {
+			if succeededCount+failedCount == totalCount {
 				break
 			}
 		}
 
-		d.logger.Info("waiting for deployment job completion ...")
+		d.logger.Info(fmt.Sprintf("waiting for deployment job completion (running: %d, succeeded: %d, failed: %d, total: %d) ...", runningCount, succeededCount, failedCount, totalCount))
 		time.Sleep(time.Second * 5)
 	}
 

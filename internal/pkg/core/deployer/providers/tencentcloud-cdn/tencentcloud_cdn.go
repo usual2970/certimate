@@ -2,9 +2,11 @@ package tencentcloudcdn
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
+	"time"
 
 	tccdn "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn/v20180606"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -131,6 +133,49 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		d.logger.Debug("sdk request 'ssl.DeployCertificateInstance'", slog.Any("request", deployCertificateInstanceReq), slog.Any("response", deployCertificateInstanceResp))
 		if err != nil {
 			return nil, fmt.Errorf("failed to execute sdk request 'ssl.DeployCertificateInstance': %w", err)
+		}
+
+		// 循环获取部署任务详情，等待任务状态变更
+		// REF: https://cloud.tencent.com.cn/document/api/400/91658
+		for {
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			default:
+			}
+
+			describeHostDeployRecordDetailReq := tcssl.NewDescribeHostDeployRecordDetailRequest()
+			describeHostDeployRecordDetailReq.DeployRecordId = common.StringPtr(fmt.Sprintf("%d", *deployCertificateInstanceResp.Response.DeployRecordId))
+			describeHostDeployRecordDetailResp, err := d.sdkClients.SSL.DescribeHostDeployRecordDetail(describeHostDeployRecordDetailReq)
+			d.logger.Debug("sdk request 'ssl.DescribeHostDeployRecordDetail'", slog.Any("request", describeHostDeployRecordDetailReq), slog.Any("response", describeHostDeployRecordDetailResp))
+			if err != nil {
+				return nil, fmt.Errorf("failed to execute sdk request 'ssl.DescribeHostDeployRecordDetail': %w", err)
+			}
+
+			var runningCount, succeededCount, failedCount, totalCount int64
+			if describeHostDeployRecordDetailResp.Response.TotalCount == nil {
+				return nil, errors.New("unexpected deployment job status")
+			} else {
+				if describeHostDeployRecordDetailResp.Response.RunningTotalCount != nil {
+					runningCount = *describeHostDeployRecordDetailResp.Response.RunningTotalCount
+				}
+				if describeHostDeployRecordDetailResp.Response.SuccessTotalCount != nil {
+					succeededCount = *describeHostDeployRecordDetailResp.Response.SuccessTotalCount
+				}
+				if describeHostDeployRecordDetailResp.Response.FailedTotalCount != nil {
+					failedCount = *describeHostDeployRecordDetailResp.Response.FailedTotalCount
+				}
+				if describeHostDeployRecordDetailResp.Response.TotalCount != nil {
+					totalCount = *describeHostDeployRecordDetailResp.Response.TotalCount
+				}
+
+				if succeededCount+failedCount == totalCount {
+					break
+				}
+			}
+
+			d.logger.Info(fmt.Sprintf("waiting for deployment job completion (running: %d, succeeded: %d, failed: %d, total: %d) ...", runningCount, succeededCount, failedCount, totalCount))
+			time.Sleep(time.Second * 5)
 		}
 	}
 

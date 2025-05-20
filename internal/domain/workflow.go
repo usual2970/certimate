@@ -105,11 +105,6 @@ type WorkflowNodeConfigForNotify struct {
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
-	skipBeforeExpiryDays := maputil.GetInt32(n.Config, "skipBeforeExpiryDays")
-	if skipBeforeExpiryDays == 0 {
-		skipBeforeExpiryDays = 30
-	}
-
 	return WorkflowNodeConfigForApply{
 		Domains:               maputil.GetString(n.Config, "domains"),
 		ContactEmail:          maputil.GetString(n.Config, "contactEmail"),
@@ -126,7 +121,7 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		DnsTTL:                maputil.GetInt32(n.Config, "dnsTTL"),
 		DisableFollowCNAME:    maputil.GetBool(n.Config, "disableFollowCNAME"),
 		DisableARI:            maputil.GetBool(n.Config, "disableARI"),
-		SkipBeforeExpiryDays:  skipBeforeExpiryDays,
+		SkipBeforeExpiryDays:  maputil.GetOrDefaultInt32(n.Config, "skipBeforeExpiryDays", 30),
 	}
 }
 
