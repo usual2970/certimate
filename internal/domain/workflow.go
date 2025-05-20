@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"time"
 
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
@@ -109,10 +110,12 @@ type WorkflowNodeConfigForNotify struct {
 }
 
 func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
-	raw := maputil.GetString(n.Config, "expression")
-	if raw == "" {
+	expression := n.Config["expression"]
+	if expression == nil {
 		return WorkflowNodeConfigForCondition{}
 	}
+
+	raw, _ := json.Marshal(expression)
 
 	expr, err := UnmarshalExpr([]byte(raw))
 	if err != nil {

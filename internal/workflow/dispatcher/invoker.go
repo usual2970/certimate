@@ -98,7 +98,9 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 
 				procErr = processor.Process(ctx)
 				if procErr != nil {
-					processor.GetLogger().Error(procErr.Error())
+					if current.Type != domain.WorkflowNodeTypeCondition {
+						processor.GetLogger().Error(procErr.Error())
+					}
 					break
 				}
 
@@ -110,9 +112,12 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 
 			break
 		}
-
 		// TODO: 优化可读性
-		if procErr != nil && current.Next != nil && current.Next.Type != domain.WorkflowNodeTypeExecuteResultBranch {
+		if procErr != nil && current.Type == domain.WorkflowNodeTypeCondition {
+			current = nil
+			procErr = nil
+			return nil
+		} else if procErr != nil && current.Next != nil && current.Next.Type != domain.WorkflowNodeTypeExecuteResultBranch {
 			return procErr
 		} else if procErr != nil && current.Next != nil && current.Next.Type == domain.WorkflowNodeTypeExecuteResultBranch {
 			current = w.getBranchByType(current.Next.Branches, domain.WorkflowNodeTypeExecuteFailure)

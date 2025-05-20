@@ -57,7 +57,7 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
           break;
       }
 
-      const right: Expr = { type: "const", value: value };
+      const right: Expr = { type: "const", value: value, valueType: t };
 
       return {
         type: "compare",

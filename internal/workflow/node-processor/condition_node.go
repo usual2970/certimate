@@ -26,27 +26,26 @@ func (n *conditionNode) Process(ctx context.Context) error {
 
 	nodeConfig := n.node.GetConfigForCondition()
 	if nodeConfig.Expression == nil {
+		n.logger.Info("no condition found, continue to next node")
 		return nil
 	}
+
+	rs, err := n.eval(ctx, nodeConfig.Expression)
+	if err != nil {
+		n.logger.Warn("failed to eval expression: " + err.Error())
+		return err
+	}
+
+	if rs.Value == false {
+		n.logger.Info("condition not met, skip this branch")
+		return errors.New("condition not met")
+	}
+
+	n.logger.Info("condition met, continue to next node")
 	return nil
 }
 
-func (n *conditionNode) eval(ctx context.Context, expression domain.Expr) (any, error) {
-	switch expr:=expression.(type) {
-	case domain.CompareExpr:
-		left,err:= n.eval(ctx, expr.Left)
-		if err != nil {
-			return nil, err
-		}
-		right,err:= n.eval(ctx, expr.Right)
-		if err != nil {
-			return nil, err
-		}
-
-	case domain.LogicalExpr:
-	case domain.NotExpr:
-	case domain.VarExpr:
-	case domain.ConstExpr:
-	}
-	return false, errors.New("unknown expression type")
+func (n *conditionNode) eval(ctx context.Context, expression domain.Expr) (*domain.EvalResult, error) {
+	variables := GetNodeOutputs(ctx)
+	return expression.Eval(variables)
 }

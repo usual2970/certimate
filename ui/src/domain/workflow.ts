@@ -238,7 +238,7 @@ export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
 
 export type LogicalOperator = "and" | "or" | "not";
 
-export type ConstExpr = { type: "const"; value: Value };
+export type ConstExpr = { type: "const"; value: Value; valueType: WorkflowNodeIoValueType };
 export type VarExpr = { type: "var"; selector: WorkflowNodeIOValueSelector };
 export type CompareExpr = { type: "compare"; op: ComparisonOperator; left: Expr; right: Expr };
 export type LogicalExpr = { type: "logical"; op: LogicalOperator; left: Expr; right: Expr };

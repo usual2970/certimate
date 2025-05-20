@@ -318,6 +318,7 @@ const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
     const right: Expr = {
       type: "const",
       value: rightValue,
+      valueType: type,
     };
 
     return {
