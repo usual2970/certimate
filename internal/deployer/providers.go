@@ -35,6 +35,7 @@ import (
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
+	pBaotaWAFSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotawaf-site"
 	pBunnyCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
@@ -467,6 +468,29 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					SiteType:                 maputil.GetOrDefaultString(options.ProviderServiceConfig, "siteType", "other"),
 					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
 					SiteNames:                sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
+		}
+
+	case domain.DeploymentProviderTypeBaotaWAFSite:
+		{
+			access := domain.AccessConfigForBaotaWAF{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeploymentProviderTypeBaotaWAFSite:
+				deployer, err := pBaotaWAFSite.NewDeployer(&pBaotaWAFSite.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
+					SitePort:                 maputil.GetOrDefaultInt32(options.ProviderServiceConfig, "sitePort", 443),
 				})
 				return deployer, err
 

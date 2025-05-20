@@ -67,6 +67,12 @@ type AccessConfigForBaotaPanel struct {
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
+type AccessConfigForBaotaWAF struct {
+	ApiUrl                   string `json:"apiUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForBytePlus struct {
 	AccessKey string `json:"accessKey"`
 	SecretKey string `json:"secretKey"`

@@ -42,6 +42,8 @@
   "provider.baotapanel": "宝塔面板",
   "provider.baotapanel.console": "宝塔面板 - 面板",
   "provider.baotapanel.site": "宝塔面板 - 网站",
+  "provider.baotawaf": "堡塔云 WAF",
+  "provider.baotawaf.site": "堡塔云 WAF - 网站",
   "provider.bunny": "Bunny",
   "provider.bunny.cdn": "Bunny - 内容分发网络 CDN",
   "provider.byteplus": "BytePlus",

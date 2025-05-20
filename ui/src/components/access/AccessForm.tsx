@@ -20,6 +20,7 @@ import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBaishanConfig from "./AccessFormBaishanConfig";
 import AccessFormBaotaPanelConfig from "./AccessFormBaotaPanelConfig";
+import AccessFormBaotaWAFConfig from "./AccessFormBaotaWAFConfig";
 import AccessFormBunnyConfig from "./AccessFormBunnyConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCacheFlyConfig from "./AccessFormCacheFlyConfig";
@@ -196,6 +197,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormBaishanConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BAOTAPANEL:
         return <AccessFormBaotaPanelConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.BAOTAWAF:
+        return <AccessFormBaotaWAFConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BUNNY:
         return <AccessFormBunnyConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BYTEPLUS:
