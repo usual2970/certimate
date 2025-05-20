@@ -37,7 +37,7 @@ const NotifyNodeConfigFormTelegramBotConfig = ({
           .nullish()
           .refine((v) => {
             if (v == null || v + "" === "") return true;
-            return /^\d+$/.test(v + "") && +v! > 0;
+            return !Number.isNaN(+v!) && +v! !== 0;
           }, t("workflow_node.notify.form.telegram_bot_chat_id.placeholder"))
       )
       .nullish(),
@@ -63,7 +63,7 @@ const NotifyNodeConfigFormTelegramBotConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegram_bot_chat_id.tooltip") }}></span>}
       >
-        <Input type="number" allowClear placeholder={t("workflow_node.notify.form.telegram_bot_chat_id.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.notify.form.telegram_bot_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );
