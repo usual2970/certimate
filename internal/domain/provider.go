@@ -191,6 +191,7 @@ const (
 	DeploymentProviderTypeBaishanCDN            = DeploymentProviderType(AccessProviderTypeBaishan + "-cdn")
 	DeploymentProviderTypeBaotaPanelConsole     = DeploymentProviderType(AccessProviderTypeBaotaPanel + "-console")
 	DeploymentProviderTypeBaotaPanelSite        = DeploymentProviderType(AccessProviderTypeBaotaPanel + "-site")
+	DeploymentProviderTypeBaotaWAFConsole       = DeploymentProviderType(AccessProviderTypeBaotaWAF + "-console")
 	DeploymentProviderTypeBaotaWAFSite          = DeploymentProviderType(AccessProviderTypeBaotaWAF + "-site")
 	DeploymentProviderTypeBunnyCDN              = DeploymentProviderType(AccessProviderTypeBunny + "-cdn")
 	DeploymentProviderTypeBytePlusCDN           = DeploymentProviderType(AccessProviderTypeBytePlus + "-cdn")

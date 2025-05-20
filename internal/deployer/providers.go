@@ -35,6 +35,7 @@ import (
 	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
 	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
 	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
+	pBaotaWAFConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotawaf-console"
 	pBaotaWAFSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotawaf-site"
 	pBunnyCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
@@ -476,7 +477,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeploymentProviderTypeBaotaWAFSite:
+	case domain.DeploymentProviderTypeBaotaWAFConsole, domain.DeploymentProviderTypeBaotaWAFSite:
 		{
 			access := domain.AccessConfigForBaotaWAF{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -484,6 +485,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			switch options.Provider {
+			case domain.DeploymentProviderTypeBaotaWAFConsole:
+				deployer, err := pBaotaWAFConsole.NewDeployer(&pBaotaWAFConsole.DeployerConfig{
+					ApiUrl:                   access.ApiUrl,
+					ApiKey:                   access.ApiKey,
+					AllowInsecureConnections: access.AllowInsecureConnections,
+				})
+				return deployer, err
+
 			case domain.DeploymentProviderTypeBaotaWAFSite:
 				deployer, err := pBaotaWAFSite.NewDeployer(&pBaotaWAFSite.DeployerConfig{
 					ApiUrl:                   access.ApiUrl,

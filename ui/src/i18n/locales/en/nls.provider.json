@@ -43,6 +43,7 @@
   "provider.baotapanel.console": "aaPanel (aka BaoTaPanel) - Console",
   "provider.baotapanel.site": "aaPanel (aka BaoTaPanel) - Website",
   "provider.baotawaf": "aaWAF (aka BaotaWAF)",
+  "provider.baotawaf.console": "aaWAF (aka BaotaWAF) - Console",
   "provider.baotawaf.site": "aaWAF (aka BaotaWAF) - Website",
   "provider.bunny": "Bunny",
   "provider.bunny.cdn": "Bunny - CDN (Content Delivery Network)",
