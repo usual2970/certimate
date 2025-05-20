@@ -49,8 +49,8 @@ type DeployerConfig struct {
 	SshKey string `json:"sshKey,omitempty"`
 	// SSH 登录私钥口令。
 	SshKeyPassphrase string `json:"sshKeyPassphrase,omitempty"`
-	// 跳板机配置
-	JumpServerConfig []JumpServerConfig `json:"jumpServerConfig,omitempty"`
+	// 跳板机配置数组。
+	JumpServers []JumpServerConfig `json:"jumpServers,omitempty"`
 	// 是否回退使用 SCP。
 	UseSCP bool `json:"useSCP,omitempty"`
 	// 前置命令。
@@ -120,9 +120,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	var targetConn net.Conn
 
 	// 连接到跳板机
-	if len(d.config.JumpServerConfig) > 0 {
+	if len(d.config.JumpServers) > 0 {
 		var jumpClient *ssh.Client
-		for i, jumpServerConf := range d.config.JumpServerConfig {
+		for i, jumpServerConf := range d.config.JumpServers {
 			d.logger.Info(fmt.Sprintf("connecting to jump server [%d]", i+1), slog.String("host", jumpServerConf.SshHost))
 
 			var jumpConn net.Conn
@@ -154,13 +154,14 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			jumpClient = newClient
 			d.logger.Info(fmt.Sprintf("jump server connected [%d]", i+1), slog.String("host", jumpServerConf.SshHost))
 		}
-		// 通过跳板机发起到目标服务器的TCP连接
+
+		// 通过跳板机发起 TCP 连接到目标服务器
 		targetConn, err = jumpClient.DialContext(ctx, "tcp", fmt.Sprintf("%s:%d", d.config.SshHost, d.config.SshPort))
 		if err != nil {
 			return nil, fmt.Errorf("failed to connect to target server: %w", err)
 		}
 	} else {
-		// 直接TCP连接到目标服务器
+		// 直接发起 TCP 连接到目标服务器
 		targetConn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", d.config.SshHost, d.config.SshPort))
 		if err != nil {
 			return nil, fmt.Errorf("failed to connect to target server: %w", err)
@@ -168,7 +169,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 	defer targetConn.Close()
 
-	// 通过已有的连接创建目标服务器SSH客户端
+	// 通过已有的连接创建目标服务器 SSH 客户端
 	client, err := createSshClient(
 		targetConn,
 		d.config.SshHost,
