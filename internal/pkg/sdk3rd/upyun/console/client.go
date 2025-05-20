@@ -20,13 +20,21 @@ type Client struct {
 }
 
 func NewClient(username, password string) *Client {
-	client := resty.New()
-
-	return &Client{
+	client := &Client{
 		username: username,
 		password: password,
-		client:   client,
 	}
+	client.client = resty.New().
+		SetBaseURL("https://console.upyun.com").
+		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
+			if client.loginCookie != "" {
+				req.Header.Set("Cookie", client.loginCookie)
+			}
+
+			return nil
+		})
+
+	return client
 }
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
@@ -35,9 +43,7 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().SetBasicAuth(c.username, c.password)
-	req.Method = method
-	req.URL = "https://console.upyun.com" + path
+	req := c.client.R()
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -51,17 +57,12 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 			}
 		}
 
-		req = req.
-			SetHeader("Cookie", c.loginCookie).
-			SetQueryParams(qs)
+		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetHeader("Cookie", c.loginCookie).
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("upyun api error: failed to send request: %w", err)
 	} else if resp.IsError() {

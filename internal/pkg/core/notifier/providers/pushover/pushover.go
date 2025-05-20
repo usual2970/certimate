@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -59,7 +58,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"token":   n.config.Token,
 			"user":    n.config.User,
 		})
-	resp, err := req.Execute(http.MethodPost, "https://api.pushover.net/1/messages.json")
+	resp, err := req.Post("https://api.pushover.net/1/messages.json")
 	if err != nil {
 		return nil, fmt.Errorf("pushover api error: failed to send request: %w", err)
 	} else if resp.IsError() {

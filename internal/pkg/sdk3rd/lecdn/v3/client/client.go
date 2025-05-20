@@ -13,7 +13,6 @@ import (
 )
 
 type Client struct {
-	apiHost  string
 	username string
 	password string
 
@@ -24,14 +23,21 @@ type Client struct {
 }
 
 func NewClient(apiHost, username, password string) *Client {
-	client := resty.New()
-
-	return &Client{
-		apiHost:  strings.TrimRight(apiHost, "/"),
+	client := &Client{
 		username: username,
 		password: password,
-		client:   client,
 	}
+	client.client = resty.New().
+		SetBaseURL(strings.TrimRight(apiHost, "/") + "/prod-api").
+		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
+			if client.accessToken != "" {
+				req.Header.Set("Authorization", "Bearer "+client.accessToken)
+			}
+
+			return nil
+		})
+
+	return client
 }
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
@@ -45,7 +51,7 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().SetBasicAuth(c.username, c.password)
+	req := c.client.R()
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -59,17 +65,12 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 			}
 		}
 
-		req = req.
-			SetHeader("Authorization", "Bearer "+c.accessToken).
-			SetQueryParams(qs)
+		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetHeader("Authorization", "Bearer "+c.accessToken).
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Execute(method, c.apiHost+"/prod-api"+path)
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("lecdn api error: failed to send request: %w", err)
 	} else if resp.IsError() {

@@ -11,16 +11,15 @@ import (
 )
 
 type Client struct {
-	apiKey string
-
 	client *resty.Client
 }
 
 func NewClient(apiKey string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL("https://api.v2.rainyun.com").
+		SetHeader("x-api-key", apiKey)
 
 	return &Client{
-		apiKey: apiKey,
 		client: client,
 	}
 }
@@ -31,21 +30,17 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().SetHeader("x-api-key", c.apiKey)
-	req.Method = method
-	req.URL = "https://api.v2.rainyun.com" + path
+	req := c.client.R()
 	if strings.EqualFold(method, http.MethodGet) {
 		if params != nil {
 			jsonb, _ := json.Marshal(params)
 			req = req.SetQueryParam("options", string(jsonb))
 		}
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("rainyun api error: failed to send request: %w", err)
 	} else if resp.IsError() {

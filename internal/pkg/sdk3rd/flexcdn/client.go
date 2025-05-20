@@ -13,7 +13,6 @@ import (
 )
 
 type Client struct {
-	apiHost     string
 	apiRole     string
 	accessKeyId string
 	accessKey   string
@@ -26,15 +25,22 @@ type Client struct {
 }
 
 func NewClient(apiHost, apiRole, accessKeyId, accessKey string) *Client {
-	client := resty.New()
-
-	return &Client{
-		apiHost:     strings.TrimRight(apiHost, "/"),
+	client := &Client{
 		apiRole:     apiRole,
 		accessKeyId: accessKeyId,
 		accessKey:   accessKey,
-		client:      client,
 	}
+	client.client = resty.New().
+		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
+			if client.accessToken != "" {
+				req.Header.Set("X-Cloud-Access-Token", client.accessToken)
+			}
+
+			return nil
+		})
+
+	return client
 }
 
 func (c *Client) WithTimeout(timeout time.Duration) *Client {
@@ -48,9 +54,7 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().SetBasicAuth(c.accessKeyId, c.accessKey)
-	req.Method = method
-	req.URL = c.apiHost + path
+	req := c.client.R()
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -64,17 +68,12 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 			}
 		}
 
-		req = req.
-			SetHeader("X-Cloud-Access-Token", c.accessToken).
-			SetQueryParams(qs)
+		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetHeader("X-Cloud-Access-Token", c.accessToken).
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("flexcdn api error: failed to send request: %w", err)
 	} else if resp.IsError() {

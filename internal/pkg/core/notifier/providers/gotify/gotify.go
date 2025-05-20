@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -64,7 +63,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"message":  message,
 			"priority": n.config.Priority,
 		})
-	resp, err := req.Execute(http.MethodPost, fmt.Sprintf("%s/message", serverUrl))
+	resp, err := req.Post(fmt.Sprintf("%s/message", serverUrl))
 	if err != nil {
 		return nil, fmt.Errorf("gotify api error: failed to send request: %w", err)
 	} else if resp.IsError() {

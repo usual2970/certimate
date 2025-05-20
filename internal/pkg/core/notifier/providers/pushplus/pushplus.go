@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -57,7 +56,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"content": message,
 			"token":   n.config.Token,
 		})
-	resp, err := req.Execute(http.MethodPost, "https://www.pushplus.plus/send")
+	resp, err := req.Post("https://www.pushplus.plus/send")
 	if err != nil {
 		return nil, fmt.Errorf("pushplus api error: failed to send request: %w", err)
 	} else if resp.IsError() {
