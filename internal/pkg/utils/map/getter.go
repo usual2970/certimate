@@ -68,31 +68,42 @@ func GetOrDefaultInt32(dict map[string]any, key string, defaultValue int32) int3
 	}
 
 	if value, ok := dict[key]; ok {
-		if result, ok := value.(int32); ok {
-			if result != 0 {
-				return result
+		var result int32
+
+		switch v := value.(type) {
+		case int:
+			result = int32(v)
+		case int8:
+			result = int32(v)
+		case int16:
+			result = int32(v)
+		case int32:
+			result = v
+		case int64:
+			result = int32(v)
+		case uint:
+			result = int32(v)
+		case uint8:
+			result = int32(v)
+		case uint16:
+			result = int32(v)
+		case uint32:
+			result = int32(v)
+		case uint64:
+			result = int32(v)
+		case float32:
+			result = int32(v)
+		case float64:
+			result = int32(v)
+		case string:
+			// 兼容字符串类型的值
+			if t, err := strconv.ParseInt(v, 10, 32); err == nil {
+				result = int32(t)
 			}
 		}
 
-		if result, ok := value.(int64); ok {
-			if result != 0 {
-				return int32(result)
-			}
-		}
-
-		if result, ok := value.(int); ok {
-			if result != 0 {
-				return int32(result)
-			}
-		}
-
-		// 兼容字符串类型的值
-		if str, ok := value.(string); ok {
-			if result, err := strconv.ParseInt(str, 10, 32); err == nil {
-				if result != 0 {
-					return int32(result)
-				}
-			}
+		if result != 0 {
+			return int32(result)
 		}
 	}
 
@@ -126,31 +137,42 @@ func GetOrDefaultInt64(dict map[string]any, key string, defaultValue int64) int6
 	}
 
 	if value, ok := dict[key]; ok {
-		if result, ok := value.(int64); ok {
-			if result != 0 {
-				return result
+		var result int64
+
+		switch v := value.(type) {
+		case int:
+			result = int64(v)
+		case int8:
+			result = int64(v)
+		case int16:
+			result = int64(v)
+		case int32:
+			result = int64(v)
+		case int64:
+			result = v
+		case uint:
+			result = int64(v)
+		case uint8:
+			result = int64(v)
+		case uint16:
+			result = int64(v)
+		case uint32:
+			result = int64(v)
+		case uint64:
+			result = int64(v)
+		case float32:
+			result = int64(v)
+		case float64:
+			result = int64(v)
+		case string:
+			// 兼容字符串类型的值
+			if t, err := strconv.ParseInt(v, 10, 32); err == nil {
+				result = t
 			}
 		}
 
-		if result, ok := value.(int32); ok {
-			if result != 0 {
-				return int64(result)
-			}
-		}
-
-		if result, ok := value.(int); ok {
-			if result != 0 {
-				return int64(result)
-			}
-		}
-
-		// 兼容字符串类型的值
-		if str, ok := value.(string); ok {
-			if result, err := strconv.ParseInt(str, 10, 64); err == nil {
-				if result != 0 {
-					return result
-				}
-			}
+		if result != 0 {
+			return int64(result)
 		}
 	}
 

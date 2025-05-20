@@ -96,6 +96,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
 			fmt.Sprintf("REGION: %v", fRegion),
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
+			fmt.Sprintf("DOMAIN: %v", fDomain),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{

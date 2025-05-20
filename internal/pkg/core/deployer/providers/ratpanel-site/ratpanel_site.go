@@ -15,14 +15,14 @@ import (
 type DeployerConfig struct {
 	// 耗子面板地址。
 	ApiUrl string `json:"apiUrl"`
-	// 耗子面板访问令牌ID。
-	AccessTokenId uint `json:"accessTokenId"`
+	// 耗子面板访问令牌 ID。
+	AccessTokenId int32 `json:"accessTokenId"`
 	// 耗子面板访问令牌。
 	AccessToken string `json:"accessToken"`
 	// 是否允许不安全的连接。
 	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 	// 网站名称。
-	SiteName string `json:"siteName,omitempty"`
+	SiteName string `json:"siteName"`
 }
 
 type DeployerProvider struct {
@@ -71,15 +71,15 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		PrivateKey:  privkeyPEM,
 	}
 	websiteCertResp, err := d.sdkClient.WebsiteCert(websiteCertReq)
-	d.logger.Debug("sdk request 'ratpanel.WebsiteCertRequest'", slog.Any("request", websiteCertReq), slog.Any("response", websiteCertResp))
+	d.logger.Debug("sdk request 'ratpanel.WebsiteCert'", slog.Any("request", websiteCertReq), slog.Any("response", websiteCertResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.WebsiteCertRequest': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.WebsiteCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl string, accessTokenId uint, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
+func createSdkClient(apiUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid ratpanel api url")
 	}
@@ -87,6 +87,7 @@ func createSdkClient(apiUrl string, accessTokenId uint, accessToken string, skip
 	if accessTokenId == 0 {
 		return nil, errors.New("invalid ratpanel access token id")
 	}
+
 	if accessToken == "" {
 		return nil, errors.New("invalid ratpanel access token")
 	}

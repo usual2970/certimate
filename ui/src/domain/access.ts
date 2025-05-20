@@ -7,6 +7,7 @@ export interface AccessModel extends BaseModel {
   */ Record<string, unknown> &
     (
       | AccessConfigFor1Panel
+      | AccessConfigForACMECA
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
       | AccessConfigForAWS
@@ -14,6 +15,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForBaiduCloud
       | AccessConfigForBaishan
       | AccessConfigForBaotaPanel
+      | AccessConfigForBaotaWAF
       | AccessConfigForBunny
       | AccessConfigForBytePlus
       | AccessConfigForCacheFly
@@ -28,6 +30,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForEmail
+      | AccessConfigForFlexCDN
       | AccessConfigForGcore
       | AccessConfigForGname
       | AccessConfigForGoDaddy
@@ -37,6 +40,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
       | AccessConfigForLarkBot
+      | AccessConfigForLeCDN
       | AccessConfigForMattermost
       | AccessConfigForNamecheap
       | AccessConfigForNameDotCom
@@ -48,6 +52,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForProxmoxVE
       | AccessConfigForQiniu
       | AccessConfigForRainYun
+      | AccessConfigForRatPanel
       | AccessConfigForSafeLine
       | AccessConfigForSSH
       | AccessConfigForSSLCom
@@ -69,8 +74,15 @@ export interface AccessModel extends BaseModel {
 // #region AccessConfig
 export type AccessConfigFor1Panel = {
   apiUrl: string;
+  apiVersion: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForACMECA = {
+  endpoint: string;
+  eabKid?: string;
+  eabHmacKey?: string;
 };
 
 export type AccessConfigForACMEHttpReq = {
@@ -107,6 +119,12 @@ export type AccessConfigForBaishan = {
 };
 
 export type AccessConfigForBaotaPanel = {
+  apiUrl: string;
+  apiKey: string;
+  allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForBaotaWAF = {
   apiUrl: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
@@ -185,6 +203,14 @@ export type AccessConfigForEmail = {
   defaultReceiverAddress?: string;
 };
 
+export type AccessConfigForFlexCDN = {
+  apiUrl: string;
+  apiRole: string;
+  accessKeyId: string;
+  accessKey: string;
+  allowInsecureConnections?: boolean;
+};
+
 export type AccessConfigForGcore = {
   apiToken: string;
 };
@@ -228,6 +254,15 @@ export type AccessConfigForKubernetes = {
 
 export type AccessConfigForLarkBot = {
   webhookUrl: string;
+};
+
+export type AccessConfigForLeCDN = {
+  apiUrl: string;
+  apiVersion: string;
+  apiRole: string;
+  username: string;
+  password: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForMattermost = {
@@ -290,6 +325,13 @@ export type AccessConfigForQiniu = {
 
 export type AccessConfigForRainYun = {
   apiKey: string;
+};
+
+export type AccessConfigForRatPanel = {
+  apiUrl: string;
+  accessTokenId: number;
+  accessToken: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForSafeLine = {

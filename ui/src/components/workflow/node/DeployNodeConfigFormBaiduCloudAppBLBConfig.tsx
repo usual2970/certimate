@@ -135,7 +135,7 @@ const DeployNodeConfigFormBaiduCloudAppBLBConfig = ({
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.baiducloud_appblb_snidomain.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.baiducloud_appblb_snidomain.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.baiducloud_appblb_snidomain.placeholder")} />
         </Form.Item>
       </Show>
     </Form>

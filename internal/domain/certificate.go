@@ -20,7 +20,7 @@ type Certificate struct {
 	SerialNumber      string                      `json:"serialNumber" db:"serialNumber"`
 	Certificate       string                      `json:"certificate" db:"certificate"`
 	PrivateKey        string                      `json:"privateKey" db:"privateKey"`
-	Issuer            string                      `json:"issuer" db:"issuer"`
+	IssuerOrg         string                      `json:"issuerOrg" db:"issuerOrg"`
 	IssuerCertificate string                      `json:"issuerCertificate" db:"issuerCertificate"`
 	KeyAlgorithm      CertificateKeyAlgorithmType `json:"keyAlgorithm" db:"keyAlgorithm"`
 	EffectAt          time.Time                   `json:"effectAt" db:"effectAt"`
@@ -38,7 +38,7 @@ type Certificate struct {
 func (c *Certificate) PopulateFromX509(certX509 *x509.Certificate) *Certificate {
 	c.SubjectAltNames = strings.Join(certX509.DNSNames, ";")
 	c.SerialNumber = strings.ToUpper(certX509.SerialNumber.Text(16))
-	c.Issuer = strings.Join(certX509.Issuer.Organization, ";")
+	c.IssuerOrg = strings.Join(certX509.Issuer.Organization, ";")
 	c.EffectAt = certX509.NotBefore
 	c.ExpireAt = certX509.NotAfter
 

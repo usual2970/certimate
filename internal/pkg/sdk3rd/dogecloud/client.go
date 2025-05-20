@@ -164,8 +164,8 @@ func (c *Client) sendReq(method string, path string, data map[string]interface{}
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Content-Type", mime)
-	req.Header.Add("Authorization", auth)
+	req.Header.Set("Content-Type", mime)
+	req.Header.Set("Authorization", auth)
 
 	client := http.Client{}
 	resp, err := client.Do(req)
@@ -174,10 +174,10 @@ func (c *Client) sendReq(method string, path string, data map[string]interface{}
 	}
 	defer resp.Body.Close()
 
-	r, err := io.ReadAll(resp.Body)
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return bytes, nil
 }

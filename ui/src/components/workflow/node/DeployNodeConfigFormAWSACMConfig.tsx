@@ -28,7 +28,7 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
       .string({ message: t("workflow_node.deploy.form.aws_acm_region.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aws_acm_region.placeholder"))
       .trim(),
-    certificateArn: z.string({ message: t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder") }).nullish(),
+    certificateArn: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -60,7 +60,7 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aws_acm_certificate_arn.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.deploy.form.aws_acm_certificate_arn.placeholder")} />
       </Form.Item>
     </Form>
   );

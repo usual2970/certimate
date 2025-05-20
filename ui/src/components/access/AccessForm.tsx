@@ -12,6 +12,7 @@ import { ACCESS_PROVIDERS, ACCESS_USAGES, type AccessProvider } from "@/domain/p
 import { useAntdForm, useAntdFormName } from "@/hooks";
 
 import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
+import AccessFormACMECAConfig from "./AccessFormACMECAConfig";
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
 import AccessFormAWSConfig from "./AccessFormAWSConfig";
@@ -19,6 +20,7 @@ import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
 import AccessFormBaishanConfig from "./AccessFormBaishanConfig";
 import AccessFormBaotaPanelConfig from "./AccessFormBaotaPanelConfig";
+import AccessFormBaotaWAFConfig from "./AccessFormBaotaWAFConfig";
 import AccessFormBunnyConfig from "./AccessFormBunnyConfig";
 import AccessFormBytePlusConfig from "./AccessFormBytePlusConfig";
 import AccessFormCacheFlyConfig from "./AccessFormCacheFlyConfig";
@@ -33,6 +35,7 @@ import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormDynv6Config from "./AccessFormDynv6Config";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormEmailConfig from "./AccessFormEmailConfig";
+import AccessFormFlexCDNConfig from "./AccessFormFlexCDNConfig";
 import AccessFormGcoreConfig from "./AccessFormGcoreConfig";
 import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
@@ -42,6 +45,7 @@ import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
 import AccessFormLarkBotConfig from "./AccessFormLarkBotConfig";
+import AccessFormLeCDNConfig from "./AccessFormLeCDNConfig";
 import AccessFormMattermostConfig from "./AccessFormMattermostConfig";
 import AccessFormNamecheapConfig from "./AccessFormNamecheapConfig";
 import AccessFormNameDotComConfig from "./AccessFormNameDotComConfig";
@@ -54,6 +58,7 @@ import AccessFormPowerDNSConfig from "./AccessFormPowerDNSConfig";
 import AccessFormProxmoxVEConfig from "./AccessFormProxmoxVEConfig";
 import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
+import AccessFormRatPanelConfig from "./AccessFormRatPanelConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
@@ -176,6 +181,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
     switch (fieldProvider) {
       case ACCESS_PROVIDERS["1PANEL"]:
         return <AccessForm1PanelConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.ACMECA:
+        return <AccessFormACMECAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ACMEHTTPREQ:
         return <AccessFormACMEHttpReqConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:
@@ -190,6 +197,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormBaishanConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BAOTAPANEL:
         return <AccessFormBaotaPanelConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.BAOTAWAF:
+        return <AccessFormBaotaWAFConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BUNNY:
         return <AccessFormBunnyConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.BYTEPLUS:
@@ -214,6 +223,12 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DYNV6:
         return <AccessFormDynv6Config {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EDGIO:
+        return <AccessFormEdgioConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.EMAIL:
+        return <AccessFormEmailConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.FLEXCDN:
+        return <AccessFormFlexCDNConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GCORE:
         return <AccessFormGcoreConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GNAME:
@@ -224,10 +239,6 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormGoEdgeConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GOOGLETRUSTSERVICES:
         return <AccessFormGoogleTrustServicesConfig {...nestedFormProps} />;
-      case ACCESS_PROVIDERS.EDGIO:
-        return <AccessFormEdgioConfig {...nestedFormProps} />;
-      case ACCESS_PROVIDERS.EMAIL:
-        return <AccessFormEmailConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.JDCLOUD:
@@ -236,6 +247,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormKubernetesConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.LARKBOT:
         return <AccessFormLarkBotConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.LECDN:
+        return <AccessFormLeCDNConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.MATTERMOST:
         return <AccessFormMattermostConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.NAMECHEAP:
@@ -260,6 +273,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormQiniuConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.RAINYUN:
         return <AccessFormRainYunConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.RATPANEL:
+        return <AccessFormRatPanelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SAFELINE:
         return <AccessFormSafeLineConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:

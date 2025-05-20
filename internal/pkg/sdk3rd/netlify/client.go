@@ -11,17 +11,16 @@ import (
 )
 
 type Client struct {
-	apiToken string
-
 	client *resty.Client
 }
 
 func NewClient(apiToken string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL("https://api.netlify.com/api/v1").
+		SetHeader("Authorization", "Bearer "+apiToken)
 
 	return &Client{
-		apiToken: apiToken,
-		client:   client,
+		client: client,
 	}
 }
 
@@ -31,9 +30,7 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 }
 
 func (c *Client) sendRequest(method string, path string, queryParams interface{}, payloadParams interface{}) (*resty.Response, error) {
-	req := c.client.R().SetHeader("Authorization", "Bearer "+c.apiToken)
-	req.Method = method
-	req.URL = "https://api.netlify.com/api/v1" + path
+	req := c.client.R()
 
 	if queryParams != nil {
 		qs := make(map[string]string)
@@ -63,12 +60,10 @@ func (c *Client) sendRequest(method string, path string, queryParams interface{}
 
 		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetBody(payloadParams)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(payloadParams)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("netlify api error: failed to send request: %w", err)
 	} else if resp.IsError() {

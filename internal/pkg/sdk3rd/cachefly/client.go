@@ -11,17 +11,16 @@ import (
 )
 
 type Client struct {
-	apiToken string
-
 	client *resty.Client
 }
 
 func NewClient(apiToken string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL("https://api.cachefly.com/api/2.5").
+		SetHeader("x-cf-authorization", "Bearer "+apiToken)
 
 	return &Client{
-		apiToken: apiToken,
-		client:   client,
+		client: client,
 	}
 }
 
@@ -32,9 +31,6 @@ func (c *Client) WithTimeout(timeout time.Duration) *Client {
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
 	req := c.client.R()
-	req.Method = method
-	req.URL = "https://api.cachefly.com/api/2.5" + path
-	req = req.SetHeader("x-cf-authorization", "Bearer "+c.apiToken)
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -50,12 +46,10 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("cachefly api error: failed to send request: %w", err)
 	} else if resp.IsError() {

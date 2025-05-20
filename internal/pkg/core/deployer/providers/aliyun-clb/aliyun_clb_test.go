@@ -18,7 +18,7 @@ var (
 	fAccessKeySecret string
 	fRegion          string
 	fLoadbalancerId  string
-	fListenerPort    int
+	fListenerPort    int64
 	fDomain          string
 )
 
@@ -31,7 +31,7 @@ func init() {
 	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
 	flag.StringVar(&fRegion, argsPrefix+"REGION", "", "")
 	flag.StringVar(&fLoadbalancerId, argsPrefix+"LOADBALANCERID", "", "")
-	flag.IntVar(&fListenerPort, argsPrefix+"LISTENERPORT", 443, "")
+	flag.Int64Var(&fListenerPort, argsPrefix+"LISTENERPORT", 443, "")
 	flag.StringVar(&fDomain, argsPrefix+"DOMAIN", "", "")
 }
 

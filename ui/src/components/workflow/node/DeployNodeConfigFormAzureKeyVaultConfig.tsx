@@ -35,7 +35,7 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
       .nonempty(t("workflow_node.deploy.form.azure_keyvault_name.placeholder"))
       .trim(),
     certificateName: z
-      .string({ message: t("workflow_node.deploy.form.azure_keyvault_certificate_name.placeholder") })
+      .string()
       .nullish()
       .refine((v) => {
         if (!v) return true;

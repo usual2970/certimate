@@ -42,22 +42,23 @@ import (
 )
 
 type applicantProviderOptions struct {
-	Domains                  []string
-	ContactEmail             string
-	Provider                 domain.ACMEDns01ProviderType
-	ProviderAccessConfig     map[string]any
-	ProviderExtendedConfig   map[string]any
-	CAProvider               domain.CAProviderType
-	CAProviderAccessConfig   map[string]any
-	CAProviderExtendedConfig map[string]any
-	KeyAlgorithm             string
-	Nameservers              []string
-	DnsPropagationWait       int32
-	DnsPropagationTimeout    int32
-	DnsTTL                   int32
-	DisableFollowCNAME       bool
-	ReplacedARIAcct          string
-	ReplacedARICert          string
+	Domains                 []string
+	ContactEmail            string
+	Provider                domain.ACMEDns01ProviderType
+	ProviderAccessConfig    map[string]any
+	ProviderServiceConfig   map[string]any
+	CAProvider              domain.CAProviderType
+	CAProviderAccessId      string
+	CAProviderAccessConfig  map[string]any
+	CAProviderServiceConfig map[string]any
+	KeyAlgorithm            string
+	Nameservers             []string
+	DnsPropagationWait      int32
+	DnsPropagationTimeout   int32
+	DnsTTL                  int32
+	DisableFollowCNAME      bool
+	ReplacedARIAcct         string
+	ReplacedARICert         string
 }
 
 func createApplicantProvider(options *applicantProviderOptions) (challenge.Provider, error) {
@@ -104,7 +105,7 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 				applicant, err := pAliyunESA.NewChallengeProvider(&pAliyunESA.ChallengeProviderConfig{
 					AccessKeyId:           access.AccessKeyId,
 					AccessKeySecret:       access.AccessKeySecret,
-					Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
+					Region:                maputil.GetString(options.ProviderServiceConfig, "region"),
 					DnsPropagationTimeout: options.DnsPropagationTimeout,
 					DnsTTL:                options.DnsTTL,
 				})
@@ -125,8 +126,8 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			applicant, err := pAWSRoute53.NewChallengeProvider(&pAWSRoute53.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
-				Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
-				HostedZoneId:          maputil.GetString(options.ProviderExtendedConfig, "hostedZoneId"),
+				Region:                maputil.GetString(options.ProviderServiceConfig, "region"),
+				HostedZoneId:          maputil.GetString(options.ProviderServiceConfig, "hostedZoneId"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -333,7 +334,7 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			applicant, err := pHuaweiCloud.NewChallengeProvider(&pHuaweiCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				SecretAccessKey:       access.SecretAccessKey,
-				Region:                maputil.GetString(options.ProviderExtendedConfig, "region"),
+				Region:                maputil.GetString(options.ProviderServiceConfig, "region"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -350,7 +351,7 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			applicant, err := pJDCloud.NewChallengeProvider(&pJDCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
-				RegionId:              maputil.GetString(options.ProviderExtendedConfig, "regionId"),
+				RegionId:              maputil.GetString(options.ProviderServiceConfig, "regionId"),
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
@@ -520,7 +521,7 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 				applicant, err := pTencentCloudEO.NewChallengeProvider(&pTencentCloudEO.ChallengeProviderConfig{
 					SecretId:              access.SecretId,
 					SecretKey:             access.SecretKey,
-					ZoneId:                maputil.GetString(options.ProviderExtendedConfig, "zoneId"),
+					ZoneId:                maputil.GetString(options.ProviderServiceConfig, "zoneId"),
 					DnsPropagationTimeout: options.DnsPropagationTimeout,
 					DnsTTL:                options.DnsTTL,
 				})

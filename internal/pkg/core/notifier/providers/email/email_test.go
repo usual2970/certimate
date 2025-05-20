@@ -17,7 +17,7 @@ const (
 
 var (
 	fSmtpHost        string
-	fSmtpPort        int
+	fSmtpPort        int64
 	fSmtpTLS         bool
 	fUsername        string
 	fPassword        string
@@ -29,7 +29,7 @@ func init() {
 	argsPrefix := "CERTIMATE_NOTIFIER_EMAIL_"
 
 	flag.StringVar(&fSmtpHost, argsPrefix+"SMTPHOST", "", "")
-	flag.IntVar(&fSmtpPort, argsPrefix+"SMTPPORT", 0, "")
+	flag.Int64Var(&fSmtpPort, argsPrefix+"SMTPPORT", 0, "")
 	flag.BoolVar(&fSmtpTLS, argsPrefix+"SMTPTLS", false, "")
 	flag.StringVar(&fUsername, argsPrefix+"USERNAME", "", "")
 	flag.StringVar(&fPassword, argsPrefix+"PASSWORD", "", "")

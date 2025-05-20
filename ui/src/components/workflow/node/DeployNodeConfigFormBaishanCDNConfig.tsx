@@ -73,7 +73,7 @@ const DeployNodeConfigFormBaishanCDNConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.baishan_cdn_certificate_id.tooltip") }}></span>}
       >
-        <Input type="number" placeholder={t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")} />
+        <Input allowClear type="number" placeholder={t("workflow_node.deploy.form.baishan_cdn_certificate_id.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -79,13 +79,23 @@ const DeployNodeConfigFormCdnflyConfig = ({ form: formInst, formName, disabled, 
       </Form.Item>
 
       <Show when={fieldResourceType === RESOURCE_TYPE_SITE}>
-        <Form.Item name="siteId" label={t("workflow_node.deploy.form.cdnfly_site_id.label")} rules={[formRule]}>
+        <Form.Item
+          name="siteId"
+          label={t("workflow_node.deploy.form.cdnfly_site_id.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.cdnfly_site_id.tooltip") }}></span>}
+        >
           <Input type="number" placeholder={t("workflow_node.deploy.form.cdnfly_site_id.placeholder")} />
         </Form.Item>
       </Show>
 
       <Show when={fieldResourceType === RESOURCE_TYPE_CERTIFICATE}>
-        <Form.Item name="certificateId" label={t("workflow_node.deploy.form.cdnfly_certificate_id.label")} rules={[formRule]}>
+        <Form.Item
+          name="certificateId"
+          label={t("workflow_node.deploy.form.cdnfly_certificate_id.label")}
+          rules={[formRule]}
+          tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.cdnfly_certificate_id.tooltip") }}></span>}
+        >
           <Input type="number" placeholder={t("workflow_node.deploy.form.cdnfly_certificate_id.placeholder")} />
         </Form.Item>
       </Show>
