@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/repository"
@@ -12,6 +13,7 @@ import (
 type uploadNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -21,6 +23,7 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 	return &uploadNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -66,6 +69,9 @@ func (n *uploadNode) Process(ctx context.Context) error {
 		return err
 	}
 
+	n.outputs["certificate.validated"] = true
+	n.outputs["certificate.daysLeft"] = int(time.Until(certificate.ExpireAt).Hours() / 24)
+
 	n.logger.Info("upload completed")
 
 	return nil
@@ -85,6 +91,8 @@ func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 
 		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
 		if lastCertificate != nil {
+			n.outputs["certificate.validated"] = true
+			n.outputs["certificate.daysLeft"] = int(time.Until(lastCertificate.ExpireAt).Hours() / 24)
 			return true, "the certificate has already been uploaded"
 		}
 	}

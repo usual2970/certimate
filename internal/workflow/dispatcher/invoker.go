@@ -101,6 +101,11 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 					processor.GetLogger().Error(procErr.Error())
 					break
 				}
+
+				nodeOutputs := processor.GetOutputs()
+				if len(nodeOutputs) > 0 {
+					ctx = nodes.AddNodeOutput(ctx, current.Id, nodeOutputs)
+				}
 			}
 
 			break

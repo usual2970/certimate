@@ -9,12 +9,14 @@ import (
 type startNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 }
 
 func NewStartNode(node *domain.WorkflowNode) *startNode {
 	return &startNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 	}
 }
 

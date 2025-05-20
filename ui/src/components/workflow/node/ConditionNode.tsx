@@ -5,7 +5,7 @@ import { Button, Card, Popover } from "antd";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
 import ConditionNodeConfigForm, { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
-import { Expr, WorkflowNodeIoValueType } from "@/domain/workflow";
+import { Expr, WorkflowNodeIoValueType, Value } from "@/domain/workflow";
 import { produce } from "immer";
 import { useWorkflowStore } from "@/stores/workflow";
 import { useZustandShallowSelector } from "@/hooks";
@@ -30,15 +30,34 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
     // 创建单个条件的表达式
     const createComparisonExpr = (condition: ConditionItem): Expr => {
       const selectors = condition.leftSelector.split("#");
+      const t = selectors[2] as WorkflowNodeIoValueType;
       const left: Expr = {
         type: "var",
         selector: {
           id: selectors[0],
           name: selectors[1],
-          type: selectors[2] as WorkflowNodeIoValueType,
+          type: t,
         },
       };
-      const right: Expr = { type: "const", value: condition.rightValue || "" };
+
+      let value: Value = condition.rightValue;
+      switch (t) {
+        case "boolean":
+          if (value === "true") {
+            value = true;
+          } else if (value === "false") {
+            value = false;
+          }
+          break;
+        case "number":
+          value = parseInt(value as string);
+          break;
+        case "string":
+          value = value as string;
+          break;
+      }
+
+      const right: Expr = { type: "const", value: value };
 
       return {
         type: "compare",

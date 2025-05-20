@@ -16,6 +16,7 @@ import (
 type applyNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -25,6 +26,7 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -71,6 +73,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 		n.logger.Warn("failed to parse certificate, may be the CA responded error")
 		return err
 	}
+
 	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
 		Certificate:       applyResult.CertificateFullChain,
@@ -95,6 +98,10 @@ func (n *applyNode) Process(ctx context.Context) error {
 		n.logger.Warn("failed to save node output")
 		return err
 	}
+
+	// 添加中间结果
+	n.outputs["certificate.validated"] = true
+	n.outputs["certificate.daysLeft"] = int(time.Until(certificate.ExpireAt).Hours() / 24)
 
 	n.logger.Info("apply completed")
 
@@ -139,6 +146,10 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
+				
+				n.outputs["certificate.validated"] = true
+				n.outputs["certificate.daysLeft"] = int(expirationTime.Hours() / 24)
+
 				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}

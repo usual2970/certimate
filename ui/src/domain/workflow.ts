@@ -232,7 +232,7 @@ export const workflowNodeIOOptions = (node: WorkflowNode) => {
 
 // #region Condition expression
 
-type Value = string | number | boolean;
+export type Value = string | number | boolean;
 
 export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
 

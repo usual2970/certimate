@@ -81,6 +81,10 @@ type WorkflowNodeConfigForApply struct {
 	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays,omitempty"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
 }
 
+type WorkflowNodeConfigForCondition struct {
+	Expression Expr `json:"expression"` // 条件表达式
+}
+
 type WorkflowNodeConfigForUpload struct {
 	Certificate string `json:"certificate"`
 	PrivateKey  string `json:"privateKey"`
@@ -102,6 +106,22 @@ type WorkflowNodeConfigForNotify struct {
 	ProviderConfig   map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
 	Subject          string         `json:"subject"`                  // 通知主题
 	Message          string         `json:"message"`                  // 通知内容
+}
+
+func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
+	raw := maputil.GetString(n.Config, "expression")
+	if raw == "" {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	expr, err := UnmarshalExpr([]byte(raw))
+	if err != nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	return WorkflowNodeConfigForCondition{
+		Expression: expr,
+	}
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -171,6 +191,7 @@ type WorkflowNodeIO struct {
 type WorkflowNodeIOValueSelector struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
+	Type string `json:"type"`
 }
 
 const WorkflowNodeIONameCertificate string = "certificate"

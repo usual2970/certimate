@@ -12,6 +12,7 @@ import (
 type notifyNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	settingsRepo settingsRepository
 }
@@ -20,6 +21,7 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	return &notifyNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		settingsRepo: repository.NewSettingsRepository(),
 	}
