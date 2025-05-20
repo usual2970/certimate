@@ -185,7 +185,10 @@ export type WorkflowNodeIO = {
 export type WorkflowNodeIOValueSelector = {
   id: string;
   name: string;
+  type: WorkflowNodeIoValueType;
 };
+
+export type WorkflowNodeIoValueType = "string" | "number" | "boolean";
 
 type WorkflowNodeIOOptions = {
   label: string;
@@ -204,18 +207,18 @@ export const workflowNodeIOOptions = (node: WorkflowNode) => {
         case "certificate":
           rs.options.push({
             label: `${node.name} - ${output.label} - 是否有效`,
-            value: `${node.id}#${output.name}.validated`,
+            value: `${node.id}#${output.name}.validated#boolean`,
           });
 
           rs.options.push({
             label: `${node.name} - ${output.label} - 剩余天数`,
-            value: `${node.id}#${output.name}.daysLeft`,
+            value: `${node.id}#${output.name}.daysLeft#number`,
           });
           break;
         default:
           rs.options.push({
             label: `${node.name} - ${output.label}`,
-            value: `${node.id}#${output.name}`,
+            value: `${node.id}#${output.name}#${output.type}`,
           });
           break;
       }
@@ -231,7 +234,7 @@ export const workflowNodeIOOptions = (node: WorkflowNode) => {
 
 type Value = string | number | boolean;
 
-export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=";
+export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
 
 export type LogicalOperator = "and" | "or" | "not";
 
