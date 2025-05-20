@@ -1,6 +1,7 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useState } from "react";
-import { Button, Card, Form, Input, Select, Space, Radio, DatePicker } from "antd";
+import { Button, Card, Form, Input, Select, Radio } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import i18n from "@/i18n";
 
 import {
   WorkflowNodeConfigForCondition,
@@ -17,6 +18,7 @@ import {
 import { FormInstance } from "antd";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
+import { useTranslation } from "react-i18next";
 
 // 表单内部使用的扁平结构 - 修改后只保留必要字段
 export interface ConditionItem {
@@ -98,15 +100,15 @@ const getOperatorsByType = (type: string): { value: ComparisonOperator; label: s
     case "number":
     case "string":
       return [
-        { value: "==", label: "等于 (==)" },
-        { value: "!=", label: "不等于 (!=)" },
-        { value: ">", label: "大于 (>)" },
-        { value: ">=", label: "大于等于 (>=)" },
-        { value: "<", label: "小于 (<)" },
-        { value: "<=", label: "小于等于 (<=)" },
+        { value: "==", label: i18n.t("workflow_node.condition.form.comparison.equal") },
+        { value: "!=", label: i18n.t("workflow_node.condition.form.comparison.not_equal") },
+        { value: ">", label: i18n.t("workflow_node.condition.form.comparison.greater_than") },
+        { value: ">=", label: i18n.t("workflow_node.condition.form.comparison.greater_than_or_equal") },
+        { value: "<", label: i18n.t("workflow_node.condition.form.comparison.less_than") },
+        { value: "<=", label: i18n.t("workflow_node.condition.form.comparison.less_than_or_equal") },
       ];
     case "boolean":
-      return [{ value: "is", label: "为" }];
+      return [{ value: "is", label: i18n.t("workflow_node.condition.form.comparison.is") }];
     default:
       return [];
   }
@@ -126,6 +128,9 @@ const getVariableTypeFromSelector = (selector: string): string => {
 
 const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, ConditionNodeConfigFormProps>(
   ({ className, style, disabled, initialValues, onValuesChange, nodeId }, ref) => {
+    const { t } = useTranslation();
+    const prefix = "workflow_node.condition.form";
+
     const { getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
 
     const [form] = Form.useForm<ConditionNodeConfigFormFieldValues>();
@@ -182,9 +187,14 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                 >
                   <div className="flex items-center gap-2">
                     {/* 左侧变量选择器 */}
-                    <Form.Item {...restField} name={[name, "leftSelector"]} className="mb-0 flex-1" rules={[{ required: true, message: "请选择变量" }]}>
+                    <Form.Item
+                      {...restField}
+                      name={[name, "leftSelector"]}
+                      className="mb-0 flex-1"
+                      rules={[{ required: true, message: t(`${prefix}.variable.errmsg`) }]}
+                    >
                       <Select
-                        placeholder="选择变量"
+                        placeholder={t(`${prefix}.variable.placeholder`)}
                         options={previousNodes.map((item) => {
                           return workflowNodeIOOptions(item);
                         })}
@@ -204,7 +214,12 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                         const operators = getOperatorsByType(varType);
 
                         return (
-                          <Form.Item {...restField} name={[name, "operator"]} className="mb-0 w-32" rules={[{ required: true, message: "请选择" }]}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "operator"]}
+                            className="mb-0 w-32"
+                            rules={[{ required: true, message: t(`${prefix}.operator.errmsg`) }]}
+                          >
                             <Select options={operators} />
                           </Form.Item>
                         );
@@ -223,18 +238,21 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                         const varType = getVariableTypeFromSelector(leftSelector);
 
                         return (
-                          <Form.Item {...restField} name={[name, "rightValue"]} className="mb-0 flex-1" rules={[{ required: true, message: "请输入值" }]}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, "rightValue"]}
+                            className="mb-0 flex-1"
+                            rules={[{ required: true, message: t(`${prefix}.value.errmsg`) }]}
+                          >
                             {varType === "boolean" ? (
-                              <Select placeholder="选择值">
-                                <Select.Option value="true">是</Select.Option>
-                                <Select.Option value="false">否</Select.Option>
+                              <Select placeholder={t(`${prefix}.value.boolean.placeholder`)}>
+                                <Select.Option value="true">{t(`${prefix}.value.boolean.true`)}</Select.Option>
+                                <Select.Option value="false">{t(`${prefix}.value.boolean.false`)}</Select.Option>
                               </Select>
                             ) : varType === "number" ? (
-                              <Input type="number" placeholder="输入数值" />
-                            ) : varType === "date" ? (
-                              <DatePicker style={{ width: "100%" }} placeholder="选择日期" format="YYYY-MM-DD" />
+                              <Input type="number" placeholder={t(`${prefix}.value.number.placeholder`)} />
                             ) : (
-                              <Input placeholder="输入值" />
+                              <Input placeholder={t(`${prefix}.value.string.placeholder`)} />
                             )}
                           </Form.Item>
                         );
@@ -258,7 +276,7 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
                   block
                   icon={<PlusOutlined />}
                 >
-                  添加条件
+                  {t(`${prefix}.add_condition.button`)}
                 </Button>
               </Form.Item>
             </>
@@ -266,10 +284,10 @@ const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, Cond
         </Form.List>
 
         {formModel.conditions && formModel.conditions.length > 1 && (
-          <Form.Item name="logicalOperator" label="条件逻辑">
+          <Form.Item name="logicalOperator" label={t(`${prefix}.logical_operator.label`)}>
             <Radio.Group buttonStyle="solid">
-              <Radio.Button value="and">满足所有条件 (AND)</Radio.Button>
-              <Radio.Button value="or">满足任一条件 (OR)</Radio.Button>
+              <Radio.Button value="and">{t(`${prefix}.logical_operator.and`)}</Radio.Button>
+              <Radio.Button value="or">{t(`${prefix}.logical_operator.or`)}</Radio.Button>
             </Radio.Group>
           </Form.Item>
         )}

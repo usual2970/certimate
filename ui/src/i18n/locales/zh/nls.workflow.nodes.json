@@ -789,6 +789,26 @@
   "workflow_node.branch.label": "并行分支",
 
   "workflow_node.condition.label": "分支",
+  "workflow_node.condition.form.variable.placeholder": "选择变量",
+  "workflow_node.condition.form.variable.errmsg": "请选择变量",
+  "workflow_node.condition.form.operator.errmsg": "请选择操作符",
+  "workflow_node.condition.form.value.errmsg": "请输入值",
+  "workflow_node.condition.form.value.string.placeholder": "输入值",
+  "workflow_node.condition.form.value.number.placeholder": "输入数值",
+  "workflow_node.condition.form.value.boolean.placeholder": "选择值",
+  "workflow_node.condition.form.value.boolean.true": "是",
+  "workflow_node.condition.form.value.boolean.false": "否",
+  "workflow_node.condition.form.add_condition.button": "添加条件",
+  "workflow_node.condition.form.logical_operator.label": "条件逻辑",
+  "workflow_node.condition.form.logical_operator.and": "满足所有条件 (AND)",
+  "workflow_node.condition.form.logical_operator.or": "满足任一条件 (OR)",
+  "workflow_node.condition.form.comparison.equal": "等于",
+  "workflow_node.condition.form.comparison.not_equal": "不等于",
+  "workflow_node.condition.form.comparison.greater_than": "大于",
+  "workflow_node.condition.form.comparison.greater_than_or_equal": "大于等于",
+  "workflow_node.condition.form.comparison.less_than": "小于",
+  "workflow_node.condition.form.comparison.less_than_or_equal": "小于等于",
+  "workflow_node.condition.form.comparison.is": "为",
 
   "workflow_node.execute_result_branch.label": "执行结果分支",
 
@@ -796,3 +816,4 @@
 
   "workflow_node.execute_failure.label": "若前序节点执行失败…"
 }
+

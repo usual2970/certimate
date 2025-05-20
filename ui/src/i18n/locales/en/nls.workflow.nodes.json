@@ -790,6 +790,26 @@
   "workflow_node.branch.label": "Parallel branch",
 
   "workflow_node.condition.label": "Branch",
+  "workflow_node.condition.form.variable.placeholder": "Please select variable",
+  "workflow_node.condition.form.variable.errmsg": "Please select variable",
+  "workflow_node.condition.form.operator.errmsg": "Please select operator",
+  "workflow_node.condition.form.value.errmsg": "Please enter value",
+  "workflow_node.condition.form.value.string.placeholder": "Please enter value",
+  "workflow_node.condition.form.value.number.placeholder": "Please enter value",
+  "workflow_node.condition.form.value.boolean.placeholder": "Please select value",
+  "workflow_node.condition.form.value.boolean.true": "True",
+  "workflow_node.condition.form.value.boolean.false": "False",
+  "workflow_node.condition.form.add_condition.button": "Add condition",
+  "workflow_node.condition.form.logical_operator.label": "Logical operator",
+  "workflow_node.condition.form.logical_operator.and": "Meet all conditions (AND)",
+  "workflow_node.condition.form.logical_operator.or": "Meet any condition (OR)",
+  "workflow_node.condition.form.comparison.equal": "Equal",
+  "workflow_node.condition.form.comparison.not_equal": "Not equal",
+  "workflow_node.condition.form.comparison.greater_than": "Greater than",
+  "workflow_node.condition.form.comparison.greater_than_or_equal": "Greater than or equal",
+  "workflow_node.condition.form.comparison.less_than": "Less than",
+  "workflow_node.condition.form.comparison.less_than_or_equal": "Less than or equal",
+  "workflow_node.condition.form.comparison.is": "Is",
 
   "workflow_node.execute_result_branch.label": "Execution result branch",
 
@@ -797,3 +817,4 @@
 
   "workflow_node.execute_failure.label": "If the previous node failed ..."
 }
+

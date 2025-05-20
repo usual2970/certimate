@@ -5,7 +5,7 @@ import { Button, Card, Popover } from "antd";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
 import ConditionNodeConfigForm, { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
-import { Expr, WorkflowNodeConfigForCondition, WorkflowNodeIoValueType } from "@/domain/workflow";
+import { Expr, WorkflowNodeIoValueType } from "@/domain/workflow";
 import { produce } from "immer";
 import { useWorkflowStore } from "@/stores/workflow";
 import { useZustandShallowSelector } from "@/hooks";
