@@ -145,7 +145,7 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 
 		if listListenersResp.Body.Listeners != nil {
 			for _, listener := range listListenersResp.Body.Listeners {
-				listenerIds = append(listenerIds, *listener.ListenerId)
+				listenerIds = append(listenerIds, tea.StringValue(listener.ListenerId))
 			}
 		}
 
@@ -167,7 +167,6 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-
 			default:
 				if err := d.updateListenerCertificate(ctx, listenerId, cloudCertId); err != nil {
 					errs = append(errs, err)

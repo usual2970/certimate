@@ -16,7 +16,7 @@ var (
 	fInputKeyPath  string
 	fApiUrl        string
 	fApiToken      string
-	fCertificateId int
+	fCertificateId int64
 )
 
 func init() {
@@ -26,7 +26,7 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
-	flag.IntVar(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
+	flag.Int64Var(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
 }
 
 /*

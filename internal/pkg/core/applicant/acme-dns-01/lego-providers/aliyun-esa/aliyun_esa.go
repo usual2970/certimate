@@ -24,6 +24,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	providerConfig := internal.NewDefaultConfig()
 	providerConfig.SecretID = config.AccessKeyId
 	providerConfig.SecretKey = config.AccessKeySecret
+	providerConfig.RegionID = config.Region
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}

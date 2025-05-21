@@ -66,7 +66,7 @@ const AccessFormCloudflareConfig = ({ form: formInst, formName, disabled, initia
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.cloudflare_zone_api_token.tooltip") }}></span>}
       >
-        <Input.Password autoComplete="new-password" placeholder={t("access.form.cloudflare_zone_api_token.placeholder")} />
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.cloudflare_zone_api_token.placeholder")} />
       </Form.Item>
     </Form>
   );

@@ -20,6 +20,7 @@ require (
 	github.com/alibabacloud-go/esa-20240910/v2 v2.32.0
 	github.com/alibabacloud-go/fc-20230330/v4 v4.3.5
 	github.com/alibabacloud-go/fc-open-20210406/v2 v2.0.12
+	github.com/alibabacloud-go/ga-20191120/v3 v3.1.8
 	github.com/alibabacloud-go/live-20161101 v1.1.1
 	github.com/alibabacloud-go/nlb-20220430/v2 v2.0.3
 	github.com/alibabacloud-go/slb-20140515/v4 v4.0.10

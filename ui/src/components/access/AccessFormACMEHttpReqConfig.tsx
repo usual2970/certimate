@@ -84,7 +84,7 @@ const AccessFormACMEHttpReqConfig = ({ form: formInst, formName, disabled, initi
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmehttpreq_username.tooltip") }}></span>}
       >
-        <Input autoComplete="new-password" placeholder={t("access.form.acmehttpreq_username.placeholder")} />
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.acmehttpreq_username.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -93,7 +93,7 @@ const AccessFormACMEHttpReqConfig = ({ form: formInst, formName, disabled, initi
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.acmehttpreq_password.tooltip") }}></span>}
       >
-        <Input.Password autoComplete="new-password" placeholder={t("access.form.acmehttpreq_password.placeholder")} />
+        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.acmehttpreq_password.placeholder")} />
       </Form.Item>
     </Form>
   );

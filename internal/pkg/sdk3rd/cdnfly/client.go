@@ -12,21 +12,17 @@ import (
 )
 
 type Client struct {
-	apiHost   string
-	apiKey    string
-	apiSecret string
-
 	client *resty.Client
 }
 
 func NewClient(apiHost, apiKey, apiSecret string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetHeader("api-key", apiKey).
+		SetHeader("api-secret", apiSecret)
 
 	return &Client{
-		apiHost:   strings.TrimRight(apiHost, "/"),
-		apiKey:    apiKey,
-		apiSecret: apiSecret,
-		client:    client,
+		client: client,
 	}
 }
 
@@ -42,11 +38,6 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
 	req := c.client.R()
-	req.Method = method
-	req.URL = c.apiHost + path
-	req = req.
-		SetHeader("api-key", c.apiKey).
-		SetHeader("api-secret", c.apiSecret)
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -62,12 +53,10 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("cdnfly api error: failed to send request: %w", err)
 	} else if resp.IsError() {

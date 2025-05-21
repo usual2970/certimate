@@ -9,12 +9,15 @@ import (
 	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	opsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
+	onepanelsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
 )
 
 type DeployerConfig struct {
 	// 1Panel 地址。
 	ApiUrl string `json:"apiUrl"`
+	// 1Panel 版本。
+	// 可取值 "v1"、"v2"。
+	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
 	ApiKey string `json:"apiKey"`
 	// 是否允许不安全的连接。
@@ -26,7 +29,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *opsdk.Client
+	sdkClient *onepanelsdk.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -36,7 +39,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -59,7 +62,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
-	updateSystemSSLReq := &opsdk.UpdateSystemSSLRequest{
+	updateSystemSSLReq := &onepanelsdk.UpdateSystemSSLRequest{
 		Cert:    certPEM,
 		Key:     privkeyPEM,
 		SSL:     "enable",
@@ -79,16 +82,20 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string, skipTlsVerify bool) (*opsdk.Client, error) {
+func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid 1panel api url")
+	}
+
+	if apiVersion == "" {
+		return nil, errors.New("invalid 1panel api version")
 	}
 
 	if apiKey == "" {
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := opsdk.NewClient(apiUrl, apiKey)
+	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

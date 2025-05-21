@@ -14,19 +14,30 @@ import (
 )
 
 type Client struct {
-	apiHost string
-	apiKey  string
+	apiKey string
 
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiKey string) *Client {
-	client := resty.New()
+func NewClient(apiHost, apiVersion, apiKey string) *Client {
+	if apiVersion == "" {
+		apiVersion = "v1"
+	}
+
+	client := resty.New().
+		SetBaseURL(strings.TrimRight(apiHost, "/") + "/api/" + apiVersion).
+		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
+			timestamp := fmt.Sprintf("%d", time.Now().Unix())
+			tokenMd5 := md5.Sum([]byte("1panel" + apiKey + timestamp))
+			tokenMd5Hex := hex.EncodeToString(tokenMd5[:])
+			req.Header.Set("1Panel-Timestamp", timestamp)
+			req.Header.Set("1Panel-Token", tokenMd5Hex)
+
+			return nil
+		})
 
 	return &Client{
-		apiHost: strings.TrimRight(apiHost, "/"),
-		apiKey:  apiKey,
-		client:  client,
+		client: client,
 	}
 }
 
@@ -40,16 +51,8 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 	return c
 }
 
-func (c *Client) generateToken(timestamp string) string {
-	tokenMd5 := md5.Sum([]byte("1panel" + c.apiKey + timestamp))
-	tokenMd5Hex := hex.EncodeToString(tokenMd5[:])
-	return tokenMd5Hex
-}
-
 func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
 	req := c.client.R()
-	req.Method = method
-	req.URL = c.apiHost + "/api/v1" + path
 	if strings.EqualFold(method, http.MethodGet) {
 		qs := make(map[string]string)
 		if params != nil {
@@ -65,17 +68,10 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 
 		req = req.SetQueryParams(qs)
 	} else {
-		req = req.
-			SetHeader("Content-Type", "application/json").
-			SetBody(params)
+		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
 	}
 
-	timestamp := fmt.Sprintf("%d", time.Now().Unix())
-	token := c.generateToken(timestamp)
-	req.SetHeader("1Panel-Timestamp", timestamp)
-	req.SetHeader("1Panel-Token", token)
-
-	resp, err := req.Send()
+	resp, err := req.Execute(method, path)
 	if err != nil {
 		return resp, fmt.Errorf("1panel api error: failed to send request: %w", err)
 	} else if resp.IsError() {

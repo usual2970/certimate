@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -65,7 +64,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"body":       message,
 			"device_key": n.config.DeviceKey,
 		})
-	resp, err := req.Execute(http.MethodPost, serverUrl)
+	resp, err := req.Post(serverUrl)
 	if err != nil {
 		return nil, fmt.Errorf("bark api error: failed to send request: %w", err)
 	} else if resp.IsError() {

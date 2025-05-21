@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -55,7 +54,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"text": subject,
 			"desp": message,
 		})
-	resp, err := req.Execute(http.MethodPost, n.config.ServerUrl)
+	resp, err := req.Post(n.config.ServerUrl)
 	if err != nil {
 		return nil, fmt.Errorf("serverchan api error: failed to send request: %w", err)
 	} else if resp.IsError() {

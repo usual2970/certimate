@@ -10,7 +10,7 @@ type AccessProviderType string
 */
 const (
 	AccessProviderType1Panel              = AccessProviderType("1panel")
-	AccessProviderTypeACMECA              = AccessProviderType("acmeca") // ACME CA（预留）
+	AccessProviderTypeACMECA              = AccessProviderType("acmeca")
 	AccessProviderTypeACMEHttpReq         = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAkamai              = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun              = AccessProviderType("aliyun")
@@ -19,6 +19,7 @@ const (
 	AccessProviderTypeBaiduCloud          = AccessProviderType("baiducloud")
 	AccessProviderTypeBaishan             = AccessProviderType("baishan")
 	AccessProviderTypeBaotaPanel          = AccessProviderType("baotapanel")
+	AccessProviderTypeBaotaWAF            = AccessProviderType("baotawaf")
 	AccessProviderTypeBytePlus            = AccessProviderType("byteplus")
 	AccessProviderTypeBunny               = AccessProviderType("bunny")
 	AccessProviderTypeBuypass             = AccessProviderType("buypass")
@@ -36,8 +37,8 @@ const (
 	AccessProviderTypeDynv6               = AccessProviderType("dynv6")
 	AccessProviderTypeEdgio               = AccessProviderType("edgio")
 	AccessProviderTypeEmail               = AccessProviderType("email")
-	AccessProviderTypeFastly              = AccessProviderType("fastly")  // Fastly（预留）
-	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn") // FlexCDN（预留）
+	AccessProviderTypeFastly              = AccessProviderType("fastly") // Fastly（预留）
+	AccessProviderTypeFlexCDN             = AccessProviderType("flexcdn")
 	AccessProviderTypeGname               = AccessProviderType("gname")
 	AccessProviderTypeGcore               = AccessProviderType("gcore")
 	AccessProviderTypeGoDaddy             = AccessProviderType("godaddy")
@@ -49,7 +50,7 @@ const (
 	AccessProviderTypeLarkBot             = AccessProviderType("larkbot")
 	AccessProviderTypeLetsEncrypt         = AccessProviderType("letsencrypt")
 	AccessProviderTypeLetsEncryptStaging  = AccessProviderType("letsencryptstaging")
-	AccessProviderTypeLeCDN               = AccessProviderType("lecdn") // LeCDN（预留）
+	AccessProviderTypeLeCDN               = AccessProviderType("lecdn")
 	AccessProviderTypeLocal               = AccessProviderType("local")
 	AccessProviderTypeMattermost          = AccessProviderType("mattermost")
 	AccessProviderTypeNamecheap           = AccessProviderType("namecheap")
@@ -91,6 +92,7 @@ type CAProviderType string
 	NOTICE: If you add new constant, please keep ASCII order.
 */
 const (
+	CAProviderTypeACMECA              = CAProviderType(AccessProviderTypeACMECA)
 	CAProviderTypeBuypass             = CAProviderType(AccessProviderTypeBuypass)
 	CAProviderTypeGoogleTrustServices = CAProviderType(AccessProviderTypeGoogleTrustServices)
 	CAProviderTypeLetsEncrypt         = CAProviderType(AccessProviderTypeLetsEncrypt)
@@ -173,7 +175,7 @@ const (
 	DeploymentProviderTypeAliyunDDoS            = DeploymentProviderType(AccessProviderTypeAliyun + "-ddos")
 	DeploymentProviderTypeAliyunESA             = DeploymentProviderType(AccessProviderTypeAliyun + "-esa")
 	DeploymentProviderTypeAliyunFC              = DeploymentProviderType(AccessProviderTypeAliyun + "-fc")
-	DeploymentProviderTypeAliyunGA              = DeploymentProviderType(AccessProviderTypeAliyun + "-ga") // 阿里云全球加速（预留）
+	DeploymentProviderTypeAliyunGA              = DeploymentProviderType(AccessProviderTypeAliyun + "-ga")
 	DeploymentProviderTypeAliyunLive            = DeploymentProviderType(AccessProviderTypeAliyun + "-live")
 	DeploymentProviderTypeAliyunNLB             = DeploymentProviderType(AccessProviderTypeAliyun + "-nlb")
 	DeploymentProviderTypeAliyunOSS             = DeploymentProviderType(AccessProviderTypeAliyun + "-oss")
@@ -189,13 +191,15 @@ const (
 	DeploymentProviderTypeBaishanCDN            = DeploymentProviderType(AccessProviderTypeBaishan + "-cdn")
 	DeploymentProviderTypeBaotaPanelConsole     = DeploymentProviderType(AccessProviderTypeBaotaPanel + "-console")
 	DeploymentProviderTypeBaotaPanelSite        = DeploymentProviderType(AccessProviderTypeBaotaPanel + "-site")
+	DeploymentProviderTypeBaotaWAFConsole       = DeploymentProviderType(AccessProviderTypeBaotaWAF + "-console")
+	DeploymentProviderTypeBaotaWAFSite          = DeploymentProviderType(AccessProviderTypeBaotaWAF + "-site")
 	DeploymentProviderTypeBunnyCDN              = DeploymentProviderType(AccessProviderTypeBunny + "-cdn")
 	DeploymentProviderTypeBytePlusCDN           = DeploymentProviderType(AccessProviderTypeBytePlus + "-cdn")
 	DeploymentProviderTypeCacheFly              = DeploymentProviderType(AccessProviderTypeCacheFly)
 	DeploymentProviderTypeCdnfly                = DeploymentProviderType(AccessProviderTypeCdnfly)
 	DeploymentProviderTypeDogeCloudCDN          = DeploymentProviderType(AccessProviderTypeDogeCloud + "-cdn")
 	DeploymentProviderTypeEdgioApplications     = DeploymentProviderType(AccessProviderTypeEdgio + "-applications")
-	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN) // FlexCDN（预留）
+	DeploymentProviderTypeFlexCDN               = DeploymentProviderType(AccessProviderTypeFlexCDN)
 	DeploymentProviderTypeGcoreCDN              = DeploymentProviderType(AccessProviderTypeGcore + "-cdn")
 	DeploymentProviderTypeGoEdge                = DeploymentProviderType(AccessProviderTypeGoEdge)
 	DeploymentProviderTypeHuaweiCloudCDN        = DeploymentProviderType(AccessProviderTypeHuaweiCloud + "-cdn")
@@ -207,7 +211,7 @@ const (
 	DeploymentProviderTypeJDCloudLive           = DeploymentProviderType(AccessProviderTypeJDCloud + "-live")
 	DeploymentProviderTypeJDCloudVOD            = DeploymentProviderType(AccessProviderTypeJDCloud + "-vod")
 	DeploymentProviderTypeKubernetesSecret      = DeploymentProviderType(AccessProviderTypeKubernetes + "-secret")
-	DeploymentProviderTypeLeCDN                 = DeploymentProviderType(AccessProviderTypeLeCDN) // LeCDN（预留）
+	DeploymentProviderTypeLeCDN                 = DeploymentProviderType(AccessProviderTypeLeCDN)
 	DeploymentProviderTypeLocal                 = DeploymentProviderType(AccessProviderTypeLocal)
 	DeploymentProviderTypeNetlifySite           = DeploymentProviderType(AccessProviderTypeNetlify + "-site")
 	DeploymentProviderTypeProxmoxVE             = DeploymentProviderType(AccessProviderTypeProxmoxVE)
@@ -242,9 +246,9 @@ const (
 	DeploymentProviderTypeVolcEngineImageX      = DeploymentProviderType(AccessProviderTypeVolcEngine + "-imagex")
 	DeploymentProviderTypeVolcEngineLive        = DeploymentProviderType(AccessProviderTypeVolcEngine + "-live")
 	DeploymentProviderTypeVolcEngineTOS         = DeploymentProviderType(AccessProviderTypeVolcEngine + "-tos")
-	DeploymentProviderTypeWangsuCDN             = DeploymentProviderType(AccessProviderTypeWangsu + "-cdn") // 网宿 CDN（预留）
+	DeploymentProviderTypeWangsuCDN             = DeploymentProviderType(AccessProviderTypeWangsu + "-cdn")
 	DeploymentProviderTypeWangsuCDNPro          = DeploymentProviderType(AccessProviderTypeWangsu + "-cdnpro")
-	DeploymentProviderTypeWangsuCert            = DeploymentProviderType(AccessProviderTypeWangsu + "-cert") // 网宿证书管理（预留）
+	DeploymentProviderTypeWangsuCertificate     = DeploymentProviderType(AccessProviderTypeWangsu + "-certificate")
 	DeploymentProviderTypeWebhook               = DeploymentProviderType(AccessProviderTypeWebhook)
 )
 

@@ -42,7 +42,7 @@ const CertificateDetail = ({ data, ...props }: CertificateDetailProps) => {
         </Form.Item>
 
         <Form.Item label={t("certificate.props.issuer")}>
-          <Input value={data.issuer} variant="filled" placeholder="" />
+          <Input value={data.issuerOrg} variant="filled" placeholder="" />
         </Form.Item>
 
         <Form.Item label={t("certificate.props.validity")}>

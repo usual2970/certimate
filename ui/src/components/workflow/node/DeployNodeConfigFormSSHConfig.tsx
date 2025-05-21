@@ -363,7 +363,7 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_servercert_path.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.ssh_servercert_path.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.ssh_servercert_path.placeholder")} />
         </Form.Item>
 
         <Form.Item
@@ -372,7 +372,7 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
           rules={[formRule]}
           tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.ssh_intermediacert_path.tooltip") }}></span>}
         >
-          <Input placeholder={t("workflow_node.deploy.form.ssh_intermediacert_path.placeholder")} />
+          <Input allowClear placeholder={t("workflow_node.deploy.form.ssh_intermediacert_path.placeholder")} />
         </Form.Item>
       </Show>
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net/http"
 
 	"github.com/go-resty/resty/v2"
 
@@ -57,7 +56,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 			"chat_id": n.config.ChatId,
 			"text":    subject + "\n" + message,
 		})
-	resp, err := req.Execute(http.MethodPost, fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", n.config.BotToken))
+	resp, err := req.Post(fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", n.config.BotToken))
 	if err != nil {
 		return nil, fmt.Errorf("telegram api error: failed to send request: %w", err)
 	} else if resp.IsError() {

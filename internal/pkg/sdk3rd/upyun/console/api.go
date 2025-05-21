@@ -7,7 +7,11 @@ import (
 	"net/http"
 )
 
-func (c *Client) getCookie() error {
+func (c *Client) ensureCookieExists() error {
+	if c.loginCookie != "" {
+		return nil
+	}
+
 	req := &signinRequest{Username: c.username, Password: c.password}
 	res, err := c.sendRequest(http.MethodPost, "/accounts/signin/", req)
 	if err != nil {
@@ -27,10 +31,8 @@ func (c *Client) getCookie() error {
 }
 
 func (c *Client) UploadHttpsCertificate(req *UploadHttpsCertificateRequest) (*UploadHttpsCertificateResponse, error) {
-	if c.loginCookie == "" {
-		if err := c.getCookie(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureCookieExists(); err != nil {
+		return nil, err
 	}
 
 	resp := &UploadHttpsCertificateResponse{}
@@ -39,10 +41,8 @@ func (c *Client) UploadHttpsCertificate(req *UploadHttpsCertificateRequest) (*Up
 }
 
 func (c *Client) GetHttpsCertificateManager(certificateId string) (*GetHttpsCertificateManagerResponse, error) {
-	if c.loginCookie == "" {
-		if err := c.getCookie(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureCookieExists(); err != nil {
+		return nil, err
 	}
 
 	req := &GetHttpsCertificateManagerRequest{CertificateId: certificateId}
@@ -52,10 +52,8 @@ func (c *Client) GetHttpsCertificateManager(certificateId string) (*GetHttpsCert
 }
 
 func (c *Client) UpdateHttpsCertificateManager(req *UpdateHttpsCertificateManagerRequest) (*UpdateHttpsCertificateManagerResponse, error) {
-	if c.loginCookie == "" {
-		if err := c.getCookie(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureCookieExists(); err != nil {
+		return nil, err
 	}
 
 	resp := &UpdateHttpsCertificateManagerResponse{}
@@ -64,10 +62,8 @@ func (c *Client) UpdateHttpsCertificateManager(req *UpdateHttpsCertificateManage
 }
 
 func (c *Client) GetHttpsServiceManager(domain string) (*GetHttpsServiceManagerResponse, error) {
-	if c.loginCookie == "" {
-		if err := c.getCookie(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureCookieExists(); err != nil {
+		return nil, err
 	}
 
 	req := &GetHttpsServiceManagerRequest{Domain: domain}
@@ -77,10 +73,8 @@ func (c *Client) GetHttpsServiceManager(domain string) (*GetHttpsServiceManagerR
 }
 
 func (c *Client) MigrateHttpsDomain(req *MigrateHttpsDomainRequest) (*MigrateHttpsDomainResponse, error) {
-	if c.loginCookie == "" {
-		if err := c.getCookie(); err != nil {
-			return nil, err
-		}
+	if err := c.ensureCookieExists(); err != nil {
+		return nil, err
 	}
 
 	resp := &MigrateHttpsDomainResponse{}

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input, Switch } from "antd";
+import { Form, type FormInstance, Input, Select, Switch } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -18,6 +18,7 @@ export type AccessForm1PanelConfigProps = {
 const initFormModel = (): AccessForm1PanelConfigFieldValues => {
   return {
     apiUrl: "http://<your-host-addr>:20410/",
+    apiVersion: "v1",
     apiKey: "",
   };
 };
@@ -27,6 +28,7 @@ const AccessForm1PanelConfig = ({ form: formInst, formName, disabled, initialVal
 
   const formSchema = z.object({
     apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    apiVersion: z.string().nonempty(t("access.form.1panel_api_version.placeholder")),
     apiKey: z
       .string()
       .min(1, t("access.form.1panel_api_key.placeholder"))
@@ -51,6 +53,10 @@ const AccessForm1PanelConfig = ({ form: formInst, formName, disabled, initialVal
     >
       <Form.Item name="apiUrl" label={t("access.form.1panel_api_url.label")} rules={[formRule]}>
         <Input placeholder={t("access.form.1panel_api_url.placeholder")} />
+      </Form.Item>
+
+      <Form.Item name="apiVersion" label={t("access.form.1panel_api_version.label")} rules={[formRule]}>
+        <Select options={["v1", "v2"].map((s) => ({ label: s, value: s }))} placeholder={t("access.form.1panel_api_version.placeholder")} />
       </Form.Item>
 
       <Form.Item
