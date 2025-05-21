@@ -89,6 +89,8 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 	return &DNSProvider{
 		client: client,
 		config: config,
+
+		siteIDs: make(map[string]int64),
 	}, nil
 }
 
@@ -100,7 +102,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteId, err := d.getSiteId(authZone)
+	siteId, err := d.getSiteId(strings.TrimRight(authZone, "."))
 	if err != nil {
 		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", authZone, err)
 	}
@@ -120,7 +122,7 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteId, err := d.getSiteId(authZone)
+	siteId, err := d.getSiteId(strings.TrimRight(authZone, "."))
 	if err != nil {
 		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", authZone, err)
 	}
@@ -148,10 +150,11 @@ func (d *DNSProvider) getSiteId(siteName string) (int64, error) {
 	pageSize := 500
 	for {
 		request := &aliesa.ListSitesRequest{
-			SiteName:   tea.String(siteName),
-			PageNumber: tea.Int32(int32(pageNumber)),
-			PageSize:   tea.Int32(int32(pageNumber)),
-			AccessType: tea.String("NS"),
+			SiteName:       tea.String(siteName),
+			SiteSearchType: tea.String("exact"),
+			PageNumber:     tea.Int32(int32(pageNumber)),
+			PageSize:       tea.Int32(int32(pageSize)),
+			AccessType:     tea.String("NS"),
 		}
 		response, err := d.client.ListSites(request)
 		if err != nil {
@@ -178,7 +181,7 @@ func (d *DNSProvider) getSiteId(siteName string) (int64, error) {
 		}
 	}
 
-	return 0, errors.New("failed to get site id")
+	return 0, errors.New("site not found")
 }
 
 func (d *DNSProvider) findDNSRecord(siteId int64, effectiveFQDN string) (*aliesa.ListRecordsResponseBodyRecords, error) {
@@ -186,11 +189,12 @@ func (d *DNSProvider) findDNSRecord(siteId int64, effectiveFQDN string) (*aliesa
 	pageSize := 500
 	for {
 		request := &aliesa.ListRecordsRequest{
-			SiteId:     tea.Int64(siteId),
-			Type:       tea.String("TXT"),
-			RecordName: tea.String(effectiveFQDN),
-			PageNumber: tea.Int32(int32(pageNumber)),
-			PageSize:   tea.Int32(int32(pageNumber)),
+			SiteId:          tea.Int64(siteId),
+			Type:            tea.String("TXT"),
+			RecordName:      tea.String(effectiveFQDN),
+			RecordMatchType: tea.String("exact"),
+			PageNumber:      tea.Int32(int32(pageNumber)),
+			PageSize:        tea.Int32(int32(pageSize)),
 		}
 		response, err := d.client.ListRecords(request)
 		if err != nil {
