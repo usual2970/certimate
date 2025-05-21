@@ -38,6 +38,7 @@ const (
 	WorkflowNodeTypeExecuteResultBranch = WorkflowNodeType("execute_result_branch")
 	WorkflowNodeTypeExecuteSuccess      = WorkflowNodeType("execute_success")
 	WorkflowNodeTypeExecuteFailure      = WorkflowNodeType("execute_failure")
+	WorkflowNodeTypeInspect             = WorkflowNodeType("inspect")
 )
 
 type WorkflowTriggerType string
@@ -86,6 +87,11 @@ type WorkflowNodeConfigForCondition struct {
 	Expression Expr `json:"expression"` // 条件表达式
 }
 
+type WorkflowNodeConfigForInspect struct {
+	Domain string `json:"domain"` // 域名
+	Port   string `json:"port"`   // 端口
+}
+
 type WorkflowNodeConfigForUpload struct {
 	Certificate string `json:"certificate"`
 	PrivateKey  string `json:"privateKey"`
@@ -124,6 +130,23 @@ func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
 
 	return WorkflowNodeConfigForCondition{
 		Expression: expr,
+	}
+}
+
+func (n *WorkflowNode) GetConfigForInspect() WorkflowNodeConfigForInspect {
+	domain := maputil.GetString(n.Config, "domain")
+	if domain == "" {
+		return WorkflowNodeConfigForInspect{}
+	}
+
+	port := maputil.GetString(n.Config, "port")
+	if port == "" {
+		port = "443"
+	}
+
+	return WorkflowNodeConfigForInspect{
+		Domain: domain,
+		Port:   port,
 	}
 }
 

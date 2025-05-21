@@ -350,4 +350,3 @@ const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
 };
 
 export default memo(ConditionNodeConfigForm);
-

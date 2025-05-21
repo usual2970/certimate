@@ -156,4 +156,3 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
 };
 
 export default memo(ConditionNode);
-

@@ -753,6 +753,12 @@
   "workflow_node.upload.form.private_key.label": "Private key (PEM format)",
   "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
 
+  "workflow_node.inspect.label": "Inspect certificate",
+  "workflow_node.inspect.form.domain.label": "Domain",
+  "workflow_node.inspect.form.domain.placeholder": "Please enter domain name",
+  "workflow_node.inspect.form.port.label": "Port",
+  "workflow_node.inspect.form.port.placeholder": "Please enter port",
+
   "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",
   "workflow_node.notify.form.subject.placeholder": "Please enter subject",
@@ -817,4 +823,3 @@
 
   "workflow_node.execute_failure.label": "If the previous node failed ..."
 }
-

@@ -7,6 +7,7 @@ import {
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
   SolutionOutlined as SolutionOutlinedIcon,
+  MonitorOutlined as MonitorOutlinedIcon,
 } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
@@ -27,6 +28,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
       [WorkflowNodeType.Upload, "workflow_node.upload.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Inspect, "workflow_node.inspect.label", <MonitorOutlinedIcon />],
       [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <DeploymentUnitOutlinedIcon />],
       [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],

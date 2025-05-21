@@ -12,6 +12,7 @@ import ExecuteResultNode from "./node/ExecuteResultNode";
 import NotifyNode from "./node/NotifyNode";
 import StartNode from "./node/StartNode";
 import UploadNode from "./node/UploadNode";
+import InspectNode from "./node/InspectNode";
 
 export type WorkflowElementProps = {
   node: WorkflowNode;
@@ -31,6 +32,9 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 
       case WorkflowNodeType.Upload:
         return <UploadNode node={node} disabled={disabled} />;
+      
+      case WorkflowNodeType.Inspect:
+        return <InspectNode node={node} disabled={disabled} />;
 
       case WorkflowNodeType.Deploy:
         return <DeployNode node={node} disabled={disabled} />;

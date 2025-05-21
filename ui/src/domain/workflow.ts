@@ -31,6 +31,7 @@ export enum WorkflowNodeType {
   End = "end",
   Apply = "apply",
   Upload = "upload",
+  Inspect = "inspect",
   Deploy = "deploy",
   Notify = "notify",
   Branch = "branch",
@@ -46,6 +47,7 @@ const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
   [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
   [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.label")],
+  [WorkflowNodeType.Inspect, i18n.t("workflow_node.inspect.label")],
   [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
   [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
   [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
@@ -86,6 +88,17 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
   ],
   [
     WorkflowNodeType.Upload,
+    [
+      {
+        name: "certificate",
+        type: "certificate",
+        required: true,
+        label: "证书",
+      },
+    ],
+  ],
+  [
+    WorkflowNodeType.Inspect,
     [
       {
         name: "certificate",
@@ -143,6 +156,11 @@ export type WorkflowNodeConfigForUpload = {
   domains: string;
   certificate: string;
   privateKey: string;
+};
+
+export type WorkflowNodeConfigForInspect = {
+  domain: string;
+  port: string;
 };
 
 export type WorkflowNodeConfigForDeploy = {
@@ -313,6 +331,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Upload:
     case WorkflowNodeType.Deploy:
+    case WorkflowNodeType.Inspect:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
         node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);
@@ -582,4 +601,3 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
 
   return true;
 };
-

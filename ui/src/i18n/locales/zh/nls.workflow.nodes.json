@@ -752,6 +752,12 @@
   "workflow_node.upload.form.private_key.label": "私钥文件（PEM 格式）",
   "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
 
+  "workflow_node.inspect.label": "检查网站证书",
+  "workflow_node.inspect.form.domain.label": "域名",
+  "workflow_node.inspect.form.domain.placeholder": "请输入要检查的网站域名",
+  "workflow_node.inspect.form.port.label": "端口号",
+  "workflow_node.inspect.form.port.placeholder": "请输入要检查的端口号",
+
   "workflow_node.notify.label": "推送通知",
   "workflow_node.notify.form.subject.label": "通知主题",
   "workflow_node.notify.form.subject.placeholder": "请输入通知主题",
@@ -816,4 +822,3 @@
 
   "workflow_node.execute_failure.label": "若前序节点执行失败…"
 }
-

@@ -86,6 +86,8 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 		return NewExecuteSuccessNode(node), nil
 	case domain.WorkflowNodeTypeExecuteFailure:
 		return NewExecuteFailureNode(node), nil
+	case domain.WorkflowNodeTypeInspect:
+		return NewInspectNode(node), nil
 	}
 
 	return nil, fmt.Errorf("supported node type: %s", string(node.Type))
