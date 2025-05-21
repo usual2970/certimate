@@ -10,6 +10,7 @@ type Value any
 type (
 	ComparisonOperator string
 	LogicalOperator    string
+	ValueType          string
 )
 
 const (
@@ -24,15 +25,19 @@ const (
 	And LogicalOperator = "and"
 	Or  LogicalOperator = "or"
 	Not LogicalOperator = "not"
+
+	Number  ValueType = "number"
+	String  ValueType = "string"
+	Boolean ValueType = "boolean"
 )
 
 type EvalResult struct {
-	Type  string
+	Type  ValueType
 	Value any
 }
 
 func (e *EvalResult) GetFloat64() (float64, error) {
-	if e.Type != "number" {
+	if e.Type != Number {
 		return 0, fmt.Errorf("type mismatch: %s", e.Type)
 	}
 	switch v := e.Value.(type) {
@@ -50,7 +55,7 @@ func (e *EvalResult) GreaterThan(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 
 		left, err := e.GetFloat64()
 		if err != nil {
@@ -62,12 +67,12 @@ func (e *EvalResult) GreaterThan(other *EvalResult) (*EvalResult, error) {
 		}
 
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left > right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) > other.Value.(string),
 		}, nil
 
@@ -81,7 +86,7 @@ func (e *EvalResult) GreaterOrEqual(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -91,12 +96,12 @@ func (e *EvalResult) GreaterOrEqual(other *EvalResult) (*EvalResult, error) {
 			return nil, err
 		}
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left >= right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) >= other.Value.(string),
 		}, nil
 
@@ -110,7 +115,7 @@ func (e *EvalResult) LessThan(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -120,12 +125,12 @@ func (e *EvalResult) LessThan(other *EvalResult) (*EvalResult, error) {
 			return nil, err
 		}
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left < right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) < other.Value.(string),
 		}, nil
 
@@ -139,7 +144,7 @@ func (e *EvalResult) LessOrEqual(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -149,12 +154,12 @@ func (e *EvalResult) LessOrEqual(other *EvalResult) (*EvalResult, error) {
 			return nil, err
 		}
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left <= right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) <= other.Value.(string),
 		}, nil
 
@@ -168,7 +173,7 @@ func (e *EvalResult) Equal(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -178,12 +183,12 @@ func (e *EvalResult) Equal(other *EvalResult) (*EvalResult, error) {
 			return nil, err
 		}
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left == right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) == other.Value.(string),
 		}, nil
 
@@ -197,7 +202,7 @@ func (e *EvalResult) NotEqual(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "number":
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -207,12 +212,12 @@ func (e *EvalResult) NotEqual(other *EvalResult) (*EvalResult, error) {
 			return nil, err
 		}
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: left != right,
 		}, nil
-	case "string":
+	case String:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(string) != other.Value.(string),
 		}, nil
 
@@ -226,9 +231,9 @@ func (e *EvalResult) And(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "boolean":
+	case Boolean:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(bool) && other.Value.(bool),
 		}, nil
 	default:
@@ -241,9 +246,9 @@ func (e *EvalResult) Or(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "boolean":
+	case Boolean:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(bool) || other.Value.(bool),
 		}, nil
 	default:
@@ -252,11 +257,11 @@ func (e *EvalResult) Or(other *EvalResult) (*EvalResult, error) {
 }
 
 func (e *EvalResult) Not() (*EvalResult, error) {
-	if e.Type != "boolean" {
+	if e.Type != Boolean {
 		return nil, fmt.Errorf("type mismatch: %s", e.Type)
 	}
 	return &EvalResult{
-		Type:  "boolean",
+		Type:  Boolean,
 		Value: !e.Value.(bool),
 	}, nil
 }
@@ -266,9 +271,9 @@ func (e *EvalResult) Is(other *EvalResult) (*EvalResult, error) {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
 	switch e.Type {
-	case "boolean":
+	case Boolean:
 		return &EvalResult{
-			Type:  "boolean",
+			Type:  Boolean,
 			Value: e.Value.(bool) == other.Value.(bool),
 		}, nil
 	default:
@@ -282,9 +287,9 @@ type Expr interface {
 }
 
 type ConstExpr struct {
-	Type      string `json:"type"`
-	Value     Value  `json:"value"`
-	ValueType string `json:"valueType"`
+	Type      string    `json:"type"`
+	Value     Value     `json:"value"`
+	ValueType ValueType `json:"valueType"`
 }
 
 func (c ConstExpr) GetType() string { return c.Type }

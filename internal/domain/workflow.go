@@ -210,9 +210,9 @@ type WorkflowNodeIO struct {
 }
 
 type WorkflowNodeIOValueSelector struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Type string `json:"type"`
+	Id   string    `json:"id"`
+	Name string    `json:"name"`
+	Type ValueType `json:"type"`
 }
 
 const WorkflowNodeIONameCertificate string = "certificate"
