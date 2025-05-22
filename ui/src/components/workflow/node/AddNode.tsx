@@ -2,6 +2,7 @@ import { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
+  CopyOutlined as CopyOutlinedIcon,
   DeploymentUnitOutlined as DeploymentUnitOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
@@ -31,6 +32,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
       [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
+      [WorkflowNodeType.Clone, "workflow_node.clone.label", <CopyOutlinedIcon />],
     ]
       .filter(([type]) => {
         if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && node.type !== WorkflowNodeType.Notify) {
@@ -65,3 +67,4 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
 };
 
 export default memo(AddNode);
+

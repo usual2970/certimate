@@ -39,6 +39,7 @@ export enum WorkflowNodeType {
   ExecuteSuccess = "execute_success",
   ExecuteFailure = "execute_failure",
   Custom = "custom",
+  Clone = "clone",
 }
 
 const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
@@ -501,3 +502,4 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
 
   return true;
 };
+
