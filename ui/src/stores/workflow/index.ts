@@ -9,6 +9,7 @@ import {
   addNode,
   getOutputBeforeNodeId,
   removeBranch,
+  removeCloneNode,
   removeNode,
   updateNode,
 } from "@/domain/workflow";
@@ -28,6 +29,7 @@ export type WorkflowState = {
   addNode: (node: WorkflowNode, previousNodeId: string) => void;
   updateNode: (node: WorkflowNode) => void;
   removeNode: (nodeId: string) => void;
+  cancelClone: () => void;
 
   addBranch: (branchId: string) => void;
   removeBranch: (branchId: string, index: number) => void;
@@ -203,6 +205,27 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
+  cancelClone: async () => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = removeCloneNode(get().workflow.draft!);
+
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
   addBranch: async (branchId: string) => {
     if (!get().initialized) throw "Workflow not initialized yet";
 
@@ -247,3 +270,4 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     return getOutputBeforeNodeId(get().workflow.draft as WorkflowNode, nodeId, type);
   },
 }));
+

@@ -21,7 +21,7 @@ import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElementsContainer from "@/components/workflow/WorkflowElementsContainer";
 import WorkflowRuns from "@/components/workflow/WorkflowRuns";
-import { isAllNodesValidated } from "@/domain/workflow";
+import { hasCloneNode, isAllNodesValidated } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow, subscribe as subscribeWorkflow, unsubscribe as unsubscribeWorkflow } from "@/repository/workflow";
@@ -38,9 +38,12 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, initialized, ...workflowState } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
+  const { workflow, initialized, cancelClone, ...workflowState } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "initialized", "cancelClone", "init", "destroy", "setEnabled", "release", "discard"])
   );
+
+  const cloning = hasCloneNode(workflow.draft!);
+
   useEffect(() => {
     workflowState.init(workflowId!);
 
@@ -308,6 +311,28 @@ const WorkflowDetail = () => {
               </div>
             </div>
 
+            <Show when={cloning}>
+              <div className="absolute top-4 left-0 right-0 z-[10] flex justify-center">
+                <Alert
+                  className="shadow-lg animate-fadeIn"
+                  showIcon
+                  message="选择要复制的节点，复制到目标位置"
+                  type="info"
+                  action={
+                    <Button
+                      size="small"
+                      type="text"
+                      onClick={() => {
+                        cancelClone();
+                      }}
+                    >
+                      取消
+                    </Button>
+                  }
+                />
+              </div>
+            </Show>
+
             <WorkflowElementsContainer className="pt-16" />
           </Card>
         </div>
@@ -395,3 +420,4 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
 };
 
 export default WorkflowDetail;
+

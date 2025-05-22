@@ -507,3 +507,45 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   return true;
 };
 
+export const hasCloneNode = (node: WorkflowNode): boolean => {
+  let current = node as typeof node | undefined;
+  while (current) {
+    if (current.type === WorkflowNodeType.Clone) {
+      return true;
+    }
+
+    if (isBranchLike(current)) {
+      for (const branch of current.branches!) {
+        if (hasCloneNode(branch)) {
+          return true;
+        }
+      }
+    }
+
+    current = current.next;
+  }
+
+  return false;
+};
+
+export const removeCloneNode = (node: WorkflowNode): WorkflowNode => {
+  return produce(node, (draft) => {
+    let current = draft as typeof draft | undefined;
+
+    while (current) {
+      if (current.next?.type === WorkflowNodeType.Clone) {
+        current.next = current.next.next;
+        break;
+      }
+
+      if (isBranchLike(current) && current.branches) {
+        current.branches = current.branches.map((branch) => removeCloneNode(branch));
+      }
+
+      current = current.next;
+    }
+
+    return draft;
+  });
+};
+
