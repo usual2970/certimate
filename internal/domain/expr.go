@@ -3,6 +3,7 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 type Value any
@@ -11,6 +12,7 @@ type (
 	ComparisonOperator string
 	LogicalOperator    string
 	ValueType          string
+	ExprType           string
 )
 
 const (
@@ -29,6 +31,12 @@ const (
 	Number  ValueType = "number"
 	String  ValueType = "string"
 	Boolean ValueType = "boolean"
+
+	ConstExprType   ExprType = "const"
+	VarExprType     ExprType = "var"
+	CompareExprType ExprType = "compare"
+	LogicalExprType ExprType = "logical"
+	NotExprType     ExprType = "not"
 )
 
 type EvalResult struct {
@@ -40,14 +48,40 @@ func (e *EvalResult) GetFloat64() (float64, error) {
 	if e.Type != Number {
 		return 0, fmt.Errorf("type mismatch: %s", e.Type)
 	}
-	switch v := e.Value.(type) {
-	case int:
-		return float64(v), nil
-	case float64:
-		return v, nil
-	default:
-		return 0, fmt.Errorf("unsupported type: %T", v)
+
+	stringValue, ok := e.Value.(string)
+	if !ok {
+		return 0, fmt.Errorf("value is not a string: %v", e.Value)
 	}
+
+	floatValue, err := strconv.ParseFloat(stringValue, 64)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse float64: %v", err)
+	}
+	return floatValue, nil
+}
+
+func (e *EvalResult) GetBool() (bool, error) {
+	if e.Type != Boolean {
+		return false, fmt.Errorf("type mismatch: %s", e.Type)
+	}
+
+	strValue, ok := e.Value.(string)
+	if ok {
+		if strValue == "true" {
+			return true, nil
+		} else if strValue == "false" {
+			return false, nil
+		}
+		return false, fmt.Errorf("value is not a boolean: %v", e.Value)
+	}
+
+	boolValue, ok := e.Value.(bool)
+	if !ok {
+		return false, fmt.Errorf("value is not a boolean: %v", e.Value)
+	}
+
+	return boolValue, nil
 }
 
 func (e *EvalResult) GreaterThan(other *EvalResult) (*EvalResult, error) {
@@ -232,9 +266,17 @@ func (e *EvalResult) And(other *EvalResult) (*EvalResult, error) {
 	}
 	switch e.Type {
 	case Boolean:
+		left, err := e.GetBool()
+		if err != nil {
+			return nil, err
+		}
+		right, err := other.GetBool()
+		if err != nil {
+			return nil, err
+		}
 		return &EvalResult{
 			Type:  Boolean,
-			Value: e.Value.(bool) && other.Value.(bool),
+			Value: left && right,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported type: %s", e.Type)
@@ -247,9 +289,17 @@ func (e *EvalResult) Or(other *EvalResult) (*EvalResult, error) {
 	}
 	switch e.Type {
 	case Boolean:
+		left, err := e.GetBool()
+		if err != nil {
+			return nil, err
+		}
+		right, err := other.GetBool()
+		if err != nil {
+			return nil, err
+		}
 		return &EvalResult{
 			Type:  Boolean,
-			Value: e.Value.(bool) || other.Value.(bool),
+			Value: left || right,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported type: %s", e.Type)
@@ -260,9 +310,13 @@ func (e *EvalResult) Not() (*EvalResult, error) {
 	if e.Type != Boolean {
 		return nil, fmt.Errorf("type mismatch: %s", e.Type)
 	}
+	boolValue, err := e.GetBool()
+	if err != nil {
+		return nil, err
+	}
 	return &EvalResult{
 		Type:  Boolean,
-		Value: !e.Value.(bool),
+		Value: !boolValue,
 	}, nil
 }
 
@@ -272,9 +326,17 @@ func (e *EvalResult) Is(other *EvalResult) (*EvalResult, error) {
 	}
 	switch e.Type {
 	case Boolean:
+		left, err := e.GetBool()
+		if err != nil {
+			return nil, err
+		}
+		right, err := other.GetBool()
+		if err != nil {
+			return nil, err
+		}
 		return &EvalResult{
 			Type:  Boolean,
-			Value: e.Value.(bool) == other.Value.(bool),
+			Value: left == right,
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported type: %s", e.Type)
@@ -282,17 +344,17 @@ func (e *EvalResult) Is(other *EvalResult) (*EvalResult, error) {
 }
 
 type Expr interface {
-	GetType() string
+	GetType() ExprType
 	Eval(variables map[string]map[string]any) (*EvalResult, error)
 }
 
 type ConstExpr struct {
-	Type      string    `json:"type"`
+	Type      ExprType  `json:"type"`
 	Value     Value     `json:"value"`
 	ValueType ValueType `json:"valueType"`
 }
 
-func (c ConstExpr) GetType() string { return c.Type }
+func (c ConstExpr) GetType() ExprType { return c.Type }
 
 func (c ConstExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	return &EvalResult{
@@ -302,11 +364,11 @@ func (c ConstExpr) Eval(variables map[string]map[string]any) (*EvalResult, error
 }
 
 type VarExpr struct {
-	Type     string                      `json:"type"`
+	Type     ExprType                    `json:"type"`
 	Selector WorkflowNodeIOValueSelector `json:"selector"`
 }
 
-func (v VarExpr) GetType() string { return v.Type }
+func (v VarExpr) GetType() ExprType { return v.Type }
 
 func (v VarExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	if v.Selector.Id == "" {
@@ -330,13 +392,13 @@ func (v VarExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) 
 }
 
 type CompareExpr struct {
-	Type  string             `json:"type"` // compare
+	Type  ExprType           `json:"type"` // compare
 	Op    ComparisonOperator `json:"op"`
 	Left  Expr               `json:"left"`
 	Right Expr               `json:"right"`
 }
 
-func (c CompareExpr) GetType() string { return c.Type }
+func (c CompareExpr) GetType() ExprType { return c.Type }
 
 func (c CompareExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	left, err := c.Left.Eval(variables)
@@ -369,13 +431,13 @@ func (c CompareExpr) Eval(variables map[string]map[string]any) (*EvalResult, err
 }
 
 type LogicalExpr struct {
-	Type  string          `json:"type"` // logical
+	Type  ExprType        `json:"type"` // logical
 	Op    LogicalOperator `json:"op"`
 	Left  Expr            `json:"left"`
 	Right Expr            `json:"right"`
 }
 
-func (l LogicalExpr) GetType() string { return l.Type }
+func (l LogicalExpr) GetType() ExprType { return l.Type }
 
 func (l LogicalExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	left, err := l.Left.Eval(variables)
@@ -398,11 +460,11 @@ func (l LogicalExpr) Eval(variables map[string]map[string]any) (*EvalResult, err
 }
 
 type NotExpr struct {
-	Type string `json:"type"` // not
-	Expr Expr   `json:"expr"`
+	Type ExprType `json:"type"` // not
+	Expr Expr     `json:"expr"`
 }
 
-func (n NotExpr) GetType() string { return n.Type }
+func (n NotExpr) GetType() ExprType { return n.Type }
 
 func (n NotExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	inner, err := n.Expr.Eval(variables)
@@ -413,7 +475,7 @@ func (n NotExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) 
 }
 
 type rawExpr struct {
-	Type string `json:"type"`
+	Type ExprType `json:"type"`
 }
 
 func MarshalExpr(e Expr) ([]byte, error) {
@@ -427,31 +489,31 @@ func UnmarshalExpr(data []byte) (Expr, error) {
 	}
 
 	switch typ.Type {
-	case "const":
+	case ConstExprType:
 		var e ConstExpr
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e, nil
-	case "var":
+	case VarExprType:
 		var e VarExpr
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e, nil
-	case "compare":
+	case CompareExprType:
 		var e CompareExprRaw
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e.ToCompareExpr()
-	case "logical":
+	case LogicalExprType:
 		var e LogicalExprRaw
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e.ToLogicalExpr()
-	case "not":
+	case NotExprType:
 		var e NotExprRaw
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
@@ -463,7 +525,7 @@ func UnmarshalExpr(data []byte) (Expr, error) {
 }
 
 type CompareExprRaw struct {
-	Type  string             `json:"type"`
+	Type  ExprType           `json:"type"`
 	Op    ComparisonOperator `json:"op"`
 	Left  json.RawMessage    `json:"left"`
 	Right json.RawMessage    `json:"right"`
@@ -487,7 +549,7 @@ func (r CompareExprRaw) ToCompareExpr() (CompareExpr, error) {
 }
 
 type LogicalExprRaw struct {
-	Type  string          `json:"type"`
+	Type  ExprType        `json:"type"`
 	Op    LogicalOperator `json:"op"`
 	Left  json.RawMessage `json:"left"`
 	Right json.RawMessage `json:"right"`
@@ -511,7 +573,7 @@ func (r LogicalExprRaw) ToLogicalExpr() (LogicalExpr, error) {
 }
 
 type NotExprRaw struct {
-	Type string          `json:"type"`
+	Type ExprType        `json:"type"`
 	Expr json.RawMessage `json:"expr"`
 }
 

@@ -67,7 +67,7 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -82,7 +82,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -93,7 +93,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -104,7 +104,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -161,6 +161,8 @@ export type WorkflowNodeConfigForUpload = {
 export type WorkflowNodeConfigForInspect = {
   domain: string;
   port: string;
+  host: string;
+  path: string;
 };
 
 export type WorkflowNodeConfigForDeploy = {
@@ -200,13 +202,19 @@ export type WorkflowNodeIO = {
   valueSelector?: WorkflowNodeIOValueSelector;
 };
 
+export const VALUE_TYPES = Object.freeze({
+  STRING: "string",
+  NUMBER: "number",
+  BOOLEAN: "boolean",
+} as const);
+
+export type WorkflowNodeIoValueType = (typeof VALUE_TYPES)[keyof typeof VALUE_TYPES];
+
 export type WorkflowNodeIOValueSelector = {
   id: string;
   name: string;
   type: WorkflowNodeIoValueType;
 };
-
-export type WorkflowNodeIoValueType = "string" | "number" | "boolean";
 
 type WorkflowNodeIOOptions = {
   label: string;
@@ -224,12 +232,12 @@ export const workflowNodeIOOptions = (node: WorkflowNode) => {
       switch (output.type) {
         case "certificate":
           rs.options.push({
-            label: `${node.name} - ${output.label} - 是否有效`,
+            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.is_validated.label")}`,
             value: `${node.id}#${output.name}.validated#boolean`,
           });
 
           rs.options.push({
-            label: `${node.name} - ${output.label} - 剩余天数`,
+            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.days_left.label")}`,
             value: `${node.id}#${output.name}.daysLeft#number`,
           });
           break;
@@ -254,22 +262,34 @@ export type Value = string | number | boolean;
 
 export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
 
-export type LogicalOperator = "and" | "or" | "not";
+export enum LogicalOperator {
+  And = "and",
+  Or = "or",
+  Not = "not",
+}
 
-export type ConstExpr = { type: "const"; value: Value; valueType: WorkflowNodeIoValueType };
-export type VarExpr = { type: "var"; selector: WorkflowNodeIOValueSelector };
-export type CompareExpr = { type: "compare"; op: ComparisonOperator; left: Expr; right: Expr };
-export type LogicalExpr = { type: "logical"; op: LogicalOperator; left: Expr; right: Expr };
-export type NotExpr = { type: "not"; expr: Expr };
+export enum ExprType {
+  Const = "const",
+  Var = "var",
+  Compare = "compare",
+  Logical = "logical",
+  Not = "not",
+}
+
+export type ConstExpr = { type: ExprType.Const; value: string; valueType: WorkflowNodeIoValueType };
+export type VarExpr = { type: ExprType.Var; selector: WorkflowNodeIOValueSelector };
+export type CompareExpr = { type: ExprType.Compare; op: ComparisonOperator; left: Expr; right: Expr };
+export type LogicalExpr = { type: ExprType.Logical; op: LogicalOperator; left: Expr; right: Expr };
+export type NotExpr = { type: ExprType.Not; expr: Expr };
 
 export type Expr = ConstExpr | VarExpr | CompareExpr | LogicalExpr | NotExpr;
 
 export const isConstExpr = (expr: Expr): expr is ConstExpr => {
-  return expr.type === "const";
+  return expr.type === ExprType.Const;
 };
 
 export const isVarExpr = (expr: Expr): expr is VarExpr => {
-  return expr.type === "var";
+  return expr.type === ExprType.Var;
 };
 
 // #endregion

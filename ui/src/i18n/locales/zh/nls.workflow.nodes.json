@@ -805,6 +805,10 @@
   "workflow_node.inspect.form.domain.placeholder": "请输入要检查的网站域名",
   "workflow_node.inspect.form.port.label": "端口号",
   "workflow_node.inspect.form.port.placeholder": "请输入要检查的端口号",
+  "workflow_node.inspect.form.host.label": "Host",
+  "workflow_node.inspect.form.host.placeholder": "请输入 Host",
+  "workflow_node.inspect.form.path.label": "Path",
+  "workflow_node.inspect.form.path.placeholder": "请输入 Path",
 
   "workflow_node.notify.label": "推送通知",
   "workflow_node.notify.form.subject.label": "通知主题",

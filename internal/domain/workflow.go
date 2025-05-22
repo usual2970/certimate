@@ -88,8 +88,10 @@ type WorkflowNodeConfigForCondition struct {
 }
 
 type WorkflowNodeConfigForInspect struct {
+	Host   string `json:"host"`   // 主机
 	Domain string `json:"domain"` // 域名
 	Port   string `json:"port"`   // 端口
+	Path   string `json:"path"`   // 路径
 }
 
 type WorkflowNodeConfigForUpload struct {
@@ -134,9 +136,14 @@ func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
 }
 
 func (n *WorkflowNode) GetConfigForInspect() WorkflowNodeConfigForInspect {
+	host := maputil.GetString(n.Config, "host")
+	if host == "" {
+		return WorkflowNodeConfigForInspect{}
+	}
+
 	domain := maputil.GetString(n.Config, "domain")
 	if domain == "" {
-		return WorkflowNodeConfigForInspect{}
+		domain = host
 	}
 
 	port := maputil.GetString(n.Config, "port")
@@ -144,9 +151,13 @@ func (n *WorkflowNode) GetConfigForInspect() WorkflowNodeConfigForInspect {
 		port = "443"
 	}
 
+	path := maputil.GetString(n.Config, "path")
+
 	return WorkflowNodeConfigForInspect{
 		Domain: domain,
 		Port:   port,
+		Host:   host,
+		Path:   path,
 	}
 }
 

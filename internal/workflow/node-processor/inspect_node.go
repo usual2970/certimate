@@ -3,9 +3,12 @@ package nodeprocessor
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"math"
 	"net"
+	"net/http"
+	"strings"
 	"time"
 
 	"github.com/usual2970/certimate/internal/domain"
@@ -26,13 +29,13 @@ func NewInspectNode(node *domain.WorkflowNode) *inspectNode {
 }
 
 func (n *inspectNode) Process(ctx context.Context) error {
-	n.logger.Info("enter inspect website certificate node ...")
+	n.logger.Info("entering inspect certificate node...")
 
 	nodeConfig := n.node.GetConfigForInspect()
 
 	err := n.inspect(ctx, nodeConfig)
 	if err != nil {
-		n.logger.Warn("inspect website certificate failed: " + err.Error())
+		n.logger.Warn("inspect certificate failed: " + err.Error())
 		return err
 	}
 
@@ -40,18 +43,35 @@ func (n *inspectNode) Process(ctx context.Context) error {
 }
 
 func (n *inspectNode) inspect(ctx context.Context, nodeConfig domain.WorkflowNodeConfigForInspect) error {
-	// 定义重试参数
 	maxRetries := 3
 	retryInterval := 2 * time.Second
 
-	var cert *tls.Certificate
 	var lastError error
+	var certInfo *x509.Certificate
 
-	domainWithPort := nodeConfig.Domain + ":" + nodeConfig.Port
+	host := nodeConfig.Host
+
+	port := nodeConfig.Port
+	if port == "" {
+		port = "443"
+	}
+
+	domain := nodeConfig.Domain
+	if domain == "" {
+		domain = host
+	}
+
+	path := nodeConfig.Path
+	if path != "" && !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	targetAddr := fmt.Sprintf("%s:%s", host, port)
+	n.logger.Info(fmt.Sprintf("Inspecting certificate at %s (validating domain: %s)", targetAddr, domain))
 
 	for attempt := 0; attempt < maxRetries; attempt++ {
 		if attempt > 0 {
-			n.logger.Info(fmt.Sprintf("Retry #%d connecting to %s", attempt, domainWithPort))
+			n.logger.Info(fmt.Sprintf("Retry #%d connecting to %s", attempt, targetAddr))
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
@@ -60,30 +80,65 @@ func (n *inspectNode) inspect(ctx context.Context, nodeConfig domain.WorkflowNod
 			}
 		}
 
-		dialer := &net.Dialer{
-			Timeout: 10 * time.Second,
+		transport := &http.Transport{
+			DialContext: (&net.Dialer{
+				Timeout: 10 * time.Second,
+			}).DialContext,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				ServerName:         domain, // Set SNI to domain for proper certificate selection
+			},
+			ForceAttemptHTTP2: false,
+			DisableKeepAlives: true,
 		}
 
-		conn, err := tls.DialWithDialer(dialer, "tcp", domainWithPort, &tls.Config{
-			InsecureSkipVerify: true, // Allow self-signed certificates
-		})
+		client := &http.Client{
+			Transport: transport,
+			Timeout:   15 * time.Second,
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+
+		scheme := "https"
+		urlStr := fmt.Sprintf("%s://%s", scheme, targetAddr)
+		if path != "" {
+			urlStr = urlStr + path
+		}
+
+		req, err := http.NewRequestWithContext(ctx, "HEAD", urlStr, nil)
 		if err != nil {
-			lastError = fmt.Errorf("failed to connect to %s: %w", domainWithPort, err)
+			lastError = fmt.Errorf("failed to create HTTP request: %w", err)
+			n.logger.Warn(fmt.Sprintf("Request creation attempt #%d failed: %s", attempt+1, lastError.Error()))
+			continue
+		}
+
+		if domain != host {
+			req.Host = domain
+		}
+
+		req.Header.Set("User-Agent", "CertificateValidator/1.0")
+		req.Header.Set("Accept", "*/*")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			lastError = fmt.Errorf("HTTP request failed: %w", err)
 			n.logger.Warn(fmt.Sprintf("Connection attempt #%d failed: %s", attempt+1, lastError.Error()))
 			continue
 		}
 
-		// Get certificate information
-		certInfo := conn.ConnectionState().PeerCertificates[0]
-		conn.Close()
-
-		// Certificate information retrieved successfully
-		cert = &tls.Certificate{
-			Certificate: [][]byte{certInfo.Raw},
-			Leaf:        certInfo,
+		if resp.TLS == nil || len(resp.TLS.PeerCertificates) == 0 {
+			resp.Body.Close()
+			lastError = fmt.Errorf("no TLS certificates received in HTTP response")
+			n.logger.Warn(fmt.Sprintf("Certificate retrieval attempt #%d failed: %s", attempt+1, lastError.Error()))
+			continue
 		}
+
+		certInfo = resp.TLS.PeerCertificates[0]
+		resp.Body.Close()
+
 		lastError = nil
-		n.logger.Info(fmt.Sprintf("Successfully retrieved certificate information for %s", domainWithPort))
+		n.logger.Info(fmt.Sprintf("Successfully retrieved certificate from %s", targetAddr))
 		break
 	}
 
@@ -91,69 +146,46 @@ func (n *inspectNode) inspect(ctx context.Context, nodeConfig domain.WorkflowNod
 		return fmt.Errorf("failed to retrieve certificate after %d attempts: %w", maxRetries, lastError)
 	}
 
-	certInfo := cert.Leaf
-	now := time.Now()
-
-	isValid := now.Before(certInfo.NotAfter) && now.After(certInfo.NotBefore)
-
-	// Check domain matching
-	domainMatch := false
-	if len(certInfo.DNSNames) > 0 {
-		for _, dnsName := range certInfo.DNSNames {
-			if matchDomain(nodeConfig.Domain, dnsName) {
-				domainMatch = true
-				break
-			}
+	if certInfo == nil {
+		outputs := map[string]any{
+			outputCertificateValidatedKey: "false",
+			outputCertificateDaysLeftKey:  "0",
 		}
-	} else if matchDomain(nodeConfig.Domain, certInfo.Subject.CommonName) {
-		domainMatch = true
+		n.setOutputs(outputs)
+		return nil
 	}
 
-	isValid = isValid && domainMatch
+	now := time.Now()
+
+	isValidTime := now.Before(certInfo.NotAfter) && now.After(certInfo.NotBefore)
+
+	domainMatch := true
+	if err := certInfo.VerifyHostname(domain); err != nil {
+		domainMatch = false
+	}
+
+	isValid := isValidTime && domainMatch
 
 	daysRemaining := math.Floor(certInfo.NotAfter.Sub(now).Hours() / 24)
 
-	// Set node outputs
-	outputs := map[string]any{
-		"certificate.validated": isValid,
-		"certificate.daysLeft":  daysRemaining,
+	isValidStr := "false"
+	if isValid {
+		isValidStr = "true"
 	}
+
+	outputs := map[string]any{
+		outputCertificateValidatedKey: isValidStr,
+		outputCertificateDaysLeftKey:  fmt.Sprintf("%d", int(daysRemaining)),
+	}
+
 	n.setOutputs(outputs)
+
+	n.logger.Info(fmt.Sprintf("Certificate inspection completed - Target: %s, Domain: %s, Valid: %s, Days Remaining: %d",
+		targetAddr, domain, isValidStr, int(daysRemaining)))
 
 	return nil
 }
 
 func (n *inspectNode) setOutputs(outputs map[string]any) {
 	n.outputs = outputs
-}
-
-func matchDomain(requestDomain, certDomain string) bool {
-	if requestDomain == certDomain {
-		return true
-	}
-
-	if len(certDomain) > 2 && certDomain[0] == '*' && certDomain[1] == '.' {
-
-		wildcardSuffix := certDomain[1:]
-		requestDomainLen := len(requestDomain)
-		suffixLen := len(wildcardSuffix)
-
-		if requestDomainLen > suffixLen && requestDomain[requestDomainLen-suffixLen:] == wildcardSuffix {
-			remainingPart := requestDomain[:requestDomainLen-suffixLen]
-			if len(remainingPart) > 0 && !contains(remainingPart, '.') {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func contains(s string, c byte) bool {
-	for i := 0; i < len(s); i++ {
-		if s[i] == c {
-			return true
-		}
-	}
-	return false
 }

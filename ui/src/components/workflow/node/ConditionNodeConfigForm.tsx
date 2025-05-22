@@ -14,6 +14,7 @@ import {
   WorkflowNode,
   workflowNodeIOOptions,
   WorkflowNodeIoValueType,
+  ExprType,
 } from "@/domain/workflow";
 import { FormInstance } from "antd";
 import { useZustandShallowSelector } from "@/hooks";
@@ -58,7 +59,7 @@ const initFormModel = (): ConditionNodeConfigFormFieldValues => {
         rightValue: "",
       },
     ],
-    logicalOperator: "and",
+    logicalOperator: LogicalOperator.And,
   };
 };
 
@@ -67,10 +68,10 @@ const expressionToForm = (expr?: Expr): ConditionNodeConfigFormFieldValues => {
   if (!expr) return initFormModel();
 
   const conditions: ConditionItem[] = [];
-  let logicalOp: LogicalOperator = "and";
+  let logicalOp: LogicalOperator = LogicalOperator.And;
 
   const extractComparisons = (expr: Expr): void => {
-    if (expr.type === "compare") {
+    if (expr.type === ExprType.Compare) {
       // 确保左侧是变量，右侧是常量
       if (isVarExpr(expr.left) && isConstExpr(expr.right)) {
         conditions.push({
@@ -79,7 +80,7 @@ const expressionToForm = (expr?: Expr): ConditionNodeConfigFormFieldValues => {
           rightValue: String(expr.right.value),
         });
       }
-    } else if (expr.type === "logical") {
+    } else if (expr.type === ExprType.Logical) {
       logicalOp = expr.op;
       extractComparisons(expr.left);
       extractComparisons(expr.right);
@@ -304,25 +305,18 @@ const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
     const type = typeStr as WorkflowNodeIoValueType;
 
     const left: Expr = {
-      type: "var",
+      type: ExprType.Var,
       selector: { id, name, type },
     };
 
-    let rightValue: any = condition.rightValue;
-    if (type === "number") {
-      rightValue = Number(condition.rightValue);
-    } else if (type === "boolean") {
-      rightValue = condition.rightValue === "true";
-    }
-
     const right: Expr = {
-      type: "const",
-      value: rightValue,
+      type: ExprType.Const,
+      value: condition.rightValue,
       valueType: type,
     };
 
     return {
-      type: "compare",
+      type: ExprType.Compare,
       op: condition.operator,
       left,
       right,
@@ -339,7 +333,7 @@ const formToExpression = (values: ConditionNodeConfigFormFieldValues): Expr => {
 
   for (let i = 1; i < values.conditions.length; i++) {
     expr = {
-      type: "logical",
+      type: ExprType.Logical,
       op: values.logicalOperator,
       left: expr,
       right: createComparisonExpr(values.conditions[i]),

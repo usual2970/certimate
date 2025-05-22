@@ -5,7 +5,7 @@ import { Button, Card, Popover } from "antd";
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
 import ConditionNodeConfigForm, { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
-import { Expr, WorkflowNodeIoValueType, Value } from "@/domain/workflow";
+import { Expr, WorkflowNodeIoValueType, ExprType } from "@/domain/workflow";
 import { produce } from "immer";
 import { useWorkflowStore } from "@/stores/workflow";
 import { useZustandShallowSelector } from "@/hooks";
@@ -32,7 +32,7 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
       const selectors = condition.leftSelector.split("#");
       const t = selectors[2] as WorkflowNodeIoValueType;
       const left: Expr = {
-        type: "var",
+        type: ExprType.Var,
         selector: {
           id: selectors[0],
           name: selectors[1],
@@ -40,27 +40,10 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
         },
       };
 
-      let value: Value = condition.rightValue;
-      switch (t) {
-        case "boolean":
-          if (value === "true") {
-            value = true;
-          } else if (value === "false") {
-            value = false;
-          }
-          break;
-        case "number":
-          value = parseInt(value as string);
-          break;
-        case "string":
-          value = value as string;
-          break;
-      }
-
-      const right: Expr = { type: "const", value: value, valueType: t };
+      const right: Expr = { type: ExprType.Const, value: condition.rightValue, valueType: t };
 
       return {
-        type: "compare",
+        type: ExprType.Compare,
         op: condition.operator,
         left,
         right,
@@ -77,7 +60,7 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
 
     for (let i = 1; i < values.conditions.length; i++) {
       expr = {
-        type: "logical",
+        type: ExprType.Logical,
         op: values.logicalOperator,
         left: expr,
         right: createComparisonExpr(values.conditions[i]),

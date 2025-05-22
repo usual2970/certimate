@@ -39,7 +39,7 @@ const InspectNode = ({ node, disabled }: InspectNodeProps) => {
     const config = (node.config as WorkflowNodeConfigForInspect) ?? {};
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
-        <Typography.Text className="truncate">{config.domain ?? ""}</Typography.Text>
+        <Typography.Text className="truncate">{config.host ?? ""}</Typography.Text>
       </Flex>
     );
   }, [node]);

@@ -806,6 +806,10 @@
   "workflow_node.inspect.form.domain.placeholder": "Please enter domain name",
   "workflow_node.inspect.form.port.label": "Port",
   "workflow_node.inspect.form.port.placeholder": "Please enter port",
+  "workflow_node.inspect.form.host.label": "Host",
+  "workflow_node.inspect.form.host.placeholder": "Please enter host",
+  "workflow_node.inspect.form.path.label": "Path",
+  "workflow_node.inspect.form.path.placeholder": "Please enter path",
 
   "workflow_node.notify.label": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",

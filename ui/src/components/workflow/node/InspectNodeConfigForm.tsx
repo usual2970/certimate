@@ -7,7 +7,7 @@ import { z } from "zod";
 import { type WorkflowNodeConfigForInspect } from "@/domain/workflow";
 import { useAntdForm } from "@/hooks";
 
-import { validDomainName, validPortNumber } from "@/utils/validators";
+import { validDomainName, validIPv4Address, validPortNumber } from "@/utils/validators";
 
 type InspectNodeConfigFormFieldValues = Partial<WorkflowNodeConfigForInspect>;
 
@@ -29,6 +29,8 @@ const initFormModel = (): InspectNodeConfigFormFieldValues => {
   return {
     domain: "",
     port: "443",
+    path: "",
+    host: "",
   };
 };
 
@@ -37,12 +39,14 @@ const InspectNodeConfigForm = forwardRef<InspectNodeConfigFormInstance, InspectN
     const { t } = useTranslation();
 
     const formSchema = z.object({
-      domain: z.string().refine((val) => validDomainName(val), {
-        message: t("workflow_node.inspect.form.domain.placeholder"),
+      host: z.string().refine((val) => validIPv4Address(val) || validDomainName(val), {
+        message: t("workflow_node.inspect.form.host.placeholder"),
       }),
+      domain: z.string().optional(),
       port: z.string().refine((val) => validPortNumber(val), {
         message: t("workflow_node.inspect.form.port.placeholder"),
       }),
+      path: z.string().optional(),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -70,12 +74,20 @@ const InspectNodeConfigForm = forwardRef<InspectNodeConfigFormInstance, InspectN
 
     return (
       <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
-        <Form.Item name="domain" label={t("workflow_node.inspect.form.domain.label")} rules={[formRule]}>
-          <Input variant="filled" placeholder={t("workflow_node.inspect.form.domain.placeholder")} />
+        <Form.Item name="host" label={t("workflow_node.inspect.form.host.label")} rules={[formRule]}>
+          <Input variant="filled" placeholder={t("workflow_node.inspect.form.host.placeholder")} />
         </Form.Item>
 
         <Form.Item name="port" label={t("workflow_node.inspect.form.port.label")} rules={[formRule]}>
           <Input variant="filled" placeholder={t("workflow_node.inspect.form.port.placeholder")} />
+        </Form.Item>
+
+        <Form.Item name="domain" label={t("workflow_node.inspect.form.domain.label")} rules={[formRule]}>
+          <Input variant="filled" placeholder={t("workflow_node.inspect.form.domain.placeholder")} />
+        </Form.Item>
+
+        <Form.Item name="path" label={t("workflow_node.inspect.form.path.label")} rules={[formRule]}>
+          <Input variant="filled" placeholder={t("workflow_node.inspect.form.path.placeholder")} />
         </Form.Item>
       </Form>
     );

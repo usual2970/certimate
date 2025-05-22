@@ -100,8 +100,8 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 添加中间结果
-	n.outputs["certificate.validated"] = true
-	n.outputs["certificate.daysLeft"] = int(time.Until(certificate.ExpireAt).Hours() / 24)
+	n.outputs[outputCertificateValidatedKey] = "true"
+	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
 
 	n.logger.Info("apply completed")
 
@@ -146,9 +146,9 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				
-				n.outputs["certificate.validated"] = true
-				n.outputs["certificate.daysLeft"] = int(expirationTime.Hours() / 24)
+
+				n.outputs[outputCertificateValidatedKey] = "true"
+				n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(expirationTime.Hours()/24))
 
 				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}

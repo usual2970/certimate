@@ -69,8 +69,8 @@ func (n *uploadNode) Process(ctx context.Context) error {
 		return err
 	}
 
-	n.outputs["certificate.validated"] = true
-	n.outputs["certificate.daysLeft"] = int(time.Until(certificate.ExpireAt).Hours() / 24)
+	n.outputs[outputCertificateValidatedKey] = "true"
+	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
 
 	n.logger.Info("upload completed")
 
@@ -91,8 +91,8 @@ func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 
 		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
 		if lastCertificate != nil {
-			n.outputs["certificate.validated"] = true
-			n.outputs["certificate.daysLeft"] = int(time.Until(lastCertificate.ExpireAt).Hours() / 24)
+			n.outputs[outputCertificateValidatedKey] = "true"
+			n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(lastCertificate.ExpireAt).Hours()/24))
 			return true, "the certificate has already been uploaded"
 		}
 	}
