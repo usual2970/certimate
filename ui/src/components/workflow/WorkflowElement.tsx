@@ -12,6 +12,7 @@ import ExecuteResultNode from "./node/ExecuteResultNode";
 import NotifyNode from "./node/NotifyNode";
 import StartNode from "./node/StartNode";
 import UploadNode from "./node/UploadNode";
+import CloneNode from "./node/CloneNode";
 
 export type WorkflowElementProps = {
   node: WorkflowNode;
@@ -51,6 +52,9 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
       case WorkflowNodeType.Condition:
         return <ConditionNode node={node} disabled={disabled} branchId={branchId!} branchIndex={branchIndex!} />;
 
+      case WorkflowNodeType.Clone:
+        return <CloneNode node={node} disabled={disabled} />;
+
       case WorkflowNodeType.End:
         return <EndNode />;
 
@@ -64,3 +68,4 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 };
 
 export default memo(WorkflowElement);
+

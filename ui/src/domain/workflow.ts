@@ -273,6 +273,10 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
         node.validated = true;
       }
       break;
+
+    case WorkflowNodeType.Clone: {
+      node.validated = true;
+    }
   }
 
   return node;
