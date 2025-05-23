@@ -2,6 +2,7 @@ import { Card } from "antd";
 import { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
 import { useTranslation } from "react-i18next";
+import { memo } from "react";
 
 export type UploadNodeProps = SharedNodeProps;
 const CloneNode = ({ node, disabled }: SharedNodeProps) => {
@@ -16,4 +17,4 @@ const CloneNode = ({ node, disabled }: SharedNodeProps) => {
   );
 };
 
-export default CloneNode;
+export default memo(CloneNode);
