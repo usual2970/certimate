@@ -21,7 +21,8 @@ $(OS_ARCH):
 	@mkdir -p $(BUILD_DIR)
 	GOOS=$(word 1,$(subst /, ,$@)) \
 	GOARCH=$(word 2,$(subst /, ,$@)) \
-	go build -o $(BUILD_DIR)/$(BINARY_NAME)_$(word 1,$(subst /, ,$@))_$(word 2,$(subst /, ,$@)) -ldflags="-X main.version=$(VERSION)" .
+	CGO_ENABLED=0 \
+	go build -o $(BUILD_DIR)/$(BINARY_NAME)_$(word 1,$(subst /, ,$@))_$(word 2,$(subst /, ,$@)) -ldflags="-X main.version=$(VERSION) -s -w" .
 
 # 清理构建文件
 clean:
