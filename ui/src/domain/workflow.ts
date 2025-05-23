@@ -568,6 +568,7 @@ export const cloneNode = (node: WorkflowNode, srcNode: WorkflowNode): WorkflowNo
       if (current.next?.type === WorkflowNodeType.Clone) {
         const clonedSrcNode = produce(srcNode, (draft) => {
           draft.id = nanoid();
+          draft.name = `${srcNode.name} copy`;
           return draft;
         });
         clonedSrcNode.next = current.next?.next;
@@ -588,10 +589,5 @@ export const cloneNode = (node: WorkflowNode, srcNode: WorkflowNode): WorkflowNo
 };
 
 export const ifCanBeCloned = (node: WorkflowNode): boolean => {
-  if (workflowNodeTypesCanBeCloned.has(node.type)) {
-    return true;
-  }
-
-  return false;
+  return workflowNodeTypesCanBeCloned.has(node.type);
 };
-
