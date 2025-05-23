@@ -833,6 +833,10 @@
   "workflow_node.notify.form.webhook_data.guide": "<details><summary>Supported variables: </summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>: The subject of notification.</li><li><strong>${MESSAGE}</strong>: The message of notification.</li></ol></details><br>Please visit the authorization management page for addtional notes.",
   "workflow_node.notify.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
 
+  "workflow_node.clone.label": "Clone node",
+  "workflow_node.clone.description": "Select a node to clone here",
+  "workflow_node.clone.alert": "Select a node to copy to the target location",
+
   "workflow_node.end.label": "End",
 
   "workflow_node.branch.label": "Parallel branch",

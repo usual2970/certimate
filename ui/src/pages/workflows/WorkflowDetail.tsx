@@ -9,6 +9,7 @@ import {
   EllipsisOutlined as EllipsisOutlinedIcon,
   HistoryOutlined as HistoryOutlinedIcon,
   UndoOutlined as UndoOutlinedIcon,
+  CloseOutlined as CloseOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
@@ -84,7 +85,7 @@ const WorkflowDetail = () => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
     setAllowDiscard(!isPendingOrRunning && hasReleased && hasChanges);
-    setAllowRelease(!isPendingOrRunning && hasChanges);
+    setAllowRelease(!isPendingOrRunning && hasChanges && !cloning);
     setAllowRun(hasReleased);
   }, [workflow.content, workflow.draft, workflow.hasDraft, isPendingOrRunning]);
 
@@ -316,17 +317,18 @@ const WorkflowDetail = () => {
                 <Alert
                   className="shadow-lg animate-fadeIn"
                   showIcon
-                  message="选择要复制的节点，复制到目标位置"
+                  message={t("workflow_node.clone.alert")}
                   type="info"
                   action={
                     <Button
                       size="small"
-                      type="text"
+                      type="default"
+                      icon={<CloseOutlinedIcon />}
                       onClick={() => {
                         cancelClone();
                       }}
                     >
-                      取消
+                      {t("common.button.cancel")}
                     </Button>
                   }
                 />
@@ -420,4 +422,3 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
 };
 
 export default WorkflowDetail;
-

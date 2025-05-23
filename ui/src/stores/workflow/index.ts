@@ -7,6 +7,7 @@ import {
   type WorkflowNodeConfigForStart,
   addBranch,
   addNode,
+  cloneNode,
   getOutputBeforeNodeId,
   removeBranch,
   removeCloneNode,
@@ -30,6 +31,7 @@ export type WorkflowState = {
   updateNode: (node: WorkflowNode) => void;
   removeNode: (nodeId: string) => void;
   cancelClone: () => void;
+  cloneNode: (node: WorkflowNode) => void;
 
   addBranch: (branchId: string) => void;
   removeBranch: (branchId: string, index: number) => void;
@@ -226,6 +228,26 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
+  cloneNode: async (node: WorkflowNode) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = cloneNode(get().workflow.draft!, node);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
   addBranch: async (branchId: string) => {
     if (!get().initialized) throw "Workflow not initialized yet";
 
@@ -270,4 +292,3 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     return getOutputBeforeNodeId(get().workflow.draft as WorkflowNode, nodeId, type);
   },
 }));
-

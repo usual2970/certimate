@@ -1,17 +1,18 @@
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
   FormOutlined as FormOutlinedIcon,
   MoreOutlined as MoreOutlinedIcon,
+  CopyOutlined as CopyOutlinedIcon,
 } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
 import { Button, Card, Drawer, Dropdown, Input, type InputRef, Modal, Popover, Space } from "antd";
 import { produce } from "immer";
 import { isEqual } from "radash";
 
-import { type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
+import { hasCloneNode, ifCanBeCloned, type WorkflowNode, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -177,6 +178,10 @@ type SharedNodeBlockProps = SharedNodeProps & {
 };
 
 const SharedNodeBlock = ({ children, node, disabled, onClick }: SharedNodeBlockProps) => {
+  const { workflow, cloneNode } = useWorkflowStore(useZustandShallowSelector(["workflow", "cloneNode"]));
+  const cloning = hasCloneNode(workflow.draft!);
+  const canBeCloned = ifCanBeCloned(node);
+
   const handleNodeClick = (e: React.MouseEvent) => {
     onClick?.(e);
   };
@@ -189,8 +194,20 @@ const SharedNodeBlock = ({ children, node, disabled, onClick }: SharedNodeBlockP
         arrow={false}
         content={<SharedNodeMenu node={node} disabled={disabled} trigger={<Button color="primary" icon={<MoreOutlinedIcon />} variant="text" />} />}
         placement="rightTop"
+        trigger={cloning ? [] : ["hover"]}
       >
         <Card className="relative w-[256px] overflow-hidden shadow-md" styles={{ body: { padding: 0 } }} hoverable>
+          {cloning && canBeCloned && (
+            <div
+              className="absolute left-2 top-2 z-10 flex items-center justify-center rounded-full bg-white/90 p-1 text-primary shadow-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                cloneNode(node);
+              }}
+            >
+              <CopyOutlinedIcon className="text-sm text-gray-500 hover:text-primary" />
+            </div>
+          )}
           <div className="bg-primary flex h-[48px] flex-col items-center justify-center truncate px-4 py-2 text-white">
             <SharedNodeTitle
               className="focus:bg-background focus:text-foreground overflow-hidden outline-none focus:rounded-sm"
@@ -236,6 +253,9 @@ const SharedNodeConfigDrawer = ({
 }: SharedNodeEditDrawerProps) => {
   const { t } = useTranslation();
 
+  const { workflow } = useWorkflowStore(useZustandShallowSelector(["workflow"]));
+  const cloning = hasCloneNode(workflow.draft!);
+
   const [modalApi, ModelContextHolder] = Modal.useModal();
 
   const [open, setOpen] = useControllableValue<boolean>(props, {
@@ -244,15 +264,28 @@ const SharedNodeConfigDrawer = ({
     trigger: "onOpenChange",
   });
 
+  useEffect(() => {
+    if (open && cloning) {
+      safeSetOpen(false);
+    }
+  }, [open, cloning]);
+
+  const safeSetOpen = (value: boolean) => {
+    if (value && cloning) {
+      return;
+    }
+    setOpen(value);
+  };
+
   const handleConfirmClick = async () => {
     await onConfirm();
-    setOpen(false);
+    safeSetOpen(false);
   };
 
   const handleCancelClick = () => {
     if (pending) return;
 
-    setOpen(false);
+    safeSetOpen(false);
   };
 
   const handleClose = () => {
@@ -275,7 +308,7 @@ const SharedNodeConfigDrawer = ({
       resolve(void 0);
     }
 
-    promise.then(() => setOpen(false));
+    promise.then(() => safeSetOpen(false));
   };
 
   return (
@@ -308,7 +341,7 @@ const SharedNodeConfigDrawer = ({
         }
         loading={loading}
         maskClosable={!pending}
-        open={open}
+        open={open && !cloning}
         title={<div className="max-w-[480px] truncate">{node.name}</div>}
         width={720}
         onClose={handleClose}
@@ -326,3 +359,4 @@ export default {
   Block: memo(SharedNodeBlock),
   ConfigDrawer: memo(SharedNodeConfigDrawer),
 };
+

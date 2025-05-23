@@ -69,7 +69,7 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
 
   return (
     <>
-      <SharedNode.Block node={node} disabled={disabled} onClick={() => setDrawerOpen(true)}>
+      <SharedNode.Block node={node} disabled={disabled} onClick={() => {setDrawerOpen(true)}}>
         {wrappedEl}
       </SharedNode.Block>
 

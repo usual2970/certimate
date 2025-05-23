@@ -42,6 +42,13 @@ export enum WorkflowNodeType {
   Clone = "clone",
 }
 
+const workflowNodeTypesCanBeCloned: Set<WorkflowNodeType> = new Set([
+  WorkflowNodeType.Apply,
+  WorkflowNodeType.Upload,
+  WorkflowNodeType.Deploy,
+  WorkflowNodeType.Notify,
+]);
+
 const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
@@ -547,5 +554,44 @@ export const removeCloneNode = (node: WorkflowNode): WorkflowNode => {
 
     return draft;
   });
+};
+
+export const cloneNode = (node: WorkflowNode, srcNode: WorkflowNode): WorkflowNode => {
+  // 1.先深度克隆一下 srcNode
+  // 2.打到 clone 节点
+  // 3.替换为深度克隆过的 srcNode
+
+  return produce(node, (draft) => {
+    let current = draft as typeof draft | undefined;
+
+    while (current) {
+      if (current.next?.type === WorkflowNodeType.Clone) {
+        const clonedSrcNode = produce(srcNode, (draft) => {
+          draft.id = nanoid();
+          return draft;
+        });
+        clonedSrcNode.next = current.next?.next;
+        current.next = clonedSrcNode;
+        break;
+      }
+
+      if (isBranchLike(current)) {
+        current.branches ??= [];
+        current.branches = current.branches.map((branch) => cloneNode(branch, srcNode));
+      }
+
+      current = current.next as WorkflowNode;
+    }
+
+    return draft;
+  });
+};
+
+export const ifCanBeCloned = (node: WorkflowNode): boolean => {
+  if (workflowNodeTypesCanBeCloned.has(node.type)) {
+    return true;
+  }
+
+  return false;
 };
 
