@@ -31,6 +31,7 @@ export enum WorkflowNodeType {
   End = "end",
   Apply = "apply",
   Upload = "upload",
+  Inspect = "inspect",
   Deploy = "deploy",
   Notify = "notify",
   Branch = "branch",
@@ -46,6 +47,7 @@ const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
   [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
   [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.label")],
+  [WorkflowNodeType.Inspect, i18n.t("workflow_node.inspect.label")],
   [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
   [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
   [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
@@ -65,7 +67,7 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -80,7 +82,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -91,7 +93,18 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.certificate.label"),
+      },
+    ],
+  ],
+  [
+    WorkflowNodeType.Inspect,
+    [
+      {
+        name: "certificate",
+        type: "certificate",
+        required: true,
+        label: i18n.t("workflow.variables.certificate.label"),
       },
     ],
   ],
@@ -145,6 +158,13 @@ export type WorkflowNodeConfigForUpload = {
   privateKey: string;
 };
 
+export type WorkflowNodeConfigForInspect = {
+  domain: string;
+  port: string;
+  host: string;
+  path: string;
+};
+
 export type WorkflowNodeConfigForDeploy = {
   certificate: string;
   provider: string;
@@ -165,6 +185,10 @@ export type WorkflowNodeConfigForNotify = {
   providerConfig?: Record<string, unknown>;
 };
 
+export type WorkflowNodeConfigForCondition = {
+  expression: Expr;
+};
+
 export type WorkflowNodeConfigForBranch = never;
 
 export type WorkflowNodeConfigForEnd = never;
@@ -178,9 +202,94 @@ export type WorkflowNodeIO = {
   valueSelector?: WorkflowNodeIOValueSelector;
 };
 
+export const VALUE_TYPES = Object.freeze({
+  STRING: "string",
+  NUMBER: "number",
+  BOOLEAN: "boolean",
+} as const);
+
+export type WorkflowNodeIoValueType = (typeof VALUE_TYPES)[keyof typeof VALUE_TYPES];
+
 export type WorkflowNodeIOValueSelector = {
   id: string;
   name: string;
+  type: WorkflowNodeIoValueType;
+};
+
+type WorkflowNodeIOOptions = {
+  label: string;
+  value: string;
+};
+
+export const workflowNodeIOOptions = (node: WorkflowNode) => {
+  const rs = {
+    label: node.name,
+    options: Array<WorkflowNodeIOOptions>(),
+  };
+
+  if (node.outputs) {
+    for (const output of node.outputs) {
+      switch (output.type) {
+        case "certificate":
+          rs.options.push({
+            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.is_validated.label")}`,
+            value: `${node.id}#${output.name}.validated#boolean`,
+          });
+
+          rs.options.push({
+            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.days_left.label")}`,
+            value: `${node.id}#${output.name}.daysLeft#number`,
+          });
+          break;
+        default:
+          rs.options.push({
+            label: `${node.name} - ${output.label}`,
+            value: `${node.id}#${output.name}#${output.type}`,
+          });
+          break;
+      }
+    }
+  }
+
+  return rs;
+};
+
+// #endregion
+
+// #region Condition expression
+
+export type Value = string | number | boolean;
+
+export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
+
+export enum LogicalOperator {
+  And = "and",
+  Or = "or",
+  Not = "not",
+}
+
+export enum ExprType {
+  Const = "const",
+  Var = "var",
+  Compare = "compare",
+  Logical = "logical",
+  Not = "not",
+}
+
+export type ConstExpr = { type: ExprType.Const; value: string; valueType: WorkflowNodeIoValueType };
+export type VarExpr = { type: ExprType.Var; selector: WorkflowNodeIOValueSelector };
+export type CompareExpr = { type: ExprType.Compare; op: ComparisonOperator; left: Expr; right: Expr };
+export type LogicalExpr = { type: ExprType.Logical; op: LogicalOperator; left: Expr; right: Expr };
+export type NotExpr = { type: ExprType.Not; expr: Expr };
+
+export type Expr = ConstExpr | VarExpr | CompareExpr | LogicalExpr | NotExpr;
+
+export const isConstExpr = (expr: Expr): expr is ConstExpr => {
+  return expr.type === ExprType.Const;
+};
+
+export const isVarExpr = (expr: Expr): expr is VarExpr => {
+  return expr.type === ExprType.Var;
 };
 
 // #endregion
@@ -242,6 +351,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Upload:
     case WorkflowNodeType.Deploy:
+    case WorkflowNodeType.Inspect:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
         node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);
@@ -433,7 +543,17 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
   });
 };
 
-export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string): WorkflowNode[] => {
+const typeEqual = (a: WorkflowNodeIO, t: string) => {
+  if (t === "all") {
+    return true;
+  }
+  if (a.type === t) {
+    return true;
+  }
+  return false;
+};
+
+export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string = "all"): WorkflowNode[] => {
   // 某个分支的节点，不应该能获取到相邻分支上节点的输出
   const outputs: WorkflowNode[] = [];
 
@@ -445,10 +565,10 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
       return true;
     }
 
-    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => io.type === type)) {
+    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => typeEqual(io, type))) {
       output.push({
         ...current,
-        outputs: current.outputs.filter((io) => io.type === type),
+        outputs: current.outputs.filter((io) => typeEqual(io, type)),
       });
     }
 

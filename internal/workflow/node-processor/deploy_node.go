@@ -15,6 +15,7 @@ import (
 type deployNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -24,6 +25,7 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 	return &deployNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),

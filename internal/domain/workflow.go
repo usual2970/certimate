@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"time"
 
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
@@ -37,6 +38,7 @@ const (
 	WorkflowNodeTypeExecuteResultBranch = WorkflowNodeType("execute_result_branch")
 	WorkflowNodeTypeExecuteSuccess      = WorkflowNodeType("execute_success")
 	WorkflowNodeTypeExecuteFailure      = WorkflowNodeType("execute_failure")
+	WorkflowNodeTypeInspect             = WorkflowNodeType("inspect")
 )
 
 type WorkflowTriggerType string
@@ -81,6 +83,17 @@ type WorkflowNodeConfigForApply struct {
 	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays,omitempty"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
 }
 
+type WorkflowNodeConfigForCondition struct {
+	Expression Expr `json:"expression"` // 条件表达式
+}
+
+type WorkflowNodeConfigForInspect struct {
+	Host   string `json:"host"`   // 主机
+	Domain string `json:"domain"` // 域名
+	Port   string `json:"port"`   // 端口
+	Path   string `json:"path"`   // 路径
+}
+
 type WorkflowNodeConfigForUpload struct {
 	Certificate string `json:"certificate"`
 	PrivateKey  string `json:"privateKey"`
@@ -102,6 +115,50 @@ type WorkflowNodeConfigForNotify struct {
 	ProviderConfig   map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
 	Subject          string         `json:"subject"`                  // 通知主题
 	Message          string         `json:"message"`                  // 通知内容
+}
+
+func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
+	expression := n.Config["expression"]
+	if expression == nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	raw, _ := json.Marshal(expression)
+
+	expr, err := UnmarshalExpr([]byte(raw))
+	if err != nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	return WorkflowNodeConfigForCondition{
+		Expression: expr,
+	}
+}
+
+func (n *WorkflowNode) GetConfigForInspect() WorkflowNodeConfigForInspect {
+	host := maputil.GetString(n.Config, "host")
+	if host == "" {
+		return WorkflowNodeConfigForInspect{}
+	}
+
+	domain := maputil.GetString(n.Config, "domain")
+	if domain == "" {
+		domain = host
+	}
+
+	port := maputil.GetString(n.Config, "port")
+	if port == "" {
+		port = "443"
+	}
+
+	path := maputil.GetString(n.Config, "path")
+
+	return WorkflowNodeConfigForInspect{
+		Domain: domain,
+		Port:   port,
+		Host:   host,
+		Path:   path,
+	}
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -164,8 +221,9 @@ type WorkflowNodeIO struct {
 }
 
 type WorkflowNodeIOValueSelector struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   string    `json:"id"`
+	Name string    `json:"name"`
+	Type ValueType `json:"type"`
 }
 
 const WorkflowNodeIONameCertificate string = "certificate"
