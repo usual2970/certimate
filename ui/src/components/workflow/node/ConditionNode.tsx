@@ -4,6 +4,9 @@ import { Button, Card, Popover } from "antd";
 
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
+import { hasCloneNode } from "@/domain/workflow";
 
 export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;
@@ -12,6 +15,8 @@ export type ConditionNodeProps = SharedNodeProps & {
 
 const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeProps) => {
   // TODO: 条件分支
+  const { workflow } = useWorkflowStore(useZustandShallowSelector(["workflow"]));
+  const cloning = hasCloneNode(workflow.draft!);
 
   return (
     <>
@@ -29,6 +34,7 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
           />
         }
         placement="rightTop"
+        trigger={cloning ? [] : ["hover"]}
       >
         <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable>
           <div className="flex h-[48px] flex-col items-center justify-center truncate px-4 py-2">

@@ -9,6 +9,7 @@ import {
   EllipsisOutlined as EllipsisOutlinedIcon,
   HistoryOutlined as HistoryOutlinedIcon,
   UndoOutlined as UndoOutlinedIcon,
+  CloseOutlined as CloseOutlinedIcon,
 } from "@ant-design/icons";
 import { PageHeader } from "@ant-design/pro-components";
 import { Alert, Button, Card, Dropdown, Form, Input, Modal, Space, Tabs, Typography, message, notification } from "antd";
@@ -21,7 +22,7 @@ import ModalForm from "@/components/ModalForm";
 import Show from "@/components/Show";
 import WorkflowElementsContainer from "@/components/workflow/WorkflowElementsContainer";
 import WorkflowRuns from "@/components/workflow/WorkflowRuns";
-import { isAllNodesValidated } from "@/domain/workflow";
+import { hasCloneNode, isAllNodesValidated } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { useAntdForm, useZustandShallowSelector } from "@/hooks";
 import { remove as removeWorkflow, subscribe as subscribeWorkflow, unsubscribe as unsubscribeWorkflow } from "@/repository/workflow";
@@ -38,9 +39,12 @@ const WorkflowDetail = () => {
   const [notificationApi, NotificationContextHolder] = notification.useNotification();
 
   const { id: workflowId } = useParams();
-  const { workflow, initialized, ...workflowState } = useWorkflowStore(
-    useZustandShallowSelector(["workflow", "initialized", "init", "destroy", "setEnabled", "release", "discard"])
+  const { workflow, initialized, cancelClone, ...workflowState } = useWorkflowStore(
+    useZustandShallowSelector(["workflow", "initialized", "cancelClone", "init", "destroy", "setEnabled", "release", "discard"])
   );
+
+  const cloning = hasCloneNode(workflow.draft!);
+
   useEffect(() => {
     workflowState.init(workflowId!);
 
@@ -81,7 +85,7 @@ const WorkflowDetail = () => {
     const hasReleased = !!workflow.content;
     const hasChanges = workflow.hasDraft! || !isEqual(workflow.draft, workflow.content);
     setAllowDiscard(!isPendingOrRunning && hasReleased && hasChanges);
-    setAllowRelease(!isPendingOrRunning && hasChanges);
+    setAllowRelease(!isPendingOrRunning && hasChanges && !cloning);
     setAllowRun(hasReleased);
   }, [workflow.content, workflow.draft, workflow.hasDraft, isPendingOrRunning]);
 
@@ -307,6 +311,29 @@ const WorkflowDetail = () => {
                 </Space>
               </div>
             </div>
+
+            <Show when={cloning}>
+              <div className="absolute top-4 left-0 right-0 z-[10] flex justify-center">
+                <Alert
+                  className="shadow-lg animate-fadeIn"
+                  showIcon
+                  message={t("workflow_node.clone.alert")}
+                  type="info"
+                  action={
+                    <Button
+                      size="small"
+                      type="default"
+                      icon={<CloseOutlinedIcon />}
+                      onClick={() => {
+                        cancelClone();
+                      }}
+                    >
+                      {t("common.button.cancel")}
+                    </Button>
+                  }
+                />
+              </div>
+            </Show>
 
             <WorkflowElementsContainer className="pt-16" />
           </Card>

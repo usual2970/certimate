@@ -39,7 +39,15 @@ export enum WorkflowNodeType {
   ExecuteSuccess = "execute_success",
   ExecuteFailure = "execute_failure",
   Custom = "custom",
+  Clone = "clone",
 }
+
+const workflowNodeTypesCanBeCloned: Set<WorkflowNodeType> = new Set([
+  WorkflowNodeType.Apply,
+  WorkflowNodeType.Upload,
+  WorkflowNodeType.Deploy,
+  WorkflowNodeType.Notify,
+]);
 
 const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
@@ -272,6 +280,10 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
         node.validated = true;
       }
       break;
+
+    case WorkflowNodeType.Clone: {
+      node.validated = true;
+    }
   }
 
   return node;
@@ -500,4 +512,82 @@ export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   }
 
   return true;
+};
+
+export const hasCloneNode = (node: WorkflowNode): boolean => {
+  let current = node as typeof node | undefined;
+  while (current) {
+    if (current.type === WorkflowNodeType.Clone) {
+      return true;
+    }
+
+    if (isBranchLike(current)) {
+      for (const branch of current.branches!) {
+        if (hasCloneNode(branch)) {
+          return true;
+        }
+      }
+    }
+
+    current = current.next;
+  }
+
+  return false;
+};
+
+export const removeCloneNode = (node: WorkflowNode): WorkflowNode => {
+  return produce(node, (draft) => {
+    let current = draft as typeof draft | undefined;
+
+    while (current) {
+      if (current.next?.type === WorkflowNodeType.Clone) {
+        current.next = current.next.next;
+        break;
+      }
+
+      if (isBranchLike(current) && current.branches) {
+        current.branches = current.branches.map((branch) => removeCloneNode(branch));
+      }
+
+      current = current.next;
+    }
+
+    return draft;
+  });
+};
+
+export const cloneNode = (node: WorkflowNode, srcNode: WorkflowNode): WorkflowNode => {
+  // 1.先深度克隆一下 srcNode
+  // 2.打到 clone 节点
+  // 3.替换为深度克隆过的 srcNode
+
+  return produce(node, (draft) => {
+    let current = draft as typeof draft | undefined;
+
+    while (current) {
+      if (current.next?.type === WorkflowNodeType.Clone) {
+        const clonedSrcNode = produce(srcNode, (draft) => {
+          draft.id = nanoid();
+          draft.name = `${srcNode.name} copy`;
+          return draft;
+        });
+        clonedSrcNode.next = current.next?.next;
+        current.next = clonedSrcNode;
+        break;
+      }
+
+      if (isBranchLike(current)) {
+        current.branches ??= [];
+        current.branches = current.branches.map((branch) => cloneNode(branch, srcNode));
+      }
+
+      current = current.next as WorkflowNode;
+    }
+
+    return draft;
+  });
+};
+
+export const ifCanBeCloned = (node: WorkflowNode): boolean => {
+  return workflowNodeTypesCanBeCloned.has(node.type);
 };

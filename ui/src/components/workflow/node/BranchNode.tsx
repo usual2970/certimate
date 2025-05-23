@@ -2,7 +2,7 @@ import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, theme } from "antd";
 
-import { type WorkflowNode } from "@/domain/workflow";
+import { hasCloneNode, type WorkflowNode } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -15,7 +15,8 @@ export type BrandNodeProps = SharedNodeProps;
 const BranchNode = ({ node, disabled }: BrandNodeProps) => {
   const { t } = useTranslation();
 
-  const { addBranch } = useWorkflowStore(useZustandShallowSelector(["addBranch"]));
+  const { addBranch, workflow } = useWorkflowStore(useZustandShallowSelector(["addBranch", "workflow"]));
+  const cloning = hasCloneNode(workflow.draft!);
 
   const { token: themeToken } = theme.useToken();
 
@@ -46,6 +47,9 @@ const BranchNode = ({ node, disabled }: BrandNodeProps) => {
           shape="round"
           variant="outlined"
           onClick={() => {
+            if (cloning) {
+              return;
+            }
             addBranch(node.id);
           }}
         >
