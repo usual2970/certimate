@@ -26,8 +26,8 @@ func (r *baseResponse) GetMessage() string {
 
 type ProvisionSiteTLSCertificateParams struct {
 	Certificate    string `json:"certificate"`
-	CACertificates string `json:"key"`
-	Key            string `json:"ca_certificates"`
+	CACertificates string `json:"ca_certificates"`
+	Key            string `json:"key"`
 }
 
 type ProvisionSiteTLSCertificateResponse struct {
