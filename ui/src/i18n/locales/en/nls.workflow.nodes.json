@@ -1,9 +1,11 @@
 {
   "workflow_node.action.configure_node": "Configure node",
   "workflow_node.action.add_node": "Add node",
+  "workflow_node.action.duplicate_node": "Duplicate node",
   "workflow_node.action.rename_node": "Rename node",
   "workflow_node.action.remove_node": "Delete node",
   "workflow_node.action.add_branch": "Add branch",
+  "workflow_node.action.duplicate_branch": "Duplicate branch",
   "workflow_node.action.rename_branch": "Rename branch",
   "workflow_node.action.remove_branch": "Delete branch",
 

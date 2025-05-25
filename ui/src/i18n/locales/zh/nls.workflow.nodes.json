@@ -1,9 +1,11 @@
 {
   "workflow_node.action.configure_node": "配置节点",
   "workflow_node.branch.add_node": "添加节点",
+  "workflow_node.action.duplicate_node": "复制节点",
   "workflow_node.action.rename_node": "重命名",
   "workflow_node.action.remove_node": "删除节点",
   "workflow_node.action.add_branch": "添加并行分支",
+  "workflow_node.action.duplicate_branch": "复制分支",
   "workflow_node.action.rename_branch": "重命名",
   "workflow_node.action.remove_branch": "删除分支",
 
