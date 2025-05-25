@@ -14,8 +14,8 @@ import (
 )
 
 type UploaderConfig struct {
-	// 1Panel 地址。
-	ApiUrl string `json:"apiUrl"`
+	// 1Panel 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// 1Panel 版本。
 	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
@@ -35,7 +35,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey)
+	client, err := createSdkClient(config.ServerUrl, config.ApiVersion, config.ApiKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}

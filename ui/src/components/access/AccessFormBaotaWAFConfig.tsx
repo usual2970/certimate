@@ -17,7 +17,7 @@ export type AccessFormBaotaWAFConfigProps = {
 
 const initFormModel = (): AccessFormBaotaWAFConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:8379/",
+    serverUrl: "http://<your-host-addr>:8379/",
     apiKey: "",
   };
 };
@@ -26,7 +26,7 @@ const AccessFormBaotaWAFConfig = ({ form: formInst, formName, disabled, initialV
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     apiKey: z.string().nonempty(t("access.form.baotawaf_api_key.placeholder")).trim(),
     allowInsecureConnections: z.boolean().nullish(),
   });
@@ -45,8 +45,8 @@ const AccessFormBaotaWAFConfig = ({ form: formInst, formName, disabled, initialV
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.baotawaf_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.baotawaf_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.baotawaf_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.baotawaf_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -58,10 +58,10 @@ const AccessFormBaotaWAFConfig = ({ form: formInst, formName, disabled, initialV
         <Input.Password autoComplete="new-password" placeholder={t("access.form.baotawaf_api_key.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.baotawaf_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.baotawaf_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.baotawaf_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

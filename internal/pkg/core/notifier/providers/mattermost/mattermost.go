@@ -12,13 +12,13 @@ import (
 )
 
 type NotifierConfig struct {
-	// 服务地址。
+	// Mattermost 服务地址。
 	ServerUrl string `json:"serverUrl"`
-	// 用户名。
+	// Mattermost 用户名。
 	Username string `json:"username"`
-	// 密码。
+	// Mattermost 密码。
 	Password string `json:"password"`
-	// 频道 ID。
+	// Mattermost 频道 ID。
 	ChannelId string `json:"channelId"`
 }
 

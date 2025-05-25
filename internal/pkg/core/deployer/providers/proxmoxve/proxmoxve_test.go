@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath  string
 	fInputKeyPath   string
-	fApiUrl         string
+	fServerUrl      string
 	fApiToken       string
 	fApiTokenSecret string
 	fNodeName       string
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
 	flag.StringVar(&fApiTokenSecret, argsPrefix+"APITOKENSECRET", "", "")
 	flag.StringVar(&fNodeName, argsPrefix+"NODENAME", "", "")
@@ -37,7 +37,7 @@ Shell command to run this test:
 	go test -v ./proxmoxve_test.go -args \
 	--CERTIMATE_DEPLOYER_PROXMOXVE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_PROXMOXVE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_PROXMOXVE_APIURL="http://127.0.0.1:8006" \
+	--CERTIMATE_DEPLOYER_PROXMOXVE_SERVERURL="http://127.0.0.1:8006" \
 	--CERTIMATE_DEPLOYER_PROXMOXVE_APITOKEN="your-api-token" \
 	--CERTIMATE_DEPLOYER_PROXMOXVE_APITOKENSECRET="your-api-token-secret" \
 	--CERTIMATE_DEPLOYER_PROXMOXVE_NODENAME="your-cluster-node-name"
@@ -50,14 +50,14 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APITOKEN: %v", fApiToken),
 			fmt.Sprintf("APITOKENSECRET: %v", fApiTokenSecret),
 			fmt.Sprintf("NODENAME: %v", fNodeName),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiToken:                 fApiToken,
 			ApiTokenSecret:           fApiTokenSecret,
 			AllowInsecureConnections: true,

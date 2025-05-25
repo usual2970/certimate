@@ -15,8 +15,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// LeCDN URL。
-	ApiUrl string `json:"apiUrl"`
+	// LeCDN 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// LeCDN 版本。
 	// 可取值 "v3"。
 	ApiVersion string `json:"apiVersion"`
@@ -59,7 +59,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiRole, config.Username, config.Password, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiVersion, config.ApiRole, config.Username, config.Password, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}

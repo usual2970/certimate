@@ -13,8 +13,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// 耗子面板地址。
-	ApiUrl string `json:"apiUrl"`
+	// 耗子面板服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// 耗子面板访问令牌 ID。
 	AccessTokenId int32 `json:"accessTokenId"`
 	// 耗子面板访问令牌。
@@ -36,7 +36,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.AccessTokenId, config.AccessToken, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.AccessTokenId, config.AccessToken, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}

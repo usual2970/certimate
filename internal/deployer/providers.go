@@ -119,7 +119,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderType1PanelConsole:
 				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
@@ -129,7 +129,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderType1PanelSite:
 				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
@@ -454,7 +454,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaotaPanelConsole:
 				deployer, err := pBaotaPanelConsole.NewDeployer(&pBaotaPanelConsole.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 					AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
@@ -463,7 +463,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderTypeBaotaPanelSite:
 				deployer, err := pBaotaPanelSite.NewDeployer(&pBaotaPanelSite.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 					SiteType:                 maputil.GetOrDefaultString(options.ProviderServiceConfig, "siteType", "other"),
@@ -487,7 +487,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaotaWAFConsole:
 				deployer, err := pBaotaWAFConsole.NewDeployer(&pBaotaWAFConsole.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 				})
@@ -495,7 +495,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderTypeBaotaWAFSite:
 				deployer, err := pBaotaWAFSite.NewDeployer(&pBaotaWAFSite.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
 					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
@@ -565,7 +565,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pCdnfly.NewDeployer(&pCdnfly.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiKey:                   access.ApiKey,
 				ApiSecret:                access.ApiSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
@@ -614,7 +614,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pFlexCDN.NewDeployer(&pFlexCDN.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
@@ -654,7 +654,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
@@ -773,7 +773,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pLeCDN.NewDeployer(&pLeCDN.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiVersion:               access.ApiVersion,
 				ApiRole:                  access.ApiRole,
 				Username:                 access.Username,
@@ -845,7 +845,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pProxmoxVE.NewDeployer(&pProxmoxVE.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiToken:                 access.ApiToken,
 				ApiTokenSecret:           access.ApiTokenSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
@@ -916,7 +916,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderTypeRatPanelConsole:
 				deployer, err := pRatPanelConsole.NewDeployer(&pRatPanelConsole.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					AccessTokenId:            access.AccessTokenId,
 					AccessToken:              access.AccessToken,
 					AllowInsecureConnections: access.AllowInsecureConnections,
@@ -925,7 +925,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderTypeRatPanelSite:
 				deployer, err := pRatPanelSite.NewDeployer(&pRatPanelSite.DeployerConfig{
-					ApiUrl:                   access.ApiUrl,
+					ServerUrl:                access.ServerUrl,
 					AccessTokenId:            access.AccessTokenId,
 					AccessToken:              access.AccessToken,
 					AllowInsecureConnections: access.AllowInsecureConnections,
@@ -946,7 +946,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 
 			deployer, err := pSafeLine.NewDeployer(&pSafeLine.DeployerConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiToken:                 access.ApiToken,
 				AllowInsecureConnections: access.AllowInsecureConnections,
 				ResourceType:             pSafeLine.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),

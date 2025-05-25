@@ -16,8 +16,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// Proxmox VE 地址。
-	ApiUrl string `json:"apiUrl"`
+	// Proxmox VE 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// Proxmox VE API Token。
 	ApiToken string `json:"apiToken"`
 	// Proxmox VE API Token Secret。
@@ -43,7 +43,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiToken, config.ApiTokenSecret, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiToken, config.ApiTokenSecret, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}

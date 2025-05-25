@@ -15,8 +15,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// Cdnfly 地址。
-	ApiUrl string `json:"apiUrl"`
+	// Cdnfly 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// Cdnfly 用户端 API Key。
 	ApiKey string `json:"apiKey"`
 	// Cdnfly 用户端 API Secret。
@@ -46,7 +46,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiKey, config.ApiSecret, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiKey, config.ApiSecret, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
