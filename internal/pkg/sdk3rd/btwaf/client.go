@@ -17,9 +17,9 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiKey string) *Client {
+func NewClient(serverUrl, apiKey string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/") + "/api").
+		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/api").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			timestamp := fmt.Sprintf("%d", time.Now().Unix())
 			keyMd5 := md5.Sum([]byte(apiKey))

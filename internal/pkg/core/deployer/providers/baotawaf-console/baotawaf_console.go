@@ -70,16 +70,16 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiKey string, skipTlsVerify bool) (*btsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid baota api url")
+func createSdkClient(serverUrl, apiKey string, skipTlsVerify bool) (*btsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid baota server url")
 	}
 
 	if apiKey == "" {
 		return nil, errors.New("invalid baota api key")
 	}
 
-	client := btsdk.NewClient(apiUrl, apiKey)
+	client := btsdk.NewClient(serverUrl, apiKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

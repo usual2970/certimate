@@ -98,16 +98,16 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiToken string, skipTlsVerify bool) (*safelinesdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid safeline api url")
+func createSdkClient(serverUrl, apiToken string, skipTlsVerify bool) (*safelinesdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid safeline server url")
 	}
 
 	if apiToken == "" {
 		return nil, errors.New("invalid safeline api token")
 	}
 
-	client := safelinesdk.NewClient(apiUrl, apiToken)
+	client := safelinesdk.NewClient(serverUrl, apiToken)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

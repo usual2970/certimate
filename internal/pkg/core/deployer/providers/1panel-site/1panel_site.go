@@ -177,9 +177,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid 1panel api url")
+func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid 1panel server url")
 	}
 
 	if apiVersion == "" {
@@ -190,7 +190,7 @@ func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*on
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
+	client := onepanelsdk.NewClient(serverUrl, apiVersion, apiKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

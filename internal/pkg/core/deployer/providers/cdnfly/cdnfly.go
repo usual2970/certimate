@@ -160,9 +160,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cfsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid cachefly api url")
+func createSdkClient(serverUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cfsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid cachefly server url")
 	}
 
 	if apiKey == "" {
@@ -173,7 +173,7 @@ func createSdkClient(apiUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cfs
 		return nil, errors.New("invalid cachefly api secret")
 	}
 
-	client := cfsdk.NewClient(apiUrl, apiKey, apiSecret)
+	client := cfsdk.NewClient(serverUrl, apiKey, apiSecret)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

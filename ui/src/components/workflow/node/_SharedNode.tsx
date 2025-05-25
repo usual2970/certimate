@@ -4,7 +4,6 @@ import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
   EllipsisOutlined as EllipsisOutlinedIcon,
   FormOutlined as FormOutlinedIcon,
-  MergeOutlined as MergeOutlinedIcon,
   MoreOutlined as MoreOutlinedIcon,
 } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
@@ -149,12 +148,6 @@ const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex,
           setTimeout(() => nameInputRef.current?.focus(), 1);
         },
       },
-      // {
-      //   key: "duplicate",
-      //   disabled: disabled || isNodeReadOnly(node),
-      //   label: isNodeBranchLike(node) ? t("workflow_node.action.duplicate_branch") : t("workflow_node.action.duplicate_node"),
-      //   icon: <MergeOutlinedIcon />,
-      // },
       {
         type: "divider",
       },

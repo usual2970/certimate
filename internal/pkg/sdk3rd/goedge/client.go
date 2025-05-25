@@ -24,14 +24,14 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiRole, accessKeyId, accessKey string) *Client {
+func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) *Client {
 	client := &Client{
 		apiRole:     apiRole,
 		accessKeyId: accessKeyId,
 		accessKey:   accessKey,
 	}
 	client.client = resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetBaseURL(strings.TrimRight(serverUrl, "/")).
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.accessToken != "" {
 				req.Header.Set("X-Edge-Access-Token", client.accessToken)

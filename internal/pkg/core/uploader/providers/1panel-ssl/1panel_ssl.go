@@ -132,9 +132,9 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 	return nil, nil
 }
 
-func createSdkClient(apiUrl, apiVersion, apiKey string) (*onepanelsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid 1panel api url")
+func createSdkClient(serverUrl, apiVersion, apiKey string) (*onepanelsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid 1panel server url")
 	}
 
 	if apiVersion == "" {
@@ -145,6 +145,6 @@ func createSdkClient(apiUrl, apiVersion, apiKey string) (*onepanelsdk.Client, er
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
+	client := onepanelsdk.NewClient(serverUrl, apiVersion, apiKey)
 	return client, nil
 }

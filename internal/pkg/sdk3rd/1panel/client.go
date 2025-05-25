@@ -19,13 +19,13 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiVersion, apiKey string) *Client {
+func NewClient(serverUrl, apiVersion, apiKey string) *Client {
 	if apiVersion == "" {
 		apiVersion = "v1"
 	}
 
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/") + "/api/" + apiVersion).
+		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/api/" + apiVersion).
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			timestamp := fmt.Sprintf("%d", time.Now().Unix())
 			tokenMd5 := md5.Sum([]byte("1panel" + apiKey + timestamp))

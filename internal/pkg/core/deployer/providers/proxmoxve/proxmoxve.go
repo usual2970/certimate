@@ -91,9 +91,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiToken, apiTokenSecret string, skipTlsVerify bool) (*proxmox.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid pve api url")
+func createSdkClient(serverUrl, apiToken, apiTokenSecret string, skipTlsVerify bool) (*proxmox.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid pve server url")
 	}
 
 	if apiToken == "" {
@@ -112,7 +112,7 @@ func createSdkClient(apiUrl, apiToken, apiTokenSecret string, skipTlsVerify bool
 		}
 	}
 	client := proxmox.NewClient(
-		strings.TrimRight(apiUrl, "/")+"/api2/json",
+		strings.TrimRight(serverUrl, "/")+"/api2/json",
 		proxmox.WithHTTPClient(httpClient),
 		proxmox.WithAPIToken(apiToken, apiTokenSecret),
 	)

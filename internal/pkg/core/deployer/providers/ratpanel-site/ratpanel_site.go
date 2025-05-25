@@ -79,9 +79,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid ratpanel api url")
+func createSdkClient(serverUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid ratpanel server url")
 	}
 
 	if accessTokenId == 0 {
@@ -92,7 +92,7 @@ func createSdkClient(apiUrl string, accessTokenId int32, accessToken string, ski
 		return nil, errors.New("invalid ratpanel access token")
 	}
 
-	client := rpsdk.NewClient(apiUrl, accessTokenId, accessToken)
+	client := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
