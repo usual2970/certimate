@@ -100,6 +100,7 @@ const AccessEditModal = ({ data, loading, trigger, scene, usage, afterSubmit, ..
         }}
         afterClose={() => setOpen(false)}
         cancelButtonProps={{ disabled: formPending }}
+        cancelText={t("common.button.cancel")}
         closable
         confirmLoading={formPending}
         destroyOnHidden
