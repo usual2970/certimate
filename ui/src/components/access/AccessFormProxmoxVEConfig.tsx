@@ -17,7 +17,7 @@ export type AccessFormProxmoxVEConfigProps = {
 
 const initFormModel = (): AccessFormProxmoxVEConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:8006/",
+    serverUrl: "http://<your-host-addr>:8006/",
     apiToken: "",
   };
 };
@@ -26,7 +26,7 @@ const AccessFormProxmoxVEConfig = ({ form: formInst, formName, disabled, initial
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     apiToken: z.string().nonempty(t("access.form.proxmoxve_api_token.placeholder")).trim(),
     apiTokenSecret: z.string().nullish(),
     allowInsecureConnections: z.boolean().nullish(),
@@ -46,8 +46,8 @@ const AccessFormProxmoxVEConfig = ({ form: formInst, formName, disabled, initial
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.proxmoxve_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.proxmoxve_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.proxmoxve_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.proxmoxve_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -68,10 +68,10 @@ const AccessFormProxmoxVEConfig = ({ form: formInst, formName, disabled, initial
         <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.proxmoxve_api_token_secret.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.proxmoxve_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.proxmoxve_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.proxmoxve_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

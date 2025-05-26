@@ -14,9 +14,9 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiToken string) *Client {
+func NewClient(serverUrl, apiToken string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetBaseURL(strings.TrimRight(serverUrl, "/")).
 		SetHeader("X-SLCE-API-TOKEN", apiToken)
 
 	return &Client{

@@ -17,7 +17,7 @@ export type AccessFormFlexCDNConfigProps = {
 
 const initFormModel = (): AccessFormFlexCDNConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:8000/",
+    serverUrl: "http://<your-host-addr>:8000/",
     apiRole: "user",
     accessKeyId: "",
     accessKey: "",
@@ -28,7 +28,7 @@ const AccessFormFlexCDNConfig = ({ form: formInst, formName, disabled, initialVa
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     role: z.union([z.literal("user"), z.literal("admin")], {
       message: t("access.form.flexcdn_api_role.placeholder"),
     }),
@@ -51,8 +51,8 @@ const AccessFormFlexCDNConfig = ({ form: formInst, formName, disabled, initialVa
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.flexcdn_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.flexcdn_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.flexcdn_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.flexcdn_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item name="apiRole" label={t("access.form.flexcdn_api_role.label")} rules={[formRule]}>
@@ -77,10 +77,10 @@ const AccessFormFlexCDNConfig = ({ form: formInst, formName, disabled, initialVa
         <Input.Password autoComplete="new-password" placeholder={t("access.form.flexcdn_access_key.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.flexcdn_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.flexcdn_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.flexcdn_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

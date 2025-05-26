@@ -15,7 +15,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fApiVersion    string
 	fApiKey        string
 )
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiVersion, argsPrefix+"APIVERSION", "v1", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
 }
@@ -36,7 +36,7 @@ Shell command to run this test:
 	go test -v ./1panel_ssl_test.go -args \
 	--CERTIMATE_UPLOADER_1PANELSSL_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_UPLOADER_1PANELSSL_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_UPLOADER_1PANELSSL_APIURL="http://127.0.0.1:20410" \
+	--CERTIMATE_UPLOADER_1PANELSSL_SERVERURL="http://127.0.0.1:20410" \
 	--CERTIMATE_UPLOADER_1PANELSSL_APIVERSION="v1" \
 	--CERTIMATE_UPLOADER_1PANELSSL_APIKEY="your-api-key"
 */
@@ -48,13 +48,13 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APIVERSION: %v", fApiVersion),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 		}, "\n"))
 
 		uploader, err := provider.NewUploader(&provider.UploaderConfig{
-			ApiUrl:     fApiUrl,
+			ServerUrl:  fServerUrl,
 			ApiVersion: fApiVersion,
 			ApiKey:     fApiKey,
 		})

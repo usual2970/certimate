@@ -17,7 +17,7 @@ export type AccessFormLeCDNConfigProps = {
 
 const initFormModel = (): AccessFormLeCDNConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:5090/",
+    serverUrl: "http://<your-host-addr>:5090/",
     apiVersion: "v3",
     apiRole: "user",
     username: "",
@@ -29,7 +29,7 @@ const AccessFormLeCDNConfig = ({ form: formInst, formName, disabled, initialValu
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     role: z.union([z.literal("client"), z.literal("master")], {
       message: t("access.form.lecdn_api_role.placeholder"),
     }),
@@ -52,8 +52,8 @@ const AccessFormLeCDNConfig = ({ form: formInst, formName, disabled, initialValu
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.lecdn_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.lecdn_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.lecdn_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.lecdn_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item name="apiVersion" label={t("access.form.lecdn_api_version.label")} rules={[formRule]}>
@@ -72,10 +72,10 @@ const AccessFormLeCDNConfig = ({ form: formInst, formName, disabled, initialValu
         <Input.Password autoComplete="new-password" placeholder={t("access.form.lecdn_password.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.lecdn_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.lecdn_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.lecdn_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

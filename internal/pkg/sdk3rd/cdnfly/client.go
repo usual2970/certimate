@@ -15,9 +15,9 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, apiKey, apiSecret string) *Client {
+func NewClient(serverUrl, apiKey, apiSecret string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/")).
+		SetBaseURL(strings.TrimRight(serverUrl, "/")).
 		SetHeader("api-key", apiKey).
 		SetHeader("api-secret", apiSecret)
 

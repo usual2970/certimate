@@ -16,8 +16,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// Proxmox VE 地址。
-	ApiUrl string `json:"apiUrl"`
+	// Proxmox VE 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// Proxmox VE API Token。
 	ApiToken string `json:"apiToken"`
 	// Proxmox VE API Token Secret。
@@ -43,7 +43,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiToken, config.ApiTokenSecret, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiToken, config.ApiTokenSecret, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -91,9 +91,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl, apiToken, apiTokenSecret string, skipTlsVerify bool) (*proxmox.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid pve api url")
+func createSdkClient(serverUrl, apiToken, apiTokenSecret string, skipTlsVerify bool) (*proxmox.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid pve server url")
 	}
 
 	if apiToken == "" {
@@ -112,7 +112,7 @@ func createSdkClient(apiUrl, apiToken, apiTokenSecret string, skipTlsVerify bool
 		}
 	}
 	client := proxmox.NewClient(
-		strings.TrimRight(apiUrl, "/")+"/api2/json",
+		strings.TrimRight(serverUrl, "/")+"/api2/json",
 		proxmox.WithHTTPClient(httpClient),
 		proxmox.WithAPIToken(apiToken, apiTokenSecret),
 	)

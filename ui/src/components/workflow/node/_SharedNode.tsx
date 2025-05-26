@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
   CloseCircleOutlined as CloseCircleOutlinedIcon,
@@ -7,7 +7,7 @@ import {
   MoreOutlined as MoreOutlinedIcon,
 } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
-import { Button, Card, Drawer, Dropdown, Input, type InputRef, Modal, Popover, Space } from "antd";
+import { Button, Card, Drawer, Dropdown, Input, type InputRef, type MenuProps, Modal, Popover, Space } from "antd";
 import { produce } from "immer";
 import { isEqual } from "radash";
 
@@ -59,12 +59,13 @@ const SharedNodeTitle = ({ className, style, node, disabled }: SharedNodeTitlePr
 type SharedNodeMenuProps = SharedNodeProps & {
   branchId?: string;
   branchIndex?: number;
+  menus?: Array<"rename" | "duplicate" | "remove">;
   trigger: React.ReactNode;
   afterUpdate?: () => void;
   afterDelete?: () => void;
 };
 
-const isBranchingNode = (node: WorkflowNode) => {
+const isNodeBranchLike = (node: WorkflowNode) => {
   return (
     node.type === WorkflowNodeType.Branch ||
     node.type === WorkflowNodeType.Condition ||
@@ -74,7 +75,11 @@ const isBranchingNode = (node: WorkflowNode) => {
   );
 };
 
-const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterUpdate, afterDelete }: SharedNodeMenuProps) => {
+const isNodeReadOnly = (node: WorkflowNode) => {
+  return node.type === WorkflowNodeType.Start || node.type === WorkflowNodeType.End;
+};
+
+const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex, afterUpdate, afterDelete }: SharedNodeMenuProps) => {
   const { t } = useTranslation();
 
   const { updateNode, removeNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode", "removeBranch"]));
@@ -101,7 +106,7 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
   };
 
   const handleDeleteClick = async () => {
-    if (isBranchingNode(node)) {
+    if (isNodeBranchLike(node)) {
       await removeBranch(branchId!, branchIndex!);
     } else {
       await removeNode(node.id);
@@ -110,56 +115,76 @@ const SharedNodeMenu = ({ trigger, node, disabled, branchId, branchIndex, afterU
     afterDelete?.();
   };
 
+  const menuItems = useMemo(() => {
+    let temp = [
+      {
+        key: "rename",
+        disabled: disabled,
+        label: isNodeBranchLike(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
+        icon: <FormOutlinedIcon />,
+        onClick: () => {
+          nameRef.current = node.name;
+
+          const dialog = modalApi.confirm({
+            title: isNodeBranchLike(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
+            content: (
+              <div className="pb-2 pt-4">
+                <Input
+                  ref={nameInputRef}
+                  autoFocus
+                  defaultValue={node.name}
+                  onChange={(e) => (nameRef.current = e.target.value)}
+                  onPressEnter={async () => {
+                    await handleRenameConfirm();
+                    dialog.destroy();
+                  }}
+                />
+              </div>
+            ),
+            icon: null,
+            okText: t("common.button.save"),
+            onOk: handleRenameConfirm,
+          });
+          setTimeout(() => nameInputRef.current?.focus(), 1);
+        },
+      },
+      {
+        type: "divider",
+      },
+      {
+        key: "remove",
+        disabled: disabled || isNodeReadOnly(node),
+        label: isNodeBranchLike(node) ? t("workflow_node.action.remove_branch") : t("workflow_node.action.remove_node"),
+        icon: <CloseCircleOutlinedIcon />,
+        danger: true,
+        onClick: handleDeleteClick,
+      },
+    ] satisfies MenuProps["items"];
+
+    if (menus) {
+      temp = temp.filter((item) => item.type === "divider" || menus.includes(item.key as "rename" | "remove"));
+      temp = temp.filter((item, index, array) => {
+        if (item.type !== "divider") return true;
+        return index === 0 || array[index - 1].type !== "divider";
+      });
+      if (temp[0]?.type === "divider") {
+        temp.shift();
+      }
+      if (temp[temp.length - 1]?.type === "divider") {
+        temp.pop();
+      }
+    }
+
+    return temp;
+  }, [disabled, node]);
+
   return (
     <>
       {ModelContextHolder}
 
       <Dropdown
         menu={{
-          items: [
-            {
-              key: "rename",
-              disabled: disabled,
-              label: isBranchingNode(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
-              icon: <FormOutlinedIcon />,
-              onClick: () => {
-                nameRef.current = node.name;
-
-                const dialog = modalApi.confirm({
-                  title: isBranchingNode(node) ? t("workflow_node.action.rename_branch") : t("workflow_node.action.rename_node"),
-                  content: (
-                    <div className="pb-2 pt-4">
-                      <Input
-                        ref={nameInputRef}
-                        autoFocus
-                        defaultValue={node.name}
-                        onChange={(e) => (nameRef.current = e.target.value)}
-                        onPressEnter={async () => {
-                          await handleRenameConfirm();
-                          dialog.destroy();
-                        }}
-                      />
-                    </div>
-                  ),
-                  icon: null,
-                  okText: t("common.button.save"),
-                  onOk: handleRenameConfirm,
-                });
-                setTimeout(() => nameInputRef.current?.focus(), 1);
-              },
-            },
-            {
-              type: "divider",
-            },
-            {
-              key: "remove",
-              disabled: disabled || node.type === WorkflowNodeType.Start,
-              label: isBranchingNode(node) ? t("workflow_node.action.remove_branch") : t("workflow_node.action.remove_node"),
-              icon: <CloseCircleOutlinedIcon />,
-              danger: true,
-              onClick: handleDeleteClick,
-            },
-          ],
+          items: menuItems,
         }}
         trigger={["click"]}
       >
@@ -264,7 +289,6 @@ const SharedNodeConfigDrawer = ({
 
     const { promise, resolve, reject } = Promise.withResolvers();
     if (changed) {
-      console.log(oldValues, newValues);
       modalApi.confirm({
         title: t("common.text.operation_confirm"),
         content: t("workflow_node.unsaved_changes.confirm"),
@@ -288,6 +312,7 @@ const SharedNodeConfigDrawer = ({
         destroyOnHidden
         extra={
           <SharedNodeMenu
+            menus={["rename", "remove"]}
             node={node}
             disabled={disabled}
             trigger={<Button icon={<EllipsisOutlinedIcon />} type="text" />}

@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fApiKey        string
 	fSiteName      string
 	fSitePort      int64
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
 }
 
@@ -35,7 +35,7 @@ Shell command to run this test:
 	go test -v ./baotawaf_console_test.go -args \
 	--CERTIMATE_DEPLOYER_BAOTAWAFCONSOLE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_BAOTAWAFCONSOLE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_BAOTAWAFCONSOLE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_BAOTAWAFCONSOLE_SERVERURL="http://127.0.0.1:8888" \
 	--CERTIMATE_DEPLOYER_BAOTAWAFCONSOLE_APIKEY="your-api-key"
 */
 func TestDeploy(t *testing.T) {
@@ -46,12 +46,12 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiKey:                   fApiKey,
 			AllowInsecureConnections: true,
 		})

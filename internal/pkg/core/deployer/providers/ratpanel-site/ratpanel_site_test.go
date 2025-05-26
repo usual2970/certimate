@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fAccessTokenId int64
 	fAccessToken   string
 	fSiteName      string
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.Int64Var(&fAccessTokenId, argsPrefix+"ACCESSTOKENID", 0, "")
 	flag.StringVar(&fAccessToken, argsPrefix+"ACCESSTOKEN", "", "")
 	flag.StringVar(&fSiteName, argsPrefix+"SITENAME", "", "")
@@ -37,7 +37,7 @@ Shell command to run this test:
 	go test -v ./ratpanel_site_test.go -args \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_RATPANELSITE_APIURL="http://127.0.0.1:8888" \
+	--CERTIMATE_DEPLOYER_RATPANELSITE_SERVERURL="http://127.0.0.1:8888" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_ACCESSTOKENID="your-access-token-id" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_ACCESSTOKEN="your-access-token" \
 	--CERTIMATE_DEPLOYER_RATPANELSITE_SITENAME="your-site-name"
@@ -50,14 +50,14 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("ACCESSTOKENID: %v", fAccessTokenId),
 			fmt.Sprintf("ACCESSTOKEN: %v", fAccessToken),
 			fmt.Sprintf("SITENAME: %v", fSiteName),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			AccessTokenId:            int32(fAccessTokenId),
 			AccessToken:              fAccessToken,
 			AllowInsecureConnections: true,

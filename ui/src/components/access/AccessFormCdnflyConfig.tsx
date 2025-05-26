@@ -17,7 +17,7 @@ export type AccessFormCdnflyConfigProps = {
 
 const initFormModel = (): AccessFormCdnflyConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:88/",
+    serverUrl: "http://<your-host-addr>:88/",
     apiKey: "",
     apiSecret: "",
   };
@@ -27,7 +27,7 @@ const AccessFormCdnflyConfig = ({ form: formInst, formName, disabled, initialVal
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     apiKey: z
       .string()
       .min(1, t("access.form.cdnfly_api_key.placeholder"))
@@ -55,8 +55,8 @@ const AccessFormCdnflyConfig = ({ form: formInst, formName, disabled, initialVal
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.cdnfly_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.cdnfly_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.cdnfly_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.cdnfly_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -77,10 +77,10 @@ const AccessFormCdnflyConfig = ({ form: formInst, formName, disabled, initialVal
         <Input.Password autoComplete="new-password" placeholder={t("access.form.cdnfly_api_secret.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.cdnfly_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.cdnfly_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.cdnfly_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

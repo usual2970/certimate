@@ -476,7 +476,7 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			}
 
 			applicant, err := pPowerDNS.NewChallengeProvider(&pPowerDNS.ChallengeProviderConfig{
-				ApiUrl:                   access.ApiUrl,
+				ServerUrl:                access.ServerUrl,
 				ApiKey:                   access.ApiKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
 				DnsPropagationTimeout:    options.DnsPropagationTimeout,

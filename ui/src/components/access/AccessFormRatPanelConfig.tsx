@@ -17,7 +17,7 @@ export type AccessFormRatPanelConfigProps = {
 
 const initFormModel = (): AccessFormRatPanelConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:8888/",
+    serverUrl: "http://<your-host-addr>:8888/",
     accessTokenId: 1,
     accessToken: "",
   };
@@ -27,7 +27,7 @@ const AccessFormRatPanelConfig = ({ form: formInst, formName, disabled, initialV
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     accessTokenId: z.preprocess((v) => Number(v), z.number().positive(t("access.form.ratpanel_access_token_id.placeholder"))),
     accessToken: z.string().nonempty(t("access.form.ratpanel_access_token.placeholder")).trim(),
     allowInsecureConnections: z.boolean().nullish(),
@@ -47,8 +47,8 @@ const AccessFormRatPanelConfig = ({ form: formInst, formName, disabled, initialV
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.ratpanel_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.ratpanel_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.ratpanel_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.ratpanel_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -69,10 +69,10 @@ const AccessFormRatPanelConfig = ({ form: formInst, formName, disabled, initialV
         <Input.Password autoComplete="new-password" placeholder={t("access.form.ratpanel_access_token.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.ratpanel_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.ratpanel_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.ratpanel_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

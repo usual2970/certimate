@@ -13,8 +13,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// 耗子面板地址。
-	ApiUrl string `json:"apiUrl"`
+	// 耗子面板服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// 耗子面板访问令牌 ID。
 	AccessTokenId int32 `json:"accessTokenId"`
 	// 耗子面板访问令牌。
@@ -38,7 +38,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.AccessTokenId, config.AccessToken, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.AccessTokenId, config.AccessToken, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -79,9 +79,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid ratpanel api url")
+func createSdkClient(serverUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid ratpanel server url")
 	}
 
 	if accessTokenId == 0 {
@@ -92,7 +92,7 @@ func createSdkClient(apiUrl string, accessTokenId int32, accessToken string, ski
 		return nil, errors.New("invalid ratpanel access token")
 	}
 
-	client := rpsdk.NewClient(apiUrl, accessTokenId, accessToken)
+	client := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

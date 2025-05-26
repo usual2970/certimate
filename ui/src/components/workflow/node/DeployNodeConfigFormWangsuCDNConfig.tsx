@@ -1,13 +1,9 @@
-import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { FormOutlined as FormOutlinedIcon } from "@ant-design/icons";
-import { Button, Form, type FormInstance, Input, Space } from "antd";
+import { Form, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import ModalForm from "@/components/ModalForm";
-import MultipleInput from "@/components/MultipleInput";
-import { useAntdForm } from "@/hooks";
+import MultipleSplitValueInput from "@/components/MultipleSplitValueInput";
 import { validDomainName } from "@/utils/validators";
 
 type DeployNodeConfigFormWangsuCDNConfigFieldValues = Nullish<{
@@ -52,8 +48,6 @@ const DeployNodeConfigFormWangsuCDNConfig = ({
   });
   const formRule = createSchemaFieldRule(formSchema);
 
-  const fieldDomains = Form.useWatch<string>("domains", formInst);
-
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values);
   };
@@ -68,79 +62,20 @@ const DeployNodeConfigFormWangsuCDNConfig = ({
       onValuesChange={handleFormChange}
     >
       <Form.Item
+        name="domains"
         label={t("workflow_node.deploy.form.wangsu_cdn_domains.label")}
+        rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.wangsu_cdn_domains.tooltip") }}></span>}
       >
-        <Space.Compact style={{ width: "100%" }}>
-          <Form.Item name="domains" noStyle rules={[formRule]}>
-            <Input
-              allowClear
-              disabled={disabled}
-              value={fieldDomains}
-              placeholder={t("workflow_node.deploy.form.wangsu_cdn_domains.placeholder")}
-              onChange={(e) => {
-                formInst.setFieldValue("domains", e.target.value);
-              }}
-              onClear={() => {
-                formInst.setFieldValue("domains", "");
-              }}
-            />
-          </Form.Item>
-          <SiteNamesModalInput
-            value={fieldDomains}
-            trigger={
-              <Button disabled={disabled}>
-                <FormOutlinedIcon />
-              </Button>
-            }
-            onChange={(value) => {
-              formInst.setFieldValue("domains", value);
-            }}
-          />
-        </Space.Compact>
+        <MultipleSplitValueInput
+          modalTitle={t("workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.title")}
+          placeholder={t("workflow_node.deploy.form.wangsu_cdn_domains.placeholder")}
+          placeholderInModal={t("workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.placeholder")}
+          splitOptions={{ trim: true, removeEmpty: true }}
+        />
       </Form.Item>
     </Form>
   );
 };
-
-const SiteNamesModalInput = memo(({ value, trigger, onChange }: { value?: string; trigger?: React.ReactNode; onChange?: (value: string) => void }) => {
-  const { t } = useTranslation();
-
-  const formSchema = z.object({
-    domains: z.array(z.string()).refine((v) => {
-      return v.every((e) => validDomainName(e));
-    }, t("workflow_node.deploy.form.wangsu_cdn_domains.errmsg.invalid")),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm({
-    name: "workflowNodeDeployConfigFormWangsuCDNNamesModalInput",
-    initialValues: { domains: value?.split(MULTIPLE_INPUT_DELIMITER) },
-    onSubmit: (values) => {
-      onChange?.(
-        values.domains
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-  });
-
-  return (
-    <ModalForm
-      {...formProps}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnHidden: true }}
-      title={t("workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.title")}
-      trigger={trigger}
-      validateTrigger="onSubmit"
-      width={480}
-    >
-      <Form.Item name="domains" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.placeholder")} />
-      </Form.Item>
-    </ModalForm>
-  );
-});
 
 export default DeployNodeConfigFormWangsuCDNConfig;
