@@ -22,6 +22,7 @@ import (
 	pGcore "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gcore"
 	pGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
 	pGoDaddy "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/godaddy"
+	pHetzner "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/hetzner"
 	pHuaweiCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/huaweicloud"
 	pJDCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/jdcloud"
 	pNamecheap "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/namecheap"
@@ -318,6 +319,21 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			applicant, err := pGoDaddy.NewChallengeProvider(&pGoDaddy.ChallengeProviderConfig{
 				ApiKey:                access.ApiKey,
 				ApiSecret:             access.ApiSecret,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ACMEDns01ProviderTypeHetzner:
+		{
+			access := domain.AccessConfigForHetzner{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pHetzner.NewChallengeProvider(&pHetzner.ChallengeProviderConfig{
+				ApiToken:              access.ApiToken,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})

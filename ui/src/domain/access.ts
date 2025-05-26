@@ -36,6 +36,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForGoDaddy
       | AccessConfigForGoEdge
       | AccessConfigForGoogleTrustServices
+      | AccessConfigForHetzner
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
@@ -236,6 +237,10 @@ export type AccessConfigForGoEdge = {
 export type AccessConfigForGoogleTrustServices = {
   eabKid: string;
   eabHmacKey: string;
+};
+
+export type AccessConfigForHetzner = {
+  apiToken: string;
 };
 
 export type AccessConfigForHuaweiCloud = {

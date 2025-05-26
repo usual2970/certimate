@@ -35,6 +35,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   GODADDY: "godaddy",
   GOEDGE: "goedge",
   GOOGLETRUSTSERVICES: "googletrustservices",
+  HETZNER: "hetzner",
   HUAWEICLOUD: "huaweicloud",
   JDCLOUD: "jdcloud",
   KUBERNETES: "k8s",
@@ -142,6 +143,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.DYNV6, "provider.dynv6", "/imgs/providers/dynv6.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.GNAME, "provider.gname", "/imgs/providers/gname.png", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.GODADDY, "provider.godaddy", "/imgs/providers/godaddy.svg", [ACCESS_USAGES.DNS]],
+    [ACCESS_PROVIDERS.HETZNER, "provider.hetzner", "/imgs/providers/hetzner.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.NAMECHEAP, "provider.namecheap", "/imgs/providers/namecheap.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.NAMEDOTCOM, "provider.namedotcom", "/imgs/providers/namedotcom.svg", [ACCESS_USAGES.DNS]],
     [ACCESS_PROVIDERS.NAMESILO, "provider.namesilo", "/imgs/providers/namesilo.svg", [ACCESS_USAGES.DNS]],
@@ -258,6 +260,7 @@ export const ACME_DNS01_PROVIDERS = Object.freeze({
   GCORE: `${ACCESS_PROVIDERS.GCORE}`,
   GNAME: `${ACCESS_PROVIDERS.GNAME}`,
   GODADDY: `${ACCESS_PROVIDERS.GODADDY}`,
+  HETZNER: `${ACCESS_PROVIDERS.HETZNER}`,
   HUAWEICLOUD: `${ACCESS_PROVIDERS.HUAWEICLOUD}`, // 兼容旧值，等同于 `HUAWEICLOUD_DNS`
   HUAWEICLOUD_DNS: `${ACCESS_PROVIDERS.HUAWEICLOUD}-dns`,
   JDCLOUD: `${ACCESS_PROVIDERS.JDCLOUD}`, // 兼容旧值，等同于 `JDCLOUD_DNS`
@@ -314,6 +317,7 @@ export const acmeDns01ProvidersMap: Map<ACMEDns01Provider["type"] | string, ACME
     [ACME_DNS01_PROVIDERS.GCORE, "provider.gcore"],
     [ACME_DNS01_PROVIDERS.GNAME, "provider.gname"],
     [ACME_DNS01_PROVIDERS.GODADDY, "provider.godaddy"],
+    [ACME_DNS01_PROVIDERS.HETZNER, "provider.hetzner"],
     [ACME_DNS01_PROVIDERS.NAMECHEAP, "provider.namecheap"],
     [ACME_DNS01_PROVIDERS.NAMEDOTCOM, "provider.namedotcom"],
     [ACME_DNS01_PROVIDERS.NAMESILO, "provider.namesilo"],
