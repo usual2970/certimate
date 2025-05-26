@@ -7,6 +7,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1745726400")
+		tracer.Printf("go ...")
+
 		// update collection `access`
 		{
 			collection, err := app.FindCollectionByNameOrId("4yzbv8urny5ja1e")
@@ -34,53 +37,62 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// migrate data
 		{
-			accesses, err := app.FindAllRecords("access")
+			collection, err := app.FindCollectionByNameOrId("4yzbv8urny5ja1e")
 			if err != nil {
 				return err
 			}
 
-			for _, access := range accesses {
+			records, err := app.FindAllRecords(collection)
+			if err != nil {
+				return err
+			}
+
+			for _, record := range records {
 				changed := false
 
-				if access.GetString("provider") == "buypass" {
-					access.Set("reserve", "ca")
+				if record.GetString("provider") == "buypass" {
+					record.Set("reserve", "ca")
 					changed = true
-				} else if access.GetString("provider") == "googletrustservices" {
-					access.Set("reserve", "ca")
+				} else if record.GetString("provider") == "googletrustservices" {
+					record.Set("reserve", "ca")
 					changed = true
-				} else if access.GetString("provider") == "sslcom" {
-					access.Set("reserve", "ca")
+				} else if record.GetString("provider") == "sslcom" {
+					record.Set("reserve", "ca")
 					changed = true
-				} else if access.GetString("provider") == "zerossl" {
-					access.Set("reserve", "ca")
+				} else if record.GetString("provider") == "zerossl" {
+					record.Set("reserve", "ca")
 					changed = true
 				}
 
-				if access.GetString("provider") == "webhook" {
+				if record.GetString("provider") == "webhook" {
 					config := make(map[string]any)
-					if err := access.UnmarshalJSONField("config", &config); err != nil {
+					if err := record.UnmarshalJSONField("config", &config); err != nil {
 						return err
 					}
 
 					config["method"] = "POST"
 					config["headers"] = "Content-Type: application/json"
-					access.Set("config", config)
+					record.Set("config", config)
 					changed = true
 				}
 
 				if changed {
-					err = app.Save(access)
-					if err != nil {
+					if err := app.Save(record); err != nil {
 						return err
 					}
+
+					tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 				}
 			}
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

@@ -7,6 +7,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1747389600")
+		tracer.Printf("go ...")
+
 		// update collection `certificate`
 		{
 			collection, err := app.FindCollectionByNameOrId("4szxr9x43tpj6np")
@@ -34,38 +37,47 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// migrate data
 		{
-			accesses, err := app.FindAllRecords("access")
+			collection, err := app.FindCollectionByNameOrId("4yzbv8urny5ja1e")
 			if err != nil {
 				return err
 			}
 
-			for _, access := range accesses {
+			records, err := app.FindAllRecords(collection)
+			if err != nil {
+				return err
+			}
+
+			for _, record := range records {
 				changed := false
 
-				if access.GetString("provider") == "1panel" {
+				if record.GetString("provider") == "1panel" {
 					config := make(map[string]any)
-					if err := access.UnmarshalJSONField("config", &config); err != nil {
+					if err := record.UnmarshalJSONField("config", &config); err != nil {
 						return err
 					}
 
 					config["apiVersion"] = "v1"
-					access.Set("config", config)
+					record.Set("config", config)
 					changed = true
 				}
 
 				if changed {
-					err = app.Save(access)
-					if err != nil {
+					if err := app.Save(record); err != nil {
 						return err
 					}
+
+					tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 				}
 			}
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil
