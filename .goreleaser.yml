@@ -31,7 +31,7 @@ builds:
         goarch: arm
 
 upx:
-  - enable: true
+  - enabled: true
 
 release:
   draft: true
