@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Alert, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -50,6 +50,10 @@ const DeployNodeConfigFormUpyunFileConfig = ({
       name={formName}
       onValuesChange={handleFormChange}
     >
+      <Form.Item>
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.upyun_file.guide") }}></span>} />
+      </Form.Item>
+
       <Form.Item
         name="domain"
         label={t("workflow_node.deploy.form.upyun_file_domain.label")}
