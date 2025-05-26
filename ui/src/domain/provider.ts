@@ -61,6 +61,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   RAINYUN: "rainyun",
   RATPANEL: "ratpanel",
   SAFELINE: "safeline",
+  SLACKBOT: "slackbot",
   SSH: "ssh",
   SSLCOM: "sslcom",
   TELEGRAMBOT: "telegrambot",
@@ -174,6 +175,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.LARKBOT, "provider.larkbot", "/imgs/providers/lark.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.WECOMBOT, "provider.wecombot", "/imgs/providers/wecom.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.DISCORDBOT, "provider.discordbot", "/imgs/providers/discord.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.SLACKBOT, "provider.slackbot", "/imgs/providers/slack.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.TELEGRAMBOT, "provider.telegrambot", "/imgs/providers/telegram.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
   ].map((e) => [
@@ -594,6 +596,7 @@ export const NOTIFICATION_PROVIDERS = Object.freeze({
   EMAIL: `${ACCESS_PROVIDERS.EMAIL}`,
   LARKBOT: `${ACCESS_PROVIDERS.LARKBOT}`,
   MATTERMOST: `${ACCESS_PROVIDERS.MATTERMOST}`,
+  SLACKBOT: `${ACCESS_PROVIDERS.SLACKBOT}`,
   TELEGRAMBOT: `${ACCESS_PROVIDERS.TELEGRAMBOT}`,
   WEBHOOK: `${ACCESS_PROVIDERS.WEBHOOK}`,
   WECOMBOT: `${ACCESS_PROVIDERS.WECOMBOT}`,
@@ -620,6 +623,7 @@ export const notificationProvidersMap: Map<NotificationProvider["type"] | string
     [NOTIFICATION_PROVIDERS.LARKBOT],
     [NOTIFICATION_PROVIDERS.WECOMBOT],
     [NOTIFICATION_PROVIDERS.DISCORDBOT],
+    [NOTIFICATION_PROVIDERS.SLACKBOT],
     [NOTIFICATION_PROVIDERS.TELEGRAMBOT],
     [NOTIFICATION_PROVIDERS.MATTERMOST],
   ].map(([type]) => [

@@ -28,7 +28,8 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
     botToken: z
       .string({ message: t("access.form.telegrambot_token.placeholder") })
       .min(1, t("access.form.telegrambot_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim(),
     defaultChatId: z
       .preprocess(
         (v) => (v == null || v === "" ? undefined : Number(v)),

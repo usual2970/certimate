@@ -300,6 +300,11 @@ type AccessConfigForSafeLine struct {
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 }
 
+type AccessConfigForSlackBot struct {
+	BotToken         string `json:"botToken"`
+	DefaultChannelId string `json:"defaultChannelId,omitempty"`
+}
+
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`

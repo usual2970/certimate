@@ -51,6 +51,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	// REF: https://discord.com/developers/docs/resources/message#create-message
 	req := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bot "+n.config.BotToken).
 		SetBody(map[string]any{

@@ -58,6 +58,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForRainYun
       | AccessConfigForRatPanel
       | AccessConfigForSafeLine
+      | AccessConfigForSlackBot
       | AccessConfigForSSH
       | AccessConfigForSSLCom
       | AccessConfigForTelegramBot
@@ -359,6 +360,11 @@ export type AccessConfigForSafeLine = {
   serverUrl: string;
   apiToken: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForSlackBot = {
+  botToken: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForSSH = {

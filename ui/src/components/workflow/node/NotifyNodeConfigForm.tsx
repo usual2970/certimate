@@ -20,6 +20,7 @@ import { useNotifyChannelsStore } from "@/stores/notify";
 import NotifyNodeConfigFormDiscordBotConfig from "./NotifyNodeConfigFormDiscordBotConfig";
 import NotifyNodeConfigFormEmailConfig from "./NotifyNodeConfigFormEmailConfig";
 import NotifyNodeConfigFormMattermostConfig from "./NotifyNodeConfigFormMattermostConfig";
+import NotifyNodeConfigFormSlackBotConfig from "./NotifyNodeConfigFormSlackBotConfig";
 import NotifyNodeConfigFormTelegramBotConfig from "./NotifyNodeConfigFormTelegramBotConfig";
 import NotifyNodeConfigFormWebhookConfig from "./NotifyNodeConfigFormWebhookConfig";
 
@@ -117,6 +118,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
           return <NotifyNodeConfigFormEmailConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.MATTERMOST:
           return <NotifyNodeConfigFormMattermostConfig {...nestedFormProps} />;
+        case NOTIFICATION_PROVIDERS.SLACKBOT:
+          return <NotifyNodeConfigFormSlackBotConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.TELEGRAMBOT:
           return <NotifyNodeConfigFormTelegramBotConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.WEBHOOK:

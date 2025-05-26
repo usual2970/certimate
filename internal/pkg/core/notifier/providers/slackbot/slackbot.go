@@ -1,4 +1,4 @@
-package telegrambot
+package discordbot
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 )
 
 type NotifierConfig struct {
-	// Telegram Bot API Token。
+	// Slack Bot API Token。
 	BotToken string `json:"botToken"`
-	// Telegram Chat ID。
-	ChatId int64 `json:"chatId"`
+	// Slack Channel ID。
+	ChannelId string `json:"channelId"`
 }
 
 type NotifierProvider struct {
@@ -49,19 +49,21 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 }
 
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
-	// REF: https://core.telegram.org/bots/api#sendmessage
+	// REF: https://docs.slack.dev/messaging/sending-and-scheduling-messages#publishing
 	req := n.httpClient.R().
 		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
+		SetHeader("Authorization", "Bearer "+n.config.BotToken).
 		SetBody(map[string]any{
-			"chat_id": n.config.ChatId,
+			"token":   n.config.BotToken,
+			"channel": n.config.ChannelId,
 			"text":    subject + "\n" + message,
 		})
-	resp, err := req.Post(fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", n.config.BotToken))
+	resp, err := req.Post("https://slack.com/api/chat.postMessage")
 	if err != nil {
-		return nil, fmt.Errorf("telegram api error: failed to send request: %w", err)
+		return nil, fmt.Errorf("slack api error: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return nil, fmt.Errorf("telegram api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return nil, fmt.Errorf("slack api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return &notifier.NotifyResult{}, nil
