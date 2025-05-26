@@ -19,6 +19,7 @@ import (
 	pDeSEC "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/desec"
 	pDigitalOcean "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/digitalocean"
 	pDNSLA "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/dnsla"
+	pDuckDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/duckdns"
 	pDynv6 "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/dynv6"
 	pGcore "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gcore"
 	pGname "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname"
@@ -275,6 +276,20 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 				ApiSecret:             access.ApiSecret,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ACMEDns01ProviderTypeDuckDNS:
+		{
+			access := domain.AccessConfigForDuckDNS{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pDuckDNS.NewChallengeProvider(&pDuckDNS.ChallengeProviderConfig{
+				Token:                 access.Token,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
 			})
 			return applicant, err
 		}

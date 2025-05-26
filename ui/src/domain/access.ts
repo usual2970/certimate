@@ -24,9 +24,11 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForDeSEC
+      | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
+      | AccessConfigForDuckDNS
       | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForEmail
@@ -187,6 +189,10 @@ export type AccessConfigForDNSLA = {
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForDuckDNS = {
+  token: string;
 };
 
 export type AccessConfigForDynv6 = {

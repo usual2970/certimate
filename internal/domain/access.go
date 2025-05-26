@@ -131,6 +131,10 @@ type AccessConfigForDogeCloud struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForDuckDNS struct {
+	Token string `json:"token"`
+}
+
 type AccessConfigForDynv6 struct {
 	HttpToken string `json:"httpToken"`
 }

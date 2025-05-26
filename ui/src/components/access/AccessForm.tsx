@@ -33,6 +33,7 @@ import AccessFormDigitalOceanConfig from "./AccessFormDigitalOceanConfig";
 import AccessFormDingTalkBotConfig from "./AccessFormDingTalkBotConfig";
 import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
+import AccessFormDuckDNSConfig from "./AccessFormDuckDNSConfig";
 import AccessFormDynv6Config from "./AccessFormDynv6Config";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormEmailConfig from "./AccessFormEmailConfig";
@@ -225,6 +226,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DUCKDNS:
+        return <AccessFormDuckDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DYNV6:
         return <AccessFormDynv6Config {...nestedFormProps} />;
       case ACCESS_PROVIDERS.EDGIO:
