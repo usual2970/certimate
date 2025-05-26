@@ -83,7 +83,7 @@ func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 			return false, "the configuration item 'PrivateKey' changed"
 		}
 
-		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
+		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
 		if lastCertificate != nil {
 			return true, "the certificate has already been uploaded"
 		}

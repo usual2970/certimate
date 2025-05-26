@@ -57,8 +57,8 @@ type applicantProviderOptions struct {
 	DnsPropagationTimeout   int32
 	DnsTTL                  int32
 	DisableFollowCNAME      bool
-	ReplacedARIAcct         string
-	ReplacedARICert         string
+	ARIReplaceAcct          string
+	ARIReplaceCert          string
 }
 
 func createApplicantProvider(options *applicantProviderOptions) (challenge.Provider, error) {

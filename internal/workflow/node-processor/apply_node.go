@@ -96,6 +96,15 @@ func (n *applyNode) Process(ctx context.Context) error {
 		return err
 	}
 
+	// 保存 ARI 记录
+	if applyResult.ARIReplaced {
+		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
+		if lastCertificate != nil {
+			lastCertificate.ACMERenewed = true
+			n.certRepo.Save(ctx, lastCertificate)
+		}
+	}
+
 	n.logger.Info("apply completed")
 
 	return nil
@@ -134,7 +143,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			return false, "the configuration item 'KeyAlgorithm' changed"
 		}
 
-		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
+		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
 		if lastCertificate != nil {
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
