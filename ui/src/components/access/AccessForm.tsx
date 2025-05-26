@@ -70,6 +70,7 @@ import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
 import AccessFormTelegramBotConfig from "./AccessFormTelegramBotConfig";
 import AccessFormTencentCloudConfig from "./AccessFormTencentCloudConfig";
 import AccessFormUCloudConfig from "./AccessFormUCloudConfig";
+import AccessFormUniCloudConfig from "./AccessFormUniCloudConfig";
 import AccessFormUpyunConfig from "./AccessFormUpyunConfig";
 import AccessFormVercelConfig from "./AccessFormVercelConfig";
 import AccessFormVolcEngineConfig from "./AccessFormVolcEngineConfig";
@@ -105,9 +106,9 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
   const formSchema = z.object({
     name: z
       .string({ message: t("access.form.name.placeholder") })
+      .trim()
       .min(1, t("access.form.name.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     provider: z.nativeEnum(ACCESS_PROVIDERS, {
       message:
         usage === "ca-only"
@@ -302,6 +303,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormTencentCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.UCLOUD:
         return <AccessFormUCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.UNICLOUD:
+        return <AccessFormUniCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.UPYUN:
         return <AccessFormUpyunConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.VERCEL:

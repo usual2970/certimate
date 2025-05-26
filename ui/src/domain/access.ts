@@ -64,6 +64,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForTelegramBot
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
+      | AccessConfigForUniCloud
       | AccessConfigForUpyun
       | AccessConfigForVercel
       | AccessConfigForVolcEngine
@@ -395,6 +396,11 @@ export type AccessConfigForUCloud = {
   privateKey: string;
   publicKey: string;
   projectId?: string;
+};
+
+export type AccessConfigForUniCloud = {
+  username: string;
+  password: string;
 };
 
 export type AccessConfigForUpyun = {
