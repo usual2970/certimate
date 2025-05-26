@@ -26,6 +26,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForDeSEC
       | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
+      | AccessConfigForDiscordBot
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
       | AccessConfigForDuckDNS
@@ -179,6 +180,11 @@ export type AccessConfigForDigitalOcean = {
 export type AccessConfigForDingTalkBot = {
   webhookUrl: string;
   secret?: string;
+};
+
+export type AccessConfigForDiscordBot = {
+  botToken: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForDNSLA = {

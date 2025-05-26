@@ -33,6 +33,7 @@ const (
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
 	AccessProviderTypeDigitalOcean        = AccessProviderType("digitalocean")
 	AccessProviderTypeDingTalkBot         = AccessProviderType("dingtalkbot")
+	AccessProviderTypeDiscordBot          = AccessProviderType("discordbot")
 	AccessProviderTypeDNSLA               = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud           = AccessProviderType("dogecloud")
 	AccessProviderTypeDuckDNS             = AccessProviderType("duckdns")
@@ -269,6 +270,7 @@ type NotificationProviderType string
 */
 const (
 	NotificationProviderTypeDingTalkBot = NotificationProviderType(AccessProviderTypeDingTalkBot)
+	NotificationProviderTypeDiscordBot  = NotificationProviderType(AccessProviderTypeDiscordBot)
 	NotificationProviderTypeEmail       = NotificationProviderType(AccessProviderTypeEmail)
 	NotificationProviderTypeLarkBot     = NotificationProviderType(AccessProviderTypeLarkBot)
 	NotificationProviderTypeMattermost  = NotificationProviderType(AccessProviderTypeMattermost)

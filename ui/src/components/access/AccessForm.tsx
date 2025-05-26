@@ -31,6 +31,7 @@ import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
 import AccessFormDeSECConfig from "./AccessFormDeSECConfig";
 import AccessFormDigitalOceanConfig from "./AccessFormDigitalOceanConfig";
 import AccessFormDingTalkBotConfig from "./AccessFormDingTalkBotConfig";
+import AccessFormDiscordBotConfig from "./AccessFormDiscordBotConfig";
 import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
 import AccessFormDuckDNSConfig from "./AccessFormDuckDNSConfig";
@@ -222,6 +223,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormDigitalOceanConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DINGTALKBOT:
         return <AccessFormDingTalkBotConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DISCORDBOT:
+        return <AccessFormDiscordBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DNSLA:
         return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:

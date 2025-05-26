@@ -121,6 +121,11 @@ type AccessConfigForDingTalkBot struct {
 	Secret     string `json:"secret"`
 }
 
+type AccessConfigForDiscordBot struct {
+	BotToken         string `json:"botToken"`
+	DefaultChannelId string `json:"defaultChannelId,omitempty"`
+}
+
 type AccessConfigForDNSLA struct {
 	ApiId     string `json:"apiId"`
 	ApiSecret string `json:"apiSecret"`

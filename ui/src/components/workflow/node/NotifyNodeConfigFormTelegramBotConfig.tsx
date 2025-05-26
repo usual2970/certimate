@@ -38,7 +38,7 @@ const NotifyNodeConfigFormTelegramBotConfig = ({
           .refine((v) => {
             if (v == null || v + "" === "") return true;
             return !Number.isNaN(+v!) && +v! !== 0;
-          }, t("workflow_node.notify.form.telegram_bot_chat_id.placeholder"))
+          }, t("workflow_node.notify.form.telegrambot_chat_id.placeholder"))
       )
       .nullish(),
   });
@@ -59,11 +59,11 @@ const NotifyNodeConfigFormTelegramBotConfig = ({
     >
       <Form.Item
         name="chatId"
-        label={t("workflow_node.notify.form.telegram_bot_chat_id.label")}
+        label={t("workflow_node.notify.form.telegrambot_chat_id.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegram_bot_chat_id.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.telegrambot_chat_id.tooltip") }}></span>}
       >
-        <Input allowClear placeholder={t("workflow_node.notify.form.telegram_bot_chat_id.placeholder")} />
+        <Input allowClear placeholder={t("workflow_node.notify.form.telegrambot_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );

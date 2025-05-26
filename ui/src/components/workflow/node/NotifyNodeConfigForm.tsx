@@ -17,6 +17,7 @@ import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks
 import { useAccessesStore } from "@/stores/access";
 import { useNotifyChannelsStore } from "@/stores/notify";
 
+import NotifyNodeConfigFormDiscordBotConfig from "./NotifyNodeConfigFormDiscordBotConfig";
 import NotifyNodeConfigFormEmailConfig from "./NotifyNodeConfigFormEmailConfig";
 import NotifyNodeConfigFormMattermostConfig from "./NotifyNodeConfigFormMattermostConfig";
 import NotifyNodeConfigFormTelegramBotConfig from "./NotifyNodeConfigFormTelegramBotConfig";
@@ -110,6 +111,8 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         NOTICE: If you add new child component, please keep ASCII order.
        */
       switch (fieldProvider) {
+        case NOTIFICATION_PROVIDERS.DISCORDBOT:
+          return <NotifyNodeConfigFormDiscordBotConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.EMAIL:
           return <NotifyNodeConfigFormEmailConfig {...nestedFormProps} />;
         case NOTIFICATION_PROVIDERS.MATTERMOST:

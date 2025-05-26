@@ -60,6 +60,7 @@
   "provider.desec": "deSEC",
   "provider.digitalocean": "DigitalOcean",
   "provider.dingtalkbot": "DingTalk Bot",
+  "provider.discordbot": "Discord Bot",
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "Doge Cloud",
   "provider.dogecloud.cdn": "Doge Cloud - CDN (Content Delivery Network)",

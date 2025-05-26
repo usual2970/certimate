@@ -1,4 +1,4 @@
-package telegrambot_test
+package discordbot_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
+	provider "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/discordbot"
 )
 
 const (
@@ -16,23 +16,23 @@ const (
 )
 
 var (
-	fApiToken string
-	fChatId   int64
+	fApiToken  string
+	fChannelId string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_NOTIFIER_TELEGRAMBOT_"
+	argsPrefix := "CERTIMATE_NOTIFIER_DISCORDBOT_"
 
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
-	flag.Int64Var(&fChatId, argsPrefix+"CHATID", 0, "")
+	flag.StringVar(&fChannelId, argsPrefix+"CHANNELID", 0, "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./telegrambot_test.go -args \
-	--CERTIMATE_NOTIFIER_TELEGRAMBOT_APITOKEN="your-api-token" \
-	--CERTIMATE_NOTIFIER_TELEGRAMBOT_CHATID=123456
+	go test -v ./discordbot_test.go -args \
+	--CERTIMATE_NOTIFIER_DISCORDBOT_APITOKEN="your-bot-token" \
+	--CERTIMATE_NOTIFIER_DISCORDBOT_CHANNELID="your-channel-id"
 */
 func TestNotify(t *testing.T) {
 	flag.Parse()
@@ -41,12 +41,12 @@ func TestNotify(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("APITOKEN: %v", fApiToken),
-			fmt.Sprintf("CHATID: %v", fChatId),
+			fmt.Sprintf("CHANNELID: %v", fChannelId),
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
-			BotToken: fApiToken,
-			ChatId:   fChatId,
+			BotToken:  fApiToken,
+			ChannelId: fChannelId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

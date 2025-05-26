@@ -25,6 +25,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   DESEC: "desec",
   DIGITALOCEAN: "digitalocean",
   DINGTALKBOT: "dingtalkbot",
+  DISCORDBOT: "discordbot",
   DNSLA: "dnsla",
   DOGECLOUD: "dogecloud",
   DUCKDNS: "duckdns",
@@ -172,8 +173,9 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.DINGTALKBOT, "provider.dingtalkbot", "/imgs/providers/dingtalk.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.LARKBOT, "provider.larkbot", "/imgs/providers/lark.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.WECOMBOT, "provider.wecombot", "/imgs/providers/wecom.svg", [ACCESS_USAGES.NOTIFICATION]],
-    [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.DISCORDBOT, "provider.discordbot", "/imgs/providers/discord.svg", [ACCESS_USAGES.NOTIFICATION]],
     [ACCESS_PROVIDERS.TELEGRAMBOT, "provider.telegrambot", "/imgs/providers/telegram.svg", [ACCESS_USAGES.NOTIFICATION]],
+    [ACCESS_PROVIDERS.MATTERMOST, "provider.mattermost", "/imgs/providers/mattermost.svg", [ACCESS_USAGES.NOTIFICATION]],
   ].map((e) => [
     e[0] as string,
     {
@@ -588,6 +590,7 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
  */
 export const NOTIFICATION_PROVIDERS = Object.freeze({
   DINGTALKBOT: `${ACCESS_PROVIDERS.DINGTALKBOT}`,
+  DISCORDBOT: `${ACCESS_PROVIDERS.DISCORDBOT}`,
   EMAIL: `${ACCESS_PROVIDERS.EMAIL}`,
   LARKBOT: `${ACCESS_PROVIDERS.LARKBOT}`,
   MATTERMOST: `${ACCESS_PROVIDERS.MATTERMOST}`,
@@ -616,8 +619,9 @@ export const notificationProvidersMap: Map<NotificationProvider["type"] | string
     [NOTIFICATION_PROVIDERS.DINGTALKBOT],
     [NOTIFICATION_PROVIDERS.LARKBOT],
     [NOTIFICATION_PROVIDERS.WECOMBOT],
-    [NOTIFICATION_PROVIDERS.MATTERMOST],
+    [NOTIFICATION_PROVIDERS.DISCORDBOT],
     [NOTIFICATION_PROVIDERS.TELEGRAMBOT],
+    [NOTIFICATION_PROVIDERS.MATTERMOST],
   ].map(([type]) => [
     type,
     {
