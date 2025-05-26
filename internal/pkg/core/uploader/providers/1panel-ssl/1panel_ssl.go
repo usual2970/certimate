@@ -2,6 +2,7 @@ package onepanelssl
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -20,6 +21,8 @@ type UploaderConfig struct {
 	ApiVersion string `json:"apiVersion"`
 	// 1Panel 接口密钥。
 	ApiKey string `json:"apiKey"`
+	// 是否允许不安全的连接。
+	AllowInsecureConnections bool `json:"allowInsecureConnections,omitempty"`
 }
 
 type UploaderProvider struct {
@@ -35,7 +38,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey)
+	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -132,7 +135,7 @@ func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, 
 	return nil, nil
 }
 
-func createSdkClient(apiUrl, apiVersion, apiKey string) (*onepanelsdk.Client, error) {
+func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
 	if _, err := url.Parse(apiUrl); err != nil {
 		return nil, errors.New("invalid 1panel api url")
 	}
@@ -146,5 +149,9 @@ func createSdkClient(apiUrl, apiVersion, apiKey string) (*onepanelsdk.Client, er
 	}
 
 	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
+	if skipTlsVerify {
+		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+	}
+
 	return client, nil
 }

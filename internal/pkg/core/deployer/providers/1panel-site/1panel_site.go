@@ -55,9 +55,10 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		ApiUrl:     config.ApiUrl,
-		ApiVersion: config.ApiVersion,
-		ApiKey:     config.ApiKey,
+		ApiUrl:                   config.ApiUrl,
+		ApiVersion:               config.ApiVersion,
+		ApiKey:                   config.ApiKey,
+		AllowInsecureConnections: config.AllowInsecureConnections,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
