@@ -49,6 +49,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
 	// REF: https://developer.work.weixin.qq.com/document/path/91770
 	req := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]any{
 			"msgtype": "text",

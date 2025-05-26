@@ -26,13 +26,14 @@ import (
 )
 
 type ApplyResult struct {
+	CSR                  string
 	FullChainCertificate string
 	IssuerCertificate    string
 	PrivateKey           string
 	ACMEAccountUrl       string
 	ACMECertUrl          string
 	ACMECertStableUrl    string
-	CSR                  string
+	ARIReplaced          bool
 }
 
 type Applicant interface {
@@ -109,7 +110,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 
 	certRepo := repository.NewCertificateRepository()
 	lastCertificate, _ := certRepo.GetByWorkflowNodeId(context.Background(), config.Node.Id)
-	if lastCertificate != nil {
+	if lastCertificate != nil && !lastCertificate.ACMERenewed {
 		newCertSan := slices.Clone(options.Domains)
 		oldCertSan := strings.Split(lastCertificate.SubjectAltNames, ";")
 		slices.Sort(newCertSan)
@@ -119,8 +120,8 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 			lastCertX509, _ := certcrypto.ParsePEMCertificate([]byte(lastCertificate.Certificate))
 			if lastCertX509 != nil {
 				replacedARICertId, _ := certificate.MakeARICertID(lastCertX509)
-				options.ReplacedARIAcct = lastCertificate.ACMEAccountUrl
-				options.ReplacedARICert = replacedARICertId
+				options.ARIReplaceAcct = lastCertificate.ACMEAccountUrl
+				options.ARIReplaceCert = replacedARICertId
 			}
 		}
 	}
@@ -235,22 +236,24 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 		Domains: options.Domains,
 		Bundle:  true,
 	}
-	if options.ReplacedARIAcct == user.Registration.URI {
-		certRequest.ReplacesCertID = options.ReplacedARICert
+	if options.ARIReplaceAcct == user.Registration.URI {
+		certRequest.ReplacesCertID = options.ARIReplaceCert
 	}
+
 	certResource, err := client.Certificate.Obtain(certRequest)
 	if err != nil {
 		return nil, err
 	}
 
 	return &ApplyResult{
+		CSR:                  strings.TrimSpace(string(certResource.CSR)),
 		FullChainCertificate: strings.TrimSpace(string(certResource.Certificate)),
 		IssuerCertificate:    strings.TrimSpace(string(certResource.IssuerCertificate)),
 		PrivateKey:           strings.TrimSpace(string(certResource.PrivateKey)),
 		ACMEAccountUrl:       user.Registration.URI,
 		ACMECertUrl:          certResource.CertURL,
 		ACMECertStableUrl:    certResource.CertStableURL,
-		CSR:                  strings.TrimSpace(string(certResource.CSR)),
+		ARIReplaced:          certRequest.ReplacesCertID != "",
 	}, nil
 }
 

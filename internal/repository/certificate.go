@@ -77,6 +77,25 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 	return r.castRecordToModel(records[0])
 }
 
+func (r *CertificateRepository) GetByWorkflowRunId(ctx context.Context, workflowRunId string) (*domain.Certificate, error) {
+	records, err := app.GetApp().FindRecordsByFilter(
+		domain.CollectionNameCertificate,
+		"workflowRunId={:workflowRunId} && deleted=null",
+		"-created",
+		1, 0,
+		dbx.Params{"workflowRunId": workflowRunId},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(records) == 0 {
+		return nil, domain.ErrRecordNotFound
+	}
+
+	return r.castRecordToModel(records[0])
+}
+
 func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Certificate) (*domain.Certificate, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
 	if err != nil {
@@ -109,6 +128,7 @@ func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Ce
 	record.Set("acmeAccountUrl", certificate.ACMEAccountUrl)
 	record.Set("acmeCertUrl", certificate.ACMECertUrl)
 	record.Set("acmeCertStableUrl", certificate.ACMECertStableUrl)
+	record.Set("acmeRenewed", certificate.ACMERenewed)
 	record.Set("workflowId", certificate.WorkflowId)
 	record.Set("workflowRunId", certificate.WorkflowRunId)
 	record.Set("workflowNodeId", certificate.WorkflowNodeId)
@@ -170,6 +190,7 @@ func (r *CertificateRepository) castRecordToModel(record *core.Record) (*domain.
 		ACMEAccountUrl:    record.GetString("acmeAccountUrl"),
 		ACMECertUrl:       record.GetString("acmeCertUrl"),
 		ACMECertStableUrl: record.GetString("acmeCertStableUrl"),
+		ACMERenewed:       record.GetBool("acmeRenewed"),
 		WorkflowId:        record.GetString("workflowId"),
 		WorkflowRunId:     record.GetString("workflowRunId"),
 		WorkflowNodeId:    record.GetString("workflowNodeId"),

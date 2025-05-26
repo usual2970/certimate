@@ -7,6 +7,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1742644800")
+		tracer.Printf("go ...")
+
 		// update collection `workflow_run`
 		{
 			collection, err := app.FindCollectionByNameOrId("qjp8lygssgwyqyz")
@@ -35,6 +38,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// update collection `workflow_output`
@@ -61,6 +66,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// update collection `workflow_logs`
@@ -105,6 +112,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// update collection `access`
@@ -182,8 +191,11 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

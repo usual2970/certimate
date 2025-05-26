@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fAccessKeyId   string
 	fAccessKey     string
 	fCertificateId int64
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
 	flag.StringVar(&fAccessKey, argsPrefix+"ACCESSKEY", "", "")
 	flag.Int64Var(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
@@ -37,7 +37,7 @@ Shell command to run this test:
 	go test -v ./goedge_test.go -args \
 	--CERTIMATE_DEPLOYER_GOEDGE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_GOEDGE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_GOEDGE_APIURL="http://127.0.0.1:7788" \
+	--CERTIMATE_DEPLOYER_GOEDGE_SERVERURL="http://127.0.0.1:7788" \
 	--CERTIMATE_DEPLOYER_GOEDGE_ACCESSKEYID="your-access-key-id" \
 	--CERTIMATE_DEPLOYER_GOEDGE_ACCESSKEY="your-access-key" \
 	--CERTIMATE_DEPLOYER_GOEDGE_CERTIFICATEID="your-cerficiate-id"
@@ -50,14 +50,14 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
 			fmt.Sprintf("ACCESSKEY: %v", fAccessKey),
 			fmt.Sprintf("CERTIFICATEID: %v", fCertificateId),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiRole:                  "user",
 			AccessKeyId:              fAccessKeyId,
 			AccessKey:                fAccessKey,

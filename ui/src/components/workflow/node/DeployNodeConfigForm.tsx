@@ -82,6 +82,7 @@ import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudWAFConfig from "./DeployNodeConfigFormTencentCloudWAFConfig";
 import DeployNodeConfigFormUCloudUCDNConfig from "./DeployNodeConfigFormUCloudUCDNConfig.tsx";
 import DeployNodeConfigFormUCloudUS3Config from "./DeployNodeConfigFormUCloudUS3Config.tsx";
+import DeployNodeConfigFormUniCloudWebHostConfig from "./DeployNodeConfigFormUniCloudWebHostConfig.tsx";
 import DeployNodeConfigFormUpyunCDNConfig from "./DeployNodeConfigFormUpyunCDNConfig.tsx";
 import DeployNodeConfigFormUpyunFileConfig from "./DeployNodeConfigFormUpyunFileConfig.tsx";
 import DeployNodeConfigFormVolcEngineALBConfig from "./DeployNodeConfigFormVolcEngineALBConfig.tsx";
@@ -318,6 +319,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormUCloudUCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.UCLOUD_US3:
           return <DeployNodeConfigFormUCloudUS3Config {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.UNICLOUD_WEBHOST:
+          return <DeployNodeConfigFormUniCloudWebHostConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.UPYUN_CDN:
           return <DeployNodeConfigFormUpyunCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.UPYUN_FILE:

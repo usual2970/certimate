@@ -89,13 +89,6 @@ const ModalForm = <T extends NonNullable<unknown> = any>({
 
       modalProps?.afterClose?.();
     },
-    onClose: async (e) => {
-      if (formPending) return;
-
-      // 关闭 Modal 时 Promise.reject 阻止关闭
-      await modalProps?.onClose?.(e as React.MouseEvent | React.KeyboardEvent);
-      setOpen(false);
-    },
   };
 
   const handleOkClick = async () => {

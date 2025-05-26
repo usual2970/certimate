@@ -1,12 +1,7 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import {
-  FormOutlined as FormOutlinedIcon,
-  PlusOutlined as PlusOutlinedIcon,
-  QuestionCircleOutlined as QuestionCircleOutlinedIcon,
-  RightOutlined as RightOutlinedIcon,
-} from "@ant-design/icons";
+import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
 import {
   AutoComplete,
@@ -19,7 +14,6 @@ import {
   Input,
   InputNumber,
   Select,
-  Space,
   Switch,
   Tooltip,
   Typography,
@@ -29,8 +23,7 @@ import { z } from "zod";
 
 import AccessEditModal from "@/components/access/AccessEditModal";
 import AccessSelect from "@/components/access/AccessSelect";
-import ModalForm from "@/components/ModalForm";
-import MultipleInput from "@/components/MultipleInput";
+import MultipleSplitValueInput from "@/components/MultipleSplitValueInput";
 import ACMEDns01ProviderSelect from "@/components/provider/ACMEDns01ProviderSelect";
 import CAProviderSelect from "@/components/provider/CAProviderSelect";
 import Show from "@/components/Show";
@@ -152,11 +145,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       initialValues: initialValues ?? initFormModel(),
     });
 
-    const fieldDomains = Form.useWatch<string>("domains", formInst);
     const fieldProvider = Form.useWatch<string>("provider", { form: formInst, preserve: true });
     const fieldProviderAccessId = Form.useWatch<string>("providerAccessId", formInst);
     const fieldCAProvider = Form.useWatch<string>("caProvider", formInst);
-    const fieldNameservers = Form.useWatch<string>("nameservers", formInst);
 
     const [showProvider, setShowProvider] = useState(false);
     useEffect(() => {
@@ -294,25 +285,17 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       <Form.Provider onFormChange={handleFormProviderChange}>
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Form.Item
+            name="domains"
             label={t("workflow_node.apply.form.domains.label")}
+            rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.domains.tooltip") }}></span>}
           >
-            <Space.Compact style={{ width: "100%" }}>
-              <Form.Item name="domains" noStyle rules={[formRule]}>
-                <Input placeholder={t("workflow_node.apply.form.domains.placeholder")} />
-              </Form.Item>
-              <DomainsModalInput
-                value={fieldDomains}
-                trigger={
-                  <Button disabled={disabled}>
-                    <FormOutlinedIcon />
-                  </Button>
-                }
-                onChange={(v) => {
-                  formInst.setFieldValue("domains", v);
-                }}
-              />
-            </Space.Compact>
+            <MultipleSplitValueInput
+              modalTitle={t("workflow_node.apply.form.domains.multiple_input_modal.title")}
+              placeholder={t("workflow_node.apply.form.domains.placeholder")}
+              placeholderInModal={t("workflow_node.apply.form.domains.multiple_input_modal.placeholder")}
+              splitOptions={{ trim: true, removeEmpty: true }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -497,36 +480,17 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
         <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
           <Form.Item
+            name="nameservers"
             label={t("workflow_node.apply.form.nameservers.label")}
+            rules={[formRule]}
             tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.apply.form.nameservers.tooltip") }}></span>}
           >
-            <Space.Compact style={{ width: "100%" }}>
-              <Form.Item name="nameservers" noStyle rules={[formRule]}>
-                <Input
-                  allowClear
-                  disabled={disabled}
-                  value={fieldNameservers}
-                  placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
-                  onChange={(e) => {
-                    formInst.setFieldValue("nameservers", e.target.value);
-                  }}
-                  onClear={() => {
-                    formInst.setFieldValue("nameservers", undefined);
-                  }}
-                />
-              </Form.Item>
-              <NameserversModalInput
-                value={fieldNameservers}
-                trigger={
-                  <Button disabled={disabled}>
-                    <FormOutlinedIcon />
-                  </Button>
-                }
-                onChange={(value) => {
-                  formInst.setFieldValue("nameservers", value);
-                }}
-              />
-            </Space.Compact>
+            <MultipleSplitValueInput
+              modalTitle={t("workflow_node.apply.form.nameservers.multiple_input_modal.title")}
+              placeholder={t("workflow_node.apply.form.nameservers.placeholder")}
+              placeholderInModal={t("workflow_node.apply.form.nameservers.multiple_input_modal.placeholder")}
+              splitOptions={{ trim: true, removeEmpty: true }}
+            />
           </Form.Item>
 
           <Form.Item
@@ -677,85 +641,5 @@ const EmailInput = memo(
     );
   }
 );
-
-const DomainsModalInput = memo(({ value, trigger, onChange }: { value?: string; trigger?: React.ReactNode; onChange?: (value: string) => void }) => {
-  const { t } = useTranslation();
-
-  const formSchema = z.object({
-    domains: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || validDomainName(e.trim(), { allowWildcard: true }));
-    }, t("common.errmsg.domain_invalid")),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm({
-    name: "workflowNodeApplyConfigFormDomainsModalInput",
-    initialValues: { domains: value?.split(MULTIPLE_INPUT_DELIMITER) },
-    onSubmit: (values) => {
-      onChange?.(
-        values.domains
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-  });
-
-  return (
-    <ModalForm
-      {...formProps}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnHidden: true }}
-      title={t("workflow_node.apply.form.domains.multiple_input_modal.title")}
-      trigger={trigger}
-      validateTrigger="onSubmit"
-      width={480}
-    >
-      <Form.Item name="domains" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow_node.apply.form.domains.multiple_input_modal.placeholder")} />
-      </Form.Item>
-    </ModalForm>
-  );
-});
-
-const NameserversModalInput = memo(({ trigger, value, onChange }: { trigger?: React.ReactNode; value?: string; onChange?: (value: string) => void }) => {
-  const { t } = useTranslation();
-
-  const formSchema = z.object({
-    nameservers: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
-    }, t("common.errmsg.domain_invalid")),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm({
-    name: "workflowNodeApplyConfigFormNameserversModalInput",
-    initialValues: { nameservers: value?.split(MULTIPLE_INPUT_DELIMITER) },
-    onSubmit: (values) => {
-      onChange?.(
-        values.nameservers
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-  });
-
-  return (
-    <ModalForm
-      {...formProps}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnHidden: true }}
-      title={t("workflow_node.apply.form.nameservers.multiple_input_modal.title")}
-      trigger={trigger}
-      validateTrigger="onSubmit"
-      width={480}
-    >
-      <Form.Item name="nameservers" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow_node.apply.form.nameservers.multiple_input_modal.placeholder")} />
-      </Form.Item>
-    </ModalForm>
-  );
-});
 
 export default memo(ApplyNodeConfigForm);

@@ -24,9 +24,12 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForDeSEC
+      | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
+      | AccessConfigForDiscordBot
       | AccessConfigForDNSLA
       | AccessConfigForDogeCloud
+      | AccessConfigForDuckDNS
       | AccessConfigForDynv6
       | AccessConfigForEdgio
       | AccessConfigForEmail
@@ -36,6 +39,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForGoDaddy
       | AccessConfigForGoEdge
       | AccessConfigForGoogleTrustServices
+      | AccessConfigForHetzner
       | AccessConfigForHuaweiCloud
       | AccessConfigForJDCloud
       | AccessConfigForKubernetes
@@ -54,11 +58,13 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForRainYun
       | AccessConfigForRatPanel
       | AccessConfigForSafeLine
+      | AccessConfigForSlackBot
       | AccessConfigForSSH
       | AccessConfigForSSLCom
       | AccessConfigForTelegramBot
       | AccessConfigForTencentCloud
       | AccessConfigForUCloud
+      | AccessConfigForUniCloud
       | AccessConfigForUpyun
       | AccessConfigForVercel
       | AccessConfigForVolcEngine
@@ -73,7 +79,7 @@ export interface AccessModel extends BaseModel {
 
 // #region AccessConfig
 export type AccessConfigFor1Panel = {
-  apiUrl: string;
+  serverUrl: string;
   apiVersion: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
@@ -119,13 +125,13 @@ export type AccessConfigForBaishan = {
 };
 
 export type AccessConfigForBaotaPanel = {
-  apiUrl: string;
+  serverUrl: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForBaotaWAF = {
-  apiUrl: string;
+  serverUrl: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
 };
@@ -144,7 +150,7 @@ export type AccessConfigForCacheFly = {
 };
 
 export type AccessConfigForCdnfly = {
-  apiUrl: string;
+  serverUrl: string;
   apiKey: string;
   apiSecret: string;
   allowInsecureConnections?: boolean;
@@ -169,9 +175,18 @@ export type AccessConfigForDeSEC = {
   token: string;
 };
 
+export type AccessConfigForDigitalOcean = {
+  accessToken: string;
+};
+
 export type AccessConfigForDingTalkBot = {
   webhookUrl: string;
   secret?: string;
+};
+
+export type AccessConfigForDiscordBot = {
+  botToken: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForDNSLA = {
@@ -182,6 +197,10 @@ export type AccessConfigForDNSLA = {
 export type AccessConfigForDogeCloud = {
   accessKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForDuckDNS = {
+  token: string;
 };
 
 export type AccessConfigForDynv6 = {
@@ -204,7 +223,7 @@ export type AccessConfigForEmail = {
 };
 
 export type AccessConfigForFlexCDN = {
-  apiUrl: string;
+  serverUrl: string;
   apiRole: string;
   accessKeyId: string;
   accessKey: string;
@@ -226,7 +245,7 @@ export type AccessConfigForGoDaddy = {
 };
 
 export type AccessConfigForGoEdge = {
-  apiUrl: string;
+  serverUrl: string;
   apiRole: string;
   accessKeyId: string;
   accessKey: string;
@@ -236,6 +255,10 @@ export type AccessConfigForGoEdge = {
 export type AccessConfigForGoogleTrustServices = {
   eabKid: string;
   eabHmacKey: string;
+};
+
+export type AccessConfigForHetzner = {
+  apiToken: string;
 };
 
 export type AccessConfigForHuaweiCloud = {
@@ -257,7 +280,7 @@ export type AccessConfigForLarkBot = {
 };
 
 export type AccessConfigForLeCDN = {
-  apiUrl: string;
+  serverUrl: string;
   apiVersion: string;
   apiRole: string;
   username: string;
@@ -306,13 +329,13 @@ export type AccessConfigForPorkbun = {
 };
 
 export type AccessConfigForPowerDNS = {
-  apiUrl: string;
+  serverUrl: string;
   apiKey: string;
   allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForProxmoxVE = {
-  apiUrl: string;
+  serverUrl: string;
   apiToken: string;
   apiTokenSecret?: string;
   allowInsecureConnections?: boolean;
@@ -328,16 +351,21 @@ export type AccessConfigForRainYun = {
 };
 
 export type AccessConfigForRatPanel = {
-  apiUrl: string;
+  serverUrl: string;
   accessTokenId: number;
   accessToken: string;
   allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForSafeLine = {
-  apiUrl: string;
+  serverUrl: string;
   apiToken: string;
   allowInsecureConnections?: boolean;
+};
+
+export type AccessConfigForSlackBot = {
+  botToken: string;
+  defaultChannelId?: string;
 };
 
 export type AccessConfigForSSH = {
@@ -368,6 +396,11 @@ export type AccessConfigForUCloud = {
   privateKey: string;
   publicKey: string;
   projectId?: string;
+};
+
+export type AccessConfigForUniCloud = {
+  username: string;
+  password: string;
 };
 
 export type AccessConfigForUpyun = {

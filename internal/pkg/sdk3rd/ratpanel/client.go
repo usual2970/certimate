@@ -20,9 +20,9 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost string, accessTokenId int32, accessToken string) *Client {
+func NewClient(serverUrl string, accessTokenId int32, accessToken string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/")+"/api").
+		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/api").
 		SetHeader("Accept", "application/json").
 		SetHeader("Content-Type", "application/json").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {

@@ -362,10 +362,10 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         </Form.Item>
       </Show>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.webhook_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.webhook_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.webhook_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

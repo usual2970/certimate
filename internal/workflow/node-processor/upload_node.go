@@ -89,7 +89,7 @@ func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 			return false, "the configuration item 'PrivateKey' changed"
 		}
 
-		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, n.node.Id)
+		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
 		if lastCertificate != nil {
 			n.outputs[outputCertificateValidatedKey] = "true"
 			n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(lastCertificate.ExpireAt).Hours()/24))

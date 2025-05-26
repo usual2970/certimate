@@ -17,14 +17,14 @@ const (
 
 var (
 	fApiToken string
-	fChartId  int64
+	fChatId   int64
 )
 
 func init() {
 	argsPrefix := "CERTIMATE_NOTIFIER_TELEGRAMBOT_"
 
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
-	flag.Int64Var(&fChartId, argsPrefix+"CHATID", 0, "")
+	flag.Int64Var(&fChatId, argsPrefix+"CHATID", 0, "")
 }
 
 /*
@@ -41,12 +41,12 @@ func TestNotify(t *testing.T) {
 		t.Log(strings.Join([]string{
 			"args:",
 			fmt.Sprintf("APITOKEN: %v", fApiToken),
-			fmt.Sprintf("CHATID: %v", fChartId),
+			fmt.Sprintf("CHATID: %v", fChatId),
 		}, "\n"))
 
 		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
 			BotToken: fApiToken,
-			ChatId:   fChartId,
+			ChatId:   fChatId,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

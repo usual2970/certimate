@@ -16,8 +16,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// 1Panel 地址。
-	ApiUrl string `json:"apiUrl"`
+	// 1Panel 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// 1Panel 版本。
 	// 可取值 "v1"、"v2"。
 	ApiVersion string `json:"apiVersion"`
@@ -49,15 +49,16 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiKey, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiVersion, config.ApiKey, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		ApiUrl:     config.ApiUrl,
-		ApiVersion: config.ApiVersion,
-		ApiKey:     config.ApiKey,
+		ServerUrl:                config.ServerUrl,
+		ApiVersion:               config.ApiVersion,
+		ApiKey:                   config.ApiKey,
+		AllowInsecureConnections: config.AllowInsecureConnections,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
@@ -177,9 +178,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid 1panel api url")
+func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid 1panel server url")
 	}
 
 	if apiVersion == "" {
@@ -190,7 +191,7 @@ func createSdkClient(apiUrl, apiVersion, apiKey string, skipTlsVerify bool) (*on
 		return nil, errors.New("invalid 1panel api key")
 	}
 
-	client := onepanelsdk.NewClient(apiUrl, apiVersion, apiKey)
+	client := onepanelsdk.NewClient(serverUrl, apiVersion, apiKey)
 	if skipTlsVerify {
 		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}

@@ -17,7 +17,7 @@ export type AccessFormPowerDNSConfigProps = {
 
 const initFormModel = (): AccessFormPowerDNSConfigFieldValues => {
   return {
-    apiUrl: "http://<your-host-addr>:8082/",
+    serverUrl: "http://<your-host-addr>:8082/",
     apiKey: "",
   };
 };
@@ -26,7 +26,7 @@ const AccessFormPowerDNSConfig = ({ form: formInst, formName, disabled, initialV
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiUrl: z.string().url(t("common.errmsg.url_invalid")),
+    serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     apiKey: z
       .string()
       .min(1, t("access.form.powerdns_api_key.placeholder"))
@@ -49,8 +49,8 @@ const AccessFormPowerDNSConfig = ({ form: formInst, formName, disabled, initialV
       name={formName}
       onValuesChange={handleFormChange}
     >
-      <Form.Item name="apiUrl" label={t("access.form.powerdns_api_url.label")} rules={[formRule]}>
-        <Input placeholder={t("access.form.powerdns_api_url.placeholder")} />
+      <Form.Item name="serverUrl" label={t("access.form.powerdns_server_url.label")} rules={[formRule]}>
+        <Input placeholder={t("access.form.powerdns_server_url.placeholder")} />
       </Form.Item>
 
       <Form.Item
@@ -62,10 +62,10 @@ const AccessFormPowerDNSConfig = ({ form: formInst, formName, disabled, initialV
         <Input.Password autoComplete="new-password" placeholder={t("access.form.powerdns_api_key.placeholder")} />
       </Form.Item>
 
-      <Form.Item name="allowInsecureConnections" label={t("access.form.powerdns_allow_insecure_conns.label")} rules={[formRule]}>
+      <Form.Item name="allowInsecureConnections" label={t("access.form.common_allow_insecure_conns.label")} rules={[formRule]}>
         <Switch
-          checkedChildren={t("access.form.powerdns_allow_insecure_conns.switch.on")}
-          unCheckedChildren={t("access.form.powerdns_allow_insecure_conns.switch.off")}
+          checkedChildren={t("access.form.common_allow_insecure_conns.switch.on")}
+          unCheckedChildren={t("access.form.common_allow_insecure_conns.switch.off")}
         />
       </Form.Item>
     </Form>

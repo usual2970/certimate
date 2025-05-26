@@ -12,13 +12,13 @@ import (
 )
 
 type NotifierConfig struct {
-	// 服务地址。
+	// Mattermost 服务地址。
 	ServerUrl string `json:"serverUrl"`
-	// 用户名。
+	// Mattermost 用户名。
 	Username string `json:"username"`
-	// 密码。
+	// Mattermost 密码。
 	Password string `json:"password"`
-	// 频道 ID。
+	// Mattermost 频道 ID。
 	ChannelId string `json:"channelId"`
 }
 
@@ -58,6 +58,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// REF: https://developers.mattermost.com/api-documentation/#/operations/Login
 	loginReq := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]any{
 			"login_id": n.config.Username,
@@ -74,6 +75,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// REF: https://developers.mattermost.com/api-documentation/#/operations/CreatePost
 	postReq := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bearer "+loginResp.Header().Get("Token")).
 		SetBody(map[string]any{

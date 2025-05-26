@@ -26,9 +26,10 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
 
   const formSchema = z.object({
     botToken: z
-      .string({ message: t("access.form.telegram_bot_token.placeholder") })
-      .min(1, t("access.form.telegram_bot_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 })),
+      .string({ message: t("access.form.telegrambot_token.placeholder") })
+      .min(1, t("access.form.telegrambot_token.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 }))
+      .trim(),
     defaultChatId: z
       .preprocess(
         (v) => (v == null || v === "" ? undefined : Number(v)),
@@ -38,7 +39,7 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
           .refine((v) => {
             if (v == null || v + "" === "") return true;
             return !Number.isNaN(+v!) && +v! !== 0;
-          }, t("access.form.telegram_bot_default_chat_id.placeholder"))
+          }, t("access.form.telegrambot_default_chat_id.placeholder"))
       )
       .nullish(),
   });
@@ -59,20 +60,20 @@ const AccessFormTelegramBotConfig = ({ form: formInst, formName, disabled, initi
     >
       <Form.Item
         name="botToken"
-        label={t("access.form.telegram_bot_token.label")}
+        label={t("access.form.telegrambot_token.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_bot_token.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegrambot_token.tooltip") }}></span>}
       >
-        <Input.Password autoComplete="new-password" placeholder={t("access.form.telegram_bot_token.placeholder")} />
+        <Input.Password autoComplete="new-password" placeholder={t("access.form.telegrambot_token.placeholder")} />
       </Form.Item>
 
       <Form.Item
         name="defaultChatId"
-        label={t("access.form.telegram_bot_default_chat_id.label")}
+        label={t("access.form.telegrambot_default_chat_id.label")}
         rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegram_bot_default_chat_id.tooltip") }}></span>}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.telegrambot_default_chat_id.tooltip") }}></span>}
       >
-        <Input allowClear placeholder={t("access.form.telegram_bot_default_chat_id.placeholder")} />
+        <Input allowClear placeholder={t("access.form.telegrambot_default_chat_id.placeholder")} />
       </Form.Item>
     </Form>
   );

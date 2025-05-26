@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fApiVersion    string
 	fUsername      string
 	fPassword      string
@@ -26,7 +26,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiVersion, argsPrefix+"APIVERSION", "v3", "")
 	flag.StringVar(&fUsername, argsPrefix+"USERNAME", "", "")
 	flag.StringVar(&fPassword, argsPrefix+"PASSWORD", "", "")
@@ -39,7 +39,7 @@ Shell command to run this test:
 	go test -v ./lecdn_test.go -args \
 	--CERTIMATE_DEPLOYER_LECDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_LECDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_LECDN_APIURL="http://127.0.0.1:5090" \
+	--CERTIMATE_DEPLOYER_LECDN_SERVERURL="http://127.0.0.1:5090" \
 	--CERTIMATE_DEPLOYER_LECDN_USERNAME="your-username" \
 	--CERTIMATE_DEPLOYER_LECDN_PASSWORD="your-password" \
 	--CERTIMATE_DEPLOYER_LECDN_CERTIFICATEID="your-cerficiate-id"
@@ -52,7 +52,7 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APIVERSION: %v", fApiVersion),
 			fmt.Sprintf("USERNAME: %v", fUsername),
 			fmt.Sprintf("PASSWORD: %v", fPassword),
@@ -60,7 +60,7 @@ func TestDeploy(t *testing.T) {
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiVersion:               fApiVersion,
 			ApiRole:                  "user",
 			Username:                 fUsername,

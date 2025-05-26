@@ -15,8 +15,8 @@ import (
 )
 
 type DeployerConfig struct {
-	// LeCDN URL。
-	ApiUrl string `json:"apiUrl"`
+	// LeCDN 服务地址。
+	ServerUrl string `json:"serverUrl"`
 	// LeCDN 版本。
 	// 可取值 "v3"。
 	ApiVersion string `json:"apiVersion"`
@@ -59,7 +59,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client, err := createSdkClient(config.ApiUrl, config.ApiVersion, config.ApiRole, config.Username, config.Password, config.AllowInsecureConnections)
+	client, err := createSdkClient(config.ServerUrl, config.ApiVersion, config.ApiRole, config.Username, config.Password, config.AllowInsecureConnections)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
@@ -141,9 +141,9 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	return nil
 }
 
-func createSdkClient(apiUrl, apiVersion, apiRole, username, password string, skipTlsVerify bool) (interface{}, error) {
-	if _, err := url.Parse(apiUrl); err != nil {
-		return nil, errors.New("invalid lecdn api url")
+func createSdkClient(serverUrl, apiVersion, apiRole, username, password string, skipTlsVerify bool) (interface{}, error) {
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, errors.New("invalid lecdn server url")
 	}
 
 	if username == "" {
@@ -156,7 +156,7 @@ func createSdkClient(apiUrl, apiVersion, apiRole, username, password string, ski
 
 	if apiVersion == apiVersionV3 && apiRole == apiRoleClient {
 		// v3 版客户端
-		client := leclientsdkv3.NewClient(apiUrl, username, password)
+		client := leclientsdkv3.NewClient(serverUrl, username, password)
 		if skipTlsVerify {
 			client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 		}
@@ -164,7 +164,7 @@ func createSdkClient(apiUrl, apiVersion, apiRole, username, password string, ski
 		return client, nil
 	} else if apiVersion == apiVersionV3 && apiRole == apiRoleMaster {
 		// v3 版主控端
-		client := lemastersdkv3.NewClient(apiUrl, username, password)
+		client := lemastersdkv3.NewClient(serverUrl, username, password)
 		if skipTlsVerify {
 			client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
 		}

@@ -1,13 +1,9 @@
-import { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { FormOutlined as FormOutlinedIcon } from "@ant-design/icons";
-import { Alert, Button, Form, type FormInstance, Input, Space } from "antd";
+import { Alert, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import ModalForm from "@/components/ModalForm";
-import MultipleInput from "@/components/MultipleInput";
-import { useAntdForm } from "@/hooks";
+import MultipleSplitValueInput from "@/components/MultipleSplitValueInput";
 
 type DeployNodeConfigFormAliyunCASDeployConfigFieldValues = Nullish<{
   region: string;
@@ -61,9 +57,6 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
   });
   const formRule = createSchemaFieldRule(formSchema);
 
-  const fieldResourceIds = Form.useWatch<string>("resourceIds", formInst);
-  const fieldContactIds = Form.useWatch<string>("contactIds", formInst);
-
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values);
   };
@@ -87,69 +80,31 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
       </Form.Item>
 
       <Form.Item
+        name="resourceIds"
         label={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.label")}
+        rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.tooltip") }}></span>}
       >
-        <Space.Compact style={{ width: "100%" }}>
-          <Form.Item name="resourceIds" noStyle rules={[formRule]}>
-            <Input
-              allowClear
-              disabled={disabled}
-              value={fieldResourceIds}
-              placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.placeholder")}
-              onChange={(e) => {
-                formInst.setFieldValue("resourceIds", e.target.value);
-              }}
-              onClear={() => {
-                formInst.setFieldValue("resourceIds", "");
-              }}
-            />
-          </Form.Item>
-          <ResourceIdsModalInput
-            value={fieldResourceIds}
-            trigger={
-              <Button disabled={disabled}>
-                <FormOutlinedIcon />
-              </Button>
-            }
-            onChange={(value) => {
-              formInst.setFieldValue("resourceIds", value);
-            }}
-          />
-        </Space.Compact>
+        <MultipleSplitValueInput
+          modalTitle={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.multiple_input_modal.title")}
+          placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.placeholder")}
+          placeholderInModal={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.multiple_input_modal.placeholder")}
+          splitOptions={{ trim: true, removeEmpty: true }}
+        />
       </Form.Item>
 
       <Form.Item
+        name="contactIds"
         label={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.label")}
+        rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.tooltip") }}></span>}
       >
-        <Space.Compact style={{ width: "100%" }}>
-          <Form.Item name="contactIds" noStyle rules={[formRule]}>
-            <Input
-              allowClear
-              disabled={disabled}
-              value={fieldContactIds}
-              placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.placeholder")}
-              onChange={(e) => {
-                formInst.setFieldValue("contactIds", e.target.value);
-              }}
-              onClear={() => {
-                formInst.setFieldValue("contactIds", "");
-              }}
-            />
-          </Form.Item>
-          <ContactIdsModalInput
-            value={fieldContactIds}
-            trigger={
-              <Button disabled={disabled}>
-                <FormOutlinedIcon />
-              </Button>
-            }
-            onChange={(value) => {
-              formInst.setFieldValue("contactIds", value);
-            }}
-          />
-        </Space.Compact>
+        <MultipleSplitValueInput
+          modalTitle={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.multiple_input_modal.title")}
+          placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.placeholder")}
+          placeholderInModal={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.multiple_input_modal.placeholder")}
+          splitOptions={{ trim: true, removeEmpty: true }}
+        />
       </Form.Item>
 
       <Form.Item>
@@ -158,85 +113,5 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
     </Form>
   );
 };
-
-const ResourceIdsModalInput = memo(({ value, trigger, onChange }: { value?: string; trigger?: React.ReactNode; onChange?: (value: string) => void }) => {
-  const { t } = useTranslation();
-
-  const formSchema = z.object({
-    resourceIds: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || /^[1-9]\d*$/.test(e));
-    }, t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.errmsg.invalid")),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm({
-    name: "workflowNodeDeployConfigFormAliyunCASResourceIdsModalInput",
-    initialValues: { resourceIds: value?.split(MULTIPLE_INPUT_DELIMITER) },
-    onSubmit: (values) => {
-      onChange?.(
-        values.resourceIds
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-  });
-
-  return (
-    <ModalForm
-      {...formProps}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnHidden: true }}
-      title={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.multiple_input_modal.title")}
-      trigger={trigger}
-      validateTrigger="onSubmit"
-      width={480}
-    >
-      <Form.Item name="resourceIds" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.multiple_input_modal.placeholder")} />
-      </Form.Item>
-    </ModalForm>
-  );
-});
-
-const ContactIdsModalInput = memo(({ value, trigger, onChange }: { value?: string; trigger?: React.ReactNode; onChange?: (value: string) => void }) => {
-  const { t } = useTranslation();
-
-  const formSchema = z.object({
-    contactIds: z.array(z.string()).refine((v) => {
-      return v.every((e) => !e?.trim() || /^[1-9]\d*$/.test(e));
-    }, t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.errmsg.invalid")),
-  });
-  const formRule = createSchemaFieldRule(formSchema);
-  const { form: formInst, formProps } = useAntdForm({
-    name: "workflowNodeDeployConfigFormAliyunCASDeploymentJobContactIdsModalInput",
-    initialValues: { contactIds: value?.split(MULTIPLE_INPUT_DELIMITER) },
-    onSubmit: (values) => {
-      onChange?.(
-        values.contactIds
-          .map((e) => e.trim())
-          .filter((e) => !!e)
-          .join(MULTIPLE_INPUT_DELIMITER)
-      );
-    },
-  });
-
-  return (
-    <ModalForm
-      {...formProps}
-      layout="vertical"
-      form={formInst}
-      modalProps={{ destroyOnHidden: true }}
-      title={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.multiple_input_modal.title")}
-      trigger={trigger}
-      validateTrigger="onSubmit"
-      width={480}
-    >
-      <Form.Item name="contactIds" rules={[formRule]}>
-        <MultipleInput placeholder={t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.multiple_input_modal.placeholder")} />
-      </Form.Item>
-    </ModalForm>
-  );
-});
 
 export default DeployNodeConfigFormAliyunCASDeployConfig;

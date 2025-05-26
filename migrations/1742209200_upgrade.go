@@ -11,6 +11,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1742209200")
+		tracer.Printf("go ...")
+
 		// create collection `workflow_logs`
 		{
 			jsonData := `{
@@ -167,6 +170,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' created", collection.Name)
 		}
 
 		// migrate data
@@ -215,6 +220,8 @@ func init() {
 						if err := app.Save(record); err != nil {
 							return err
 						}
+
+						tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 					}
 				}
 			}
@@ -243,6 +250,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// migrate data
@@ -321,6 +330,8 @@ func init() {
 				if err := app.Save(workflowRun); err != nil {
 					return err
 				}
+
+				tracer.Printf("record #%s in collection '%s' updated", workflowRun.Id, workflowRun.Collection().Name)
 			}
 		}
 
@@ -336,8 +347,11 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

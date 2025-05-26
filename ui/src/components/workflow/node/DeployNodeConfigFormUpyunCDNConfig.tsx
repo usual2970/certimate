@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Alert, Form, type FormInstance, Input } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -44,6 +44,10 @@ const DeployNodeConfigFormUpyunCDNConfig = ({ form: formInst, formName, disabled
       name={formName}
       onValuesChange={handleFormChange}
     >
+      <Form.Item>
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.upyun_cdn.guide") }}></span>} />
+      </Form.Item>
+
       <Form.Item
         name="domain"
         label={t("workflow_node.deploy.form.upyun_cdn_domain.label")}
