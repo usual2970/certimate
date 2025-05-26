@@ -79,6 +79,7 @@ import (
 	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
 	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
 	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
+	pUniCloudWebHost "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/unicloud-webhost"
 	pUpyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/upyun-cdn"
 	pVolcEngineALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-alb"
 	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
@@ -1142,6 +1143,23 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			default:
 				break
 			}
+		}
+
+	case domain.DeploymentProviderTypeUniCloudWebHost:
+		{
+			access := domain.AccessConfigForUniCloud{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pUniCloudWebHost.NewDeployer(&pUniCloudWebHost.DeployerConfig{
+				Username:      access.Username,
+				Password:      access.Password,
+				SpaceProvider: maputil.GetString(options.ProviderServiceConfig, "spaceProvider"),
+				SpaceId:       maputil.GetString(options.ProviderServiceConfig, "spaceId"),
+				Domain:        maputil.GetString(options.ProviderServiceConfig, "domain"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeUpyunCDN, domain.DeploymentProviderTypeUpyunFile:

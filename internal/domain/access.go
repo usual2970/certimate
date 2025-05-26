@@ -343,6 +343,11 @@ type AccessConfigForUCloud struct {
 	ProjectId  string `json:"projectId,omitempty"`
 }
 
+type AccessConfigForUniCloud struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type AccessConfigForUpyun struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

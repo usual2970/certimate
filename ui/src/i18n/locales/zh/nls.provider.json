@@ -138,6 +138,8 @@
   "provider.ucloud": "优刻得",
   "provider.ucloud.ucdn": "优刻得 - 内容分发 UCDN",
   "provider.ucloud.us3": "优刻得 - 对象存储 US3",
+  "provider.unicloud": "uniCloud (DCloud)",
+  "provider.unicloud.webhost": "uniCloud (DCloud) - 前端网页托管",
   "provider.upyun": "又拍云",
   "provider.upyun.cdn": "又拍云 - 云分发 CDN",
   "provider.upyun.file": "又拍云 - 云存储 USS",
