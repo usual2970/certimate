@@ -170,6 +170,10 @@ export type AccessConfigForDeSEC = {
   token: string;
 };
 
+export type AccessConfigForDigitalOcean = {
+  accessToken: string;
+};
+
 export type AccessConfigForDingTalkBot = {
   webhookUrl: string;
   secret?: string;

@@ -31,6 +31,7 @@ const (
 	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 天翼云（预留）
 	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 联通云（预留）
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
+	AccessProviderTypeDigitalOcean        = AccessProviderType("digitalocean")
 	AccessProviderTypeDingTalkBot         = AccessProviderType("dingtalkbot")
 	AccessProviderTypeDNSLA               = AccessProviderType("dnsla")
 	AccessProviderTypeDogeCloud           = AccessProviderType("dogecloud")
@@ -127,6 +128,7 @@ const (
 	ACMEDns01ProviderTypeClouDNS         = ACMEDns01ProviderType(AccessProviderTypeClouDNS)
 	ACMEDns01ProviderTypeCMCCCloud       = ACMEDns01ProviderType(AccessProviderTypeCMCCCloud)
 	ACMEDns01ProviderTypeDeSEC           = ACMEDns01ProviderType(AccessProviderTypeDeSEC)
+	ACMEDns01ProviderTypeDigitalOcean    = ACMEDns01ProviderType(AccessProviderTypeDigitalOcean)
 	ACMEDns01ProviderTypeDNSLA           = ACMEDns01ProviderType(AccessProviderTypeDNSLA)
 	ACMEDns01ProviderTypeDynv6           = ACMEDns01ProviderType(AccessProviderTypeDynv6)
 	ACMEDns01ProviderTypeGcore           = ACMEDns01ProviderType(AccessProviderTypeGcore)

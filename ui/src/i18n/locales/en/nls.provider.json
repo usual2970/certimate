@@ -58,6 +58,7 @@
   "provider.ctcccloud": "China Telecom Cloud (State Cloud)",
   "provider.cucccloud": "China Unicom Cloud",
   "provider.desec": "deSEC",
+  "provider.digitalocean": "DigitalOcean",
   "provider.dingtalkbot": "DingTalk Bot",
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "Doge Cloud",

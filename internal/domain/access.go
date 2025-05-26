@@ -112,6 +112,10 @@ type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }
 
+type AccessConfigForDigitalOcean struct {
+	AccessToken string `json:"accessToken"`
+}
+
 type AccessConfigForDingTalkBot struct {
 	WebhookUrl string `json:"webhookUrl"`
 	Secret     string `json:"secret"`

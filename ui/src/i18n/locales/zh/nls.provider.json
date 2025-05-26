@@ -58,6 +58,7 @@
   "provider.ctcccloud": "联通云",
   "provider.cucccloud": "天翼云",
   "provider.desec": "deSEC",
+  "provider.digitalocean": "DigitalOcean",
   "provider.dingtalkbot": "钉钉群机器人",
   "provider.dnsla": "DNS.LA",
   "provider.dogecloud": "多吉云",
