@@ -29,9 +29,12 @@ import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
 import AccessFormDeSECConfig from "./AccessFormDeSECConfig";
+import AccessFormDigitalOceanConfig from "./AccessFormDigitalOceanConfig";
 import AccessFormDingTalkBotConfig from "./AccessFormDingTalkBotConfig";
+import AccessFormDiscordBotConfig from "./AccessFormDiscordBotConfig";
 import AccessFormDNSLAConfig from "./AccessFormDNSLAConfig";
 import AccessFormDogeCloudConfig from "./AccessFormDogeCloudConfig";
+import AccessFormDuckDNSConfig from "./AccessFormDuckDNSConfig";
 import AccessFormDynv6Config from "./AccessFormDynv6Config";
 import AccessFormEdgioConfig from "./AccessFormEdgioConfig";
 import AccessFormEmailConfig from "./AccessFormEmailConfig";
@@ -41,6 +44,7 @@ import AccessFormGnameConfig from "./AccessFormGnameConfig";
 import AccessFormGoDaddyConfig from "./AccessFormGoDaddyConfig";
 import AccessFormGoEdgeConfig from "./AccessFormGoEdgeConfig";
 import AccessFormGoogleTrustServicesConfig from "./AccessFormGoogleTrustServicesConfig";
+import AccessFormHetznerConfig from "./AccessFormHetznerConfig";
 import AccessFormHuaweiCloudConfig from "./AccessFormHuaweiCloudConfig";
 import AccessFormJDCloudConfig from "./AccessFormJDCloudConfig";
 import AccessFormKubernetesConfig from "./AccessFormKubernetesConfig";
@@ -60,6 +64,7 @@ import AccessFormQiniuConfig from "./AccessFormQiniuConfig";
 import AccessFormRainYunConfig from "./AccessFormRainYunConfig";
 import AccessFormRatPanelConfig from "./AccessFormRatPanelConfig";
 import AccessFormSafeLineConfig from "./AccessFormSafeLineConfig";
+import AccessFormSlackBotConfig from "./AccessFormSlackBotConfig";
 import AccessFormSSHConfig from "./AccessFormSSHConfig";
 import AccessFormSSLComConfig from "./AccessFormSSLComConfig";
 import AccessFormTelegramBotConfig from "./AccessFormTelegramBotConfig";
@@ -215,12 +220,18 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormCMCCCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DESEC:
         return <AccessFormDeSECConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DIGITALOCEAN:
+        return <AccessFormDigitalOceanConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DINGTALKBOT:
         return <AccessFormDingTalkBotConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DISCORDBOT:
+        return <AccessFormDiscordBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DNSLA:
         return <AccessFormDNSLAConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DOGECLOUD:
         return <AccessFormDogeCloudConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.DUCKDNS:
+        return <AccessFormDuckDNSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DYNV6:
         return <AccessFormDynv6Config {...nestedFormProps} />;
       case ACCESS_PROVIDERS.EDGIO:
@@ -239,6 +250,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormGoEdgeConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.GOOGLETRUSTSERVICES:
         return <AccessFormGoogleTrustServicesConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.HETZNER:
+        return <AccessFormHetznerConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.HUAWEICLOUD:
         return <AccessFormHuaweiCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.JDCLOUD:
@@ -277,6 +290,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormRatPanelConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SAFELINE:
         return <AccessFormSafeLineConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.SLACKBOT:
+        return <AccessFormSlackBotConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.SSH:
         return <AccessFormSSHConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.TELEGRAMBOT:

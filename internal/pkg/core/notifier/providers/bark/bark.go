@@ -58,6 +58,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// REF: https://bark.day.app/#/tutorial
 	req := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]any{
 			"title":      subject,

@@ -139,7 +139,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// 生成请求
 	// 其中 GET 请求需转换为查询参数
-	req := n.httpClient.R().SetHeaderMultiValues(webhookHeaders)
+	req := n.httpClient.R().SetContext(ctx).SetHeaderMultiValues(webhookHeaders)
 	req.URL = webhookUrl.String()
 	req.Method = webhookMethod
 	if webhookMethod == http.MethodGet {

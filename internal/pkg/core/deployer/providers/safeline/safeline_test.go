@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fApiToken      string
 	fCertificateId int64
 )
@@ -24,7 +24,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
 	flag.Int64Var(&fCertificateId, argsPrefix+"CERTIFICATEID", 0, "")
 }
@@ -35,7 +35,7 @@ Shell command to run this test:
 	go test -v ./safeline_test.go -args \
 	--CERTIMATE_DEPLOYER_SAFELINE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_SAFELINE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_SAFELINE_APIURL="http://127.0.0.1:9443" \
+	--CERTIMATE_DEPLOYER_SAFELINE_SERVERURL="http://127.0.0.1:9443" \
 	--CERTIMATE_DEPLOYER_SAFELINE_APITOKEN="your-api-token" \
 	--CERTIMATE_DEPLOYER_SAFELINE_CERTIFICATEID="your-cerficiate-id"
 */
@@ -47,13 +47,13 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APITOKEN: %v", fApiToken),
 			fmt.Sprintf("CERTIFICATEID: %v", fCertificateId),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiToken:                 fApiToken,
 			AllowInsecureConnections: true,
 			ResourceType:             provider.RESOURCE_TYPE_CERTIFICATE,

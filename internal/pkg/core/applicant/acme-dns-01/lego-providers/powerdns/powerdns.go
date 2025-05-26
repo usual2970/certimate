@@ -11,7 +11,7 @@ import (
 )
 
 type ChallengeProviderConfig struct {
-	ApiUrl                   string `json:"apiUrl"`
+	ServerUrl                string `json:"serverUrl"`
 	ApiKey                   string `json:"apiKey"`
 	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
 	DnsPropagationTimeout    int32  `json:"dnsPropagationTimeout,omitempty"`
@@ -23,9 +23,9 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 		panic("config is nil")
 	}
 
-	host, _ := url.Parse(config.ApiUrl)
+	serverUrl, _ := url.Parse(config.ServerUrl)
 	providerConfig := pdns.NewDefaultConfig()
-	providerConfig.Host = host
+	providerConfig.Host = serverUrl
 	providerConfig.APIKey = config.ApiKey
 	if config.AllowInsecureConnections {
 		providerConfig.HTTPClient.Transport = &http.Transport{

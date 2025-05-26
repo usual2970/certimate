@@ -7,6 +7,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1748228400")
+		tracer.Printf("go ...")
+
 		// update collection `certificate`
 		{
 			collection, err := app.FindCollectionByNameOrId("4szxr9x43tpj6np")
@@ -30,8 +33,11 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

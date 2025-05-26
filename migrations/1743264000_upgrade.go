@@ -7,6 +7,9 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1743264000")
+		tracer.Printf("go ...")
+
 		// update collection `settings`
 		{
 			collection, err := app.FindCollectionByNameOrId("dy6ccjb60spfy6p")
@@ -52,6 +55,8 @@ func init() {
 				if err := app.Save(record); err != nil {
 					return err
 				}
+
+				tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 			}
 		}
 
@@ -62,7 +67,6 @@ func init() {
 				return err
 			}
 
-			// update field
 			if err := collection.Fields.AddMarshaledJSONAt(2, []byte(`{
 				"hidden": false,
 				"id": "hwy7m03o",
@@ -136,6 +140,8 @@ func init() {
 			if err := app.Save(collection); err != nil {
 				return err
 			}
+
+			tracer.Printf("collection '%s' updated", collection.Name)
 		}
 
 		// update collection `acme_accounts`
@@ -163,9 +169,12 @@ func init() {
 				if err := app.Save(record); err != nil {
 					return err
 				}
+
+				tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 			}
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

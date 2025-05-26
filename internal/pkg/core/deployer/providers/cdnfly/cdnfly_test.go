@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath string
 	fInputKeyPath  string
-	fApiUrl        string
+	fServerUrl     string
 	fApiKey        string
 	fApiSecret     string
 	fCertificateId string
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fApiUrl, argsPrefix+"APIURL", "", "")
+	flag.StringVar(&fServerUrl, argsPrefix+"SERVERURL", "", "")
 	flag.StringVar(&fApiKey, argsPrefix+"APIKEY", "", "")
 	flag.StringVar(&fApiSecret, argsPrefix+"APISECRET", "", "")
 	flag.StringVar(&fCertificateId, argsPrefix+"CERTIFICATEID", "", "")
@@ -37,7 +37,7 @@ Shell command to run this test:
 	go test -v ./cdnfly_test.go -args \
 	--CERTIMATE_DEPLOYER_CDNFLY_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_CDNFLY_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_CDNFLY_APIURL="http://127.0.0.1:88" \
+	--CERTIMATE_DEPLOYER_CDNFLY_SERVERURL="http://127.0.0.1:88" \
 	--CERTIMATE_DEPLOYER_CDNFLY_APIKEY="your-api-key" \
 	--CERTIMATE_DEPLOYER_CDNFLY_APISECRET="your-api-secret" \
 	--CERTIMATE_DEPLOYER_CDNFLY_CERTIFICATEID="your-cert-id"
@@ -50,14 +50,14 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("APIURL: %v", fApiUrl),
+			fmt.Sprintf("SERVERURL: %v", fServerUrl),
 			fmt.Sprintf("APIKEY: %v", fApiKey),
 			fmt.Sprintf("APISECRET: %v", fApiSecret),
 			fmt.Sprintf("CERTIFICATEID: %v", fCertificateId),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			ApiUrl:                   fApiUrl,
+			ServerUrl:                fServerUrl,
 			ApiKey:                   fApiKey,
 			ApiSecret:                fApiSecret,
 			AllowInsecureConnections: true,

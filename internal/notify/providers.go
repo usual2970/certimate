@@ -7,9 +7,11 @@ import (
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/pkg/core/notifier"
 	pDingTalkBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalkbot"
+	pDiscordBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/discordbot"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
 	pLarkBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/larkbot"
 	pMattermost "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/mattermost"
+	pSlackBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/slackbot"
 	pTelegramBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeComBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
@@ -39,6 +41,19 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 			return pDingTalkBot.NewNotifier(&pDingTalkBot.NotifierConfig{
 				WebhookUrl: access.WebhookUrl,
 				Secret:     access.Secret,
+			})
+		}
+
+	case domain.NotificationProviderTypeDiscordBot:
+		{
+			access := domain.AccessConfigForDiscordBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pDiscordBot.NewNotifier(&pDiscordBot.NotifierConfig{
+				BotToken:  access.BotToken,
+				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
 		}
 
@@ -83,6 +98,19 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				ServerUrl: access.ServerUrl,
 				Username:  access.Username,
 				Password:  access.Password,
+				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
+			})
+		}
+
+	case domain.NotificationProviderTypeSlackBot:
+		{
+			access := domain.AccessConfigForSlackBot{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			return pSlackBot.NewNotifier(&pSlackBot.NotifierConfig{
+				BotToken:  access.BotToken,
 				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
 		}

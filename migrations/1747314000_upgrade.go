@@ -7,36 +7,46 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
+		tracer := NewTracer("(v0.3)1747314000")
+		tracer.Printf("go ...")
+
 		// migrate data
 		{
-			accesses, err := app.FindAllRecords("access")
+			collection, err := app.FindCollectionByNameOrId("4yzbv8urny5ja1e")
 			if err != nil {
 				return err
 			}
 
-			for _, access := range accesses {
+			records, err := app.FindAllRecords(collection)
+			if err != nil {
+				return err
+			}
+
+			for _, record := range records {
 				changed := false
 
-				if access.GetString("provider") == "goedge" {
+				if record.GetString("provider") == "goedge" {
 					config := make(map[string]any)
-					if err := access.UnmarshalJSONField("config", &config); err != nil {
+					if err := record.UnmarshalJSONField("config", &config); err != nil {
 						return err
 					}
 
 					config["apiRole"] = "user"
-					access.Set("config", config)
+					record.Set("config", config)
 					changed = true
 				}
 
 				if changed {
-					err = app.Save(access)
-					if err != nil {
+					if err := app.Save(record); err != nil {
 						return err
 					}
+
+					tracer.Printf("record #%s in collection '%s' updated", record.Id, collection.Name)
 				}
 			}
 		}
 
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

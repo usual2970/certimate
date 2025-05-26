@@ -2,7 +2,6 @@ package migrations
 
 import (
 	x509 "crypto/x509"
-	"log/slog"
 	"strings"
 
 	"github.com/pocketbase/pocketbase/core"
@@ -12,7 +11,8 @@ import (
 
 func init() {
 	m.Register(func(app core.App) error {
-		slog.Info("[CERTIMATE] migration: ready ...")
+		tracer := NewTracer("to v0.3")
+		tracer.Printf("go ...")
 
 		// backup collection records
 		collectionRecords := make([]*core.Record, 0)
@@ -30,7 +30,7 @@ func init() {
 						}
 						collectionRecords = append(collectionRecords, records...)
 
-						slog.Info("[CERTIMATE] migration: collection '" + collection.Name + "' backed up")
+						tracer.Printf("collection '%s' backed up", collection.Name)
 
 						if collection.Name == "access" {
 							collection.Fields.RemoveByName("usage")
@@ -107,7 +107,7 @@ func init() {
 					{
 						app.Delete(collection)
 
-						slog.Info("[CERTIMATE] migration: collection '" + collection.Name + "' truncated")
+						tracer.Printf("collection '%s' truncated", collection.Name)
 					}
 				}
 			}
@@ -1729,7 +1729,7 @@ func init() {
 			return err
 		}
 
-		slog.Info("[CERTIMATE] migration: collections imported")
+		tracer.Printf("collections imported")
 
 		// restore records
 		for _, record := range collectionRecords {
@@ -1795,12 +1795,11 @@ func init() {
 					return err
 				}
 
-				slog.Info("[CERTIMATE] migration: collection '" + record.Collection().Name + "' record #" + record.Id + " updated")
+				tracer.Printf("record #%s in collection '%s' updated", record.Id, record.Collection().Name)
 			}
 		}
 
-		slog.Info("[CERTIMATE] migration: done")
-
+		tracer.Printf("done")
 		return nil
 	}, func(app core.App) error {
 		return nil

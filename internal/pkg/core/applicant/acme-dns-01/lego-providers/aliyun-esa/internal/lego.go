@@ -102,9 +102,10 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteId, err := d.getSiteId(strings.TrimRight(authZone, "."))
+	siteName := strings.TrimRight(authZone, ".")
+	siteId, err := d.getSiteId(siteName)
 	if err != nil {
-		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", authZone, err)
+		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", siteName, err)
 	}
 
 	if err := d.addOrUpdateDNSRecord(siteId, strings.TrimRight(info.EffectiveFQDN, "."), info.Value); err != nil {
@@ -122,9 +123,10 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteId, err := d.getSiteId(strings.TrimRight(authZone, "."))
+	siteName := strings.TrimRight(authZone, ".")
+	siteId, err := d.getSiteId(siteName)
 	if err != nil {
-		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", authZone, err)
+		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", siteName, err)
 	}
 
 	if err := d.removeDNSRecord(siteId, strings.TrimRight(info.EffectiveFQDN, ".")); err != nil {

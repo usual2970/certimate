@@ -56,6 +56,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	// REF: https://gotify.net/api-docs#/message/createMessage
 	req := n.httpClient.R().
+		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bearer "+n.config.Token).
 		SetBody(map[string]any{

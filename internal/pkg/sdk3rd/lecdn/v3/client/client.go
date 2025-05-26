@@ -22,13 +22,13 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiHost, username, password string) *Client {
+func NewClient(serverUrl, username, password string) *Client {
 	client := &Client{
 		username: username,
 		password: password,
 	}
 	client.client = resty.New().
-		SetBaseURL(strings.TrimRight(apiHost, "/") + "/prod-api").
+		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/prod-api").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.accessToken != "" {
 				req.Header.Set("Authorization", "Bearer "+client.accessToken)
