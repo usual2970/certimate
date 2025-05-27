@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -19,6 +20,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
@@ -150,6 +153,8 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
 	var fc2Endpoint string
 	switch region {
+	case "":
+		fc2Endpoint = "fc.aliyuncs.com"
 	case "cn-hangzhou-finance":
 		fc2Endpoint = fmt.Sprintf("%s.fc.aliyuncs.com", region)
 	default:
@@ -167,7 +172,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}
 
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
-	fc3Endpoint := fmt.Sprintf("fcv3.%s.aliyuncs.com", region)
+	fc3Endpoint := strings.ReplaceAll(fmt.Sprintf("fcv3.%s.aliyuncs.com", region), "..", ".")
 	fc3Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),

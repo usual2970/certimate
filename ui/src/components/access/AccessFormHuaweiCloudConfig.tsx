@@ -36,11 +36,7 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
       .trim()
       .min(1, t("access.form.huaweicloud_secret_access_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
-    enterpriseProjectId: z
-      .string()
-      .trim()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .nullish(),
+    enterpriseProjectId: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

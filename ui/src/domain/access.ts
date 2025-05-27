@@ -101,6 +101,7 @@ export type AccessConfigForACMEHttpReq = {
 export type AccessConfigForAliyun = {
   accessKeyId: string;
   accessKeySecret: string;
+  resourceGroupId?: string;
 };
 
 export type AccessConfigForAWS = {

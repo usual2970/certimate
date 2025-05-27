@@ -22,10 +22,11 @@ func ToPtr[T any](v T) (p *T) {
 // 出参：
 //   - 返回对象的指针。
 func ToPtrOrZeroNil[T any](v T) (p *T) {
-	if !reflect.ValueOf(v).IsZero() {
-		return &v
+	if reflect.ValueOf(v).IsZero() {
+		return nil
 	}
-	return nil
+
+	return &v
 }
 
 // 将指针转换为对象。
