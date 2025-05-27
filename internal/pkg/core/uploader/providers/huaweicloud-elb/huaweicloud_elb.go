@@ -26,6 +26,8 @@ type UploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 	// 华为云区域。
 	Region string `json:"region"`
 }
@@ -141,10 +143,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateReq := &hcelbmodel.CreateCertificateRequest{
 		Body: &hcelbmodel.CreateCertificateRequestBody{
 			Certificate: &hcelbmodel.CreateCertificateOption{
-				ProjectId:   typeutil.ToPtr(projectId),
-				Name:        typeutil.ToPtr(certName),
-				Certificate: typeutil.ToPtr(certPEM),
-				PrivateKey:  typeutil.ToPtr(privkeyPEM),
+				EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+				ProjectId:           typeutil.ToPtr(projectId),
+				Name:                typeutil.ToPtr(certName),
+				Certificate:         typeutil.ToPtr(certPEM),
+				PrivateKey:          typeutil.ToPtr(privkeyPEM),
 			},
 		},
 	}

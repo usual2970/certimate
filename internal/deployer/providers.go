@@ -676,40 +676,44 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			switch options.Provider {
 			case domain.DeploymentProviderTypeHuaweiCloudCDN:
 				deployer, err := pHuaweiCloudCDN.NewDeployer(&pHuaweiCloudCDN.DeployerConfig{
-					AccessKeyId:     access.AccessKeyId,
-					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					AccessKeyId:         access.AccessKeyId,
+					SecretAccessKey:     access.SecretAccessKey,
+					EnterpriseProjectId: access.EnterpriseProjectId,
+					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
+					Domain:              maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudELB:
 				deployer, err := pHuaweiCloudELB.NewDeployer(&pHuaweiCloudELB.DeployerConfig{
-					AccessKeyId:     access.AccessKeyId,
-					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pHuaweiCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					AccessKeyId:         access.AccessKeyId,
+					SecretAccessKey:     access.SecretAccessKey,
+					EnterpriseProjectId: access.EnterpriseProjectId,
+					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:        pHuaweiCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:       maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					LoadbalancerId:      maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:          maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudSCM:
 				deployer, err := pHuaweiCloudSCM.NewDeployer(&pHuaweiCloudSCM.DeployerConfig{
-					AccessKeyId:     access.AccessKeyId,
-					SecretAccessKey: access.SecretAccessKey,
+					AccessKeyId:         access.AccessKeyId,
+					SecretAccessKey:     access.SecretAccessKey,
+					EnterpriseProjectId: access.EnterpriseProjectId,
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudWAF:
 				deployer, err := pHuaweiCloudWAF.NewDeployer(&pHuaweiCloudWAF.DeployerConfig{
-					AccessKeyId:     access.AccessKeyId,
-					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pHuaweiCloudWAF.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					AccessKeyId:         access.AccessKeyId,
+					SecretAccessKey:     access.SecretAccessKey,
+					EnterpriseProjectId: access.EnterpriseProjectId,
+					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:        pHuaweiCloudWAF.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:       maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					Domain:              maputil.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 

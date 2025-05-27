@@ -199,8 +199,9 @@ type AccessConfigForHetzner struct {
 }
 
 type AccessConfigForHuaweiCloud struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	SecretAccessKey string `json:"secretAccessKey"`
+	AccessKeyId         string `json:"accessKeyId"`
+	SecretAccessKey     string `json:"secretAccessKey"`
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 }
 
 type AccessConfigForJDCloud struct {

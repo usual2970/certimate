@@ -264,6 +264,7 @@ export type AccessConfigForHetzner = {
 export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
+  enterpriseProjectId?: string;
 };
 
 export type AccessConfigForJDCloud = {
