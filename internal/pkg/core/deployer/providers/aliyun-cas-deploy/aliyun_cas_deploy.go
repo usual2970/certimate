@@ -29,7 +29,7 @@ type DeployerConfig struct {
 	// 阿里云云产品资源 ID 数组。
 	ResourceIds []string `json:"resourceIds"`
 	// 阿里云云联系人 ID 数组。
-	// 零值时默认使用账号下第一个联系人。
+	// 零值时使用账号下第一个联系人。
 	ContactIds []string `json:"contactIds"`
 }
 

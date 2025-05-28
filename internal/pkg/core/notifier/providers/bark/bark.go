@@ -12,7 +12,7 @@ import (
 
 type NotifierConfig struct {
 	// Bark 服务地址。
-	// 零值时默认使用官方服务器。
+	// 零值时使用官方服务器。
 	ServerUrl string `json:"serverUrl"`
 	// Bark 设备密钥。
 	DeviceKey string `json:"deviceKey"`

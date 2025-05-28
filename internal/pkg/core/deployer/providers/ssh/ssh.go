@@ -19,10 +19,10 @@ import (
 
 type JumpServerConfig struct {
 	// SSH 主机。
-	// 零值时默认为 "localhost"。
+	// 零值时默认值 "localhost"。
 	SshHost string `json:"sshHost,omitempty"`
 	// SSH 端口。
-	// 零值时默认为 22。
+	// 零值时默认值 22。
 	SshPort int32 `json:"sshPort,omitempty"`
 	// SSH 登录用户名。
 	SshUsername string `json:"sshUsername,omitempty"`
@@ -36,10 +36,10 @@ type JumpServerConfig struct {
 
 type DeployerConfig struct {
 	// SSH 主机。
-	// 零值时默认为 "localhost"。
+	// 零值时默认值 "localhost"。
 	SshHost string `json:"sshHost,omitempty"`
 	// SSH 端口。
-	// 零值时默认为 22。
+	// 零值时默认值 22。
 	SshPort int32 `json:"sshPort,omitempty"`
 	// SSH 登录用户名。
 	SshUsername string `json:"sshUsername,omitempty"`
