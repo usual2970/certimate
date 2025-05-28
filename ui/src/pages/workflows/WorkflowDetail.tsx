@@ -265,7 +265,7 @@ const WorkflowDetail = () => {
               body: {
                 position: "relative",
                 height: "100%",
-                padding: 0,
+                padding: initialized ? 0 : undefined,
               },
             }}
             loading={!initialized}

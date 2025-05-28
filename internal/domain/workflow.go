@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/usual2970/certimate/internal/domain/expr"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
@@ -114,7 +115,7 @@ type WorkflowNodeConfigForNotify struct {
 }
 
 type WorkflowNodeConfigForCondition struct {
-	Expression Expr `json:"expression"` // 条件表达式
+	Expression expr.Expr `json:"expression"` // 条件表达式
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -183,9 +184,8 @@ func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
 		return WorkflowNodeConfigForCondition{}
 	}
 
-	raw, _ := json.Marshal(expression)
-
-	expr, err := UnmarshalExpr([]byte(raw))
+	exprRaw, _ := json.Marshal(expression)
+	expr, err := expr.UnmarshalExpr([]byte(exprRaw))
 	if err != nil {
 		return WorkflowNodeConfigForCondition{}
 	}
@@ -204,10 +204,6 @@ type WorkflowNodeIO struct {
 	ValueSelector WorkflowNodeIOValueSelector `json:"valueSelector"`
 }
 
-type WorkflowNodeIOValueSelector struct {
-	Id   string    `json:"id"`
-	Name string    `json:"name"`
-	Type ValueType `json:"type"`
-}
+type WorkflowNodeIOValueSelector = expr.ExprValueSelector
 
 const WorkflowNodeIONameCertificate string = "certificate"

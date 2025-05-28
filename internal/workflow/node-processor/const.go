@@ -1,6 +1,6 @@
 package nodeprocessor
 
 const (
-	outputCertificateValidatedKey = "certificate.validated"
-	outputCertificateDaysLeftKey  = "certificate.daysLeft"
+	outputKeyForCertificateValidity = "certificate.validity"
+	outputKeyForCertificateDaysLeft = "certificate.daysLeft"
 )

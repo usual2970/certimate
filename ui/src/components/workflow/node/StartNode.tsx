@@ -23,9 +23,9 @@ const StartNode = ({ node, disabled }: StartNodeProps) => {
 
   const formRef = useRef<StartNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForStart;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForStart;
 
   const wrappedEl = useMemo(() => {
     if (node.type !== WorkflowNodeType.Start) {
@@ -83,12 +83,12 @@ const StartNode = ({ node, disabled }: StartNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
         node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => setDrawerOpen(open)}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <StartNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>

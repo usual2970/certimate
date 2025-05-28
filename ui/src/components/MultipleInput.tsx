@@ -152,10 +152,10 @@ const MultipleInput = ({
             value={element}
             onBlur={() => handleInputBlur(index)}
             onChange={(val) => handleChange(index, val)}
-            onClickAdd={() => handleClickAdd(index)}
-            onClickDown={() => handleClickDown(index)}
-            onClickUp={() => handleClickUp(index)}
-            onClickRemove={() => handleClickRemove(index)}
+            onEntryAdd={() => handleClickAdd(index)}
+            onEntryDown={() => handleClickDown(index)}
+            onEntryUp={() => handleClickUp(index)}
+            onEntryRemove={() => handleClickRemove(index)}
           />
         );
       })}
@@ -174,10 +174,10 @@ type MultipleInputItemProps = Omit<
   defaultValue?: string;
   value?: string;
   onChange?: (value: string) => void;
-  onClickAdd?: () => void;
-  onClickDown?: () => void;
-  onClickUp?: () => void;
-  onClickRemove?: () => void;
+  onEntryAdd?: () => void;
+  onEntryDown?: () => void;
+  onEntryUp?: () => void;
+  onEntryRemove?: () => void;
 };
 
 type MultipleInputItemInstance = {
@@ -197,10 +197,10 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
       disabled,
       showSortButton,
       size,
-      onClickAdd,
-      onClickDown,
-      onClickUp,
-      onClickRemove,
+      onEntryAdd,
+      onEntryDown,
+      onEntryUp,
+      onEntryRemove,
       ...props
     }: MultipleInputItemProps,
     ref
@@ -216,18 +216,18 @@ const MultipleInputItem = forwardRef<MultipleInputItemInstance, MultipleInputIte
 
     const upBtn = useMemo(() => {
       if (!showSortButton) return null;
-      return <Button icon={<ArrowUpOutlinedIcon />} color="default" disabled={disabled || !allowUp} type="text" onClick={onClickUp} />;
-    }, [allowUp, disabled, showSortButton, onClickUp]);
+      return <Button icon={<ArrowUpOutlinedIcon />} color="default" disabled={disabled || !allowUp} type="text" onClick={onEntryUp} />;
+    }, [allowUp, disabled, showSortButton, onEntryUp]);
     const downBtn = useMemo(() => {
       if (!showSortButton) return null;
-      return <Button icon={<ArrowDownOutlinedIcon />} color="default" disabled={disabled || !allowDown} type="text" onClick={onClickDown} />;
-    }, [allowDown, disabled, showSortButton, onClickDown]);
+      return <Button icon={<ArrowDownOutlinedIcon />} color="default" disabled={disabled || !allowDown} type="text" onClick={onEntryDown} />;
+    }, [allowDown, disabled, showSortButton, onEntryDown]);
     const removeBtn = useMemo(() => {
-      return <Button icon={<MinusOutlinedIcon />} color="default" disabled={disabled || !allowRemove} type="text" onClick={onClickRemove} />;
-    }, [allowRemove, disabled, onClickRemove]);
+      return <Button icon={<MinusOutlinedIcon />} color="default" disabled={disabled || !allowRemove} type="text" onClick={onEntryRemove} />;
+    }, [allowRemove, disabled, onEntryRemove]);
     const addBtn = useMemo(() => {
-      return <Button icon={<PlusOutlinedIcon />} color="default" disabled={disabled || !allowAdd} type="text" onClick={onClickAdd} />;
-    }, [allowAdd, disabled, onClickAdd]);
+      return <Button icon={<PlusOutlinedIcon />} color="default" disabled={disabled || !allowAdd} type="text" onClick={onEntryAdd} />;
+    }, [allowAdd, disabled, onEntryAdd]);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value);

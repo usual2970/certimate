@@ -53,9 +53,5 @@
   "workflow.detail.orchestration.action.run": "Run",
   "workflow.detail.orchestration.action.run.confirm": "You have unreleased changes. Do you really want to run this workflow based on the latest released version?",
   "workflow.detail.orchestration.action.run.prompt": "Running... Please check the history later",
-  "workflow.detail.runs.tab": "History runs",
-
-  "workflow.variables.is_validated.label": "Is valid",
-  "workflow.variables.days_left.label": "Days left",
-  "workflow.variables.certificate.label": "Certificate"
+  "workflow.detail.runs.tab": "History runs"
 }

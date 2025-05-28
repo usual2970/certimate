@@ -32,7 +32,7 @@ export type WorkflowState = {
   addBranch: (branchId: string) => void;
   removeBranch: (branchId: string, index: number) => void;
 
-  getWorkflowOuptutBeforeId: (nodeId: string, type?: string) => WorkflowNode[];
+  getWorkflowOuptutBeforeId: (nodeId: string, typeFilter?: string | string[]) => WorkflowNode[];
 };
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -243,7 +243,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  getWorkflowOuptutBeforeId: (nodeId: string, type: string = "all") => {
-    return getOutputBeforeNodeId(get().workflow.draft as WorkflowNode, nodeId, type);
+  getWorkflowOuptutBeforeId: (nodeId: string, typeFilter?: string | string[]) => {
+    return getOutputBeforeNodeId(get().workflow.draft as WorkflowNode, nodeId, typeFilter);
   },
 }));

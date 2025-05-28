@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"golang.org/x/exp/maps"
@@ -108,15 +109,15 @@ func (n *applyNode) Process(ctx context.Context) error {
 		}
 	}
 
-	// 添加中间结果
-	n.outputs[outputCertificateValidatedKey] = "true"
-	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
+	// 记录中间结果
+	n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
+	n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(time.Until(certificate.ExpireAt).Hours()/24), 10)
 
 	n.logger.Info("application completed")
 	return nil
 }
 
-func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
 		currentNodeConfig := n.node.GetConfigForApply()
@@ -154,9 +155,12 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				n.outputs[outputCertificateValidatedKey] = "true"
-				n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(expirationTime.Hours()/24))
-				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				daysLeft := int(expirationTime.Hours() / 24)
+				// TODO: 优化此处逻辑，[checkCanSkip] 方法不应该修改中间结果，违背单一职责
+				n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
+				n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(daysLeft), 10)
+
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", daysLeft, currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

@@ -36,7 +36,7 @@ import { ClientResponseError } from "pocketbase";
 import CertificateDetailDrawer from "@/components/certificate/CertificateDetailDrawer";
 import Show from "@/components/Show";
 import { type CertificateModel } from "@/domain/certificate";
-import type { WorkflowLogModel } from "@/domain/workflowLog";
+import { type WorkflowLogModel } from "@/domain/workflowLog";
 import { WORKFLOW_RUN_STATUSES, type WorkflowRunModel } from "@/domain/workflowRun";
 import { useBrowserTheme } from "@/hooks";
 import { listByWorkflowRunId as listCertificatesByWorkflowRunId } from "@/repository/certificate";

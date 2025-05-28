@@ -265,7 +265,7 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
                   })}
                 />
               ) : null}
-              <Button type="dashed" className="w-full" icon={<PlusOutlined />} onClick={() => add()}>
+              <Button className="w-full" type="dashed" icon={<PlusOutlined />} onClick={() => add()}>
                 {t("access.form.ssh_jump_servers.add")}
               </Button>
             </Space>

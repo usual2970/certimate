@@ -69,7 +69,7 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.variables.certificate.label"),
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -84,7 +84,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.variables.certificate.label"),
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -95,7 +95,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.variables.certificate.label"),
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -106,7 +106,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: i18n.t("workflow.variables.certificate.label"),
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -188,7 +188,7 @@ export type WorkflowNodeConfigForNotify = {
 };
 
 export type WorkflowNodeConfigForCondition = {
-  expression: Expr;
+  expression?: Expr;
 };
 
 export type WorkflowNodeConfigForBranch = never;
@@ -204,96 +204,35 @@ export type WorkflowNodeIO = {
   valueSelector?: WorkflowNodeIOValueSelector;
 };
 
-export const VALUE_TYPES = Object.freeze({
-  STRING: "string",
-  NUMBER: "number",
-  BOOLEAN: "boolean",
-} as const);
-
-export type WorkflowNodeIoValueType = (typeof VALUE_TYPES)[keyof typeof VALUE_TYPES];
-
-export type WorkflowNodeIOValueSelector = {
-  id: string;
-  name: string;
-  type: WorkflowNodeIoValueType;
-};
-
-type WorkflowNodeIOOptions = {
-  label: string;
-  value: string;
-};
-
-export const workflowNodeIOOptions = (node: WorkflowNode) => {
-  const rs = {
-    label: node.name,
-    options: Array<WorkflowNodeIOOptions>(),
-  };
-
-  if (node.outputs) {
-    for (const output of node.outputs) {
-      switch (output.type) {
-        case "certificate":
-          rs.options.push({
-            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.is_validated.label")}`,
-            value: `${node.id}#${output.name}.validated#boolean`,
-          });
-
-          rs.options.push({
-            label: `${node.name} - ${output.label} - ${i18n.t("workflow.variables.days_left.label")}`,
-            value: `${node.id}#${output.name}.daysLeft#number`,
-          });
-          break;
-        default:
-          rs.options.push({
-            label: `${node.name} - ${output.label}`,
-            value: `${node.id}#${output.name}#${output.type}`,
-          });
-          break;
-      }
-    }
-  }
-
-  return rs;
-};
-
+export type WorkflowNodeIOValueSelector = ExprValueSelector;
 // #endregion
 
-// #region Condition expression
-
-export type Value = string | number | boolean;
-
-export type ComparisonOperator = ">" | "<" | ">=" | "<=" | "==" | "!=" | "is";
-
-export enum LogicalOperator {
-  And = "and",
-  Or = "or",
-  Not = "not",
-}
-
+// #region Expression
 export enum ExprType {
-  Const = "const",
-  Var = "var",
-  Compare = "compare",
+  Constant = "const",
+  Variant = "var",
+  Comparison = "comparison",
   Logical = "logical",
   Not = "not",
 }
 
-export type ConstExpr = { type: ExprType.Const; value: string; valueType: WorkflowNodeIoValueType };
-export type VarExpr = { type: ExprType.Var; selector: WorkflowNodeIOValueSelector };
-export type CompareExpr = { type: ExprType.Compare; op: ComparisonOperator; left: Expr; right: Expr };
-export type LogicalExpr = { type: ExprType.Logical; op: LogicalOperator; left: Expr; right: Expr };
+export type ExprValue = string | number | boolean;
+export type ExprValueType = "string" | "number" | "boolean";
+export type ExprValueSelector = {
+  id: string;
+  name: string;
+  type: ExprValueType;
+};
+
+export type ExprComparisonOperator = "gt" | "gte" | "lt" | "lte" | "eq" | "neq";
+export type ExprLogicalOperator = "and" | "or" | "not";
+
+export type ConstantExpr = { type: ExprType.Constant; value: string; valueType: ExprValueType };
+export type VariantExpr = { type: ExprType.Variant; selector: ExprValueSelector };
+export type ComparisonExpr = { type: ExprType.Comparison; operator: ExprComparisonOperator; left: Expr; right: Expr };
+export type LogicalExpr = { type: ExprType.Logical; operator: ExprLogicalOperator; left: Expr; right: Expr };
 export type NotExpr = { type: ExprType.Not; expr: Expr };
-
-export type Expr = ConstExpr | VarExpr | CompareExpr | LogicalExpr | NotExpr;
-
-export const isConstExpr = (expr: Expr): expr is ConstExpr => {
-  return expr.type === ExprType.Const;
-};
-
-export const isVarExpr = (expr: Expr): expr is VarExpr => {
-  return expr.type === ExprType.Var;
-};
-
+export type Expr = ConstantExpr | VariantExpr | ComparisonExpr | LogicalExpr | NotExpr;
 // #endregion
 
 const isBranchLike = (node: WorkflowNode) => {
@@ -352,8 +291,8 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
   switch (nodeType) {
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Upload:
-    case WorkflowNodeType.Deploy:
     case WorkflowNodeType.Monitor:
+    case WorkflowNodeType.Deploy:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
         node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);
@@ -545,19 +484,23 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
   });
 };
 
-const typeEqual = (a: WorkflowNodeIO, t: string) => {
-  if (t === "all") {
-    return true;
-  }
-  if (a.type === t) {
-    return true;
-  }
-  return false;
-};
-
-export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string = "all"): WorkflowNode[] => {
+export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, typeFilter?: string | string[]): WorkflowNode[] => {
   // 某个分支的节点，不应该能获取到相邻分支上节点的输出
   const outputs: WorkflowNode[] = [];
+
+  const filter = (io: WorkflowNodeIO) => {
+    if (typeFilter == null) {
+      return true;
+    }
+
+    if (Array.isArray(typeFilter) && typeFilter.includes(io.type)) {
+      return true;
+    } else if (io.type === typeFilter) {
+      return true;
+    }
+
+    return false;
+  };
 
   const traverse = (current: WorkflowNode, output: WorkflowNode[]) => {
     if (!current) {
@@ -567,10 +510,10 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
       return true;
     }
 
-    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => typeEqual(io, type))) {
+    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => filter(io))) {
       output.push({
         ...current,
-        outputs: current.outputs.filter((io) => typeEqual(io, type)),
+        outputs: current.outputs.filter((io) => filter(io)),
       });
     }
 

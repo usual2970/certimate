@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -33,7 +34,7 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 func (n *uploadNode) Process(ctx context.Context) error {
 	n.logger.Info("ready to upload certiticate ...")
 
-	nodeConfig := n.node.GetConfigForUpload()
+	nodeCfg := n.node.GetConfigForUpload()
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -53,7 +54,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 	certificate := &domain.Certificate{
 		Source: domain.CertificateSourceTypeUpload,
 	}
-	certificate.PopulateFromPEM(nodeConfig.Certificate, nodeConfig.PrivateKey)
+	certificate.PopulateFromPEM(nodeCfg.Certificate, nodeCfg.PrivateKey)
 
 	// 保存执行结果
 	output := &domain.WorkflowOutput{
@@ -69,15 +70,15 @@ func (n *uploadNode) Process(ctx context.Context) error {
 		return err
 	}
 
-	n.outputs[outputCertificateValidatedKey] = "true"
-	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
+	// 记录中间结果
+	n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
+	n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(time.Until(certificate.ExpireAt).Hours()/24), 10)
 
 	n.logger.Info("uploading completed")
-
 	return nil
 }
 
-func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次上传时的关键配置（即影响证书上传的）参数是否一致
 		currentNodeConfig := n.node.GetConfigForUpload()
@@ -91,8 +92,10 @@ func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workfl
 
 		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
 		if lastCertificate != nil {
-			n.outputs[outputCertificateValidatedKey] = "true"
-			n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(lastCertificate.ExpireAt).Hours()/24))
+			daysLeft := int(time.Until(lastCertificate.ExpireAt).Hours() / 24)
+			n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(daysLeft > 0)
+			n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(daysLeft), 10)
+
 			return true, "the certificate has already been uploaded"
 		}
 	}

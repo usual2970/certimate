@@ -25,9 +25,9 @@ const NotifyNode = ({ node, disabled }: NotifyNodeProps) => {
 
   const formRef = useRef<NotifyNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForNotify;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForNotify;
 
   const wrappedEl = useMemo(() => {
     if (node.type !== WorkflowNodeType.Notify) {
@@ -82,12 +82,12 @@ const NotifyNode = ({ node, disabled }: NotifyNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
         node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => setDrawerOpen(open)}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <NotifyNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>

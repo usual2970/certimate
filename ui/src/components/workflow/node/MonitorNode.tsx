@@ -23,9 +23,9 @@ const MonitorNode = ({ node, disabled }: MonitorNodeProps) => {
 
   const formRef = useRef<MonitorNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForMonitor;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForMonitor;
 
   const wrappedEl = useMemo(() => {
     if (node.type !== WorkflowNodeType.Monitor) {
@@ -74,12 +74,12 @@ const MonitorNode = ({ node, disabled }: MonitorNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
         node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => setDrawerOpen(open)}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <MonitorNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>

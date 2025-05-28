@@ -42,8 +42,9 @@ func (n *deployNode) Process(ctx context.Context) error {
 	}
 
 	// 获取前序节点输出证书
+	const DELIMITER = "#"
 	previousNodeOutputCertificateSource := n.node.GetConfigForDeploy().Certificate
-	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, "#")
+	previousNodeOutputCertificateSourceSlice := strings.Split(previousNodeOutputCertificateSource, DELIMITER)
 	if len(previousNodeOutputCertificateSourceSlice) != 2 {
 		n.logger.Warn("invalid certificate source", slog.String("certificate.source", previousNodeOutputCertificateSource))
 		return fmt.Errorf("invalid certificate source: %s", previousNodeOutputCertificateSource)
@@ -99,7 +100,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 	return nil
 }
 
-func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次部署时的关键配置（即影响证书部署的）参数是否一致
 		currentNodeConfig := n.node.GetConfigForDeploy()

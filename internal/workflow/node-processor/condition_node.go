@@ -3,8 +3,10 @@ package nodeprocessor
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/usual2970/certimate/internal/domain"
+	"github.com/usual2970/certimate/internal/domain/expr"
 )
 
 type conditionNode struct {
@@ -22,30 +24,29 @@ func NewConditionNode(node *domain.WorkflowNode) *conditionNode {
 }
 
 func (n *conditionNode) Process(ctx context.Context) error {
-	n.logger.Info("enter condition node: " + n.node.Name)
-
-	nodeConfig := n.node.GetConfigForCondition()
-	if nodeConfig.Expression == nil {
-		n.logger.Info("no condition found, continue to next node")
+	nodeCfg := n.node.GetConfigForCondition()
+	if nodeCfg.Expression == nil {
+		n.logger.Info("without any conditions, enter this branch")
 		return nil
 	}
 
-	rs, err := n.eval(ctx, nodeConfig.Expression)
+	rs, err := n.evalExpr(ctx, nodeCfg.Expression)
 	if err != nil {
-		n.logger.Warn("failed to eval expression: " + err.Error())
+		n.logger.Warn(fmt.Sprintf("failed to eval condition expression: %w", err))
 		return err
 	}
 
 	if rs.Value == false {
 		n.logger.Info("condition not met, skip this branch")
-		return errors.New("condition not met")
+		return errors.New("condition not met") // TODO: 错误处理
+	} else {
+		n.logger.Info("condition met, enter this branch")
 	}
 
-	n.logger.Info("condition met, continue to next node")
 	return nil
 }
 
-func (n *conditionNode) eval(ctx context.Context, expression domain.Expr) (*domain.EvalResult, error) {
+func (n *conditionNode) evalExpr(ctx context.Context, expression expr.Expr) (*expr.EvalResult, error) {
 	variables := GetNodeOutputs(ctx)
 	return expression.Eval(variables)
 }

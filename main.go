@@ -26,9 +26,7 @@ func main() {
 	app := app.GetApp().(*pocketbase.PocketBase)
 
 	var flagHttp string
-	var flagDir string
 	flag.StringVar(&flagHttp, "http", "127.0.0.1:8090", "HTTP server address")
-	flag.StringVar(&flagDir, "dir", "/pb_data/database", "Pocketbase data directory")
 	if len(os.Args) < 2 {
 		slog.Error("[CERTIMATE] missing exec args")
 		os.Exit(1)
@@ -59,13 +57,16 @@ func main() {
 		Priority: 999,
 	})
 
+	app.OnServe().BindFunc(func(e *core.ServeEvent) error {
+		slog.Info("[CERTIMATE] Visit the website: http://" + flagHttp)
+		return e.Next()
+	})
+
 	app.OnTerminate().BindFunc(func(e *core.TerminateEvent) error {
 		routes.Unregister()
 		slog.Info("[CERTIMATE] Exit!")
 		return e.Next()
 	})
-
-	slog.Info("[CERTIMATE] Visit the website: http://" + flagHttp)
 
 	if err := app.Start(); err != nil {
 		slog.Error("[CERTIMATE] Start failed.", "err", err)

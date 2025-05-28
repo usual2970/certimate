@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Select, type SelectProps, Space, Tag, Typography } from "antd";
+import { Avatar, Select, type SelectProps, Space, Tag, Typography, theme } from "antd";
 
 import Show from "@/components/Show";
 import { ACCESS_USAGES, type AccessProvider, type AccessUsageType, accessProvidersMap } from "@/domain/provider";
@@ -15,6 +15,8 @@ export type AccessProviderSelectProps = Omit<
 
 const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProviderSelectProps = { showOptionTags: true }) => {
   const { t } = useTranslation();
+
+  const { token: themeToken } = theme.useToken();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessProvider }>>([]);
   useEffect(() => {
@@ -84,12 +86,12 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
         const value = inputValue.toLowerCase();
         return option.value.toLowerCase().includes(value) || option.label.toLowerCase().includes(value);
       }}
-      labelRender={({ label, value }) => {
-        if (!label) {
-          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+      labelRender={({ value }) => {
+        if (value != null) {
+          return renderOption(value as string);
         }
 
-        return renderOption(value as string);
+        return <span style={{ color: themeToken.colorTextPlaceholder }}>{props.placeholder}</span>;
       }}
       options={options}
       optionFilterProp={undefined}

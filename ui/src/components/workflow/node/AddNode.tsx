@@ -35,7 +35,14 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
     ]
       .filter(([type]) => {
-        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && node.type !== WorkflowNodeType.Notify) {
+        const hasExecuteResult = [
+          WorkflowNodeType.Apply,
+          WorkflowNodeType.Upload,
+          WorkflowNodeType.Monitor,
+          WorkflowNodeType.Deploy,
+          WorkflowNodeType.Notify,
+        ].includes(node.type);
+        if (!hasExecuteResult) {
           return type !== WorkflowNodeType.ExecuteResultBranch;
         }
 

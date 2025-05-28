@@ -1,4 +1,4 @@
-package domain
+package expr
 
 import (
 	"testing"
@@ -7,15 +7,15 @@ import (
 func TestLogicalEval(t *testing.T) {
 	// 测试逻辑表达式 and
 	logicalExpr := LogicalExpr{
-		Left: ConstExpr{
+		Left: ConstantExpr{
 			Type:      "const",
-			Value:     true,
+			Value:     "true",
 			ValueType: "boolean",
 		},
-		Op: And,
-		Right: ConstExpr{
+		Operator: And,
+		Right: ConstantExpr{
 			Type:      "const",
-			Value:     true,
+			Value:     "true",
 			ValueType: "boolean",
 		},
 	}
@@ -29,15 +29,15 @@ func TestLogicalEval(t *testing.T) {
 
 	// 测试逻辑表达式 or
 	orExpr := LogicalExpr{
-		Left: ConstExpr{
+		Left: ConstantExpr{
 			Type:      "const",
-			Value:     true,
+			Value:     "true",
 			ValueType: "boolean",
 		},
-		Op: Or,
-		Right: ConstExpr{
+		Operator: Or,
+		Right: ConstantExpr{
 			Type:      "const",
-			Value:     true,
+			Value:     "true",
 			ValueType: "boolean",
 		},
 	}
@@ -63,7 +63,7 @@ func TestUnmarshalExpr(t *testing.T) {
 		{
 			name: "test1",
 			args: args{
-				data: []byte(`{"left":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.validated","type":"boolean"},"type":"var"},"op":"is","right":{"type":"const","value":true,"valueType":"boolean"},"type":"compare"},"op":"and","right":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.daysLeft","type":"number"},"type":"var"},"op":"==","right":{"type":"const","value":2,"valueType":"number"},"type":"compare"},"type":"logical"}`),
+				data: []byte(`{"left":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.validity","type":"boolean"},"type":"var"},"operator":"is","right":{"type":"const","value":true,"valueType":"boolean"},"type":"comparison"},"operator":"and","right":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.daysLeft","type":"number"},"type":"var"},"operator":"eq","right":{"type":"const","value":2,"valueType":"number"},"type":"comparison"},"type":"logical"}`),
 			},
 		},
 	}
@@ -98,11 +98,11 @@ func TestExpr_Eval(t *testing.T) {
 			args: args{
 				variables: map[string]map[string]any{
 					"ODnYSOXB6HQP2_vz6JcZE": {
-						"certificate.validated": true,
-						"certificate.daysLeft":  2,
+						"certificate.validity": true,
+						"certificate.daysLeft": 2,
 					},
 				},
-				data: []byte(`{"left":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.validated","type":"boolean"},"type":"var"},"op":"is","right":{"type":"const","value":true,"valueType":"boolean"},"type":"compare"},"op":"and","right":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.daysLeft","type":"number"},"type":"var"},"op":"==","right":{"type":"const","value":2,"valueType":"number"},"type":"compare"},"type":"logical"}`),
+				data: []byte(`{"left":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.validity","type":"boolean"},"type":"var"},"operator":"is","right":{"type":"const","value":true,"valueType":"boolean"},"type":"comparison"},"operator":"and","right":{"left":{"selector":{"id":"ODnYSOXB6HQP2_vz6JcZE","name":"certificate.daysLeft","type":"number"},"type":"var"},"operator":"eq","right":{"type":"const","value":2,"valueType":"number"},"type":"comparison"},"type":"logical"}`),
 			},
 		},
 	}

@@ -1,4 +1,4 @@
-package domain
+package expr
 
 import (
 	"encoding/json"
@@ -6,41 +6,38 @@ import (
 	"strconv"
 )
 
-type Value any
-
 type (
-	ComparisonOperator string
-	LogicalOperator    string
-	ValueType          string
-	ExprType           string
+	ExprType               string
+	ExprComparisonOperator string
+	ExprLogicalOperator    string
+	ExprValueType          string
 )
 
 const (
-	GreaterThan    ComparisonOperator = ">"
-	LessThan       ComparisonOperator = "<"
-	GreaterOrEqual ComparisonOperator = ">="
-	LessOrEqual    ComparisonOperator = "<="
-	Equal          ComparisonOperator = "=="
-	NotEqual       ComparisonOperator = "!="
-	Is             ComparisonOperator = "is"
+	GreaterThan    ExprComparisonOperator = "gt"
+	GreaterOrEqual ExprComparisonOperator = "gte"
+	LessThan       ExprComparisonOperator = "lt"
+	LessOrEqual    ExprComparisonOperator = "lte"
+	Equal          ExprComparisonOperator = "eq"
+	NotEqual       ExprComparisonOperator = "neq"
 
-	And LogicalOperator = "and"
-	Or  LogicalOperator = "or"
-	Not LogicalOperator = "not"
+	And ExprLogicalOperator = "and"
+	Or  ExprLogicalOperator = "or"
+	Not ExprLogicalOperator = "not"
 
-	Number  ValueType = "number"
-	String  ValueType = "string"
-	Boolean ValueType = "boolean"
+	Number  ExprValueType = "number"
+	String  ExprValueType = "string"
+	Boolean ExprValueType = "boolean"
 
-	ConstExprType   ExprType = "const"
-	VarExprType     ExprType = "var"
-	CompareExprType ExprType = "compare"
-	LogicalExprType ExprType = "logical"
-	NotExprType     ExprType = "not"
+	ConstantExprType   ExprType = "const"
+	VariantExprType    ExprType = "var"
+	ComparisonExprType ExprType = "comparison"
+	LogicalExprType    ExprType = "logical"
+	NotExprType        ExprType = "not"
 )
 
 type EvalResult struct {
-	Type  ValueType
+	Type  ExprValueType
 	Value any
 }
 
@@ -88,13 +85,20 @@ func (e *EvalResult) GreaterThan(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
-	switch e.Type {
-	case Number:
 
+	switch e.Type {
+	case String:
+		return &EvalResult{
+			Type:  Boolean,
+			Value: e.Value.(string) > other.Value.(string),
+		}, nil
+
+	case Number:
 		left, err := e.GetFloat64()
 		if err != nil {
 			return nil, err
 		}
+
 		right, err := other.GetFloat64()
 		if err != nil {
 			return nil, err
@@ -104,14 +108,9 @@ func (e *EvalResult) GreaterThan(other *EvalResult) (*EvalResult, error) {
 			Type:  Boolean,
 			Value: left > right,
 		}, nil
-	case String:
-		return &EvalResult{
-			Type:  Boolean,
-			Value: e.Value.(string) > other.Value.(string),
-		}, nil
 
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -119,28 +118,32 @@ func (e *EvalResult) GreaterOrEqual(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
-	case Number:
-		left, err := e.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left >= right,
-		}, nil
 	case String:
 		return &EvalResult{
 			Type:  Boolean,
 			Value: e.Value.(string) >= other.Value.(string),
 		}, nil
 
+	case Number:
+		left, err := e.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left >= right,
+		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -148,28 +151,32 @@ func (e *EvalResult) LessThan(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
-	case Number:
-		left, err := e.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left < right,
-		}, nil
 	case String:
 		return &EvalResult{
 			Type:  Boolean,
 			Value: e.Value.(string) < other.Value.(string),
 		}, nil
 
+	case Number:
+		left, err := e.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left < right,
+		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -177,28 +184,32 @@ func (e *EvalResult) LessOrEqual(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
-	case Number:
-		left, err := e.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left <= right,
-		}, nil
 	case String:
 		return &EvalResult{
 			Type:  Boolean,
 			Value: e.Value.(string) <= other.Value.(string),
 		}, nil
 
+	case Number:
+		left, err := e.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left <= right,
+		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -206,28 +217,48 @@ func (e *EvalResult) Equal(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
-	case Number:
-		left, err := e.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left == right,
-		}, nil
 	case String:
 		return &EvalResult{
 			Type:  Boolean,
 			Value: e.Value.(string) == other.Value.(string),
 		}, nil
 
+	case Number:
+		left, err := e.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left == right,
+		}, nil
+
+	case Boolean:
+		left, err := e.GetBool()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetBool()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left == right,
+		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -235,28 +266,48 @@ func (e *EvalResult) NotEqual(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
-	case Number:
-		left, err := e.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetFloat64()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left != right,
-		}, nil
 	case String:
 		return &EvalResult{
 			Type:  Boolean,
 			Value: e.Value.(string) != other.Value.(string),
 		}, nil
 
+	case Number:
+		left, err := e.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetFloat64()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left != right,
+		}, nil
+
+	case Boolean:
+		left, err := e.GetBool()
+		if err != nil {
+			return nil, err
+		}
+
+		right, err := other.GetBool()
+		if err != nil {
+			return nil, err
+		}
+
+		return &EvalResult{
+			Type:  Boolean,
+			Value: left != right,
+		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -264,22 +315,26 @@ func (e *EvalResult) And(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
 	case Boolean:
 		left, err := e.GetBool()
 		if err != nil {
 			return nil, err
 		}
+
 		right, err := other.GetBool()
 		if err != nil {
 			return nil, err
 		}
+
 		return &EvalResult{
 			Type:  Boolean,
 			Value: left && right,
 		}, nil
+
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -287,22 +342,25 @@ func (e *EvalResult) Or(other *EvalResult) (*EvalResult, error) {
 	if e.Type != other.Type {
 		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
 	}
+
 	switch e.Type {
 	case Boolean:
 		left, err := e.GetBool()
 		if err != nil {
 			return nil, err
 		}
+
 		right, err := other.GetBool()
 		if err != nil {
 			return nil, err
 		}
+
 		return &EvalResult{
 			Type:  Boolean,
 			Value: left || right,
 		}, nil
 	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
+		return nil, fmt.Errorf("unsupported value type: %s", e.Type)
 	}
 }
 
@@ -310,37 +368,16 @@ func (e *EvalResult) Not() (*EvalResult, error) {
 	if e.Type != Boolean {
 		return nil, fmt.Errorf("type mismatch: %s", e.Type)
 	}
+
 	boolValue, err := e.GetBool()
 	if err != nil {
 		return nil, err
 	}
+
 	return &EvalResult{
 		Type:  Boolean,
 		Value: !boolValue,
 	}, nil
-}
-
-func (e *EvalResult) Is(other *EvalResult) (*EvalResult, error) {
-	if e.Type != other.Type {
-		return nil, fmt.Errorf("type mismatch: %s vs %s", e.Type, other.Type)
-	}
-	switch e.Type {
-	case Boolean:
-		left, err := e.GetBool()
-		if err != nil {
-			return nil, err
-		}
-		right, err := other.GetBool()
-		if err != nil {
-			return nil, err
-		}
-		return &EvalResult{
-			Type:  Boolean,
-			Value: left == right,
-		}, nil
-	default:
-		return nil, fmt.Errorf("unsupported type: %s", e.Type)
-	}
 }
 
 type Expr interface {
@@ -348,29 +385,35 @@ type Expr interface {
 	Eval(variables map[string]map[string]any) (*EvalResult, error)
 }
 
-type ConstExpr struct {
-	Type      ExprType  `json:"type"`
-	Value     Value     `json:"value"`
-	ValueType ValueType `json:"valueType"`
+type ExprValueSelector struct {
+	Id   string        `json:"id"`
+	Name string        `json:"name"`
+	Type ExprValueType `json:"type"`
 }
 
-func (c ConstExpr) GetType() ExprType { return c.Type }
+type ConstantExpr struct {
+	Type      ExprType      `json:"type"`
+	Value     string        `json:"value"`
+	ValueType ExprValueType `json:"valueType"`
+}
 
-func (c ConstExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
+func (c ConstantExpr) GetType() ExprType { return c.Type }
+
+func (c ConstantExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	return &EvalResult{
 		Type:  c.ValueType,
 		Value: c.Value,
 	}, nil
 }
 
-type VarExpr struct {
-	Type     ExprType                    `json:"type"`
-	Selector WorkflowNodeIOValueSelector `json:"selector"`
+type VariantExpr struct {
+	Type     ExprType          `json:"type"`
+	Selector ExprValueSelector `json:"selector"`
 }
 
-func (v VarExpr) GetType() ExprType { return v.Type }
+func (v VariantExpr) GetType() ExprType { return v.Type }
 
-func (v VarExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
+func (v VariantExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	if v.Selector.Id == "" {
 		return nil, fmt.Errorf("node id is empty")
 	}
@@ -391,16 +434,16 @@ func (v VarExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) 
 	}, nil
 }
 
-type CompareExpr struct {
-	Type  ExprType           `json:"type"` // compare
-	Op    ComparisonOperator `json:"op"`
-	Left  Expr               `json:"left"`
-	Right Expr               `json:"right"`
+type ComparisonExpr struct {
+	Type     ExprType               `json:"type"` // compare
+	Operator ExprComparisonOperator `json:"operator"`
+	Left     Expr                   `json:"left"`
+	Right    Expr                   `json:"right"`
 }
 
-func (c CompareExpr) GetType() ExprType { return c.Type }
+func (c ComparisonExpr) GetType() ExprType { return c.Type }
 
-func (c CompareExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
+func (c ComparisonExpr) Eval(variables map[string]map[string]any) (*EvalResult, error) {
 	left, err := c.Left.Eval(variables)
 	if err != nil {
 		return nil, err
@@ -410,7 +453,7 @@ func (c CompareExpr) Eval(variables map[string]map[string]any) (*EvalResult, err
 		return nil, err
 	}
 
-	switch c.Op {
+	switch c.Operator {
 	case GreaterThan:
 		return left.GreaterThan(right)
 	case LessThan:
@@ -423,18 +466,16 @@ func (c CompareExpr) Eval(variables map[string]map[string]any) (*EvalResult, err
 		return left.Equal(right)
 	case NotEqual:
 		return left.NotEqual(right)
-	case Is:
-		return left.Is(right)
 	default:
-		return nil, fmt.Errorf("unknown operator: %s", c.Op)
+		return nil, fmt.Errorf("unknown expression operator: %s", c.Operator)
 	}
 }
 
 type LogicalExpr struct {
-	Type  ExprType        `json:"type"` // logical
-	Op    LogicalOperator `json:"op"`
-	Left  Expr            `json:"left"`
-	Right Expr            `json:"right"`
+	Type     ExprType            `json:"type"` // logical
+	Operator ExprLogicalOperator `json:"operator"`
+	Left     Expr                `json:"left"`
+	Right    Expr                `json:"right"`
 }
 
 func (l LogicalExpr) GetType() ExprType { return l.Type }
@@ -449,13 +490,13 @@ func (l LogicalExpr) Eval(variables map[string]map[string]any) (*EvalResult, err
 		return nil, err
 	}
 
-	switch l.Op {
+	switch l.Operator {
 	case And:
 		return left.And(right)
 	case Or:
 		return left.Or(right)
 	default:
-		return nil, fmt.Errorf("unknown operator: %s", l.Op)
+		return nil, fmt.Errorf("unknown expression operator: %s", l.Operator)
 	}
 }
 
@@ -489,24 +530,24 @@ func UnmarshalExpr(data []byte) (Expr, error) {
 	}
 
 	switch typ.Type {
-	case ConstExprType:
-		var e ConstExpr
+	case ConstantExprType:
+		var e ConstantExpr
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e, nil
-	case VarExprType:
-		var e VarExpr
+	case VariantExprType:
+		var e VariantExpr
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
 		return e, nil
-	case CompareExprType:
-		var e CompareExprRaw
+	case ComparisonExprType:
+		var e ComparisonExprRaw
 		if err := json.Unmarshal(data, &e); err != nil {
 			return nil, err
 		}
-		return e.ToCompareExpr()
+		return e.ToComparisonExpr()
 	case LogicalExprType:
 		var e LogicalExprRaw
 		if err := json.Unmarshal(data, &e); err != nil {
@@ -520,39 +561,39 @@ func UnmarshalExpr(data []byte) (Expr, error) {
 		}
 		return e.ToNotExpr()
 	default:
-		return nil, fmt.Errorf("unknown expr type: %s", typ.Type)
+		return nil, fmt.Errorf("unknown expression type: %s", typ.Type)
 	}
 }
 
-type CompareExprRaw struct {
-	Type  ExprType           `json:"type"`
-	Op    ComparisonOperator `json:"op"`
-	Left  json.RawMessage    `json:"left"`
-	Right json.RawMessage    `json:"right"`
+type ComparisonExprRaw struct {
+	Type     ExprType               `json:"type"`
+	Operator ExprComparisonOperator `json:"operator"`
+	Left     json.RawMessage        `json:"left"`
+	Right    json.RawMessage        `json:"right"`
 }
 
-func (r CompareExprRaw) ToCompareExpr() (CompareExpr, error) {
+func (r ComparisonExprRaw) ToComparisonExpr() (ComparisonExpr, error) {
 	leftExpr, err := UnmarshalExpr(r.Left)
 	if err != nil {
-		return CompareExpr{}, err
+		return ComparisonExpr{}, err
 	}
 	rightExpr, err := UnmarshalExpr(r.Right)
 	if err != nil {
-		return CompareExpr{}, err
+		return ComparisonExpr{}, err
 	}
-	return CompareExpr{
-		Type:  r.Type,
-		Op:    r.Op,
-		Left:  leftExpr,
-		Right: rightExpr,
+	return ComparisonExpr{
+		Type:     r.Type,
+		Operator: r.Operator,
+		Left:     leftExpr,
+		Right:    rightExpr,
 	}, nil
 }
 
 type LogicalExprRaw struct {
-	Type  ExprType        `json:"type"`
-	Op    LogicalOperator `json:"op"`
-	Left  json.RawMessage `json:"left"`
-	Right json.RawMessage `json:"right"`
+	Type     ExprType            `json:"type"`
+	Operator ExprLogicalOperator `json:"operator"`
+	Left     json.RawMessage     `json:"left"`
+	Right    json.RawMessage     `json:"right"`
 }
 
 func (r LogicalExprRaw) ToLogicalExpr() (LogicalExpr, error) {
@@ -565,10 +606,10 @@ func (r LogicalExprRaw) ToLogicalExpr() (LogicalExpr, error) {
 		return LogicalExpr{}, err
 	}
 	return LogicalExpr{
-		Type:  r.Type,
-		Op:    r.Op,
-		Left:  left,
-		Right: right,
+		Type:     r.Type,
+		Operator: r.Operator,
+		Left:     left,
+		Right:    right,
 	}, nil
 }
 

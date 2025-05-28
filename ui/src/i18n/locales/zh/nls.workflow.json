@@ -53,9 +53,5 @@
   "workflow.detail.orchestration.action.run": "执行",
   "workflow.detail.orchestration.action.run.confirm": "你有尚未发布的更改。确定要以最近一次发布的版本继续执行吗？",
   "workflow.detail.orchestration.action.run.prompt": "执行中……请稍后查看执行历史",
-  "workflow.detail.runs.tab": "执行历史",
-
-  "workflow.variables.is_validated.label": "是否有效",
-  "workflow.variables.days_left.label": "剩余天数",
-  "workflow.variables.certificate.label": "证书"
+  "workflow.detail.runs.tab": "执行历史"
 }

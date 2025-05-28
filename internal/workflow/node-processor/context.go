@@ -35,7 +35,8 @@ func AddNodeOutput(ctx context.Context, nodeId string, output map[string]any) co
 	container.Lock()
 	defer container.Unlock()
 
-	// 创建输出的深拷贝以避免后续修改
+	// 创建输出的深拷贝
+	// TODO: 暂时使用浅拷贝，等后续值类型扩充后修改
 	outputCopy := make(map[string]any, len(output))
 	for k, v := range output {
 		outputCopy[k] = v
@@ -90,6 +91,7 @@ func GetNodeOutputs(ctx context.Context) map[string]map[string]any {
 	defer container.RUnlock()
 
 	// 创建所有输出的深拷贝
+	// TODO: 暂时使用浅拷贝，等后续值类型扩充后修改
 	allOutputs := make(map[string]map[string]any, len(container.outputs))
 	for nodeId, output := range container.outputs {
 		nodeCopy := make(map[string]any, len(output))
