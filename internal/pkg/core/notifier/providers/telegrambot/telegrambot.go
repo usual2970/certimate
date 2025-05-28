@@ -53,6 +53,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	req := n.httpClient.R().
 		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"chat_id": n.config.ChatId,
 			"text":    subject + "\n" + message,

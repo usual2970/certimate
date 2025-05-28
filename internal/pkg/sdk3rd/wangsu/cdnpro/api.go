@@ -11,7 +11,7 @@ import (
 func (c *Client) CreateCertificate(req *CreateCertificateRequest) (*CreateCertificateResponse, error) {
 	resp := &CreateCertificateResponse{}
 	rres, err := c.client.SendRequestWithResult(http.MethodPost, "/cdn/certificates", req, resp, func(r *resty.Request) {
-		r.SetHeader("x-cnc-timestamp", fmt.Sprintf("%d", req.Timestamp))
+		r.SetHeader("X-CNC-Timestamp", fmt.Sprintf("%d", req.Timestamp))
 	})
 	if err != nil {
 		return resp, err
@@ -28,7 +28,7 @@ func (c *Client) UpdateCertificate(certificateId string, req *UpdateCertificateR
 
 	resp := &UpdateCertificateResponse{}
 	rres, err := c.client.SendRequestWithResult(http.MethodPatch, fmt.Sprintf("/cdn/certificates/%s", url.PathEscape(certificateId)), req, resp, func(r *resty.Request) {
-		r.SetHeader("x-cnc-timestamp", fmt.Sprintf("%d", req.Timestamp))
+		r.SetHeader("X-CNC-Timestamp", fmt.Sprintf("%d", req.Timestamp))
 	})
 	if err != nil {
 		return resp, err

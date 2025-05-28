@@ -52,8 +52,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	// REF: https://docs.slack.dev/messaging/sending-and-scheduling-messages#publishing
 	req := n.httpClient.R().
 		SetContext(ctx).
-		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bearer "+n.config.BotToken).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"token":   n.config.BotToken,
 			"channel": n.config.ChannelId,

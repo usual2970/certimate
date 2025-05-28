@@ -17,7 +17,8 @@ type Client struct {
 func NewClient(apiId, apiSecret string) *Client {
 	client := resty.New().
 		SetBaseURL("https://api.dns.la/api").
-		SetBasicAuth(apiId, apiSecret)
+		SetBasicAuth(apiId, apiSecret).
+		SetHeader("User-Agent", "certimate")
 
 	return &Client{
 		client: client,

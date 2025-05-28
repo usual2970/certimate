@@ -60,6 +60,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	loginReq := n.httpClient.R().
 		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"login_id": n.config.Username,
 			"password": n.config.Password,
@@ -76,8 +77,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	// REF: https://developers.mattermost.com/api-documentation/#/operations/CreatePost
 	postReq := n.httpClient.R().
 		SetContext(ctx).
-		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bearer "+loginResp.Header().Get("Token")).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"channel_id": n.config.ChannelId,
 			"props": map[string]interface{}{

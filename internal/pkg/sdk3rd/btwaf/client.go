@@ -19,7 +19,9 @@ type Client struct {
 
 func NewClient(serverUrl, apiKey string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/api").
+		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/api").
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			timestamp := fmt.Sprintf("%d", time.Now().Unix())
 			keyMd5 := md5.Sum([]byte(apiKey))
@@ -48,9 +50,7 @@ func (c *Client) WithTLSConfig(config *tls.Config) *Client {
 }
 
 func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R().
-		SetHeader("Content-Type", "application/json").
-		SetBody(params)
+	req := c.client.R().SetBody(params)
 	resp, err := req.Post(path)
 	if err != nil {
 		return resp, fmt.Errorf("baota api error: failed to send request: %w", err)

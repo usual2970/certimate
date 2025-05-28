@@ -52,8 +52,9 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	// REF: https://discord.com/developers/docs/resources/message#create-message
 	req := n.httpClient.R().
 		SetContext(ctx).
-		SetHeader("Content-Type", "application/json").
 		SetHeader("Authorization", "Bot "+n.config.BotToken).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"content": subject + "\n" + message,
 		})

@@ -20,7 +20,10 @@ type Client struct {
 }
 
 func NewClient(appId, appKey string) *Client {
-	client := resty.New()
+	client := resty.New().
+		SetBaseURL("http://api.gname.com").
+		SetHeader("Content-Type", "application/x-www-form-urlencoded").
+		SetHeader("User-Agent", "certimate")
 
 	return &Client{
 		appId:  appId,
@@ -74,11 +77,8 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	data["gntime"] = fmt.Sprintf("%d", time.Now().Unix())
 	data["gntoken"] = c.generateSignature(data)
 
-	url := "http://api.gname.com" + path
-	req := c.client.R().
-		SetHeader("Content-Type", "application/x-www-form-urlencoded").
-		SetFormData(data)
-	resp, err := req.Post(url)
+	req := c.client.R().SetFormData(data)
+	resp, err := req.Post(path)
 	if err != nil {
 		return resp, fmt.Errorf("gname api error: failed to send request: %w", err)
 	} else if resp.IsError() {
