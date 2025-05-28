@@ -54,7 +54,7 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}

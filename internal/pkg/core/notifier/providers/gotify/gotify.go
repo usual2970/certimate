@@ -44,7 +44,7 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	if logger == nil {
-		n.logger = slog.Default()
+		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
