@@ -49,7 +49,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	const defaultServerURL = "https://api.day.app/"
 	serverUrl := defaultServerURL
 	if n.config.ServerUrl != "" {

@@ -48,7 +48,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	// REF: https://docs.slack.dev/messaging/sending-and-scheduling-messages#publishing
 	req := n.httpClient.R().
 		SetContext(ctx).

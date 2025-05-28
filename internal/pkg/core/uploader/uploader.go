@@ -21,7 +21,7 @@ type Uploader interface {
 	// 出参：
 	//   - res：上传结果。
 	//   - err: 错误。
-	Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *UploadResult, err error)
+	Upload(ctx context.Context, certPEM string, privkeyPEM string) (_res *UploadResult, _err error)
 }
 
 // 表示证书上传结果的数据结构，包含上传后的证书 ID、名称和其他数据。

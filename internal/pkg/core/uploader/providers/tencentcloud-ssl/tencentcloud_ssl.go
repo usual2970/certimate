@@ -53,7 +53,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 上传新证书
 	// REF: https://cloud.tencent.com/document/product/400/41665
 	uploadCertificateReq := tcssl.NewUploadCertificateRequest()

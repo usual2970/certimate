@@ -67,7 +67,7 @@ func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	// 处理 Webhook URL
 	webhookUrl, err := url.Parse(n.config.WebhookUrl)
 	if err != nil {
