@@ -111,6 +111,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPEM string, priv
 			TlsConfig: getCustomDomainResp.Body.TlsConfig,
 		},
 	}
+	if tea.StringValue(updateCustomDomainReq.Body.Protocol) == "HTTP" {
+		updateCustomDomainReq.Body.Protocol = tea.String("HTTP,HTTPS")
+	}
 	updateCustomDomainResp, err := d.sdkClients.FC3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
@@ -139,6 +142,9 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPEM string, priv
 		},
 		Protocol:  getCustomDomainResp.Body.Protocol,
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,
+	}
+	if tea.StringValue(updateCustomDomainReq.Protocol) == "HTTP" {
+		updateCustomDomainReq.Protocol = tea.String("HTTP,HTTPS")
 	}
 	updateCustomDomainResp, err := d.sdkClients.FC2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
