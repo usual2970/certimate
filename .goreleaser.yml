@@ -30,8 +30,8 @@ builds:
       - goos: darwin
         goarch: arm
 
-upx:
-  - enabled: true
+# upx:
+#   - enabled: true
 
 release:
   draft: true

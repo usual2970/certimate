@@ -23,11 +23,11 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
-      
-      - name: Install upx (optional)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y upx
+
+      # - name: Install upx (optional)
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y upx
 
       - name: Build WebUI
         run: |
@@ -49,3 +49,4 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
