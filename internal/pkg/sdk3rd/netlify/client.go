@@ -17,7 +17,8 @@ type Client struct {
 func NewClient(apiToken string) *Client {
 	client := resty.New().
 		SetBaseURL("https://api.netlify.com/api/v1").
-		SetHeader("Authorization", "Bearer "+apiToken)
+		SetHeader("Authorization", "Bearer "+apiToken).
+		SetHeader("User-Agent", "certimate")
 
 	return &Client{
 		client: client,

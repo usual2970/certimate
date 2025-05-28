@@ -21,6 +21,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
@@ -52,7 +54,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -67,7 +69,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -224,12 +226,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*alinlb.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/Nlb
-	var endpoint string
-	switch region {
-	default:
-		endpoint = fmt.Sprintf("nlb.%s.aliyuncs.com", region)
-	}
-
+	endpoint := strings.ReplaceAll(fmt.Sprintf("nlb.%s.aliyuncs.com", region), "..", ".")
 	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
@@ -244,7 +241,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alinlb.Clien
 	return client, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
 	casRegion := region
 	if casRegion != "" {
 		// 阿里云 CAS 服务接入点是独立于 NLB 服务的
@@ -260,6 +257,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          casRegion,
 	})
 	return uploader, err

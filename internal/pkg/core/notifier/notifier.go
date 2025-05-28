@@ -19,7 +19,7 @@ type Notifier interface {
 	// 出参：
 	//   - res：发送结果。
 	//   - err: 错误。
-	Notify(ctx context.Context, subject string, message string) (res *NotifyResult, err error)
+	Notify(ctx context.Context, subject string, message string) (_res *NotifyResult, _err error)
 }
 
 // 表示通知发送结果的数据结构。

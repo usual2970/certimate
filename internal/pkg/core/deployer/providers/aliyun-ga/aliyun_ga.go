@@ -22,6 +22,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 部署资源类型。
 	ResourceType ResourceType `json:"resourceType"`
 	// 全球加速实例 ID。
@@ -53,7 +55,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -68,7 +70,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -312,10 +314,11 @@ func createSdkClient(accessKeyId, accessKeySecret string) (*aliga.Client, error)
 	return client, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId string) (uploader.Uploader, error) {
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          "cn-hangzhou",
 	})
 	return uploader, err

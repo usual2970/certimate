@@ -57,7 +57,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}

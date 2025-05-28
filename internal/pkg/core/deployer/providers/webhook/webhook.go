@@ -23,7 +23,7 @@ type DeployerConfig struct {
 	// Webhook 回调数据（application/json 或 application/x-www-form-urlencoded 格式）。
 	WebhookData string `json:"webhookData,omitempty"`
 	// 请求谓词。
-	// 零值时默认为 "POST"。
+	// 零值时默认值 "POST"。
 	Method string `json:"method,omitempty"`
 	// 请求标头。
 	Headers map[string]string `json:"headers,omitempty"`
@@ -61,7 +61,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}

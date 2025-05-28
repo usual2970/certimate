@@ -44,14 +44,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res != nil {
@@ -80,7 +80,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 }
 
-func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {

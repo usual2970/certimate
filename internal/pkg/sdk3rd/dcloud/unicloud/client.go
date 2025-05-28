@@ -51,6 +51,7 @@ func NewClient(username, password string) *Client {
 	client.serverlessClient = resty.New()
 	client.apiClient = resty.New().
 		SetBaseURL("https://unicloud-api.dcloud.net.cn/unicloud/api").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.apiUserToken != "" {
 				req.Header.Set("Token", client.apiUserToken)
@@ -173,9 +174,9 @@ func (c *Client) invokeServerless(endpoint, clientSecret, appId, spaceId, target
 	sign := c.generateSignature(payload, clientSecret)
 
 	req := c.serverlessClient.R().
+		SetHeader("Content-Type", "application/json").
 		SetHeader("Origin", "https://unicloud.dcloud.net.cn").
 		SetHeader("Referer", "https://unicloud.dcloud.net.cn").
-		SetHeader("Content-Type", "application/json").
 		SetHeader("X-Client-Info", string(clientInfoJsonb)).
 		SetHeader("X-Client-Token", c.serverlessJwtToken).
 		SetHeader("X-Serverless-Sign", sign).

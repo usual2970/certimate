@@ -26,6 +26,7 @@ func NewClient(username, password string) *Client {
 	}
 	client.client = resty.New().
 		SetBaseURL("https://console.upyun.com").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.loginCookie != "" {
 				req.Header.Set("Cookie", client.loginCookie)

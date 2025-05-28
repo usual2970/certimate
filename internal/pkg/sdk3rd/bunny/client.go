@@ -17,6 +17,7 @@ type Client struct {
 func NewClient(apiToken string) *Client {
 	client := resty.New().
 		SetBaseURL("https://api.bunny.net").
+		SetHeader("User-Agent", "certimate").
 		SetHeader("AccessKey", apiToken)
 
 	return &Client{

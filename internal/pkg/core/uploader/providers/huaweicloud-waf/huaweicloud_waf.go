@@ -26,6 +26,8 @@ type UploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 	// 华为云区域。
 	Region string `json:"region"`
 }
@@ -57,14 +59,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
@@ -84,8 +86,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertificatesReq := &hcwafmodel.ListCertificatesRequest{
-			Page:     typeutil.ToPtr(listCertificatesPage),
-			Pagesize: typeutil.ToPtr(listCertificatesPageSize),
+			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			Page:                typeutil.ToPtr(listCertificatesPage),
+			Pagesize:            typeutil.ToPtr(listCertificatesPageSize),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
@@ -96,7 +99,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		if listCertificatesResp.Items != nil {
 			for _, certItem := range *listCertificatesResp.Items {
 				showCertificateReq := &hcwafmodel.ShowCertificateRequest{
-					CertificateId: certItem.Id,
+					EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+					CertificateId:       certItem.Id,
 				}
 				showCertificateResp, err := u.sdkClient.ShowCertificate(showCertificateReq)
 				u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
@@ -141,6 +145,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 创建证书
 	// REF: https://support.huaweicloud.com/api-waf/CreateCertificate.html
 	createCertificateReq := &hcwafmodel.CreateCertificateRequest{
+		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
 		Body: &hcwafmodel.CreateCertificateRequestBody{
 			Name:    certName,
 			Content: certPEM,

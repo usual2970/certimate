@@ -20,6 +20,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
@@ -54,7 +56,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -69,7 +71,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -283,7 +285,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alislb.Clien
 	// 接入点一览 https://api.aliyun.com/product/Slb
 	var endpoint string
 	switch region {
-	case
+	case "",
 		"cn-hangzhou",
 		"cn-hangzhou-finance",
 		"cn-shanghai-finance-1",
@@ -307,10 +309,11 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alislb.Clien
 	return client, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          region,
 	})
 	return uploader, err

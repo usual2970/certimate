@@ -27,6 +27,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 	// 华为云区域。
 	Region string `json:"region"`
 	// 部署资源类型。
@@ -62,9 +64,10 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		SecretAccessKey: config.SecretAccessKey,
-		Region:          config.Region,
+		AccessKeyId:         config.AccessKeyId,
+		SecretAccessKey:     config.SecretAccessKey,
+		EnterpriseProjectId: config.EnterpriseProjectId,
+		Region:              config.Region,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
@@ -80,7 +83,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -171,6 +174,9 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 			Marker:         listListenersMarker,
 			Protocol:       &[]string{"HTTPS", "TERMINATED_HTTPS"},
 			LoadbalancerId: &[]string{showLoadBalancerResp.Loadbalancer.Id},
+		}
+		if d.config.EnterpriseProjectId != "" {
+			listListenersReq.EnterpriseProjectId = typeutil.ToPtr([]string{d.config.EnterpriseProjectId})
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'elb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))

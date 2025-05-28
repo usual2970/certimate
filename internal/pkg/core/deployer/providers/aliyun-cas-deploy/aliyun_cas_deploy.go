@@ -22,12 +22,14 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 阿里云云产品资源 ID 数组。
 	ResourceIds []string `json:"resourceIds"`
 	// 阿里云云联系人 ID 数组。
-	// 零值时默认使用账号下第一个联系人。
+	// 零值时使用账号下第一个联系人。
 	ContactIds []string `json:"contactIds"`
 }
 
@@ -50,11 +52,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		AccessKeySecret: config.AccessKeySecret,
-		Region:          config.Region,
-	})
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -69,7 +67,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -94,9 +92,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	if len(contactIds) == 0 {
 		// 获取联系人列表
 		// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-listcontact
-		listContactReq := &alicas.ListContactRequest{}
-		listContactReq.ShowSize = tea.Int32(1)
-		listContactReq.CurrentPage = tea.Int32(1)
+		listContactReq := &alicas.ListContactRequest{
+			ShowSize:    tea.Int32(1),
+			CurrentPage: tea.Int32(1),
+		}
 		listContactResp, err := d.sdkClient.ListContact(listContactReq)
 		d.logger.Debug("sdk request 'cas.ListContact'", slog.Any("request", listContactReq), slog.Any("response", listContactResp))
 		if err != nil {
@@ -157,14 +156,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*alicas.Client, error) {
-	if region == "" {
-		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
-	}
-
 	// 接入点一览 https://api.aliyun.com/product/cas
 	var endpoint string
 	switch region {
-	case "cn-hangzhou":
+	case "", "cn-hangzhou":
 		endpoint = "cas.aliyuncs.com"
 	default:
 		endpoint = fmt.Sprintf("cas.%s.aliyuncs.com", region)
@@ -182,4 +177,26 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alicas.Clien
 	}
 
 	return client, nil
+}
+
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
+	casRegion := region
+	if casRegion != "" {
+		// 阿里云 CAS 服务接入点是独立于其他服务的
+		// 国内版固定接入点：华东一杭州
+		// 国际版固定接入点：亚太东南一新加坡
+		if !strings.HasPrefix(casRegion, "cn-") {
+			casRegion = "ap-southeast-1"
+		} else {
+			casRegion = "cn-hangzhou"
+		}
+	}
+
+	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
+		AccessKeyId:     accessKeyId,
+		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
+		Region:          casRegion,
+	})
+	return uploader, err
 }

@@ -16,6 +16,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type UploaderConfig struct {
@@ -23,6 +24,8 @@ type UploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 }
@@ -54,14 +57,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
@@ -71,7 +74,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 查询证书列表，避免重复上传
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeservercertificates
 	describeServerCertificatesReq := &alislb.DescribeServerCertificatesRequest{
-		RegionId: tea.String(u.config.Region),
+		ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+		RegionId:        tea.String(u.config.Region),
 	}
 	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificates(describeServerCertificatesReq)
 	u.logger.Debug("sdk request 'slb.DescribeServerCertificates'", slog.Any("request", describeServerCertificatesReq), slog.Any("response", describeServerCertificatesResp))
@@ -110,6 +114,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-uploadservercertificate
 	uploadServerCertificateReq := &alislb.UploadServerCertificateRequest{
+		ResourceGroupId:       typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
 		RegionId:              tea.String(u.config.Region),
 		ServerCertificateName: tea.String(certName),
 		ServerCertificate:     tea.String(certPEM),
@@ -132,7 +137,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alislb.Clien
 	// 接入点一览 https://api.aliyun.com/product/Slb
 	var endpoint string
 	switch region {
-	case
+	case "",
 		"cn-hangzhou",
 		"cn-hangzhou-finance",
 		"cn-shanghai-finance-1",

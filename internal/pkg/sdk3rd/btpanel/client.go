@@ -21,7 +21,9 @@ type Client struct {
 
 func NewClient(serverUrl, apiKey string) *Client {
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(serverUrl, "/"))
+		SetBaseURL(strings.TrimRight(serverUrl, "/")).
+		SetHeader("Content-Type", "application/x-www-form-urlencoded").
+		SetHeader("User-Agent", "certimate")
 
 	return &Client{
 		apiKey: apiKey,
@@ -77,9 +79,7 @@ func (c *Client) sendRequest(path string, params interface{}) (*resty.Response, 
 	data["request_time"] = fmt.Sprintf("%d", timestamp)
 	data["request_token"] = c.generateSignature(fmt.Sprintf("%d", timestamp))
 
-	req := c.client.R().
-		SetHeader("Content-Type", "application/x-www-form-urlencoded").
-		SetFormData(data)
+	req := c.client.R().SetFormData(data)
 	resp, err := req.Post(path)
 	if err != nil {
 		return resp, fmt.Errorf("baota api error: failed to send request: %w", err)

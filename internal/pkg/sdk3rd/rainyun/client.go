@@ -17,7 +17,8 @@ type Client struct {
 func NewClient(apiKey string) *Client {
 	client := resty.New().
 		SetBaseURL("https://api.v2.rainyun.com").
-		SetHeader("x-api-key", apiKey)
+		SetHeader("User-Agent", "certimate").
+		SetHeader("X-API-Key", apiKey)
 
 	return &Client{
 		client: client,

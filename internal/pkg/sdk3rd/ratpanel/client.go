@@ -25,6 +25,7 @@ func NewClient(serverUrl string, accessTokenId int32, accessToken string) *Clien
 		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/api").
 		SetHeader("Accept", "application/json").
 		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			var body []byte
 			var err error

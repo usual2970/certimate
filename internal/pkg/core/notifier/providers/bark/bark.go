@@ -12,7 +12,7 @@ import (
 
 type NotifierConfig struct {
 	// Bark 服务地址。
-	// 零值时默认使用官方服务器。
+	// 零值时使用官方服务器。
 	ServerUrl string `json:"serverUrl"`
 	// Bark 设备密钥。
 	DeviceKey string `json:"deviceKey"`
@@ -42,14 +42,14 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	if logger == nil {
-		n.logger = slog.Default()
+		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	const defaultServerURL = "https://api.day.app/"
 	serverUrl := defaultServerURL
 	if n.config.ServerUrl != "" {

@@ -28,14 +28,15 @@ const AccessFormAliyunConfig = ({ form: formInst, formName, disabled, initialVal
   const formSchema = z.object({
     accessKeyId: z
       .string()
+      .trim()
       .min(1, t("access.form.aliyun_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     accessKeySecret: z
       .string()
+      .trim()
       .min(1, t("access.form.aliyun_access_key_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    resourceGroupId: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -68,6 +69,24 @@ const AccessFormAliyunConfig = ({ form: formInst, formName, disabled, initialVal
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_access_key_secret.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.aliyun_access_key_secret.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="securityToken"
+        label={t("access.form.aliyun_security_token.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_security_token.tooltip") }}></span>}
+      >
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.aliyun_security_token.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="resourceGroupId"
+        label={t("access.form.aliyun_resource_group_id.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_resource_group_id.tooltip") }}></span>}
+      >
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.aliyun_resource_group_id.placeholder")} />
       </Form.Item>
     </Form>
   );

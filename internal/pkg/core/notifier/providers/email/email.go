@@ -50,14 +50,14 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	if logger == nil {
-		n.logger = slog.Default()
+		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	var smtpAuth smtp.Auth
 	if n.config.Username != "" || n.config.Password != "" {
 		smtpAuth = smtp.PlainAuth("", n.config.Username, n.config.Password, n.config.SmtpHost)
@@ -76,10 +76,11 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 
 	var yak *mailyak.MailYak
 	if n.config.SmtpTls {
-		yak, err = mailyak.NewWithTLS(smtpAddr, smtpAuth, newTlsConfig())
+		yakWithTls, err := mailyak.NewWithTLS(smtpAddr, smtpAuth, newTlsConfig())
 		if err != nil {
 			return nil, err
 		}
+		yak = yakWithTls
 	} else {
 		yak = mailyak.New(smtpAddr, smtpAuth)
 	}
@@ -89,8 +90,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	yak.Subject(subject)
 	yak.Plain().Set(message)
 
-	err = yak.Send()
-	if err != nil {
+	if err := yak.Send(); err != nil {
 		return nil, err
 	}
 

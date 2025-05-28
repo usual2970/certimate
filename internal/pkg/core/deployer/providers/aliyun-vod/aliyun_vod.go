@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -18,6 +19,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 点播加速域名（不支持泛域名）。
@@ -51,7 +54,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -80,8 +83,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*alivod.Client, error) {
 	// 接入点一览 https://api.aliyun.com/product/vod
-	endpoint := fmt.Sprintf("vod.%s.aliyuncs.com", region)
-
+	endpoint := strings.ReplaceAll(fmt.Sprintf("vod.%s.aliyuncs.com", region), "..", ".")
 	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),

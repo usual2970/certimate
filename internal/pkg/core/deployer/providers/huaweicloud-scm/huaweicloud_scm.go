@@ -15,6 +15,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 }
 
 type DeployerProvider struct {
@@ -31,8 +33,9 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		SecretAccessKey: config.SecretAccessKey,
+		AccessKeyId:         config.AccessKeyId,
+		SecretAccessKey:     config.SecretAccessKey,
+		EnterpriseProjectId: config.EnterpriseProjectId,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
@@ -47,7 +50,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}

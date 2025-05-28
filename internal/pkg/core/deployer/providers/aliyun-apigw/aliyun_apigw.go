@@ -16,6 +16,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -23,6 +24,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务类型。
@@ -61,7 +64,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -76,7 +79,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -149,10 +152,11 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 		}
 
 		listDomainsReq := &aliapig.ListDomainsRequest{
-			GatewayId:  tea.String(d.config.GatewayId),
-			NameLike:   tea.String(d.config.Domain),
-			PageNumber: tea.Int32(listDomainsPageNumber),
-			PageSize:   tea.Int32(listDomainsPageSize),
+			ResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			GatewayId:       tea.String(d.config.GatewayId),
+			NameLike:        tea.String(d.config.Domain),
+			PageNumber:      tea.Int32(listDomainsPageNumber),
+			PageSize:        tea.Int32(listDomainsPageSize),
 		}
 		listDomainsResp, err := d.sdkClients.CloudNativeAPIGateway.ListDomains(listDomainsReq)
 		d.logger.Debug("sdk request 'apig.ListDomains'", slog.Any("request", listDomainsReq), slog.Any("response", listDomainsResp))
@@ -223,7 +227,7 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 
 func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients, error) {
 	// 接入点一览 https://api.aliyun.com/product/APIG
-	cloudNativeAPIGEndpoint := fmt.Sprintf("apig.%s.aliyuncs.com", region)
+	cloudNativeAPIGEndpoint := strings.ReplaceAll(fmt.Sprintf("apig.%s.aliyuncs.com", region), "..", ".")
 	cloudNativeAPIGConfig := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
@@ -235,7 +239,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}
 
 	// 接入点一览 https://api.aliyun.com/product/CloudAPI
-	traditionalAPIGEndpoint := fmt.Sprintf("apigateway.%s.aliyuncs.com", region)
+	traditionalAPIGEndpoint := strings.ReplaceAll(fmt.Sprintf("apigateway.%s.aliyuncs.com", region), "..", ".")
 	traditionalAPIGConfig := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
@@ -252,7 +256,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
 	casRegion := region
 	if casRegion != "" {
 		// 阿里云 CAS 服务接入点是独立于 APIGateway 服务的
@@ -268,6 +272,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          casRegion,
 	})
 	return uploader, err

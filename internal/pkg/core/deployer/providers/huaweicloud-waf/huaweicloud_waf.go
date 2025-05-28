@@ -27,6 +27,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 	// 华为云区域。
 	Region string `json:"region"`
 	// 部署资源类型。
@@ -59,9 +61,10 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		SecretAccessKey: config.SecretAccessKey,
-		Region:          config.Region,
+		AccessKeyId:         config.AccessKeyId,
+		SecretAccessKey:     config.SecretAccessKey,
+		EnterpriseProjectId: config.EnterpriseProjectId,
+		Region:              config.Region,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
@@ -77,7 +80,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -126,7 +129,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	// 查询证书
 	// REF: https://support.huaweicloud.com/api-waf/ShowCertificate.html
 	showCertificateReq := &hcwafmodel.ShowCertificateRequest{
-		CertificateId: d.config.CertificateId,
+		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+		CertificateId:       d.config.CertificateId,
 	}
 	showCertificateResp, err := d.sdkClient.ShowCertificate(showCertificateReq)
 	d.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", showCertificateReq), slog.Any("response", showCertificateResp))
@@ -137,7 +141,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	// 更新证书
 	// REF: https://support.huaweicloud.com/api-waf/UpdateCertificate.html
 	updateCertificateReq := &hcwafmodel.UpdateCertificateRequest{
-		CertificateId: d.config.CertificateId,
+		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+		CertificateId:       d.config.CertificateId,
 		Body: &hcwafmodel.UpdateCertificateRequestBody{
 			Name:    *showCertificateResp.Name,
 			Content: typeutil.ToPtr(certPEM),
@@ -179,9 +184,10 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 		}
 
 		listHostReq := &hcwafmodel.ListHostRequest{
-			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
-			Page:     typeutil.ToPtr(listHostPage),
-			Pagesize: typeutil.ToPtr(listHostPageSize),
+			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+			Hostname:            typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
+			Page:                typeutil.ToPtr(listHostPage),
+			Pagesize:            typeutil.ToPtr(listHostPageSize),
 		}
 		listHostResp, err := d.sdkClient.ListHost(listHostReq)
 		d.logger.Debug("sdk request 'waf.ListHost'", slog.Any("request", listHostReq), slog.Any("response", listHostResp))
@@ -211,7 +217,8 @@ func (d *DeployerProvider) deployToCloudServer(ctx context.Context, certPEM stri
 	// 更新云模式防护域名的配置
 	// REF: https://support.huaweicloud.com/api-waf/UpdateHost.html
 	updateHostReq := &hcwafmodel.UpdateHostRequest{
-		InstanceId: hostId,
+		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+		InstanceId:          hostId,
 		Body: &hcwafmodel.UpdateHostRequestBody{
 			Certificateid:   typeutil.ToPtr(upres.CertId),
 			Certificatename: typeutil.ToPtr(upres.CertName),
@@ -252,9 +259,10 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 		}
 
 		listPremiumHostReq := &hcwafmodel.ListPremiumHostRequest{
-			Hostname: typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
-			Page:     typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPage)),
-			Pagesize: typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
+			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+			Hostname:            typeutil.ToPtr(strings.TrimPrefix(d.config.Domain, "*")),
+			Page:                typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPage)),
+			Pagesize:            typeutil.ToPtr(fmt.Sprintf("%d", listPremiumHostPageSize)),
 		}
 		listPremiumHostResp, err := d.sdkClient.ListPremiumHost(listPremiumHostReq)
 		d.logger.Debug("sdk request 'waf.ListPremiumHost'", slog.Any("request", listPremiumHostReq), slog.Any("response", listPremiumHostResp))
@@ -284,7 +292,8 @@ func (d *DeployerProvider) deployToPremiumHost(ctx context.Context, certPEM stri
 	// 修改独享模式域名配置
 	// REF: https://support.huaweicloud.com/api-waf/UpdatePremiumHost.html
 	updatePremiumHostReq := &hcwafmodel.UpdatePremiumHostRequest{
-		HostId: hostId,
+		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(d.config.EnterpriseProjectId),
+		HostId:              hostId,
 		Body: &hcwafmodel.UpdatePremiumHostRequestBody{
 			Certificateid:   typeutil.ToPtr(upres.CertId),
 			Certificatename: typeutil.ToPtr(upres.CertName),

@@ -14,7 +14,7 @@ import (
 //   - serverCertPEM: 服务器证书的 PEM 内容。
 //   - intermediaCertPEM: 中间证书的 PEM 内容。
 //   - err: 错误。
-func ExtractCertificatesFromPEM(certPEM string) (serverCertPEM string, intermediaCertPEM string, err error) {
+func ExtractCertificatesFromPEM(certPEM string) (_serverCertPEM string, _intermediaCertPEM string, _err error) {
 	pemBlocks := make([]*pem.Block, 0)
 	pemData := []byte(certPEM)
 	for {
@@ -27,8 +27,8 @@ func ExtractCertificatesFromPEM(certPEM string) (serverCertPEM string, intermedi
 		pemData = rest
 	}
 
-	serverCertPEM = ""
-	intermediaCertPEM = ""
+	serverCertPEM := ""
+	intermediaCertPEM := ""
 
 	if len(pemBlocks) == 0 {
 		return "", "", errors.New("failed to decode PEM block")

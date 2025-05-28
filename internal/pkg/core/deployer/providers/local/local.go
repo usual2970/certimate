@@ -15,7 +15,7 @@ import (
 
 type DeployerConfig struct {
 	// Shell 执行环境。
-	// 零值时默认根据操作系统决定。
+	// 零值时根据操作系统决定。
 	ShellEnv ShellEnvType `json:"shellEnv,omitempty"`
 	// 前置命令。
 	PreCommand string `json:"preCommand,omitempty"`
@@ -67,7 +67,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}

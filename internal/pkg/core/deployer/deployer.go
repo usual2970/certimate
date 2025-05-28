@@ -20,7 +20,7 @@ type Deployer interface {
 	// 出参：
 	//   - res：部署结果。
 	//   - err: 错误。
-	Deploy(ctx context.Context, certPEM string, privkeyPEM string) (res *DeployResult, err error)
+	Deploy(ctx context.Context, certPEM string, privkeyPEM string) (_res *DeployResult, _err error)
 }
 
 // 表示证书部署结果的数据结构。

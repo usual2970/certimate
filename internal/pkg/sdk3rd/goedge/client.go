@@ -32,6 +32,7 @@ func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) *Client {
 	}
 	client.client = resty.New().
 		SetBaseURL(strings.TrimRight(serverUrl, "/")).
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.accessToken != "" {
 				req.Header.Set("X-Edge-Access-Token", client.accessToken)
