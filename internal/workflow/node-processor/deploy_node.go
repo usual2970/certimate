@@ -33,7 +33,7 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 }
 
 func (n *deployNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to deploy ...")
+	n.logger.Info("ready to deploy certificate ...")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -78,7 +78,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 
 	// 部署证书
 	if err := deployer.Deploy(ctx); err != nil {
-		n.logger.Warn("failed to deploy")
+		n.logger.Warn("failed to deploy certificate")
 		return err
 	}
 
@@ -95,8 +95,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 		return err
 	}
 
-	n.logger.Info("deploy completed")
-
+	n.logger.Info("deployment completed")
 	return nil
 }
 

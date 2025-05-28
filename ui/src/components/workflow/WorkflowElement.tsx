@@ -9,10 +9,11 @@ import DeployNode from "./node/DeployNode";
 import EndNode from "./node/EndNode";
 import ExecuteResultBranchNode from "./node/ExecuteResultBranchNode";
 import ExecuteResultNode from "./node/ExecuteResultNode";
+import MonitorNode from "./node/MonitorNode";
 import NotifyNode from "./node/NotifyNode";
 import StartNode from "./node/StartNode";
+import UnknownNode from "./node/UnknownNode";
 import UploadNode from "./node/UploadNode";
-import InspectNode from "./node/InspectNode";
 
 export type WorkflowElementProps = {
   node: WorkflowNode;
@@ -32,9 +33,9 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 
       case WorkflowNodeType.Upload:
         return <UploadNode node={node} disabled={disabled} />;
-      
-      case WorkflowNodeType.Inspect:
-        return <InspectNode node={node} disabled={disabled} />;
+
+      case WorkflowNodeType.Monitor:
+        return <MonitorNode node={node} disabled={disabled} />;
 
       case WorkflowNodeType.Deploy:
         return <DeployNode node={node} disabled={disabled} />;
@@ -60,7 +61,7 @@ const WorkflowElement = ({ node, disabled, branchId, branchIndex }: WorkflowElem
 
       default:
         console.warn(`[certimate] unsupported workflow node type: ${node.type}`);
-        return <></>;
+        return <UnknownNode node={node} />;
     }
   }, [node, disabled, branchId, branchIndex]);
 

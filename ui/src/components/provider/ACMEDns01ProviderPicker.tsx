@@ -67,7 +67,7 @@ const ACMEDns01ProviderPicker = ({ className, style, autoFocus, filter, placehol
                     }}
                   >
                     <Flex className="size-full overflow-hidden" align="center" gap={8}>
-                      <Avatar src={provider.icon} size="small" />
+                      <Avatar shape="square" src={provider.icon} size="small" />
                       <Typography.Text className="line-clamp-2 flex-1">{t(provider.name)}</Typography.Text>
                     </Flex>
                   </Card>

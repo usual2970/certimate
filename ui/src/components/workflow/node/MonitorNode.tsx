@@ -3,43 +3,43 @@ import { useTranslation } from "react-i18next";
 import { Flex, Typography } from "antd";
 import { produce } from "immer";
 
-import { type WorkflowNodeConfigForInspect, WorkflowNodeType } from "@/domain/workflow";
+import { type WorkflowNodeConfigForMonitor, WorkflowNodeType } from "@/domain/workflow";
 import { useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
-import InspectNodeConfigForm, { type InspectNodeConfigFormInstance } from "./InspectNodeConfigForm";
+import MonitorNodeConfigForm, { type MonitorNodeConfigFormInstance } from "./MonitorNodeConfigForm";
 
-export type InspectNodeProps = SharedNodeProps;
+export type MonitorNodeProps = SharedNodeProps;
 
-const InspectNode = ({ node, disabled }: InspectNodeProps) => {
-  if (node.type !== WorkflowNodeType.Inspect) {
-    console.warn(`[certimate] current workflow node type is not: ${WorkflowNodeType.Inspect}`);
+const MonitorNode = ({ node, disabled }: MonitorNodeProps) => {
+  if (node.type !== WorkflowNodeType.Monitor) {
+    console.warn(`[certimate] current workflow node type is not: ${WorkflowNodeType.Monitor}`);
   }
 
   const { t } = useTranslation();
 
   const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
 
-  const formRef = useRef<InspectNodeConfigFormInstance>(null);
+  const formRef = useRef<MonitorNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForInspect;
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForMonitor;
 
   const wrappedEl = useMemo(() => {
-    if (node.type !== WorkflowNodeType.Inspect) {
-      console.warn(`[certimate] current workflow node type is not: ${WorkflowNodeType.Inspect}`);
+    if (node.type !== WorkflowNodeType.Monitor) {
+      console.warn(`[certimate] current workflow node type is not: ${WorkflowNodeType.Monitor}`);
     }
 
     if (!node.validated) {
       return <Typography.Link>{t("workflow_node.action.configure_node")}</Typography.Link>;
     }
 
-    const config = (node.config as WorkflowNodeConfigForInspect) ?? {};
+    const config = (node.config as WorkflowNodeConfigForMonitor) ?? {};
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
-        <Typography.Text className="truncate">{config.host ?? ""}</Typography.Text>
+        <Typography.Text className="truncate">{config.domain || config.host || ""}</Typography.Text>
       </Flex>
     );
   }, [node]);
@@ -81,10 +81,10 @@ const InspectNode = ({ node, disabled }: InspectNodeProps) => {
         onOpenChange={(open) => setDrawerOpen(open)}
         getFormValues={() => formRef.current!.getFieldsValue()}
       >
-        <InspectNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
+        <MonitorNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>
     </>
   );
 };
 
-export default memo(InspectNode);
+export default memo(MonitorNode);

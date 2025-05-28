@@ -34,7 +34,7 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to apply ...")
+	n.logger.Info("ready to obtain certificiate ...")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -63,7 +63,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	// 申请证书
 	applyResult, err := applicant.Apply(ctx)
 	if err != nil {
-		n.logger.Warn("failed to apply")
+		n.logger.Warn("failed to obtain certificiate")
 		return err
 	}
 
@@ -112,7 +112,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	n.outputs[outputCertificateValidatedKey] = "true"
 	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
 
-	n.logger.Info("apply completed")
+	n.logger.Info("application completed")
 	return nil
 }
 
@@ -156,7 +156,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			if expirationTime > renewalInterval {
 				n.outputs[outputCertificateValidatedKey] = "true"
 				n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(expirationTime.Hours()/24))
-				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

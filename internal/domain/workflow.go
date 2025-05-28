@@ -31,6 +31,7 @@ const (
 	WorkflowNodeTypeEnd                 = WorkflowNodeType("end")
 	WorkflowNodeTypeApply               = WorkflowNodeType("apply")
 	WorkflowNodeTypeUpload              = WorkflowNodeType("upload")
+	WorkflowNodeTypeMonitor             = WorkflowNodeType("monitor")
 	WorkflowNodeTypeDeploy              = WorkflowNodeType("deploy")
 	WorkflowNodeTypeNotify              = WorkflowNodeType("notify")
 	WorkflowNodeTypeBranch              = WorkflowNodeType("branch")
@@ -38,7 +39,6 @@ const (
 	WorkflowNodeTypeExecuteResultBranch = WorkflowNodeType("execute_result_branch")
 	WorkflowNodeTypeExecuteSuccess      = WorkflowNodeType("execute_success")
 	WorkflowNodeTypeExecuteFailure      = WorkflowNodeType("execute_failure")
-	WorkflowNodeTypeInspect             = WorkflowNodeType("inspect")
 )
 
 type WorkflowTriggerType string
@@ -83,21 +83,17 @@ type WorkflowNodeConfigForApply struct {
 	SkipBeforeExpiryDays  int32          `json:"skipBeforeExpiryDays,omitempty"`  // 证书到期前多少天前跳过续期（零值将使用默认值 30）
 }
 
-type WorkflowNodeConfigForCondition struct {
-	Expression Expr `json:"expression"` // 条件表达式
-}
-
-type WorkflowNodeConfigForInspect struct {
-	Host   string `json:"host"`   // 主机
-	Domain string `json:"domain"` // 域名
-	Port   string `json:"port"`   // 端口
-	Path   string `json:"path"`   // 路径
-}
-
 type WorkflowNodeConfigForUpload struct {
-	Certificate string `json:"certificate"`
-	PrivateKey  string `json:"privateKey"`
-	Domains     string `json:"domains"`
+	Certificate string `json:"certificate"` // 证书 PEM 内容
+	PrivateKey  string `json:"privateKey"`  // 私钥 PEM 内容
+	Domains     string `json:"domains,omitempty"`
+}
+
+type WorkflowNodeConfigForMonitor struct {
+	Host        string `json:"host"`                  // 主机地址
+	Port        int32  `json:"port,omitempty"`        // 端口（零值时默认值 443）
+	Domain      string `json:"domain,omitempty"`      // 域名（零值时默认值 [Host]）
+	RequestPath string `json:"requestPath,omitempty"` // 请求路径
 }
 
 type WorkflowNodeConfigForDeploy struct {
@@ -117,48 +113,8 @@ type WorkflowNodeConfigForNotify struct {
 	Message          string         `json:"message"`                  // 通知内容
 }
 
-func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
-	expression := n.Config["expression"]
-	if expression == nil {
-		return WorkflowNodeConfigForCondition{}
-	}
-
-	raw, _ := json.Marshal(expression)
-
-	expr, err := UnmarshalExpr([]byte(raw))
-	if err != nil {
-		return WorkflowNodeConfigForCondition{}
-	}
-
-	return WorkflowNodeConfigForCondition{
-		Expression: expr,
-	}
-}
-
-func (n *WorkflowNode) GetConfigForInspect() WorkflowNodeConfigForInspect {
-	host := maputil.GetString(n.Config, "host")
-	if host == "" {
-		return WorkflowNodeConfigForInspect{}
-	}
-
-	domain := maputil.GetString(n.Config, "domain")
-	if domain == "" {
-		domain = host
-	}
-
-	port := maputil.GetString(n.Config, "port")
-	if port == "" {
-		port = "443"
-	}
-
-	path := maputil.GetString(n.Config, "path")
-
-	return WorkflowNodeConfigForInspect{
-		Domain: domain,
-		Port:   port,
-		Host:   host,
-		Path:   path,
-	}
+type WorkflowNodeConfigForCondition struct {
+	Expression Expr `json:"expression"` // 条件表达式
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -190,6 +146,16 @@ func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
 	}
 }
 
+func (n *WorkflowNode) GetConfigForMonitor() WorkflowNodeConfigForMonitor {
+	host := maputil.GetString(n.Config, "host")
+	return WorkflowNodeConfigForMonitor{
+		Host:        host,
+		Port:        maputil.GetOrDefaultInt32(n.Config, "port", 443),
+		Domain:      maputil.GetOrDefaultString(n.Config, "domain", host),
+		RequestPath: maputil.GetString(n.Config, "path"),
+	}
+}
+
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
 		Certificate:         maputil.GetString(n.Config, "certificate"),
@@ -208,6 +174,24 @@ func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 		ProviderConfig:   maputil.GetKVMapAny(n.Config, "providerConfig"),
 		Subject:          maputil.GetString(n.Config, "subject"),
 		Message:          maputil.GetString(n.Config, "message"),
+	}
+}
+
+func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
+	expression := n.Config["expression"]
+	if expression == nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	raw, _ := json.Marshal(expression)
+
+	expr, err := UnmarshalExpr([]byte(raw))
+	if err != nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	return WorkflowNodeConfigForCondition{
+		Expression: expr,
 	}
 }
 

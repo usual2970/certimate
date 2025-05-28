@@ -49,12 +49,12 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
     return (
       <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
         <Space className="max-w-full grow truncate" size={4}>
-          <Avatar src={provider.icon} size="small" />
+          <Avatar shape="square" src={provider.icon} size="small" />
           <Typography.Text className="leading-loose" type={provider.builtin ? "secondary" : undefined} ellipsis>
             {t(provider.name)}
           </Typography.Text>
         </Space>
-        <div className="origin-right scale-[80%]">
+        <div className="origin-right scale-[75%]">
           <Show when={provider.builtin}>
             <Tag>{t("access.props.provider.builtin")}</Tag>
           </Show>

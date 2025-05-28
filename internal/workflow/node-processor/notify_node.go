@@ -28,7 +28,7 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 }
 
 func (n *notifyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to notify ...")
+	n.logger.Info("ready to send notification ...")
 
 	nodeConfig := n.node.GetConfigForNotify()
 
@@ -51,11 +51,11 @@ func (n *notifyNode) Process(ctx context.Context) error {
 
 		// 发送通知
 		if err := notify.SendToChannel(nodeConfig.Subject, nodeConfig.Message, nodeConfig.Channel, channelConfig); err != nil {
-			n.logger.Warn("failed to notify", slog.String("channel", nodeConfig.Channel))
+			n.logger.Warn("failed to send notification", slog.String("channel", nodeConfig.Channel))
 			return err
 		}
 
-		n.logger.Info("notify completed")
+		n.logger.Info("notification completed")
 		return nil
 	}
 
@@ -73,9 +73,10 @@ func (n *notifyNode) Process(ctx context.Context) error {
 
 	// 推送通知
 	if err := deployer.Notify(ctx); err != nil {
-		n.logger.Warn("failed to notify")
+		n.logger.Warn("failed to send notification")
 		return err
 	}
 
+	n.logger.Info("notification completed")
 	return nil
 }

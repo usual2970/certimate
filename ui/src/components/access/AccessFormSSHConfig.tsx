@@ -120,7 +120,7 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
 
         <div className="w-1/3">
           <Form.Item name="port" label={t("access.form.ssh_port.label")} rules={[formRule]}>
-            <InputNumber className="w-full" placeholder={t("access.form.ssh_port.placeholder")} min={1} max={65535} />
+            <InputNumber className="w-full" min={1} max={65535} placeholder={t("access.form.ssh_port.placeholder")} />
           </Form.Item>
         </div>
       </div>

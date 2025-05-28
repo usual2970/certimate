@@ -43,7 +43,7 @@ const NotifyNode = ({ node, disabled }: NotifyNodeProps) => {
     const provider = notificationProvidersMap.get(config.provider);
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="flex-1 truncate">{t(channel?.name ?? provider?.name ?? "　")}</Typography.Text>
         <Typography.Text className="truncate" type="secondary">
           {config.subject ?? ""}

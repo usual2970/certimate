@@ -37,7 +37,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
     if (!access) {
       return (
         <Space className="max-w-full grow truncate" size={4}>
-          <Avatar size="small" />
+          <Avatar shape="square" size="small" />
           <Typography.Text className="leading-loose" ellipsis>
             {key}
           </Typography.Text>
@@ -48,7 +48,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
     const provider = accessProvidersMap.get(access.provider);
     return (
       <Space className="max-w-full grow truncate" size={4}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {access.name}
         </Typography.Text>

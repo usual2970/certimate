@@ -46,7 +46,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     const provider = deploymentProvidersMap.get(config.provider);
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="flex-1 truncate">{t(provider?.name ?? "")}</Typography.Text>
       </Flex>
     );

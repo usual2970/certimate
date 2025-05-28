@@ -3,11 +3,11 @@ import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
   DeploymentUnitOutlined as DeploymentUnitOutlinedIcon,
+  MonitorOutlined as MonitorOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
   SolutionOutlined as SolutionOutlinedIcon,
-  MonitorOutlined as MonitorOutlinedIcon,
 } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
@@ -28,7 +28,7 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
       [WorkflowNodeType.Upload, "workflow_node.upload.label", <CloudUploadOutlinedIcon />],
-      [WorkflowNodeType.Inspect, "workflow_node.inspect.label", <MonitorOutlinedIcon />],
+      [WorkflowNodeType.Monitor, "workflow_node.monitor.label", <MonitorOutlinedIcon />],
       [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <DeploymentUnitOutlinedIcon />],
       [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],

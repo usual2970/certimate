@@ -1,14 +1,17 @@
 import { memo, useRef, useState } from "react";
 import { MoreOutlined as MoreOutlinedIcon } from "@ant-design/icons";
 import { Button, Card, Popover } from "antd";
+import { produce } from "immer";
+
+import type { Expr, WorkflowNodeIoValueType } from "@/domain/workflow";
+import { ExprType } from "@/domain/workflow";
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
 
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
-import ConditionNodeConfigForm, { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
-import { Expr, WorkflowNodeIoValueType, ExprType } from "@/domain/workflow";
-import { produce } from "immer";
-import { useWorkflowStore } from "@/stores/workflow";
-import { useZustandShallowSelector } from "@/hooks";
+import type { ConditionItem, ConditionNodeConfigFormFieldValues, ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
+import ConditionNodeConfigForm from "./ConditionNodeConfigForm";
 
 export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;

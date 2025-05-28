@@ -56,7 +56,7 @@ const AccessList = () => {
       render: (_, record) => {
         return (
           <Space className="max-w-full truncate" size={4}>
-            <Avatar src={accessProvidersMap.get(record.provider)?.icon} size="small" />
+            <Avatar shape="square" src={accessProvidersMap.get(record.provider)?.icon} size="small" />
             <Typography.Text ellipsis>{t(accessProvidersMap.get(record.provider)?.name ?? "")}</Typography.Text>
           </Space>
         );

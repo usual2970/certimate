@@ -32,7 +32,7 @@ const DeploymentProviderSelect = ({ filter, ...props }: DeploymentProviderSelect
     const provider = deploymentProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {t(provider?.name ?? "")}
         </Typography.Text>

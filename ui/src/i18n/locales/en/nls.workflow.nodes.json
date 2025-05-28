@@ -10,6 +10,7 @@
   "workflow_node.unsaved_changes.confirm": "You have unsaved changes. Do you really want to close the panel and drop those changes?",
 
   "workflow_node.start.label": "Start",
+  "workflow_node.start.default_name": "Start",
   "workflow_node.start.form.trigger.label": "Trigger",
   "workflow_node.start.form.trigger.placeholder": "Please select trigger",
   "workflow_node.start.form.trigger.tooltip": "Auto: Time triggered based on cron expression.<br>Manual: Manually triggered.",
@@ -22,7 +23,8 @@
   "workflow_node.start.form.trigger_cron.extra": "Expected execution time for the last 5 times:",
   "workflow_node.start.form.trigger_cron.guide": "Tips: If you have multiple workflows, it is recommended to set them to run at multiple times of the day instead of always running at specific times. Don't always set it to midnight every day to avoid spikes in traffic.<br><br>Reference links:<br>1. <a href=\"https://letsencrypt.org/docs/rate-limits/\" target=\"_blank\">Let’s Encrypt rate limits</a><br>2. <a href=\"https://letsencrypt.org/docs/faq/#why-should-my-let-s-encrypt-acme-client-run-at-a-random-time\" target=\"_blank\">Why should my Let’s Encrypt (ACME) client run at a random time?</a>",
 
-  "workflow_node.apply.label": "Application",
+  "workflow_node.apply.label": "Obtain certificate",
+  "workflow_node.apply.default_name": "Application",
   "workflow_node.apply.form.domains.label": "Domains",
   "workflow_node.apply.form.domains.placeholder": "Please enter domains (separated by semicolons)",
   "workflow_node.apply.form.domains.tooltip": "Wildcard domain: *.example.com",
@@ -97,7 +99,17 @@
   "workflow_node.apply.form.skip_before_expiry_days.unit": "days",
   "workflow_node.apply.form.skip_before_expiry_days.tooltip": "Be careful not to exceed the validity period limit of the issued certificate, otherwise the certificate may never be renewed.",
 
-  "workflow_node.deploy.label": "Deployment",
+  "workflow_node.upload.label": "Upload certificate",
+  "workflow_node.upload.default_name": "Uploading",
+  "workflow_node.upload.form.domains.label": "Domains",
+  "workflow_node.upload.form.domains.placholder": "Please select certificate file",
+  "workflow_node.upload.form.certificate.label": "Certificate (PEM format)",
+  "workflow_node.upload.form.certificate.placeholder": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----",
+  "workflow_node.upload.form.private_key.label": "Private key (PEM format)",
+  "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
+
+  "workflow_node.deploy.label": "Deploy certificate",
+  "workflow_node.deploy.default_name": "Deployment",
   "workflow_node.deploy.form.provider.label": "Deploy target",
   "workflow_node.deploy.form.provider.placeholder": "Please select deploy target",
   "workflow_node.deploy.form.provider.search.placeholder": "Search deploy target ...",
@@ -805,25 +817,20 @@
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.on": "skip",
   "workflow_node.deploy.form.skip_on_last_succeeded.switch.off": "not skip",
 
-  "workflow_node.upload.label": "Upload",
-  "workflow_node.upload.form.domains.label": "Domains",
-  "workflow_node.upload.form.domains.placholder": "Please select certificate file",
-  "workflow_node.upload.form.certificate.label": "Certificate (PEM format)",
-  "workflow_node.upload.form.certificate.placeholder": "-----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----",
-  "workflow_node.upload.form.private_key.label": "Private key (PEM format)",
-  "workflow_node.upload.form.private_key.placeholder": "-----BEGIN (RSA|EC) PRIVATE KEY-----...-----END(RSA|EC) PRIVATE KEY-----",
+  "workflow_node.monitor.label": "Monitor certificate",
+  "workflow_node.monitor.default_name": "Monitoring",
+  "workflow_node.monitor.form.guide": "Tips: Certimate will send a HEAD request to the target address to obtain the certificate. Please ensure that the address is accessible through HTTPS protocol.",
+  "workflow_node.monitor.form.host.label": "Host",
+  "workflow_node.monitor.form.host.placeholder": "Please enter host",
+  "workflow_node.monitor.form.port.label": "Port",
+  "workflow_node.monitor.form.port.placeholder": "Please enter port",
+  "workflow_node.monitor.form.domain.label": "Domain (Optional)",
+  "workflow_node.monitor.form.domain.placeholder": "Please enter domain name",
+  "workflow_node.monitor.form.request_path.label": "Request path (Optional)",
+  "workflow_node.monitor.form.request_path.placeholder": "Please enter request path",
 
-  "workflow_node.inspect.label": "Inspect certificate",
-  "workflow_node.inspect.form.domain.label": "Domain",
-  "workflow_node.inspect.form.domain.placeholder": "Please enter domain name",
-  "workflow_node.inspect.form.port.label": "Port",
-  "workflow_node.inspect.form.port.placeholder": "Please enter port",
-  "workflow_node.inspect.form.host.label": "Host",
-  "workflow_node.inspect.form.host.placeholder": "Please enter host",
-  "workflow_node.inspect.form.path.label": "Path",
-  "workflow_node.inspect.form.path.placeholder": "Please enter path",
-
-  "workflow_node.notify.label": "Notification",
+  "workflow_node.notify.label": "Send notification",
+  "workflow_node.notify.default_name": "Notification",
   "workflow_node.notify.form.subject.label": "Subject",
   "workflow_node.notify.form.subject.placeholder": "Please enter subject",
   "workflow_node.notify.form.message.label": "Message",
@@ -862,10 +869,13 @@
   "workflow_node.notify.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
 
   "workflow_node.end.label": "End",
+  "workflow_node.end.default_name": "End",
 
   "workflow_node.branch.label": "Parallel branch",
+  "workflow_node.branch.default_name": "Parallel",
 
   "workflow_node.condition.label": "Branch",
+  "workflow_node.condition.default_name": "Branch",
   "workflow_node.condition.form.variable.placeholder": "Please select variable",
   "workflow_node.condition.form.variable.errmsg": "Please select variable",
   "workflow_node.condition.form.operator.errmsg": "Please select operator",
@@ -888,8 +898,11 @@
   "workflow_node.condition.form.comparison.is": "Is",
 
   "workflow_node.execute_result_branch.label": "Execution result branch",
+  "workflow_node.execute_result_branch.default_name": "Execution result branch",
 
   "workflow_node.execute_success.label": "If the previous node succeeded ...",
+  "workflow_node.execute_success.default_name": "If the previous node succeeded ...",
 
-  "workflow_node.execute_failure.label": "If the previous node failed ..."
+  "workflow_node.execute_failure.label": "If the previous node failed ...",
+  "workflow_node.execute_failure.default_name": "If the previous node failed ..."
 }

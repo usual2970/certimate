@@ -31,7 +31,7 @@ export enum WorkflowNodeType {
   End = "end",
   Apply = "apply",
   Upload = "upload",
-  Inspect = "inspect",
+  Monitor = "monitor",
   Deploy = "deploy",
   Notify = "notify",
   Branch = "branch",
@@ -43,23 +43,25 @@ export enum WorkflowNodeType {
 }
 
 const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
-  [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
-  [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
-  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
-  [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.label")],
-  [WorkflowNodeType.Inspect, i18n.t("workflow_node.inspect.label")],
-  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
-  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
-  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
-  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.label")],
-  [WorkflowNodeType.ExecuteResultBranch, i18n.t("workflow_node.execute_result_branch.label")],
-  [WorkflowNodeType.ExecuteSuccess, i18n.t("workflow_node.execute_success.label")],
-  [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.label")],
-  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
+  [WorkflowNodeType.Start, i18n.t("workflow_node.start.default_name")],
+  [WorkflowNodeType.End, i18n.t("workflow_node.end.default_name")],
+  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.default_name")],
+  [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.default_name")],
+  [WorkflowNodeType.Monitor, i18n.t("workflow_node.monitor.default_name")],
+  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.default_name")],
+  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.default_name")],
+  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.default_name")],
+  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.default_name")],
+  [WorkflowNodeType.ExecuteResultBranch, i18n.t("workflow_node.execute_result_branch.default_name")],
+  [WorkflowNodeType.ExecuteSuccess, i18n.t("workflow_node.execute_success.default_name")],
+  [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.default_name")],
+  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.default_name")],
 ]);
 
 const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [WorkflowNodeType.Apply, []],
+  [WorkflowNodeType.Upload, []],
+  [WorkflowNodeType.Monitor, []],
   [
     WorkflowNodeType.Deploy,
     [
@@ -98,7 +100,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
     ],
   ],
   [
-    WorkflowNodeType.Inspect,
+    WorkflowNodeType.Monitor,
     [
       {
         name: "certificate",
@@ -158,11 +160,11 @@ export type WorkflowNodeConfigForUpload = {
   privateKey: string;
 };
 
-export type WorkflowNodeConfigForInspect = {
-  domain: string;
-  port: string;
+export type WorkflowNodeConfigForMonitor = {
   host: string;
-  path: string;
+  port: number;
+  domain?: string;
+  requestPath?: string;
 };
 
 export type WorkflowNodeConfigForDeploy = {
@@ -351,7 +353,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Upload:
     case WorkflowNodeType.Deploy:
-    case WorkflowNodeType.Inspect:
+    case WorkflowNodeType.Monitor:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
         node.outputs = workflowNodeTypeDefaultOutputs.get(nodeType);

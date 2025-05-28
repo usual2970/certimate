@@ -31,7 +31,7 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 }
 
 func (n *uploadNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to upload ...")
+	n.logger.Info("ready to upload certiticate ...")
 
 	nodeConfig := n.node.GetConfigForUpload()
 
@@ -43,7 +43,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 
 	// 检测是否可以跳过本次执行
 	if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
-		n.logger.Info(fmt.Sprintf("skip this upload, because %s", reason))
+		n.logger.Info(fmt.Sprintf("skip this uploading, because %s", reason))
 		return nil
 	} else if reason != "" {
 		n.logger.Info(fmt.Sprintf("re-upload, because %s", reason))
@@ -72,7 +72,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 	n.outputs[outputCertificateValidatedKey] = "true"
 	n.outputs[outputCertificateDaysLeftKey] = fmt.Sprintf("%d", int(time.Until(certificate.ExpireAt).Hours()/24))
 
-	n.logger.Info("upload completed")
+	n.logger.Info("uploading completed")
 
 	return nil
 }
