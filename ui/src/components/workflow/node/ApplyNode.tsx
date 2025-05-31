@@ -38,9 +38,9 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
 
   const formRef = useRef<ApplyNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForApply;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForApply;
 
   const handleDrawerConfirm = async () => {
     setFormPending(true);
@@ -74,12 +74,12 @@ const ApplyNode = ({ node, disabled }: ApplyNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
         node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => setDrawerOpen(open)}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <ApplyNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>

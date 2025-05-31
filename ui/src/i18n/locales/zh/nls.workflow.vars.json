@@ -1,0 +1,6 @@
+{
+  "workflow.variables.type.certificate.label": "证书",
+
+  "workflow.variables.selector.validity.label": "有效性",
+  "workflow.variables.selector.days_left.label": "剩余天数"
+}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import {
   CloudUploadOutlined as CloudUploadOutlinedIcon,
   DeploymentUnitOutlined as DeploymentUnitOutlinedIcon,
+  MonitorOutlined as MonitorOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   SendOutlined as SendOutlinedIcon,
   SisternodeOutlined as SisternodeOutlinedIcon,
@@ -27,13 +28,21 @@ const AddNode = ({ node, disabled }: AddNodeProps) => {
     return [
       [WorkflowNodeType.Apply, "workflow_node.apply.label", <SolutionOutlinedIcon />],
       [WorkflowNodeType.Upload, "workflow_node.upload.label", <CloudUploadOutlinedIcon />],
+      [WorkflowNodeType.Monitor, "workflow_node.monitor.label", <MonitorOutlinedIcon />],
       [WorkflowNodeType.Deploy, "workflow_node.deploy.label", <DeploymentUnitOutlinedIcon />],
       [WorkflowNodeType.Notify, "workflow_node.notify.label", <SendOutlinedIcon />],
       [WorkflowNodeType.Branch, "workflow_node.branch.label", <SisternodeOutlinedIcon />],
       [WorkflowNodeType.ExecuteResultBranch, "workflow_node.execute_result_branch.label", <SisternodeOutlinedIcon />],
     ]
       .filter(([type]) => {
-        if (node.type !== WorkflowNodeType.Apply && node.type !== WorkflowNodeType.Deploy && node.type !== WorkflowNodeType.Notify) {
+        const hasExecuteResult = [
+          WorkflowNodeType.Apply,
+          WorkflowNodeType.Upload,
+          WorkflowNodeType.Monitor,
+          WorkflowNodeType.Deploy,
+          WorkflowNodeType.Notify,
+        ].includes(node.type);
+        if (!hasExecuteResult) {
           return type !== WorkflowNodeType.ExecuteResultBranch;
         }
 

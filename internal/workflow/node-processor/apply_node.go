@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"golang.org/x/exp/maps"
@@ -16,6 +17,7 @@ import (
 type applyNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	certRepo   certificateRepository
 	outputRepo workflowOutputRepository
@@ -25,6 +27,7 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 	return &applyNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		certRepo:   repository.NewCertificateRepository(),
 		outputRepo: repository.NewWorkflowOutputRepository(),
@@ -32,7 +35,7 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to apply ...")
+	n.logger.Info("ready to obtain certificiate ...")
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -61,7 +64,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	// 申请证书
 	applyResult, err := applicant.Apply(ctx)
 	if err != nil {
-		n.logger.Warn("failed to apply")
+		n.logger.Warn("failed to obtain certificiate")
 		return err
 	}
 
@@ -71,6 +74,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 		n.logger.Warn("failed to parse certificate, may be the CA responded error")
 		return err
 	}
+
 	certificate := &domain.Certificate{
 		Source:            domain.CertificateSourceTypeWorkflow,
 		Certificate:       applyResult.FullChainCertificate,
@@ -105,12 +109,15 @@ func (n *applyNode) Process(ctx context.Context) error {
 		}
 	}
 
-	n.logger.Info("apply completed")
+	// 记录中间结果
+	n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
+	n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(time.Until(certificate.ExpireAt).Hours()/24), 10)
 
+	n.logger.Info("application completed")
 	return nil
 }
 
-func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (skip bool, reason string) {
+func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
 		currentNodeConfig := n.node.GetConfigForApply()
@@ -148,7 +155,12 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
-				return true, fmt.Sprintf("the certificate has already been issued (expires in %dd, next renewal in %dd)", int(expirationTime.Hours()/24), currentNodeConfig.SkipBeforeExpiryDays)
+				daysLeft := int(expirationTime.Hours() / 24)
+				// TODO: 优化此处逻辑，[checkCanSkip] 方法不应该修改中间结果，违背单一职责
+				n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
+				n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(daysLeft), 10)
+
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", daysLeft, currentNodeConfig.SkipBeforeExpiryDays)
 			}
 		}
 	}

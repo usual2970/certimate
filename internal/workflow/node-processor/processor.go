@@ -14,6 +14,8 @@ type NodeProcessor interface {
 	SetLogger(*slog.Logger)
 
 	Process(ctx context.Context) error
+
+	GetOutputs() map[string]any
 }
 
 type nodeProcessor struct {
@@ -30,6 +32,20 @@ func (n *nodeProcessor) SetLogger(logger *slog.Logger) {
 	}
 
 	n.logger = logger
+}
+
+type nodeOutputer struct {
+	outputs map[string]any
+}
+
+func newNodeOutputer() *nodeOutputer {
+	return &nodeOutputer{
+		outputs: make(map[string]any),
+	}
+}
+
+func (n *nodeOutputer) GetOutputs() map[string]any {
+	return n.outputs
 }
 
 type certificateRepository interface {
@@ -58,23 +74,25 @@ func GetProcessor(node *domain.WorkflowNode) (NodeProcessor, error) {
 	switch node.Type {
 	case domain.WorkflowNodeTypeStart:
 		return NewStartNode(node), nil
-	case domain.WorkflowNodeTypeCondition:
-		return NewConditionNode(node), nil
 	case domain.WorkflowNodeTypeApply:
 		return NewApplyNode(node), nil
 	case domain.WorkflowNodeTypeUpload:
 		return NewUploadNode(node), nil
+	case domain.WorkflowNodeTypeMonitor:
+		return NewMonitorNode(node), nil
 	case domain.WorkflowNodeTypeDeploy:
 		return NewDeployNode(node), nil
 	case domain.WorkflowNodeTypeNotify:
 		return NewNotifyNode(node), nil
+	case domain.WorkflowNodeTypeCondition:
+		return NewConditionNode(node), nil
 	case domain.WorkflowNodeTypeExecuteSuccess:
 		return NewExecuteSuccessNode(node), nil
 	case domain.WorkflowNodeTypeExecuteFailure:
 		return NewExecuteFailureNode(node), nil
 	}
 
-	return nil, fmt.Errorf("supported node type: %s", string(node.Type))
+	return nil, fmt.Errorf("unsupported node type: %s", string(node.Type))
 }
 
 func getContextWorkflowId(ctx context.Context) string {

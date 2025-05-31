@@ -29,6 +29,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	providerConfig.APIKey = config.ApiKey
 	if config.AllowInsecureConnections {
 		providerConfig.HTTPClient.Transport = &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
 			},

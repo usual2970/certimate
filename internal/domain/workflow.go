@@ -1,8 +1,10 @@
 package domain
 
 import (
+	"encoding/json"
 	"time"
 
+	"github.com/usual2970/certimate/internal/domain/expr"
 	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
 )
 
@@ -30,6 +32,7 @@ const (
 	WorkflowNodeTypeEnd                 = WorkflowNodeType("end")
 	WorkflowNodeTypeApply               = WorkflowNodeType("apply")
 	WorkflowNodeTypeUpload              = WorkflowNodeType("upload")
+	WorkflowNodeTypeMonitor             = WorkflowNodeType("monitor")
 	WorkflowNodeTypeDeploy              = WorkflowNodeType("deploy")
 	WorkflowNodeTypeNotify              = WorkflowNodeType("notify")
 	WorkflowNodeTypeBranch              = WorkflowNodeType("branch")
@@ -82,9 +85,16 @@ type WorkflowNodeConfigForApply struct {
 }
 
 type WorkflowNodeConfigForUpload struct {
-	Certificate string `json:"certificate"`
-	PrivateKey  string `json:"privateKey"`
-	Domains     string `json:"domains"`
+	Certificate string `json:"certificate"` // 证书 PEM 内容
+	PrivateKey  string `json:"privateKey"`  // 私钥 PEM 内容
+	Domains     string `json:"domains,omitempty"`
+}
+
+type WorkflowNodeConfigForMonitor struct {
+	Host        string `json:"host"`                  // 主机地址
+	Port        int32  `json:"port,omitempty"`        // 端口（零值时默认值 443）
+	Domain      string `json:"domain,omitempty"`      // 域名（零值时默认值 [Host]）
+	RequestPath string `json:"requestPath,omitempty"` // 请求路径
 }
 
 type WorkflowNodeConfigForDeploy struct {
@@ -102,6 +112,10 @@ type WorkflowNodeConfigForNotify struct {
 	ProviderConfig   map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
 	Subject          string         `json:"subject"`                  // 通知主题
 	Message          string         `json:"message"`                  // 通知内容
+}
+
+type WorkflowNodeConfigForCondition struct {
+	Expression expr.Expr `json:"expression"` // 条件表达式
 }
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
@@ -133,6 +147,16 @@ func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
 	}
 }
 
+func (n *WorkflowNode) GetConfigForMonitor() WorkflowNodeConfigForMonitor {
+	host := maputil.GetString(n.Config, "host")
+	return WorkflowNodeConfigForMonitor{
+		Host:        host,
+		Port:        maputil.GetOrDefaultInt32(n.Config, "port", 443),
+		Domain:      maputil.GetOrDefaultString(n.Config, "domain", host),
+		RequestPath: maputil.GetString(n.Config, "path"),
+	}
+}
+
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
 		Certificate:         maputil.GetString(n.Config, "certificate"),
@@ -154,6 +178,23 @@ func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	}
 }
 
+func (n *WorkflowNode) GetConfigForCondition() WorkflowNodeConfigForCondition {
+	expression := n.Config["expression"]
+	if expression == nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	exprRaw, _ := json.Marshal(expression)
+	expr, err := expr.UnmarshalExpr([]byte(exprRaw))
+	if err != nil {
+		return WorkflowNodeConfigForCondition{}
+	}
+
+	return WorkflowNodeConfigForCondition{
+		Expression: expr,
+	}
+}
+
 type WorkflowNodeIO struct {
 	Label         string                      `json:"label"`
 	Name          string                      `json:"name"`
@@ -163,9 +204,6 @@ type WorkflowNodeIO struct {
 	ValueSelector WorkflowNodeIOValueSelector `json:"valueSelector"`
 }
 
-type WorkflowNodeIOValueSelector struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-}
+type WorkflowNodeIOValueSelector = expr.ExprValueSelector
 
 const WorkflowNodeIONameCertificate string = "certificate"

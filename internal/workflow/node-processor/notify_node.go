@@ -12,6 +12,7 @@ import (
 type notifyNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 
 	settingsRepo settingsRepository
 }
@@ -20,17 +21,18 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 	return &notifyNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 
 		settingsRepo: repository.NewSettingsRepository(),
 	}
 }
 
 func (n *notifyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to notify ...")
+	n.logger.Info("ready to send notification ...")
 
-	nodeConfig := n.node.GetConfigForNotify()
+	nodeCfg := n.node.GetConfigForNotify()
 
-	if nodeConfig.Provider == "" {
+	if nodeCfg.Provider == "" {
 		// Deprecated: v0.4.x 将废弃
 		// 兼容旧版本的通知渠道
 		n.logger.Warn("WARNING! you are using the notification channel from global settings, which will be deprecated in the future")
@@ -42,18 +44,18 @@ func (n *notifyNode) Process(ctx context.Context) error {
 		}
 
 		// 获取通知渠道
-		channelConfig, err := settings.GetNotifyChannelConfig(nodeConfig.Channel)
+		channelConfig, err := settings.GetNotifyChannelConfig(nodeCfg.Channel)
 		if err != nil {
 			return err
 		}
 
 		// 发送通知
-		if err := notify.SendToChannel(nodeConfig.Subject, nodeConfig.Message, nodeConfig.Channel, channelConfig); err != nil {
-			n.logger.Warn("failed to notify", slog.String("channel", nodeConfig.Channel))
+		if err := notify.SendToChannel(nodeCfg.Subject, nodeCfg.Message, nodeCfg.Channel, channelConfig); err != nil {
+			n.logger.Warn("failed to send notification", slog.String("channel", nodeCfg.Channel))
 			return err
 		}
 
-		n.logger.Info("notify completed")
+		n.logger.Info("notification completed")
 		return nil
 	}
 
@@ -61,8 +63,8 @@ func (n *notifyNode) Process(ctx context.Context) error {
 	deployer, err := notify.NewWithWorkflowNode(notify.NotifierWithWorkflowNodeConfig{
 		Node:    n.node,
 		Logger:  n.logger,
-		Subject: nodeConfig.Subject,
-		Message: nodeConfig.Message,
+		Subject: nodeCfg.Subject,
+		Message: nodeCfg.Message,
 	})
 	if err != nil {
 		n.logger.Warn("failed to create notifier provider")
@@ -71,9 +73,10 @@ func (n *notifyNode) Process(ctx context.Context) error {
 
 	// 推送通知
 	if err := deployer.Notify(ctx); err != nil {
-		n.logger.Warn("failed to notify")
+		n.logger.Warn("failed to send notification")
 		return err
 	}
 
+	n.logger.Info("notification completed")
 	return nil
 }

@@ -19,7 +19,7 @@ export type DeployNodeConfigFormAliyunCASDeployConfigProps = {
   onValuesChange?: (values: DeployNodeConfigFormAliyunCASDeployConfigFieldValues) => void;
 };
 
-const MULTIPLE_INPUT_DELIMITER = ";";
+const MULTIPLE_INPUT_SEPARATOR = ";";
 
 const initFormModel = (): DeployNodeConfigFormAliyunCASDeployConfigFieldValues => {
   return {};
@@ -42,7 +42,7 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
     resourceIds: z.string({ message: t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.placeholder") }).refine((v) => {
       if (!v) return false;
       return String(v)
-        .split(MULTIPLE_INPUT_DELIMITER)
+        .split(MULTIPLE_INPUT_SEPARATOR)
         .every((e) => /^[1-9]\d*$/.test(e));
     }, t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.errmsg.invalid")),
     contactIds: z
@@ -51,7 +51,7 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
       .refine((v) => {
         if (!v) return true;
         return String(v)
-          .split(MULTIPLE_INPUT_DELIMITER)
+          .split(MULTIPLE_INPUT_SEPARATOR)
           .every((e) => /^[1-9]\d*$/.test(e));
       }, t("workflow_node.deploy.form.aliyun_cas_deploy_contact_ids.errmsg.invalid")),
   });

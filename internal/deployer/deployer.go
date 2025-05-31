@@ -29,18 +29,18 @@ func NewWithWorkflowNode(config DeployerWithWorkflowNodeConfig) (Deployer, error
 		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeDeploy))
 	}
 
-	nodeConfig := config.Node.GetConfigForDeploy()
+	nodeCfg := config.Node.GetConfigForDeploy()
 	options := &deployerProviderOptions{
-		Provider:              domain.DeploymentProviderType(nodeConfig.Provider),
+		Provider:              domain.DeploymentProviderType(nodeCfg.Provider),
 		ProviderAccessConfig:  make(map[string]any),
-		ProviderServiceConfig: nodeConfig.ProviderConfig,
+		ProviderServiceConfig: nodeCfg.ProviderConfig,
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	if nodeConfig.ProviderAccessId != "" {
-		access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId)
+	if nodeCfg.ProviderAccessId != "" {
+		access, err := accessRepo.GetById(context.Background(), nodeCfg.ProviderAccessId)
 		if err != nil {
-			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeCfg.ProviderAccessId, err)
 		} else {
 			options.ProviderAccessConfig = access.Config
 		}

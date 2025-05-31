@@ -23,7 +23,7 @@ export type DeployNodeConfigFormBaotaPanelSiteConfigProps = {
 const SITE_TYPE_PHP = "php";
 const SITE_TYPE_OTHER = "other";
 
-const MULTIPLE_INPUT_DELIMITER = ";";
+const MULTIPLE_INPUT_SEPARATOR = ";";
 
 const initFormModel = (): DeployNodeConfigFormBaotaPanelSiteConfigFieldValues => {
   return {
@@ -60,7 +60,7 @@ const DeployNodeConfigFormBaotaPanelSiteConfig = ({
         if (fieldSiteType !== SITE_TYPE_OTHER) return true;
         if (!v) return false;
         return String(v)
-          .split(MULTIPLE_INPUT_DELIMITER)
+          .split(MULTIPLE_INPUT_SEPARATOR)
           .every((e) => !!e.trim());
       }, t("workflow_node.deploy.form.baotapanel_site_names.placeholder")),
   });

@@ -9,12 +9,14 @@ import (
 type executeSuccessNode struct {
 	node *domain.WorkflowNode
 	*nodeProcessor
+	*nodeOutputer
 }
 
 func NewExecuteSuccessNode(node *domain.WorkflowNode) *executeSuccessNode {
 	return &executeSuccessNode{
 		node:          node,
 		nodeProcessor: newNodeProcessor(node),
+		nodeOutputer:  newNodeOutputer(),
 	}
 }
 

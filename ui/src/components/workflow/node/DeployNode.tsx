@@ -24,10 +24,10 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
 
   const formRef = useRef<DeployNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForDeploy;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerFooterShow, setDrawerFooterShow] = useState(true);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForDeploy;
 
   useEffect(() => {
     setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
@@ -46,7 +46,7 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
     const provider = deploymentProvidersMap.get(config.provider);
     return (
       <Flex className="size-full overflow-hidden" align="center" gap={8}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="flex-1 truncate">{t(provider?.name ?? "")}</Typography.Text>
       </Flex>
     );
@@ -86,8 +86,9 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
-        node={node}
         footer={drawerFooterShow}
+        getConfigNewValues={getFormValues}
+        node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
@@ -95,7 +96,6 @@ const DeployNode = ({ node, disabled }: DeployNodeProps) => {
           setDrawerFooterShow(!!(node.config as WorkflowNodeConfigForDeploy)?.provider);
           setDrawerOpen(open);
         }}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <DeployNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} nodeId={node.id} onValuesChange={handleFormValuesChange} />
       </SharedNode.ConfigDrawer>

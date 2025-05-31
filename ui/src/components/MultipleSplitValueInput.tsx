@@ -15,24 +15,24 @@ type SplitOptions = {
 
 export type MultipleSplitValueInputProps = Omit<InputProps, "count" | "defaultValue" | "showCount" | "value" | "onChange"> & {
   defaultValue?: string;
-  delimiter?: string;
   maxCount?: number;
   minCount?: number;
   modalTitle?: string;
   modalWidth?: number;
   placeholderInModal?: string;
   showSortButton?: boolean;
+  separator?: string;
   splitOptions?: SplitOptions;
   value?: string[];
   onChange?: (value: string) => void;
 };
 
-const DEFAULT_DELIMITER = ";";
+const DEFAULT_SEPARATOR = ";";
 
 const MultipleSplitValueInput = ({
   className,
   style,
-  delimiter = DEFAULT_DELIMITER,
+  separator: delimiter = DEFAULT_SEPARATOR,
   disabled,
   maxCount,
   minCount,

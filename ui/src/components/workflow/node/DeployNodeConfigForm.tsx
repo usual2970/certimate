@@ -1,7 +1,7 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon } from "@ant-design/icons";
-import { Button, Divider, Flex, Form, type FormInstance, Select, Switch, Tooltip, Typography } from "antd";
+import { Button, Divider, Flex, Form, type FormInstance, Select, Switch, Tooltip, Typography, theme } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -11,7 +11,7 @@ import DeploymentProviderPicker from "@/components/provider/DeploymentProviderPi
 import DeploymentProviderSelect from "@/components/provider/DeploymentProviderSelect.tsx";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOYMENT_PROVIDERS, accessProvidersMap, deploymentProvidersMap } from "@/domain/provider";
-import { type WorkflowNode, type WorkflowNodeConfigForDeploy } from "@/domain/workflow";
+import { type WorkflowNodeConfigForDeploy, WorkflowNodeType } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -125,14 +125,9 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
   ({ className, style, disabled, initialValues, nodeId, onValuesChange }, ref) => {
     const { t } = useTranslation();
 
-    const { getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
+    const { token: themeToken } = theme.useToken();
 
-    // TODO: 优化此处逻辑
-    const [previousNodes, setPreviousNodes] = useState<WorkflowNode[]>([]);
-    useEffect(() => {
-      const previousNodes = getWorkflowOuptutBeforeId(nodeId, "certificate");
-      setPreviousNodes(previousNodes);
-    }, [nodeId]);
+    const { getWorkflowOuptutBeforeId } = useWorkflowStore(useZustandShallowSelector(["updateNode", "getWorkflowOuptutBeforeId"]));
 
     const formSchema = z.object({
       certificate: z
@@ -169,6 +164,24 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
         setShowProviderAccess(false);
       }
     }, [fieldProvider]);
+
+    const certificateCandidates = useMemo(() => {
+      const previousNodes = getWorkflowOuptutBeforeId(nodeId, "certificate");
+      return previousNodes
+        .filter((node) => node.type === WorkflowNodeType.Apply || node.type === WorkflowNodeType.Upload)
+        .map((item) => {
+          return {
+            label: item.name,
+            options: (item.outputs ?? [])?.map((output) => {
+              return {
+                label: output.label,
+                value: `${item.id}#${output.name}`,
+              };
+            }),
+          };
+        })
+        .filter((group) => group.options.length > 0);
+    }, [nodeId]);
 
     const [nestedFormInst] = Form.useForm();
     const nestedFormName = useAntdFormName({ form: nestedFormInst, name: "workflowNodeDeployConfigFormProviderConfigForm" });
@@ -487,17 +500,15 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
               tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.certificate.tooltip") }}></span>}
             >
               <Select
-                options={previousNodes.map((item) => {
-                  return {
-                    label: item.name,
-                    options: item.outputs?.map((output) => {
-                      return {
-                        label: `${item.name} - ${output.label}`,
-                        value: `${item.id}#${output.name}`,
-                      };
-                    }),
-                  };
-                })}
+                labelRender={({ label, value }) => {
+                  if (value != null) {
+                    const group = certificateCandidates.find((group) => group.options.some((option) => option.value === value));
+                    return `${group?.label} - ${label}`;
+                  }
+
+                  return <span style={{ color: themeToken.colorTextPlaceholder }}>{t("workflow_node.deploy.form.certificate.placeholder")}</span>;
+                }}
+                options={certificateCandidates}
                 placeholder={t("workflow_node.deploy.form.certificate.placeholder")}
               />
             </Form.Item>

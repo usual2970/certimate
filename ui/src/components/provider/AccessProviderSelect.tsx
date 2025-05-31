@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Select, type SelectProps, Space, Tag, Typography } from "antd";
+import { Avatar, Select, type SelectProps, Space, Tag, Typography, theme } from "antd";
 
 import Show from "@/components/Show";
 import { ACCESS_USAGES, type AccessProvider, type AccessUsageType, accessProvidersMap } from "@/domain/provider";
@@ -15,6 +15,8 @@ export type AccessProviderSelectProps = Omit<
 
 const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProviderSelectProps = { showOptionTags: true }) => {
   const { t } = useTranslation();
+
+  const { token: themeToken } = theme.useToken();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: AccessProvider }>>([]);
   useEffect(() => {
@@ -49,12 +51,12 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
     return (
       <div className="flex max-w-full items-center justify-between gap-4 overflow-hidden">
         <Space className="max-w-full grow truncate" size={4}>
-          <Avatar src={provider.icon} size="small" />
+          <Avatar shape="square" src={provider.icon} size="small" />
           <Typography.Text className="leading-loose" type={provider.builtin ? "secondary" : undefined} ellipsis>
             {t(provider.name)}
           </Typography.Text>
         </Space>
-        <div className="origin-right scale-[80%]">
+        <div className="origin-right scale-[75%]">
           <Show when={provider.builtin}>
             <Tag>{t("access.props.provider.builtin")}</Tag>
           </Show>
@@ -84,12 +86,12 @@ const AccessProviderSelect = ({ filter, showOptionTags, ...props }: AccessProvid
         const value = inputValue.toLowerCase();
         return option.value.toLowerCase().includes(value) || option.label.toLowerCase().includes(value);
       }}
-      labelRender={({ label, value }) => {
-        if (!label) {
-          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+      labelRender={({ value }) => {
+        if (value != null) {
+          return renderOption(value as string);
         }
 
-        return renderOption(value as string);
+        return <span style={{ color: themeToken.colorTextPlaceholder }}>{props.placeholder}</span>;
       }}
       options={options}
       optionFilterProp={undefined}

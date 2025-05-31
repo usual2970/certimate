@@ -1,0 +1,6 @@
+{
+  "workflow.variables.type.certificate.label": "Certificate",
+
+  "workflow.variables.selector.validity.label": "Validity",
+  "workflow.variables.selector.days_left.label": "Days left"
+}

@@ -33,7 +33,7 @@ const SharedNodeTitle = ({ className, style, node, disabled }: SharedNodeTitlePr
 
   const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
     const oldName = node.name;
-    const newName = e.target.innerText.trim().substring(0, 64) || oldName;
+    const newName = e.target.innerText.replaceAll("\r", "").replaceAll("\n", "").trim().substring(0, 64) || oldName;
     if (oldName === newName) {
       return;
     }
@@ -45,9 +45,16 @@ const SharedNodeTitle = ({ className, style, node, disabled }: SharedNodeTitlePr
     );
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.code === "Enter") {
+      e.preventDefault();
+      e.currentTarget.blur();
+    }
+  };
+
   return (
     <div className="w-full cursor-text overflow-hidden text-center">
-      <div className={className} style={style} contentEditable={!disabled} suppressContentEditableWarning onBlur={handleBlur}>
+      <div className={className} style={style} contentEditable={!disabled} suppressContentEditableWarning onBlur={handleBlur} onKeyDown={handleKeyDown}>
         {node.name}
       </div>
     </div>
@@ -91,7 +98,7 @@ const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex,
 
   const handleRenameConfirm = async () => {
     const oldName = node.name;
-    const newName = nameRef.current?.trim()?.substring(0, 64) || oldName;
+    const newName = nameRef.current?.replaceAll("\r", "")?.replaceAll("\n", "").trim()?.substring(0, 64) || oldName;
     if (oldName === newName) {
       return;
     }
@@ -195,7 +202,7 @@ const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex,
 };
 // #endregion
 
-// #region Wrapper
+// #region Block
 type SharedNodeBlockProps = SharedNodeProps & {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent) => void;
@@ -245,7 +252,7 @@ type SharedNodeEditDrawerProps = SharedNodeProps & {
   pending?: boolean;
   onOpenChange?: (open: boolean) => void;
   onConfirm: () => void | Promise<unknown>;
-  getFormValues: () => NonNullable<unknown>;
+  getConfigNewValues: () => NonNullable<unknown>; // 用于获取节点配置的新值，以便在抽屉关闭前进行对比，决定是否提示保存
 };
 
 const SharedNodeConfigDrawer = ({
@@ -256,7 +263,7 @@ const SharedNodeConfigDrawer = ({
   loading,
   pending,
   onConfirm,
-  getFormValues,
+  getConfigNewValues,
   ...props
 }: SharedNodeEditDrawerProps) => {
   const { t } = useTranslation();
@@ -284,7 +291,7 @@ const SharedNodeConfigDrawer = ({
     if (pending) return;
 
     const oldValues = JSON.parse(JSON.stringify(node.config ?? {}));
-    const newValues = JSON.parse(JSON.stringify(getFormValues()));
+    const newValues = JSON.parse(JSON.stringify(getConfigNewValues()));
     const changed = !isEqual(oldValues, {}) && !isEqual(oldValues, newValues);
 
     const { promise, resolve, reject } = Promise.withResolvers();

@@ -31,6 +31,7 @@ export enum WorkflowNodeType {
   End = "end",
   Apply = "apply",
   Upload = "upload",
+  Monitor = "monitor",
   Deploy = "deploy",
   Notify = "notify",
   Branch = "branch",
@@ -42,22 +43,25 @@ export enum WorkflowNodeType {
 }
 
 const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
-  [WorkflowNodeType.Start, i18n.t("workflow_node.start.label")],
-  [WorkflowNodeType.End, i18n.t("workflow_node.end.label")],
-  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.label")],
-  [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.label")],
-  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.label")],
-  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.label")],
-  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.label")],
-  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.label")],
-  [WorkflowNodeType.ExecuteResultBranch, i18n.t("workflow_node.execute_result_branch.label")],
-  [WorkflowNodeType.ExecuteSuccess, i18n.t("workflow_node.execute_success.label")],
-  [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.label")],
-  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.title")],
+  [WorkflowNodeType.Start, i18n.t("workflow_node.start.default_name")],
+  [WorkflowNodeType.End, i18n.t("workflow_node.end.default_name")],
+  [WorkflowNodeType.Apply, i18n.t("workflow_node.apply.default_name")],
+  [WorkflowNodeType.Upload, i18n.t("workflow_node.upload.default_name")],
+  [WorkflowNodeType.Monitor, i18n.t("workflow_node.monitor.default_name")],
+  [WorkflowNodeType.Deploy, i18n.t("workflow_node.deploy.default_name")],
+  [WorkflowNodeType.Notify, i18n.t("workflow_node.notify.default_name")],
+  [WorkflowNodeType.Branch, i18n.t("workflow_node.branch.default_name")],
+  [WorkflowNodeType.Condition, i18n.t("workflow_node.condition.default_name")],
+  [WorkflowNodeType.ExecuteResultBranch, i18n.t("workflow_node.execute_result_branch.default_name")],
+  [WorkflowNodeType.ExecuteSuccess, i18n.t("workflow_node.execute_success.default_name")],
+  [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.default_name")],
+  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.default_name")],
 ]);
 
 const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
   [WorkflowNodeType.Apply, []],
+  [WorkflowNodeType.Upload, []],
+  [WorkflowNodeType.Monitor, []],
   [
     WorkflowNodeType.Deploy,
     [
@@ -65,7 +69,7 @@ const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = n
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -80,7 +84,7 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -91,7 +95,18 @@ const workflowNodeTypeDefaultOutputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = 
         name: "certificate",
         type: "certificate",
         required: true,
-        label: "证书",
+        label: i18n.t("workflow.variables.type.certificate.label"),
+      },
+    ],
+  ],
+  [
+    WorkflowNodeType.Monitor,
+    [
+      {
+        name: "certificate",
+        type: "certificate",
+        required: true,
+        label: i18n.t("workflow.variables.type.certificate.label"),
       },
     ],
   ],
@@ -145,6 +160,13 @@ export type WorkflowNodeConfigForUpload = {
   privateKey: string;
 };
 
+export type WorkflowNodeConfigForMonitor = {
+  host: string;
+  port: number;
+  domain?: string;
+  requestPath?: string;
+};
+
 export type WorkflowNodeConfigForDeploy = {
   certificate: string;
   provider: string;
@@ -165,6 +187,10 @@ export type WorkflowNodeConfigForNotify = {
   providerConfig?: Record<string, unknown>;
 };
 
+export type WorkflowNodeConfigForCondition = {
+  expression?: Expr;
+};
+
 export type WorkflowNodeConfigForBranch = never;
 
 export type WorkflowNodeConfigForEnd = never;
@@ -178,11 +204,35 @@ export type WorkflowNodeIO = {
   valueSelector?: WorkflowNodeIOValueSelector;
 };
 
-export type WorkflowNodeIOValueSelector = {
+export type WorkflowNodeIOValueSelector = ExprValueSelector;
+// #endregion
+
+// #region Expression
+export enum ExprType {
+  Constant = "const",
+  Variant = "var",
+  Comparison = "comparison",
+  Logical = "logical",
+  Not = "not",
+}
+
+export type ExprValue = string | number | boolean;
+export type ExprValueType = "string" | "number" | "boolean";
+export type ExprValueSelector = {
   id: string;
   name: string;
+  type: ExprValueType;
 };
 
+export type ExprComparisonOperator = "gt" | "gte" | "lt" | "lte" | "eq" | "neq";
+export type ExprLogicalOperator = "and" | "or" | "not";
+
+export type ConstantExpr = { type: ExprType.Constant; value: string; valueType: ExprValueType };
+export type VariantExpr = { type: ExprType.Variant; selector: ExprValueSelector };
+export type ComparisonExpr = { type: ExprType.Comparison; operator: ExprComparisonOperator; left: Expr; right: Expr };
+export type LogicalExpr = { type: ExprType.Logical; operator: ExprLogicalOperator; left: Expr; right: Expr };
+export type NotExpr = { type: ExprType.Not; expr: Expr };
+export type Expr = ConstantExpr | VariantExpr | ComparisonExpr | LogicalExpr | NotExpr;
 // #endregion
 
 const isBranchLike = (node: WorkflowNode) => {
@@ -241,6 +291,7 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
   switch (nodeType) {
     case WorkflowNodeType.Apply:
     case WorkflowNodeType.Upload:
+    case WorkflowNodeType.Monitor:
     case WorkflowNodeType.Deploy:
       {
         node.inputs = workflowNodeTypeDefaultInputs.get(nodeType);
@@ -433,9 +484,23 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
   });
 };
 
-export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: string): WorkflowNode[] => {
+export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, typeFilter?: string | string[]): WorkflowNode[] => {
   // 某个分支的节点，不应该能获取到相邻分支上节点的输出
   const outputs: WorkflowNode[] = [];
+
+  const filter = (io: WorkflowNodeIO) => {
+    if (typeFilter == null) {
+      return true;
+    }
+
+    if (Array.isArray(typeFilter) && typeFilter.includes(io.type)) {
+      return true;
+    } else if (io.type === typeFilter) {
+      return true;
+    }
+
+    return false;
+  };
 
   const traverse = (current: WorkflowNode, output: WorkflowNode[]) => {
     if (!current) {
@@ -445,10 +510,10 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, type: 
       return true;
     }
 
-    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => io.type === type)) {
+    if (current.type !== WorkflowNodeType.Branch && current.outputs && current.outputs.some((io) => filter(io))) {
       output.push({
         ...current,
-        outputs: current.outputs.filter((io) => io.type === type),
+        outputs: current.outputs.filter((io) => filter(io)),
       });
     }
 

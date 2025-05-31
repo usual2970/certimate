@@ -56,7 +56,7 @@ export type ApplyNodeConfigFormInstance = {
   validateFields: FormInstance<ApplyNodeConfigFormFieldValues>["validateFields"];
 };
 
-const MULTIPLE_INPUT_DELIMITER = ";";
+const MULTIPLE_INPUT_SEPARATOR = ";";
 
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
   return {
@@ -76,7 +76,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
       domains: z.string({ message: t("workflow_node.apply.form.domains.placeholder") }).refine((v) => {
         if (!v) return false;
         return String(v)
-          .split(MULTIPLE_INPUT_DELIMITER)
+          .split(MULTIPLE_INPUT_SEPARATOR)
           .every((e) => validDomainName(e, { allowWildcard: true }));
       }, t("common.errmsg.domain_invalid")),
       contactEmail: z.string({ message: t("workflow_node.apply.form.contact_email.placeholder") }).email(t("common.errmsg.email_invalid")),
@@ -106,7 +106,7 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
         .refine((v) => {
           if (!v) return true;
           return String(v)
-            .split(MULTIPLE_INPUT_DELIMITER)
+            .split(MULTIPLE_INPUT_SEPARATOR)
             .every((e) => validIPv4Address(e) || validIPv6Address(e) || validDomainName(e));
         }, t("common.errmsg.host_invalid")),
       dnsPropagationWait: z.preprocess(
