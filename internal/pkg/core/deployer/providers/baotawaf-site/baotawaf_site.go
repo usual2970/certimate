@@ -116,7 +116,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		SiteId: siteId,
 		Type:   typeutil.ToPtr("openCert"),
 		Server: &btsdk.SiteServerInfo{
-			ListenSSLPort: typeutil.ToPtr(d.config.SitePort),
+			ListenSSLPorts: typeutil.ToPtr([]int32{d.config.SitePort}),
 			SSL: &btsdk.SiteServerSSLInfo{
 				IsSSL:      typeutil.ToPtr(int32(1)),
 				FullChain:  typeutil.ToPtr(certPEM),

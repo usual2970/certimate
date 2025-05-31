@@ -37,8 +37,8 @@ type GetSiteListResponse struct {
 }
 
 type SiteServerInfo struct {
-	ListenSSLPort *int32             `json:"listen_ssl_port,omitempty"`
-	SSL           *SiteServerSSLInfo `json:"ssl,omitempty"`
+	ListenSSLPorts *[]int32           `json:"listen_ssl_port,omitempty"`
+	SSL            *SiteServerSSLInfo `json:"ssl,omitempty"`
 }
 
 type SiteServerSSLInfo struct {
