@@ -8,7 +8,7 @@ import (
 
 func (c *Client) ListCertificates() (*ListCertificatesResponse, error) {
 	resp := &ListCertificatesResponse{}
-	_, err := c.client.SendRequestWithResult(http.MethodGet, "/api/certificate", nil, resp)
+	_, err := c.client.SendRequestWithResult(http.MethodGet, "/api/ssl/certificate", nil, resp)
 	if err != nil {
 		return resp, err
 	}
