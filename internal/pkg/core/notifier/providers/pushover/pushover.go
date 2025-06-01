@@ -41,18 +41,19 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	if logger == nil {
-		n.logger = slog.Default()
+		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	// REF: https://pushover.net/api
 	req := n.httpClient.R().
 		SetContext(ctx).
 		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
 		SetBody(map[string]any{
 			"title":   subject,
 			"message": message,

@@ -101,6 +101,7 @@ export type AccessConfigForACMEHttpReq = {
 export type AccessConfigForAliyun = {
   accessKeyId: string;
   accessKeySecret: string;
+  resourceGroupId?: string;
 };
 
 export type AccessConfigForAWS = {
@@ -264,6 +265,7 @@ export type AccessConfigForHetzner = {
 export type AccessConfigForHuaweiCloud = {
   accessKeyId: string;
   secretAccessKey: string;
+  enterpriseProjectId?: string;
 };
 
 export type AccessConfigForJDCloud = {

@@ -15,6 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
 	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type DeployerConfig struct {
@@ -22,6 +23,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
@@ -51,7 +54,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -66,7 +69,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -107,8 +110,9 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		// 查询默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedefaulthttps
 		describeDefaultHttpsReq := &aliwaf.DescribeDefaultHttpsRequest{
-			InstanceId: tea.String(d.config.InstanceId),
-			RegionId:   tea.String(d.config.Region),
+			ResourceManagerResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			InstanceId:                     tea.String(d.config.InstanceId),
+			RegionId:                       tea.String(d.config.Region),
 		}
 		describeDefaultHttpsResp, err := d.sdkClient.DescribeDefaultHttps(describeDefaultHttpsReq)
 		d.logger.Debug("sdk request 'waf.DescribeDefaultHttps'", slog.Any("request", describeDefaultHttpsReq), slog.Any("response", describeDefaultHttpsResp))
@@ -119,11 +123,12 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		// 修改默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydefaulthttps
 		modifyDefaultHttpsReq := &aliwaf.ModifyDefaultHttpsRequest{
-			InstanceId:  tea.String(d.config.InstanceId),
-			RegionId:    tea.String(d.config.Region),
-			CertId:      tea.String(upres.CertId),
-			TLSVersion:  tea.String("tlsv1"),
-			EnableTLSv3: tea.Bool(false),
+			ResourceManagerResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			InstanceId:                     tea.String(d.config.InstanceId),
+			RegionId:                       tea.String(d.config.Region),
+			CertId:                         tea.String(upres.CertId),
+			TLSVersion:                     tea.String("tlsv1"),
+			EnableTLSv3:                    tea.Bool(false),
 		}
 		if describeDefaultHttpsResp.Body != nil && describeDefaultHttpsResp.Body.DefaultHttps != nil {
 			modifyDefaultHttpsReq.TLSVersion = describeDefaultHttpsResp.Body.DefaultHttps.TLSVersion
@@ -172,10 +177,11 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliwaf.Client, error) {
 	// 接入点一览：https://api.aliyun.com/product/waf-openapi
+	endpoint := strings.ReplaceAll(fmt.Sprintf("wafopenapi.%s.aliyuncs.com", region), "..", ".")
 	config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),
-		Endpoint:        tea.String(fmt.Sprintf("wafopenapi.%s.aliyuncs.com", region)),
+		Endpoint:        tea.String(endpoint),
 	}
 
 	client, err := aliwaf.NewClient(config)
@@ -186,7 +192,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*aliwaf.Clien
 	return client, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
 	casRegion := region
 	if casRegion != "" {
 		// 阿里云 CAS 服务接入点是独立于 WAF 服务的
@@ -202,6 +208,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          casRegion,
 	})
 	return uploader, err

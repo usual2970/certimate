@@ -14,8 +14,6 @@ import (
 )
 
 type Client struct {
-	apiKey string
-
 	client *resty.Client
 }
 
@@ -25,7 +23,8 @@ func NewClient(serverUrl, apiVersion, apiKey string) *Client {
 	}
 
 	client := resty.New().
-		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/api/" + apiVersion).
+		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/api/"+apiVersion).
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			timestamp := fmt.Sprintf("%d", time.Now().Unix())
 			tokenMd5 := md5.Sum([]byte("1panel" + apiKey + timestamp))

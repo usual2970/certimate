@@ -25,6 +25,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 部署资源类型。
@@ -64,7 +66,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk clients: %w", err)
 	}
 
-	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.Region)
+	uploader, err := createSslUploader(config.AccessKeyId, config.AccessKeySecret, config.ResourceGroupId, config.Region)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
 	}
@@ -79,7 +81,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -423,7 +425,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	// 接入点一览 https://api.aliyun.com/product/Alb
 	var albEndpoint string
 	switch region {
-	case "cn-hangzhou-finance":
+	case "", "cn-hangzhou-finance":
 		albEndpoint = "alb.cn-hangzhou.aliyuncs.com"
 	default:
 		albEndpoint = fmt.Sprintf("alb.%s.aliyuncs.com", region)
@@ -463,7 +465,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}, nil
 }
 
-func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Uploader, error) {
+func createSslUploader(accessKeyId, accessKeySecret, resourceGroupId, region string) (uploader.Uploader, error) {
 	casRegion := region
 	if casRegion != "" {
 		// 阿里云 CAS 服务接入点是独立于 ALB 服务的
@@ -479,6 +481,7 @@ func createSslUploader(accessKeyId, accessKeySecret, region string) (uploader.Up
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKeyId:     accessKeyId,
 		AccessKeySecret: accessKeySecret,
+		ResourceGroupId: resourceGroupId,
 		Region:          casRegion,
 	})
 	return uploader, err

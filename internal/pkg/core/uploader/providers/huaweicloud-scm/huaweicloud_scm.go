@@ -21,6 +21,8 @@ type UploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 华为云 SecretAccessKey。
 	SecretAccessKey string `json:"secretAccessKey"`
+	// 华为云企业项目 ID。
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 	// 华为云区域。
 	Region string `json:"region"`
 }
@@ -52,14 +54,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
@@ -79,10 +81,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertificatesReq := &hcscmmodel.ListCertificatesRequest{
-			Limit:   typeutil.ToPtr(listCertificatesLimit),
-			Offset:  typeutil.ToPtr(listCertificatesOffset),
-			SortDir: typeutil.ToPtr("DESC"),
-			SortKey: typeutil.ToPtr("certExpiredTime"),
+			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			Limit:               typeutil.ToPtr(listCertificatesLimit),
+			Offset:              typeutil.ToPtr(listCertificatesOffset),
+			SortDir:             typeutil.ToPtr("DESC"),
+			SortKey:             typeutil.ToPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'scm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
@@ -142,9 +145,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// REF: https://support.huaweicloud.com/api-ccm/ImportCertificate.html
 	importCertificateReq := &hcscmmodel.ImportCertificateRequest{
 		Body: &hcscmmodel.ImportCertificateRequestBody{
-			Name:        certName,
-			Certificate: certPEM,
-			PrivateKey:  privkeyPEM,
+			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			Name:                certName,
+			Certificate:         certPEM,
+			PrivateKey:          privkeyPEM,
 		},
 	}
 	importCertificateResp, err := u.sdkClient.ImportCertificate(importCertificateReq)

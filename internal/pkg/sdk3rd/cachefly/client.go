@@ -17,7 +17,7 @@ type Client struct {
 func NewClient(apiToken string) *Client {
 	client := resty.New().
 		SetBaseURL("https://api.cachefly.com/api/2.5").
-		SetHeader("x-cf-authorization", "Bearer "+apiToken)
+		SetHeader("X-CF-Authorization", "Bearer "+apiToken)
 
 	return &Client{
 		client: client,

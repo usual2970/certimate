@@ -28,7 +28,8 @@ func NewClient(serverUrl, username, password string) *Client {
 		password: password,
 	}
 	client.client = resty.New().
-		SetBaseURL(strings.TrimRight(serverUrl, "/") + "/prod-api").
+		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/prod-api").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.accessToken != "" {
 				req.Header.Set("Authorization", "Bearer "+client.accessToken)

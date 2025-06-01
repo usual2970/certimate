@@ -21,7 +21,7 @@ import (
 // 出参:
 //   - cert: x509.Certificate 对象。
 //   - err: 错误。
-func ParseCertificateFromPEM(certPEM string) (cert *x509.Certificate, err error) {
+func ParseCertificateFromPEM(certPEM string) (_cert *x509.Certificate, _err error) {
 	pemData := []byte(certPEM)
 
 	block, _ := pem.Decode(pemData)
@@ -29,7 +29,7 @@ func ParseCertificateFromPEM(certPEM string) (cert *x509.Certificate, err error)
 		return nil, errors.New("failed to decode PEM block")
 	}
 
-	cert, err = x509.ParseCertificate(block.Bytes)
+	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse certificate: %w", err)
 	}
@@ -45,7 +45,7 @@ func ParseCertificateFromPEM(certPEM string) (cert *x509.Certificate, err error)
 // 出参:
 //   - privkey: crypto.PrivateKey 对象，可能是 rsa.PrivateKey、ecdsa.PrivateKey 或 ed25519.PrivateKey。
 //   - err: 错误。
-func ParsePrivateKeyFromPEM(privkeyPEM string) (privkey crypto.PrivateKey, err error) {
+func ParsePrivateKeyFromPEM(privkeyPEM string) (_privkey crypto.PrivateKey, _err error) {
 	pemData := []byte(privkeyPEM)
 	return certcrypto.ParsePEMPrivateKey(pemData)
 }
@@ -58,7 +58,7 @@ func ParsePrivateKeyFromPEM(privkeyPEM string) (privkey crypto.PrivateKey, err e
 // 出参:
 //   - privkey: ecdsa.PrivateKey 对象。
 //   - err: 错误。
-func ParseECPrivateKeyFromPEM(privkeyPEM string) (privkey *ecdsa.PrivateKey, err error) {
+func ParseECPrivateKeyFromPEM(privkeyPEM string) (_privkey *ecdsa.PrivateKey, _err error) {
 	pemData := []byte(privkeyPEM)
 
 	block, _ := pem.Decode(pemData)
@@ -66,7 +66,7 @@ func ParseECPrivateKeyFromPEM(privkeyPEM string) (privkey *ecdsa.PrivateKey, err
 		return nil, errors.New("failed to decode PEM block")
 	}
 
-	privkey, err = x509.ParseECPrivateKey(block.Bytes)
+	privkey, err := x509.ParseECPrivateKey(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse private key: %w", err)
 	}
@@ -82,7 +82,7 @@ func ParseECPrivateKeyFromPEM(privkeyPEM string) (privkey *ecdsa.PrivateKey, err
 // 出参:
 //   - privkey: rsa.PrivateKey 对象。
 //   - err: 错误。
-func ParsePKCS1PrivateKeyFromPEM(privkeyPEM string) (privkey *rsa.PrivateKey, err error) {
+func ParsePKCS1PrivateKeyFromPEM(privkeyPEM string) (_privkey *rsa.PrivateKey, _err error) {
 	pemData := []byte(privkeyPEM)
 
 	block, _ := pem.Decode(pemData)
@@ -90,7 +90,7 @@ func ParsePKCS1PrivateKeyFromPEM(privkeyPEM string) (privkey *rsa.PrivateKey, er
 		return nil, errors.New("failed to decode PEM block")
 	}
 
-	privkey, err = x509.ParsePKCS1PrivateKey(block.Bytes)
+	privkey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse private key: %w", err)
 	}

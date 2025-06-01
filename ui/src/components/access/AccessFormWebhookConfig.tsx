@@ -224,7 +224,24 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
         );
         break;
 
-      case "serverchan":
+      case "serverchan3":
+        formInst.setFieldValue("url", "https://<your-serverchan-uid>.push.ft07.com/send/<your-serverchan-sendkey>.send");
+        formInst.setFieldValue("method", "POST");
+        formInst.setFieldValue("headers", "Content-Type: application/json");
+        formInst.setFieldValue(
+          "defaultDataForNotification",
+          JSON.stringify(
+            {
+              title: "${SUBJECT}",
+              desp: "${MESSAGE}",
+            },
+            null,
+            2
+          )
+        );
+        break;
+
+      case "serverchanturbo":
         formInst.setFieldValue("url", "https://sctapi.ftqq.com/<your-serverchan-key>.send");
         formInst.setFieldValue("method", "POST");
         formInst.setFieldValue("headers", "Content-Type: application/json");
@@ -329,9 +346,9 @@ const AccessFormWebhookConfig = ({ form: formInst, formName, disabled, initialVa
               <div className="text-right">
                 <Dropdown
                   menu={{
-                    items: ["bark", "ntfy", "gotify", "pushover", "pushplus", "serverchan", "common"].map((key) => ({
+                    items: ["bark", "ntfy", "gotify", "pushover", "pushplus", "serverchan3", "serverchanturbo", "common"].map((key) => ({
                       key,
-                      label: t(`access.form.webhook_preset_data.option.${key}.label`),
+                      label: <span dangerouslySetInnerHTML={{ __html: t(`access.form.webhook_preset_data.option.${key}.label`) }}></span>,
                       onClick: () => handlePresetDataForNotificationClick(key),
                     })),
                   }}

@@ -52,14 +52,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 遍历证书列表，避免重复上传
 	if res, err := u.getCertIfExists(ctx, certPEM, privkeyPEM); err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 }
 
-func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	searchWebsiteSSLPageNumber := int32(1)
 	searchWebsiteSSLPageSize := int32(100)
 	for {

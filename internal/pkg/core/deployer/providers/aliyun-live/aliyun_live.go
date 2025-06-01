@@ -19,6 +19,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 直播流域名（支持泛域名）。
@@ -52,7 +54,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -86,7 +88,7 @@ func createSdkClient(accessKeyId, accessKeySecret, region string) (*alilive.Clie
 	// 接入点一览 https://api.aliyun.com/product/live
 	var endpoint string
 	switch region {
-	case
+	case "",
 		"cn-qingdao",
 		"cn-beijing",
 		"cn-shanghai",

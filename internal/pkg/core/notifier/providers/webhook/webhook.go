@@ -22,7 +22,7 @@ type NotifierConfig struct {
 	// Webhook 回调数据（application/json 或 application/x-www-form-urlencoded 格式）。
 	WebhookData string `json:"webhookData,omitempty"`
 	// 请求谓词。
-	// 零值时默认为 "POST"。
+	// 零值时默认值 "POST"。
 	Method string `json:"method,omitempty"`
 	// 请求标头。
 	Headers map[string]string `json:"headers,omitempty"`
@@ -60,14 +60,14 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 
 func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
 	if logger == nil {
-		n.logger = slog.Default()
+		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
 	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (res *notifier.NotifyResult, err error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
 	// 处理 Webhook URL
 	webhookUrl, err := url.Parse(n.config.WebhookUrl)
 	if err != nil {

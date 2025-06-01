@@ -30,9 +30,10 @@ type Result interface {
 func NewClient(accessKey, secretKey string) *Client {
 	client := resty.New().
 		SetBaseURL("https://open.chinanetcenter.com").
-		SetHeader("Host", "open.chinanetcenter.com").
 		SetHeader("Accept", "application/json").
 		SetHeader("Content-Type", "application/json").
+		SetHeader("Host", "open.chinanetcenter.com").
+		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			// Step 1: Get request method
 			method := req.Method
@@ -85,7 +86,7 @@ func NewClient(accessKey, secretKey string) *Client {
 
 			// Step 6: Get timestamp
 			var reqtime time.Time
-			timestampString := req.Header.Get("x-cnc-timestamp")
+			timestampString := req.Header.Get("X-CNC-Timestamp")
 			if timestampString == "" {
 				reqtime = time.Now().UTC()
 				timestampString = fmt.Sprintf("%d", reqtime.Unix())
@@ -111,9 +112,9 @@ func NewClient(accessKey, secretKey string) *Client {
 			signHex := strings.ToLower(hex.EncodeToString(sign))
 
 			// Step 9: Add headers to request
-			req.Header.Set("x-cnc-accesskey", accessKey)
-			req.Header.Set("x-cnc-timestamp", timestampString)
-			req.Header.Set("x-cnc-auth-method", "AKSK")
+			req.Header.Set("X-CNC-AccessKey", accessKey)
+			req.Header.Set("X-CNC-Timestamp", timestampString)
+			req.Header.Set("X-CNC-Auth-Method", "AKSK")
 			req.Header.Set("Authorization", fmt.Sprintf("%s Credential=%s, SignedHeaders=%s, Signature=%s", SignAlgorithmHeader, accessKey, signedHeaders, signHex))
 			req.Header.Set("Date", reqtime.Format("Mon, 02 Jan 2006 15:04:05 GMT"))
 
@@ -173,7 +174,7 @@ func (c *Client) SendRequestWithResult(method string, path string, params interf
 	if err != nil {
 		if resp != nil {
 			json.Unmarshal(resp.Body(), &result)
-			result.SetRequestId(resp.Header().Get("x-cnc-request-id"))
+			result.SetRequestId(resp.Header().Get("X-CNC-Request-Id"))
 		}
 		return resp, err
 	}
@@ -185,6 +186,6 @@ func (c *Client) SendRequestWithResult(method string, path string, params interf
 		}
 	}
 
-	result.SetRequestId(resp.Header().Get("x-cnc-request-id"))
+	result.SetRequestId(resp.Header().Get("X-CNC-Request-Id"))
 	return resp, nil
 }

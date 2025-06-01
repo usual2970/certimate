@@ -38,6 +38,7 @@ type AccessConfigForACMEHttpReq struct {
 type AccessConfigForAliyun struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	AccessKeySecret string `json:"accessKeySecret"`
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 }
 
 type AccessConfigForAWS struct {
@@ -199,8 +200,9 @@ type AccessConfigForHetzner struct {
 }
 
 type AccessConfigForHuaweiCloud struct {
-	AccessKeyId     string `json:"accessKeyId"`
-	SecretAccessKey string `json:"secretAccessKey"`
+	AccessKeyId         string `json:"accessKeyId"`
+	SecretAccessKey     string `json:"secretAccessKey"`
+	EnterpriseProjectId string `json:"enterpriseProjectId,omitempty"`
 }
 
 type AccessConfigForJDCloud struct {

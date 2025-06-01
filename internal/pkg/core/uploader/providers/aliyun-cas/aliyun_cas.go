@@ -13,6 +13,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
 )
 
 type UploaderConfig struct {
@@ -20,6 +21,8 @@ type UploaderConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 }
@@ -51,14 +54,14 @@ func NewUploader(config *UploaderConfig) (*UploaderProvider, error) {
 
 func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 	if logger == nil {
-		u.logger = slog.Default()
+		u.logger = slog.New(slog.DiscardHandler)
 	} else {
 		u.logger = logger
 	}
 	return u
 }
 
-func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (res *uploader.UploadResult, err error) {
+func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
@@ -78,9 +81,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listUserCertificateOrderReq := &alicas.ListUserCertificateOrderRequest{
-			CurrentPage: tea.Int64(listUserCertificateOrderPage),
-			ShowSize:    tea.Int64(listUserCertificateOrderLimit),
-			OrderType:   tea.String("CERT"),
+			ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+			CurrentPage:     tea.Int64(listUserCertificateOrderPage),
+			ShowSize:        tea.Int64(listUserCertificateOrderLimit),
+			OrderType:       tea.String("CERT"),
 		}
 		listUserCertificateOrderResp, err := u.sdkClient.ListUserCertificateOrder(listUserCertificateOrderReq)
 		u.logger.Debug("sdk request 'cas.ListUserCertificateOrder'", slog.Any("request", listUserCertificateOrderReq), slog.Any("response", listUserCertificateOrderResp))
@@ -143,9 +147,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-uploadusercertificate
 	uploadUserCertificateReq := &alicas.UploadUserCertificateRequest{
-		Name: tea.String(certName),
-		Cert: tea.String(certPEM),
-		Key:  tea.String(privkeyPEM),
+		ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+		Name:            tea.String(certName),
+		Cert:            tea.String(certPEM),
+		Key:             tea.String(privkeyPEM),
 	}
 	uploadUserCertificateResp, err := u.sdkClient.UploadUserCertificate(uploadUserCertificateReq)
 	u.logger.Debug("sdk request 'cas.UploadUserCertificate'", slog.Any("request", uploadUserCertificateReq), slog.Any("response", uploadUserCertificateResp))
@@ -176,14 +181,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKeyId, accessKeySecret, region string) (*alicas.Client, error) {
-	if region == "" {
-		region = "cn-hangzhou" // CAS 服务默认区域：华东一杭州
-	}
-
 	// 接入点一览 https://api.aliyun.com/product/cas
 	var endpoint string
 	switch region {
-	case "cn-hangzhou":
+	case "", "cn-hangzhou":
 		endpoint = "cas.aliyuncs.com"
 	default:
 		endpoint = fmt.Sprintf("cas.%s.aliyuncs.com", region)

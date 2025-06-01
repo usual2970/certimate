@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
@@ -19,6 +20,8 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 阿里云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
+	// 阿里云资源组 ID。
+	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 	// 阿里云地域。
 	Region string `json:"region"`
 	// 服务版本。
@@ -60,7 +63,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 
 func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 	if logger == nil {
-		d.logger = slog.Default()
+		d.logger = slog.New(slog.DiscardHandler)
 	} else {
 		d.logger = logger
 	}
@@ -108,6 +111,9 @@ func (d *DeployerProvider) deployToFC3(ctx context.Context, certPEM string, priv
 			TlsConfig: getCustomDomainResp.Body.TlsConfig,
 		},
 	}
+	if tea.StringValue(updateCustomDomainReq.Body.Protocol) == "HTTP" {
+		updateCustomDomainReq.Body.Protocol = tea.String("HTTP,HTTPS")
+	}
 	updateCustomDomainResp, err := d.sdkClients.FC3.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
@@ -137,6 +143,9 @@ func (d *DeployerProvider) deployToFC2(ctx context.Context, certPEM string, priv
 		Protocol:  getCustomDomainResp.Body.Protocol,
 		TlsConfig: getCustomDomainResp.Body.TlsConfig,
 	}
+	if tea.StringValue(updateCustomDomainReq.Protocol) == "HTTP" {
+		updateCustomDomainReq.Protocol = tea.String("HTTP,HTTPS")
+	}
 	updateCustomDomainResp, err := d.sdkClients.FC2.UpdateCustomDomain(tea.String(d.config.Domain), updateCustomDomainReq)
 	d.logger.Debug("sdk request 'fc.UpdateCustomDomain'", slog.Any("request", updateCustomDomainReq), slog.Any("response", updateCustomDomainResp))
 	if err != nil {
@@ -150,6 +159,8 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
 	var fc2Endpoint string
 	switch region {
+	case "":
+		fc2Endpoint = "fc.aliyuncs.com"
 	case "cn-hangzhou-finance":
 		fc2Endpoint = fmt.Sprintf("%s.fc.aliyuncs.com", region)
 	default:
@@ -167,7 +178,7 @@ func createSdkClients(accessKeyId, accessKeySecret, region string) (*wSdkClients
 	}
 
 	// 接入点一览 https://api.aliyun.com/product/FC-Open
-	fc3Endpoint := fmt.Sprintf("fcv3.%s.aliyuncs.com", region)
+	fc3Endpoint := strings.ReplaceAll(fmt.Sprintf("fcv3.%s.aliyuncs.com", region), "..", ".")
 	fc3Config := &aliopen.Config{
 		AccessKeyId:     tea.String(accessKeyId),
 		AccessKeySecret: tea.String(accessKeySecret),

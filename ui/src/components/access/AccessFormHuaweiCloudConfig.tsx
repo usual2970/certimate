@@ -28,14 +28,15 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
   const formSchema = z.object({
     accessKeyId: z
       .string()
+      .trim()
       .min(1, t("access.form.huaweicloud_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
+      .trim()
       .min(1, t("access.form.huaweicloud_secret_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
+    enterpriseProjectId: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -68,6 +69,15 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_secret_access_key.tooltip") }}></span>}
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.huaweicloud_secret_access_key.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="enterpriseProjectId"
+        label={t("access.form.huaweicloud_enterprise_project_id.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.huaweicloud_enterprise_project_id.tooltip") }}></span>}
+      >
+        <Input allowClear autoComplete="new-password" placeholder={t("access.form.huaweicloud_enterprise_project_id.placeholder")} />
       </Form.Item>
     </Form>
   );
