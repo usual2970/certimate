@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
+import { Avatar, Select, type SelectProps, Space, Typography, theme } from "antd";
 
 import { type DeploymentProvider, deploymentProvidersMap } from "@/domain/provider";
 
@@ -13,6 +13,8 @@ export type DeploymentProviderSelectProps = Omit<
 
 const DeploymentProviderSelect = ({ filter, ...props }: DeploymentProviderSelectProps) => {
   const { t } = useTranslation();
+
+  const { token: themeToken } = theme.useToken();
 
   const [options, setOptions] = useState<Array<{ key: string; value: string; label: string; data: DeploymentProvider }>>([]);
   useEffect(() => {
@@ -32,7 +34,7 @@ const DeploymentProviderSelect = ({ filter, ...props }: DeploymentProviderSelect
     const provider = deploymentProvidersMap.get(key);
     return (
       <Space className="max-w-full grow overflow-hidden truncate" size={4}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {t(provider?.name ?? "")}
         </Typography.Text>
@@ -49,12 +51,12 @@ const DeploymentProviderSelect = ({ filter, ...props }: DeploymentProviderSelect
         const value = inputValue.toLowerCase();
         return option.value.toLowerCase().includes(value) || option.label.toLowerCase().includes(value);
       }}
-      labelRender={({ label, value }) => {
-        if (!label) {
-          return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+      labelRender={({ value }) => {
+        if (value != null) {
+          return renderOption(value as string);
         }
 
-        return renderOption(value as string);
+        return <span style={{ color: themeToken.colorTextPlaceholder }}>{props.placeholder}</span>;
       }}
       options={options}
       optionFilterProp={undefined}

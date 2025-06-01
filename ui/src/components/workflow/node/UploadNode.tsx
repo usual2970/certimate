@@ -23,9 +23,9 @@ const UploadNode = ({ node, disabled }: UploadNodeProps) => {
 
   const formRef = useRef<UploadNodeConfigFormInstance>(null);
   const [formPending, setFormPending] = useState(false);
+  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForUpload;
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const getFormValues = () => formRef.current!.getFieldsValue() as WorkflowNodeConfigForUpload;
 
   const wrappedEl = useMemo(() => {
     if (node.type !== WorkflowNodeType.Upload) {
@@ -74,12 +74,12 @@ const UploadNode = ({ node, disabled }: UploadNodeProps) => {
       </SharedNode.Block>
 
       <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
         node={node}
         open={drawerOpen}
         pending={formPending}
         onConfirm={handleDrawerConfirm}
         onOpenChange={(open) => setDrawerOpen(open)}
-        getFormValues={() => formRef.current!.getFieldsValue()}
       >
         <UploadNodeConfigForm ref={formRef} disabled={disabled} initialValues={node.config} />
       </SharedNode.ConfigDrawer>

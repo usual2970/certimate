@@ -53,35 +53,35 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 		return nil, fmt.Errorf("node type is not '%s'", string(domain.WorkflowNodeTypeApply))
 	}
 
-	nodeConfig := config.Node.GetConfigForApply()
+	nodeCfg := config.Node.GetConfigForApply()
 	options := &applicantProviderOptions{
-		Domains:                 sliceutil.Filter(strings.Split(nodeConfig.Domains, ";"), func(s string) bool { return s != "" }),
-		ContactEmail:            nodeConfig.ContactEmail,
-		Provider:                domain.ACMEDns01ProviderType(nodeConfig.Provider),
+		Domains:                 sliceutil.Filter(strings.Split(nodeCfg.Domains, ";"), func(s string) bool { return s != "" }),
+		ContactEmail:            nodeCfg.ContactEmail,
+		Provider:                domain.ACMEDns01ProviderType(nodeCfg.Provider),
 		ProviderAccessConfig:    make(map[string]any),
-		ProviderServiceConfig:   nodeConfig.ProviderConfig,
-		CAProvider:              domain.CAProviderType(nodeConfig.CAProvider),
+		ProviderServiceConfig:   nodeCfg.ProviderConfig,
+		CAProvider:              domain.CAProviderType(nodeCfg.CAProvider),
 		CAProviderAccessConfig:  make(map[string]any),
-		CAProviderServiceConfig: nodeConfig.CAProviderConfig,
-		KeyAlgorithm:            nodeConfig.KeyAlgorithm,
-		Nameservers:             sliceutil.Filter(strings.Split(nodeConfig.Nameservers, ";"), func(s string) bool { return s != "" }),
-		DnsPropagationWait:      nodeConfig.DnsPropagationWait,
-		DnsPropagationTimeout:   nodeConfig.DnsPropagationTimeout,
-		DnsTTL:                  nodeConfig.DnsTTL,
-		DisableFollowCNAME:      nodeConfig.DisableFollowCNAME,
+		CAProviderServiceConfig: nodeCfg.CAProviderConfig,
+		KeyAlgorithm:            nodeCfg.KeyAlgorithm,
+		Nameservers:             sliceutil.Filter(strings.Split(nodeCfg.Nameservers, ";"), func(s string) bool { return s != "" }),
+		DnsPropagationWait:      nodeCfg.DnsPropagationWait,
+		DnsPropagationTimeout:   nodeCfg.DnsPropagationTimeout,
+		DnsTTL:                  nodeCfg.DnsTTL,
+		DisableFollowCNAME:      nodeCfg.DisableFollowCNAME,
 	}
 
 	accessRepo := repository.NewAccessRepository()
-	if nodeConfig.ProviderAccessId != "" {
-		if access, err := accessRepo.GetById(context.Background(), nodeConfig.ProviderAccessId); err != nil {
-			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.ProviderAccessId, err)
+	if nodeCfg.ProviderAccessId != "" {
+		if access, err := accessRepo.GetById(context.Background(), nodeCfg.ProviderAccessId); err != nil {
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeCfg.ProviderAccessId, err)
 		} else {
 			options.ProviderAccessConfig = access.Config
 		}
 	}
-	if nodeConfig.CAProviderAccessId != "" {
-		if access, err := accessRepo.GetById(context.Background(), nodeConfig.CAProviderAccessId); err != nil {
-			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeConfig.CAProviderAccessId, err)
+	if nodeCfg.CAProviderAccessId != "" {
+		if access, err := accessRepo.GetById(context.Background(), nodeCfg.CAProviderAccessId); err != nil {
+			return nil, fmt.Errorf("failed to get access #%s record: %w", nodeCfg.CAProviderAccessId, err)
 		} else {
 			options.CAProviderAccessId = access.Id
 			options.CAProviderAccessConfig = access.Config

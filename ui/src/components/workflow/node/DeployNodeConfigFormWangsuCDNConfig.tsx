@@ -18,7 +18,7 @@ export type DeployNodeConfigFormWangsuCDNConfigProps = {
   onValuesChange?: (values: DeployNodeConfigFormWangsuCDNConfigFieldValues) => void;
 };
 
-const MULTIPLE_INPUT_DELIMITER = ";";
+const MULTIPLE_INPUT_SEPARATOR = ";";
 
 const initFormModel = (): DeployNodeConfigFormWangsuCDNConfigFieldValues => {
   return {
@@ -42,7 +42,7 @@ const DeployNodeConfigFormWangsuCDNConfig = ({
       .refine((v) => {
         if (!v) return false;
         return String(v)
-          .split(MULTIPLE_INPUT_DELIMITER)
+          .split(MULTIPLE_INPUT_SEPARATOR)
           .every((e) => validDomainName(e));
       }, t("workflow_node.deploy.form.wangsu_cdn_domains.placeholder")),
   });

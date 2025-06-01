@@ -1,9 +1,14 @@
-import { memo } from "react";
-import { MoreOutlined as MoreOutlinedIcon } from "@ant-design/icons";
+import { memo, useRef, useState } from "react";
+import { FilterFilled as FilterFilledIcon, FilterOutlined as FilterOutlinedIcon, MoreOutlined as MoreOutlinedIcon } from "@ant-design/icons";
 import { Button, Card, Popover } from "antd";
+import { produce } from "immer";
+
+import { useZustandShallowSelector } from "@/hooks";
+import { useWorkflowStore } from "@/stores/workflow";
 
 import SharedNode, { type SharedNodeProps } from "./_SharedNode";
 import AddNode from "./AddNode";
+import ConditionNodeConfigForm, { type ConditionNodeConfigFormFieldValues, type ConditionNodeConfigFormInstance } from "./ConditionNodeConfigForm";
 
 export type ConditionNodeProps = SharedNodeProps & {
   branchId: string;
@@ -11,12 +16,41 @@ export type ConditionNodeProps = SharedNodeProps & {
 };
 
 const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeProps) => {
-  // TODO: 条件分支
+  const { updateNode } = useWorkflowStore(useZustandShallowSelector(["updateNode"]));
+
+  const [formPending, setFormPending] = useState(false);
+  const formRef = useRef<ConditionNodeConfigFormInstance>(null);
+  const getFormValues = () => formRef.current!.getFieldsValue() as ConditionNodeConfigFormFieldValues;
+
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleDrawerConfirm = async () => {
+    setFormPending(true);
+    try {
+      await formRef.current!.validateFields();
+    } catch (err) {
+      setFormPending(false);
+      throw err;
+    }
+
+    try {
+      const newValues = getFormValues();
+      const newNode = produce(node, (draft) => {
+        draft.config = {
+          ...newValues,
+        };
+        draft.validated = true;
+      });
+      await updateNode(newNode);
+    } finally {
+      setFormPending(false);
+    }
+  };
 
   return (
     <>
       <Popover
-        classNames={{ root: "shadow-md" }}
+        classNames={{ root: "mt-20 shadow-md" }}
         styles={{ body: { padding: 0 } }}
         arrow={false}
         content={
@@ -30,16 +64,36 @@ const ConditionNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeP
         }
         placement="rightTop"
       >
-        <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable>
+        <Card className="relative z-[1] mt-10 w-[256px] shadow-md" styles={{ body: { padding: 0 } }} hoverable onClick={() => setDrawerOpen(true)}>
           <div className="flex h-[48px] flex-col items-center justify-center truncate px-4 py-2">
-            <SharedNode.Title
-              className="focus:bg-background focus:text-foreground overflow-hidden outline-slate-200 focus:rounded-sm"
-              node={node}
-              disabled={disabled}
-            />
+            <div className="relative w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+              <SharedNode.Title
+                className="focus:bg-background focus:text-foreground overflow-hidden outline-slate-200 focus:rounded-sm"
+                node={node}
+                disabled={disabled}
+              />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2" onClick={() => setDrawerOpen(true)}>
+                {node.config?.expression ? (
+                  <Button color="primary" icon={<FilterFilledIcon />} variant="link" />
+                ) : (
+                  <Button color="default" icon={<FilterOutlinedIcon />} variant="link" />
+                )}
+              </div>
+            </div>
           </div>
         </Card>
       </Popover>
+
+      <SharedNode.ConfigDrawer
+        getConfigNewValues={getFormValues}
+        node={node}
+        open={drawerOpen}
+        pending={formPending}
+        onConfirm={handleDrawerConfirm}
+        onOpenChange={(open) => setDrawerOpen(open)}
+      >
+        <ConditionNodeConfigForm nodeId={node.id} ref={formRef} disabled={disabled} initialValues={node.config} />
+      </SharedNode.ConfigDrawer>
 
       <AddNode node={node} disabled={disabled} />
     </>

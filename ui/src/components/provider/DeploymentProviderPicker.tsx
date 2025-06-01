@@ -104,7 +104,7 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, filter, placeho
                       >
                         <Tooltip title={t(provider.name)} mouseEnterDelay={1}>
                           <Flex className="size-full overflow-hidden" align="center" gap={8}>
-                            <Avatar src={provider.icon} size="small" />
+                            <Avatar shape="square" src={provider.icon} size="small" />
                             <Typography.Text className="line-clamp-2 flex-1">{t(provider.name)}</Typography.Text>
                           </Flex>
                         </Tooltip>

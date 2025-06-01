@@ -65,7 +65,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 查询证书列表，避免重复上传
-	// REF: https://www.wangsu.com/document/api-doc/26426
+	// REF: https://www.wangsu.com/document/api-doc/22675?productCode=certificatemanagement
 	listCertificatesResp, err := u.sdkClient.ListCertificates()
 	u.logger.Debug("sdk request 'certificatemanagement.ListCertificates'", slog.Any("response", listCertificatesResp))
 	if err != nil {

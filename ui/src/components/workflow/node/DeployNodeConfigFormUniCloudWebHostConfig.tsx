@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input, Select } from "antd";
+import { Alert, Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -56,6 +56,10 @@ const DeployNodeConfigFormUniCloudWebHostConfig = ({
       name={formName}
       onValuesChange={handleFormChange}
     >
+      <Form.Item>
+        <Alert type="info" message={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.unicloud_webhost.guide") }}></span>} />
+      </Form.Item>
+
       <Form.Item name="spaceProvider" label={t("workflow_node.deploy.form.unicloud_webhost_space_provider.label")} rules={[formRule]}>
         <Select
           options={["aliyun", "tencent"].map((s) => ({

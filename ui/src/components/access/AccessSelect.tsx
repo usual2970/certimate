@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Avatar, Select, type SelectProps, Space, Typography } from "antd";
+import { Avatar, Select, type SelectProps, Space, Typography, theme } from "antd";
 
 import { type AccessModel } from "@/domain/access";
 import { accessProvidersMap } from "@/domain/provider";
@@ -14,6 +14,8 @@ export type AccessTypeSelectProps = Omit<
 };
 
 const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
+  const { token: themeToken } = theme.useToken();
+
   const { accesses, loadedAtOnce, fetchAccesses } = useAccessesStore(useZustandShallowSelector(["accesses", "loadedAtOnce", "fetchAccesses"]));
   useEffect(() => {
     fetchAccesses();
@@ -37,7 +39,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
     if (!access) {
       return (
         <Space className="max-w-full grow truncate" size={4}>
-          <Avatar size="small" />
+          <Avatar shape="square" size="small" />
           <Typography.Text className="leading-loose" ellipsis>
             {key}
           </Typography.Text>
@@ -48,7 +50,7 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
     const provider = accessProvidersMap.get(access.provider);
     return (
       <Space className="max-w-full grow truncate" size={4}>
-        <Avatar src={provider?.icon} size="small" />
+        <Avatar shape="square" src={provider?.icon} size="small" />
         <Typography.Text className="leading-loose" ellipsis>
           {access.name}
         </Typography.Text>
@@ -65,12 +67,12 @@ const AccessSelect = ({ filter, ...props }: AccessTypeSelectProps) => {
         const value = inputValue.toLowerCase();
         return option.label.toLowerCase().includes(value);
       }}
-      labelRender={({ label, value }) => {
-        if (label) {
+      labelRender={({ value }) => {
+        if (value != null) {
           return renderOption(value as string);
         }
 
-        return <Typography.Text type="secondary">{props.placeholder}</Typography.Text>;
+        return <span style={{ color: themeToken.colorTextPlaceholder }}>{props.placeholder}</span>;
       }}
       loading={!loadedAtOnce}
       options={options}

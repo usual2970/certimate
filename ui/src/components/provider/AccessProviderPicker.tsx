@@ -86,12 +86,12 @@ const AccessProviderPicker = ({ className, style, autoFocus, filter, placeholder
                     }}
                   >
                     <Flex className="size-full overflow-hidden" align="center" gap={8}>
-                      <Avatar src={provider.icon} size="small" />
+                      <Avatar shape="square" src={provider.icon} size="small" />
                       <div className="flex-1 overflow-hidden">
                         <Typography.Text className="mb-1 line-clamp-1" type={provider.builtin ? "secondary" : undefined}>
                           {t(provider.name)}
                         </Typography.Text>
-                        <div className="origin-left scale-[80%]">
+                        <div className="origin-left scale-[75%]">
                           <Show when={provider.builtin}>
                             <Tag>{t("access.props.provider.builtin")}</Tag>
                           </Show>

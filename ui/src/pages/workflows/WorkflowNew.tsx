@@ -12,9 +12,10 @@ import { useAntdForm } from "@/hooks";
 import { save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
 
-const TEMPLATE_KEY_BLANK = "blank" as const;
 const TEMPLATE_KEY_STANDARD = "standard" as const;
-type TemplateKeys = typeof TEMPLATE_KEY_BLANK | typeof TEMPLATE_KEY_STANDARD;
+const TEMPLATE_KEY_CERTTEST = "monitor" as const;
+const TEMPLATE_KEY_BLANK = "blank" as const;
+type TemplateKeys = typeof TEMPLATE_KEY_BLANK | typeof TEMPLATE_KEY_CERTTEST | typeof TEMPLATE_KEY_STANDARD;
 
 const WorkflowNew = () => {
   const navigate = useNavigate();
@@ -27,8 +28,8 @@ const WorkflowNew = () => {
     xs: { flex: "100%" },
     md: { flex: "100%" },
     lg: { flex: "50%" },
-    xl: { flex: "50%" },
-    xxl: { flex: "50%" },
+    xl: { flex: "33.3333%" },
+    xxl: { flex: "33.3333%" },
   };
   const [templateSelectKey, setTemplateSelectKey] = useState<TemplateKeys>();
 
@@ -62,6 +63,10 @@ const WorkflowNew = () => {
 
           case TEMPLATE_KEY_STANDARD:
             workflow = initWorkflow({ template: "standard" });
+            break;
+
+          case TEMPLATE_KEY_CERTTEST:
+            workflow = initWorkflow({ template: "certtest" });
             break;
 
           default:
@@ -116,7 +121,7 @@ const WorkflowNew = () => {
       </Card>
 
       <div className="p-4">
-        <div className="mx-auto max-w-[960px] px-2">
+        <div className="mx-auto max-w-[1600px] px-2">
           <Typography.Text type="secondary">
             <div className="mb-8 mt-4 text-xl">{t("workflow.new.templates.title")}</div>
           </Typography.Text>
@@ -139,6 +144,25 @@ const WorkflowNew = () => {
                 </div>
               </Card>
             </Col>
+
+            <Col {...templateGridSpans}>
+              <Card
+                className="size-full"
+                cover={<img className="min-h-[120px] object-contain" src="/imgs/workflow/tpl-certtest.png" />}
+                hoverable
+                onClick={() => handleTemplateClick(TEMPLATE_KEY_CERTTEST)}
+              >
+                <div className="flex w-full items-center gap-4">
+                  <Card.Meta
+                    className="grow"
+                    title={t("workflow.new.templates.template.certtest.title")}
+                    description={t("workflow.new.templates.template.certtest.description")}
+                  />
+                  <Spin spinning={templateSelectKey === TEMPLATE_KEY_CERTTEST} />
+                </div>
+              </Card>
+            </Col>
+
             <Col {...templateGridSpans}>
               <Card
                 className="size-full"
