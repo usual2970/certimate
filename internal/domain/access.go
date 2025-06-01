@@ -386,7 +386,7 @@ type AccessConfigForWeComBot struct {
 
 type AccessConfigForWestcn struct {
 	Username    string `json:"username"`
-	ApiPassword string `json:"password"`
+	ApiPassword string `json:"apiPassword"`
 }
 
 type AccessConfigForZeroSSL struct {
