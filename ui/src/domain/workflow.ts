@@ -55,7 +55,6 @@ const workflowNodeTypeDefaultNames: Map<WorkflowNodeType, string> = new Map([
   [WorkflowNodeType.ExecuteResultBranch, i18n.t("workflow_node.execute_result_branch.default_name")],
   [WorkflowNodeType.ExecuteSuccess, i18n.t("workflow_node.execute_success.default_name")],
   [WorkflowNodeType.ExecuteFailure, i18n.t("workflow_node.execute_failure.default_name")],
-  [WorkflowNodeType.Custom, i18n.t("workflow_node.custom.default_name")],
 ]);
 
 const workflowNodeTypeDefaultInputs: Map<WorkflowNodeType, WorkflowNodeIO[]> = new Map([
@@ -240,25 +239,153 @@ const isBranchLike = (node: WorkflowNode) => {
 };
 
 type InitWorkflowOptions = {
-  template?: "standard";
+  template?: "standard" | "certtest";
 };
 
 export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel => {
   const root = newNode(WorkflowNodeType.Start, {}) as WorkflowNode;
   root.config = { trigger: WORKFLOW_TRIGGERS.MANUAL };
 
-  if (options.template === "standard") {
-    let current = root;
-    current.next = newNode(WorkflowNodeType.Apply, {});
+  switch (options.template) {
+    case "standard":
+      {
+        let current = root;
 
-    current = current.next;
-    current.next = newNode(WorkflowNodeType.Deploy, {});
+        const applyNode = newNode(WorkflowNodeType.Apply);
+        current.next = applyNode;
 
-    current = current.next;
-    current.next = newNode(WorkflowNodeType.ExecuteResultBranch, {});
+        current = current.next;
+        current.next = newNode(WorkflowNodeType.ExecuteResultBranch);
 
-    current = current.next!.branches![1];
-    current.next = newNode(WorkflowNodeType.Notify, {});
+        current = current.next!.branches![1];
+        current.next = newNode(WorkflowNodeType.Notify, {
+          nodeConfig: {
+            subject: "[Certimate] Workflow Failure Alert!",
+            message: "Your workflow run for the certificate application has failed. Please check the details.",
+          } as WorkflowNodeConfigForNotify,
+        });
+
+        current = applyNode.next!.branches![0];
+        current.next = newNode(WorkflowNodeType.Deploy, {
+          nodeConfig: {
+            certificate: `${applyNode.id}#certificate`,
+            skipOnLastSucceeded: true,
+          } as WorkflowNodeConfigForDeploy,
+        });
+
+        current = current.next;
+        current.next = newNode(WorkflowNodeType.ExecuteResultBranch);
+
+        current = current.next!.branches![1];
+        current.next = newNode(WorkflowNodeType.Notify, {
+          nodeConfig: {
+            subject: "[Certimate] Workflow Failure Alert!",
+            message: "Your workflow run for the certificate deployment has failed. Please check the details.",
+          } as WorkflowNodeConfigForNotify,
+        });
+      }
+      break;
+
+    case "certtest":
+      {
+        let current = root;
+
+        const monitorNode = newNode(WorkflowNodeType.Monitor);
+        current.next = monitorNode;
+
+        current = current.next;
+        current.next = newNode(WorkflowNodeType.ExecuteResultBranch);
+
+        current = current.next!.branches![1];
+        current.next = newNode(WorkflowNodeType.Notify, {
+          nodeConfig: {
+            subject: "[Certimate] Workflow Failure Alert!",
+            message: "Your workflow run for the certificate monitoring has failed. Please check the details.",
+          } as WorkflowNodeConfigForNotify,
+        });
+
+        current = monitorNode.next!.branches![0];
+        const branchNode = newNode(WorkflowNodeType.Branch);
+        current.next = branchNode;
+
+        current = branchNode.branches![0];
+        current.name = i18n.t("workflow_node.condition.default_name.template_certtest_on_expire_soon");
+        current.config = {
+          expression: {
+            left: {
+              left: {
+                selector: {
+                  id: monitorNode.id,
+                  name: "certificate.validity",
+                  type: "boolean",
+                },
+                type: "var",
+              },
+              operator: "eq",
+              right: {
+                type: "const",
+                value: "true",
+                valueType: "boolean",
+              },
+              type: "comparison",
+            },
+            operator: "and",
+            right: {
+              left: {
+                selector: {
+                  id: monitorNode.id,
+                  name: "certificate.daysLeft",
+                  type: "number",
+                },
+                type: "var",
+              },
+              operator: "lte",
+              right: {
+                type: "const",
+                value: "30",
+                valueType: "number",
+              },
+              type: "comparison",
+            },
+            type: "logical",
+          },
+        } as WorkflowNodeConfigForCondition;
+        current.next = newNode(WorkflowNodeType.Notify, {
+          nodeConfig: {
+            subject: "[Certimate] Certificate Expiry Alert!",
+            message: "The certificate will expire soon. Please pay attention to your website.",
+          } as WorkflowNodeConfigForNotify,
+        });
+
+        current = branchNode.branches![1];
+        current.name = i18n.t("workflow_node.condition.default_name.template_certtest_on_expired");
+        current.config = {
+          expression: {
+            left: {
+              selector: {
+                id: monitorNode.id,
+                name: "certificate.validity",
+                type: "boolean",
+              },
+              type: "var",
+            },
+            operator: "eq",
+            right: {
+              type: "const",
+              value: "false",
+              valueType: "boolean",
+            },
+            type: "comparison",
+          },
+        } as WorkflowNodeConfigForCondition;
+        current.next = newNode(WorkflowNodeType.Notify, {
+          nodeConfig: {
+            subject: "[Certimate] Certificate Expiry Alert!",
+            message: "The certificate has already expired. Please pay attention to your website.",
+          } as WorkflowNodeConfigForNotify,
+        });
+      }
+      break;
   }
 
   return {
@@ -275,6 +402,8 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
 };
 
 type NewNodeOptions = {
+  nodeName?: string;
+  nodeConfig?: Record<string, unknown>;
   branchIndex?: number;
 };
 
@@ -284,8 +413,9 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
 
   const node: WorkflowNode = {
     id: nanoid(),
-    name: nodeName,
+    name: options.nodeName ?? nodeName,
     type: nodeType,
+    config: options.nodeConfig,
   };
 
   switch (nodeType) {

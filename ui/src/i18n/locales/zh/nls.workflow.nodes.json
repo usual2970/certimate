@@ -875,6 +875,8 @@
 
   "workflow_node.condition.label": "分支",
   "workflow_node.condition.default_name": "分支",
+  "workflow_node.condition.default_name.template_certtest_on_expire_soon": "若网站证书即将到期 ...",
+  "workflow_node.condition.default_name.template_certtest_on_expired": "若网站证书已到期 ...",
   "workflow_node.condition.form.expression.label": "分支进入条件",
   "workflow_node.condition.form.expression.logical_operator.errmsg": "请选择条件组合方式",
   "workflow_node.condition.form.expression.logical_operator.option.and.label": "满足以下所有条件 (AND)",
@@ -900,9 +902,9 @@
   "workflow_node.execute_result_branch.label": "执行结果分支",
   "workflow_node.execute_result_branch.default_name": "执行结果分支",
 
-  "workflow_node.execute_success.label": "若前序节点执行成功…",
-  "workflow_node.execute_success.default_name": "若前序节点执行成功…",
+  "workflow_node.execute_success.label": "若上一节点执行成功…",
+  "workflow_node.execute_success.default_name": "若上一节点执行成功…",
 
-  "workflow_node.execute_failure.label": "若前序节点执行失败…",
-  "workflow_node.execute_failure.default_name": "若前序节点执行失败…"
+  "workflow_node.execute_failure.label": "若上一节点执行失败…",
+  "workflow_node.execute_failure.default_name": "若上一节点执行失败…"
 }

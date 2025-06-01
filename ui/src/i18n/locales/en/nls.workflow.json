@@ -30,6 +30,8 @@
   "workflow.new.templates.title": "Choose a Workflow Template",
   "workflow.new.templates.template.standard.title": "Standard template",
   "workflow.new.templates.template.standard.description": "A standard operating procedure that includes application, deployment, and notification steps.",
+  "workflow.new.templates.template.certtest.title": "Monitoring template",
+  "workflow.new.templates.template.certtest.description": "A monitoring operating procedure that includes monitoring, and notification steps.",
   "workflow.new.templates.template.blank.title": "Blank template",
   "workflow.new.templates.template.blank.description": "Customize all the contents of the workflow from the beginning.",
   "workflow.new.modal.title": "Create workflow",

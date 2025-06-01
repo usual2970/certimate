@@ -876,6 +876,8 @@
 
   "workflow_node.condition.label": "Branch",
   "workflow_node.condition.default_name": "Branch",
+  "workflow_node.condition.default_name.template_certtest_on_expire_soon": "If the certificate will expire soon ...",
+  "workflow_node.condition.default_name.template_certtest_on_expired": "If the certificate has expired ...",
   "workflow_node.condition.form.expression.label": "Conditions to enter the branch",
   "workflow_node.condition.form.expression.logical_operator.errmsg": "Please select logical operator of conditions",
   "workflow_node.condition.form.expression.logical_operator.option.and.label": "Meeting all of the conditions (AND)",
