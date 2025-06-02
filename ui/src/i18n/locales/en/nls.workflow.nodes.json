@@ -2,9 +2,11 @@
   "workflow_node.action.configure_node": "Configure node",
   "workflow_node.action.add_node": "Add node",
   "workflow_node.action.rename_node": "Rename node",
+  "workflow_node.action.duplicate_node": "Duplicate node",
   "workflow_node.action.remove_node": "Delete node",
   "workflow_node.action.add_branch": "Add branch",
   "workflow_node.action.rename_branch": "Rename branch",
+  "workflow_node.action.duplicate_branch": "Duplicate branch",
   "workflow_node.action.remove_branch": "Delete branch",
 
   "workflow_node.unsaved_changes.confirm": "You have unsaved changes. Do you really want to close the panel and drop those changes?",
@@ -901,11 +903,11 @@
   "workflow_node.condition.form.expression.add_condition.button": "Add condition",
 
   "workflow_node.execute_result_branch.label": "Execution result branch",
-  "workflow_node.execute_result_branch.default_name": "Execution result branch",
+  "workflow_node.execute_result_branch.default_name": "Branch",
 
   "workflow_node.execute_success.label": "If the previous node succeeded ...",
-  "workflow_node.execute_success.default_name": "If the previous node succeeded ...",
+  "workflow_node.execute_success.default_name": "On Succeeded",
 
   "workflow_node.execute_failure.label": "If the previous node failed ...",
-  "workflow_node.execute_failure.default_name": "If the previous node failed ..."
+  "workflow_node.execute_failure.default_name": "On Failed"
 }

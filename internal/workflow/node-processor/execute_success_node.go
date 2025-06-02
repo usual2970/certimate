@@ -22,7 +22,6 @@ func NewExecuteSuccessNode(node *domain.WorkflowNode) *executeSuccessNode {
 
 func (n *executeSuccessNode) Process(ctx context.Context) error {
 	// 此类型节点不需要执行任何操作，直接返回
-	n.logger.Info("the previous node execution was succeeded")
 
 	return nil
 }

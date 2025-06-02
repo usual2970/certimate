@@ -14,7 +14,7 @@ const UnknownNode = ({ node, disabled }: MonitorNodeProps) => {
   const { removeNode } = useWorkflowStore(useZustandShallowSelector(["removeNode"]));
 
   const handleClickRemove = () => {
-    removeNode(node.id);
+    removeNode(node);
   };
 
   return (

@@ -7,6 +7,8 @@ import {
   type WorkflowNodeConfigForStart,
   addBranch,
   addNode,
+  duplicateBranch,
+  duplicateNode,
   getOutputBeforeNodeId,
   removeBranch,
   removeNode,
@@ -26,10 +28,12 @@ export type WorkflowState = {
   destroy(): void;
 
   addNode: (node: WorkflowNode, previousNodeId: string) => void;
+  duplicateNode: (node: WorkflowNode) => void;
   updateNode: (node: WorkflowNode) => void;
-  removeNode: (nodeId: string) => void;
+  removeNode: (node: WorkflowNode) => void;
 
   addBranch: (branchId: string) => void;
+  duplicateBranch: (branchId: string, index: number) => void;
   removeBranch: (branchId: string, index: number) => void;
 
   getWorkflowOuptutBeforeId: (nodeId: string, typeFilter?: string | string[]) => WorkflowNode[];
@@ -146,7 +150,27 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
   addNode: async (node: WorkflowNode, previousNodeId: string) => {
     if (!get().initialized) throw "Workflow not initialized yet";
 
-    const root = addNode(get().workflow.draft!, previousNodeId, node);
+    const root = addNode(get().workflow.draft!, node, previousNodeId);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
+  duplicateNode: async (node: WorkflowNode) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = duplicateNode(get().workflow.draft!, node);
     const resp = await saveWorkflow({
       id: get().workflow.id!,
       draft: root,
@@ -183,10 +207,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     });
   },
 
-  removeNode: async (nodeId: string) => {
+  removeNode: async (node: WorkflowNode) => {
     if (!get().initialized) throw "Workflow not initialized yet";
 
-    const root = removeNode(get().workflow.draft!, nodeId);
+    const root = removeNode(get().workflow.draft!, node.id);
     const resp = await saveWorkflow({
       id: get().workflow.id!,
       draft: root,
@@ -207,6 +231,26 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     if (!get().initialized) throw "Workflow not initialized yet";
 
     const root = addBranch(get().workflow.draft!, branchId);
+    const resp = await saveWorkflow({
+      id: get().workflow.id!,
+      draft: root,
+      hasDraft: true,
+    });
+
+    set((state: WorkflowState) => {
+      return {
+        workflow: produce(state.workflow, (draft) => {
+          draft.draft = resp.draft;
+          draft.hasDraft = resp.hasDraft;
+        }),
+      };
+    });
+  },
+
+  duplicateBranch: async (branchId: string, index: number) => {
+    if (!get().initialized) throw "Workflow not initialized yet";
+
+    const root = duplicateBranch(get().workflow.draft!, branchId, index);
     const resp = await saveWorkflow({
       id: get().workflow.id!,
       draft: root,

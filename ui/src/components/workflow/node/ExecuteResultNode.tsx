@@ -1,5 +1,4 @@
 import { memo } from "react";
-import { useTranslation } from "react-i18next";
 import {
   CheckCircleOutlined as CheckCircleOutlinedIcon,
   CloseCircleOutlined as CloseCircleOutlinedIcon,
@@ -17,8 +16,6 @@ export type ConditionNodeProps = SharedNodeProps & {
 };
 
 const ExecuteResultNode = ({ node, disabled, branchId, branchIndex }: ConditionNodeProps) => {
-  const { t } = useTranslation();
-
   const { token: themeToken } = theme.useToken();
 
   return (
@@ -42,16 +39,15 @@ const ExecuteResultNode = ({ node, disabled, branchId, branchIndex }: ConditionN
           <div className="flex h-[48px] flex-col items-center justify-center truncate px-4 py-2">
             <div className="flex items-center space-x-2">
               {node.type === WorkflowNodeType.ExecuteSuccess ? (
-                <>
-                  <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />
-                  <div>{t("workflow_node.execute_success.label")}</div>
-                </>
+                <CheckCircleOutlinedIcon style={{ color: themeToken.colorSuccess }} />
               ) : (
-                <>
-                  <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
-                  <div>{t("workflow_node.execute_failure.label")}</div>
-                </>
+                <CloseCircleOutlinedIcon style={{ color: themeToken.colorError }} />
               )}
+              <SharedNode.Title
+                className="focus:bg-background focus:text-foreground overflow-hidden outline-slate-200 focus:rounded-sm"
+                node={node}
+                disabled={disabled}
+              />
             </div>
           </div>
         </Card>
