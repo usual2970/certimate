@@ -5,6 +5,7 @@ import {
   EllipsisOutlined as EllipsisOutlinedIcon,
   FormOutlined as FormOutlinedIcon,
   MoreOutlined as MoreOutlinedIcon,
+  SnippetsOutlined as SnippetsOutlinedIcon,
 } from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
 import { Button, Card, Drawer, Dropdown, Input, type InputRef, type MenuProps, Modal, Popover, Space } from "antd";
@@ -82,14 +83,27 @@ const isNodeBranchLike = (node: WorkflowNode) => {
   );
 };
 
-const isNodeReadOnly = (node: WorkflowNode) => {
+const isNodeUnduplicatable = (node: WorkflowNode) => {
+  return (
+    node.type === WorkflowNodeType.Start ||
+    node.type === WorkflowNodeType.End ||
+    node.type === WorkflowNodeType.Branch ||
+    node.type === WorkflowNodeType.ExecuteResultBranch ||
+    node.type === WorkflowNodeType.ExecuteSuccess ||
+    node.type === WorkflowNodeType.ExecuteFailure
+  );
+};
+
+const isNodeUnremovable = (node: WorkflowNode) => {
   return node.type === WorkflowNodeType.Start || node.type === WorkflowNodeType.End;
 };
 
 const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex, afterUpdate, afterDelete }: SharedNodeMenuProps) => {
   const { t } = useTranslation();
 
-  const { updateNode, removeNode, removeBranch } = useWorkflowStore(useZustandShallowSelector(["updateNode", "removeNode", "removeBranch"]));
+  const { duplicateNode, updateNode, removeNode, duplicateBranch, removeBranch } = useWorkflowStore(
+    useZustandShallowSelector(["duplicateNode", "updateNode", "removeNode", "duplicateBranch", "removeBranch"])
+  );
 
   const [modalApi, ModelContextHolder] = Modal.useModal();
 
@@ -112,11 +126,19 @@ const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex,
     afterUpdate?.();
   };
 
-  const handleDeleteClick = async () => {
+  const handleDuplicateClick = async () => {
+    if (isNodeBranchLike(node)) {
+      await duplicateBranch(branchId!, branchIndex!);
+    } else {
+      await duplicateNode(node);
+    }
+  };
+
+  const handleRemoveClick = async () => {
     if (isNodeBranchLike(node)) {
       await removeBranch(branchId!, branchIndex!);
     } else {
-      await removeNode(node.id);
+      await removeNode(node);
     }
 
     afterDelete?.();
@@ -156,15 +178,22 @@ const SharedNodeMenu = ({ menus, trigger, node, disabled, branchId, branchIndex,
         },
       },
       {
+        key: "duplicate",
+        disabled: disabled || isNodeUnduplicatable(node),
+        label: isNodeBranchLike(node) ? t("workflow_node.action.duplicate_branch") : t("workflow_node.action.duplicate_node"),
+        icon: <SnippetsOutlinedIcon />,
+        onClick: handleDuplicateClick,
+      },
+      {
         type: "divider",
       },
       {
         key: "remove",
-        disabled: disabled || isNodeReadOnly(node),
+        disabled: disabled || isNodeUnremovable(node),
         label: isNodeBranchLike(node) ? t("workflow_node.action.remove_branch") : t("workflow_node.action.remove_node"),
         icon: <CloseCircleOutlinedIcon />,
         danger: true,
-        onClick: handleDeleteClick,
+        onClick: handleRemoveClick,
       },
     ] satisfies MenuProps["items"];
 

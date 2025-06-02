@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { produce } from "immer";
+import { Immer, produce } from "immer";
 import { nanoid } from "nanoid";
 
 import i18n from "@/i18n";
@@ -234,7 +234,7 @@ export type NotExpr = { type: ExprType.Not; expr: Expr };
 export type Expr = ConstantExpr | VariantExpr | ComparisonExpr | LogicalExpr | NotExpr;
 // #endregion
 
-const isBranchLike = (node: WorkflowNode) => {
+const isBranchNode = (node: WorkflowNode) => {
   return node.type === WorkflowNodeType.Branch || node.type === WorkflowNodeType.ExecuteResultBranch;
 };
 
@@ -458,8 +458,75 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
   return node;
 };
 
-export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
-  return produce(node, (draft) => {
+export const cloneNode = (sourceNode: WorkflowNode): WorkflowNode => {
+  const { produce } = new Immer({ autoFreeze: false });
+  const deepClone = (node: WorkflowNode): WorkflowNode => {
+    return produce(node, (draft) => {
+      draft.id = nanoid();
+
+      if (draft.next) {
+        draft.next = cloneNode(draft.next);
+      }
+
+      if (draft.branches) {
+        draft.branches = draft.branches.map((branch) => cloneNode(branch));
+      }
+
+      return draft;
+    });
+  };
+
+  const copyNode = produce(sourceNode, (draft) => {
+    draft.name = `${draft.name}-copy`;
+  });
+  return deepClone(copyNode);
+};
+
+export const addNode = (root: WorkflowNode, targetNode: WorkflowNode, previousNodeId: string) => {
+  if (isBranchNode(targetNode)) {
+    throw new Error("Cannot add a branch node directly. Use `addBranch` instead.");
+  }
+
+  return produce(root, (draft) => {
+    let current = draft;
+    while (current) {
+      if (current.id === previousNodeId && !isBranchNode(targetNode)) {
+        targetNode.next = current.next;
+        current.next = targetNode;
+        break;
+      } else if (current.id === previousNodeId && isBranchNode(targetNode)) {
+        targetNode.branches![0].next = current.next;
+        current.next = targetNode;
+        break;
+      }
+
+      if (isBranchNode(current)) {
+        current.branches ??= [];
+        current.branches = current.branches.map((branch) => addNode(branch, targetNode, previousNodeId));
+      }
+
+      current = current.next as WorkflowNode;
+    }
+
+    return draft;
+  });
+};
+
+export const duplicateNode = (root: WorkflowNode, targetNode: WorkflowNode) => {
+  if (isBranchNode(targetNode)) {
+    throw new Error("Cannot duplicate a branch node directly. Use `duplicateBranch` instead.");
+  }
+
+  const copiedNode = cloneNode(targetNode);
+  return addNode(root, copiedNode, targetNode.id);
+};
+
+export const updateNode = (root: WorkflowNode, targetNode: WorkflowNode) => {
+  if (isBranchNode(targetNode)) {
+    throw new Error("Cannot update a branch node directly. Use `updateBranch` instead.");
+  }
+
+  return produce(root, (draft) => {
     let current = draft;
     while (current) {
       if (current.id === targetNode.id) {
@@ -476,7 +543,7 @@ export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
         break;
       }
 
-      if (isBranchLike(current)) {
+      if (isBranchNode(current)) {
         current.branches ??= [];
         current.branches = current.branches.map((branch) => updateNode(branch, targetNode));
       }
@@ -488,23 +555,18 @@ export const updateNode = (node: WorkflowNode, targetNode: WorkflowNode) => {
   });
 };
 
-export const addNode = (node: WorkflowNode, previousNodeId: string, targetNode: WorkflowNode) => {
-  return produce(node, (draft) => {
+export const removeNode = (root: WorkflowNode, targetNodeId: string) => {
+  return produce(root, (draft) => {
     let current = draft;
     while (current) {
-      if (current.id === previousNodeId && !isBranchLike(targetNode)) {
-        targetNode.next = current.next;
-        current.next = targetNode;
-        break;
-      } else if (current.id === previousNodeId && isBranchLike(targetNode)) {
-        targetNode.branches![0].next = current.next;
-        current.next = targetNode;
+      if (current.next?.id === targetNodeId) {
+        current.next = current.next.next;
         break;
       }
 
-      if (isBranchLike(current)) {
+      if (isBranchNode(current)) {
         current.branches ??= [];
-        current.branches = current.branches.map((branch) => addNode(branch, previousNodeId, targetNode));
+        current.branches = current.branches.map((branch) => removeNode(branch, targetNodeId));
       }
 
       current = current.next as WorkflowNode;
@@ -514,8 +576,8 @@ export const addNode = (node: WorkflowNode, previousNodeId: string, targetNode: 
   });
 };
 
-export const addBranch = (node: WorkflowNode, branchNodeId: string) => {
-  return produce(node, (draft) => {
+export const addBranch = (root: WorkflowNode, branchNodeId: string) => {
+  return produce(root, (draft) => {
     let current = draft;
     while (current) {
       if (current.id === branchNodeId) {
@@ -532,7 +594,7 @@ export const addBranch = (node: WorkflowNode, branchNodeId: string) => {
         break;
       }
 
-      if (isBranchLike(current)) {
+      if (isBranchNode(current)) {
         current.branches ??= [];
         current.branches = current.branches.map((branch) => addBranch(branch, branchNodeId));
       }
@@ -544,29 +606,8 @@ export const addBranch = (node: WorkflowNode, branchNodeId: string) => {
   });
 };
 
-export const removeNode = (node: WorkflowNode, targetNodeId: string) => {
-  return produce(node, (draft) => {
-    let current = draft;
-    while (current) {
-      if (current.next?.id === targetNodeId) {
-        current.next = current.next.next;
-        break;
-      }
-
-      if (isBranchLike(current)) {
-        current.branches ??= [];
-        current.branches = current.branches.map((branch) => removeNode(branch, targetNodeId));
-      }
-
-      current = current.next as WorkflowNode;
-    }
-
-    return draft;
-  });
-};
-
-export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchIndex: number) => {
-  return produce(node, (draft) => {
+export const duplicateBranch = (root: WorkflowNode, branchNodeId: string, branchIndex: number) => {
+  return produce(root, (draft) => {
     let current = draft;
     let last: WorkflowNode | undefined = {
       id: "",
@@ -576,7 +617,41 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
     };
     while (current && last) {
       if (current.id === branchNodeId) {
-        if (!isBranchLike(current)) {
+        if (!isBranchNode(current)) {
+          return draft;
+        }
+
+        current.branches ??= [];
+        current.branches.splice(branchIndex + 1, 0, cloneNode(current.branches[branchIndex]));
+
+        break;
+      }
+
+      if (isBranchNode(current)) {
+        current.branches ??= [];
+        current.branches = current.branches.map((branch) => duplicateBranch(branch, branchNodeId, branchIndex));
+      }
+
+      current = current.next as WorkflowNode;
+      last = last.next;
+    }
+
+    return draft;
+  });
+};
+
+export const removeBranch = (root: WorkflowNode, branchNodeId: string, branchIndex: number) => {
+  return produce(root, (draft) => {
+    let current = draft;
+    let last: WorkflowNode | undefined = {
+      id: "",
+      name: "",
+      type: WorkflowNodeType.Start,
+      next: draft,
+    };
+    while (current && last) {
+      if (current.id === branchNodeId) {
+        if (!isBranchNode(current)) {
           return draft;
         }
 
@@ -601,7 +676,7 @@ export const removeBranch = (node: WorkflowNode, branchNodeId: string, branchInd
         break;
       }
 
-      if (isBranchLike(current)) {
+      if (isBranchNode(current)) {
         current.branches ??= [];
         current.branches = current.branches.map((branch) => removeBranch(branch, branchNodeId, branchIndex));
       }
@@ -647,7 +722,7 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, typeFi
       });
     }
 
-    if (isBranchLike(current)) {
+    if (isBranchNode(current)) {
       let currentLength = output.length;
       const latestOutput = output.length > 0 ? output[output.length - 1] : null;
       for (const branch of current.branches!) {
@@ -679,7 +754,7 @@ export const getOutputBeforeNodeId = (root: WorkflowNode, nodeId: string, typeFi
 export const isAllNodesValidated = (node: WorkflowNode): boolean => {
   let current = node as typeof node | undefined;
   while (current) {
-    if (isBranchLike(current)) {
+    if (isBranchNode(current)) {
       for (const branch of current.branches!) {
         if (!isAllNodesValidated(branch)) {
           return false;
