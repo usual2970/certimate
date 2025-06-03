@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/sftp"
 	"github.com/povsister/scp"
@@ -313,7 +314,7 @@ func createSshClient(conn net.Conn, host string, port int32, authMethod string, 
 				if len(questions) == 1 {
 					return []string{password}, nil
 				}
-				return nil, fmt.Errorf("unexpected keyboard interactive question: %s", questions[0])
+				return nil, fmt.Errorf("unexpected keyboard interactive question [%s]", strings.Join(questions, ", "))
 			}))
 		}
 
