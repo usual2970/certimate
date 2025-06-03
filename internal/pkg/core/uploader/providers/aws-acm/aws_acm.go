@@ -74,7 +74,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 获取证书列表，避免重复上传
 	// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListCertificates.html
 	var listCertificatesNextToken *string = nil
-	listCertificatesMaxItems := int32(1000)
+	var listCertificatesMaxItems int32 = 1000
 	for {
 		select {
 		case <-ctx.Done():
@@ -107,7 +107,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			}
 
 			// 最后对比证书内容
-			// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_ListTagsForCertificate.html
+			// REF: https://docs.aws.amazon.com/en_us/acm/latest/APIReference/API_GetCertificate.html
 			getCertificateReq := &awsacm.GetCertificateInput{
 				CertificateArn: certSummary.CertificateArn,
 			}
@@ -115,11 +115,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			if err != nil {
 				return nil, fmt.Errorf("failed to execute sdk request 'acm.GetCertificate': %w", err)
 			} else {
-				oldCertPEM := aws.ToString(getCertificateResp.CertificateChain)
-				if oldCertPEM == "" {
-					oldCertPEM = aws.ToString(getCertificateResp.Certificate)
-				}
-
+				oldCertPEM := aws.ToString(getCertificateResp.Certificate)
 				oldCertX509, err := certutil.ParseCertificateFromPEM(oldCertPEM)
 				if err != nil {
 					continue
@@ -158,7 +154,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	return &uploader.UploadResult{
-		CertId: *importCertificateResp.CertificateArn,
+		CertId: aws.ToString(importCertificateResp.CertificateArn),
 	}, nil
 }
 

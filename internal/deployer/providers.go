@@ -27,6 +27,7 @@ import (
 	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
 	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
+	pAWSIAM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-iam"
 	pAzureKeyVault "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/azure-keyvault"
 	pBaiduCloudAppBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-appblb"
 	pBaiduCloudBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-blb"
@@ -331,7 +332,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			}
 		}
 
-	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront:
+	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront, domain.DeploymentProviderTypeAWSIAM:
 		{
 			access := domain.AccessConfigForAWS{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -350,10 +351,20 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderTypeAWSCloudFront:
 				deployer, err := pAWSCloudFront.NewDeployer(&pAWSCloudFront.DeployerConfig{
+					AccessKeyId:       access.AccessKeyId,
+					SecretAccessKey:   access.SecretAccessKey,
+					Region:            maputil.GetString(options.ProviderServiceConfig, "region"),
+					DistributionId:    maputil.GetString(options.ProviderServiceConfig, "distributionId"),
+					CertificateSource: maputil.GetOrDefaultString(options.ProviderServiceConfig, "certificateSource", "ACM"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeAWSIAM:
+				deployer, err := pAWSIAM.NewDeployer(&pAWSIAM.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					DistributionId:  maputil.GetString(options.ProviderServiceConfig, "distributionId"),
+					CertificatePath: maputil.GetOrDefaultString(options.ProviderServiceConfig, "certificatePath", "/"),
 				})
 				return deployer, err
 
