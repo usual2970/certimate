@@ -158,6 +158,7 @@ const (
 	ACMEDns01ProviderTypeTencentCloud    = ACMEDns01ProviderType(AccessProviderTypeTencentCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeTencentCloudDNS]
 	ACMEDns01ProviderTypeTencentCloudDNS = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-dns")
 	ACMEDns01ProviderTypeTencentCloudEO  = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-eo")
+	ACMEDns01ProviderTypeUCloudUDNR      = ACMEDns01ProviderType(AccessProviderTypeUCloud + "-udnr")
 	ACMEDns01ProviderTypeVercel          = ACMEDns01ProviderType(AccessProviderTypeVercel)
 	ACMEDns01ProviderTypeVolcEngine      = ACMEDns01ProviderType(AccessProviderTypeVolcEngine) // 兼容旧值，等同于 [ACMEDns01ProviderTypeVolcEngineDNS]
 	ACMEDns01ProviderTypeVolcEngineDNS   = ACMEDns01ProviderType(AccessProviderTypeVolcEngine + "-dns")

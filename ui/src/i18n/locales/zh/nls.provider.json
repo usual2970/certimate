@@ -138,6 +138,7 @@
   "provider.tencentcloud.waf": "腾讯云 - Web 应用防火墙 WAF",
   "provider.ucloud": "优刻得",
   "provider.ucloud.ucdn": "优刻得 - 内容分发 UCDN",
+  "provider.ucloud.udnr": "优刻得 - 域名服务 UDNR",
   "provider.ucloud.us3": "优刻得 - 对象存储 US3",
   "provider.unicloud": "uniCloud (DCloud)",
   "provider.unicloud.webhost": "uniCloud (DCloud) - 前端网页托管",

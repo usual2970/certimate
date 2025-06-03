@@ -1,9 +1,8 @@
-package lego_aliyunesa
+package internal
 
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"sync"
 	"time"
 
@@ -102,13 +101,13 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteName := strings.TrimRight(authZone, ".")
+	siteName := dns01.UnFqdn(authZone)
 	siteId, err := d.getSiteId(siteName)
 	if err != nil {
 		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", siteName, err)
 	}
 
-	if err := d.addOrUpdateDNSRecord(siteId, strings.TrimRight(info.EffectiveFQDN, "."), info.Value); err != nil {
+	if err := d.addOrUpdateDNSRecord(siteId, dns01.UnFqdn(info.EffectiveFQDN), info.Value); err != nil {
 		return fmt.Errorf("alicloud-esa: %w", err)
 	}
 
@@ -123,13 +122,13 @@ func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 		return fmt.Errorf("alicloud-esa: could not find zone for domain %q: %w", domain, err)
 	}
 
-	siteName := strings.TrimRight(authZone, ".")
+	siteName := dns01.UnFqdn(authZone)
 	siteId, err := d.getSiteId(siteName)
 	if err != nil {
 		return fmt.Errorf("alicloud-esa: could not find site for zone %q: %w", siteName, err)
 	}
 
-	if err := d.removeDNSRecord(siteId, strings.TrimRight(info.EffectiveFQDN, ".")); err != nil {
+	if err := d.removeDNSRecord(siteId, dns01.UnFqdn(info.EffectiveFQDN)); err != nil {
 		return fmt.Errorf("alicloud-esa: %w", err)
 	}
 

@@ -121,6 +121,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.GCORE, "provider.gcore", "/imgs/providers/gcore.png", [ACCESS_USAGES.DNS, ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.NETLIFY, "provider.netlify", "/imgs/providers/netlify.png", [ACCESS_USAGES.DNS, ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.RAINYUN, "provider.rainyun", "/imgs/providers/rainyun.svg", [ACCESS_USAGES.DNS, ACCESS_USAGES.HOSTING]],
+    [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.DNS, ACCESS_USAGES.HOSTING]],
 
     [ACCESS_PROVIDERS.QINIU, "provider.qiniu", "/imgs/providers/qiniu.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.UPYUN, "provider.upyun", "/imgs/providers/upyun.svg", [ACCESS_USAGES.HOSTING]],
@@ -128,7 +129,6 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.WANGSU, "provider.wangsu", "/imgs/providers/wangsu.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.DOGECLOUD, "provider.dogecloud", "/imgs/providers/dogecloud.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.BYTEPLUS, "provider.byteplus", "/imgs/providers/byteplus.svg", [ACCESS_USAGES.HOSTING]],
-    [ACCESS_PROVIDERS.UCLOUD, "provider.ucloud", "/imgs/providers/ucloud.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.UNICLOUD, "provider.unicloud", "/imgs/providers/unicloud.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS["1PANEL"], "provider.1panel", "/imgs/providers/1panel.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.BAOTAPANEL, "provider.baotapanel", "/imgs/providers/baotapanel.svg", [ACCESS_USAGES.HOSTING]],
@@ -289,6 +289,7 @@ export const ACME_DNS01_PROVIDERS = Object.freeze({
   PORKBUN: `${ACCESS_PROVIDERS.PORKBUN}`,
   POWERDNS: `${ACCESS_PROVIDERS.POWERDNS}`,
   RAINYUN: `${ACCESS_PROVIDERS.RAINYUN}`,
+  UCLOUD_UDNR: `${ACCESS_PROVIDERS.UCLOUD}-udnr`,
   TENCENTCLOUD: `${ACCESS_PROVIDERS.TENCENTCLOUD}`, // 兼容旧值，等同于 `TENCENTCLOUD_DNS`
   TENCENTCLOUD_DNS: `${ACCESS_PROVIDERS.TENCENTCLOUD}-dns`,
   TENCENTCLOUD_EO: `${ACCESS_PROVIDERS.TENCENTCLOUD}-eo`,
@@ -346,6 +347,7 @@ export const acmeDns01ProvidersMap: Map<ACMEDns01Provider["type"] | string, ACME
     [ACME_DNS01_PROVIDERS.VERCEL, "provider.vercel"],
     [ACME_DNS01_PROVIDERS.CMCCCLOUD, "provider.cmcccloud"],
     [ACME_DNS01_PROVIDERS.RAINYUN, "provider.rainyun"],
+    [ACME_DNS01_PROVIDERS.UCLOUD_UDNR, "provider.ucloud.udnr"],
     [ACME_DNS01_PROVIDERS.WESTCN, "provider.westcn"],
     [ACME_DNS01_PROVIDERS.POWERDNS, "provider.powerdns"],
     [ACME_DNS01_PROVIDERS.ACMEHTTPREQ, "provider.acmehttpreq"],

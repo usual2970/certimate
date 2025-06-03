@@ -1,4 +1,4 @@
-package lego_baiducloud
+package internal
 
 import (
 	"errors"

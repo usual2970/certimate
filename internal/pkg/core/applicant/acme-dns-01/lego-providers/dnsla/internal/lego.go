@@ -1,4 +1,4 @@
-package lego_dnsla
+package internal
 
 import (
 	"errors"

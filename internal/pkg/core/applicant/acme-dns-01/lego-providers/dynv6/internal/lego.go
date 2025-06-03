@@ -1,4 +1,4 @@
-package lego_dynv6
+package internal
 
 import (
 	"context"
