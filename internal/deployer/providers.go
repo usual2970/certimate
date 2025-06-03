@@ -831,9 +831,19 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
+			// Get namespaces from config, with backward compatibility
+			var namespaces []string
+			if namespacesStr := maputil.GetString(options.ProviderServiceConfig, "namespaces"); namespacesStr != "" {
+				namespaces = strings.Split(namespacesStr, ",")
+			} else if namespace := maputil.GetString(options.ProviderServiceConfig, "namespace"); namespace != "" {
+				namespaces = []string{namespace}
+			} else {
+				namespaces = []string{"default"}
+			}
+
 			deployer, err := pK8sSecret.NewDeployer(&pK8sSecret.DeployerConfig{
 				KubeConfig:          access.KubeConfig,
-				Namespace:           maputil.GetOrDefaultString(options.ProviderServiceConfig, "namespace", "default"),
+				Namespaces:          namespaces,
 				SecretName:          maputil.GetString(options.ProviderServiceConfig, "secretName"),
 				SecretType:          maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretType", "kubernetes.io/tls"),
 				SecretDataKeyForCrt: maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForCrt", "tls.crt"),

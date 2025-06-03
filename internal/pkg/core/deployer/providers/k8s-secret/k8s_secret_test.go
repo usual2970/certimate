@@ -14,7 +14,7 @@ import (
 var (
 	fInputCertPath       string
 	fInputKeyPath        string
-	fNamespace           string
+	fNamespaces          string
 	fSecretName          string
 	fSecretDataKeyForCrt string
 	fSecretDataKeyForKey string
@@ -25,7 +25,7 @@ func init() {
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
-	flag.StringVar(&fNamespace, argsPrefix+"NAMESPACE", "default", "")
+	flag.StringVar(&fNamespaces, argsPrefix+"NAMESPACES", "default", "")
 	flag.StringVar(&fSecretName, argsPrefix+"SECRETNAME", "", "")
 	flag.StringVar(&fSecretDataKeyForCrt, argsPrefix+"SECRETDATAKEYFORCRT", "tls.crt", "")
 	flag.StringVar(&fSecretDataKeyForKey, argsPrefix+"SECRETDATAKEYFORKEY", "tls.key", "")
@@ -37,7 +37,7 @@ Shell command to run this test:
 	go test -v ./k8s_secret_test.go -args \
 	--CERTIMATE_DEPLOYER_K8SSECRET_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_K8SSECRET_NAMESPACE="default" \
+	--CERTIMATE_DEPLOYER_K8SSECRET_NAMESPACES="default,namespace1,namespace2" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_SECRETNAME="secret" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_SECRETDATAKEYFORCRT="tls.crt" \
 	--CERTIMATE_DEPLOYER_K8SSECRET_SECRETDATAKEYFORKEY="tls.key"
@@ -50,14 +50,14 @@ func TestDeploy(t *testing.T) {
 			"args:",
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
-			fmt.Sprintf("NAMESPACE: %v", fNamespace),
+			fmt.Sprintf("NAMESPACES: %v", fNamespaces),
 			fmt.Sprintf("SECRETNAME: %v", fSecretName),
 			fmt.Sprintf("SECRETDATAKEYFORCRT: %v", fSecretDataKeyForCrt),
 			fmt.Sprintf("SECRETDATAKEYFORKEY: %v", fSecretDataKeyForKey),
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			Namespace:           fNamespace,
+			Namespaces:          strings.Split(fNamespaces, ","),
 			SecretName:          fSecretName,
 			SecretDataKeyForCrt: fSecretDataKeyForCrt,
 			SecretDataKeyForKey: fSecretDataKeyForKey,

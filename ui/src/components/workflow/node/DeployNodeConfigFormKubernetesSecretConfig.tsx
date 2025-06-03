@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 type DeployNodeConfigFormKubernetesSecretConfigFieldValues = Nullish<{
-  namespace: string;
+  namespace: string[];
   secretName: string;
   secretType: string;
   secretDataKeyForCrt: string;
@@ -21,7 +21,7 @@ export type DeployNodeConfigFormKubernetesSecretConfigProps = {
 
 const initFormModel = (): DeployNodeConfigFormKubernetesSecretConfigFieldValues => {
   return {
-    namespace: "default",
+    namespace: ["default"],
     secretType: "kubernetes.io/tls",
     secretDataKeyForCrt: "tls.crt",
     secretDataKeyForKey: "tls.key",
@@ -39,10 +39,9 @@ const DeployNodeConfigFormKubernetesSecretConfig = ({
 
   const formSchema = z.object({
     namespace: z
-      .string({ message: t("workflow_node.deploy.form.k8s_namespace.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.k8s_namespace.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .array(z.string())
+      .min(1, t("workflow_node.deploy.form.k8s_namespace.placeholder"))
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     secretName: z
       .string({ message: t("workflow_node.deploy.form.k8s_secret_name.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_secret_name.placeholder"))
@@ -85,7 +84,11 @@ const DeployNodeConfigFormKubernetesSecretConfig = ({
         rules={[formRule]}
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.k8s_namespace.tooltip") }}></span>}
       >
-        <Input placeholder={t("workflow_node.deploy.form.k8s_namespace.placeholder")} />
+        <Select
+          mode="tags"
+          placeholder={t("workflow_node.deploy.form.k8s_namespace.placeholder")}
+          style={{ width: '100%' }}
+        />
       </Form.Item>
 
       <Form.Item

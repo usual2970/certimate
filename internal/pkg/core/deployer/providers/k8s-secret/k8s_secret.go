@@ -20,8 +20,8 @@ import (
 type DeployerConfig struct {
 	// kubeconfig 文件内容。
 	KubeConfig string `json:"kubeConfig,omitempty"`
-	// Kubernetes 命名空间。
-	Namespace string `json:"namespace,omitempty"`
+	// Kubernetes 命名空间列表。
+	Namespaces []string `json:"namespaces,omitempty"`
 	// Kubernetes Secret 名称。
 	SecretName string `json:"secretName"`
 	// Kubernetes Secret 类型。
@@ -60,8 +60,8 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
-	if d.config.Namespace == "" {
-		return nil, errors.New("config `namespace` is required")
+	if len(d.config.Namespaces) == 0 {
+		return nil, errors.New("config `namespaces` is required")
 	}
 	if d.config.SecretName == "" {
 		return nil, errors.New("config `secretName` is required")
@@ -87,7 +87,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, fmt.Errorf("failed to create k8s client: %w", err)
 	}
 
-	var secretPayload *k8score.Secret
 	secretAnnotations := map[string]string{
 		"certimate/common-name":       certX509.Subject.CommonName,
 		"certimate/subject-sn":        certX509.Subject.SerialNumber,
@@ -96,51 +95,53 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		"certimate/issuer-org":        strings.Join(certX509.Issuer.Organization, ","),
 	}
 
-	// 获取 Secret 实例，如果不存在则创建
-	secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Get(context.TODO(), d.config.SecretName, k8smeta.GetOptions{})
-	if err != nil {
-		secretPayload = &k8score.Secret{
-			TypeMeta: k8smeta.TypeMeta{
-				Kind:       "Secret",
-				APIVersion: "v1",
-			},
-			ObjectMeta: k8smeta.ObjectMeta{
-				Name:        d.config.SecretName,
-				Annotations: secretAnnotations,
-			},
-			Type: k8score.SecretType(d.config.SecretType),
-		}
-		secretPayload.Data = make(map[string][]byte)
-		secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
-		secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
-
-		secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Create(context.TODO(), secretPayload, k8smeta.CreateOptions{})
-		d.logger.Debug("k8s operate 'Secrets.Create'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
+	// 遍历所有命名空间，创建或更新 Secret
+	for _, namespace := range d.config.Namespaces {
+		var secretPayload *k8score.Secret
+		// 获取 Secret 实例，如果不存在则创建
+		secretPayload, err = client.CoreV1().Secrets(namespace).Get(context.TODO(), d.config.SecretName, k8smeta.GetOptions{})
 		if err != nil {
-			return nil, fmt.Errorf("failed to create k8s secret: %w", err)
-		} else {
-			return &deployer.DeployResult{}, nil
-		}
-	}
+			secretPayload = &k8score.Secret{
+				TypeMeta: k8smeta.TypeMeta{
+					Kind:       "Secret",
+					APIVersion: "v1",
+				},
+				ObjectMeta: k8smeta.ObjectMeta{
+					Name:        d.config.SecretName,
+					Annotations: secretAnnotations,
+				},
+				Type: k8score.SecretType(d.config.SecretType),
+			}
+			secretPayload.Data = make(map[string][]byte)
+			secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
+			secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
 
-	// 更新 Secret 实例
-	secretPayload.Type = k8score.SecretType(d.config.SecretType)
-	if secretPayload.ObjectMeta.Annotations == nil {
-		secretPayload.ObjectMeta.Annotations = secretAnnotations
-	} else {
-		for k, v := range secretAnnotations {
-			secretPayload.ObjectMeta.Annotations[k] = v
+			secretPayload, err = client.CoreV1().Secrets(namespace).Create(context.TODO(), secretPayload, k8smeta.CreateOptions{})
+			d.logger.Debug("k8s operate 'Secrets.Create'", slog.String("namespace", namespace), slog.Any("secret", secretPayload))
+			if err != nil {
+				return nil, fmt.Errorf("failed to create k8s secret in namespace %s: %w", namespace, err)
+			}
+		} else {
+			// 更新 Secret 实例
+			secretPayload.Type = k8score.SecretType(d.config.SecretType)
+			if secretPayload.ObjectMeta.Annotations == nil {
+				secretPayload.ObjectMeta.Annotations = secretAnnotations
+			} else {
+				for k, v := range secretAnnotations {
+					secretPayload.ObjectMeta.Annotations[k] = v
+				}
+			}
+			if secretPayload.Data == nil {
+				secretPayload.Data = make(map[string][]byte)
+			}
+			secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
+			secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
+			secretPayload, err = client.CoreV1().Secrets(namespace).Update(context.TODO(), secretPayload, k8smeta.UpdateOptions{})
+			d.logger.Debug("k8s operate 'Secrets.Update'", slog.String("namespace", namespace), slog.Any("secret", secretPayload))
+			if err != nil {
+				return nil, fmt.Errorf("failed to update k8s secret in namespace %s: %w", namespace, err)
+			}
 		}
-	}
-	if secretPayload.Data == nil {
-		secretPayload.Data = make(map[string][]byte)
-	}
-	secretPayload.Data[d.config.SecretDataKeyForCrt] = []byte(certPEM)
-	secretPayload.Data[d.config.SecretDataKeyForKey] = []byte(privkeyPEM)
-	secretPayload, err = client.CoreV1().Secrets(d.config.Namespace).Update(context.TODO(), secretPayload, k8smeta.UpdateOptions{})
-	d.logger.Debug("k8s operate 'Secrets.Update'", slog.String("namespace", d.config.Namespace), slog.Any("secret", secretPayload))
-	if err != nil {
-		return nil, fmt.Errorf("failed to update k8s secret: %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
