@@ -483,10 +483,6 @@ export const cloneNode = (sourceNode: WorkflowNode): WorkflowNode => {
 };
 
 export const addNode = (root: WorkflowNode, targetNode: WorkflowNode, previousNodeId: string) => {
-  if (isBranchNode(targetNode)) {
-    throw new Error("Cannot add a branch node directly. Use `addBranch` instead.");
-  }
-
   return produce(root, (draft) => {
     let current = draft;
     while (current) {
