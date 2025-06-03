@@ -28,6 +28,7 @@ const (
 	AccessProviderTypeCloudflare          = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS             = AccessProviderType("cloudns")
 	AccessProviderTypeCMCCCloud           = AccessProviderType("cmcccloud")
+	AccessProviderTypeConstellix          = AccessProviderType("constellix")
 	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 天翼云（预留）
 	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 联通云（预留）
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
@@ -131,6 +132,7 @@ const (
 	ACMEDns01ProviderTypeCloudflare      = ACMEDns01ProviderType(AccessProviderTypeCloudflare)
 	ACMEDns01ProviderTypeClouDNS         = ACMEDns01ProviderType(AccessProviderTypeClouDNS)
 	ACMEDns01ProviderTypeCMCCCloud       = ACMEDns01ProviderType(AccessProviderTypeCMCCCloud)
+	ACMEDns01ProviderTypeConstellix      = ACMEDns01ProviderType(AccessProviderTypeConstellix)
 	ACMEDns01ProviderTypeDeSEC           = ACMEDns01ProviderType(AccessProviderTypeDeSEC)
 	ACMEDns01ProviderTypeDigitalOcean    = ACMEDns01ProviderType(AccessProviderTypeDigitalOcean)
 	ACMEDns01ProviderTypeDNSLA           = ACMEDns01ProviderType(AccessProviderTypeDNSLA)
@@ -156,6 +158,7 @@ const (
 	ACMEDns01ProviderTypeTencentCloud    = ACMEDns01ProviderType(AccessProviderTypeTencentCloud) // 兼容旧值，等同于 [ACMEDns01ProviderTypeTencentCloudDNS]
 	ACMEDns01ProviderTypeTencentCloudDNS = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-dns")
 	ACMEDns01ProviderTypeTencentCloudEO  = ACMEDns01ProviderType(AccessProviderTypeTencentCloud + "-eo")
+	ACMEDns01ProviderTypeUCloudUDNR      = ACMEDns01ProviderType(AccessProviderTypeUCloud + "-udnr")
 	ACMEDns01ProviderTypeVercel          = ACMEDns01ProviderType(AccessProviderTypeVercel)
 	ACMEDns01ProviderTypeVolcEngine      = ACMEDns01ProviderType(AccessProviderTypeVolcEngine) // 兼容旧值，等同于 [ACMEDns01ProviderTypeVolcEngineDNS]
 	ACMEDns01ProviderTypeVolcEngineDNS   = ACMEDns01ProviderType(AccessProviderTypeVolcEngine + "-dns")
@@ -192,6 +195,7 @@ const (
 	DeploymentProviderTypeAliyunWAF             = DeploymentProviderType(AccessProviderTypeAliyun + "-waf")
 	DeploymentProviderTypeAWSACM                = DeploymentProviderType(AccessProviderTypeAWS + "-acm")
 	DeploymentProviderTypeAWSCloudFront         = DeploymentProviderType(AccessProviderTypeAWS + "-cloudfront")
+	DeploymentProviderTypeAWSIAM                = DeploymentProviderType(AccessProviderTypeAWS + "-iam")
 	DeploymentProviderTypeAzureKeyVault         = DeploymentProviderType(AccessProviderTypeAzure + "-keyvault")
 	DeploymentProviderTypeBaiduCloudAppBLB      = DeploymentProviderType(AccessProviderTypeBaiduCloud + "-appblb")
 	DeploymentProviderTypeBaiduCloudBLB         = DeploymentProviderType(AccessProviderTypeBaiduCloud + "-blb")

@@ -14,7 +14,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
+	uploaderspacm "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
+	uploaderspiam "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-iam"
 )
 
 type DeployerConfig struct {
@@ -26,6 +27,9 @@ type DeployerConfig struct {
 	Region string `json:"region"`
 	// AWS CloudFront 分配 ID。
 	DistributionId string `json:"distributionId"`
+	// AWS CloudFront 证书来源。
+	// 可取值 "ACM"、"IAM"。
+	CertificateSource string `json:"certificateSource"`
 }
 
 type DeployerProvider struct {
@@ -47,13 +51,28 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		return nil, fmt.Errorf("failed to create sdk client: %w", err)
 	}
 
-	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
-		AccessKeyId:     config.AccessKeyId,
-		SecretAccessKey: config.SecretAccessKey,
-		Region:          config.Region,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
+	var uploader uploader.Uploader
+	if config.CertificateSource == "ACM" {
+		uploader, err = uploaderspacm.NewUploader(&uploaderspacm.UploaderConfig{
+			AccessKeyId:     config.AccessKeyId,
+			SecretAccessKey: config.SecretAccessKey,
+			Region:          config.Region,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
+		}
+	} else if config.CertificateSource == "IAM" {
+		uploader, err = uploaderspiam.NewUploader(&uploaderspiam.UploaderConfig{
+			AccessKeyId:     config.AccessKeyId,
+			SecretAccessKey: config.SecretAccessKey,
+			Region:          config.Region,
+			CertificatePath: "/cloudfront/",
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create ssl uploader: %w", err)
+		}
+	} else {
+		return nil, fmt.Errorf("unsupported certificate source: '%s'", config.CertificateSource)
 	}
 
 	return &DeployerProvider{
@@ -79,7 +98,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, errors.New("config `distribuitionId` is required")
 	}
 
-	// 上传证书到 ACM
+	// 上传证书到 ACM/IAM
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to upload certificate file: %w", err)
@@ -109,7 +128,19 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		updateDistributionReq.DistributionConfig.ViewerCertificate = &types.ViewerCertificate{}
 	}
 	updateDistributionReq.DistributionConfig.ViewerCertificate.CloudFrontDefaultCertificate = aws.Bool(false)
-	updateDistributionReq.DistributionConfig.ViewerCertificate.ACMCertificateArn = aws.String(upres.CertId)
+	if d.config.CertificateSource == "ACM" {
+		updateDistributionReq.DistributionConfig.ViewerCertificate.ACMCertificateArn = aws.String(upres.CertId)
+		updateDistributionReq.DistributionConfig.ViewerCertificate.IAMCertificateId = nil
+	} else if d.config.CertificateSource == "IAM" {
+		updateDistributionReq.DistributionConfig.ViewerCertificate.ACMCertificateArn = nil
+		updateDistributionReq.DistributionConfig.ViewerCertificate.IAMCertificateId = aws.String(upres.CertId)
+		if updateDistributionReq.DistributionConfig.ViewerCertificate.MinimumProtocolVersion == "" {
+			updateDistributionReq.DistributionConfig.ViewerCertificate.MinimumProtocolVersion = types.MinimumProtocolVersionTLSv1
+		}
+		if updateDistributionReq.DistributionConfig.ViewerCertificate.SSLSupportMethod == "" {
+			updateDistributionReq.DistributionConfig.ViewerCertificate.SSLSupportMethod = types.SSLSupportMethodSniOnly
+		}
+	}
 	updateDistributionResp, err := d.sdkClient.UpdateDistribution(context.TODO(), updateDistributionReq)
 	d.logger.Debug("sdk request 'cloudfront.UpdateDistribution'", slog.Any("request", updateDistributionReq), slog.Any("response", updateDistributionResp))
 	if err != nil {

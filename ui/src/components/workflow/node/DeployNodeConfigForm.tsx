@@ -35,6 +35,7 @@ import DeployNodeConfigFormAliyunVODConfig from "./DeployNodeConfigFormAliyunVOD
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
 import DeployNodeConfigFormAWSACMConfig from "./DeployNodeConfigFormAWSACMConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
+import DeployNodeConfigFormAWSIAMConfig from "./DeployNodeConfigFormAWSIAMConfig";
 import DeployNodeConfigFormAzureKeyVaultConfig from "./DeployNodeConfigFormAzureKeyVaultConfig";
 import DeployNodeConfigFormBaiduCloudAppBLBConfig from "./DeployNodeConfigFormBaiduCloudAppBLBConfig";
 import DeployNodeConfigFormBaiduCloudBLBConfig from "./DeployNodeConfigFormBaiduCloudBLBConfig";
@@ -238,6 +239,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAWSACMConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.AWS_CLOUDFRONT:
           return <DeployNodeConfigFormAWSCloudFrontConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.AWS_IAM:
+          return <DeployNodeConfigFormAWSIAMConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.AZURE_KEYVAULT:
           return <DeployNodeConfigFormAzureKeyVaultConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.BAIDUCLOUD_APPBLB:

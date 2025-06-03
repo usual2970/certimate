@@ -1,10 +1,9 @@
-package lego_tencentcloudeo
+package internal
 
 import (
 	"errors"
 	"fmt"
 	"math"
-	"strings"
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
@@ -91,7 +90,7 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	if err := d.addOrUpdateDNSRecord(strings.TrimRight(info.EffectiveFQDN, "."), info.Value); err != nil {
+	if err := d.addOrUpdateDNSRecord(dns01.UnFqdn(info.EffectiveFQDN), info.Value); err != nil {
 		return fmt.Errorf("tencentcloud-eo: %w", err)
 	}
 
@@ -101,7 +100,7 @@ func (d *DNSProvider) Present(domain, token, keyAuth string) error {
 func (d *DNSProvider) CleanUp(domain, token, keyAuth string) error {
 	info := dns01.GetChallengeInfo(domain, keyAuth)
 
-	if err := d.removeDNSRecord(strings.TrimRight(info.EffectiveFQDN, ".")); err != nil {
+	if err := d.removeDNSRecord(dns01.UnFqdn(info.EffectiveFQDN)); err != nil {
 		return fmt.Errorf("tencentcloud-eo: %w", err)
 	}
 

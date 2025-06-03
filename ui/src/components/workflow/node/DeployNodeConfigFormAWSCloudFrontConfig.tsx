@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { Form, type FormInstance, Input } from "antd";
+import { Form, type FormInstance, Input, Select } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
 type DeployNodeConfigFormAWSCloudFrontConfigFieldValues = Nullish<{
   region: string;
   distributionId: string;
+  certificateSource: string;
 }>;
 
 export type DeployNodeConfigFormAWSCloudFrontConfigProps = {
@@ -17,7 +18,9 @@ export type DeployNodeConfigFormAWSCloudFrontConfigProps = {
 };
 
 const initFormModel = (): DeployNodeConfigFormAWSCloudFrontConfigFieldValues => {
-  return {};
+  return {
+    certificateSource: "ACM",
+  };
 };
 
 const DeployNodeConfigFormAWSCloudFrontConfig = ({
@@ -30,15 +33,9 @@ const DeployNodeConfigFormAWSCloudFrontConfig = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    region: z
-      .string({ message: t("workflow_node.deploy.form.aws_cloudfront_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aws_cloudfront_region.placeholder"))
-      .trim(),
-    distributionId: z
-      .string({ message: t("workflow_node.deploy.form.aws_cloudfront_distribution_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aws_cloudfront_distribution_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+    region: z.string().trim().nonempty(t("workflow_node.deploy.form.aws_cloudfront_region.placeholder")),
+    distributionId: z.string().trim().nonempty(t("workflow_node.deploy.form.aws_cloudfront_distribution_id.placeholder")),
+    certificateSource: z.string().trim().nonempty(t("workflow_node.deploy.form.aws_cloudfront_certificate_source.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -71,6 +68,17 @@ const DeployNodeConfigFormAWSCloudFrontConfig = ({
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.deploy.form.aws_cloudfront_distribution_id.tooltip") }}></span>}
       >
         <Input placeholder={t("workflow_node.deploy.form.aws_cloudfront_distribution_id.placeholder")} />
+      </Form.Item>
+
+      <Form.Item name="certificateSource" label={t("workflow_node.deploy.form.aws_cloudfront_certificate_source.label")} rules={[formRule]}>
+        <Select placeholder={t("workflow_node.deploy.form.aws_cloudfront_certificate_source.placeholder")}>
+          <Select.Option key="ACM" value="ACM">
+            ACM
+          </Select.Option>
+          <Select.Option key="IAM" value="IAM">
+            IAM
+          </Select.Option>
+        </Select>
       </Form.Item>
     </Form>
   );

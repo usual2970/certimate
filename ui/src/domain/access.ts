@@ -23,6 +23,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForCloudflare
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
+      | AccessConfigForConstellix
       | AccessConfigForDeSEC
       | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
@@ -170,6 +171,11 @@ export type AccessConfigForClouDNS = {
 export type AccessConfigForCMCCCloud = {
   accessKeyId: string;
   accessKeySecret: string;
+};
+
+export type AccessConfigForConstellix = {
+  apiKey: string;
+  secretKey: string;
 };
 
 export type AccessConfigForDeSEC = {
@@ -373,7 +379,8 @@ export type AccessConfigForSlackBot = {
 export type AccessConfigForSSH = {
   host: string;
   port: number;
-  username: string;
+  authMethod?: string;
+  username?: string;
   password?: string;
   key?: string;
   keyPassphrase?: string;

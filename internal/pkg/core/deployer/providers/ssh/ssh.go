@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/sftp"
 	"github.com/povsister/scp"
@@ -24,7 +25,12 @@ type JumpServerConfig struct {
 	// SSH 端口。
 	// 零值时默认值 22。
 	SshPort int32 `json:"sshPort,omitempty"`
+	// SSH 认证方式。
+	// 可取值 "none"、"password"、"key"。
+	// 零值时根据有无密码或私钥字段决定。
+	SshAuthMethod string `json:"sshAuthMethod,omitempty"`
 	// SSH 登录用户名。
+	// 零值时默认值 "root"。
 	SshUsername string `json:"sshUsername,omitempty"`
 	// SSH 登录密码。
 	SshPassword string `json:"sshPassword,omitempty"`
@@ -41,7 +47,12 @@ type DeployerConfig struct {
 	// SSH 端口。
 	// 零值时默认值 22。
 	SshPort int32 `json:"sshPort,omitempty"`
+	// SSH 认证方式。
+	// 可取值 "none"、"password" 或 "key"。
+	// 零值时根据有无密码或私钥字段决定。
+	SshAuthMethod string `json:"sshAuthMethod,omitempty"`
 	// SSH 登录用户名。
+	// 零值时默认值 "root"。
 	SshUsername string `json:"sshUsername,omitempty"`
 	// SSH 登录密码。
 	SshPassword string `json:"sshPassword,omitempty"`
@@ -141,6 +152,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 				jumpConn,
 				jumpServerConf.SshHost,
 				jumpServerConf.SshPort,
+				jumpServerConf.SshAuthMethod,
 				jumpServerConf.SshUsername,
 				jumpServerConf.SshPassword,
 				jumpServerConf.SshKey,
@@ -174,6 +186,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		targetConn,
 		d.config.SshHost,
 		d.config.SshPort,
+		d.config.SshAuthMethod,
 		d.config.SshUsername,
 		d.config.SshPassword,
 		d.config.SshKey,
@@ -262,7 +275,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSshClient(conn net.Conn, host string, port int32, username string, password string, key string, keyPassphrase string) (*ssh.Client, error) {
+func createSshClient(conn net.Conn, host string, port int32, authMethod string, username, password, key, keyPassphrase string) (*ssh.Client, error) {
 	if host == "" {
 		host = "localhost"
 	}
@@ -271,28 +284,65 @@ func createSshClient(conn net.Conn, host string, port int32, username string, pa
 		port = 22
 	}
 
-	var authMethod ssh.AuthMethod
-	if key != "" {
-		var signer ssh.Signer
-		var err error
+	if username == "" {
+		username = "root"
+	}
 
-		if keyPassphrase != "" {
-			signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(key), []byte(keyPassphrase))
+	const AUTH_METHOD_NONE = "none"
+	const AUTH_METHOD_PASSWORD = "password"
+	const AUTH_METHOD_KEY = "key"
+	if authMethod == "" {
+		if key != "" {
+			authMethod = AUTH_METHOD_KEY
+		} else if password != "" {
+			authMethod = AUTH_METHOD_PASSWORD
 		} else {
-			signer, err = ssh.ParsePrivateKey([]byte(key))
+			authMethod = AUTH_METHOD_NONE
+		}
+	}
+
+	authentications := make([]ssh.AuthMethod, 0)
+	switch authMethod {
+	case AUTH_METHOD_NONE:
+		{
 		}
 
-		if err != nil {
-			return nil, err
+	case AUTH_METHOD_PASSWORD:
+		{
+			authentications = append(authentications, ssh.Password(password))
+			authentications = append(authentications, ssh.KeyboardInteractive(func(user, instruction string, questions []string, echos []bool) ([]string, error) {
+				if len(questions) == 1 {
+					return []string{password}, nil
+				}
+				return nil, fmt.Errorf("unexpected keyboard interactive question [%s]", strings.Join(questions, ", "))
+			}))
 		}
-		authMethod = ssh.PublicKeys(signer)
-	} else {
-		authMethod = ssh.Password(password)
+
+	case AUTH_METHOD_KEY:
+		{
+			var signer ssh.Signer
+			var err error
+
+			if keyPassphrase != "" {
+				signer, err = ssh.ParsePrivateKeyWithPassphrase([]byte(key), []byte(keyPassphrase))
+			} else {
+				signer, err = ssh.ParsePrivateKey([]byte(key))
+			}
+
+			if err != nil {
+				return nil, err
+			}
+
+			authentications = append(authentications, ssh.PublicKeys(signer))
+		}
+
+	default:
+		return nil, fmt.Errorf("unsupported auth method '%s'", authMethod)
 	}
 
 	sshConn, chans, reqs, err := ssh.NewClientConn(conn, fmt.Sprintf("%s:%d", host, port), &ssh.ClientConfig{
 		User:            username,
-		Auth:            []ssh.AuthMethod{authMethod},
+		Auth:            authentications,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	})
 	if err != nil {

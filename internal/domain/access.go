@@ -109,6 +109,11 @@ type AccessConfigForCMCCCloud struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
+type AccessConfigForConstellix struct {
+	ApiKey    string `json:"apiKey"`
+	SecretKey string `json:"secretKey"`
+}
+
 type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }
@@ -310,14 +315,16 @@ type AccessConfigForSlackBot struct {
 type AccessConfigForSSH struct {
 	Host          string `json:"host"`
 	Port          int32  `json:"port"`
-	Username      string `json:"username"`
+	AuthMethod    string `json:"authMethod,omitempty"`
+	Username      string `json:"username,omitempty"`
 	Password      string `json:"password,omitempty"`
 	Key           string `json:"key,omitempty"`
 	KeyPassphrase string `json:"keyPassphrase,omitempty"`
 	JumpServers   []struct {
 		Host          string `json:"host"`
 		Port          int32  `json:"port"`
-		Username      string `json:"username"`
+		AuthMethod    string `json:"authMethod,omitempty"`
+		Username      string `json:"username,omitempty"`
 		Password      string `json:"password,omitempty"`
 		Key           string `json:"key,omitempty"`
 		KeyPassphrase string `json:"keyPassphrase,omitempty"`
