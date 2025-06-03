@@ -28,6 +28,7 @@ const (
 	AccessProviderTypeCloudflare          = AccessProviderType("cloudflare")
 	AccessProviderTypeClouDNS             = AccessProviderType("cloudns")
 	AccessProviderTypeCMCCCloud           = AccessProviderType("cmcccloud")
+	AccessProviderTypeConstellix          = AccessProviderType("constellix")
 	AccessProviderTypeCTCCCloud           = AccessProviderType("ctcccloud") // 天翼云（预留）
 	AccessProviderTypeCUCCCloud           = AccessProviderType("cucccloud") // 联通云（预留）
 	AccessProviderTypeDeSEC               = AccessProviderType("desec")
@@ -131,6 +132,7 @@ const (
 	ACMEDns01ProviderTypeCloudflare      = ACMEDns01ProviderType(AccessProviderTypeCloudflare)
 	ACMEDns01ProviderTypeClouDNS         = ACMEDns01ProviderType(AccessProviderTypeClouDNS)
 	ACMEDns01ProviderTypeCMCCCloud       = ACMEDns01ProviderType(AccessProviderTypeCMCCCloud)
+	ACMEDns01ProviderTypeConstellix      = ACMEDns01ProviderType(AccessProviderTypeConstellix)
 	ACMEDns01ProviderTypeDeSEC           = ACMEDns01ProviderType(AccessProviderTypeDeSEC)
 	ACMEDns01ProviderTypeDigitalOcean    = ACMEDns01ProviderType(AccessProviderTypeDigitalOcean)
 	ACMEDns01ProviderTypeDNSLA           = ACMEDns01ProviderType(AccessProviderTypeDNSLA)

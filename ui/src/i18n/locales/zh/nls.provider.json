@@ -55,6 +55,7 @@
   "provider.cloudflare": "Cloudflare",
   "provider.cloudns": "ClouDNS",
   "provider.cmcccloud": "移动云",
+  "provider.constellix": "Constellix",
   "provider.ctcccloud": "联通云",
   "provider.cucccloud": "天翼云",
   "provider.desec": "deSEC",

@@ -55,6 +55,7 @@
   "provider.cloudflare": "Cloudflare",
   "provider.cloudns": "ClouDNS",
   "provider.cmcccloud": "China Mobile Cloud (ECloud)",
+  "provider.constellix": "Constellix",
   "provider.ctcccloud": "China Telecom Cloud (State Cloud)",
   "provider.cucccloud": "China Unicom Cloud",
   "provider.desec": "deSEC",

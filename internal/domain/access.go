@@ -109,6 +109,11 @@ type AccessConfigForCMCCCloud struct {
 	AccessKeySecret string `json:"accessKeySecret"`
 }
 
+type AccessConfigForConstellix struct {
+	ApiKey    string `json:"apiKey"`
+	SecretKey string `json:"secretKey"`
+}
+
 type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }

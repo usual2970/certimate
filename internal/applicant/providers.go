@@ -16,6 +16,7 @@ import (
 	pCloudflare "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudflare"
 	pClouDNS "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cloudns"
 	pCMCCCloud "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cmcccloud"
+	pConstellix "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/constellix"
 	pDeSEC "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/desec"
 	pDigitalOcean "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/digitalocean"
 	pDNSLA "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/dnsla"
@@ -228,6 +229,22 @@ func createApplicantProvider(options *applicantProviderOptions) (challenge.Provi
 			applicant, err := pCMCCCloud.NewChallengeProvider(&pCMCCCloud.ChallengeProviderConfig{
 				AccessKeyId:           access.AccessKeyId,
 				AccessKeySecret:       access.AccessKeySecret,
+				DnsPropagationTimeout: options.DnsPropagationTimeout,
+				DnsTTL:                options.DnsTTL,
+			})
+			return applicant, err
+		}
+
+	case domain.ACMEDns01ProviderTypeConstellix:
+		{
+			access := domain.AccessConfigForConstellix{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			applicant, err := pConstellix.NewChallengeProvider(&pConstellix.ChallengeProviderConfig{
+				ApiKey:                access.ApiKey,
+				SecretKey:             access.SecretKey,
 				DnsPropagationTimeout: options.DnsPropagationTimeout,
 				DnsTTL:                options.DnsTTL,
 			})
