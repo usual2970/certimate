@@ -379,7 +379,8 @@ export type AccessConfigForSlackBot = {
 export type AccessConfigForSSH = {
   host: string;
   port: number;
-  username: string;
+  authMethod?: string;
+  username?: string;
   password?: string;
   key?: string;
   keyPassphrase?: string;

@@ -997,6 +997,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				jumpServers[i] = pSSH.JumpServerConfig{
 					SshHost:          jumpServer.Host,
 					SshPort:          jumpServer.Port,
+					SshAuthMethod:    jumpServer.AuthMethod,
 					SshUsername:      jumpServer.Username,
 					SshPassword:      jumpServer.Password,
 					SshKey:           jumpServer.Key,
@@ -1007,6 +1008,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			deployer, err := pSSH.NewDeployer(&pSSH.DeployerConfig{
 				SshHost:                  access.Host,
 				SshPort:                  access.Port,
+				SshAuthMethod:            access.AuthMethod,
 				SshUsername:              access.Username,
 				SshPassword:              access.Password,
 				SshKey:                   access.Key,

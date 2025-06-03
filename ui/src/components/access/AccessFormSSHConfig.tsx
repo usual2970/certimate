@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { ArrowDownOutlined, ArrowUpOutlined, CloseOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Collapse, Form, type FormInstance, Input, InputNumber, Space } from "antd";
+import { Button, Collapse, Form, type FormInstance, Input, InputNumber, Select, Space } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
+import Show from "@/components/Show";
 import TextFileInput from "@/components/TextFileInput";
 import { type AccessConfigForSSH } from "@/domain/access";
 import { validDomainName, validIPv4Address, validIPv6Address, validPortNumber } from "@/utils/validators";
@@ -18,10 +19,15 @@ export type AccessFormSSHConfigProps = {
   onValuesChange?: (values: AccessFormSSHConfigFieldValues) => void;
 };
 
+const AUTH_METHOD_NONE = "none" as const;
+const AUTH_METHOD_PASSWORD = "password" as const;
+const AUTH_METHOD_KEY = "key" as const;
+
 const initFormModel = (): AccessFormSSHConfigFieldValues => {
   return {
     host: "127.0.0.1",
     port: 22,
+    authMethod: AUTH_METHOD_PASSWORD,
     username: "root",
   };
 };
@@ -38,6 +44,9 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
         .int(t("access.form.ssh_port.placeholder"))
         .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
     ),
+    authMethod: z.union([z.literal(AUTH_METHOD_NONE), z.literal(AUTH_METHOD_PASSWORD), z.literal(AUTH_METHOD_KEY)], {
+      message: t("access.form.ssh_auth_method.placeholder"),
+    }),
     username: z
       .string()
       .min(1, t("access.form.ssh_username.placeholder"))
@@ -45,11 +54,13 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
     password: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .nullish(),
+      .nullish()
+      .refine((v) => fieldAuthMethod !== AUTH_METHOD_PASSWORD || !!v?.trim(), t("access.form.ssh_password.placeholder")),
     key: z
       .string()
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
-      .nullish(),
+      .nullish()
+      .refine((v) => fieldAuthMethod !== AUTH_METHOD_KEY || !!v?.trim(), t("access.form.ssh_key.placeholder")),
     keyPassphrase: z
       .string()
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
@@ -57,46 +68,42 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
       .refine((v) => !v || formInst.getFieldValue("key"), t("access.form.ssh_key.placeholder")),
     jumpServers: z
       .array(
-        z
-          .object({
-            host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
-            port: z.preprocess(
-              (v) => Number(v),
-              z
-                .number()
-                .int(t("access.form.ssh_port.placeholder"))
-                .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
-            ),
-            username: z
-              .string()
-              .min(1, t("access.form.ssh_username.placeholder"))
-              .max(64, t("common.errmsg.string_max", { max: 64 })),
-            password: z
-              .string()
-              .max(64, t("common.errmsg.string_max", { max: 64 }))
-              .nullish(),
-            key: z
-              .string()
-              .max(20480, t("common.errmsg.string_max", { max: 20480 }))
-              .nullish(),
-            keyPassphrase: z
-              .string()
-              .max(20480, t("common.errmsg.string_max", { max: 20480 }))
-              .nullish(),
-          })
-          .superRefine((data, ctx) => {
-            if (data.keyPassphrase && !data.key) {
-              ctx.addIssue({
-                path: ["keyPassphrase"],
-                code: z.ZodIssueCode.custom,
-                message: t("access.form.ssh_key.placeholder"),
-              });
-            }
-          })
+        z.object({
+          host: z.string().refine((v) => validDomainName(v) || validIPv4Address(v) || validIPv6Address(v), t("common.errmsg.host_invalid")),
+          port: z.preprocess(
+            (v) => Number(v),
+            z
+              .number()
+              .int(t("access.form.ssh_port.placeholder"))
+              .refine((v) => validPortNumber(v), t("common.errmsg.port_invalid"))
+          ),
+          authMethod: z.union([z.literal(AUTH_METHOD_NONE), z.literal(AUTH_METHOD_PASSWORD), z.literal(AUTH_METHOD_KEY)], {
+            message: t("access.form.ssh_auth_method.placeholder"),
+          }),
+          username: z
+            .string()
+            .min(1, t("access.form.ssh_username.placeholder"))
+            .max(64, t("common.errmsg.string_max", { max: 64 })),
+          password: z
+            .string()
+            .max(64, t("common.errmsg.string_max", { max: 64 }))
+            .nullish(),
+          key: z
+            .string()
+            .max(20480, t("common.errmsg.string_max", { max: 20480 }))
+            .nullish(),
+          keyPassphrase: z
+            .string()
+            .max(20480, t("common.errmsg.string_max", { max: 20480 }))
+            .nullish(),
+        }),
+        { message: t("access.form.ssh_jump_servers.errmsg.invalid") }
       )
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
+
+  const fieldAuthMethod = Form.useWatch("authMethod", formInst);
 
   const handleFormChange = (_: unknown, values: z.infer<typeof formSchema>) => {
     onValuesChange?.(values);
@@ -125,36 +132,39 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
         </div>
       </div>
 
+      <Form.Item name="authMethod" label={t("access.form.ssh_auth_method.label")} rules={[formRule]}>
+        <Select placeholder={t("access.form.ssh_auth_method.placeholder")}>
+          <Select.Option key={AUTH_METHOD_NONE} value={AUTH_METHOD_NONE}>
+            {t("access.form.ssh_auth_method.option.none.label")}
+          </Select.Option>
+          <Select.Option key={AUTH_METHOD_PASSWORD} value={AUTH_METHOD_PASSWORD}>
+            {t("access.form.ssh_auth_method.option.password.label")}
+          </Select.Option>
+          <Select.Option key={AUTH_METHOD_KEY} value={AUTH_METHOD_KEY}>
+            {t("access.form.ssh_auth_method.option.key.label")}
+          </Select.Option>
+        </Select>
+      </Form.Item>
+
       <Form.Item name="username" label={t("access.form.ssh_username.label")} rules={[formRule]}>
         <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
       </Form.Item>
 
-      <Form.Item
-        name="password"
-        label={t("access.form.ssh_password.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_password.tooltip") }}></span>}
-      >
-        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
-      </Form.Item>
+      <Show when={fieldAuthMethod === AUTH_METHOD_PASSWORD}>
+        <Form.Item name="password" label={t("access.form.ssh_password.label")} rules={[formRule]}>
+          <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
+        </Form.Item>
+      </Show>
 
-      <Form.Item
-        name="key"
-        label={t("access.form.ssh_key.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}
-      >
-        <TextFileInput allowClear autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("access.form.ssh_key.placeholder")} />
-      </Form.Item>
+      <Show when={fieldAuthMethod === AUTH_METHOD_KEY}>
+        <Form.Item name="key" label={t("access.form.ssh_key.label")} rules={[formRule]}>
+          <TextFileInput allowClear autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("access.form.ssh_key.placeholder")} />
+        </Form.Item>
 
-      <Form.Item
-        name="keyPassphrase"
-        label={t("access.form.ssh_key_passphrase.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key_passphrase.tooltip") }}></span>}
-      >
-        <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
-      </Form.Item>
+        <Form.Item name="keyPassphrase" label={t("access.form.ssh_key_passphrase.label")} rules={[formRule]}>
+          <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
+        </Form.Item>
+      </Show>
 
       <Form.Item name="jumpServers" label={t("access.form.ssh_jump_servers.label")} rules={[formRule]}>
         <Form.List name="jumpServers">
@@ -171,6 +181,60 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
                         <span className="select-none">
                           [{t("access.form.ssh_jump_servers.item.label")} {field.name + 1}] {addr}
                         </span>
+                      );
+                    };
+
+                    const Fields = () => {
+                      const authMethod = Form.useWatch(["jumpServers", field.name, "authMethod"], formInst);
+                      return (
+                        <>
+                          <div className="flex space-x-2">
+                            <div className="w-2/3">
+                              <Form.Item name={[field.name, "host"]} label={t("access.form.ssh_host.label")} rules={[formRule]}>
+                                <Input placeholder={t("access.form.ssh_host.placeholder")} />
+                              </Form.Item>
+                            </div>
+                            <div className="w-1/3">
+                              <Form.Item name={[field.name, "port"]} label={t("access.form.ssh_port.label")} rules={[formRule]}>
+                                <InputNumber className="w-full" placeholder={t("access.form.ssh_port.placeholder")} min={1} max={65535} />
+                              </Form.Item>
+                            </div>
+                          </div>
+
+                          <Form.Item name={[field.name, "authMethod"]} label={t("access.form.ssh_auth_method.label")} rules={[formRule]}>
+                            <Select placeholder={t("access.form.ssh_auth_method.placeholder")}>
+                              <Select.Option key={AUTH_METHOD_NONE} value={AUTH_METHOD_NONE}>
+                                {t("access.form.ssh_auth_method.option.none.label")}
+                              </Select.Option>
+                              <Select.Option key={AUTH_METHOD_PASSWORD} value={AUTH_METHOD_PASSWORD}>
+                                {t("access.form.ssh_auth_method.option.password.label")}
+                              </Select.Option>
+                              <Select.Option key={AUTH_METHOD_KEY} value={AUTH_METHOD_KEY}>
+                                {t("access.form.ssh_auth_method.option.key.label")}
+                              </Select.Option>
+                            </Select>
+                          </Form.Item>
+
+                          <Form.Item name={[field.name, "username"]} label={t("access.form.ssh_username.label")} rules={[formRule]}>
+                            <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
+                          </Form.Item>
+
+                          <Show when={authMethod === AUTH_METHOD_PASSWORD}>
+                            <Form.Item name={[field.name, "password"]} label={t("access.form.ssh_password.label")} rules={[formRule]}>
+                              <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
+                            </Form.Item>
+                          </Show>
+
+                          <Show when={authMethod === AUTH_METHOD_KEY}>
+                            <Form.Item name={[field.name, "key"]} label={t("access.form.ssh_key.label")} rules={[formRule]}>
+                              <TextFileInput allowClear autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("access.form.ssh_key.placeholder")} />
+                            </Form.Item>
+
+                            <Form.Item name={[field.name, "keyPassphrase"]} label={t("access.form.ssh_key_passphrase.label")} rules={[formRule]}>
+                              <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
+                            </Form.Item>
+                          </Show>
+                        </>
                       );
                     };
 
@@ -214,58 +278,12 @@ const AccessFormSSHConfig = ({ form: formInst, formName, disabled, initialValues
                           />
                         </Space.Compact>
                       ),
-                      children: (
-                        <>
-                          <div className="flex space-x-2">
-                            <div className="w-2/3">
-                              <Form.Item name={[field.name, "host"]} label={t("access.form.ssh_host.label")} rules={[formRule]}>
-                                <Input placeholder={t("access.form.ssh_host.placeholder")} />
-                              </Form.Item>
-                            </div>
-                            <div className="w-1/3">
-                              <Form.Item name={[field.name, "port"]} label={t("access.form.ssh_port.label")} rules={[formRule]}>
-                                <InputNumber className="w-full" placeholder={t("access.form.ssh_port.placeholder")} min={1} max={65535} />
-                              </Form.Item>
-                            </div>
-                          </div>
-
-                          <Form.Item name={[field.name, "username"]} label={t("access.form.ssh_username.label")} rules={[formRule]}>
-                            <Input autoComplete="new-password" placeholder={t("access.form.ssh_username.placeholder")} />
-                          </Form.Item>
-
-                          <Form.Item
-                            name={[field.name, "password"]}
-                            label={t("access.form.ssh_password.label")}
-                            rules={[formRule]}
-                            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_password.tooltip") }}></span>}
-                          >
-                            <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_password.placeholder")} />
-                          </Form.Item>
-
-                          <Form.Item
-                            name={[field.name, "key"]}
-                            label={t("access.form.ssh_key.label")}
-                            rules={[formRule]}
-                            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key.tooltip") }}></span>}
-                          >
-                            <TextFileInput allowClear autoSize={{ minRows: 1, maxRows: 5 }} placeholder={t("access.form.ssh_key.placeholder")} />
-                          </Form.Item>
-
-                          <Form.Item
-                            name={[field.name, "keyPassphrase"]}
-                            label={t("access.form.ssh_key_passphrase.label")}
-                            rules={[formRule]}
-                            tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.ssh_key_passphrase.tooltip") }}></span>}
-                          >
-                            <Input.Password allowClear autoComplete="new-password" placeholder={t("access.form.ssh_key_passphrase.placeholder")} />
-                          </Form.Item>
-                        </>
-                      ),
+                      children: <Fields />,
                     };
                   })}
                 />
               ) : null}
-              <Button className="w-full" type="dashed" icon={<PlusOutlined />} onClick={() => add()}>
+              <Button className="w-full" type="dashed" icon={<PlusOutlined />} onClick={() => add(initFormModel())}>
                 {t("access.form.ssh_jump_servers.add")}
               </Button>
             </Space>
