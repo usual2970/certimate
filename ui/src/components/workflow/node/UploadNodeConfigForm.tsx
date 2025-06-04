@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { validateCertificate, validatePrivateKey } from "@/api/certificates";
 import TextFileInput from "@/components/TextFileInput";
-import { type WorkflowNodeConfigForUpload } from "@/domain/workflow";
+import { type WorkflowNodeConfigForUpload, defaultNodeConfigForUpload } from "@/domain/workflow";
 import { useAntdForm } from "@/hooks";
 import { getErrMsg } from "@/utils/error";
 
@@ -27,7 +27,7 @@ export type UploadNodeConfigFormInstance = {
 };
 
 const initFormModel = (): UploadNodeConfigFormFieldValues => {
-  return {};
+  return defaultNodeConfigForUpload();
 };
 
 const UploadNodeConfigForm = forwardRef<UploadNodeConfigFormInstance, UploadNodeConfigFormProps>(

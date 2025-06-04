@@ -11,7 +11,7 @@ import DeploymentProviderPicker from "@/components/provider/DeploymentProviderPi
 import DeploymentProviderSelect from "@/components/provider/DeploymentProviderSelect.tsx";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, DEPLOYMENT_PROVIDERS, accessProvidersMap, deploymentProvidersMap } from "@/domain/provider";
-import { type WorkflowNodeConfigForDeploy, WorkflowNodeType } from "@/domain/workflow";
+import { type WorkflowNodeConfigForDeploy, WorkflowNodeType, defaultNodeConfigForDeploy } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useWorkflowStore } from "@/stores/workflow";
 
@@ -117,9 +117,7 @@ export type DeployNodeConfigFormInstance = {
 };
 
 const initFormModel = (): DeployNodeConfigFormFieldValues => {
-  return {
-    skipOnLastSucceeded: true,
-  };
+  return defaultNodeConfigForDeploy();
 };
 
 const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNodeConfigFormProps>(
