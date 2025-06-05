@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"log/slog"
 	"strconv"
+	"strings"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/wangsu-certificate"
 	wangsusdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
+	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
 )
 
 type DeployerConfig struct {
@@ -18,7 +20,7 @@ type DeployerConfig struct {
 	AccessKeyId string `json:"accessKeyId"`
 	// 网宿云 AccessKeySecret。
 	AccessKeySecret string `json:"accessKeySecret"`
-	// 加速域名数组。
+	// 加速域名数组（支持泛域名）。
 	Domains []string `json:"domains"`
 }
 
@@ -80,7 +82,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
 	batchUpdateCertificateConfigReq := &wangsusdk.BatchUpdateCertificateConfigRequest{
 		CertificateId: certId,
-		DomainNames:   d.config.Domains,
+		DomainNames: sliceutil.Map(d.config.Domains, func(domain string) string {
+			// "*.example.com" → ".example.com"，适配网宿云 CDN 要求的泛域名格式
+			return strings.TrimPrefix(domain, "*")
+		}),
 	}
 	batchUpdateCertificateConfigResp, err := d.sdkClient.BatchUpdateCertificateConfig(batchUpdateCertificateConfigReq)
 	d.logger.Debug("sdk request 'cdn.BatchUpdateCertificateConfig'", slog.Any("request", batchUpdateCertificateConfigReq), slog.Any("response", batchUpdateCertificateConfigResp))

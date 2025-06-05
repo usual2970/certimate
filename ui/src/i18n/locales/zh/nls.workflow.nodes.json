@@ -795,7 +795,7 @@
   "workflow_node.deploy.form.volcengine_tos_domain.placeholder": "请输入火山引擎 TOS 自定义域名",
   "workflow_node.deploy.form.volcengine_tos_domain.tooltip": "这是什么？请参阅 see <a href=\"https://console.volcengine.com/tos\" target=\"_blank\">https://console.volcengine.com/tos</a>",
   "workflow_node.deploy.form.wangsu_cdn_domains.label": "网宿云 CDN 加速域名",
-  "workflow_node.deploy.form.wangsu_cdn_domains.placeholder": "请输入网宿云 CDN 加速域名（多个值请用半角分号隔开）",
+  "workflow_node.deploy.form.wangsu_cdn_domains.placeholder": "请输入网宿云 CDN 加速域名（支持泛域名；多个值请用半角分号隔开）",
   "workflow_node.deploy.form.wangsu_cdn_domains.tooltip": "这是什么？请参阅 <a href=\"https://cdn.console.wangsu.com/v2/index/#/property/list\" target=\"_blank\">https://cdn.console.wangsu.com/v2/index/#/property/list</a>",
   "workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.title": "修改网宿云 CDN 加速域名",
   "workflow_node.deploy.form.wangsu_cdn_domains.multiple_input_modal.placeholder": "请输入网宿云 CDN 加速域名",
