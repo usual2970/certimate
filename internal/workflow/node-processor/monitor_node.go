@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"fmt"
 	"math"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -34,9 +35,9 @@ func (n *monitorNode) Process(ctx context.Context) error {
 
 	nodeCfg := n.node.GetConfigForMonitor()
 
-	targetAddr := fmt.Sprintf("%s:%d", nodeCfg.Host, nodeCfg.Port)
+	targetAddr := net.JoinHostPort(nodeCfg.Host, fmt.Sprintf("%d", nodeCfg.Port))
 	if nodeCfg.Port == 0 {
-		targetAddr = fmt.Sprintf("%s:443", nodeCfg.Host)
+		targetAddr = net.JoinHostPort(nodeCfg.Host, "443")
 	}
 
 	targetDomain := nodeCfg.Domain

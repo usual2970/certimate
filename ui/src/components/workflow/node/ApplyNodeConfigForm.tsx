@@ -28,7 +28,7 @@ import ACMEDns01ProviderSelect from "@/components/provider/ACMEDns01ProviderSele
 import CAProviderSelect from "@/components/provider/CAProviderSelect";
 import Show from "@/components/Show";
 import { ACCESS_USAGES, ACME_DNS01_PROVIDERS, accessProvidersMap, acmeDns01ProvidersMap, caProvidersMap } from "@/domain/provider";
-import { type WorkflowNodeConfigForApply } from "@/domain/workflow";
+import { type WorkflowNodeConfigForApply, defaultNodeConfigForApply } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useContactEmailsStore } from "@/stores/contact";
@@ -59,11 +59,7 @@ export type ApplyNodeConfigFormInstance = {
 const MULTIPLE_INPUT_SEPARATOR = ";";
 
 const initFormModel = (): ApplyNodeConfigFormFieldValues => {
-  return {
-    challengeType: "dns-01",
-    keyAlgorithm: "RSA2048",
-    skipBeforeExpiryDays: 30,
-  };
+  return defaultNodeConfigForApply();
 };
 
 const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeConfigFormProps>(

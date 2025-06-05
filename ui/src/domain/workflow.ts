@@ -133,6 +133,13 @@ export type WorkflowNodeConfigForStart = {
   triggerCron?: string;
 };
 
+export const defaultNodeConfigForStart = (): Partial<WorkflowNodeConfigForStart> => {
+  return {
+    trigger: WORKFLOW_TRIGGERS.AUTO,
+    triggerCron: "0 0 * * *",
+  };
+};
+
 export type WorkflowNodeConfigForApply = {
   domains: string;
   contactEmail: string;
@@ -152,11 +159,23 @@ export type WorkflowNodeConfigForApply = {
   skipBeforeExpiryDays: number;
 };
 
+export const defaultNodeConfigForApply = (): Partial<WorkflowNodeConfigForApply> => {
+  return {
+    challengeType: "dns-01",
+    keyAlgorithm: "RSA2048",
+    skipBeforeExpiryDays: 30,
+  };
+};
+
 export type WorkflowNodeConfigForUpload = {
   certificateId: string;
   domains: string;
   certificate: string;
   privateKey: string;
+};
+
+export const defaultNodeConfigForUpload = (): Partial<WorkflowNodeConfigForUpload> => {
+  return {};
 };
 
 export type WorkflowNodeConfigForMonitor = {
@@ -166,12 +185,25 @@ export type WorkflowNodeConfigForMonitor = {
   requestPath?: string;
 };
 
+export const defaultNodeConfigForMonitor = (): Partial<WorkflowNodeConfigForMonitor> => {
+  return {
+    port: 443,
+    requestPath: "/",
+  };
+};
+
 export type WorkflowNodeConfigForDeploy = {
   certificate: string;
   provider: string;
   providerAccessId?: string;
   providerConfig?: Record<string, unknown>;
   skipOnLastSucceeded: boolean;
+};
+
+export const defaultNodeConfigForDeploy = (): Partial<WorkflowNodeConfigForDeploy> => {
+  return {
+    skipOnLastSucceeded: true,
+  };
 };
 
 export type WorkflowNodeConfigForNotify = {
@@ -186,8 +218,16 @@ export type WorkflowNodeConfigForNotify = {
   providerConfig?: Record<string, unknown>;
 };
 
+export const defaultNodeConfigForNotify = (): Partial<WorkflowNodeConfigForNotify> => {
+  return {};
+};
+
 export type WorkflowNodeConfigForCondition = {
   expression?: Expr;
+};
+
+export const defaultNodeConfigForCondition = (): Partial<WorkflowNodeConfigForCondition> => {
+  return {};
 };
 
 export type WorkflowNodeConfigForBranch = never;
@@ -243,15 +283,18 @@ type InitWorkflowOptions = {
 };
 
 export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel => {
-  const root = newNode(WorkflowNodeType.Start, {}) as WorkflowNode;
-  root.config = { trigger: WORKFLOW_TRIGGERS.MANUAL };
+  const root = newNode(WorkflowNodeType.Start, {
+    nodeConfig: { trigger: WORKFLOW_TRIGGERS.MANUAL },
+  });
 
   switch (options.template) {
     case "standard":
       {
         let current = root;
 
-        const applyNode = newNode(WorkflowNodeType.Apply);
+        const applyNode = newNode(WorkflowNodeType.Apply, {
+          nodeConfig: defaultNodeConfigForApply(),
+        });
         current.next = applyNode;
 
         current = current.next;
@@ -260,6 +303,7 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         current = current.next!.branches![1];
         current.next = newNode(WorkflowNodeType.Notify, {
           nodeConfig: {
+            ...defaultNodeConfigForNotify(),
             subject: "[Certimate] Workflow Failure Alert!",
             message: "Your workflow run for the certificate application has failed. Please check the details.",
           } as WorkflowNodeConfigForNotify,
@@ -268,8 +312,8 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         current = applyNode.next!.branches![0];
         current.next = newNode(WorkflowNodeType.Deploy, {
           nodeConfig: {
+            ...defaultNodeConfigForDeploy(),
             certificate: `${applyNode.id}#certificate`,
-            skipOnLastSucceeded: true,
           } as WorkflowNodeConfigForDeploy,
         });
 
@@ -279,6 +323,7 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         current = current.next!.branches![1];
         current.next = newNode(WorkflowNodeType.Notify, {
           nodeConfig: {
+            ...defaultNodeConfigForNotify(),
             subject: "[Certimate] Workflow Failure Alert!",
             message: "Your workflow run for the certificate deployment has failed. Please check the details.",
           } as WorkflowNodeConfigForNotify,
@@ -290,7 +335,9 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
       {
         let current = root;
 
-        const monitorNode = newNode(WorkflowNodeType.Monitor);
+        const monitorNode = newNode(WorkflowNodeType.Monitor, {
+          nodeConfig: defaultNodeConfigForMonitor(),
+        });
         current.next = monitorNode;
 
         current = current.next;
@@ -299,6 +346,7 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         current = current.next!.branches![1];
         current.next = newNode(WorkflowNodeType.Notify, {
           nodeConfig: {
+            ...defaultNodeConfigForNotify(),
             subject: "[Certimate] Workflow Failure Alert!",
             message: "Your workflow run for the certificate monitoring has failed. Please check the details.",
           } as WorkflowNodeConfigForNotify,
@@ -352,6 +400,7 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         } as WorkflowNodeConfigForCondition;
         current.next = newNode(WorkflowNodeType.Notify, {
           nodeConfig: {
+            ...defaultNodeConfigForNotify(),
             subject: "[Certimate] Certificate Expiry Alert!",
             message: "The certificate will expire soon. Please pay attention to your website.",
           } as WorkflowNodeConfigForNotify,
@@ -380,6 +429,7 @@ export const initWorkflow = (options: InitWorkflowOptions = {}): WorkflowModel =
         } as WorkflowNodeConfigForCondition;
         current.next = newNode(WorkflowNodeType.Notify, {
           nodeConfig: {
+            ...defaultNodeConfigForNotify(),
             subject: "[Certimate] Certificate Expiry Alert!",
             message: "The certificate has already expired. Please pay attention to your website.",
           } as WorkflowNodeConfigForNotify,

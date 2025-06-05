@@ -43,7 +43,7 @@ const DeployNodeConfigFormWangsuCDNConfig = ({
         if (!v) return false;
         return String(v)
           .split(MULTIPLE_INPUT_SEPARATOR)
-          .every((e) => validDomainName(e));
+          .every((e) => validDomainName(e, { allowWildcard: true }));
       }, t("workflow_node.deploy.form.wangsu_cdn_domains.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);

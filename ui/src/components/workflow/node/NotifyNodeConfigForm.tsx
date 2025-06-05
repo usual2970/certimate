@@ -12,7 +12,7 @@ import NotificationProviderSelect from "@/components/provider/NotificationProvid
 import Show from "@/components/Show";
 import { ACCESS_USAGES, NOTIFICATION_PROVIDERS, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
-import { type WorkflowNodeConfigForNotify } from "@/domain/workflow";
+import { type WorkflowNodeConfigForNotify, defaultNodeConfigForNotify } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useNotifyChannelsStore } from "@/stores/notify";
@@ -41,7 +41,7 @@ export type NotifyNodeConfigFormInstance = {
 };
 
 const initFormModel = (): NotifyNodeConfigFormFieldValues => {
-  return {};
+  return defaultNodeConfigForNotify();
 };
 
 const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNodeConfigFormProps>(

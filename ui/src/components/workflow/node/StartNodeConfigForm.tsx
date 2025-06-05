@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { z } from "zod";
 
 import Show from "@/components/Show";
-import { WORKFLOW_TRIGGERS, type WorkflowNodeConfigForStart, type WorkflowTriggerType } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowNodeConfigForStart, type WorkflowTriggerType, defaultNodeConfigForStart } from "@/domain/workflow";
 import { useAntdForm } from "@/hooks";
 import { getNextCronExecutions, validCronExpression } from "@/utils/cron";
 
@@ -27,10 +27,7 @@ export type StartNodeConfigFormInstance = {
 };
 
 const initFormModel = (): StartNodeConfigFormFieldValues => {
-  return {
-    trigger: WORKFLOW_TRIGGERS.AUTO,
-    triggerCron: "0 0 * * *",
-  };
+  return defaultNodeConfigForStart();
 };
 
 const StartNodeConfigForm = forwardRef<StartNodeConfigFormInstance, StartNodeConfigFormProps>(

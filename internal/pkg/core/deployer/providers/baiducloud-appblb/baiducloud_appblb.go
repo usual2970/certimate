@@ -285,6 +285,7 @@ func (d *DeployerProvider) updateHttpsListenerCertificate(ctx context.Context, c
 			ClientToken:  generateClientToken(),
 			ListenerPort: uint16(cloudHttpsListenerPort),
 			Scheduler:    describeAppHTTPSListenersResp.ListenerList[0].Scheduler,
+			CertIds:      describeAppHTTPSListenersResp.ListenerList[0].CertIds,
 			AdditionalCertDomains: sliceutil.Map(describeAppHTTPSListenersResp.ListenerList[0].AdditionalCertDomains, func(domain bceappblb.AdditionalCertDomainsModel) bceappblb.AdditionalCertDomainsModel {
 				if domain.Host == d.config.Domain {
 					return bceappblb.AdditionalCertDomainsModel{

@@ -4,7 +4,7 @@ import { Alert, Form, type FormInstance, Input, InputNumber } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type WorkflowNodeConfigForMonitor } from "@/domain/workflow";
+import { type WorkflowNodeConfigForMonitor, defaultNodeConfigForMonitor } from "@/domain/workflow";
 import { useAntdForm } from "@/hooks";
 import { validDomainName, validIPv4Address, validIPv6Address, validPortNumber } from "@/utils/validators";
 
@@ -25,11 +25,7 @@ export type MonitorNodeConfigFormInstance = {
 };
 
 const initFormModel = (): MonitorNodeConfigFormFieldValues => {
-  return {
-    host: "",
-    port: 443,
-    requestPath: "/",
-  };
+  return defaultNodeConfigForMonitor();
 };
 
 const MonitorNodeConfigForm = forwardRef<MonitorNodeConfigFormInstance, MonitorNodeConfigFormProps>(
