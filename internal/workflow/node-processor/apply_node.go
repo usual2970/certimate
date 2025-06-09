@@ -103,7 +103,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 保存 ARI 记录
-	if applyResult.ARIReplaced {
+	if applyResult.ARIReplaced && lastOutput != nil {
 		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
 		if lastCertificate != nil {
 			lastCertificate.ACMERenewed = true
