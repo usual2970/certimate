@@ -1,0 +1,52 @@
+# .goreleaser.windows.yml
+project_name: certimate
+
+dist: .builds/windows
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: build_windows
+    main: ./
+    binary: certimate
+    ldflags:
+      - -s -w -X github.com/usual2970/certimate.Version={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm
+
+release:
+  draft: true
+  ids:
+    - windows
+
+archives:
+  - id: archive_windows
+    builds: [build_windows]
+    format: "zip"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - CHANGELOG.md
+      - LICENSE.md
+      - README.md
+
+checksum:
+  name_template: "checksums_windows.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^ui:"

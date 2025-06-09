@@ -6,7 +6,7 @@ on:
       - "v[0-9]*"
 
 jobs:
-  goreleaser:
+  prepare-ui:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,34 +19,111 @@ jobs:
         with:
           node-version: 20.11.0
 
+      - name: Build WebUI
+        run: |
+          npm --prefix=./ui ci
+          npm --prefix=./ui run build
+
+      - name: Upload UI build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-build
+          path: ./ui/dist
+          retention-days: 1
+
+  release-linux:
+    needs: prepare-ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
 
-      # - name: Install upx (optional)
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y upx
-
-      - name: Build WebUI
-        run: |
-          npm --prefix=./ui ci
-          npm --prefix=./ui run build
-          npm cache clean --force
-          rm -rf ./ui/node_modules
+      - name: Download UI build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-build
+          path: ./ui/dist
 
       - name: Check disk usage
-        run: |
-          df -h
-          du -sh /opt/hostedtoolcache/go/*
+        run: df -h
 
-      - name: Run GoReleaser
+      - name: Run GoReleaser for Linux
         uses: goreleaser/goreleaser-action@v5
         with:
           distribution: goreleaser
           version: latest
-          args: release --clean
+          args: release --clean --config .goreleaser.linux.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+  release-macos:
+    needs: prepare-ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Download UI build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-build
+          path: ./ui/dist
+
+      - name: Check disk usage
+        run: df -h
+
+      - name: Run GoReleaser for macOS
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean --config .goreleaser.macos.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
+  release-windows:
+    needs: prepare-ui
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - name: Download UI build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ui-build
+          path: ./ui/dist
+
+      - name: Check disk usage
+        run: df -h
+
+      - name: Run GoReleaser for Windows
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          distribution: goreleaser
+          version: latest
+          args: release --clean --config .goreleaser.windows.yml
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 

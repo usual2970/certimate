@@ -1,0 +1,52 @@
+# .goreleaser.linux.yml
+project_name: certimate
+
+dist: .builds/linux
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: build_linux
+    main: ./
+    binary: certimate
+    ldflags:
+      - -s -w -X github.com/usual2970/certimate.Version={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+      - arm
+    goarm:
+      - 7
+
+release:
+  draft: true
+  ids:
+    - linux
+
+archives:
+  - id: archive_linux
+    builds: [build_linux]
+    format: "zip"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - CHANGELOG.md
+      - LICENSE.md
+      - README.md
+
+checksum:
+  name_template: "checksums_linux.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^ui:"

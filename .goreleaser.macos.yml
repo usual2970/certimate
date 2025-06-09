@@ -1,0 +1,49 @@
+# .goreleaser.macos.yml
+project_name: certimate
+
+dist: .builds/macos
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: build_macos
+    main: ./
+    binary: certimate
+    ldflags:
+      - -s -w -X github.com/usual2970/certimate.Version={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+release:
+  draft: true
+  ids:
+    - macos
+
+archives:
+  - id: archive_macos
+    builds: [build_macos]
+    format: "zip"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - CHANGELOG.md
+      - LICENSE.md
+      - README.md
+
+checksum:
+  name_template: "checksums_macos.txt"
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^ui:"
