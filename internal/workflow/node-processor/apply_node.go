@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -35,7 +36,8 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to obtain certificiate ...")
+	nodeCfg := n.node.GetConfigForApply()
+	n.logger.Info("ready to obtain certificiate ...", slog.Any("config", nodeCfg))
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -45,6 +47,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 
 	// 检测是否可以跳过本次执行
 	if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
+		n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(true)
 		n.logger.Info(fmt.Sprintf("skip this application, because %s", reason))
 		return nil
 	} else if reason != "" {
@@ -101,8 +104,8 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 保存 ARI 记录
-	if applyResult.ARIReplaced {
-		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
+	if applyResult.ARIReplaced && lastOutput != nil {
+		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, lastOutput.NodeId)
 		if lastCertificate != nil {
 			lastCertificate.ACMERenewed = true
 			n.certRepo.Save(ctx, lastCertificate)
@@ -110,6 +113,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 记录中间结果
+	n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(false)
 	n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
 	n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(time.Until(certificate.ExpireAt).Hours()/24), 10)
 
@@ -120,39 +124,40 @@ func (n *applyNode) Process(ctx context.Context) error {
 func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次申请时的关键配置（即影响证书签发的）参数是否一致
-		currentNodeConfig := n.node.GetConfigForApply()
-		lastNodeConfig := lastOutput.Node.GetConfigForApply()
-		if currentNodeConfig.Domains != lastNodeConfig.Domains {
+		thisNodeCfg := n.node.GetConfigForApply()
+		lastNodeCfg := lastOutput.Node.GetConfigForApply()
+
+		if thisNodeCfg.Domains != lastNodeCfg.Domains {
 			return false, "the configuration item 'Domains' changed"
 		}
-		if currentNodeConfig.ContactEmail != lastNodeConfig.ContactEmail {
+		if thisNodeCfg.ContactEmail != lastNodeCfg.ContactEmail {
 			return false, "the configuration item 'ContactEmail' changed"
 		}
-		if currentNodeConfig.Provider != lastNodeConfig.Provider {
+		if thisNodeCfg.Provider != lastNodeCfg.Provider {
 			return false, "the configuration item 'Provider' changed"
 		}
-		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
+		if thisNodeCfg.ProviderAccessId != lastNodeCfg.ProviderAccessId {
 			return false, "the configuration item 'ProviderAccessId' changed"
 		}
-		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
+		if !maps.Equal(thisNodeCfg.ProviderConfig, lastNodeCfg.ProviderConfig) {
 			return false, "the configuration item 'ProviderConfig' changed"
 		}
-		if currentNodeConfig.CAProvider != lastNodeConfig.CAProvider {
+		if thisNodeCfg.CAProvider != lastNodeCfg.CAProvider {
 			return false, "the configuration item 'CAProvider' changed"
 		}
-		if currentNodeConfig.CAProviderAccessId != lastNodeConfig.CAProviderAccessId {
+		if thisNodeCfg.CAProviderAccessId != lastNodeCfg.CAProviderAccessId {
 			return false, "the configuration item 'CAProviderAccessId' changed"
 		}
-		if !maps.Equal(currentNodeConfig.CAProviderConfig, lastNodeConfig.CAProviderConfig) {
+		if !maps.Equal(thisNodeCfg.CAProviderConfig, lastNodeCfg.CAProviderConfig) {
 			return false, "the configuration item 'CAProviderConfig' changed"
 		}
-		if currentNodeConfig.KeyAlgorithm != lastNodeConfig.KeyAlgorithm {
+		if thisNodeCfg.KeyAlgorithm != lastNodeCfg.KeyAlgorithm {
 			return false, "the configuration item 'KeyAlgorithm' changed"
 		}
 
-		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
+		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, lastOutput.NodeId)
 		if lastCertificate != nil {
-			renewalInterval := time.Duration(currentNodeConfig.SkipBeforeExpiryDays) * time.Hour * 24
+			renewalInterval := time.Duration(thisNodeCfg.SkipBeforeExpiryDays) * time.Hour * 24
 			expirationTime := time.Until(lastCertificate.ExpireAt)
 			if expirationTime > renewalInterval {
 				daysLeft := int(expirationTime.Hours() / 24)
@@ -160,7 +165,7 @@ func (n *applyNode) checkCanSkip(ctx context.Context, lastOutput *domain.Workflo
 				n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
 				n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(daysLeft), 10)
 
-				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", daysLeft, currentNodeConfig.SkipBeforeExpiryDays)
+				return true, fmt.Sprintf("the certificate has already been issued (expires in %d day(s), next renewal in %d day(s))", daysLeft, thisNodeCfg.SkipBeforeExpiryDays)
 			}
 		}
 	}

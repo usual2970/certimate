@@ -112,6 +112,7 @@ func (w *workflowInvoker) processNode(ctx context.Context, node *domain.Workflow
 
 			break
 		}
+
 		// TODO: 优化可读性
 		if procErr != nil && current.Type == domain.WorkflowNodeTypeCondition {
 			current = nil

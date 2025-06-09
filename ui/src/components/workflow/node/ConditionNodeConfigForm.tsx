@@ -4,7 +4,7 @@ import { Form, type FormInstance } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
-import { type Expr, type WorkflowNodeConfigForCondition } from "@/domain/workflow";
+import { type Expr, type WorkflowNodeConfigForCondition, defaultNodeConfigForCondition } from "@/domain/workflow";
 import { useAntdForm } from "@/hooks";
 
 import ConditionNodeConfigFormExpressionEditor, { type ConditionNodeConfigFormExpressionEditorInstance } from "./ConditionNodeConfigFormExpressionEditor";
@@ -29,7 +29,7 @@ export type ConditionNodeConfigFormInstance = {
 };
 
 const initFormModel = (): ConditionNodeConfigFormFieldValues => {
-  return {};
+  return defaultNodeConfigForCondition();
 };
 
 const ConditionNodeConfigForm = forwardRef<ConditionNodeConfigFormInstance, ConditionNodeConfigFormProps>(

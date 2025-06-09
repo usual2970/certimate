@@ -7,6 +7,8 @@
 
   "workflow.action.create": "Create workflow",
   "workflow.action.edit": "Edit workflow",
+  "workflow.action.duplicate": "Duplicate workflow",
+  "workflow.action.duplicate.confirm": "Are you sure to duplicate this workflow?",
   "workflow.action.delete": "Delete workflow",
   "workflow.action.delete.confirm": "Are you sure to delete this workflow?",
   "workflow.action.enable": "Enable",

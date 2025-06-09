@@ -2,7 +2,9 @@ package nodeprocessor
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"strconv"
 
 	"github.com/usual2970/certimate/internal/domain"
 	"github.com/usual2970/certimate/internal/notify"
@@ -28,9 +30,8 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 }
 
 func (n *notifyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to send notification ...")
-
 	nodeCfg := n.node.GetConfigForNotify()
+	n.logger.Info("ready to send notification ...", slog.Any("config", nodeCfg))
 
 	if nodeCfg.Provider == "" {
 		// Deprecated: v0.4.x 将废弃
@@ -59,6 +60,12 @@ func (n *notifyNode) Process(ctx context.Context) error {
 		return nil
 	}
 
+	// 检测是否可以跳过本次执行
+	if skippable := n.checkCanSkip(ctx); skippable {
+		n.logger.Info(fmt.Sprintf("skip this notification, because all the previous nodes have been skipped"))
+		return nil
+	}
+
 	// 初始化通知器
 	deployer, err := notify.NewWithWorkflowNode(notify.NotifierWithWorkflowNodeConfig{
 		Node:    n.node,
@@ -79,4 +86,22 @@ func (n *notifyNode) Process(ctx context.Context) error {
 
 	n.logger.Info("notification completed")
 	return nil
+}
+
+func (n *notifyNode) checkCanSkip(ctx context.Context) (_skip bool) {
+	thisNodeCfg := n.node.GetConfigForNotify()
+	if !thisNodeCfg.SkipOnAllPrevSkipped {
+		return false
+	}
+
+	prevNodeOutputs := GetAllNodeOutputs(ctx)
+	for _, nodeOutput := range prevNodeOutputs {
+		if nodeOutput[outputKeyForNodeSkipped] != nil {
+			if nodeOutput[outputKeyForNodeSkipped].(string) != strconv.FormatBool(true) {
+				return false
+			}
+		}
+	}
+
+	return true
 }

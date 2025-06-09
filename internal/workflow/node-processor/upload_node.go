@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -32,9 +33,8 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 }
 
 func (n *uploadNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to upload certiticate ...")
-
 	nodeCfg := n.node.GetConfigForUpload()
+	n.logger.Info("ready to upload certiticate ...", slog.Any("config", nodeCfg))
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)
@@ -44,6 +44,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 
 	// 检测是否可以跳过本次执行
 	if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
+		n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(true)
 		n.logger.Info(fmt.Sprintf("skip this uploading, because %s", reason))
 		return nil
 	} else if reason != "" {
@@ -71,6 +72,7 @@ func (n *uploadNode) Process(ctx context.Context) error {
 	}
 
 	// 记录中间结果
+	n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(false)
 	n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(true)
 	n.outputs[outputKeyForCertificateDaysLeft] = strconv.FormatInt(int64(time.Until(certificate.ExpireAt).Hours()/24), 10)
 
@@ -81,16 +83,17 @@ func (n *uploadNode) Process(ctx context.Context) error {
 func (n *uploadNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次上传时的关键配置（即影响证书上传的）参数是否一致
-		currentNodeConfig := n.node.GetConfigForUpload()
-		lastNodeConfig := lastOutput.Node.GetConfigForUpload()
-		if strings.TrimSpace(currentNodeConfig.Certificate) != strings.TrimSpace(lastNodeConfig.Certificate) {
+		thisNodeCfg := n.node.GetConfigForUpload()
+		lastNodeCfg := lastOutput.Node.GetConfigForUpload()
+
+		if strings.TrimSpace(thisNodeCfg.Certificate) != strings.TrimSpace(lastNodeCfg.Certificate) {
 			return false, "the configuration item 'Certificate' changed"
 		}
-		if strings.TrimSpace(currentNodeConfig.PrivateKey) != strings.TrimSpace(lastNodeConfig.PrivateKey) {
+		if strings.TrimSpace(thisNodeCfg.PrivateKey) != strings.TrimSpace(lastNodeCfg.PrivateKey) {
 			return false, "the configuration item 'PrivateKey' changed"
 		}
 
-		lastCertificate, _ := n.certRepo.GetByWorkflowRunId(ctx, lastOutput.RunId)
+		lastCertificate, _ := n.certRepo.GetByWorkflowNodeId(ctx, lastOutput.NodeId)
 		if lastCertificate != nil {
 			daysLeft := int(time.Until(lastCertificate.ExpireAt).Hours() / 24)
 			n.outputs[outputKeyForCertificateValidity] = strconv.FormatBool(daysLeft > 0)

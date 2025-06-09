@@ -25,6 +25,15 @@ func newNodeOutputsContainer() *nodeOutputsContainer {
 	}
 }
 
+// 获取节点输出容器
+func getNodeOutputsContainer(ctx context.Context) *nodeOutputsContainer {
+	value := ctx.Value(nodeOutputsKey)
+	if value == nil {
+		return nil
+	}
+	return value.(*nodeOutputsContainer)
+}
+
 // 添加节点输出到上下文
 func AddNodeOutput(ctx context.Context, nodeId string, output map[string]any) context.Context {
 	container := getNodeOutputsContainer(ctx)
@@ -50,7 +59,7 @@ func AddNodeOutput(ctx context.Context, nodeId string, output map[string]any) co
 func GetNodeOutput(ctx context.Context, nodeId string) map[string]any {
 	container := getNodeOutputsContainer(ctx)
 	if container == nil {
-		return nil
+		container = newNodeOutputsContainer()
 	}
 
 	container.RLock()
@@ -69,22 +78,11 @@ func GetNodeOutput(ctx context.Context, nodeId string) map[string]any {
 	return outputCopy
 }
 
-// 获取特定节点的特定输出项
-func GetNodeOutputValue(ctx context.Context, nodeId string, key string) (any, bool) {
-	output := GetNodeOutput(ctx, nodeId)
-	if output == nil {
-		return nil, false
-	}
-
-	value, exists := output[key]
-	return value, exists
-}
-
 // 获取所有节点输出
-func GetNodeOutputs(ctx context.Context) map[string]map[string]any {
+func GetAllNodeOutputs(ctx context.Context) map[string]map[string]any {
 	container := getNodeOutputsContainer(ctx)
 	if container == nil {
-		return nil
+		container = newNodeOutputsContainer()
 	}
 
 	container.RLock()
@@ -102,27 +100,4 @@ func GetNodeOutputs(ctx context.Context) map[string]map[string]any {
 	}
 
 	return allOutputs
-}
-
-// 获取节点输出容器
-func getNodeOutputsContainer(ctx context.Context) *nodeOutputsContainer {
-	value := ctx.Value(nodeOutputsKey)
-	if value == nil {
-		return nil
-	}
-	return value.(*nodeOutputsContainer)
-}
-
-// 检查节点是否有输出
-func HasNodeOutput(ctx context.Context, nodeId string) bool {
-	container := getNodeOutputsContainer(ctx)
-	if container == nil {
-		return false
-	}
-
-	container.RLock()
-	defer container.RUnlock()
-
-	_, exists := container.outputs[nodeId]
-	return exists
 }

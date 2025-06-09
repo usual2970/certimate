@@ -2,7 +2,7 @@ import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } f
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { PlusOutlined as PlusOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
-import { Button, Divider, Form, type FormInstance, Input, Select, Typography } from "antd";
+import { Button, Divider, Flex, Form, type FormInstance, Input, Select, Switch, Typography } from "antd";
 import { createSchemaFieldRule } from "antd-zod";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ import NotificationProviderSelect from "@/components/provider/NotificationProvid
 import Show from "@/components/Show";
 import { ACCESS_USAGES, NOTIFICATION_PROVIDERS, accessProvidersMap, notificationProvidersMap } from "@/domain/provider";
 import { notifyChannelsMap } from "@/domain/settings";
-import { type WorkflowNodeConfigForNotify } from "@/domain/workflow";
+import { type WorkflowNodeConfigForNotify, defaultNodeConfigForNotify } from "@/domain/workflow";
 import { useAntdForm, useAntdFormName, useZustandShallowSelector } from "@/hooks";
 import { useAccessesStore } from "@/stores/access";
 import { useNotifyChannelsStore } from "@/stores/notify";
@@ -41,7 +41,7 @@ export type NotifyNodeConfigFormInstance = {
 };
 
 const initFormModel = (): NotifyNodeConfigFormFieldValues => {
-  return {};
+  return defaultNodeConfigForNotify();
 };
 
 const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNodeConfigFormProps>(
@@ -74,6 +74,7 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
         .string({ message: t("workflow_node.notify.form.provider_access.placeholder") })
         .nonempty(t("workflow_node.notify.form.provider_access.placeholder")),
       providerConfig: z.any().nullish(),
+      skipOnAllPrevSkipped: z.boolean().nullish(),
     });
     const formRule = createSchemaFieldRule(formSchema);
     const { form: formInst, formProps } = useAntdForm({
@@ -281,6 +282,27 @@ const NotifyNodeConfigForm = forwardRef<NotifyNodeConfigFormInstance, NotifyNode
 
           {nestedFormEl}
         </Show>
+
+        <Divider size="small">
+          <Typography.Text className="text-xs font-normal" type="secondary">
+            {t("workflow_node.notify.form.strategy_config.label")}
+          </Typography.Text>
+        </Divider>
+
+        <Form className={className} style={style} {...formProps} disabled={disabled} layout="vertical" scrollToFirstError onValuesChange={handleFormChange}>
+          <Form.Item label={t("workflow_node.notify.form.skip_on_all_prev_skipped.label")}>
+            <Flex align="center" gap={8} wrap="wrap">
+              <div>{t("workflow_node.notify.form.skip_on_all_prev_skipped.prefix")}</div>
+              <Form.Item name="skipOnAllPrevSkipped" noStyle rules={[formRule]}>
+                <Switch
+                  checkedChildren={t("workflow_node.notify.form.skip_on_all_prev_skipped.switch.on")}
+                  unCheckedChildren={t("workflow_node.notify.form.skip_on_all_prev_skipped.switch.off")}
+                />
+              </Form.Item>
+              <div>{t("workflow_node.notify.form.skip_on_all_prev_skipped.suffix")}</div>
+            </Flex>
+          </Form.Item>
+        </Form>
       </Form>
     );
   }

@@ -5,7 +5,9 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
+	"log/slog"
 	"math"
+	"net"
 	"net/http"
 	"strconv"
 	"strings"
@@ -30,13 +32,12 @@ func NewMonitorNode(node *domain.WorkflowNode) *monitorNode {
 }
 
 func (n *monitorNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to monitor certificate ...")
-
 	nodeCfg := n.node.GetConfigForMonitor()
+	n.logger.Info("ready to monitor certificate ...", slog.Any("config", nodeCfg))
 
-	targetAddr := fmt.Sprintf("%s:%d", nodeCfg.Host, nodeCfg.Port)
+	targetAddr := net.JoinHostPort(nodeCfg.Host, fmt.Sprintf("%d", nodeCfg.Port))
 	if nodeCfg.Port == 0 {
-		targetAddr = fmt.Sprintf("%s:443", nodeCfg.Host)
+		targetAddr = net.JoinHostPort(nodeCfg.Host, "443")
 	}
 
 	targetDomain := nodeCfg.Domain

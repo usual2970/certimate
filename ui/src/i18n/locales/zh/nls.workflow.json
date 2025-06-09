@@ -7,6 +7,8 @@
 
   "workflow.action.create": "新建工作流",
   "workflow.action.edit": "编辑工作流",
+  "workflow.action.duplicate": "复制工作流",
+  "workflow.action.duplicate.confirm": "确定要复制此工作流吗？",
   "workflow.action.delete": "删除工作流",
   "workflow.action.delete.confirm": "确定要删除此工作流吗？",
   "workflow.action.enable": "启用",

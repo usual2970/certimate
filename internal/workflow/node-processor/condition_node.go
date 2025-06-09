@@ -47,6 +47,6 @@ func (n *conditionNode) Process(ctx context.Context) error {
 }
 
 func (n *conditionNode) evalExpr(ctx context.Context, expression expr.Expr) (*expr.EvalResult, error) {
-	variables := GetNodeOutputs(ctx)
+	variables := GetAllNodeOutputs(ctx)
 	return expression.Eval(variables)
 }

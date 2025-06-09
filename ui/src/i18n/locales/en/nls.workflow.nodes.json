@@ -878,6 +878,12 @@
   "workflow_node.notify.form.webhook_data.tooltip": "Leave it blank to use the default Webhook data provided by the authorization.",
   "workflow_node.notify.form.webhook_data.guide": "<details><summary>Supported variables: </summary><ol style=\"margin-left: 1.25em; list-style: disc;\"><li><strong>${SUBJECT}</strong>: The subject of notification.</li><li><strong>${MESSAGE}</strong>: The message of notification.</li></ol></details><br>Please visit the authorization management page for addtional notes.",
   "workflow_node.notify.form.webhook_data.errmsg.json_invalid": "Please enter a valiod JSON string",
+  "workflow_node.notify.form.strategy_config.label": "Strategy settings",
+  "workflow_node.notify.form.skip_on_all_prev_skipped.label": "Silent behavior",
+  "workflow_node.notify.form.skip_on_all_prev_skipped.prefix": "If all the previous nodes were skipped, ",
+  "workflow_node.notify.form.skip_on_all_prev_skipped.suffix": " to notify.",
+  "workflow_node.notify.form.skip_on_all_prev_skipped.switch.on": "skip",
+  "workflow_node.notify.form.skip_on_all_prev_skipped.switch.off": "not skip",
 
   "workflow_node.end.label": "End",
   "workflow_node.end.default_name": "End",
