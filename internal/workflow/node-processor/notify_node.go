@@ -28,9 +28,8 @@ func NewNotifyNode(node *domain.WorkflowNode) *notifyNode {
 }
 
 func (n *notifyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to send notification ...")
-
 	nodeCfg := n.node.GetConfigForNotify()
+	n.logger.Info("ready to send notification ...", slog.Any("config", nodeCfg))
 
 	if nodeCfg.Provider == "" {
 		// Deprecated: v0.4.x 将废弃

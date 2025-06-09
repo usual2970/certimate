@@ -33,7 +33,8 @@ func NewDeployNode(node *domain.WorkflowNode) *deployNode {
 }
 
 func (n *deployNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to deploy certificate ...")
+	nodeCfg := n.node.GetConfigForDeploy()
+	n.logger.Info("ready to deploy certificate ...", slog.Any("config", nodeCfg))
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)

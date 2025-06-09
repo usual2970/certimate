@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 	"time"
@@ -32,9 +33,8 @@ func NewUploadNode(node *domain.WorkflowNode) *uploadNode {
 }
 
 func (n *uploadNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to upload certiticate ...")
-
 	nodeCfg := n.node.GetConfigForUpload()
+	n.logger.Info("ready to upload certiticate ...", slog.Any("config", nodeCfg))
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)

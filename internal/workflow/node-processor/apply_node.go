@@ -3,6 +3,7 @@ package nodeprocessor
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"time"
 
@@ -35,7 +36,8 @@ func NewApplyNode(node *domain.WorkflowNode) *applyNode {
 }
 
 func (n *applyNode) Process(ctx context.Context) error {
-	n.logger.Info("ready to obtain certificiate ...")
+	nodeCfg := n.node.GetConfigForApply()
+	n.logger.Info("ready to obtain certificiate ...", slog.Any("config", nodeCfg))
 
 	// 查询上次执行结果
 	lastOutput, err := n.outputRepo.GetByNodeId(ctx, n.node.Id)

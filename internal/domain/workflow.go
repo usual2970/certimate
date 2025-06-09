@@ -128,7 +128,7 @@ func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 		CAProvider:            maputil.GetString(n.Config, "caProvider"),
 		CAProviderAccessId:    maputil.GetString(n.Config, "caProviderAccessId"),
 		CAProviderConfig:      maputil.GetKVMapAny(n.Config, "caProviderConfig"),
-		KeyAlgorithm:          maputil.GetString(n.Config, "keyAlgorithm"),
+		KeyAlgorithm:          maputil.GetOrDefaultString(n.Config, "keyAlgorithm", string(CertificateKeyAlgorithmTypeRSA2048)),
 		Nameservers:           maputil.GetString(n.Config, "nameservers"),
 		DnsPropagationWait:    maputil.GetInt32(n.Config, "dnsPropagationWait"),
 		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
