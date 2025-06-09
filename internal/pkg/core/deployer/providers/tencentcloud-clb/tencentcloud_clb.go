@@ -153,7 +153,7 @@ func (d *DeployerProvider) deployViaSslService(ctx context.Context, cloudCertId 
 	}
 
 	// 循环获取部署任务详情，等待任务状态变更
-	// REF: https://cloud.tencent.com.cn/document/api/400/91658
+	// REF: https://cloud.tencent.com/document/api/400/91658
 	for {
 		select {
 		case <-ctx.Done():
