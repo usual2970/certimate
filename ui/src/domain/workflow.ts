@@ -509,18 +509,22 @@ export const newNode = (nodeType: WorkflowNodeType, options: NewNodeOptions = {}
   return node;
 };
 
-export const cloneNode = (sourceNode: WorkflowNode): WorkflowNode => {
+type CloneNodeOptions = {
+  withCopySuffix?: boolean;
+};
+
+export const cloneNode = (sourceNode: WorkflowNode, { withCopySuffix }: CloneNodeOptions = { withCopySuffix: true }): WorkflowNode => {
   const { produce } = new Immer({ autoFreeze: false });
   const deepClone = (node: WorkflowNode): WorkflowNode => {
     return produce(node, (draft) => {
       draft.id = nanoid();
 
       if (draft.next) {
-        draft.next = cloneNode(draft.next);
+        draft.next = cloneNode(draft.next, { withCopySuffix });
       }
 
       if (draft.branches) {
-        draft.branches = draft.branches.map((branch) => cloneNode(branch));
+        draft.branches = draft.branches.map((branch) => cloneNode(branch, { withCopySuffix }));
       }
 
       return draft;
@@ -528,7 +532,7 @@ export const cloneNode = (sourceNode: WorkflowNode): WorkflowNode => {
   };
 
   const copyNode = produce(sourceNode, (draft) => {
-    draft.name = `${draft.name}-copy`;
+    draft.name = withCopySuffix ? `${draft.name}-copy` : draft.name;
   });
   return deepClone(copyNode);
 };

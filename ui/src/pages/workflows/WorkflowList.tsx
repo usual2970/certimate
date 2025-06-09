@@ -9,6 +9,7 @@ import {
   EditOutlined as EditOutlinedIcon,
   PlusOutlined as PlusOutlinedIcon,
   ReloadOutlined as ReloadOutlinedIcon,
+  SnippetsOutlined as SnippetsOutlinedIcon,
   StopOutlined as StopOutlinedIcon,
   SyncOutlined as SyncOutlinedIcon,
 } from "@ant-design/icons";
@@ -39,7 +40,7 @@ import {
 import dayjs from "dayjs";
 import { ClientResponseError } from "pocketbase";
 
-import { WORKFLOW_TRIGGERS, type WorkflowModel, isAllNodesValidated } from "@/domain/workflow";
+import { WORKFLOW_TRIGGERS, type WorkflowModel, cloneNode, initWorkflow, isAllNodesValidated } from "@/domain/workflow";
 import { WORKFLOW_RUN_STATUSES } from "@/domain/workflowRun";
 import { list as listWorkflows, remove as removeWorkflow, save as saveWorkflow } from "@/repository/workflow";
 import { getErrMsg } from "@/utils/error";
@@ -219,6 +220,17 @@ const WorkflowList = () => {
             />
           </Tooltip>
 
+          <Tooltip title={t("workflow.action.duplicate")}>
+            <Button
+              color="primary"
+              icon={<SnippetsOutlinedIcon />}
+              variant="text"
+              onClick={() => {
+                handleDuplicateClick(record);
+              }}
+            />
+          </Tooltip>
+
           <Tooltip title={t("workflow.action.delete")}>
             <Button
               color="danger"
@@ -319,6 +331,36 @@ const WorkflowList = () => {
       console.error(err);
       notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
     }
+  };
+
+  const handleDuplicateClick = (workflow: WorkflowModel) => {
+    modalApi.confirm({
+      title: t("workflow.action.duplicate"),
+      content: t("workflow.action.duplicate.confirm"),
+      onOk: async () => {
+        try {
+          const workflowCopy = {
+            name: `${workflow.name}-copy`,
+            description: workflow.description,
+            trigger: workflow.trigger,
+            triggerCron: workflow.triggerCron,
+            draft: workflow.content
+              ? cloneNode(workflow.content, { withCopySuffix: false })
+              : workflow.draft
+                ? cloneNode(workflow.draft, { withCopySuffix: false })
+                : initWorkflow().draft,
+            hasDraft: true,
+          } as WorkflowModel;
+          const resp = await saveWorkflow(workflowCopy);
+          if (resp) {
+            refreshData();
+          }
+        } catch (err) {
+          console.error(err);
+          notificationApi.error({ message: t("common.text.request_error"), description: getErrMsg(err) });
+        }
+      },
+    });
   };
 
   const handleDeleteClick = (workflow: WorkflowModel) => {
