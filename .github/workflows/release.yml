@@ -169,7 +169,11 @@ jobs:
           # 为每个二进制文件创建 zip 包
           cd dist
           for bin in certimate_*; do
-            zip "${bin}.zip" "${bin}"
+            if [[ "$bin" == *".exe" ]]; then 
+              zip "${bin%.exe}.zip" "${bin}"
+            else
+              zip "${bin}.zip" "${bin}"
+            fi
           done
 
           # 创建校验和文件
