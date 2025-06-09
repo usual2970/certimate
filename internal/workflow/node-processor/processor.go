@@ -50,6 +50,7 @@ func (n *nodeOutputer) GetOutputs() map[string]any {
 
 type certificateRepository interface {
 	GetByWorkflowNodeId(ctx context.Context, workflowNodeId string) (*domain.Certificate, error)
+	GetByWorkflowRunIdAndNodeId(ctx context.Context, workflowRunId string, workflowNodeId string) (*domain.Certificate, error)
 	Save(ctx context.Context, certificate *domain.Certificate) (*domain.Certificate, error)
 }
 
