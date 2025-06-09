@@ -77,25 +77,6 @@ func (r *CertificateRepository) GetByWorkflowNodeId(ctx context.Context, workflo
 	return r.castRecordToModel(records[0])
 }
 
-func (r *CertificateRepository) GetByWorkflowRunId(ctx context.Context, workflowRunId string) (*domain.Certificate, error) {
-	records, err := app.GetApp().FindRecordsByFilter(
-		domain.CollectionNameCertificate,
-		"workflowRunId={:workflowRunId} && deleted=null",
-		"-created",
-		1, 0,
-		dbx.Params{"workflowRunId": workflowRunId},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(records) == 0 {
-		return nil, domain.ErrRecordNotFound
-	}
-
-	return r.castRecordToModel(records[0])
-}
-
 func (r *CertificateRepository) Save(ctx context.Context, certificate *domain.Certificate) (*domain.Certificate, error) {
 	collection, err := app.GetApp().FindCollectionByNameOrId(domain.CollectionNameCertificate)
 	if err != nil {
