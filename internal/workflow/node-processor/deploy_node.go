@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 
 	"github.com/usual2970/certimate/internal/deployer"
@@ -59,6 +60,7 @@ func (n *deployNode) Process(ctx context.Context) error {
 	// 检测是否可以跳过本次执行
 	if lastOutput != nil && certificate.CreatedAt.Before(lastOutput.UpdatedAt) {
 		if skippable, reason := n.checkCanSkip(ctx, lastOutput); skippable {
+			n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(true)
 			n.logger.Info(fmt.Sprintf("skip this deployment, because %s", reason))
 			return nil
 		} else if reason != "" {
@@ -97,6 +99,9 @@ func (n *deployNode) Process(ctx context.Context) error {
 		return err
 	}
 
+	// 记录中间结果
+	n.outputs[outputKeyForNodeSkipped] = strconv.FormatBool(false)
+
 	n.logger.Info("deployment completed")
 	return nil
 }
@@ -104,16 +109,17 @@ func (n *deployNode) Process(ctx context.Context) error {
 func (n *deployNode) checkCanSkip(ctx context.Context, lastOutput *domain.WorkflowOutput) (_skip bool, _reason string) {
 	if lastOutput != nil && lastOutput.Succeeded {
 		// 比较和上次部署时的关键配置（即影响证书部署的）参数是否一致
-		currentNodeConfig := n.node.GetConfigForDeploy()
-		lastNodeConfig := lastOutput.Node.GetConfigForDeploy()
-		if currentNodeConfig.ProviderAccessId != lastNodeConfig.ProviderAccessId {
+		thisNodeCfg := n.node.GetConfigForDeploy()
+		lastNodeCfg := lastOutput.Node.GetConfigForDeploy()
+
+		if thisNodeCfg.ProviderAccessId != lastNodeCfg.ProviderAccessId {
 			return false, "the configuration item 'ProviderAccessId' changed"
 		}
-		if !maps.Equal(currentNodeConfig.ProviderConfig, lastNodeConfig.ProviderConfig) {
+		if !maps.Equal(thisNodeCfg.ProviderConfig, lastNodeCfg.ProviderConfig) {
 			return false, "the configuration item 'ProviderConfig' changed"
 		}
 
-		if currentNodeConfig.SkipOnLastSucceeded {
+		if thisNodeCfg.SkipOnLastSucceeded {
 			return true, "the certificate has already been deployed"
 		}
 	}

@@ -216,6 +216,7 @@ export type WorkflowNodeConfigForNotify = {
   provider: string;
   providerAccessId: string;
   providerConfig?: Record<string, unknown>;
+  skipOnAllPrevSkipped?: boolean;
 };
 
 export const defaultNodeConfigForNotify = (): Partial<WorkflowNodeConfigForNotify> => {

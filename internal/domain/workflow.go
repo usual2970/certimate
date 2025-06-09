@@ -106,12 +106,13 @@ type WorkflowNodeConfigForDeploy struct {
 }
 
 type WorkflowNodeConfigForNotify struct {
-	Channel          string         `json:"channel,omitempty"`        // Deprecated: v0.4.x 将废弃
-	Provider         string         `json:"provider"`                 // 通知提供商
-	ProviderAccessId string         `json:"providerAccessId"`         // 通知提供商授权记录 ID
-	ProviderConfig   map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
-	Subject          string         `json:"subject"`                  // 通知主题
-	Message          string         `json:"message"`                  // 通知内容
+	Channel              string         `json:"channel,omitempty"`        // Deprecated: v0.4.x 将废弃
+	Provider             string         `json:"provider"`                 // 通知提供商
+	ProviderAccessId     string         `json:"providerAccessId"`         // 通知提供商授权记录 ID
+	ProviderConfig       map[string]any `json:"providerConfig,omitempty"` // 通知提供商额外配置
+	Subject              string         `json:"subject"`                  // 通知主题
+	Message              string         `json:"message"`                  // 通知内容
+	SkipOnAllPrevSkipped bool           `json:"skipOnAllPrevSkipped"`     // 前序节点均已跳过时是否跳过
 }
 
 type WorkflowNodeConfigForCondition struct {
@@ -169,12 +170,13 @@ func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 
 func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	return WorkflowNodeConfigForNotify{
-		Channel:          maputil.GetString(n.Config, "channel"),
-		Provider:         maputil.GetString(n.Config, "provider"),
-		ProviderAccessId: maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:   maputil.GetKVMapAny(n.Config, "providerConfig"),
-		Subject:          maputil.GetString(n.Config, "subject"),
-		Message:          maputil.GetString(n.Config, "message"),
+		Channel:              maputil.GetString(n.Config, "channel"),
+		Provider:             maputil.GetString(n.Config, "provider"),
+		ProviderAccessId:     maputil.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:       maputil.GetKVMapAny(n.Config, "providerConfig"),
+		Subject:              maputil.GetString(n.Config, "subject"),
+		Message:              maputil.GetString(n.Config, "message"),
+		SkipOnAllPrevSkipped: maputil.GetBool(n.Config, "skipOnAllPrevSkipped"),
 	}
 }
 
