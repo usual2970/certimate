@@ -31,7 +31,7 @@ jobs:
           path: ./ui/dist
           retention-days: 1
 
-  release-linux:
+  build-linux:
     needs: prepare-ui
     runs-on: ubuntu-latest
     steps:
@@ -51,19 +51,27 @@ jobs:
           name: ui-build
           path: ./ui/dist
 
-      - name: Check disk usage
-        run: df -h
-
-      - name: Run GoReleaser for Linux
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean --config .goreleaser.linux.yml
+      - name: Build Linux binaries
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          CGO_ENABLED: 0
+          GOOS: linux
+        run: |
+          mkdir -p dist/linux
+          for ARCH in amd64 arm64 arm; do
+            if [ "$ARCH" = "arm" ]; then
+              export GOARM=7
+            fi
+            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
+          done
 
-  release-macos:
+      - name: Upload Linux binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binaries
+          path: dist/linux/
+          retention-days: 1
+
+  build-macos:
     needs: prepare-ui
     runs-on: ubuntu-latest
     steps:
@@ -83,19 +91,24 @@ jobs:
           name: ui-build
           path: ./ui/dist
 
-      - name: Check disk usage
-        run: df -h
-
-      - name: Run GoReleaser for macOS
-        uses: goreleaser/goreleaser-action@v5
-        with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean --config .goreleaser.macos.yml
+      - name: Build macOS binaries
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          CGO_ENABLED: 0
+          GOOS: darwin
+        run: |
+          mkdir -p dist/darwin
+          for ARCH in amd64 arm64; do
+            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
+          done
 
-  release-windows:
+      - name: Upload macOS binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-binaries
+          path: dist/darwin/
+          retention-days: 1
+
+  build-windows:
     needs: prepare-ui
     runs-on: ubuntu-latest
     steps:
@@ -115,15 +128,60 @@ jobs:
           name: ui-build
           path: ./ui/dist
 
-      - name: Check disk usage
-        run: df -h
+      - name: Build Windows binaries
+        env:
+          CGO_ENABLED: 0
+          GOOS: windows
+        run: |
+          mkdir -p dist/windows
+          for ARCH in amd64 arm64; do
+            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
+          done
 
-      - name: Run GoReleaser for Windows
-        uses: goreleaser/goreleaser-action@v5
+      - name: Upload Windows binaries
+        uses: actions/upload-artifact@v4
         with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean --config .goreleaser.windows.yml
+          name: windows-binaries
+          path: dist/windows/
+          retention-days: 1
+
+  create-release:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p dist
+          cp -r artifacts/linux-binaries/* dist/
+          cp -r artifacts/macos-binaries/* dist/
+          cp -r artifacts/windows-binaries/* dist/
+
+          # 为每个二进制文件创建 zip 包
+          cd dist
+          for bin in certimate_*; do
+            zip "${bin}.zip" "${bin}"
+          done
+
+          # 创建校验和文件
+          sha256sum *.zip > checksums.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/checksums.txt
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
