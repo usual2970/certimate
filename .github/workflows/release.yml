@@ -166,13 +166,15 @@ jobs:
           cp -r artifacts/macos-binaries/* dist/
           cp -r artifacts/windows-binaries/* dist/
 
+          find dist -type f -not -name "*.exe" -exec chmod +x {} \;
+
           # 为每个二进制文件创建 zip 包
           cd dist
           for bin in certimate_*; do
             if [[ "$bin" == *".exe" ]]; then 
               zip "${bin%.exe}.zip" "${bin}"
             else
-              zip "${bin}.zip" "${bin}"
+              zip -X "${bin}.zip" "${bin}"
             fi
           done
 
