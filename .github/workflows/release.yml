@@ -57,8 +57,8 @@ jobs:
           GOOS: linux
         run: |
           mkdir -p dist/linux
-          for ARCH in amd64 arm64 arm; do
-            if [ "$ARCH" = "arm" ]; then
+          for ARCH in amd64 arm64 armv7; do
+            if [ "$ARCH" = "armv7" ]; then
               export GOARM=7
             fi
             go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
