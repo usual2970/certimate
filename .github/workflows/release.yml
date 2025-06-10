@@ -171,11 +171,23 @@ jobs:
           # 为每个二进制文件创建 zip 包
           cd dist
           for bin in certimate_*; do
-            if [[ "$bin" == *".exe" ]]; then 
-              zip "${bin%.exe}.zip" "${bin}"
+            if [[ "$bin" == *".exe" ]]; then
+              entrypoint="certimate.exe"
             else
-              zip -X "${bin}.zip" "${bin}"
+              entrypoint="certimate"
             fi
+
+            tmpdir=$(mktemp -d)
+            cp "$bin" "${tmpdir}/${entrypoint}"
+            cp ../README.md ../LICENSE.md ../CHANGELOG.md "$tmpdir"
+
+            if [[ "$bin" == *".exe" ]]; then
+              zip -j "${bin%.exe}.zip" "$tmpdir"/*
+            else
+              zip -j -X "${bin}.zip" "$tmpdir"/*
+            fi
+
+            rm -rf "$tmpdir"
           done
 
           # 创建校验和文件
@@ -190,4 +202,3 @@ jobs:
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-
