@@ -10,6 +10,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForACMECA
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
+      | AccessConfigForAPISIX
       | AccessConfigForAWS
       | AccessConfigForAzure
       | AccessConfigForBaiduCloud
@@ -103,6 +104,12 @@ export type AccessConfigForAliyun = {
   accessKeyId: string;
   accessKeySecret: string;
   resourceGroupId?: string;
+};
+
+export type AccessConfigForAPISIX = {
+  serverUrl: string;
+  apiKey: string;
+  allowInsecureConnections?: boolean;
 };
 
 export type AccessConfigForAWS = {

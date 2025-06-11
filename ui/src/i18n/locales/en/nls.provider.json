@@ -24,6 +24,7 @@
   "provider.aliyun.waf": "Alibaba Cloud - WAF (Web Application Firewall)",
   "provider.akamai": "Akamai",
   "provider.akamai.cdn": "Akamai - CDN (Content Delivery Network)",
+  "provider.apisix": "Apache APISIX",
   "provider.aws": "AWS",
   "provider.aws.acm": "AWS - ACM (Amazon Certificate Manager)",
   "provider.aws.cloudfront": "AWS - CloudFront",

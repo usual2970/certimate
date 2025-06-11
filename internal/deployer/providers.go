@@ -25,6 +25,7 @@ import (
 	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	pAliyunVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-vod"
 	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
+	pAPISIX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/apisix"
 	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	pAWSIAM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-iam"
@@ -331,6 +332,23 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			default:
 				break
 			}
+		}
+
+	case domain.DeploymentProviderTypeAPISIX:
+		{
+			access := domain.AccessConfigForAPISIX{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pAPISIX.NewDeployer(&pAPISIX.DeployerConfig{
+				ServerUrl:                access.ServerUrl,
+				ApiKey:                   access.ApiKey,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pAPISIX.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront, domain.DeploymentProviderTypeAWSIAM:

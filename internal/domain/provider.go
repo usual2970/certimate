@@ -14,6 +14,7 @@ const (
 	AccessProviderTypeACMEHttpReq         = AccessProviderType("acmehttpreq")
 	AccessProviderTypeAkamai              = AccessProviderType("akamai") // Akamai（预留）
 	AccessProviderTypeAliyun              = AccessProviderType("aliyun")
+	AccessProviderTypeAPISIX              = AccessProviderType("apisix")
 	AccessProviderTypeAWS                 = AccessProviderType("aws")
 	AccessProviderTypeAzure               = AccessProviderType("azure")
 	AccessProviderTypeBaiduCloud          = AccessProviderType("baiducloud")
@@ -193,6 +194,7 @@ const (
 	DeploymentProviderTypeAliyunOSS             = DeploymentProviderType(AccessProviderTypeAliyun + "-oss")
 	DeploymentProviderTypeAliyunVOD             = DeploymentProviderType(AccessProviderTypeAliyun + "-vod")
 	DeploymentProviderTypeAliyunWAF             = DeploymentProviderType(AccessProviderTypeAliyun + "-waf")
+	DeploymentProviderTypeAPISIX                = DeploymentProviderType(AccessProviderTypeAWS + "-apisix")
 	DeploymentProviderTypeAWSACM                = DeploymentProviderType(AccessProviderTypeAWS + "-acm")
 	DeploymentProviderTypeAWSCloudFront         = DeploymentProviderType(AccessProviderTypeAWS + "-cloudfront")
 	DeploymentProviderTypeAWSIAM                = DeploymentProviderType(AccessProviderTypeAWS + "-iam")

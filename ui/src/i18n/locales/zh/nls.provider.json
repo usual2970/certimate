@@ -24,6 +24,7 @@
   "provider.aliyun.waf": "阿里云 - Web 应用防火墙 WAF",
   "provider.akamai": "Akamai",
   "provider.akamai.cdn": "Akamai - 内容分发网络 CDN",
+  "provider.apisix": "Apache APISIX",
   "provider.aws": "AWS",
   "provider.aws.acm": "AWS - ACM (Amazon Certificate Manager)",
   "provider.aws.cloudfront": "AWS - CloudFront",

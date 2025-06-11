@@ -8,6 +8,7 @@ export const ACCESS_PROVIDERS = Object.freeze({
   ACMECA: "acmeca",
   ACMEHTTPREQ: "acmehttpreq",
   ALIYUN: "aliyun",
+  APISIX: "apisix",
   AWS: "aws",
   AZURE: "azure",
   BAIDUCLOUD: "baiducloud",
@@ -141,6 +142,7 @@ export const accessProvidersMap: Map<AccessProvider["type"] | string, AccessProv
     [ACCESS_PROVIDERS.LECDN, "provider.lecdn", "/imgs/providers/lecdn.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.CACHEFLY, "provider.cachefly", "/imgs/providers/cachefly.png", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.EDGIO, "provider.edgio", "/imgs/providers/edgio.svg", [ACCESS_USAGES.HOSTING]],
+    [ACCESS_PROVIDERS.APISIX, "provider.apisix", "/imgs/providers/apisix.svg", [ACCESS_USAGES.HOSTING]],
     [ACCESS_PROVIDERS.PROXMOXVE, "provider.proxmoxve", "/imgs/providers/proxmoxve.svg", [ACCESS_USAGES.HOSTING]],
 
     [ACCESS_PROVIDERS.CLOUDFLARE, "provider.cloudflare", "/imgs/providers/cloudflare.svg", [ACCESS_USAGES.DNS]],
@@ -387,6 +389,7 @@ export const DEPLOYMENT_PROVIDERS = Object.freeze({
   ALIYUN_OSS: `${ACCESS_PROVIDERS.ALIYUN}-oss`,
   ALIYUN_VOD: `${ACCESS_PROVIDERS.ALIYUN}-vod`,
   ALIYUN_WAF: `${ACCESS_PROVIDERS.ALIYUN}-waf`,
+  APISIX: `${ACCESS_PROVIDERS.APISIX}`,
   AWS_ACM: `${ACCESS_PROVIDERS.AWS}-acm`,
   AWS_CLOUDFRONT: `${ACCESS_PROVIDERS.AWS}-cloudfront`,
   AWS_IAM: `${ACCESS_PROVIDERS.AWS}-iam`,
@@ -585,6 +588,7 @@ export const deploymentProvidersMap: Map<DeploymentProvider["type"] | string, De
     [DEPLOYMENT_PROVIDERS.BAOTAWAF_SITE, "provider.baotawaf.site", DEPLOYMENT_CATEGORIES.FIREWALL],
     [DEPLOYMENT_PROVIDERS.BAOTAWAF_CONSOLE, "provider.baotawaf.console", DEPLOYMENT_CATEGORIES.OTHER],
     [DEPLOYMENT_PROVIDERS.SAFELINE, "provider.safeline", DEPLOYMENT_CATEGORIES.FIREWALL],
+    [DEPLOYMENT_PROVIDERS.APISIX, "provider.apisix", DEPLOYMENT_CATEGORIES.APIGATEWAY],
     [DEPLOYMENT_PROVIDERS.PROXMOXVE, "provider.proxmoxve", DEPLOYMENT_CATEGORIES.NAS],
   ].map(([type, name, category, builtin]) => [
     type,

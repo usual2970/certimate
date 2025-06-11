@@ -33,6 +33,7 @@ import DeployNodeConfigFormAliyunNLBConfig from "./DeployNodeConfigFormAliyunNLB
 import DeployNodeConfigFormAliyunOSSConfig from "./DeployNodeConfigFormAliyunOSSConfig";
 import DeployNodeConfigFormAliyunVODConfig from "./DeployNodeConfigFormAliyunVODConfig";
 import DeployNodeConfigFormAliyunWAFConfig from "./DeployNodeConfigFormAliyunWAFConfig";
+import DeployNodeConfigFormAPISIXConfig from "./DeployNodeConfigFormAPISIXConfig";
 import DeployNodeConfigFormAWSACMConfig from "./DeployNodeConfigFormAWSACMConfig";
 import DeployNodeConfigFormAWSCloudFrontConfig from "./DeployNodeConfigFormAWSCloudFrontConfig";
 import DeployNodeConfigFormAWSIAMConfig from "./DeployNodeConfigFormAWSIAMConfig";
@@ -234,6 +235,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormAliyunVODConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.ALIYUN_WAF:
           return <DeployNodeConfigFormAliyunWAFConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.APISIX:
+          return <DeployNodeConfigFormAPISIXConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.AWS_ACM:
           return <DeployNodeConfigFormAWSACMConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.AWS_CLOUDFRONT:

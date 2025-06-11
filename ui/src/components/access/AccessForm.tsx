@@ -15,6 +15,7 @@ import AccessForm1PanelConfig from "./AccessForm1PanelConfig";
 import AccessFormACMECAConfig from "./AccessFormACMECAConfig";
 import AccessFormACMEHttpReqConfig from "./AccessFormACMEHttpReqConfig";
 import AccessFormAliyunConfig from "./AccessFormAliyunConfig";
+import AccessFormAPISIXConfig from "./AccessFormAPISIXConfig";
 import AccessFormAWSConfig from "./AccessFormAWSConfig";
 import AccessFormAzureConfig from "./AccessFormAzureConfig";
 import AccessFormBaiduCloudConfig from "./AccessFormBaiduCloudConfig";
@@ -194,6 +195,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormACMEHttpReqConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.ALIYUN:
         return <AccessFormAliyunConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.APISIX:
+        return <AccessFormAPISIXConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.AWS:
         return <AccessFormAWSConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.AZURE:

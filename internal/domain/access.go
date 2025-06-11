@@ -41,6 +41,12 @@ type AccessConfigForAliyun struct {
 	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 }
 
+type AccessConfigForAPISIX struct {
+	ServerUrl                string `json:"serverUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForAWS struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
