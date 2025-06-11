@@ -626,6 +626,7 @@
   "workflow_node.deploy.form.ssh_preset_scripts.option.sh_reload_nginx.label": "POSIX Bash - Reload nginx",
   "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_synologydsm_ssl.label": "POSIX Bash - Replace SynologyDSM SSL certificate",
   "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_fnos_ssl.label": "POSIX Bash - Replace fnOS SSL certificate",
+  "workflow_node.deploy.form.ssh_preset_scripts.option.sh_replace_qnap_ssl.label": "POSIX Bash - Replace QNAP SSL certificate",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_iis.label": "PowerShell - Binding IIS",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_netsh.label": "PowerShell - Binding netsh",
   "workflow_node.deploy.form.ssh_preset_scripts.option.ps_binding_rdp.label": "PowerShell - Binding RDP",
