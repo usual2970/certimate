@@ -35,6 +35,8 @@ git clone https://github.com/your_username/certimate.git
 
 这将启动一个 Web 服务器，默认运行在 `http://localhost:8090`，并使用来自 `ui/dist` 的预构建管理页面。
 
+> 如果你遇到报错 `ui/embed.go:10:12: pattern all:dist: no matching files found` 请先参考 [构建 Admin UI](#修改管理页面-admin-ui)
+
 **在向主仓库提交 PR 之前，建议你：**
 
 - 使用 [gofumpt](https://github.com/mvdan/gofumpt) 对你的代码进行格式化。
