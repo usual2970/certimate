@@ -202,6 +202,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudA
 		listListenerCertificatesReq := &aliga.ListListenerCertificatesRequest{
 			RegionId:      tea.String("cn-hangzhou"),
 			AcceleratorId: tea.String(d.config.AcceleratorId),
+			ListenerId:    tea.String(d.config.ListenerId),
 			NextToken:     listListenerCertificatesNextToken,
 			MaxResults:    tea.Int32(20),
 		}
