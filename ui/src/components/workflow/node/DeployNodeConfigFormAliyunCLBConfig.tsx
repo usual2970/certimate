@@ -27,6 +27,7 @@ const RESOURCE_TYPE_LISTENER = "listener" as const;
 
 const initFormModel = (): DeployNodeConfigFormAliyunCLBConfigFieldValues => {
   return {
+    resourceType: RESOURCE_TYPE_LISTENER,
     listenerPort: 443,
   };
 };

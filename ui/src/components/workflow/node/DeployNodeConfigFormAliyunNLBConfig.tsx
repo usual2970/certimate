@@ -24,7 +24,9 @@ const RESOURCE_TYPE_LOADBALANCER = "loadbalancer" as const;
 const RESOURCE_TYPE_LISTENER = "listener" as const;
 
 const initFormModel = (): DeployNodeConfigFormAliyunNLBConfigFieldValues => {
-  return {};
+  return {
+    resourceType: RESOURCE_TYPE_LISTENER,
+  };
 };
 
 const DeployNodeConfigFormAliyunNLBConfig = ({

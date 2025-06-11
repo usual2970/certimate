@@ -77,6 +77,7 @@ import DeployNodeConfigFormTencentCloudCOSConfig from "./DeployNodeConfigFormTen
 import DeployNodeConfigFormTencentCloudCSSConfig from "./DeployNodeConfigFormTencentCloudCSSConfig.tsx";
 import DeployNodeConfigFormTencentCloudECDNConfig from "./DeployNodeConfigFormTencentCloudECDNConfig.tsx";
 import DeployNodeConfigFormTencentCloudEOConfig from "./DeployNodeConfigFormTencentCloudEOConfig.tsx";
+import DeployNodeConfigFormTencentCloudGAAPConfig from "./DeployNodeConfigFormTencentCloudGAAPConfig.tsx";
 import DeployNodeConfigFormTencentCloudSCFConfig from "./DeployNodeConfigFormTencentCloudSCFConfig";
 import DeployNodeConfigFormTencentCloudSSLDeployConfig from "./DeployNodeConfigFormTencentCloudSSLDeployConfig";
 import DeployNodeConfigFormTencentCloudVODConfig from "./DeployNodeConfigFormTencentCloudVODConfig";
@@ -321,6 +322,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormTencentCloudECDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_EO:
           return <DeployNodeConfigFormTencentCloudEOConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_GAAP:
+          return <DeployNodeConfigFormTencentCloudGAAPConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_SCF:
           return <DeployNodeConfigFormTencentCloudSCFConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.TENCENTCLOUD_SSL_DEPLOY:

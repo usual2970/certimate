@@ -30,6 +30,7 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
 	github.com/aws/aws-sdk-go-v2/service/acm v1.32.0
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.46.1
+	github.com/aws/aws-sdk-go-v2/service/iam v1.42.0
 	github.com/baidubce/bce-sdk-go v0.9.228
 	github.com/blinkbean/dingtalk v1.1.3
 	github.com/byteplus-sdk/byteplus-sdk-golang v1.0.46
@@ -51,6 +52,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.1155
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1166
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1173
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.1163
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1150
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.1172
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.1169
@@ -85,7 +87,6 @@ require (
 	github.com/alibabacloud-go/tea-oss-utils v1.1.0 // indirect
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.7 // indirect
 	github.com/avast/retry-go v3.0.0+incompatible // indirect
-	github.com/aws/aws-sdk-go-v2/service/iam v1.42.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.50.0 // indirect
 	github.com/buger/goterm v1.0.4 // indirect
 	github.com/diskfs/go-diskfs v1.5.0 // indirect

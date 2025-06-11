@@ -72,6 +72,7 @@ const DeploymentProviderPicker = ({ className, style, autoFocus, filter, placeho
               DEPLOYMENT_CATEGORIES.LOADBALANCE,
               DEPLOYMENT_CATEGORIES.FIREWALL,
               DEPLOYMENT_CATEGORIES.AV,
+              DEPLOYMENT_CATEGORIES.ACCELERATOR,
               DEPLOYMENT_CATEGORIES.APIGATEWAY,
               DEPLOYMENT_CATEGORIES.SERVERLESS,
               DEPLOYMENT_CATEGORIES.WEBSITE,
