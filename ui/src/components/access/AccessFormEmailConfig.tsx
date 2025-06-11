@@ -54,6 +54,7 @@ const AccessFormEmailConfig = ({ form: formInst, formName, disabled, initialValu
         if (!v) return true;
         return validEmailAddress(v);
       }, t("common.errmsg.email_invalid")),
+    defaultSenderName: z.string().nullish(),
     defaultReceiverAddress: z
       .string()
       .nullish()
@@ -113,6 +114,10 @@ const AccessFormEmailConfig = ({ form: formInst, formName, disabled, initialValu
 
       <Form.Item name="defaultSenderAddress" label={t("access.form.email_default_sender_address.label")} rules={[formRule]}>
         <Input type="email" allowClear placeholder={t("access.form.email_default_sender_address.placeholder")} />
+      </Form.Item>
+
+      <Form.Item name="defaultSenderName" label={t("access.form.email_default_sender_name.label")} rules={[formRule]}>
+        <Input allowClear placeholder={t("access.form.email_default_sender_name.placeholder")} />
       </Form.Item>
 
       <Form.Item name="defaultReceiverAddress" label={t("access.form.email_default_receiver_address.label")} rules={[formRule]}>

@@ -1,15 +1,15 @@
 ﻿{
   "access.page.title": "Authorization",
 
-  "access.nodata": "No accesses. Please create an authorization first.",
+  "access.nodata": "No accesses. Please create an credential first.",
 
   "access.search.placeholder": "Search by access name ...",
 
-  "access.action.add": "Create authorization",
-  "access.action.edit": "Edit authorization",
-  "access.action.duplicate": "Duplicate authorization",
-  "access.action.delete": "Delete authorization",
-  "access.action.delete.confirm": "Are you sure to delete this authorization?",
+  "access.action.add": "Create credential",
+  "access.action.edit": "Edit credential",
+  "access.action.duplicate": "Duplicate credential",
+  "access.action.delete": "Delete credential",
+  "access.action.delete.confirm": "Are you sure to delete this credential?",
 
   "access.props.name": "Name",
   "access.props.provider": "Provider",
@@ -25,7 +25,7 @@
   "access.props.updated_at": "Updated at",
 
   "access.form.name.label": "Name",
-  "access.form.name.placeholder": "Please enter authorization name",
+  "access.form.name.placeholder": "Please enter credential name",
   "access.form.provider.label": "Provider",
   "access.form.provider.placeholder": "Please select a provider",
   "access.form.provider.tooltip": "DNS provider: The provider that hosts your domain names and manages your DNS records.<br>Hosting provider: The provider that hosts your servers or cloud services for deploying certificates.<br><br><i>Cannot be edited after saving.</i>",
@@ -210,6 +210,8 @@
   "access.form.email_password.placeholder": "please enter password",
   "access.form.email_default_sender_address.label": "Default sender email address (Optional)",
   "access.form.email_default_sender_address.placeholder": "Please enter default sender email address",
+  "access.form.email_default_sender_name.label": "Default sender display name (Optional)",
+  "access.form.email_default_sender_name.placeholder": "Please enter default sender display name",
   "access.form.email_default_receiver_address.label": "Default receiver email address (Optional)",
   "access.form.email_default_receiver_address.placeholder": "Please enter default receiver email address",
   "access.form.flexcdn_server_url.label": "FlexCDN server URL",

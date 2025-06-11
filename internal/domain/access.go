@@ -168,6 +168,7 @@ type AccessConfigForEmail struct {
 	Username               string `json:"username"`
 	Password               string `json:"password"`
 	DefaultSenderAddress   string `json:"defaultSenderAddress,omitempty"`
+	DefaultSenderName      string `json:"defaultSenderName,omitempty"`
 	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
 }
 

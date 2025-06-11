@@ -33,6 +33,7 @@ const NotifyNodeConfigFormEmailConfig = ({ form: formInst, formName, disabled, i
         if (!v) return true;
         return validEmailAddress(v);
       }, t("common.errmsg.email_invalid")),
+    senderName: z.string().nullish(),
     receiverAddress: z
       .string()
       .nullish()
@@ -63,6 +64,15 @@ const NotifyNodeConfigFormEmailConfig = ({ form: formInst, formName, disabled, i
         tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.email_sender_address.tooltip") }}></span>}
       >
         <Input type="email" allowClear placeholder={t("workflow_node.notify.form.email_sender_address.placeholder")} />
+      </Form.Item>
+
+      <Form.Item
+        name="senderName"
+        label={t("workflow_node.notify.form.email_sender_name.label")}
+        rules={[formRule]}
+        tooltip={<span dangerouslySetInnerHTML={{ __html: t("workflow_node.notify.form.email_sender_name.tooltip") }}></span>}
+      >
+        <Input allowClear placeholder={t("workflow_node.notify.form.email_sender_name.placeholder")} />
       </Form.Item>
 
       <Form.Item

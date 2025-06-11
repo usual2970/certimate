@@ -71,6 +71,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				Username:        access.Username,
 				Password:        access.Password,
 				SenderAddress:   maputil.GetOrDefaultString(options.ProviderServiceConfig, "senderAddress", access.DefaultSenderAddress),
+				SenderName:      maputil.GetOrDefaultString(options.ProviderServiceConfig, "senderName", access.DefaultSenderName),
 				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderServiceConfig, "receiverAddress", access.DefaultReceiverAddress),
 			})
 		}
