@@ -589,11 +589,11 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 
 const EmailInput = memo(
   ({ disabled, placeholder, ...props }: { disabled?: boolean; placeholder?: string; value?: string; onChange?: (value: string) => void }) => {
-    const { emails, fetchEmails } = useContactEmailsStore();
+    const { emails, fetchEmails, removeEmail } = useContactEmailsStore();
     const emailsToOptions = () => emails.map((email) => ({ label: email, value: email }));
     useEffect(() => {
       fetchEmails();
-    }, []);
+    }, [fetchEmails]);
 
     const [value, setValue] = useControllableValue<string>(props, {
       valuePropName: "value",
@@ -617,13 +617,21 @@ const EmailInput = memo(
           temp.unshift({ label: text, value: text });
         }
       }
-
       setOptions(temp);
+    };
+
+    const handleRemoveEmail = async () => {
+      try {
+        await removeEmail(value);
+      } catch (error) {
+        console.error("removeEmail", error);
+      }
     };
 
     return (
       <AutoComplete
         backfill
+        allowClear
         defaultValue={value}
         disabled={disabled}
         filterOption
@@ -633,6 +641,7 @@ const EmailInput = memo(
         value={value}
         onChange={handleChange}
         onSearch={handleSearch}
+        onClear={handleRemoveEmail}
       />
     );
   }

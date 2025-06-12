@@ -60,6 +60,7 @@ export const useContactEmailsStore = create<ContactEmailsState>((set, get) => {
         if (draft.includes(email)) return;
         draft.push(email);
         draft.sort();
+        return draft;
       });
       get().setEmails(emails);
     },
@@ -68,6 +69,7 @@ export const useContactEmailsStore = create<ContactEmailsState>((set, get) => {
       const emails = produce(get().emails, (draft) => {
         draft = draft.filter((e) => e !== email);
         draft.sort();
+        return draft;
       });
       get().setEmails(emails);
     },
