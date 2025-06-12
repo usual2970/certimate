@@ -23,7 +23,7 @@ type DeployerConfig struct {
 	SecretKey string `json:"secretKey"`
 	// 站点 ID。
 	ZoneId string `json:"zoneId"`
-	// 加速域名（不支持泛域名）。
+	// 加速域名（支持泛域名）。
 	Domain string `json:"domain"`
 }
 
