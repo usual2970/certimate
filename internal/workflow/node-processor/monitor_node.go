@@ -35,7 +35,7 @@ func (n *monitorNode) Process(ctx context.Context) error {
 	nodeCfg := n.node.GetConfigForMonitor()
 	n.logger.Info("ready to monitor certificate ...", slog.Any("config", nodeCfg))
 
-	targetAddr := net.JoinHostPort(nodeCfg.Host, fmt.Sprintf("%d", nodeCfg.Port))
+	targetAddr := net.JoinHostPort(nodeCfg.Host, strconv.Itoa(int(nodeCfg.Port)))
 	if nodeCfg.Port == 0 {
 		targetAddr = net.JoinHostPort(nodeCfg.Host, "443")
 	}

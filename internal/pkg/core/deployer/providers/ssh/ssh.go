@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/sftp"
@@ -139,9 +140,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			var jumpConn net.Conn
 			// 第一个连接是主机发起，后续通过跳板机发起
 			if jumpClient == nil {
-				jumpConn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", jumpServerConf.SshHost, jumpServerConf.SshPort))
+				jumpConn, err = net.Dial("tcp", net.JoinHostPort(jumpServerConf.SshHost, strconv.Itoa(int(jumpServerConf.SshPort))))
 			} else {
-				jumpConn, err = jumpClient.DialContext(ctx, "tcp", fmt.Sprintf("%s:%d", jumpServerConf.SshHost, jumpServerConf.SshPort))
+				jumpConn, err = jumpClient.DialContext(ctx, "tcp", net.JoinHostPort(jumpServerConf.SshHost, strconv.Itoa(int(jumpServerConf.SshPort))))
 			}
 			if err != nil {
 				return nil, fmt.Errorf("failed to connect to jump server [%d]: %w", i+1, err)
@@ -168,13 +169,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		// 通过跳板机发起 TCP 连接到目标服务器
-		targetConn, err = jumpClient.DialContext(ctx, "tcp", fmt.Sprintf("%s:%d", d.config.SshHost, d.config.SshPort))
+		targetConn, err = jumpClient.DialContext(ctx, "tcp", net.JoinHostPort(d.config.SshHost, strconv.Itoa(int(d.config.SshPort))))
 		if err != nil {
 			return nil, fmt.Errorf("failed to connect to target server: %w", err)
 		}
 	} else {
 		// 直接发起 TCP 连接到目标服务器
-		targetConn, err = net.Dial("tcp", fmt.Sprintf("%s:%d", d.config.SshHost, d.config.SshPort))
+		targetConn, err = net.Dial("tcp", net.JoinHostPort(d.config.SshHost, strconv.Itoa(int(d.config.SshPort))))
 		if err != nil {
 			return nil, fmt.Errorf("failed to connect to target server: %w", err)
 		}
@@ -340,7 +341,8 @@ func createSshClient(conn net.Conn, host string, port int32, authMethod string, 
 		return nil, fmt.Errorf("unsupported auth method '%s'", authMethod)
 	}
 
-	sshConn, chans, reqs, err := ssh.NewClientConn(conn, fmt.Sprintf("%s:%d", host, port), &ssh.ClientConfig{
+	addr := net.JoinHostPort(host, strconv.Itoa(int(port)))
+	sshConn, chans, reqs, err := ssh.NewClientConn(conn, addr, &ssh.ClientConfig{
 		User:            username,
 		Auth:            authentications,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
