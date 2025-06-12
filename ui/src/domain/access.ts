@@ -25,6 +25,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForConstellix
+      | AccessConfigForCTCCCloud
       | AccessConfigForDeSEC
       | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
@@ -183,6 +184,11 @@ export type AccessConfigForCMCCCloud = {
 export type AccessConfigForConstellix = {
   apiKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForCTCCCloud = {
+  accessKeyId: string;
+  secretAccessKey: string;
 };
 
 export type AccessConfigForDeSEC = {

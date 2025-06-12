@@ -120,6 +120,11 @@ type AccessConfigForConstellix struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForCTCCCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+}
+
 type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }

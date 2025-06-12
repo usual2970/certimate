@@ -18,8 +18,9 @@ import (
 const (
 	envNamespace = "CMCCCLOUD_"
 
-	EnvAccessKey          = envNamespace + "ACCESS_KEY"
-	EnvSecretKey          = envNamespace + "SECRET_KEY"
+	EnvAccessKey = envNamespace + "ACCESS_KEY"
+	EnvSecretKey = envNamespace + "SECRET_KEY"
+
 	EnvTTL                = envNamespace + "TTL"
 	EnvPropagationTimeout = envNamespace + "PROPAGATION_TIMEOUT"
 	EnvPollingInterval    = envNamespace + "POLLING_INTERVAL"
@@ -30,13 +31,14 @@ const (
 var _ challenge.ProviderTimeout = (*DNSProvider)(nil)
 
 type Config struct {
-	AccessKey          string
-	SecretKey          string
-	ReadTimeOut        int
-	ConnectTimeout     int
+	AccessKey string
+	SecretKey string
+
 	PropagationTimeout time.Duration
 	PollingInterval    time.Duration
 	TTL                int32
+	ReadTimeOut        int
+	ConnectTimeout     int
 }
 
 type DNSProvider struct {

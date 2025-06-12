@@ -30,6 +30,7 @@ import AccessFormCloudflareConfig from "./AccessFormCloudflareConfig";
 import AccessFormClouDNSConfig from "./AccessFormClouDNSConfig";
 import AccessFormCMCCCloudConfig from "./AccessFormCMCCCloudConfig";
 import AccessFormConstellixConfig from "./AccessFormConstellixConfig";
+import AccessFormCTCCCloudConfig from "./AccessFormCTCCCloudConfig";
 import AccessFormDeSECConfig from "./AccessFormDeSECConfig";
 import AccessFormDigitalOceanConfig from "./AccessFormDigitalOceanConfig";
 import AccessFormDingTalkBotConfig from "./AccessFormDingTalkBotConfig";
@@ -225,6 +226,8 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
         return <AccessFormCMCCCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.CONSTELLIX:
         return <AccessFormConstellixConfig {...nestedFormProps} />;
+      case ACCESS_PROVIDERS.CTCCCLOUD:
+        return <AccessFormCTCCCloudConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DESEC:
         return <AccessFormDeSECConfig {...nestedFormProps} />;
       case ACCESS_PROVIDERS.DIGITALOCEAN:

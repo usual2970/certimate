@@ -1,16 +1,16 @@
-package cmcccloud
+package ctcccloud
 
 import (
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
 
-	"github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/cmcccloud/internal"
+	"github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ctcccloud/internal"
 )
 
 type ChallengeProviderConfig struct {
 	AccessKeyId           string `json:"accessKeyId"`
-	AccessKeySecret       string `json:"accessKeySecret"`
+	SecretAccessKey       string `json:"secretAccessKey"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -21,10 +21,10 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	}
 
 	providerConfig := internal.NewDefaultConfig()
-	providerConfig.AccessKey = config.AccessKeyId
-	providerConfig.SecretKey = config.AccessKeySecret
+	providerConfig.AccessKeyId = config.AccessKeyId
+	providerConfig.SecretAccessKey = config.SecretAccessKey
 	if config.DnsTTL != 0 {
-		providerConfig.TTL = config.DnsTTL
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
