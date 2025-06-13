@@ -1,4 +1,4 @@
-package icdn
+package cms
 
 import (
 	"bytes"
@@ -70,21 +70,25 @@ func (r *baseResult) GetErrorMessage() string {
 
 var _ baseResultInterface = (*baseResult)(nil)
 
-type CertRecord struct {
-	Id          int64    `json:"id"`
-	Name        string   `json:"name"`
-	CN          string   `json:"cn"`
-	SANs        []string `json:"sans"`
-	UsageMode   int32    `json:"usage_mode"`
-	State       int32    `json:"state"`
-	ExpiresTime int64    `json:"expires"`
-	IssueTime   int64    `json:"issue"`
-	Issuer      string   `json:"issuer"`
-	CreatedTime int64    `json:"created"`
-}
-
-type CertDetail struct {
-	CertRecord
-	Certs string `json:"certs"`
-	Key   string `json:"key"`
+type CertificateRecord struct {
+	Id                  string `json:"id"`
+	Origin              string `json:"origin"`
+	Type                string `json:"type"`
+	ResourceId          string `json:"resourceId"`
+	ResourceType        string `json:"resourceType"`
+	CertificateId       string `json:"certificateId"`
+	CertificateMode     string `json:"certificateMode"`
+	Name                string `json:"name"`
+	Status              string `json:"status"`
+	DetailStatus        string `json:"detailStatus"`
+	ManagedStatus       string `json:"managedStatus"`
+	Fingerprint         string `json:"fingerprint"`
+	IssueTime           string `json:"issueTime"`
+	ExpireTime          string `json:"expireTime"`
+	DomainType          string `json:"domainType"`
+	DomainName          string `json:"domainName"`
+	EncryptionStandard  string `json:"encryptionStandard"`
+	EncryptionAlgorithm string `json:"encryptionAlgorithm"`
+	CreateTime          string `json:"createTime"`
+	UpdateTime          string `json:"updateTime"`
 }

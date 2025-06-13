@@ -1,15 +1,14 @@
-package ctcccloudao_test
+package ctcccloudcms_test
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-ao"
+	provider "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
 )
 
 var (
@@ -20,7 +19,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_UPLOADER_CTCCCLOUDAO_"
+	argsPrefix := "CERTIMATE_DEPLOYER_CTCCCLOUDCMS_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -31,11 +30,11 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./ctcccloud_ao_test.go -args \
-	--CERTIMATE_UPLOADER_CTCCCLOUDAO_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_UPLOADER_CTCCCLOUDAO_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_UPLOADER_CTCCCLOUDAO_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_UPLOADER_CTCCCLOUDAO_SECRETACCESSKEY="your-secret-access-key"
+	go test -v ./ctcccloud_cms_test.go -args \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCMS_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCMS_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCMS_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCMS_SECRETACCESSKEY="your-secret-access-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -49,7 +48,7 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("SECRETACCESSKEY: %v", fSecretAccessKey),
 		}, "\n"))
 
-		uploader, err := provider.NewUploader(&provider.UploaderConfig{
+		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
 			AccessKeyId:     fAccessKeyId,
 			SecretAccessKey: fSecretAccessKey,
 		})
@@ -60,13 +59,12 @@ func TestDeploy(t *testing.T) {
 
 		fInputCertData, _ := os.ReadFile(fInputCertPath)
 		fInputKeyData, _ := os.ReadFile(fInputKeyPath)
-		res, err := uploader.Upload(context.Background(), string(fInputCertData), string(fInputKeyData))
+		res, err := deployer.Deploy(context.Background(), string(fInputCertData), string(fInputKeyData))
 		if err != nil {
 			t.Errorf("err: %+v", err)
 			return
 		}
 
-		sres, _ := json.Marshal(res)
-		t.Logf("ok: %s", string(sres))
+		t.Logf("ok: %v", res)
 	})
 }

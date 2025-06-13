@@ -34,8 +34,8 @@ Shell command to run this test:
 	go test -v ./ctcccloud_cdn_test.go -args \
 	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_SECRETACCESSKEY="your-secret-access-key"
+	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_SECRETACCESSKEY="your-secret-access-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

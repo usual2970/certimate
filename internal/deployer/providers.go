@@ -45,6 +45,7 @@ import (
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
 	pCTCCCloudAO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-ao"
 	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
+	pCTCCCloudCMS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
 	pCTCCCloudICDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-icdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
@@ -624,7 +625,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudICDN:
+	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudICDN:
 		{
 			access := domain.AccessConfigForCTCCCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -645,6 +646,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudCMS:
+				deployer, err := pCTCCCloudCMS.NewDeployer(&pCTCCCloudCMS.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
 				})
 				return deployer, err
 

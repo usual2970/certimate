@@ -15,7 +15,7 @@ type CreateCertResponse struct {
 	baseResult
 
 	ReturnObj *struct {
-		Id int32 `json:"id"`
+		Id int64 `json:"id"`
 	} `json:"returnObj,omitempty"`
 }
 

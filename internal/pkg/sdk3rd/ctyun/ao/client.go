@@ -1,6 +1,7 @@
 package ao
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -36,5 +37,13 @@ func (c *Client) doRequest(request *resty.Request) (*resty.Response, error) {
 }
 
 func (c *Client) doRequestWithResult(request *resty.Request, result baseResultInterface) (*resty.Response, error) {
-	return c.client.DoRequestWithResult(request, result)
+	response, err := c.client.DoRequestWithResult(request, result)
+	if err == nil {
+		statusCode := result.GetStatusCode()
+		if statusCode != "" && statusCode != "100000" {
+			return response, fmt.Errorf("sdkerr: api error, code='%s', message='%s', errorCode='%s', errorMessage='%s'", statusCode, result.GetMessage(), result.GetMessage(), result.GetErrorMessage())
+		}
+	}
+
+	return response, err
 }

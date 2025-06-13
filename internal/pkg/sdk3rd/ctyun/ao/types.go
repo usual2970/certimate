@@ -71,7 +71,7 @@ func (r *baseResult) GetErrorMessage() string {
 var _ baseResultInterface = (*baseResult)(nil)
 
 type CertRecord struct {
-	Id          int32    `json:"id"`
+	Id          int64    `json:"id"`
 	Name        string   `json:"name"`
 	CN          string   `json:"cn"`
 	SANs        []string `json:"sans"`

@@ -1,4 +1,4 @@
-package icdn
+package cms
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/openapi"
 )
 
-const endpoint = "https://icdn-global.ctapi.ctyun.cn"
+const endpoint = "https://ccms-global.ctapi.ctyun.cn"
 
 type Client struct {
 	client *openapi.Client
@@ -40,7 +40,7 @@ func (c *Client) doRequestWithResult(request *resty.Request, result baseResultIn
 	response, err := c.client.DoRequestWithResult(request, result)
 	if err == nil {
 		statusCode := result.GetStatusCode()
-		if statusCode != "" && statusCode != "100000" {
+		if statusCode != "" && statusCode != "200" {
 			return response, fmt.Errorf("sdkerr: api error, code='%s', message='%s', errorCode='%s', errorMessage='%s'", statusCode, result.GetMessage(), result.GetMessage(), result.GetErrorMessage())
 		}
 	}

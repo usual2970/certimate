@@ -7,7 +7,7 @@ import (
 )
 
 type QueryCertRequest struct {
-	Id        *int32  `json:"id,omitempty"`
+	Id        *int64  `json:"id,omitempty"`
 	Name      *string `json:"name,omitempty"`
 	UsageMode *int32  `json:"usage_mode,omitempty"`
 }
