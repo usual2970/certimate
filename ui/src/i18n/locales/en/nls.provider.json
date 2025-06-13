@@ -60,7 +60,7 @@
   "provider.cmcccloud.dns": "China Mobile ECloud - DNS",
   "provider.constellix": "Constellix",
   "provider.ctcccloud": "China Telecom StateCloud",
-  "provider.ctcccloud.accessone": "China Telecom StateCloud - AccessOne",
+  "provider.ctcccloud.ao": "China Telecom StateCloud - AccessOne",
   "provider.ctcccloud.cdn": "China Telecom StateCloud - CDN (Content Delivery Network)",
   "provider.ctcccloud.cms_upload": "China Telecom StateCloud - Upload to Certificate Management Service",
   "provider.ctcccloud.elb": "China Telecom StateCloud - ELB (Elastic Load Balancing)",

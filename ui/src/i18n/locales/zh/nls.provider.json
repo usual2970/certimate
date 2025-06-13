@@ -60,7 +60,7 @@
   "provider.cmcccloud.dns": "移动云 - 云解析 DNS",
   "provider.constellix": "Constellix",
   "provider.ctcccloud": "天翼云",
-  "provider.ctcccloud.accessone": "天翼云 - 边缘安全加速平台 AccessOne",
+  "provider.ctcccloud.ao": "天翼云 - 边缘安全加速平台 AccessOne",
   "provider.ctcccloud.cdn": "天翼云 - 内容分发网络 CDN",
   "provider.ctcccloud.cms_upload": "天翼云 - 上传到证书管理服务 CMS",
   "provider.ctcccloud.elb": "天翼云 - 弹性负载均衡 ELB",
