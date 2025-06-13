@@ -30,16 +30,16 @@ func (c *Client) UpdateRecord(req *UpdateRecordRequest) (*UpdateRecordResponse, 
 }
 
 func (c *Client) UpdateRecordWithContext(ctx context.Context, req *UpdateRecordRequest) (*UpdateRecordResponse, error) {
-	request, err := c.newRequest(http.MethodPost, "/v2/updateRecord")
+	httpreq, err := c.newRequest(http.MethodPost, "/v2/updateRecord")
 	if err != nil {
 		return nil, err
 	} else {
-		request.SetContext(ctx)
-		request.SetBody(req)
+		httpreq.SetBody(req)
+		httpreq.SetContext(ctx)
 	}
 
 	result := &UpdateRecordResponse{}
-	if _, err := c.doRequestWithResult(request, result); err != nil {
+	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}
 

@@ -29,16 +29,16 @@ func (c *Client) AddRecord(req *AddRecordRequest) (*AddRecordResponse, error) {
 }
 
 func (c *Client) AddRecordWithContext(ctx context.Context, req *AddRecordRequest) (*AddRecordResponse, error) {
-	request, err := c.newRequest(http.MethodPost, "/v2/addRecord")
+	httpreq, err := c.newRequest(http.MethodPost, "/v2/addRecord")
 	if err != nil {
 		return nil, err
 	} else {
-		request.SetContext(ctx)
-		request.SetBody(req)
+		httpreq.SetBody(req)
+		httpreq.SetContext(ctx)
 	}
 
 	result := &AddRecordResponse{}
-	if _, err := c.doRequestWithResult(request, result); err != nil {
+	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}
 

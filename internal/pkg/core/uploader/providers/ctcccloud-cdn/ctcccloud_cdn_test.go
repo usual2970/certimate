@@ -1,4 +1,4 @@
-package wangsucertificate_test
+package ctcccloudcdn
 
 import (
 	"context"
@@ -9,33 +9,33 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/wangsu-certificate"
+	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-cdn"
 )
 
 var (
 	fInputCertPath   string
 	fInputKeyPath    string
 	fAccessKeyId     string
-	fAccessKeySecret string
+	fSecretAccessKey string
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_UPLOADER_WANGSUCERTIFICATE_"
+	argsPrefix := "CERTIMATE_UPLOADER_CTCCCLOUDCDN_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fAccessKeyId, argsPrefix+"ACCESSKEYID", "", "")
-	flag.StringVar(&fAccessKeySecret, argsPrefix+"ACCESSKEYSECRET", "", "")
+	flag.StringVar(&fSecretAccessKey, argsPrefix+"SECRETACCESSKEY", "", "")
 }
 
 /*
 Shell command to run this test:
 
-	go test -v ./wangsu_certificate_test.go -args \
-	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_WANGSUCERTIFICATE_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_WANGSUCERTIFICATE_ACCESSKEYSECRET="your-access-key-secret"
+	go test -v ./ctcccloud_cdn_test.go -args \
+	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_SECRETACCESSKEY="your-secret-access-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
@@ -46,12 +46,12 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTCERTPATH: %v", fInputCertPath),
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("ACCESSKEYID: %v", fAccessKeyId),
-			fmt.Sprintf("ACCESSKEYSECRET: %v", fAccessKeySecret),
+			fmt.Sprintf("SECRETACCESSKEY: %v", fSecretAccessKey),
 		}, "\n"))
 
 		uploader, err := provider.NewUploader(&provider.UploaderConfig{
 			AccessKeyId:     fAccessKeyId,
-			AccessKeySecret: fAccessKeySecret,
+			SecretAccessKey: fSecretAccessKey,
 		})
 		if err != nil {
 			t.Errorf("err: %+v", err)

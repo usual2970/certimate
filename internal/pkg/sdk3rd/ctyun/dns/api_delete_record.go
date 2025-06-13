@@ -18,16 +18,16 @@ func (c *Client) DeleteRecord(req *DeleteRecordRequest) (*DeleteRecordResponse, 
 }
 
 func (c *Client) DeleteRecordWithContext(ctx context.Context, req *DeleteRecordRequest) (*DeleteRecordResponse, error) {
-	request, err := c.newRequest(http.MethodPost, "/v2/deleteRecord")
+	httpreq, err := c.newRequest(http.MethodPost, "/v2/deleteRecord")
 	if err != nil {
 		return nil, err
 	} else {
-		request.SetContext(ctx)
-		request.SetBody(req)
+		httpreq.SetBody(req)
+		httpreq.SetContext(ctx)
 	}
 
 	result := &DeleteRecordResponse{}
-	if _, err := c.doRequestWithResult(request, result); err != nil {
+	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}
 

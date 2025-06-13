@@ -48,6 +48,7 @@ import DeployNodeConfigFormBaotaWAFSiteConfig from "./DeployNodeConfigFormBaotaW
 import DeployNodeConfigFormBunnyCDNConfig from "./DeployNodeConfigFormBunnyCDNConfig.tsx";
 import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlusCDNConfig";
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
+import DeployNodeConfigFormCTCCCloudCDNConfig from "./DeployNodeConfigFormCTCCCloudCDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
 import DeployNodeConfigFormFlexCDNConfig from "./DeployNodeConfigFormFlexCDNConfig";
@@ -265,6 +266,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormBytePlusCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.CDNFLY:
           return <DeployNodeConfigFormCdnflyConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.CTCCCLOUD_CDN:
+          return <DeployNodeConfigFormCTCCCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.DOGECLOUD_CDN:
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:

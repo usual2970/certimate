@@ -22,16 +22,16 @@ type Client struct {
 
 func NewClient(endpoint, accessKeyId, secretAccessKey string) (*Client, error) {
 	if endpoint == "" {
-		return nil, fmt.Errorf("sdk error: unset endpoint")
+		return nil, fmt.Errorf("sdkerr: unset endpoint")
 	}
 	if _, err := url.Parse(endpoint); err != nil {
-		return nil, fmt.Errorf("sdk error: invalid endpoint: %w", err)
+		return nil, fmt.Errorf("sdkerr: invalid endpoint: %w", err)
 	}
 	if accessKeyId == "" {
-		return nil, fmt.Errorf("sdk error: unset accessKey")
+		return nil, fmt.Errorf("sdkerr: unset accessKey")
 	}
 	if secretAccessKey == "" {
-		return nil, fmt.Errorf("sdk error: unset secretKey")
+		return nil, fmt.Errorf("sdkerr: unset secretKey")
 	}
 
 	client := resty.New().
@@ -83,7 +83,7 @@ func NewClient(endpoint, accessKeyId, secretAccessKey string) (*Client, error) {
 			hasher.Write([]byte(accessKeyId))
 			kak := hasher.Sum(nil)
 
-			// 生成 kdata
+			// 生成 kdate
 			hasher = hmac.New(sha256.New, kak)
 			hasher.Write([]byte(now.Format("20060102")))
 			kdate := hasher.Sum(nil)
@@ -114,10 +114,10 @@ func (c *Client) SetTimeout(timeout time.Duration) *Client {
 
 func (c *Client) NewRequest(method string, path string) (*resty.Request, error) {
 	if method == "" {
-		return nil, fmt.Errorf("sdk error: unset method")
+		return nil, fmt.Errorf("sdkerr: unset method")
 	}
 	if path == "" {
-		return nil, fmt.Errorf("sdk error: unset path")
+		return nil, fmt.Errorf("sdkerr: unset path")
 	}
 
 	req := c.client.R()
@@ -128,7 +128,7 @@ func (c *Client) NewRequest(method string, path string) (*resty.Request, error) 
 
 func (c *Client) DoRequest(request *resty.Request) (*resty.Response, error) {
 	if request == nil {
-		return nil, fmt.Errorf("sdk error: nil request")
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
 	// WARN:
@@ -136,9 +136,9 @@ func (c *Client) DoRequest(request *resty.Request) (*resty.Response, error) {
 
 	resp, err := request.Send()
 	if err != nil {
-		return resp, fmt.Errorf("sdk error: failed to send request: %w", err)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("sdk error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
@@ -146,7 +146,7 @@ func (c *Client) DoRequest(request *resty.Request) (*resty.Response, error) {
 
 func (c *Client) DoRequestWithResult(request *resty.Request, result any) (*resty.Response, error) {
 	if request == nil {
-		return nil, fmt.Errorf("sdk error: nil request")
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
 	response, err := c.DoRequest(request)
@@ -159,7 +159,7 @@ func (c *Client) DoRequestWithResult(request *resty.Request, result any) (*resty
 
 	if len(response.Body()) != 0 {
 		if err := json.Unmarshal(response.Body(), &result); err != nil {
-			return response, fmt.Errorf("sdk error: failed to unmarshal response: %w", err)
+			return response, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
 		}
 	}
 

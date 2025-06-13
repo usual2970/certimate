@@ -43,6 +43,7 @@ import (
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
+	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pFlexCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
@@ -619,6 +620,27 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
+		}
+
+	case domain.DeploymentProviderTypeCTCCCloudCDN:
+		{
+			access := domain.AccessConfigForCTCCCloud{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeploymentProviderTypeCTCCCloudCDN:
+				deployer, err := pCTCCCloudCDN.NewDeployer(&pCTCCCloudCDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeploymentProviderTypeDogeCloudCDN:
