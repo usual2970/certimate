@@ -1,7 +1,12 @@
 import { forwardRef, memo, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { PlusOutlined as PlusOutlinedIcon, QuestionCircleOutlined as QuestionCircleOutlinedIcon, RightOutlined as RightOutlinedIcon } from "@ant-design/icons";
+import {
+  CloseOutlined as CloseOutlinedIcon,
+  PlusOutlined as PlusOutlinedIcon,
+  QuestionCircleOutlined as QuestionCircleOutlinedIcon,
+  RightOutlined as RightOutlinedIcon,
+} from "@ant-design/icons";
 import { useControllableValue } from "ahooks";
 import {
   AutoComplete,
@@ -590,7 +595,33 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 const EmailInput = memo(
   ({ disabled, placeholder, ...props }: { disabled?: boolean; placeholder?: string; value?: string; onChange?: (value: string) => void }) => {
     const { emails, fetchEmails, removeEmail } = useContactEmailsStore();
-    const emailsToOptions = () => emails.map((email) => ({ label: email, value: email }));
+
+    const handleRemoveEmail = async (value: string) => {
+      try {
+        await removeEmail(value);
+      } catch (error) {
+        console.error("removeEmail", error);
+      }
+    };
+    const emailOptionItemLabel = (email: string, displayRemove: boolean = false) => (
+      <div style={{ display: "flex", flexDirection: "row" }}>
+        <span style={{ flex: 1 }}>{email}</span>
+        {displayRemove && (
+          <CloseOutlinedIcon
+            onClick={(e) => {
+              handleRemoveEmail(email);
+              e.stopPropagation();
+            }}
+          />
+        )}
+      </div>
+    );
+
+    const emailsToOptions = () =>
+      emails.map((email) => ({
+        label: emailOptionItemLabel(email, true),
+        value: email,
+      }));
     useEffect(() => {
       fetchEmails();
     }, [fetchEmails]);
@@ -613,19 +644,14 @@ const EmailInput = memo(
     const handleSearch = (text: string) => {
       const temp = emailsToOptions();
       if (text?.trim()) {
-        if (temp.every((option) => option.label !== text)) {
-          temp.unshift({ label: text, value: text });
+        if (temp.every((option) => option.value !== text)) {
+          temp.unshift({
+            label: emailOptionItemLabel(text),
+            value: text,
+          });
         }
       }
       setOptions(temp);
-    };
-
-    const handleRemoveEmail = async () => {
-      try {
-        await removeEmail(value);
-      } catch (error) {
-        console.error("removeEmail", error);
-      }
     };
 
     return (
@@ -641,7 +667,6 @@ const EmailInput = memo(
         value={value}
         onChange={handleChange}
         onSearch={handleSearch}
-        onClear={handleRemoveEmail}
       />
     );
   }
