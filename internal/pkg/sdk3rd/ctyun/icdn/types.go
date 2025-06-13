@@ -1,4 +1,4 @@
-package cdn
+package icdn
 
 import (
 	"bytes"

@@ -1,4 +1,4 @@
-package cdn
+package icdn
 
 import (
 	"time"
@@ -7,7 +7,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/openapi"
 )
 
-const endpoint = "https://ctcdn-global.ctapi.ctyun.cn"
+const endpoint = "https://icdn-global.ctapi.ctyun.cn"
 
 type Client struct {
 	client *openapi.Client

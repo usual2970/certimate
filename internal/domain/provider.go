@@ -217,9 +217,9 @@ const (
 	DeploymentProviderTypeCdnfly                = DeploymentProviderType(AccessProviderTypeCdnfly)
 	DeploymentProviderTypeCTCCCloudAO           = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-ao") // （预留）
 	DeploymentProviderTypeCTCCCloudCDN          = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-cdn")
-	DeploymentProviderTypeCTCCCloudCMS          = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-cms")  // （预留）
-	DeploymentProviderTypeCTCCCloudELB          = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-elb")  // （预留）
-	DeploymentProviderTypeCTCCCloudICDN         = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-icdn") // （预留）
+	DeploymentProviderTypeCTCCCloudCMS          = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-cms") // （预留）
+	DeploymentProviderTypeCTCCCloudELB          = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-elb") // （预留）
+	DeploymentProviderTypeCTCCCloudICDN         = DeploymentProviderType(AccessProviderTypeCTCCCloud + "-icdn")
 	DeploymentProviderTypeDogeCloudLVDN         = DeploymentProviderType(AccessProviderTypeDogeCloud + "-ldvn") // （预留）
 	DeploymentProviderTypeDogeCloudCDN          = DeploymentProviderType(AccessProviderTypeDogeCloud + "-cdn")
 	DeploymentProviderTypeEdgioApplications     = DeploymentProviderType(AccessProviderTypeEdgio + "-applications")

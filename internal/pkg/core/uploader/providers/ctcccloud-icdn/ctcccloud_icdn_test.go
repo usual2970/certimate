@@ -1,4 +1,4 @@
-package ctcccloudcdn_test
+package ctcccloudicdn_test
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-cdn"
+	provider "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-icdn"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_UPLOADER_CTCCCLOUDCDN_"
+	argsPrefix := "CERTIMATE_UPLOADER_CTCCCLOUDICDN_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -31,11 +31,11 @@ func init() {
 /*
 Shell command to run this test:
 
-	go test -v ./ctcccloud_cdn_test.go -args \
-	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
-	--CERTIMATE_UPLOADER_CTCCCLOUDCDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_CTCCCLOUDCDN_SECRETACCESSKEY="your-secret-access-key"
+	go test -v ./ctcccloud_icdn_test.go -args \
+	--CERTIMATE_UPLOADER_CTCCCLOUDICDN_INPUTCERTPATH="/path/to/your-input-cert.pem" \
+	--CERTIMATE_UPLOADER_CTCCCLOUDICDN_INPUTKEYPATH="/path/to/your-input-key.pem" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDICDN_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_DEPLOYER_CTCCCLOUDICDN_SECRETACCESSKEY="your-secret-access-key"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()
