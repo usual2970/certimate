@@ -595,36 +595,9 @@ const ApplyNodeConfigForm = forwardRef<ApplyNodeConfigFormInstance, ApplyNodeCon
 const EmailInput = memo(
   ({ disabled, placeholder, ...props }: { disabled?: boolean; placeholder?: string; value?: string; onChange?: (value: string) => void }) => {
     const { emails, fetchEmails, removeEmail } = useContactEmailsStore();
-
-    const handleRemoveEmail = async (value: string) => {
-      try {
-        await removeEmail(value);
-      } catch (error) {
-        console.error("removeEmail", error);
-      }
-    };
-    const emailOptionItemLabel = (email: string, displayRemove: boolean = false) => (
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <span style={{ flex: 1 }}>{email}</span>
-        {displayRemove && (
-          <CloseOutlinedIcon
-            onClick={(e) => {
-              handleRemoveEmail(email);
-              e.stopPropagation();
-            }}
-          />
-        )}
-      </div>
-    );
-
-    const emailsToOptions = () =>
-      emails.map((email) => ({
-        label: emailOptionItemLabel(email, true),
-        value: email,
-      }));
     useEffect(() => {
       fetchEmails();
-    }, [fetchEmails]);
+    }, []);
 
     const [value, setValue] = useControllableValue<string>(props, {
       valuePropName: "value",
@@ -632,32 +605,54 @@ const EmailInput = memo(
       trigger: "onChange",
     });
 
-    const [options, setOptions] = useState<AutoCompleteProps["options"]>([]);
-    useEffect(() => {
-      setOptions(emailsToOptions());
-    }, [emails]);
+    const [inputValue, setInputValue] = useState<string>();
+
+    const renderOptionLabel = (email: string, removable: boolean = false) => (
+      <div className="flex items-center gap-2 overflow-hidden">
+        <span className="flex-1 overflow-hidden truncate">{email}</span>
+        {removable && (
+          <Button
+            color="default"
+            disabled={disabled}
+            icon={<CloseOutlinedIcon />}
+            size="small"
+            type="text"
+            onClick={(e) => {
+              removeEmail(email);
+              e.stopPropagation();
+            }}
+          />
+        )}
+      </div>
+    );
+
+    const options = useMemo(() => {
+      const temp = emails.map((email) => ({
+        label: renderOptionLabel(email, true),
+        value: email,
+      }));
+
+      if (!!inputValue && temp.every((option) => option.value !== inputValue)) {
+        temp.unshift({
+          label: renderOptionLabel(inputValue),
+          value: inputValue,
+        });
+      }
+
+      return temp;
+    }, [emails, inputValue]);
 
     const handleChange = (value: string) => {
       setValue(value);
     };
 
-    const handleSearch = (text: string) => {
-      const temp = emailsToOptions();
-      if (text?.trim()) {
-        if (temp.every((option) => option.value !== text)) {
-          temp.unshift({
-            label: emailOptionItemLabel(text),
-            value: text,
-          });
-        }
-      }
-      setOptions(temp);
+    const handleSearch = (value: string) => {
+      setInputValue(value?.trim());
     };
 
     return (
       <AutoComplete
         backfill
-        allowClear
         defaultValue={value}
         disabled={disabled}
         filterOption
