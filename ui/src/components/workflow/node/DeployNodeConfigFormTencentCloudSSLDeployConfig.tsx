@@ -47,7 +47,7 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
       if (!v) return false;
       return String(v)
         .split(MULTIPLE_INPUT_SEPARATOR)
-        .every((e) => /^[A-Za-z0-9*._-|]+$/.test(e));
+        .every((e) => /^[A-Za-z0-9*._\-|]+$/.test(e));
     }, t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.errmsg.invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);
