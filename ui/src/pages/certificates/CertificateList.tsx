@@ -111,16 +111,16 @@ const CertificateList = () => {
         const total = dayjs(record.expireAt).diff(dayjs(record.created), "d") + 1;
         // 使用 isAfter 更精确地判断是否过期
         const isExpired = dayjs().isAfter(dayjs(record.expireAt));
-        const left = dayjs(record.expireAt).diff(dayjs(), "d");
-        const hours = dayjs(record.expireAt).diff(dayjs(), "h");
+        const leftDays = dayjs(record.expireAt).diff(dayjs(), "d");
+        const leftHours = dayjs(record.expireAt).diff(dayjs(), "h");
 
         return (
           <Space className="max-w-full" direction="vertical" size={4}>
             {!isExpired ? (
-              left > 0 ? (
-                <Typography.Text type="success">{t("certificate.props.validity.left_days", { left, total })}</Typography.Text>
+              leftDays > 0 ? (
+                <Typography.Text type="success">{t("certificate.props.validity.left_days", { left: leftDays, total })}</Typography.Text>
               ) : (
-                <Typography.Text type="warning">{t("certificate.props.validity.less_than_day", { hours: hours > 0 ? hours : 1 })}</Typography.Text>
+                <Typography.Text type="warning">{t("certificate.props.validity.less_than_day", { hours: leftHours > 0 ? leftHours : 1 })}</Typography.Text>
               )
             ) : (
               <Typography.Text type="danger">{t("certificate.props.validity.expired")}</Typography.Text>
