@@ -14,7 +14,8 @@ import (
 )
 
 type Client struct {
-	client *resty.Client
+	client  *resty.Client
+	version string
 }
 
 func NewClient(serverUrl, apiVersion, apiKey string) *Client {
@@ -36,7 +37,8 @@ func NewClient(serverUrl, apiVersion, apiKey string) *Client {
 		})
 
 	return &Client{
-		client: client,
+		client:  client,
+		version: apiVersion,
 	}
 }
 

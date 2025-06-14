@@ -62,10 +62,15 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
+	SSLEnable := "enable"
+	if d.config.ApiVersion == "v2" {
+		SSLEnable = "Enable"
+	}
+
 	updateSystemSSLReq := &onepanelsdk.UpdateSystemSSLRequest{
 		Cert:    certPEM,
 		Key:     privkeyPEM,
-		SSL:     "enable",
+		SSL:     SSLEnable,
 		SSLType: "import-paste",
 	}
 	if d.config.AutoRestart {

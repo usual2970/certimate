@@ -7,7 +7,13 @@ import (
 
 func (c *Client) UpdateSystemSSL(req *UpdateSystemSSLRequest) (*UpdateSystemSSLResponse, error) {
 	resp := &UpdateSystemSSLResponse{}
-	err := c.sendRequestWithResult(http.MethodPost, "/settings/ssl/update", req, resp)
+
+	path := "/settings/ssl/update"
+	if c.version == "v2" {
+		path = "/core" + path
+	}
+
+	err := c.sendRequestWithResult(http.MethodPost, path, req, resp)
 	return resp, err
 }
 
