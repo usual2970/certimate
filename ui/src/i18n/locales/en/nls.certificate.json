@@ -13,6 +13,7 @@
   "certificate.props.subject_alt_names": "Name",
   "certificate.props.validity": "Expiry",
   "certificate.props.validity.left_days": "{{left}} / {{total}} days left",
+  "certificate.props.validity.less_than_day": "Expire soon ({{hours}} hours left)",
   "certificate.props.validity.expired": "Expired",
   "certificate.props.validity.expiration": "Expire on {{date}}",
   "certificate.props.validity.filter.expire_soon": "Expire soon",

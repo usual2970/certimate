@@ -13,6 +13,7 @@
   "certificate.props.subject_alt_names": "名称",
   "certificate.props.validity": "有效期限",
   "certificate.props.validity.left_days": "{{left}} / {{total}} 天",
+  "certificate.props.validity.less_than_day": "即将过期（剩余 {{hours}} 小时）",
   "certificate.props.validity.expired": "已到期",
   "certificate.props.validity.expiration": "{{date}} 到期",
   "certificate.props.validity.filter.expire_soon": "即将到期",
