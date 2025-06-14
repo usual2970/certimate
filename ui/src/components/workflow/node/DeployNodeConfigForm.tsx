@@ -50,6 +50,7 @@ import DeployNodeConfigFormBytePlusCDNConfig from "./DeployNodeConfigFormBytePlu
 import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig";
 import DeployNodeConfigFormCTCCCloudAOConfig from "./DeployNodeConfigFormCTCCCloudAOConfig";
 import DeployNodeConfigFormCTCCCloudCDNConfig from "./DeployNodeConfigFormCTCCCloudCDNConfig";
+import DeployNodeConfigFormCTCCCloudELBConfig from "./DeployNodeConfigFormCTCCCloudELBConfig";
 import DeployNodeConfigFormCTCCCloudICDNConfig from "./DeployNodeConfigFormCTCCCloudICDNConfig";
 import DeployNodeConfigFormCTCCCloudLVDNConfig from "./DeployNodeConfigFormCTCCCloudLVDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
@@ -273,6 +274,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormCTCCCloudAOConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.CTCCCLOUD_CDN:
           return <DeployNodeConfigFormCTCCCloudCDNConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.CTCCCLOUD_ELB:
+          return <DeployNodeConfigFormCTCCCloudELBConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.CTCCCLOUD_ICDN:
           return <DeployNodeConfigFormCTCCCloudICDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.CTCCCLOUD_LVDN:

@@ -46,6 +46,7 @@ import (
 	pCTCCCloudAO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-ao"
 	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
 	pCTCCCloudCMS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
+	pCTCCCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-elb"
 	pCTCCCloudICDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-icdn"
 	pCTCCCloudLVDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-lvdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
@@ -626,7 +627,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudICDN, domain.DeploymentProviderTypeCTCCCloudLVDN:
+	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudELB, domain.DeploymentProviderTypeCTCCCloudICDN, domain.DeploymentProviderTypeCTCCCloudLVDN:
 		{
 			access := domain.AccessConfigForCTCCCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -654,6 +655,17 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				deployer, err := pCTCCCloudCMS.NewDeployer(&pCTCCCloudCMS.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudELB:
+				deployer, err := pCTCCCloudELB.NewDeployer(&pCTCCCloudELB.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					RegionId:        maputil.GetString(options.ProviderServiceConfig, "regionId"),
+					ResourceType:    pCTCCCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
