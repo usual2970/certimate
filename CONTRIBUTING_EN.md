@@ -36,6 +36,8 @@ Once you have made changes to the Go code in Certimate, follow these steps to ru
 
 This will start a web server at `http://localhost:8090` using the prebuilt Admin UI located in `ui/dist`.
 
+> if you encounter an error `ui/embed.go:10:12: pattern all:dist: no matching files found`, please refer to [build Admin UI](#making-changes-in-the-admin-ui)
+
 **Before submitting a PR to the main repository, consider:**
 
 - Format your source code by using [gofumpt](https://github.com/mvdan/gofumpt).
