@@ -40,7 +40,8 @@ func (c *Client) doRequestWithResult(request *resty.Request, result baseResultIn
 	response, err := c.client.DoRequestWithResult(request, result)
 	if err == nil {
 		statusCode := result.GetStatusCode()
-		if statusCode != "" && statusCode != "200" {
+		errorCode := result.GetError()
+		if (statusCode != "" && statusCode != "200") || errorCode != "" {
 			return response, fmt.Errorf("sdkerr: api error, code='%s', message='%s', errorCode='%s', errorMessage='%s'", statusCode, result.GetMessage(), result.GetMessage(), result.GetErrorMessage())
 		}
 	}

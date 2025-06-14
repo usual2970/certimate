@@ -47,6 +47,7 @@ import (
 	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
 	pCTCCCloudCMS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
 	pCTCCCloudICDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-icdn"
+	pCTCCCloudLVDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-lvdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pFlexCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
@@ -625,7 +626,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudICDN:
+	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudICDN, domain.DeploymentProviderTypeCTCCCloudLVDN:
 		{
 			access := domain.AccessConfigForCTCCCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -658,6 +659,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 
 			case domain.DeploymentProviderTypeCTCCCloudICDN:
 				deployer, err := pCTCCCloudICDN.NewDeployer(&pCTCCCloudICDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudLVDN:
+				deployer, err := pCTCCCloudLVDN.NewDeployer(&pCTCCCloudLVDN.DeployerConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),

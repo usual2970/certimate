@@ -51,6 +51,7 @@ import DeployNodeConfigFormCdnflyConfig from "./DeployNodeConfigFormCdnflyConfig
 import DeployNodeConfigFormCTCCCloudAOConfig from "./DeployNodeConfigFormCTCCCloudAOConfig";
 import DeployNodeConfigFormCTCCCloudCDNConfig from "./DeployNodeConfigFormCTCCCloudCDNConfig";
 import DeployNodeConfigFormCTCCCloudICDNConfig from "./DeployNodeConfigFormCTCCCloudICDNConfig";
+import DeployNodeConfigFormCTCCCloudLVDNConfig from "./DeployNodeConfigFormCTCCCloudLVDNConfig";
 import DeployNodeConfigFormDogeCloudCDNConfig from "./DeployNodeConfigFormDogeCloudCDNConfig";
 import DeployNodeConfigFormEdgioApplicationsConfig from "./DeployNodeConfigFormEdgioApplicationsConfig";
 import DeployNodeConfigFormFlexCDNConfig from "./DeployNodeConfigFormFlexCDNConfig";
@@ -274,6 +275,8 @@ const DeployNodeConfigForm = forwardRef<DeployNodeConfigFormInstance, DeployNode
           return <DeployNodeConfigFormCTCCCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.CTCCCLOUD_ICDN:
           return <DeployNodeConfigFormCTCCCloudICDNConfig {...nestedFormProps} />;
+        case DEPLOYMENT_PROVIDERS.CTCCCLOUD_LVDN:
+          return <DeployNodeConfigFormCTCCCloudLVDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.DOGECLOUD_CDN:
           return <DeployNodeConfigFormDogeCloudCDNConfig {...nestedFormProps} />;
         case DEPLOYMENT_PROVIDERS.EDGIO_APPLICATIONS:

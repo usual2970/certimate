@@ -1,4 +1,4 @@
-package dns
+package lvdn
 
 import (
 	"bytes"
@@ -70,13 +70,21 @@ func (r *baseResult) GetErrorMessage() string {
 
 var _ baseResultInterface = (*baseResult)(nil)
 
-type DnsRecord struct {
-	RecordId int32  `json:"recordId"`
-	Host     string `json:"host"`
-	Type     string `json:"type"`
-	LineCode string `json:"lineCode"`
-	Value    string `json:"value"`
-	TTL      int32  `json:"ttl"`
-	State    int32  `json:"state"`
-	Remark   string `json:"remark"`
+type CertRecord struct {
+	Id          int64    `json:"id"`
+	Name        string   `json:"name"`
+	CN          string   `json:"cn"`
+	SANs        []string `json:"sans"`
+	UsageMode   int32    `json:"usage_mode"`
+	State       int32    `json:"state"`
+	ExpiresTime int64    `json:"expires"`
+	IssueTime   int64    `json:"issue"`
+	Issuer      string   `json:"issuer"`
+	CreatedTime int64    `json:"created"`
+}
+
+type CertDetail struct {
+	CertRecord
+	Certs string `json:"certs"`
+	Key   string `json:"key"`
 }
