@@ -1,4 +1,4 @@
-package jdcloudssl_test
+package wangsucertificate_test
 
 import (
 	"context"
@@ -20,7 +20,7 @@ var (
 )
 
 func init() {
-	argsPrefix := "CERTIMATE_UPLOADER_JDCLOUDSSL_"
+	argsPrefix := "CERTIMATE_UPLOADER_WANGSUCERTIFICATE_"
 
 	flag.StringVar(&fInputCertPath, argsPrefix+"INPUTCERTPATH", "", "")
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
@@ -34,8 +34,8 @@ Shell command to run this test:
 	go test -v ./wangsu_certificate_test.go -args \
 	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_INPUTCERTPATH="/path/to/your-input-cert.pem" \
 	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_INPUTKEYPATH="/path/to/your-input-key.pem" \
-	--CERTIMATE_DEPLOYER_WANGSUCERTIFICATE_ACCESSKEYID="your-access-key-id" \
-	--CERTIMATE_DEPLOYER_WANGSUCERTIFICATE_ACCESSKEYSECRET="your-access-key-secret"
+	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_ACCESSKEYID="your-access-key-id" \
+	--CERTIMATE_UPLOADER_WANGSUCERTIFICATE_ACCESSKEYSECRET="your-access-key-secret"
 */
 func TestDeploy(t *testing.T) {
 	flag.Parse()

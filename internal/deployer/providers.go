@@ -25,6 +25,7 @@ import (
 	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
 	pAliyunVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-vod"
 	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
+	pAPISIX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/apisix"
 	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
 	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
 	pAWSIAM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-iam"
@@ -42,6 +43,12 @@ import (
 	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
 	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
 	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
+	pCTCCCloudAO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-ao"
+	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
+	pCTCCCloudCMS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
+	pCTCCCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-elb"
+	pCTCCCloudICDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-icdn"
+	pCTCCCloudLVDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-lvdn"
 	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
 	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
 	pFlexCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
@@ -73,6 +80,7 @@ import (
 	pTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
 	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
 	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
+	pTencentCloudGAAP "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-gaap"
 	pTencentCloudSCF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-scf"
 	pTencentCloudSSL "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl"
 	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
@@ -330,6 +338,23 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			default:
 				break
 			}
+		}
+
+	case domain.DeploymentProviderTypeAPISIX:
+		{
+			access := domain.AccessConfigForAPISIX{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			deployer, err := pAPISIX.NewDeployer(&pAPISIX.DeployerConfig{
+				ServerUrl:                access.ServerUrl,
+				ApiKey:                   access.ApiKey,
+				AllowInsecureConnections: access.AllowInsecureConnections,
+				ResourceType:             pAPISIX.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+			})
+			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront, domain.DeploymentProviderTypeAWSIAM:
@@ -600,6 +625,69 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
+		}
+
+	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudELB, domain.DeploymentProviderTypeCTCCCloudICDN, domain.DeploymentProviderTypeCTCCCloudLVDN:
+		{
+			access := domain.AccessConfigForCTCCCloud{}
+			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
+			}
+
+			switch options.Provider {
+			case domain.DeploymentProviderTypeCTCCCloudAO:
+				deployer, err := pCTCCCloudAO.NewDeployer(&pCTCCCloudAO.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudCDN:
+				deployer, err := pCTCCCloudCDN.NewDeployer(&pCTCCCloudCDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudCMS:
+				deployer, err := pCTCCCloudCMS.NewDeployer(&pCTCCCloudCMS.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudELB:
+				deployer, err := pCTCCCloudELB.NewDeployer(&pCTCCCloudELB.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					RegionId:        maputil.GetString(options.ProviderServiceConfig, "regionId"),
+					ResourceType:    pCTCCCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudICDN:
+				deployer, err := pCTCCCloudICDN.NewDeployer(&pCTCCCloudICDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeCTCCCloudLVDN:
+				deployer, err := pCTCCCloudLVDN.NewDeployer(&pCTCCCloudLVDN.DeployerConfig{
+					AccessKeyId:     access.AccessKeyId,
+					SecretAccessKey: access.SecretAccessKey,
+					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			default:
+				break
+			}
 		}
 
 	case domain.DeploymentProviderTypeDogeCloudCDN:
@@ -1030,7 +1118,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 			return deployer, err
 		}
 
-	case domain.DeploymentProviderTypeTencentCloudCDN, domain.DeploymentProviderTypeTencentCloudCLB, domain.DeploymentProviderTypeTencentCloudCOS, domain.DeploymentProviderTypeTencentCloudCSS, domain.DeploymentProviderTypeTencentCloudECDN, domain.DeploymentProviderTypeTencentCloudEO, domain.DeploymentProviderTypeTencentCloudSCF, domain.DeploymentProviderTypeTencentCloudSSL, domain.DeploymentProviderTypeTencentCloudSSLDeploy, domain.DeploymentProviderTypeTencentCloudVOD, domain.DeploymentProviderTypeTencentCloudWAF:
+	case domain.DeploymentProviderTypeTencentCloudCDN, domain.DeploymentProviderTypeTencentCloudCLB, domain.DeploymentProviderTypeTencentCloudCOS, domain.DeploymentProviderTypeTencentCloudCSS, domain.DeploymentProviderTypeTencentCloudECDN, domain.DeploymentProviderTypeTencentCloudEO, domain.DeploymentProviderTypeTencentCloudGAAP, domain.DeploymentProviderTypeTencentCloudSCF, domain.DeploymentProviderTypeTencentCloudSSL, domain.DeploymentProviderTypeTencentCloudSSLDeploy, domain.DeploymentProviderTypeTencentCloudVOD, domain.DeploymentProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
 			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
@@ -1090,6 +1178,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					SecretKey: access.SecretKey,
 					ZoneId:    maputil.GetString(options.ProviderServiceConfig, "zoneId"),
 					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+				})
+				return deployer, err
+
+			case domain.DeploymentProviderTypeTencentCloudGAAP:
+				deployer, err := pTencentCloudGAAP.NewDeployer(&pTencentCloudGAAP.DeployerConfig{
+					SecretId:     access.SecretId,
+					SecretKey:    access.SecretKey,
+					ResourceType: pTencentCloudGAAP.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
+					ProxyId:      maputil.GetString(options.ProviderServiceConfig, "proxyId"),
+					ListenerId:   maputil.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 

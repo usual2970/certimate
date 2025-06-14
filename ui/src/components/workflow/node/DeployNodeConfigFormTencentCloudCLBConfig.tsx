@@ -29,7 +29,7 @@ const RESOURCE_TYPE_RULEDOMAIN = "ruledomain" as const;
 
 const initFormModel = (): DeployNodeConfigFormTencentCloudCLBConfigFieldValues => {
   return {
-    resourceType: RESOURCE_TYPE_VIA_SSLDEPLOY,
+    resourceType: RESOURCE_TYPE_LISTENER,
   };
 };
 

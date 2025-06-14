@@ -1,6 +1,8 @@
 package typeutil
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // 判断对象是否为 nil。
 // 与直接使用 `obj == nil` 不同，该函数会正确判断接口类型对象的真实值是否为空。

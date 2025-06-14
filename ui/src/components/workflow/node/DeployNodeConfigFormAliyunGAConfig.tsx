@@ -25,7 +25,9 @@ const RESOURCE_TYPE_ACCELERATOR = "accelerator" as const;
 const RESOURCE_TYPE_LISTENER = "listener" as const;
 
 const initFormModel = (): DeployNodeConfigFormAliyunGAConfigFieldValues => {
-  return {};
+  return {
+    resourceType: RESOURCE_TYPE_LISTENER,
+  };
 };
 
 const DeployNodeConfigFormAliyunGAConfig = ({ form: formInst, formName, disabled, initialValues, onValuesChange }: DeployNodeConfigFormAliyunGAConfigProps) => {

@@ -35,7 +35,7 @@ func (n *monitorNode) Process(ctx context.Context) error {
 	nodeCfg := n.node.GetConfigForMonitor()
 	n.logger.Info("ready to monitor certificate ...", slog.Any("config", nodeCfg))
 
-	targetAddr := net.JoinHostPort(nodeCfg.Host, fmt.Sprintf("%d", nodeCfg.Port))
+	targetAddr := net.JoinHostPort(nodeCfg.Host, strconv.Itoa(int(nodeCfg.Port)))
 	if nodeCfg.Port == 0 {
 		targetAddr = net.JoinHostPort(nodeCfg.Host, "443")
 	}
@@ -100,7 +100,13 @@ func (n *monitorNode) Process(ctx context.Context) error {
 			if validated {
 				n.logger.Info(fmt.Sprintf("the certificate is valid, and will expire in %d day(s)", daysLeft))
 			} else {
-				n.logger.Warn(fmt.Sprintf("the certificate is invalid", validated))
+				if !isCertHostMatched {
+					n.logger.Warn("the certificate is invalid, because it is not matched the host")
+				} else if !isCertPeriodValid {
+					n.logger.Warn("the certificate is invalid, because it is either expired or not yet valid")
+				} else {
+					n.logger.Warn("the certificate is invalid")
+				}
 			}
 		}
 	}

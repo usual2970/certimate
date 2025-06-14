@@ -41,6 +41,12 @@ type AccessConfigForAliyun struct {
 	ResourceGroupId string `json:"resourceGroupId,omitempty"`
 }
 
+type AccessConfigForAPISIX struct {
+	ServerUrl                string `json:"serverUrl"`
+	ApiKey                   string `json:"apiKey"`
+	AllowInsecureConnections bool   `json:"allowInsecureConnections,omitempty"`
+}
+
 type AccessConfigForAWS struct {
 	AccessKeyId     string `json:"accessKeyId"`
 	SecretAccessKey string `json:"secretAccessKey"`
@@ -114,6 +120,11 @@ type AccessConfigForConstellix struct {
 	SecretKey string `json:"secretKey"`
 }
 
+type AccessConfigForCTCCCloud struct {
+	AccessKeyId     string `json:"accessKeyId"`
+	SecretAccessKey string `json:"secretAccessKey"`
+}
+
 type AccessConfigForDeSEC struct {
 	Token string `json:"token"`
 }
@@ -162,6 +173,7 @@ type AccessConfigForEmail struct {
 	Username               string `json:"username"`
 	Password               string `json:"password"`
 	DefaultSenderAddress   string `json:"defaultSenderAddress,omitempty"`
+	DefaultSenderName      string `json:"defaultSenderName,omitempty"`
 	DefaultReceiverAddress string `json:"defaultReceiverAddress,omitempty"`
 }
 

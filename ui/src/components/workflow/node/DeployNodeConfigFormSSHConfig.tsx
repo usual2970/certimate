@@ -46,12 +46,13 @@ const initFormModel = (): DeployNodeConfigFormSSHConfigFieldValues => {
 };
 
 const initPresetScript = (
-  key: Parameters<typeof _initPresetScript>[0] | "sh_replace_synologydsm_ssl" | "sh_replace_fnos_ssl",
+  key: Parameters<typeof _initPresetScript>[0] | "sh_replace_synologydsm_ssl" | "sh_replace_fnos_ssl" | "sh_replace_qnap_ssl",
   params?: Parameters<typeof _initPresetScript>[1]
 ) => {
   switch (key) {
     case "sh_replace_synologydsm_ssl":
       return `# *** 需要 root 权限 ***
+# 注意仅支持替换证书，需本身已开启过一次 HTTPS
 # 脚本参考 https://github.com/catchdave/ssl-certs/blob/main/replace_synology_ssl_certs.sh
 
 # 请将以下变量替换为实际值
@@ -129,6 +130,7 @@ info "Completed"
 
     case "sh_replace_fnos_ssl":
       return `# *** 需要 root 权限 ***
+# 注意仅支持替换证书，需本身已开启过一次 HTTPS
 # 脚本参考 https://github.com/lfgyx/fnos_certificate_update/blob/main/src/update_cert.sh
 
 # 请将以下变量替换为实际值
@@ -145,9 +147,9 @@ $domain = "<your-domain-name>" # 域名
 cp -rf "$tmpFullchainPath" "$fnFullchainPath"
 cp -rf "$tmpCertPath" "$fnCertPath"
 cp -rf "$tmpKeyPath" "$fnKeyPath"
+chmod 755 "$fnFullchainPath"
 chmod 755 "$fnCertPath"
 chmod 755 "$fnKeyPath"
-chmod 755 "$fnFullchainPath"
 
 # 更新数据库
 NEW_EXPIRY_DATE=$(openssl x509 -enddate -noout -in "$fnCertPath" | sed "s/^.*=\\(.*\\)$/\\1/")
@@ -158,6 +160,28 @@ psql -U postgres -d trim_connect -c "UPDATE cert SET valid_to=$NEW_EXPIRY_TIMEST
 systemctl restart webdav.service
 systemctl restart smbftpd.service
 systemctl restart trim_nginx.service
+      `.trim();
+
+    case "sh_replace_qnap_ssl":
+      return `# *** 需要 root 权限 ***
+# 注意仅支持替换证书，需本身已开启过一次 HTTPS
+
+# 请将以下变量替换为实际值
+$tmpFullchainPath = "${params?.certPath || "<your-fullchain-cert-path>"}" # 证书文件路径（与表单中保持一致）
+$tmpKeyPath = "${params?.keyPath || "<your-key-path>"}" # 私钥文件路径（与表单中保持一致）
+
+# 复制文件
+cp -rf "$tmpFullchainPath" /etc/stunnel/backup.cert
+cp -rf "$tmpKeyPath" /etc/stunnel/backup.key
+cat /etc/stunnel/backup.key > /etc/stunnel/stunnel.pem
+cat /etc/stunnel/backup.cert >> /etc/stunnel/stunnel.pem
+chmod 600 /etc/stunnel/backup.cert
+chmod 600 /etc/stunnel/backup.key
+chmod 600 /etc/stunnel/stunnel.pem
+
+# 重启服务
+/etc/init.d/stunnel.sh restart
+/etc/init.d/reverse_proxy.sh reload
       `.trim();
   }
 
@@ -286,6 +310,7 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
 
       case "sh_replace_synologydsm_ssl":
       case "sh_replace_fnos_ssl":
+      case "sh_replace_qnap_ssl":
         {
           const presetScriptParams = {
             certPath: formInst.getFieldValue("certPath"),
@@ -461,13 +486,19 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
             <div className="text-right">
               <Dropdown
                 menu={{
-                  items: ["sh_reload_nginx", "sh_replace_synologydsm_ssl", "sh_replace_fnos_ssl", "ps_binding_iis", "ps_binding_netsh", "ps_binding_rdp"].map(
-                    (key) => ({
-                      key,
-                      label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
-                      onClick: () => handlePresetPostScriptClick(key),
-                    })
-                  ),
+                  items: [
+                    "sh_reload_nginx",
+                    "sh_replace_synologydsm_ssl",
+                    "sh_replace_fnos_ssl",
+                    "sh_replace_qnap_ssl",
+                    "ps_binding_iis",
+                    "ps_binding_netsh",
+                    "ps_binding_rdp",
+                  ].map((key) => ({
+                    key,
+                    label: t(`workflow_node.deploy.form.ssh_preset_scripts.option.${key}.label`),
+                    onClick: () => handlePresetPostScriptClick(key),
+                  })),
                 }}
                 trigger={["click"]}
               >

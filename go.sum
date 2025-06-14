@@ -836,6 +836,7 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.1166/go.mod h1
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1128/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1150/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1155/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1163/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1164/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1166/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1169/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
@@ -845,6 +846,8 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1173 h1:W5b
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.1173/go.mod h1:r5r4xbfxSaeR04b166HGsBa/R4U3SueirEUpXGuw+Q0=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1128 h1:mrJ5Fbkd7sZIJ5F6oRfh5zebPQaudPH9Y0+GUmFytYU=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.1128/go.mod h1:zbsYIBT+VTX4z4ocjTAdLBIWyNYj3z0BRqd0iPdnjsk=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.1163 h1:putqrH5n1SVRqFWHOylVqYI5yLQUjRTkHqZPLT2yeVY=
+github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.1163/go.mod h1:aEWRXlAvovPUUoS3kVB/LVWEQ19WqzTj2lXGvR1YArY=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1150 h1:RQQYfZOFYlkxKR2+xp8el3+8xs9DhxBy+ajlHtapqtQ=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/live v1.0.1150/go.mod h1:zpfr6EBWy7ClASTGUgIy01Gn4R79UXf+2QGQeyR124A=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.1172 h1:6SUO0hTie3zxnUEMxmhnS1iRIXpAukSZV27Nrx4NwIk=

@@ -1,6 +1,8 @@
 package typeutil
 
-import "reflect"
+import (
+	"reflect"
+)
 
 // 将对象转换为指针。
 //

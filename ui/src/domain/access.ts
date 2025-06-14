@@ -10,6 +10,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForACMECA
       | AccessConfigForACMEHttpReq
       | AccessConfigForAliyun
+      | AccessConfigForAPISIX
       | AccessConfigForAWS
       | AccessConfigForAzure
       | AccessConfigForBaiduCloud
@@ -24,6 +25,7 @@ export interface AccessModel extends BaseModel {
       | AccessConfigForClouDNS
       | AccessConfigForCMCCCloud
       | AccessConfigForConstellix
+      | AccessConfigForCTCCCloud
       | AccessConfigForDeSEC
       | AccessConfigForDigitalOcean
       | AccessConfigForDingTalkBot
@@ -105,6 +107,12 @@ export type AccessConfigForAliyun = {
   resourceGroupId?: string;
 };
 
+export type AccessConfigForAPISIX = {
+  serverUrl: string;
+  apiKey: string;
+  allowInsecureConnections?: boolean;
+};
+
 export type AccessConfigForAWS = {
   accessKeyId: string;
   secretAccessKey: string;
@@ -176,6 +184,11 @@ export type AccessConfigForCMCCCloud = {
 export type AccessConfigForConstellix = {
   apiKey: string;
   secretKey: string;
+};
+
+export type AccessConfigForCTCCCloud = {
+  accessKeyId: string;
+  secretAccessKey: string;
 };
 
 export type AccessConfigForDeSEC = {

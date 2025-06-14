@@ -88,7 +88,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	u.logger.Debug("sdk request 'ussl.UploadNormalCertificate'", slog.Any("request", uploadNormalCertificateReq), slog.Any("response", uploadNormalCertificateResp))
 	if err != nil {
 		if uploadNormalCertificateResp != nil && uploadNormalCertificateResp.GetRetCode() == 80035 {
-			if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
+			if res, err := u.findCertIfExists(ctx, certPEM); err != nil {
 				return nil, err
 			} else if res == nil {
 				return nil, errors.New("ucloud ssl: no certificate found")
@@ -111,14 +111,14 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}, nil
 }
 
-func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
+func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
-	// 遍历获取用户证书列表，避免重复上传
+	// 遍历获取用户证书列表
 	// REF: https://docs.ucloud.cn/api/usslcertificate-api/get_certificate_list
 	// REF: https://docs.ucloud.cn/api/usslcertificate-api/download_certificate
 	getCertificateListPage := int(1)

@@ -3,9 +3,10 @@ package email
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
 	"log/slog"
+	"net"
 	"net/smtp"
+	"strconv"
 
 	"github.com/domodwyer/mailyak/v3"
 
@@ -26,6 +27,8 @@ type NotifierConfig struct {
 	Password string `json:"password"`
 	// 发件人邮箱。
 	SenderAddress string `json:"senderAddress"`
+	// 发件人显示名称。
+	SenderName string `json:"senderName,omitempty"`
 	// 收件人邮箱。
 	ReceiverAddress string `json:"receiverAddress"`
 }
@@ -66,12 +69,12 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	var smtpAddr string
 	if n.config.SmtpPort == 0 {
 		if n.config.SmtpTls {
-			smtpAddr = fmt.Sprintf("%s:465", n.config.SmtpHost)
+			smtpAddr = net.JoinHostPort(n.config.SmtpHost, "465")
 		} else {
-			smtpAddr = fmt.Sprintf("%s:25", n.config.SmtpHost)
+			smtpAddr = net.JoinHostPort(n.config.SmtpHost, "25")
 		}
 	} else {
-		smtpAddr = fmt.Sprintf("%s:%d", n.config.SmtpHost, n.config.SmtpPort)
+		smtpAddr = net.JoinHostPort(n.config.SmtpHost, strconv.Itoa(int(n.config.SmtpPort)))
 	}
 
 	var yak *mailyak.MailYak
@@ -86,6 +89,7 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 	}
 
 	yak.From(n.config.SenderAddress)
+	yak.FromName(n.config.SenderName)
 	yak.To(n.config.ReceiverAddress)
 	yak.Subject(subject)
 	yak.Plain().Set(message)

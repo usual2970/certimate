@@ -52,7 +52,8 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 }
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
-	if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
+	// 遍历证书列表，避免重复上传
+	if res, err := u.findCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res != nil {
 		u.logger.Info("ssl certificate already exists")
@@ -71,7 +72,8 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		return nil, fmt.Errorf("failed to execute sdk request 'sslcenter.Create': %w", err)
 	}
 
-	if res, err := u.getCertIfExists(ctx, certPEM); err != nil {
+	// 遍历证书列表，获取刚刚上传证书 ID
+	if res, err := u.findCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res == nil {
 		return nil, errors.New("rainyun sslcenter: no certificate found")
@@ -80,14 +82,14 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 }
 
-func (u *UploaderProvider) getCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
+func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
 	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
-	// 遍历 SSL 证书列表，避免重复上传
+	// 遍历 SSL 证书列表
 	// REF: https://apifox.com/apidoc/shared/a4595cc8-44c5-4678-a2a3-eed7738dab03/api-69943046
 	// REF: https://apifox.com/apidoc/shared/a4595cc8-44c5-4678-a2a3-eed7738dab03/api-69943048
 	sslCenterListPage := int32(1)
