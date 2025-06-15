@@ -31,7 +31,7 @@ func (c *Client) GetDomainConfig(req *GetDomainConfigRequest) (*GetDomainConfigR
 }
 
 func (c *Client) GetDomainConfigWithContext(ctx context.Context, req *GetDomainConfigRequest) (*GetDomainConfigResponse, error) {
-	httpreq, err := c.newRequest(http.MethodGet, "/ctapi/v1/accessone/domain/config")
+	httpreq, err := c.newRequest(http.MethodPost, "/ctapi/v1/accessone/domain/config")
 	if err != nil {
 		return nil, err
 	} else {

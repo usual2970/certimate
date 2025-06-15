@@ -73,19 +73,19 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		default:
 		}
 
-		listCertReq := &ctyunao.ListCertRequest{
+		listCertsReq := &ctyunao.ListCertsRequest{
 			Page:      typeutil.ToPtr(listCertPage),
 			PerPage:   typeutil.ToPtr(listCertPerPage),
 			UsageMode: typeutil.ToPtr(int32(0)),
 		}
-		listCertResp, err := u.sdkClient.ListCert(listCertReq)
-		u.logger.Debug("sdk request 'ao.ListCert'", slog.Any("request", listCertReq), slog.Any("response", listCertResp))
+		listCertsResp, err := u.sdkClient.ListCerts(listCertsReq)
+		u.logger.Debug("sdk request 'ao.ListCerts'", slog.Any("request", listCertsReq), slog.Any("response", listCertsResp))
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'ao.ListCert': %w", err)
+			return nil, fmt.Errorf("failed to execute sdk request 'ao.ListCerts': %w", err)
 		}
 
-		if listCertResp.ReturnObj != nil {
-			for _, certRecord := range listCertResp.ReturnObj.Results {
+		if listCertsResp.ReturnObj != nil {
+			for _, certRecord := range listCertsResp.ReturnObj.Results {
 				// 对比证书通用名称
 				if !strings.EqualFold(certX509.Subject.CommonName, certRecord.CN) {
 					continue
@@ -137,7 +137,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			}
 		}
 
-		if listCertResp.ReturnObj == nil || len(listCertResp.ReturnObj.Results) < int(listCertPerPage) {
+		if listCertsResp.ReturnObj == nil || len(listCertsResp.ReturnObj.Results) < int(listCertPerPage) {
 			break
 		} else {
 			listCertPage++

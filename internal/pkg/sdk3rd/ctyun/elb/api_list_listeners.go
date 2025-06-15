@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type ListListenerRequest struct {
+type ListListenersRequest struct {
 	ClientToken     *string `json:"clientToken,omitempty"`
 	RegionID        *string `json:"regionID,omitempty"`
 	ProjectID       *string `json:"projectID,omitempty"`
@@ -15,17 +15,17 @@ type ListListenerRequest struct {
 	AccessControlID *string `json:"accessControlID,omitempty"`
 }
 
-type ListListenerResponse struct {
+type ListListenersResponse struct {
 	baseResult
 
 	ReturnObj []*ListenerRecord `json:"returnObj,omitempty"`
 }
 
-func (c *Client) ListListener(req *ListListenerRequest) (*ListListenerResponse, error) {
-	return c.ListListenerWithContext(context.Background(), req)
+func (c *Client) ListListeners(req *ListListenersRequest) (*ListListenersResponse, error) {
+	return c.ListListenersWithContext(context.Background(), req)
 }
 
-func (c *Client) ListListenerWithContext(ctx context.Context, req *ListListenerRequest) (*ListListenerResponse, error) {
+func (c *Client) ListListenersWithContext(ctx context.Context, req *ListListenersRequest) (*ListListenersResponse, error) {
 	httpreq, err := c.newRequest(http.MethodGet, "/v4/elb/list-listener")
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (c *Client) ListListenerWithContext(ctx context.Context, req *ListListenerR
 		httpreq.SetContext(ctx)
 	}
 
-	result := &ListListenerResponse{}
+	result := &ListListenersResponse{}
 	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}

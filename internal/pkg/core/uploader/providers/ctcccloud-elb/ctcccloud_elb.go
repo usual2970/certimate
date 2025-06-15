@@ -66,15 +66,15 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 	// 查询证书列表，避免重复上传
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=24&api=5692&data=88&isNormal=1&vid=82
-	listCertificateReq := &ctyunelb.ListCertificateRequest{
+	listCertificatesReq := &ctyunelb.ListCertificatesRequest{
 		RegionID: typeutil.ToPtr(u.config.RegionId),
 	}
-	listCertificateResp, err := u.sdkClient.ListCertificate(listCertificateReq)
-	u.logger.Debug("sdk request 'elb.ListCertificate'", slog.Any("request", listCertificateReq), slog.Any("response", listCertificateResp))
+	listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
+	u.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'elb.ListCertificate': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'elb.ListCertificates': %w", err)
 	} else {
-		for _, certRecord := range listCertificateResp.ReturnObj {
+		for _, certRecord := range listCertificatesResp.ReturnObj {
 			var isSameCert bool
 			if certRecord.Certificate == certPEM {
 				isSameCert = true

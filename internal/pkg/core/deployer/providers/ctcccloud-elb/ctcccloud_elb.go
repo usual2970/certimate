@@ -119,17 +119,17 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, cloudCertId
 		default:
 		}
 
-		listListenerReq := &ctyunelb.ListListenerRequest{
+		listListenersReq := &ctyunelb.ListListenersRequest{
 			RegionID:       typeutil.ToPtr(d.config.RegionId),
 			LoadBalancerID: typeutil.ToPtr(d.config.LoadbalancerId),
 		}
-		listListenerResp, err := d.sdkClient.ListListener(listListenerReq)
-		d.logger.Debug("sdk request 'elb.ListListener'", slog.Any("request", listListenerReq), slog.Any("response", listListenerResp))
+		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
+		d.logger.Debug("sdk request 'elb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
 		if err != nil {
-			return fmt.Errorf("failed to execute sdk request 'elb.ListListener': %w", err)
+			return fmt.Errorf("failed to execute sdk request 'elb.ListListeners': %w", err)
 		}
 
-		for _, listener := range listListenerResp.ReturnObj {
+		for _, listener := range listListenersResp.ReturnObj {
 			if strings.EqualFold(listener.Protocol, "HTTPS") {
 				listenerIds = append(listenerIds, listener.ID)
 			}

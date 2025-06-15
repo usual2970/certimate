@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-type ListCertificateRequest struct {
+type ListCertificatesRequest struct {
 	ClientToken *string `json:"clientToken,omitempty"`
 	RegionID    *string `json:"regionID,omitempty"`
 	IDs         *string `json:"IDs,omitempty"`
@@ -13,17 +13,17 @@ type ListCertificateRequest struct {
 	Type        *string `json:"type,omitempty"`
 }
 
-type ListCertificateResponse struct {
+type ListCertificatesResponse struct {
 	baseResult
 
 	ReturnObj []*CertificateRecord `json:"returnObj,omitempty"`
 }
 
-func (c *Client) ListCertificate(req *ListCertificateRequest) (*ListCertificateResponse, error) {
-	return c.ListCertificateWithContext(context.Background(), req)
+func (c *Client) ListCertificates(req *ListCertificatesRequest) (*ListCertificatesResponse, error) {
+	return c.ListCertificatesWithContext(context.Background(), req)
 }
 
-func (c *Client) ListCertificateWithContext(ctx context.Context, req *ListCertificateRequest) (*ListCertificateResponse, error) {
+func (c *Client) ListCertificatesWithContext(ctx context.Context, req *ListCertificatesRequest) (*ListCertificatesResponse, error) {
 	httpreq, err := c.newRequest(http.MethodGet, "/v4/elb/list-certificate")
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (c *Client) ListCertificateWithContext(ctx context.Context, req *ListCertif
 		httpreq.SetContext(ctx)
 	}
 
-	result := &ListCertificateResponse{}
+	result := &ListCertificatesResponse{}
 	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}

@@ -6,13 +6,13 @@ import (
 	"strconv"
 )
 
-type ListCertRequest struct {
+type ListCertsRequest struct {
 	Page      *int32 `json:"page,omitempty"`
 	PerPage   *int32 `json:"per_page,omitempty"`
 	UsageMode *int32 `json:"usage_mode,omitempty"`
 }
 
-type ListCertResponse struct {
+type ListCertsResponse struct {
 	baseResult
 
 	ReturnObj *struct {
@@ -24,11 +24,11 @@ type ListCertResponse struct {
 	} `json:"returnObj,omitempty"`
 }
 
-func (c *Client) ListCert(req *ListCertRequest) (*ListCertResponse, error) {
-	return c.ListCertWithContext(context.Background(), req)
+func (c *Client) ListCerts(req *ListCertsRequest) (*ListCertsResponse, error) {
+	return c.ListCertsWithContext(context.Background(), req)
 }
 
-func (c *Client) ListCertWithContext(ctx context.Context, req *ListCertRequest) (*ListCertResponse, error) {
+func (c *Client) ListCertsWithContext(ctx context.Context, req *ListCertsRequest) (*ListCertsResponse, error) {
 	httpreq, err := c.newRequest(http.MethodGet, "/ctapi/v1/accessone/cert/list")
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (c *Client) ListCertWithContext(ctx context.Context, req *ListCertRequest) 
 		httpreq.SetContext(ctx)
 	}
 
-	result := &ListCertResponse{}
+	result := &ListCertsResponse{}
 	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
 		return result, err
 	}
