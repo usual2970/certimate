@@ -18,7 +18,7 @@ export const list = async (request: ListRequest) => {
     filters.push(pb.filter("(subjectAltNames~{:keyword} || serialNumber={:keyword})", { keyword: request.keyword }));
   }
   if (request.state === "expireSoon") {
-    filters.push(pb.filter("expireAt<{:expiredAt}", { expiredAt: dayjs().add(20, "d").toDate() }));
+    filters.push(pb.filter("expireAt<{:expiredAt} && expireAt>@now", { expiredAt: dayjs().add(20, "d").toDate() }));
   } else if (request.state === "expired") {
     filters.push(pb.filter("expireAt<={:expiredAt}", { expiredAt: new Date() }));
   }
