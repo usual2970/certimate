@@ -16,7 +16,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -152,7 +152,7 @@ func (d *DeployerProvider) deployToCloudNative(ctx context.Context, certPEM stri
 		}
 
 		listDomainsReq := &aliapig.ListDomainsRequest{
-			ResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			ResourceGroupId: xtypes.ToPtrOrZeroNil(d.config.ResourceGroupId),
 			GatewayId:       tea.String(d.config.GatewayId),
 			NameLike:        tea.String(d.config.Domain),
 			PageNumber:      tea.Int32(listDomainsPageNumber),

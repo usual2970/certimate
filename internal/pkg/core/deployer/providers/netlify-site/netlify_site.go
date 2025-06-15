@@ -8,7 +8,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	netlifysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/netlify"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -58,7 +58,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 提取服务器证书和中间证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}

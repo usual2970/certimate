@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aws-acm"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -85,7 +85,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 	} else {
 		// 提取服务器证书
-		serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+		serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 		if err != nil {
 			return nil, fmt.Errorf("failed to extract certs: %w", err)
 		}

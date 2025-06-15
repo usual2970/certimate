@@ -12,7 +12,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/wangsu-certificate"
 	wangsusdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdn"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -82,7 +82,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
 	batchUpdateCertificateConfigReq := &wangsusdk.BatchUpdateCertificateConfigRequest{
 		CertificateId: certId,
-		DomainNames: sliceutil.Map(d.config.Domains, func(domain string) string {
+		DomainNames: xslices.Map(d.config.Domains, func(domain string) string {
 			// "*.example.com" → ".example.com"，适配网宿云 CDN 要求的泛域名格式
 			return strings.TrimPrefix(domain, "*")
 		}),

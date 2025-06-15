@@ -9,7 +9,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	rainyunsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/rainyun"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -84,7 +84,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -137,12 +137,12 @@ func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string)
 					if sslCenterGetResp.Data.Cert == certPEM {
 						isSameCert = true
 					} else {
-						oldCertX509, err := certutil.ParseCertificateFromPEM(sslCenterGetResp.Data.Cert)
+						oldCertX509, err := xcert.ParseCertificateFromPEM(sslCenterGetResp.Data.Cert)
 						if err != nil {
 							continue
 						}
 
-						isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+						isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 					}
 				}
 

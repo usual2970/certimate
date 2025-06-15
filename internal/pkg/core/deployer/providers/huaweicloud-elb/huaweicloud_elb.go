@@ -19,7 +19,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/huaweicloud-elb"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -127,8 +127,8 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 		CertificateId: d.config.CertificateId,
 		Body: &hcelbmodel.UpdateCertificateRequestBody{
 			Certificate: &hcelbmodel.UpdateCertificateOption{
-				Certificate: typeutil.ToPtr(certPEM),
-				PrivateKey:  typeutil.ToPtr(privkeyPEM),
+				Certificate: xtypes.ToPtr(certPEM),
+				PrivateKey:  xtypes.ToPtr(privkeyPEM),
 			},
 		},
 	}
@@ -170,13 +170,13 @@ func (d *DeployerProvider) deployToLoadbalancer(ctx context.Context, certPEM str
 		}
 
 		listListenersReq := &hcelbmodel.ListListenersRequest{
-			Limit:          typeutil.ToPtr(listListenersLimit),
+			Limit:          xtypes.ToPtr(listListenersLimit),
 			Marker:         listListenersMarker,
 			Protocol:       &[]string{"HTTPS", "TERMINATED_HTTPS"},
 			LoadbalancerId: &[]string{showLoadBalancerResp.Loadbalancer.Id},
 		}
 		if d.config.EnterpriseProjectId != "" {
-			listListenersReq.EnterpriseProjectId = typeutil.ToPtr([]string{d.config.EnterpriseProjectId})
+			listListenersReq.EnterpriseProjectId = xtypes.ToPtr([]string{d.config.EnterpriseProjectId})
 		}
 		listListenersResp, err := d.sdkClient.ListListeners(listListenersReq)
 		d.logger.Debug("sdk request 'elb.ListListeners'", slog.Any("request", listListenersReq), slog.Any("response", listListenersResp))
@@ -270,7 +270,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		ListenerId: cloudListenerId,
 		Body: &hcelbmodel.UpdateListenerRequestBody{
 			Listener: &hcelbmodel.UpdateListenerOption{
-				DefaultTlsContainerRef: typeutil.ToPtr(cloudCertId),
+				DefaultTlsContainerRef: xtypes.ToPtr(cloudCertId),
 			},
 		},
 	}
@@ -319,7 +319,7 @@ func (d *DeployerProvider) modifyListenerCertificate(ctx context.Context, cloudL
 		}
 
 		if showListenerResp.Listener.SniMatchAlgo != "" {
-			updateListenerReq.Body.Listener.SniMatchAlgo = typeutil.ToPtr(showListenerResp.Listener.SniMatchAlgo)
+			updateListenerReq.Body.Listener.SniMatchAlgo = xtypes.ToPtr(showListenerResp.Listener.SniMatchAlgo)
 		}
 	}
 	updateListenerResp, err := d.sdkClient.UpdateListener(updateListenerReq)

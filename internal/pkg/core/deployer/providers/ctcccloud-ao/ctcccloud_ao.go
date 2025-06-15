@@ -10,7 +10,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-ao"
 	ctyunao "github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/ao"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -82,7 +82,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 域名基础及加速配置查询
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=113&api=13412&data=174&isNormal=1&vid=167
 	getDomainConfigReq := &ctyunao.GetDomainConfigRequest{
-		Domain: typeutil.ToPtr(d.config.Domain),
+		Domain: xtypes.ToPtr(d.config.Domain),
 	}
 	getDomainConfigResp, err := d.sdkClient.GetDomainConfig(getDomainConfigReq)
 	d.logger.Debug("sdk request 'cdn.GetDomainConfig'", slog.Any("request", getDomainConfigReq), slog.Any("response", getDomainConfigResp))
@@ -93,11 +93,11 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 域名基础及加速配置修改
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=113&api=13413&data=174&isNormal=1&vid=167
 	modifyDomainConfigReq := &ctyunao.ModifyDomainConfigRequest{
-		Domain:      typeutil.ToPtr(d.config.Domain),
-		ProductCode: typeutil.ToPtr(getDomainConfigResp.ReturnObj.ProductCode),
+		Domain:      xtypes.ToPtr(d.config.Domain),
+		ProductCode: xtypes.ToPtr(getDomainConfigResp.ReturnObj.ProductCode),
 		Origin:      getDomainConfigResp.ReturnObj.Origin,
-		HttpsStatus: typeutil.ToPtr("on"),
-		CertName:    typeutil.ToPtr(upres.CertName),
+		HttpsStatus: xtypes.ToPtr("on"),
+		CertName:    xtypes.ToPtr(upres.CertName),
 	}
 	modifyDomainConfigResp, err := d.sdkClient.ModifyDomainConfig(modifyDomainConfigReq)
 	d.logger.Debug("sdk request 'cdn.ModifyDomainConfig'", slog.Any("request", modifyDomainConfigReq), slog.Any("response", modifyDomainConfigResp))

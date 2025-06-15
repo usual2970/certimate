@@ -17,7 +17,7 @@ import (
 	pTelegram "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeCom "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
+	xmaps "github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 // Deprecated: v0.4.x 将废弃
@@ -29,78 +29,78 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 	switch channel {
 	case domain.NotifyChannelTypeBark:
 		return pBark.NewNotifier(&pBark.NotifierConfig{
-			DeviceKey: maputil.GetString(channelConfig, "deviceKey"),
-			ServerUrl: maputil.GetString(channelConfig, "serverUrl"),
+			DeviceKey: xmaps.GetString(channelConfig, "deviceKey"),
+			ServerUrl: xmaps.GetString(channelConfig, "serverUrl"),
 		})
 
 	case domain.NotifyChannelTypeDingTalk:
 		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
-			WebhookUrl: "https://oapi.dingtalk.com/robot/send?access_token=" + maputil.GetString(channelConfig, "accessToken"),
-			Secret:     maputil.GetString(channelConfig, "secret"),
+			WebhookUrl: "https://oapi.dingtalk.com/robot/send?access_token=" + xmaps.GetString(channelConfig, "accessToken"),
+			Secret:     xmaps.GetString(channelConfig, "secret"),
 		})
 
 	case domain.NotifyChannelTypeEmail:
 		return pEmail.NewNotifier(&pEmail.NotifierConfig{
-			SmtpHost:        maputil.GetString(channelConfig, "smtpHost"),
-			SmtpPort:        maputil.GetInt32(channelConfig, "smtpPort"),
-			SmtpTls:         maputil.GetOrDefaultBool(channelConfig, "smtpTLS", true),
-			Username:        maputil.GetOrDefaultString(channelConfig, "username", maputil.GetString(channelConfig, "senderAddress")),
-			Password:        maputil.GetString(channelConfig, "password"),
-			SenderAddress:   maputil.GetString(channelConfig, "senderAddress"),
-			ReceiverAddress: maputil.GetString(channelConfig, "receiverAddress"),
+			SmtpHost:        xmaps.GetString(channelConfig, "smtpHost"),
+			SmtpPort:        xmaps.GetInt32(channelConfig, "smtpPort"),
+			SmtpTls:         xmaps.GetOrDefaultBool(channelConfig, "smtpTLS", true),
+			Username:        xmaps.GetOrDefaultString(channelConfig, "username", xmaps.GetString(channelConfig, "senderAddress")),
+			Password:        xmaps.GetString(channelConfig, "password"),
+			SenderAddress:   xmaps.GetString(channelConfig, "senderAddress"),
+			ReceiverAddress: xmaps.GetString(channelConfig, "receiverAddress"),
 		})
 
 	case domain.NotifyChannelTypeGotify:
 		return pGotify.NewNotifier(&pGotify.NotifierConfig{
-			ServerUrl: maputil.GetString(channelConfig, "url"),
-			Token:     maputil.GetString(channelConfig, "token"),
-			Priority:  maputil.GetOrDefaultInt64(channelConfig, "priority", 1),
+			ServerUrl: xmaps.GetString(channelConfig, "url"),
+			Token:     xmaps.GetString(channelConfig, "token"),
+			Priority:  xmaps.GetOrDefaultInt64(channelConfig, "priority", 1),
 		})
 
 	case domain.NotifyChannelTypeLark:
 		return pLark.NewNotifier(&pLark.NotifierConfig{
-			WebhookUrl: maputil.GetString(channelConfig, "webhookUrl"),
+			WebhookUrl: xmaps.GetString(channelConfig, "webhookUrl"),
 		})
 
 	case domain.NotifyChannelTypeMattermost:
 		return pMattermost.NewNotifier(&pMattermost.NotifierConfig{
-			ServerUrl: maputil.GetString(channelConfig, "serverUrl"),
-			ChannelId: maputil.GetString(channelConfig, "channelId"),
-			Username:  maputil.GetString(channelConfig, "username"),
-			Password:  maputil.GetString(channelConfig, "password"),
+			ServerUrl: xmaps.GetString(channelConfig, "serverUrl"),
+			ChannelId: xmaps.GetString(channelConfig, "channelId"),
+			Username:  xmaps.GetString(channelConfig, "username"),
+			Password:  xmaps.GetString(channelConfig, "password"),
 		})
 
 	case domain.NotifyChannelTypePushover:
 		return pPushover.NewNotifier(&pPushover.NotifierConfig{
-			Token: maputil.GetString(channelConfig, "token"),
-			User:  maputil.GetString(channelConfig, "user"),
+			Token: xmaps.GetString(channelConfig, "token"),
+			User:  xmaps.GetString(channelConfig, "user"),
 		})
 
 	case domain.NotifyChannelTypePushPlus:
 		return pPushPlus.NewNotifier(&pPushPlus.NotifierConfig{
-			Token: maputil.GetString(channelConfig, "token"),
+			Token: xmaps.GetString(channelConfig, "token"),
 		})
 
 	case domain.NotifyChannelTypeServerChan:
 		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
-			ServerUrl: maputil.GetString(channelConfig, "url"),
+			ServerUrl: xmaps.GetString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeTelegram:
 		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
-			BotToken: maputil.GetString(channelConfig, "apiToken"),
-			ChatId:   maputil.GetInt64(channelConfig, "chatId"),
+			BotToken: xmaps.GetString(channelConfig, "apiToken"),
+			ChatId:   xmaps.GetInt64(channelConfig, "chatId"),
 		})
 
 	case domain.NotifyChannelTypeWebhook:
 		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
-			WebhookUrl:               maputil.GetString(channelConfig, "url"),
-			AllowInsecureConnections: maputil.GetBool(channelConfig, "allowInsecureConnections"),
+			WebhookUrl:               xmaps.GetString(channelConfig, "url"),
+			AllowInsecureConnections: xmaps.GetBool(channelConfig, "allowInsecureConnections"),
 		})
 
 	case domain.NotifyChannelTypeWeCom:
 		return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
-			WebhookUrl: maputil.GetString(channelConfig, "webhookUrl"),
+			WebhookUrl: xmaps.GetString(channelConfig, "webhookUrl"),
 		})
 	}
 

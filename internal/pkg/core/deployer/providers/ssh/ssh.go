@@ -16,7 +16,7 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type JumpServerConfig struct {
@@ -124,7 +124,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 提取服务器证书和中间证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}
@@ -237,7 +237,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		d.logger.Info("ssl private key file uploaded", slog.String("path", d.config.OutputKeyPath))
 
 	case OUTPUT_FORMAT_PFX:
-		pfxData, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, d.config.PfxPassword)
+		pfxData, err := xcert.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, d.config.PfxPassword)
 		if err != nil {
 			return nil, fmt.Errorf("failed to transform certificate to PFX: %w", err)
 		}
@@ -249,7 +249,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		d.logger.Info("ssl certificate file uploaded", slog.String("path", d.config.OutputCertPath))
 
 	case OUTPUT_FORMAT_JKS:
-		jksData, err := certutil.TransformCertificateFromPEMToJKS(certPEM, privkeyPEM, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
+		jksData, err := xcert.TransformCertificateFromPEMToJKS(certPEM, privkeyPEM, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, fmt.Errorf("failed to transform certificate to JKS: %w", err)
 		}

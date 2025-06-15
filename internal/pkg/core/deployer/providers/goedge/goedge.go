@@ -12,7 +12,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	goedgesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/goedge"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -89,7 +89,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	}
 
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return err
 	}

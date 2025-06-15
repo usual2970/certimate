@@ -13,7 +13,7 @@ import (
 	"github.com/luthermonson/go-proxmox"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
+	xhttp "github.com/usual2970/certimate/internal/pkg/utils/http"
 )
 
 type DeployerConfig struct {
@@ -102,11 +102,11 @@ func createSdkClient(serverUrl, apiToken, apiTokenSecret string, skipTlsVerify b
 	}
 
 	httpClient := &http.Client{
-		Transport: httputil.NewDefaultTransport(),
+		Transport: xhttp.NewDefaultTransport(),
 		Timeout:   http.DefaultClient.Timeout,
 	}
 	if skipTlsVerify {
-		transport := httputil.NewDefaultTransport()
+		transport := xhttp.NewDefaultTransport()
 		if transport.TLSClientConfig == nil {
 			transport.TLSClientConfig = &tls.Config{}
 		}

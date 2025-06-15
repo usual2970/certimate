@@ -12,7 +12,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -60,13 +60,13 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
 	// 提取服务器证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}
@@ -116,12 +116,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				return nil, fmt.Errorf("failed to execute sdk request 'acm.GetCertificate': %w", err)
 			} else {
 				oldCertPEM := aws.ToString(getCertificateResp.Certificate)
-				oldCertX509, err := certutil.ParseCertificateFromPEM(oldCertPEM)
+				oldCertX509, err := xcert.ParseCertificateFromPEM(oldCertPEM)
 				if err != nil {
 					continue
 				}
 
-				if !certutil.EqualCertificate(certX509, oldCertX509) {
+				if !xcert.EqualCertificate(certX509, oldCertX509) {
 					continue
 				}
 			}

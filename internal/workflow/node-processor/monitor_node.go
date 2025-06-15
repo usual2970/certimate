@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/usual2970/certimate/internal/domain"
-	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
+	xhttp "github.com/usual2970/certimate/internal/pkg/utils/http"
 )
 
 type monitorNode struct {
@@ -116,7 +116,7 @@ func (n *monitorNode) Process(ctx context.Context) error {
 }
 
 func (n *monitorNode) tryRetrievePeerCertificates(ctx context.Context, addr, domain, requestPath string) ([]*x509.Certificate, error) {
-	transport := httputil.NewDefaultTransport()
+	transport := xhttp.NewDefaultTransport()
 	if transport.TLSClientConfig == nil {
 		transport.TLSClientConfig = &tls.Config{}
 	}

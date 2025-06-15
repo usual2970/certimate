@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/tencentcloud-ssl"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -130,7 +130,7 @@ func (d *DeployerProvider) modifyHttpsListenerCertificate(ctx context.Context, c
 	// 修改 HTTPS 监听器配置
 	// REF: https://cloud.tencent.com/document/product/608/36996
 	modifyHTTPSListenerAttributeReq := tcgaap.NewModifyHTTPSListenerAttributeRequest()
-	modifyHTTPSListenerAttributeReq.ProxyId = typeutil.ToPtrOrZeroNil(d.config.ProxyId)
+	modifyHTTPSListenerAttributeReq.ProxyId = xtypes.ToPtrOrZeroNil(d.config.ProxyId)
 	modifyHTTPSListenerAttributeReq.ListenerId = common.StringPtr(cloudListenerId)
 	modifyHTTPSListenerAttributeReq.CertificateId = common.StringPtr(cloudCertId)
 	modifyHTTPSListenerAttributeResp, err := d.sdkClient.ModifyHTTPSListenerAttribute(modifyHTTPSListenerAttributeReq)

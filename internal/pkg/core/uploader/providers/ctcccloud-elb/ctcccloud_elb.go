@@ -10,8 +10,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	ctyunelb "github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/elb"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -59,7 +59,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 查询证书列表，避免重复上传
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=24&api=5692&data=88&isNormal=1&vid=82
 	listCertificatesReq := &ctyunelb.ListCertificatesRequest{
-		RegionID: typeutil.ToPtr(u.config.RegionId),
+		RegionID: xtypes.ToPtr(u.config.RegionId),
 	}
 	listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 	u.logger.Debug("sdk request 'elb.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
@@ -79,12 +79,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 			if certRecord.Certificate == certPEM {
 				isSameCert = true
 			} else {
-				oldCertX509, err := certutil.ParseCertificateFromPEM(certRecord.Certificate)
+				oldCertX509, err := xcert.ParseCertificateFromPEM(certRecord.Certificate)
 				if err != nil {
 					continue
 				}
 
-				isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+				isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 			}
 
 			// 如果已存在相同证书，直接返回
@@ -104,13 +104,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 创建证书
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=24&api=5685&data=88&isNormal=1&vid=82
 	createCertificateReq := &ctyunelb.CreateCertificateRequest{
-		ClientToken: typeutil.ToPtr(generateClientToken()),
-		RegionID:    typeutil.ToPtr(u.config.RegionId),
-		Name:        typeutil.ToPtr(certName),
-		Description: typeutil.ToPtr("upload from certimate"),
-		Type:        typeutil.ToPtr("Server"),
-		Certificate: typeutil.ToPtr(certPEM),
-		PrivateKey:  typeutil.ToPtr(privkeyPEM),
+		ClientToken: xtypes.ToPtr(generateClientToken()),
+		RegionID:    xtypes.ToPtr(u.config.RegionId),
+		Name:        xtypes.ToPtr(certName),
+		Description: xtypes.ToPtr("upload from certimate"),
+		Type:        xtypes.ToPtr("Server"),
+		Certificate: xtypes.ToPtr(certPEM),
+		PrivateKey:  xtypes.ToPtr(privkeyPEM),
 	}
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
 	u.logger.Debug("sdk request 'elb.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))

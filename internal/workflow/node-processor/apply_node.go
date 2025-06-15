@@ -11,7 +11,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -72,7 +72,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 解析证书并生成实体
-	certX509, err := certutil.ParseCertificateFromPEM(applyResult.FullChainCertificate)
+	certX509, err := xcert.ParseCertificateFromPEM(applyResult.FullChainCertificate)
 	if err != nil {
 		n.logger.Warn("failed to parse certificate, may be the CA responded error")
 		return err

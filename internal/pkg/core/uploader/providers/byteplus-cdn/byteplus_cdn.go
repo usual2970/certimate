@@ -13,7 +13,7 @@ import (
 	bytepluscdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -58,7 +58,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}

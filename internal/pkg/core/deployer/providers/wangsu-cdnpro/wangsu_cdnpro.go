@@ -18,8 +18,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	wangsucdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/cdnpro"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -81,7 +81,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -99,10 +99,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, fmt.Errorf("failed to encrypt private key: %w", err)
 	}
 	certificateNewVersionInfo := &wangsucdn.CertificateVersion{
-		PrivateKey:  typeutil.ToPtr(encryptedPrivateKey),
-		Certificate: typeutil.ToPtr(certPEM),
+		PrivateKey:  xtypes.ToPtr(encryptedPrivateKey),
+		Certificate: xtypes.ToPtr(certPEM),
 		IdentificationInfo: &wangsucdn.CertificateVersionIdentificationInfo{
-			CommonName:              typeutil.ToPtr(certX509.Subject.CommonName),
+			CommonName:              xtypes.ToPtr(certX509.Subject.CommonName),
 			SubjectAlternativeNames: &certX509.DNSNames,
 		},
 	}
@@ -121,8 +121,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 创建证书
 		createCertificateReq := &wangsucdn.CreateCertificateRequest{
 			Timestamp:  timestamp,
-			Name:       typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-			AutoRenew:  typeutil.ToPtr("Off"),
+			Name:       xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			AutoRenew:  xtypes.ToPtr("Off"),
 			NewVersion: certificateNewVersionInfo,
 		}
 		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
@@ -144,8 +144,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 更新证书
 		updateCertificateReq := &wangsucdn.UpdateCertificateRequest{
 			Timestamp:  timestamp,
-			Name:       typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-			AutoRenew:  typeutil.ToPtr("Off"),
+			Name:       xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			AutoRenew:  xtypes.ToPtr("Off"),
 			NewVersion: certificateNewVersionInfo,
 		}
 		updateCertificateResp, err := d.sdkClient.UpdateCertificate(d.config.CertificateId, updateCertificateReq)
@@ -172,18 +172,18 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 创建部署任务
 	// REF: https://www.wangsu.com/document/api-doc/27034
 	createDeploymentTaskReq := &wangsucdn.CreateDeploymentTaskRequest{
-		Name:   typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-		Target: typeutil.ToPtr(d.config.Environment),
+		Name:   xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+		Target: xtypes.ToPtr(d.config.Environment),
 		Actions: &[]wangsucdn.DeploymentTaskAction{
 			{
-				Action:        typeutil.ToPtr("deploy_cert"),
-				CertificateId: typeutil.ToPtr(wangsuCertId),
-				Version:       typeutil.ToPtr(wangsuCertVer),
+				Action:        xtypes.ToPtr("deploy_cert"),
+				CertificateId: xtypes.ToPtr(wangsuCertId),
+				Version:       xtypes.ToPtr(wangsuCertVer),
 			},
 		},
 	}
 	if d.config.WebhookId != "" {
-		createDeploymentTaskReq.Webhook = typeutil.ToPtr(d.config.WebhookId)
+		createDeploymentTaskReq.Webhook = xtypes.ToPtr(d.config.WebhookId)
 	}
 	createDeploymentTaskResp, err := d.sdkClient.CreateDeploymentTask(createDeploymentTaskReq)
 	d.logger.Debug("sdk request 'cdnpro.CreateCertificate'", slog.Any("request", createDeploymentTaskReq), slog.Any("response", createDeploymentTaskResp))

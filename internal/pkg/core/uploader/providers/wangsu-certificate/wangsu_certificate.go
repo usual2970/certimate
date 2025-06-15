@@ -11,8 +11,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	wangsusdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/certificate"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -58,7 +58,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -102,10 +102,10 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 新增证书
 	// REF: https://www.wangsu.com/document/api-doc/25199?productCode=certificatemanagement
 	createCertificateReq := &wangsusdk.CreateCertificateRequest{
-		Name:        typeutil.ToPtr(certName),
-		Certificate: typeutil.ToPtr(certPEM),
-		PrivateKey:  typeutil.ToPtr(privkeyPEM),
-		Comment:     typeutil.ToPtr("upload from certimate"),
+		Name:        xtypes.ToPtr(certName),
+		Certificate: xtypes.ToPtr(certPEM),
+		PrivateKey:  xtypes.ToPtr(privkeyPEM),
+		Comment:     xtypes.ToPtr("upload from certimate"),
 	}
 	createCertificateResp, err := u.sdkClient.CreateCertificate(createCertificateReq)
 	u.logger.Debug("sdk request 'certificatemanagement.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))

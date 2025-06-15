@@ -17,8 +17,8 @@ import (
 	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -68,7 +68,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +86,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertificatesReq := &hcwafmodel.ListCertificatesRequest{
-			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
-			Page:                typeutil.ToPtr(listCertificatesPage),
-			Pagesize:            typeutil.ToPtr(listCertificatesPageSize),
+			EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			Page:                xtypes.ToPtr(listCertificatesPage),
+			Pagesize:            xtypes.ToPtr(listCertificatesPageSize),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'waf.ShowCertificate'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
@@ -99,7 +99,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		if listCertificatesResp.Items != nil {
 			for _, certItem := range *listCertificatesResp.Items {
 				showCertificateReq := &hcwafmodel.ShowCertificateRequest{
-					EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+					EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
 					CertificateId:       certItem.Id,
 				}
 				showCertificateResp, err := u.sdkClient.ShowCertificate(showCertificateReq)
@@ -112,12 +112,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				if *showCertificateResp.Content == certPEM {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certutil.ParseCertificateFromPEM(*showCertificateResp.Content)
+					oldCertX509, err := xcert.ParseCertificateFromPEM(*showCertificateResp.Content)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+					isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回
@@ -145,7 +145,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 创建证书
 	// REF: https://support.huaweicloud.com/api-waf/CreateCertificate.html
 	createCertificateReq := &hcwafmodel.CreateCertificateRequest{
-		EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+		EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
 		Body: &hcwafmodel.CreateCertificateRequestBody{
 			Name:    certName,
 			Content: certPEM,

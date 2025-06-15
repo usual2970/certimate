@@ -16,7 +16,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/jdcloud-ssl"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -226,7 +226,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 	} else {
 		// 指定 SNI，需部署到扩展证书
 
-		extCertSpecs := sliceutil.Filter(describeListenerResp.Result.Listener.ExtensionCertificateSpecs, func(extCertSpec jdlbmodel.ExtensionCertificateSpec) bool {
+		extCertSpecs := xslices.Filter(describeListenerResp.Result.Listener.ExtensionCertificateSpecs, func(extCertSpec jdlbmodel.ExtensionCertificateSpec) bool {
 			return extCertSpec.Domain == d.config.Domain
 		})
 		if len(extCertSpecs) == 0 {
@@ -238,7 +238,7 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		updateListenerCertificatesReq := jdlbapi.NewUpdateListenerCertificatesRequest(
 			d.config.RegionId,
 			cloudListenerId,
-			sliceutil.Map(extCertSpecs, func(extCertSpec jdlbmodel.ExtensionCertificateSpec) jdlbmodel.ExtCertificateUpdateSpec {
+			xslices.Map(extCertSpecs, func(extCertSpec jdlbmodel.ExtensionCertificateSpec) jdlbmodel.ExtCertificateUpdateSpec {
 				return jdlbmodel.ExtCertificateUpdateSpec{
 					CertificateBindId: extCertSpec.CertificateBindId,
 					CertificateId:     &cloudCertId,

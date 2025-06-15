@@ -10,7 +10,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btwaf"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -82,9 +82,9 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		getSiteListReq := &btsdk.GetSiteListRequest{
-			SiteName: typeutil.ToPtr(d.config.SiteName),
-			Page:     typeutil.ToPtr(getSitListPage),
-			PageSize: typeutil.ToPtr(getSitListPageSize),
+			SiteName: xtypes.ToPtr(d.config.SiteName),
+			Page:     xtypes.ToPtr(getSitListPage),
+			PageSize: xtypes.ToPtr(getSitListPageSize),
 		}
 		getSiteListResp, err := d.sdkClient.GetSiteList(getSiteListReq)
 		d.logger.Debug("sdk request 'bt.GetSiteList'", slog.Any("request", getSiteListReq), slog.Any("response", getSiteListResp))
@@ -114,13 +114,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 修改站点配置
 	modifySiteReq := &btsdk.ModifySiteRequest{
 		SiteId: siteId,
-		Type:   typeutil.ToPtr("openCert"),
+		Type:   xtypes.ToPtr("openCert"),
 		Server: &btsdk.SiteServerInfo{
-			ListenSSLPorts: typeutil.ToPtr([]int32{d.config.SitePort}),
+			ListenSSLPorts: xtypes.ToPtr([]int32{d.config.SitePort}),
 			SSL: &btsdk.SiteServerSSLInfo{
-				IsSSL:      typeutil.ToPtr(int32(1)),
-				FullChain:  typeutil.ToPtr(certPEM),
-				PrivateKey: typeutil.ToPtr(privkeyPEM),
+				IsSSL:      xtypes.ToPtr(int32(1)),
+				FullChain:  xtypes.ToPtr(certPEM),
+				PrivateKey: xtypes.ToPtr(privkeyPEM),
 			},
 		},
 	}

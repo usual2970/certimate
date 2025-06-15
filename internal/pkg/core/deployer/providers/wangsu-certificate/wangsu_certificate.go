@@ -11,7 +11,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/wangsu-certificate"
 	wangsusdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/wangsu/certificate"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -81,10 +81,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 修改证书
 		// REF: https://www.wangsu.com/document/api-doc/25568?productCode=certificatemanagement
 		updateCertificateReq := &wangsusdk.UpdateCertificateRequest{
-			Name:        typeutil.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
-			Certificate: typeutil.ToPtr(certPEM),
-			PrivateKey:  typeutil.ToPtr(privkeyPEM),
-			Comment:     typeutil.ToPtr("upload from certimate"),
+			Name:        xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			Certificate: xtypes.ToPtr(certPEM),
+			PrivateKey:  xtypes.ToPtr(privkeyPEM),
+			Comment:     xtypes.ToPtr("upload from certimate"),
 		}
 		updateCertificateResp, err := d.sdkClient.UpdateCertificate(d.config.CertificateId, updateCertificateReq)
 		d.logger.Debug("sdk request 'certificatemanagement.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))

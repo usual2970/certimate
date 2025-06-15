@@ -17,7 +17,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/azure-keyvault"
 	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -86,13 +86,13 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
 
 	// 转换证书格式
-	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
+	certPFX, err := xcert.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to transform certificate from PEM to PFX: %w", err)
 	}
@@ -118,7 +118,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		} else {
 			oldCertX509, err := x509.ParseCertificate(getCertificateResp.CER)
 			if err == nil {
-				if certutil.EqualCertificate(certX509, oldCertX509) {
+				if xcert.EqualCertificate(certX509, oldCertX509) {
 					return &deployer.DeployResult{}, nil
 				}
 			}

@@ -10,8 +10,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	ctyunao "github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/ao"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -57,7 +57,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -74,9 +74,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertsReq := &ctyunao.ListCertsRequest{
-			Page:      typeutil.ToPtr(listCertPage),
-			PerPage:   typeutil.ToPtr(listCertPerPage),
-			UsageMode: typeutil.ToPtr(int32(0)),
+			Page:      xtypes.ToPtr(listCertPage),
+			PerPage:   xtypes.ToPtr(listCertPerPage),
+			UsageMode: xtypes.ToPtr(int32(0)),
 		}
 		listCertsResp, err := u.sdkClient.ListCerts(listCertsReq)
 		u.logger.Debug("sdk request 'ao.ListCerts'", slog.Any("request", listCertsReq), slog.Any("response", listCertsResp))
@@ -106,7 +106,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				// 查询证书详情
 				// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=113&api=13015&data=174&isNormal=1&vid=167
 				queryCertReq := &ctyunao.QueryCertRequest{
-					Id: typeutil.ToPtr(certRecord.Id),
+					Id: xtypes.ToPtr(certRecord.Id),
 				}
 				queryCertResp, err := u.sdkClient.QueryCert(queryCertReq)
 				u.logger.Debug("sdk request 'ao.QueryCert'", slog.Any("request", queryCertReq), slog.Any("response", queryCertResp))
@@ -117,12 +117,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 					if queryCertResp.ReturnObj.Result.Certs == certPEM {
 						isSameCert = true
 					} else {
-						oldCertX509, err := certutil.ParseCertificateFromPEM(queryCertResp.ReturnObj.Result.Certs)
+						oldCertX509, err := xcert.ParseCertificateFromPEM(queryCertResp.ReturnObj.Result.Certs)
 						if err != nil {
 							continue
 						}
 
-						isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+						isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 					}
 
 					// 如果已存在相同证书，直接返回
@@ -150,9 +150,9 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 创建证书
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=113&api=13014&data=174&isNormal=1&vid=167
 	createCertReq := &ctyunao.CreateCertRequest{
-		Name:  typeutil.ToPtr(certName),
-		Certs: typeutil.ToPtr(certPEM),
-		Key:   typeutil.ToPtr(privkeyPEM),
+		Name:  xtypes.ToPtr(certName),
+		Certs: xtypes.ToPtr(certPEM),
+		Key:   xtypes.ToPtr(privkeyPEM),
 	}
 	createCertResp, err := u.sdkClient.CreateCert(createCertReq)
 	u.logger.Debug("sdk request 'ao.CreateCert'", slog.Any("request", createCertReq), slog.Any("response", createCertResp))

@@ -15,8 +15,8 @@ import (
 	pTelegramBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/telegrambot"
 	pWebhook "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/webhook"
 	pWeComBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/wecombot"
-	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
+	xhttp "github.com/usual2970/certimate/internal/pkg/utils/http"
+	xmaps "github.com/usual2970/certimate/internal/pkg/utils/maps"
 )
 
 type notifierProviderOptions struct {
@@ -34,7 +34,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	case domain.NotificationProviderTypeDingTalkBot:
 		{
 			access := domain.AccessConfigForDingTalkBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -47,20 +47,20 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	case domain.NotificationProviderTypeDiscordBot:
 		{
 			access := domain.AccessConfigForDiscordBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			return pDiscordBot.NewNotifier(&pDiscordBot.NotifierConfig{
 				BotToken:  access.BotToken,
-				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
+				ChannelId: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
 		}
 
 	case domain.NotificationProviderTypeEmail:
 		{
 			access := domain.AccessConfigForEmail{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -70,16 +70,16 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				SmtpTls:         access.SmtpTls,
 				Username:        access.Username,
 				Password:        access.Password,
-				SenderAddress:   maputil.GetOrDefaultString(options.ProviderServiceConfig, "senderAddress", access.DefaultSenderAddress),
-				SenderName:      maputil.GetOrDefaultString(options.ProviderServiceConfig, "senderName", access.DefaultSenderName),
-				ReceiverAddress: maputil.GetOrDefaultString(options.ProviderServiceConfig, "receiverAddress", access.DefaultReceiverAddress),
+				SenderAddress:   xmaps.GetOrDefaultString(options.ProviderServiceConfig, "senderAddress", access.DefaultSenderAddress),
+				SenderName:      xmaps.GetOrDefaultString(options.ProviderServiceConfig, "senderName", access.DefaultSenderName),
+				ReceiverAddress: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "receiverAddress", access.DefaultReceiverAddress),
 			})
 		}
 
 	case domain.NotificationProviderTypeLarkBot:
 		{
 			access := domain.AccessConfigForLarkBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -91,7 +91,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	case domain.NotificationProviderTypeMattermost:
 		{
 			access := domain.AccessConfigForMattermost{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -99,46 +99,46 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				ServerUrl: access.ServerUrl,
 				Username:  access.Username,
 				Password:  access.Password,
-				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
+				ChannelId: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
 		}
 
 	case domain.NotificationProviderTypeSlackBot:
 		{
 			access := domain.AccessConfigForSlackBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			return pSlackBot.NewNotifier(&pSlackBot.NotifierConfig{
 				BotToken:  access.BotToken,
-				ChannelId: maputil.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
+				ChannelId: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
 		}
 
 	case domain.NotificationProviderTypeTelegramBot:
 		{
 			access := domain.AccessConfigForTelegramBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			return pTelegramBot.NewNotifier(&pTelegramBot.NotifierConfig{
 				BotToken: access.BotToken,
-				ChatId:   maputil.GetOrDefaultInt64(options.ProviderServiceConfig, "chatId", access.DefaultChatId),
+				ChatId:   xmaps.GetOrDefaultInt64(options.ProviderServiceConfig, "chatId", access.DefaultChatId),
 			})
 		}
 
 	case domain.NotificationProviderTypeWebhook:
 		{
 			access := domain.AccessConfigForWebhook{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			mergedHeaders := make(map[string]string)
 			if defaultHeadersString := access.HeadersString; defaultHeadersString != "" {
-				h, err := httputil.ParseHeaders(defaultHeadersString)
+				h, err := xhttp.ParseHeaders(defaultHeadersString)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
 				}
@@ -146,8 +146,8 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
 				}
 			}
-			if extendedHeadersString := maputil.GetString(options.ProviderServiceConfig, "headers"); extendedHeadersString != "" {
-				h, err := httputil.ParseHeaders(extendedHeadersString)
+			if extendedHeadersString := xmaps.GetString(options.ProviderServiceConfig, "headers"); extendedHeadersString != "" {
+				h, err := xhttp.ParseHeaders(extendedHeadersString)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
 				}
@@ -158,7 +158,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 
 			return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
 				WebhookUrl:               access.Url,
-				WebhookData:              maputil.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForNotification),
+				WebhookData:              xmaps.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForNotification),
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,
@@ -168,7 +168,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 	case domain.NotificationProviderTypeWeComBot:
 		{
 			access := domain.AccessConfigForWeComBot{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 

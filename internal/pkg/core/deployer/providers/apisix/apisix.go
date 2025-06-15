@@ -10,8 +10,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	apisixsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/apisix"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -83,7 +83,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	}
 
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return err
 	}
@@ -92,11 +92,11 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	// REF: https://apisix.apache.org/zh/docs/apisix/admin-api/#ssl
 	updateSSLReq := &apisixsdk.UpdateSSLRequest{
 		ID:     d.config.CertificateId,
-		Cert:   typeutil.ToPtr(certPEM),
-		Key:    typeutil.ToPtr(privkeyPEM),
-		SNIs:   typeutil.ToPtr(certX509.DNSNames),
-		Type:   typeutil.ToPtr("server"),
-		Status: typeutil.ToPtr(int32(1)),
+		Cert:   xtypes.ToPtr(certPEM),
+		Key:    xtypes.ToPtr(privkeyPEM),
+		SNIs:   xtypes.ToPtr(certX509.DNSNames),
+		Type:   xtypes.ToPtr("server"),
+		Status: xtypes.ToPtr(int32(1)),
 	}
 	updateSSLResp, err := d.sdkClient.UpdateSSL(updateSSLReq)
 	d.logger.Debug("sdk request 'apisix.UpdateSSL'", slog.Any("request", updateSSLReq), slog.Any("response", updateSSLResp))

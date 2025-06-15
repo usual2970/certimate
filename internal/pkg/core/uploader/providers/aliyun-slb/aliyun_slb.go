@@ -15,8 +15,8 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -66,7 +66,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 查询证书列表，避免重复上传
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-describeservercertificates
 	describeServerCertificatesReq := &alislb.DescribeServerCertificatesRequest{
-		ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+		ResourceGroupId: xtypes.ToPtrOrZeroNil(u.config.ResourceGroupId),
 		RegionId:        tea.String(u.config.Region),
 	}
 	describeServerCertificatesResp, err := u.sdkClient.DescribeServerCertificates(describeServerCertificatesReq)
@@ -114,7 +114,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/slb/classic-load-balancer/developer-reference/api-slb-2014-05-15-uploadservercertificate
 	uploadServerCertificateReq := &alislb.UploadServerCertificateRequest{
-		ResourceGroupId:       typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+		ResourceGroupId:       xtypes.ToPtrOrZeroNil(u.config.ResourceGroupId),
 		RegionId:              tea.String(u.config.Region),
 		ServerCertificateName: tea.String(certName),
 		ServerCertificate:     tea.String(certPEM),

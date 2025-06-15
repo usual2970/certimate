@@ -1,4 +1,4 @@
-package maputil
+package maps
 
 import (
 	"strconv"
@@ -103,7 +103,7 @@ func GetOrDefaultInt32(dict map[string]any, key string, defaultValue int32) int3
 		}
 
 		if result != 0 {
-			return int32(result)
+			return result
 		}
 	}
 
@@ -166,13 +166,13 @@ func GetOrDefaultInt64(dict map[string]any, key string, defaultValue int64) int6
 			result = int64(v)
 		case string:
 			// 兼容字符串类型的值
-			if t, err := strconv.ParseInt(v, 10, 32); err == nil {
+			if t, err := strconv.ParseInt(v, 10, 64); err == nil {
 				result = t
 			}
 		}
 
 		if result != 0 {
-			return int64(result)
+			return result
 		}
 	}
 

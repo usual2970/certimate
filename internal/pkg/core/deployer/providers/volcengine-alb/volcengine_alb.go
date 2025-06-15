@@ -13,7 +13,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/volcengine-certcenter"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -233,8 +233,8 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudL
 		// REF: https://www.volcengine.com/docs/6767/113683
 		modifyListenerAttributesReq := &vealb.ModifyListenerAttributesInput{
 			ListenerId: ve.String(cloudListenerId),
-			DomainExtensions: sliceutil.Map(
-				sliceutil.Filter(
+			DomainExtensions: xslices.Map(
+				xslices.Filter(
 					describeListenerAttributesResp.DomainExtensions,
 					func(domain *vealb.DomainExtensionForDescribeListenerAttributesOutput) bool {
 						return *domain.Domain == d.config.Domain

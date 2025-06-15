@@ -10,7 +10,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/ctcccloud-lvdn"
 	ctyunlvdn "github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/lvdn"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -82,8 +82,8 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 查询域名配置信息
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=125&api=11473&data=183&isNormal=1&vid=261
 	queryDomainDetailReq := &ctyunlvdn.QueryDomainDetailRequest{
-		Domain:      typeutil.ToPtr(d.config.Domain),
-		ProductCode: typeutil.ToPtr("005"),
+		Domain:      xtypes.ToPtr(d.config.Domain),
+		ProductCode: xtypes.ToPtr("005"),
 	}
 	queryDomainDetailResp, err := d.sdkClient.QueryDomainDetail(queryDomainDetailReq)
 	d.logger.Debug("sdk request 'lvdn.QueryDomainDetail'", slog.Any("request", queryDomainDetailReq), slog.Any("response", queryDomainDetailResp))
@@ -94,10 +94,10 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 修改域名配置
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=108&api=11308&data=161&isNormal=1&vid=154
 	updateDomainReq := &ctyunlvdn.UpdateDomainRequest{
-		Domain:      typeutil.ToPtr(d.config.Domain),
-		ProductCode: typeutil.ToPtr("005"),
-		HttpsSwitch: typeutil.ToPtr(int32(1)),
-		CertName:    typeutil.ToPtr(upres.CertName),
+		Domain:      xtypes.ToPtr(d.config.Domain),
+		ProductCode: xtypes.ToPtr("005"),
+		HttpsSwitch: xtypes.ToPtr(int32(1)),
+		CertName:    xtypes.ToPtr(upres.CertName),
 	}
 	updateDomainResp, err := d.sdkClient.UpdateDomain(updateDomainReq)
 	d.logger.Debug("sdk request 'lvdn.UpdateDomain'", slog.Any("request", updateDomainReq), slog.Any("response", updateDomainResp))

@@ -9,8 +9,8 @@ import (
 	"runtime"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	fileutil "github.com/usual2970/certimate/internal/pkg/utils/file"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xfile "github.com/usual2970/certimate/internal/pkg/utils/file"
 )
 
 type DeployerConfig struct {
@@ -76,7 +76,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 提取服务器证书和中间证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}
@@ -93,50 +93,50 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 写入证书和私钥文件
 	switch d.config.OutputFormat {
 	case OUTPUT_FORMAT_PEM:
-		if err := fileutil.WriteString(d.config.OutputCertPath, certPEM); err != nil {
+		if err := xfile.WriteString(d.config.OutputCertPath, certPEM); err != nil {
 			return nil, fmt.Errorf("failed to save certificate file: %w", err)
 		}
 		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 		if d.config.OutputServerCertPath != "" {
-			if err := fileutil.WriteString(d.config.OutputServerCertPath, serverCertPEM); err != nil {
+			if err := xfile.WriteString(d.config.OutputServerCertPath, serverCertPEM); err != nil {
 				return nil, fmt.Errorf("failed to save server certificate file: %w", err)
 			}
 			d.logger.Info("ssl server certificate file saved", slog.String("path", d.config.OutputServerCertPath))
 		}
 
 		if d.config.OutputIntermediaCertPath != "" {
-			if err := fileutil.WriteString(d.config.OutputIntermediaCertPath, intermediaCertPEM); err != nil {
+			if err := xfile.WriteString(d.config.OutputIntermediaCertPath, intermediaCertPEM); err != nil {
 				return nil, fmt.Errorf("failed to save intermedia certificate file: %w", err)
 			}
 			d.logger.Info("ssl intermedia certificate file saved", slog.String("path", d.config.OutputIntermediaCertPath))
 		}
 
-		if err := fileutil.WriteString(d.config.OutputKeyPath, privkeyPEM); err != nil {
+		if err := xfile.WriteString(d.config.OutputKeyPath, privkeyPEM); err != nil {
 			return nil, fmt.Errorf("failed to save private key file: %w", err)
 		}
 		d.logger.Info("ssl private key file saved", slog.String("path", d.config.OutputKeyPath))
 
 	case OUTPUT_FORMAT_PFX:
-		pfxData, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, d.config.PfxPassword)
+		pfxData, err := xcert.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, d.config.PfxPassword)
 		if err != nil {
 			return nil, fmt.Errorf("failed to transform certificate to PFX: %w", err)
 		}
 		d.logger.Info("ssl certificate transformed to pfx")
 
-		if err := fileutil.Write(d.config.OutputCertPath, pfxData); err != nil {
+		if err := xfile.Write(d.config.OutputCertPath, pfxData); err != nil {
 			return nil, fmt.Errorf("failed to save certificate file: %w", err)
 		}
 		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))
 
 	case OUTPUT_FORMAT_JKS:
-		jksData, err := certutil.TransformCertificateFromPEMToJKS(certPEM, privkeyPEM, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
+		jksData, err := xcert.TransformCertificateFromPEMToJKS(certPEM, privkeyPEM, d.config.JksAlias, d.config.JksKeypass, d.config.JksStorepass)
 		if err != nil {
 			return nil, fmt.Errorf("failed to transform certificate to JKS: %w", err)
 		}
 		d.logger.Info("ssl certificate transformed to jks")
 
-		if err := fileutil.Write(d.config.OutputCertPath, jksData); err != nil {
+		if err := xfile.Write(d.config.OutputCertPath, jksData); err != nil {
 			return nil, fmt.Errorf("failed to save certificate file: %w", err)
 		}
 		d.logger.Info("ssl certificate file saved", slog.String("path", d.config.OutputCertPath))

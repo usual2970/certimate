@@ -15,7 +15,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -67,7 +67,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 					continue
 				}
 
-				if !certutil.EqualCertificate(certX509, oldCertX509) {
+				if !xcert.EqualCertificate(certX509, oldCertX509) {
 					continue
 				}
 			}
@@ -144,7 +144,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// Azure Key Vault 不支持导入带有 Certificiate Chain 的 PEM 证书。
 	// Issue Link: https://github.com/Azure/azure-cli/issues/19017
 	// 暂时的解决方法是，将 PEM 证书转换成 PFX 格式，然后再导入。
-	certPFX, err := certutil.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
+	certPFX, err := xcert.TransformCertificateFromPEMToPFX(certPEM, privkeyPEM, "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to transform certificate from PEM to PFX: %w", err)
 	}

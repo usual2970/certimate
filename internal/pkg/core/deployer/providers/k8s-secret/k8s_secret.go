@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -76,7 +76,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		return nil, errors.New("config `secretDataKeyForKey` is required")
 	}
 
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}

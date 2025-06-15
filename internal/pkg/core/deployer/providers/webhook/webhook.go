@@ -14,7 +14,7 @@ import (
 	"github.com/go-resty/resty/v2"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -70,13 +70,13 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse x509: %w", err)
 	}
 
 	// 提取服务器证书和中间证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}

@@ -12,8 +12,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	ctyuncms "github.com/usual2970/certimate/internal/pkg/sdk3rd/ctyun/cms"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -64,7 +64,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 提取服务器证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}
@@ -75,11 +75,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 上传证书
 	// REF: https://eop.ctyun.cn/ebp/ctapiDocument/search?sid=152&api=17243&data=204&isNormal=1&vid=283
 	uploadCertificateReq := &ctyuncms.UploadCertificateRequest{
-		Name:               typeutil.ToPtr(certName),
-		Certificate:        typeutil.ToPtr(serverCertPEM),
-		CertificateChain:   typeutil.ToPtr(intermediaCertPEM),
-		PrivateKey:         typeutil.ToPtr(privkeyPEM),
-		EncryptionStandard: typeutil.ToPtr("INTERNATIONAL"),
+		Name:               xtypes.ToPtr(certName),
+		Certificate:        xtypes.ToPtr(serverCertPEM),
+		CertificateChain:   xtypes.ToPtr(intermediaCertPEM),
+		PrivateKey:         xtypes.ToPtr(privkeyPEM),
+		EncryptionStandard: xtypes.ToPtr("INTERNATIONAL"),
 	}
 	uploadCertificateResp, err := u.sdkClient.UploadCertificate(uploadCertificateReq)
 	u.logger.Debug("sdk request 'cms.UploadCertificate'", slog.Any("request", uploadCertificateReq), slog.Any("response", uploadCertificateResp))
@@ -110,7 +110,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -127,10 +127,10 @@ func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string)
 		}
 
 		getCertificateListReq := &ctyuncms.GetCertificateListRequest{
-			PageNum:  typeutil.ToPtr(getCertificateListPageNum),
-			PageSize: typeutil.ToPtr(getCertificateListPageSize),
-			Keyword:  typeutil.ToPtr(certX509.Subject.CommonName),
-			Origin:   typeutil.ToPtr("UPLOAD"),
+			PageNum:  xtypes.ToPtr(getCertificateListPageNum),
+			PageSize: xtypes.ToPtr(getCertificateListPageSize),
+			Keyword:  xtypes.ToPtr(certX509.Subject.CommonName),
+			Origin:   xtypes.ToPtr("UPLOAD"),
 		}
 		getCertificateListResp, err := u.sdkClient.GetCertificateList(getCertificateListReq)
 		u.logger.Debug("sdk request 'cms.GetCertificateList'", slog.Any("request", getCertificateListReq), slog.Any("response", getCertificateListResp))

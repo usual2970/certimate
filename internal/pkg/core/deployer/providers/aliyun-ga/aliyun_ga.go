@@ -14,7 +14,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -252,14 +252,14 @@ func (d *DeployerProvider) updateListenerCertificate(ctx context.Context, cloudA
 		}
 	} else {
 		// 指定 SNI，需部署到扩展域名
-		if sliceutil.Some(listenerAdditionalCertificates, func(item *aliga.ListListenerCertificatesResponseBodyCertificates) bool {
+		if xslices.Some(listenerAdditionalCertificates, func(item *aliga.ListListenerCertificatesResponseBodyCertificates) bool {
 			return tea.StringValue(item.CertificateId) == cloudCertId
 		}) {
 			d.logger.Info("no need to update ga listener additional certificate")
 			return nil
 		}
 
-		if sliceutil.Some(listenerAdditionalCertificates, func(item *aliga.ListListenerCertificatesResponseBodyCertificates) bool {
+		if xslices.Some(listenerAdditionalCertificates, func(item *aliga.ListListenerCertificatesResponseBodyCertificates) bool {
 			return tea.StringValue(item.Domain) == d.config.Domain
 		}) {
 			// 为监听替换扩展证书

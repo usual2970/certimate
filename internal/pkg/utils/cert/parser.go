@@ -1,4 +1,4 @@
-package certutil
+package cert
 
 import (
 	"crypto"

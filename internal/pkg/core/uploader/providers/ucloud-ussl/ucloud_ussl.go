@@ -17,7 +17,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	usslsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/ucloud/ussl"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type UploaderConfig struct {
@@ -113,7 +113,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}

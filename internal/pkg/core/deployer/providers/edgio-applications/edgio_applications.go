@@ -9,7 +9,7 @@ import (
 	edgiodtos "github.com/Edgio/edgio-api/applications/v7/dtos"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
 type DeployerConfig struct {
@@ -57,7 +57,7 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 提取服务器证书和中间证书
-	serverCertPEM, intermediaCertPEM, err := certutil.ExtractCertificatesFromPEM(certPEM)
+	serverCertPEM, intermediaCertPEM, err := xcert.ExtractCertificatesFromPEM(certPEM)
 	if err != nil {
 		return nil, fmt.Errorf("failed to extract certs: %w", err)
 	}

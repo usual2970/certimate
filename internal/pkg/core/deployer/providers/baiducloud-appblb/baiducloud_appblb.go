@@ -14,7 +14,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/baiducloud-cert"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -286,7 +286,7 @@ func (d *DeployerProvider) updateHttpsListenerCertificate(ctx context.Context, c
 			ListenerPort: uint16(cloudHttpsListenerPort),
 			Scheduler:    describeAppHTTPSListenersResp.ListenerList[0].Scheduler,
 			CertIds:      describeAppHTTPSListenersResp.ListenerList[0].CertIds,
-			AdditionalCertDomains: sliceutil.Map(describeAppHTTPSListenersResp.ListenerList[0].AdditionalCertDomains, func(domain bceappblb.AdditionalCertDomainsModel) bceappblb.AdditionalCertDomainsModel {
+			AdditionalCertDomains: xslices.Map(describeAppHTTPSListenersResp.ListenerList[0].AdditionalCertDomains, func(domain bceappblb.AdditionalCertDomainsModel) bceappblb.AdditionalCertDomainsModel {
 				if domain.Host == d.config.Domain {
 					return bceappblb.AdditionalCertDomainsModel{
 						Host:   domain.Host,

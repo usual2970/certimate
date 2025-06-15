@@ -20,8 +20,8 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/usual2970/certimate/internal/domain"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xmaps "github.com/usual2970/certimate/internal/pkg/utils/maps"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -55,7 +55,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 
 	nodeCfg := config.Node.GetConfigForApply()
 	options := &applicantProviderOptions{
-		Domains:                 sliceutil.Filter(strings.Split(nodeCfg.Domains, ";"), func(s string) bool { return s != "" }),
+		Domains:                 xslices.Filter(strings.Split(nodeCfg.Domains, ";"), func(s string) bool { return s != "" }),
 		ContactEmail:            nodeCfg.ContactEmail,
 		Provider:                domain.ACMEDns01ProviderType(nodeCfg.Provider),
 		ProviderAccessConfig:    make(map[string]any),
@@ -64,7 +64,7 @@ func NewWithWorkflowNode(config ApplicantWithWorkflowNodeConfig) (Applicant, err
 		CAProviderAccessConfig:  make(map[string]any),
 		CAProviderServiceConfig: nodeCfg.CAProviderConfig,
 		KeyAlgorithm:            nodeCfg.KeyAlgorithm,
-		Nameservers:             sliceutil.Filter(strings.Split(nodeCfg.Nameservers, ";"), func(s string) bool { return s != "" }),
+		Nameservers:             xslices.Filter(strings.Split(nodeCfg.Nameservers, ";"), func(s string) bool { return s != "" }),
 		DnsPropagationWait:      nodeCfg.DnsPropagationWait,
 		DnsPropagationTimeout:   nodeCfg.DnsPropagationTimeout,
 		DnsTTL:                  nodeCfg.DnsTTL,
@@ -189,7 +189,7 @@ func applyUseLego(legoProvider challenge.Provider, options *applicantProviderOpt
 		}
 
 	case caCustom:
-		caDirURL := maputil.GetString(options.CAProviderAccessConfig, "endpoint")
+		caDirURL := xmaps.GetString(options.CAProviderAccessConfig, "endpoint")
 		if caDirURL != "" {
 			config.CADirURL = caDirURL
 		} else {

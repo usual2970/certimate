@@ -1,4 +1,4 @@
-﻿package httputil
+﻿package http
 
 import (
 	"net"

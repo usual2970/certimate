@@ -17,8 +17,8 @@ import (
 	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -68,7 +68,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertificatesReq := &hcelbmodel.ListCertificatesRequest{
-			Limit:  typeutil.ToPtr(listCertificatesLimit),
+			Limit:  xtypes.ToPtr(listCertificatesLimit),
 			Marker: listCertificatesMarker,
 			Type:   &[]string{"server"},
 		}
@@ -101,12 +101,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				if certDetail.Certificate == certPEM {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certutil.ParseCertificateFromPEM(certDetail.Certificate)
+					oldCertX509, err := xcert.ParseCertificateFromPEM(certDetail.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+					isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回
@@ -143,11 +143,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	createCertificateReq := &hcelbmodel.CreateCertificateRequest{
 		Body: &hcelbmodel.CreateCertificateRequestBody{
 			Certificate: &hcelbmodel.CreateCertificateOption{
-				EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
-				ProjectId:           typeutil.ToPtr(projectId),
-				Name:                typeutil.ToPtr(certName),
-				Certificate:         typeutil.ToPtr(certPEM),
-				PrivateKey:          typeutil.ToPtr(privkeyPEM),
+				EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+				ProjectId:           xtypes.ToPtr(projectId),
+				Name:                xtypes.ToPtr(certName),
+				Certificate:         xtypes.ToPtr(certPEM),
+				PrivateKey:          xtypes.ToPtr(privkeyPEM),
 			},
 		},
 	}

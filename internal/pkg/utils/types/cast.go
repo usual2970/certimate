@@ -1,4 +1,4 @@
-package typeutil
+package types
 
 import (
 	"reflect"

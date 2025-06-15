@@ -12,8 +12,8 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -63,7 +63,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listUserCertificateOrderReq := &alicas.ListUserCertificateOrderRequest{
-			ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+			ResourceGroupId: xtypes.ToPtrOrZeroNil(u.config.ResourceGroupId),
 			CurrentPage:     tea.Int64(listUserCertificateOrderPage),
 			ShowSize:        tea.Int64(listUserCertificateOrderLimit),
 			OrderType:       tea.String("CERT"),
@@ -111,12 +111,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				if *getUserCertificateDetailResp.Body.Cert == certPEM {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certutil.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
+					oldCertX509, err := xcert.ParseCertificateFromPEM(*getUserCertificateDetailResp.Body.Cert)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+					isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回
@@ -147,7 +147,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 上传新证书
 	// REF: https://help.aliyun.com/zh/ssl-certificate/developer-reference/api-cas-2020-04-07-uploadusercertificate
 	uploadUserCertificateReq := &alicas.UploadUserCertificateRequest{
-		ResourceGroupId: typeutil.ToPtrOrZeroNil(u.config.ResourceGroupId),
+		ResourceGroupId: xtypes.ToPtrOrZeroNil(u.config.ResourceGroupId),
 		Name:            tea.String(certName),
 		Cert:            tea.String(certPEM),
 		Key:             tea.String(privkeyPEM),

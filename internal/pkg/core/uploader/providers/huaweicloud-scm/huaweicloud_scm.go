@@ -12,8 +12,8 @@ import (
 	hcscmregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type UploaderConfig struct {
@@ -63,7 +63,7 @@ func (u *UploaderProvider) WithLogger(logger *slog.Logger) uploader.Uploader {
 
 func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPEM string) (*uploader.UploadResult, error) {
 	// 解析证书内容
-	certX509, err := certutil.ParseCertificateFromPEM(certPEM)
+	certX509, err := xcert.ParseCertificateFromPEM(certPEM)
 	if err != nil {
 		return nil, err
 	}
@@ -81,11 +81,11 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 		}
 
 		listCertificatesReq := &hcscmmodel.ListCertificatesRequest{
-			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
-			Limit:               typeutil.ToPtr(listCertificatesLimit),
-			Offset:              typeutil.ToPtr(listCertificatesOffset),
-			SortDir:             typeutil.ToPtr("DESC"),
-			SortKey:             typeutil.ToPtr("certExpiredTime"),
+			EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			Limit:               xtypes.ToPtr(listCertificatesLimit),
+			Offset:              xtypes.ToPtr(listCertificatesOffset),
+			SortDir:             xtypes.ToPtr("DESC"),
+			SortKey:             xtypes.ToPtr("certExpiredTime"),
 		}
 		listCertificatesResp, err := u.sdkClient.ListCertificates(listCertificatesReq)
 		u.logger.Debug("sdk request 'scm.ListCertificates'", slog.Any("request", listCertificatesReq), slog.Any("response", listCertificatesResp))
@@ -111,12 +111,12 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 				if *exportCertificateResp.Certificate == certPEM {
 					isSameCert = true
 				} else {
-					oldCertX509, err := certutil.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
+					oldCertX509, err := xcert.ParseCertificateFromPEM(*exportCertificateResp.Certificate)
 					if err != nil {
 						continue
 					}
 
-					isSameCert = certutil.EqualCertificate(certX509, oldCertX509)
+					isSameCert = xcert.EqualCertificate(certX509, oldCertX509)
 				}
 
 				// 如果已存在相同证书，直接返回
@@ -145,7 +145,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// REF: https://support.huaweicloud.com/api-ccm/ImportCertificate.html
 	importCertificateReq := &hcscmmodel.ImportCertificateRequest{
 		Body: &hcscmmodel.ImportCertificateRequestBody{
-			EnterpriseProjectId: typeutil.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
+			EnterpriseProjectId: xtypes.ToPtrOrZeroNil(u.config.EnterpriseProjectId),
 			Name:                certName,
 			Certificate:         certPEM,
 			PrivateKey:          privkeyPEM,

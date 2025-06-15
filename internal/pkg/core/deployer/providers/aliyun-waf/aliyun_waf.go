@@ -14,8 +14,8 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/aliyun-cas"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
-	typeutil "github.com/usual2970/certimate/internal/pkg/utils/type"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -110,7 +110,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		// 查询默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-describedefaulthttps
 		describeDefaultHttpsReq := &aliwaf.DescribeDefaultHttpsRequest{
-			ResourceManagerResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			ResourceManagerResourceGroupId: xtypes.ToPtrOrZeroNil(d.config.ResourceGroupId),
 			InstanceId:                     tea.String(d.config.InstanceId),
 			RegionId:                       tea.String(d.config.Region),
 		}
@@ -123,7 +123,7 @@ func (d *DeployerProvider) deployToWAF3(ctx context.Context, certPEM string, pri
 		// 修改默认 SSL/TLS 设置
 		// REF: https://help.aliyun.com/zh/waf/web-application-firewall-3-0/developer-reference/api-waf-openapi-2021-10-01-modifydefaulthttps
 		modifyDefaultHttpsReq := &aliwaf.ModifyDefaultHttpsRequest{
-			ResourceManagerResourceGroupId: typeutil.ToPtrOrZeroNil(d.config.ResourceGroupId),
+			ResourceManagerResourceGroupId: xtypes.ToPtrOrZeroNil(d.config.ResourceGroupId),
 			InstanceId:                     tea.String(d.config.InstanceId),
 			RegionId:                       tea.String(d.config.Region),
 			CertId:                         tea.String(upres.CertId),
@@ -252,7 +252,7 @@ func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDet
 		}
 
 		if target.Listen.HttpPorts != nil {
-			source.Listen.HttpPorts = sliceutil.Map(target.Listen.HttpPorts, func(v *int64) *int32 {
+			source.Listen.HttpPorts = xslices.Map(target.Listen.HttpPorts, func(v *int64) *int32 {
 				if v == nil {
 					return nil
 				}
@@ -261,7 +261,7 @@ func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDet
 		}
 
 		if target.Listen.HttpsPorts != nil {
-			source.Listen.HttpsPorts = sliceutil.Map(target.Listen.HttpsPorts, func(v *int64) *int32 {
+			source.Listen.HttpsPorts = xslices.Map(target.Listen.HttpsPorts, func(v *int64) *int32 {
 				if v == nil {
 					return nil
 				}
@@ -296,7 +296,7 @@ func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDet
 		}
 
 		if target.Redirect.Backends != nil {
-			source.Redirect.Backends = sliceutil.Map(target.Redirect.Backends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackends) *string {
+			source.Redirect.Backends = xslices.Map(target.Redirect.Backends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackends) *string {
 				if v == nil {
 					return nil
 				}
@@ -305,7 +305,7 @@ func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDet
 		}
 
 		if target.Redirect.BackupBackends != nil {
-			source.Redirect.BackupBackends = sliceutil.Map(target.Redirect.BackupBackends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackupBackends) *string {
+			source.Redirect.BackupBackends = xslices.Map(target.Redirect.BackupBackends, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectBackupBackends) *string {
 				if v == nil {
 					return nil
 				}
@@ -342,7 +342,7 @@ func assign(source *aliwaf.ModifyDomainRequest, target *aliwaf.DescribeDomainDet
 		}
 
 		if target.Redirect.RequestHeaders != nil {
-			source.Redirect.RequestHeaders = sliceutil.Map(target.Redirect.RequestHeaders, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectRequestHeaders) *aliwaf.ModifyDomainRequestRedirectRequestHeaders {
+			source.Redirect.RequestHeaders = xslices.Map(target.Redirect.RequestHeaders, func(v *aliwaf.DescribeDomainDetailResponseBodyRedirectRequestHeaders) *aliwaf.ModifyDomainRequestRedirectRequestHeaders {
 				if v == nil {
 					return nil
 				}

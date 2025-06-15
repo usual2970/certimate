@@ -10,7 +10,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btpanel"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
 )
 
 type DeployerConfig struct {
@@ -103,7 +103,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 
 			// 设置站点证书
 			sslSetBatchCertToSiteReq := &btsdk.SSLSetBatchCertToSiteRequest{
-				BatchInfo: sliceutil.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
+				BatchInfo: xslices.Map(d.config.SiteNames, func(siteName string) *btsdk.SSLSetBatchCertToSiteRequestBatchInfo {
 					return &btsdk.SSLSetBatchCertToSiteRequestBatchInfo{
 						SiteName: siteName,
 						SSLHash:  sslCertSaveCertResp.SSLHash,
