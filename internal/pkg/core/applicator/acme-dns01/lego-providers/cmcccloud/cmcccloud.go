@@ -1,16 +1,16 @@
-package baiducloud
+package cmcccloud
 
 import (
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
 
-	internal "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/baiducloud/internal"
+	"github.com/usual2970/certimate/internal/pkg/core/applicator/acme-dns01/lego-providers/cmcccloud/internal"
 )
 
 type ChallengeProviderConfig struct {
 	AccessKeyId           string `json:"accessKeyId"`
-	SecretAccessKey       string `json:"secretAccessKey"`
+	AccessKeySecret       string `json:"accessKeySecret"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -21,13 +21,13 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	}
 
 	providerConfig := internal.NewDefaultConfig()
-	providerConfig.AccessKeyID = config.AccessKeyId
-	providerConfig.SecretAccessKey = config.SecretAccessKey
-	if config.DnsPropagationTimeout != 0 {
-		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
-	}
+	providerConfig.AccessKey = config.AccessKeyId
+	providerConfig.SecretKey = config.AccessKeySecret
 	if config.DnsTTL != 0 {
 		providerConfig.TTL = config.DnsTTL
+	}
+	if config.DnsPropagationTimeout != 0 {
+		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
 
 	provider, err := internal.NewDNSProviderConfig(providerConfig)

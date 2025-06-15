@@ -1,16 +1,17 @@
-package gname
+package aliyunesa
 
 import (
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
 
-	internal "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/gname/internal"
+	internal "github.com/usual2970/certimate/internal/pkg/core/applicator/acme-dns01/lego-providers/aliyun-esa/internal"
 )
 
 type ChallengeProviderConfig struct {
-	AppId                 string `json:"appId"`
-	AppKey                string `json:"appKey"`
+	AccessKeyId           string `json:"accessKeyId"`
+	AccessKeySecret       string `json:"accessKeySecret"`
+	Region                string `json:"region"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -21,13 +22,14 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	}
 
 	providerConfig := internal.NewDefaultConfig()
-	providerConfig.AppID = config.AppId
-	providerConfig.AppKey = config.AppKey
+	providerConfig.SecretID = config.AccessKeyId
+	providerConfig.SecretKey = config.AccessKeySecret
+	providerConfig.RegionID = config.Region
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
 	if config.DnsTTL != 0 {
-		providerConfig.TTL = int(config.DnsTTL)
+		providerConfig.TTL = config.DnsTTL
 	}
 
 	provider, err := internal.NewDNSProviderConfig(providerConfig)

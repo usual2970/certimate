@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-acme/lego/v4/challenge"
 
-	"github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/ctcccloud/internal"
+	"github.com/usual2970/certimate/internal/pkg/core/applicator/acme-dns01/lego-providers/ctcccloud/internal"
 )
 
 type ChallengeProviderConfig struct {

@@ -1,17 +1,16 @@
-package tencentcloudeo
+package dnsla
 
 import (
 	"time"
 
 	"github.com/go-acme/lego/v4/challenge"
 
-	internal "github.com/usual2970/certimate/internal/pkg/core/applicant/acme-dns-01/lego-providers/tencentcloud-eo/internal"
+	internal "github.com/usual2970/certimate/internal/pkg/core/applicator/acme-dns01/lego-providers/dnsla/internal"
 )
 
 type ChallengeProviderConfig struct {
-	SecretId              string `json:"secretId"`
-	SecretKey             string `json:"secretKey"`
-	ZoneId                string `json:"zoneId"`
+	ApiId                 string `json:"apiId"`
+	ApiSecret             string `json:"apiSecret"`
 	DnsPropagationTimeout int32  `json:"dnsPropagationTimeout,omitempty"`
 	DnsTTL                int32  `json:"dnsTTL,omitempty"`
 }
@@ -22,14 +21,13 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	}
 
 	providerConfig := internal.NewDefaultConfig()
-	providerConfig.SecretID = config.SecretId
-	providerConfig.SecretKey = config.SecretKey
-	providerConfig.ZoneID = config.ZoneId
+	providerConfig.APIId = config.ApiId
+	providerConfig.APISecret = config.ApiSecret
 	if config.DnsPropagationTimeout != 0 {
 		providerConfig.PropagationTimeout = time.Duration(config.DnsPropagationTimeout) * time.Second
 	}
 	if config.DnsTTL != 0 {
-		providerConfig.TTL = config.DnsTTL
+		providerConfig.TTL = int(config.DnsTTL)
 	}
 
 	provider, err := internal.NewDNSProviderConfig(providerConfig)
