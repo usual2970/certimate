@@ -26,7 +26,6 @@ const AccessFormKubernetesConfig = ({ form: formInst, formName, disabled, initia
   const formSchema = z.object({
     kubeConfig: z
       .string()
-      .trim()
       .max(20480, t("common.errmsg.string_max", { max: 20480 }))
       .nullish(),
   });

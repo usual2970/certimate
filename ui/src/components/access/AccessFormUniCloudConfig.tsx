@@ -26,8 +26,8 @@ const AccessFormUniCloudConfig = ({ form: formInst, formName, disabled, initialV
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    username: z.string().trim().nonempty(t("access.form.unicloud_username.placeholder")),
-    password: z.string().trim().nonempty(t("access.form.unicloud_password.placeholder")),
+    username: z.string().nonempty(t("access.form.unicloud_username.placeholder")),
+    password: z.string().nonempty(t("access.form.unicloud_password.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

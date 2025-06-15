@@ -28,8 +28,7 @@ const AccessFormDiscordBotConfig = ({ form: formInst, formName, disabled, initia
     botToken: z
       .string({ message: t("access.form.discordbot_token.placeholder") })
       .min(1, t("access.form.discordbot_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     defaultChannelId: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

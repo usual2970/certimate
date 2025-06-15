@@ -35,12 +35,10 @@ const DeployNodeConfigFormVolcEngineTOSConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.volcengine_tos_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.volcengine_tos_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.volcengine_tos_region.placeholder")),
     bucket: z
       .string({ message: t("workflow_node.deploy.form.volcengine_tos_bucket.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.volcengine_tos_bucket.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.volcengine_tos_bucket.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.volcengine_tos_domain.placeholder") })
       .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),

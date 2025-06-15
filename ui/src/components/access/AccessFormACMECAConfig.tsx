@@ -26,8 +26,8 @@ const AccessFormACMECAConfig = ({ form: formInst, formName, disabled, initialVal
 
   const formSchema = z.object({
     endpoint: z.string().url(t("common.errmsg.url_invalid")),
-    eabKid: z.string().trim().nullish(),
-    eabHmacKey: z.string().trim().nullish(),
+    eabKid: z.string().nullish(),
+    eabHmacKey: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

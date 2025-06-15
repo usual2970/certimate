@@ -34,8 +34,7 @@ const DeployNodeConfigFormTencentCloudEOConfig = ({
   const formSchema = z.object({
     zoneId: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_eo_zone_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_eo_zone_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_eo_zone_id.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_eo_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),

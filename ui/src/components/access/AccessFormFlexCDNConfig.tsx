@@ -32,8 +32,8 @@ const AccessFormFlexCDNConfig = ({ form: formInst, formName, disabled, initialVa
     role: z.union([z.literal("user"), z.literal("admin")], {
       message: t("access.form.flexcdn_api_role.placeholder"),
     }),
-    accessKeyId: z.string().nonempty(t("access.form.flexcdn_access_key_id.placeholder")).trim(),
-    accessKey: z.string().nonempty(t("access.form.flexcdn_access_key.placeholder")).trim(),
+    accessKeyId: z.string().nonempty(t("access.form.flexcdn_access_key_id.placeholder")),
+    accessKey: z.string().nonempty(t("access.form.flexcdn_access_key.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

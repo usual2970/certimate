@@ -49,17 +49,14 @@ const DeployNodeConfigFormTencentCloudCLBConfig = ({
     ),
     region: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_clb_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_clb_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_clb_region.placeholder")),
     loadbalancerId: z
       .string()
       .min(1, t("workflow_node.deploy.form.tencentcloud_clb_loadbalancer_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     listenerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine(
         (v) => ![RESOURCE_TYPE_VIA_SSLDEPLOY, RESOURCE_TYPE_LISTENER, RESOURCE_TYPE_RULEDOMAIN].includes(fieldResourceType) || !!v?.trim(),

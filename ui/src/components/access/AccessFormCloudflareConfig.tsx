@@ -28,12 +28,10 @@ const AccessFormCloudflareConfig = ({ form: formInst, formName, disabled, initia
     dnsApiToken: z
       .string()
       .min(1, t("access.form.cloudflare_dns_api_token.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     zoneApiToken: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

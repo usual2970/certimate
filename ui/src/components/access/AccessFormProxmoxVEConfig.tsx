@@ -27,7 +27,7 @@ const AccessFormProxmoxVEConfig = ({ form: formInst, formName, disabled, initial
 
   const formSchema = z.object({
     serverUrl: z.string().url(t("common.errmsg.url_invalid")),
-    apiToken: z.string().nonempty(t("access.form.proxmoxve_api_token.placeholder")).trim(),
+    apiToken: z.string().nonempty(t("access.form.proxmoxve_api_token.placeholder")),
     apiTokenSecret: z.string().nullish(),
     allowInsecureConnections: z.boolean().nullish(),
   });

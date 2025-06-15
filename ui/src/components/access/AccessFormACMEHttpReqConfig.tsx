@@ -31,12 +31,10 @@ const AccessFormACMEHttpReqConfig = ({ form: formInst, formName, disabled, initi
     username: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
     password: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

@@ -25,10 +25,7 @@ const AccessFormBunnyConfig = ({ form: formInst, formName, disabled, initialValu
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiKey: z
-      .string()
-      .nonempty(t("access.form.bunny_api_key.placeholder"))
-      .trim(),
+    apiKey: z.string().nonempty(t("access.form.bunny_api_key.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
@@ -45,7 +42,6 @@ const AccessFormBunnyConfig = ({ form: formInst, formName, disabled, initialValu
       name={formName}
       onValuesChange={handleFormChange}
     >
-
       <Form.Item
         name="apiKey"
         label={t("access.form.bunny_api_key.label")}
@@ -54,7 +50,6 @@ const AccessFormBunnyConfig = ({ form: formInst, formName, disabled, initialValu
       >
         <Input.Password autoComplete="new-password" placeholder={t("access.form.bunny_api_key.placeholder")} />
       </Form.Item>
-
     </Form>
   );
 };

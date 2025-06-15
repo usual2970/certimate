@@ -27,9 +27,9 @@ const AccessFormNetcupConfig = ({ form: formInst, formName, disabled, initialVal
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    customerNumber: z.string().nonempty(t("access.form.netcup_customer_number.placeholder")).trim(),
-    apiKey: z.string().nonempty(t("access.form.netcup_api_key.placeholder")).trim(),
-    apiPassword: z.string().nonempty(t("access.form.netcup_api_password.placeholder")).trim(),
+    customerNumber: z.string().nonempty(t("access.form.netcup_customer_number.placeholder")),
+    apiKey: z.string().nonempty(t("access.form.netcup_api_key.placeholder")),
+    apiPassword: z.string().nonempty(t("access.form.netcup_api_password.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

@@ -29,13 +29,11 @@ const AccessFormDNSLAConfig = ({ form: formInst, formName, disabled, initialValu
     apiId: z
       .string()
       .min(1, t("access.form.dnsla_api_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiSecret: z
       .string()
       .min(1, t("access.form.dnsla_api_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

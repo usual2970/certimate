@@ -31,8 +31,7 @@ const ApplyNodeConfigFormTencentCloudEOConfig = ({
   const formSchema = z.object({
     zoneId: z
       .string({ message: t("workflow_node.apply.form.tencentcloud_eo_zone_id.placeholder") })
-      .nonempty(t("workflow_node.apply.form.tencentcloud_eo_zone_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.apply.form.tencentcloud_eo_zone_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

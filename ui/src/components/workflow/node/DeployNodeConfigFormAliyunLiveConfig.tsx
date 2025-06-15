@@ -34,8 +34,7 @@ const DeployNodeConfigFormAliyunLiveConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_live_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_live_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_live_region.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.aliyun_live_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),

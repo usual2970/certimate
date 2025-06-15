@@ -35,12 +35,10 @@ const DeployNodeConfigFormTencentCloudCOSConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_cos_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_cos_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_cos_region.placeholder")),
     bucket: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_cos_bucket.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_cos_bucket.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_cos_bucket.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_cos_domain.placeholder") })
       .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),

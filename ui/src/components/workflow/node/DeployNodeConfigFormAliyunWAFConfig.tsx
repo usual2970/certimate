@@ -38,16 +38,14 @@ const DeployNodeConfigFormAliyunWAFConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_waf_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_waf_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_waf_region.placeholder")),
     serviceVersion: z.literal("3.0", {
       message: t("workflow_node.deploy.form.aliyun_waf_service_version.placeholder"),
     }),
     instanceId: z
       .string({ message: t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder") })
       .nonempty(t("workflow_node.deploy.form.aliyun_waf_instance_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     domain: z
       .string()
       .nullish()

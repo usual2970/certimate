@@ -29,13 +29,11 @@ const AccessFormDogeCloudConfig = ({ form: formInst, formName, disabled, initial
     accessKey: z
       .string()
       .min(1, t("access.form.dogecloud_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretKey: z
       .string()
       .min(1, t("access.form.dogecloud_secret_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

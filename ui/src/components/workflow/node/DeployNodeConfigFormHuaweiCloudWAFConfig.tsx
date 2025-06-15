@@ -45,12 +45,10 @@ const DeployNodeConfigFormHuaweiCloudWAFConfig = ({
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.huaweicloud_waf_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.huaweicloud_waf_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.huaweicloud_waf_region.placeholder")),
     certificateId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => {
         if (fieldResourceType !== RESOURCE_TYPE_CERTIFICATE) return true;

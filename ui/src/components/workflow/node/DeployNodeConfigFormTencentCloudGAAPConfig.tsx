@@ -39,10 +39,9 @@ const DeployNodeConfigFormTencentCloudGAAPConfig = ({
 
   const formSchema = z.object({
     resourceType: z.literal(RESOURCE_TYPE_LISTENER, { message: t("workflow_node.deploy.form.tencentcloud_gaap_resource_type.placeholder") }),
-    proxyId: z.string().trim().nullish(),
+    proxyId: z.string().nullish(),
     listenerId: z
       .string()
-      .trim()
       .nullish()
       .refine(
         (v) => ![RESOURCE_TYPE_LISTENER].includes(fieldResourceType) || !!v?.trim(),

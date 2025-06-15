@@ -37,12 +37,10 @@ const DeployNodeConfigFormTencentCloudSSLDeployConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_ssl_deploy_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_ssl_deploy_region.placeholder")),
     resourceType: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_type.placeholder")),
     resourceIds: z.string({ message: t("workflow_node.deploy.form.tencentcloud_ssl_deploy_resource_ids.placeholder") }).refine((v) => {
       if (!v) return false;
       return String(v)

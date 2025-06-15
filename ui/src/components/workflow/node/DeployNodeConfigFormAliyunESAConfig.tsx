@@ -32,8 +32,7 @@ const DeployNodeConfigFormAliyunESAConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_esa_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_esa_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_esa_region.placeholder")),
     siteId: z.union([z.string(), z.number()]).refine((v) => {
       return /^\d+$/.test(v + "") && +v > 0;
     }, t("workflow_node.deploy.form.aliyun_esa_site_id.placeholder")),

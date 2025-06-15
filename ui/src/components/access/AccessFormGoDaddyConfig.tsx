@@ -29,13 +29,11 @@ const AccessFormGoDaddyConfig = ({ form: formInst, formName, disabled, initialVa
     apiKey: z
       .string()
       .min(1, t("access.form.godaddy_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiSecret: z
       .string()
       .min(1, t("access.form.godaddy_api_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

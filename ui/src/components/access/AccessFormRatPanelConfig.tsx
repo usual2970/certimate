@@ -29,7 +29,7 @@ const AccessFormRatPanelConfig = ({ form: formInst, formName, disabled, initialV
   const formSchema = z.object({
     serverUrl: z.string().url(t("common.errmsg.url_invalid")),
     accessTokenId: z.preprocess((v) => Number(v), z.number().positive(t("access.form.ratpanel_access_token_id.placeholder"))),
-    accessToken: z.string().nonempty(t("access.form.ratpanel_access_token.placeholder")).trim(),
+    accessToken: z.string().nonempty(t("access.form.ratpanel_access_token.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

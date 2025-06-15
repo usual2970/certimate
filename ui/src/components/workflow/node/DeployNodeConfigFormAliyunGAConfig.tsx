@@ -37,14 +37,10 @@ const DeployNodeConfigFormAliyunGAConfig = ({ form: formInst, formName, disabled
     resourceType: z.union([z.literal(RESOURCE_TYPE_ACCELERATOR), z.literal(RESOURCE_TYPE_LISTENER)], {
       message: t("workflow_node.deploy.form.aliyun_ga_resource_type.placeholder"),
     }),
-    acceleratorId: z
-      .string()
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+    acceleratorId: z.string().max(64, t("common.errmsg.string_max", { max: 64 })),
     listenerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_LISTENER || !!v?.trim(), t("workflow_node.deploy.form.aliyun_ga_listener_id.placeholder")),
     domain: z

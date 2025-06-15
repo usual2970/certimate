@@ -25,7 +25,7 @@ const AccessFormDuckDNSConfig = ({ form: formInst, formName, disabled, initialVa
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    token: z.string().nonempty(t("access.form.duckdns_token.placeholder")).trim(),
+    token: z.string().nonempty(t("access.form.duckdns_token.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

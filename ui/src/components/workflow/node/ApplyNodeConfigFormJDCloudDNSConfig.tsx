@@ -33,8 +33,7 @@ const ApplyNodeConfigFormJDCloudDNSConfig = ({
   const formSchema = z.object({
     regionId: z
       .string({ message: t("workflow_node.apply.form.jdcloud_dns_region_id.placeholder") })
-      .nonempty(t("workflow_node.apply.form.jdcloud_dns_region_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.apply.form.jdcloud_dns_region_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

@@ -28,12 +28,10 @@ const AccessFormAliyunConfig = ({ form: formInst, formName, disabled, initialVal
   const formSchema = z.object({
     accessKeyId: z
       .string()
-      .trim()
       .min(1, t("access.form.aliyun_access_key_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     accessKeySecret: z
       .string()
-      .trim()
       .min(1, t("access.form.aliyun_access_key_secret.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     resourceGroupId: z.string().nullish(),

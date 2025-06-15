@@ -25,8 +25,7 @@ const ApplyNodeConfigFormAliyunESAConfig = ({ form: formInst, formName, disabled
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.apply.form.aliyun_esa_region.placeholder") })
-      .nonempty(t("workflow_node.apply.form.aliyun_esa_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.apply.form.aliyun_esa_region.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

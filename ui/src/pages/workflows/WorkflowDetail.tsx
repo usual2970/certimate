@@ -335,12 +335,10 @@ const WorkflowBaseInfoModal = ({ trigger }: { trigger?: React.ReactNode }) => {
     name: z
       .string({ message: t("workflow.detail.baseinfo.form.name.placeholder") })
       .min(1, t("workflow.detail.baseinfo.form.name.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     description: z
       .string({ message: t("workflow.detail.baseinfo.form.description.placeholder") })
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

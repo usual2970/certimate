@@ -28,8 +28,7 @@ const AccessFormDynv6Config = ({ form: formInst, formName, disabled, initialValu
     httpToken: z
       .string()
       .min(1, t("access.form.dynv6_http_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

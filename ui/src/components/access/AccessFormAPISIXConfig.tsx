@@ -27,7 +27,7 @@ const AccessFormAPISIXConfig = ({ form: formInst, formName, disabled, initialVal
 
   const formSchema = z.object({
     serverUrl: z.string().url(t("common.errmsg.url_invalid")),
-    apiKey: z.string().trim().nonempty(t("access.form.apisix_api_key.placeholder")),
+    apiKey: z.string().nonempty(t("access.form.apisix_api_key.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

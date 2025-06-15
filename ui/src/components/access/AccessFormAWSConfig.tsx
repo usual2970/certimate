@@ -29,13 +29,11 @@ const AccessFormAWSConfig = ({ form: formInst, formName, disabled, initialValues
     accessKeyId: z
       .string()
       .min(1, t("access.form.aws_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
       .min(1, t("access.form.aws_secret_access_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

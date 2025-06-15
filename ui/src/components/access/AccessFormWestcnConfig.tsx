@@ -29,13 +29,11 @@ const AccessFormWestcnConfig = ({ form: formInst, formName, disabled, initialVal
     username: z
       .string()
       .min(1, t("access.form.westcn_username.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiPassword: z
       .string()
       .min(1, t("access.form.westcn_api_password.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

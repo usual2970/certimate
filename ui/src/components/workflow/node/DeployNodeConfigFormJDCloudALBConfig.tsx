@@ -46,18 +46,15 @@ const DeployNodeConfigFormJDCloudALBConfig = ({
     }),
     regionId: z
       .string({ message: t("workflow_node.deploy.form.jdcloud_alb_region_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.jdcloud_alb_region_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.jdcloud_alb_region_id.placeholder")),
     loadbalancerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_LOADBALANCER || !!v?.trim(), t("workflow_node.deploy.form.jdcloud_alb_loadbalancer_id.placeholder")),
     listenerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_LISTENER || !!v?.trim(), t("workflow_node.deploy.form.jdcloud_alb_listener_id.placeholder")),
     domain: z

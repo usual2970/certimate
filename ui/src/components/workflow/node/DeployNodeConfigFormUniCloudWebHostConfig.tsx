@@ -37,8 +37,8 @@ const DeployNodeConfigFormUniCloudWebHostConfig = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    spaceProvider: z.string().trim().nonempty(t("workflow_node.deploy.form.unicloud_webhost_space_provider.placeholder")),
-    spaceId: z.string().trim().nonempty(t("workflow_node.deploy.form.unicloud_webhost_space_id.placeholder")),
+    spaceProvider: z.string().nonempty(t("workflow_node.deploy.form.unicloud_webhost_space_provider.placeholder")),
+    spaceId: z.string().nonempty(t("workflow_node.deploy.form.unicloud_webhost_space_id.placeholder")),
     domain: z.string().refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),
   });
   const formRule = createSchemaFieldRule(formSchema);

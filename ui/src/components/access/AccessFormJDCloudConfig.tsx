@@ -29,13 +29,11 @@ const AccessFormJDCloudConfig = ({ form: formInst, formName, disabled, initialVa
     accessKeyId: z
       .string()
       .min(1, t("access.form.jdcloud_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     accessKeySecret: z
       .string()
       .min(1, t("access.form.jdcloud_access_key_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

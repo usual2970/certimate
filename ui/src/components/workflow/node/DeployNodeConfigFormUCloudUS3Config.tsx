@@ -35,12 +35,10 @@ const DeployNodeConfigFormUCloudUS3Config = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.ucloud_us3_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.ucloud_us3_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.ucloud_us3_region.placeholder")),
     bucket: z
       .string({ message: t("workflow_node.deploy.form.ucloud_us3_bucket.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.ucloud_us3_bucket.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.ucloud_us3_bucket.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.ucloud_us3_domain.placeholder") })
       .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),

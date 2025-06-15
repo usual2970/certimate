@@ -34,8 +34,7 @@ const DeployNodeConfigFormTencentCloudSCFConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_scf_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_scf_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_scf_region.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_scf_domain.placeholder") })
       .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),

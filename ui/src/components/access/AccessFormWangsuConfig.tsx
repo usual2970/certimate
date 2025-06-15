@@ -30,18 +30,15 @@ const AccessFormWangsuConfig = ({ form: formInst, formName, disabled, initialVal
     accessKeyId: z
       .string()
       .min(1, t("access.form.wangsu_access_key_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     accessKeySecret: z
       .string()
       .min(1, t("access.form.wangsu_access_key_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiKey: z
       .string()
       .min(1, t("access.form.wangsu_api_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

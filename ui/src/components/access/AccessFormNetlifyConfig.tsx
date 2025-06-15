@@ -25,7 +25,7 @@ const AccessFormNetlifyConfig = ({ form: formInst, formName, disabled, initialVa
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiToken: z.string().nonempty(t("access.form.netlify_api_token.placeholder")).trim(),
+    apiToken: z.string().nonempty(t("access.form.netlify_api_token.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

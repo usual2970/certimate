@@ -32,10 +32,7 @@ const DeployNodeConfigFormQiniuPiliConfig = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    hub: z
-      .string({ message: t("workflow_node.deploy.form.qiniu_pili_hub.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.qiniu_pili_hub.placeholder"))
-      .trim(),
+    hub: z.string({ message: t("workflow_node.deploy.form.qiniu_pili_hub.placeholder") }).nonempty(t("workflow_node.deploy.form.qiniu_pili_hub.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.qiniu_pili_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),

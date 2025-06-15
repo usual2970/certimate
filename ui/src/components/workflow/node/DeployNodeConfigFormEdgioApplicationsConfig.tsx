@@ -32,8 +32,7 @@ const DeployNodeConfigFormEdgioApplicationsConfig = ({
     environmentId: z
       .string({ message: t("workflow_node.deploy.form.edgio_applications_environment_id.placeholder") })
       .min(1, t("workflow_node.deploy.form.edgio_applications_environment_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
