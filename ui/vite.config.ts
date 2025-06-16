@@ -1,9 +1,12 @@
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 import legacyPlugin from "@vitejs/plugin-legacy";
 import reactPlugin from "@vitejs/plugin-react";
 import fs from "fs-extra";
 import { type Plugin, defineConfig } from "vite";
+
+const appVersion = execFileSync("git", ["describe", "--match", "v[0-9]*", "--always", "--tags", "--abbrev=8"])?.toString();
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   return {
@@ -33,6 +36,9 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
 };
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(appVersion),
+  },
   plugins: [
     reactPlugin({}),
     legacyPlugin({
