@@ -70,15 +70,6 @@ const AccessFormAliyunConfig = ({ form: formInst, formName, disabled, initialVal
       </Form.Item>
 
       <Form.Item
-        name="securityToken"
-        label={t("access.form.aliyun_security_token.label")}
-        rules={[formRule]}
-        tooltip={<span dangerouslySetInnerHTML={{ __html: t("access.form.aliyun_security_token.tooltip") }}></span>}
-      >
-        <Input allowClear autoComplete="new-password" placeholder={t("access.form.aliyun_security_token.placeholder")} />
-      </Form.Item>
-
-      <Form.Item
         name="resourceGroupId"
         label={t("access.form.aliyun_resource_group_id.label")}
         rules={[formRule]}
