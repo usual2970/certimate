@@ -82,7 +82,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 ## 🤝 参与贡献
 
-Certimate 是一个免费且开源的项目，采用 [MIT License](./LICENSE.md)。你可以使用它做任何你想做的事，甚至把它当作一个付费服务提供给用户。
+Certimate 是一个免费且开源的项目，采用 [MIT License](./LICENSE)。你可以使用它做任何你想做的事，甚至把它当作一个付费服务提供给用户。
 
 你可以通过以下方式来支持 Certimate 的开发：
 

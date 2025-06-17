@@ -80,7 +80,7 @@ Related articles:
 
 ## 🤝 Contributing
 
-Certimate is a free and open-source project, licensed under the [MIT License](./LICENSE.md). You can use it for anything you want, even offering it as a paid service to users.
+Certimate is a free and open-source project, licensed under the [MIT License](./LICENSE). You can use it for anything you want, even offering it as a paid service to users.
 
 You can support the development of Certimate in the following ways:
 
