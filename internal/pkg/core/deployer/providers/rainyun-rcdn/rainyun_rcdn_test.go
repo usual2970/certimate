@@ -53,8 +53,8 @@ func TestDeploy(t *testing.T) {
 		}, "\n"))
 
 		deployer, err := provider.NewDeployer(&provider.DeployerConfig{
-			PrivateKey: fApiKey,
-			InstanceId: fInstanceId,
+			ApiKey:     fApiKey,
+			InstanceId: int32(fInstanceId),
 			Domain:     fDomain,
 		})
 		if err != nil {

@@ -12,6 +12,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	bssdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/baishan"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -68,34 +69,34 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 新增证书
 		// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
 		certificateId := ""
-		createCertificateReq := &bssdk.CreateCertificateRequest{
-			Certificate: certPEM,
-			Key:         privkeyPEM,
-			Name:        fmt.Sprintf("certimate_%d", time.Now().UnixMilli()),
+		setDomainCertificateReq := &bssdk.SetDomainCertificateRequest{
+			Name:        xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			Certificate: xtypes.ToPtr(certPEM),
+			Key:         xtypes.ToPtr(privkeyPEM),
 		}
-		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
-		d.logger.Debug("sdk request 'baishan.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
+		setDomainCertificateResp, err := d.sdkClient.SetDomainCertificate(setDomainCertificateReq)
+		d.logger.Debug("sdk request 'baishan.SetDomainCertificate'", slog.Any("request", setDomainCertificateReq), slog.Any("response", setDomainCertificateResp))
 		if err != nil {
-			if createCertificateResp != nil {
-				if createCertificateResp.GetCode() == 400699 && strings.Contains(createCertificateResp.GetMessage(), "this certificate is exists") {
+			if setDomainCertificateResp != nil {
+				if setDomainCertificateResp.GetCode() == 400699 && strings.Contains(setDomainCertificateResp.GetMessage(), "this certificate is exists") {
 					// 证书已存在，忽略新增证书接口错误
 					re := regexp.MustCompile(`\d+`)
-					certificateId = re.FindString(createCertificateResp.GetMessage())
+					certificateId = re.FindString(setDomainCertificateResp.GetMessage())
 				}
 			}
 
 			if certificateId == "" {
-				return nil, fmt.Errorf("failed to execute sdk request 'baishan.CreateCertificate': %w", err)
+				return nil, fmt.Errorf("failed to execute sdk request 'baishan.SetDomainCertificate': %w", err)
 			}
 		} else {
-			certificateId = createCertificateResp.Data.CertId.String()
+			certificateId = setDomainCertificateResp.Data.CertId.String()
 		}
 
 		// 查询域名配置
 		// REF: https://portal.baishancloud.com/track/document/api/1/1065
 		getDomainConfigReq := &bssdk.GetDomainConfigRequest{
-			Domains: d.config.Domain,
-			Config:  []string{"https"},
+			Domains: xtypes.ToPtr(d.config.Domain),
+			Config:  xtypes.ToPtr([]string{"https"}),
 		}
 		getDomainConfigResp, err := d.sdkClient.GetDomainConfig(getDomainConfigReq)
 		d.logger.Debug("sdk request 'baishan.GetDomainConfig'", slog.Any("request", getDomainConfigReq), slog.Any("response", getDomainConfigResp))
@@ -108,7 +109,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 		// 设置域名配置
 		// REF: https://portal.baishancloud.com/track/document/api/1/1045
 		setDomainConfigReq := &bssdk.SetDomainConfigRequest{
-			Domains: d.config.Domain,
+			Domains: xtypes.ToPtr(d.config.Domain),
 			Config: &bssdk.DomainConfig{
 				Https: &bssdk.DomainConfigHttps{
 					CertId:      json.Number(certificateId),
@@ -126,16 +127,16 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	} else {
 		// 替换证书
 		// REF: https://portal.baishancloud.com/track/document/downloadPdf/1441
-		createCertificateReq := &bssdk.CreateCertificateRequest{
+		setDomainCertificateReq := &bssdk.SetDomainCertificateRequest{
 			CertificateId: &d.config.CertificateId,
-			Certificate:   certPEM,
-			Key:           privkeyPEM,
-			Name:          fmt.Sprintf("certimate_%d", time.Now().UnixMilli()),
+			Name:          xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
+			Certificate:   xtypes.ToPtr(certPEM),
+			Key:           xtypes.ToPtr(privkeyPEM),
 		}
-		createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
-		d.logger.Debug("sdk request 'baishan.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
+		setDomainCertificateResp, err := d.sdkClient.SetDomainCertificate(setDomainCertificateReq)
+		d.logger.Debug("sdk request 'baishan.SetDomainCertificate'", slog.Any("request", setDomainCertificateReq), slog.Any("response", setDomainCertificateResp))
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute sdk request 'baishan.CreateCertificate': %w", err)
+			return nil, fmt.Errorf("failed to execute sdk request 'baishan.SetDomainCertificate': %w", err)
 		}
 	}
 
@@ -143,10 +144,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(apiToken string) (*bssdk.Client, error) {
-	if apiToken == "" {
-		return nil, errors.New("invalid baishan api token")
-	}
-
-	client := bssdk.NewClient(apiToken)
-	return client, nil
+	return bssdk.NewClient(apiToken)
 }

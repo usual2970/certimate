@@ -15,7 +15,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/gcore-cdn"
-	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore/common"
+	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore"
 )
 
 type DeployerConfig struct {

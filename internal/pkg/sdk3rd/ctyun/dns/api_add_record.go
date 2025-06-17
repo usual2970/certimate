@@ -17,7 +17,7 @@ type AddRecordRequest struct {
 }
 
 type AddRecordResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj *struct {
 		RecordId int32 `json:"recordId"`

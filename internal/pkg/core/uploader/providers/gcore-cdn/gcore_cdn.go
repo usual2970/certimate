@@ -11,7 +11,7 @@ import (
 	"github.com/G-Core/gcorelabscdn-go/sslcerts"
 
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
-	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore/common"
+	gcoresdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gcore"
 )
 
 type UploaderConfig struct {

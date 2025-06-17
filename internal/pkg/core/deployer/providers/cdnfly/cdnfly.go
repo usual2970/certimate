@@ -7,11 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 	"time"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cdnfly"
+	cdnflysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cdnfly"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -36,7 +36,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *cfsdk.Client
+	sdkClient *cdnflysdk.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -94,27 +94,24 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, pri
 
 	// 获取单个网站详情
 	// REF: https://doc.cdnfly.cn/wangzhanguanli-v1-sites.html#%E8%8E%B7%E5%8F%96%E5%8D%95%E4%B8%AA%E7%BD%91%E7%AB%99%E8%AF%A6%E6%83%85
-	getSiteReq := &cfsdk.GetSiteRequest{
-		Id: d.config.SiteId,
-	}
-	getSiteResp, err := d.sdkClient.GetSite(getSiteReq)
-	d.logger.Debug("sdk request 'cdnfly.GetSite'", slog.Any("request", getSiteReq), slog.Any("response", getSiteResp))
+	getSiteResp, err := d.sdkClient.GetSite(d.config.SiteId)
+	d.logger.Debug("sdk request 'cdnfly.GetSite'", slog.Any("siteId", d.config.SiteId), slog.Any("response", getSiteResp))
 	if err != nil {
 		return fmt.Errorf("failed to execute sdk request 'cdnfly.GetSite': %w", err)
 	}
 
 	// 添加单个证书
 	// REF: https://doc.cdnfly.cn/wangzhanzhengshu-v1-certs.html#%E6%B7%BB%E5%8A%A0%E5%8D%95%E4%B8%AA%E6%88%96%E5%A4%9A%E4%B8%AA%E8%AF%81%E4%B9%A6-%E5%A4%9A%E4%B8%AA%E8%AF%81%E4%B9%A6%E6%97%B6%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E4%B8%BA%E6%95%B0%E7%BB%84
-	createCertificateReq := &cfsdk.CreateCertificateRequest{
-		Name: fmt.Sprintf("certimate-%d", time.Now().UnixMilli()),
-		Type: "custom",
-		Cert: certPEM,
-		Key:  privkeyPEM,
+	createCertificateReq := &cdnflysdk.CreateCertRequest{
+		Name: xtypes.ToPtr(fmt.Sprintf("certimate-%d", time.Now().UnixMilli())),
+		Type: xtypes.ToPtr("custom"),
+		Cert: xtypes.ToPtr(certPEM),
+		Key:  xtypes.ToPtr(privkeyPEM),
 	}
-	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
-	d.logger.Debug("sdk request 'cdnfly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
+	createCertificateResp, err := d.sdkClient.CreateCert(createCertificateReq)
+	d.logger.Debug("sdk request 'cdnfly.CreateCert'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'cdnfly.CreateCertificate': %w", err)
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.CreateCert': %w", err)
 	}
 
 	// 修改单个网站
@@ -123,13 +120,11 @@ func (d *DeployerProvider) deployToSite(ctx context.Context, certPEM string, pri
 	_ = json.Unmarshal([]byte(getSiteResp.Data.HttpsListen), &updateSiteHttpsListenMap)
 	updateSiteHttpsListenMap["cert"] = createCertificateResp.Data
 	updateSiteHttpsListenData, _ := json.Marshal(updateSiteHttpsListenMap)
-	updateSiteHttpsListen := string(updateSiteHttpsListenData)
-	updateSiteReq := &cfsdk.UpdateSiteRequest{
-		Id:          d.config.SiteId,
-		HttpsListen: &updateSiteHttpsListen,
+	updateSiteReq := &cdnflysdk.UpdateSiteRequest{
+		HttpsListen: xtypes.ToPtr(string(updateSiteHttpsListenData)),
 	}
-	updateSiteResp, err := d.sdkClient.UpdateSite(updateSiteReq)
-	d.logger.Debug("sdk request 'cdnfly.UpdateSite'", slog.Any("request", updateSiteReq), slog.Any("response", updateSiteResp))
+	updateSiteResp, err := d.sdkClient.UpdateSite(d.config.SiteId, updateSiteReq)
+	d.logger.Debug("sdk request 'cdnfly.UpdateSite'", slog.String("siteId", d.config.SiteId), slog.Any("request", updateSiteReq), slog.Any("response", updateSiteResp))
 	if err != nil {
 		return fmt.Errorf("failed to execute sdk request 'cdnfly.UpdateSite': %w", err)
 	}
@@ -144,38 +139,28 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 
 	// 修改单个证书
 	// REF: https://doc.cdnfly.cn/wangzhanzhengshu-v1-certs.html#%E4%BF%AE%E6%94%B9%E5%8D%95%E4%B8%AA%E8%AF%81%E4%B9%A6
-	updateCertificateType := "custom"
-	updateCertificateReq := &cfsdk.UpdateCertificateRequest{
-		Id:   d.config.CertificateId,
-		Type: &updateCertificateType,
-		Cert: &certPEM,
-		Key:  &privkeyPEM,
+	updateCertReq := &cdnflysdk.UpdateCertRequest{
+		Type: xtypes.ToPtr("custom"),
+		Cert: xtypes.ToPtr(certPEM),
+		Key:  xtypes.ToPtr(privkeyPEM),
 	}
-	updateCertificateResp, err := d.sdkClient.UpdateCertificate(updateCertificateReq)
-	d.logger.Debug("sdk request 'cdnfly.UpdateCertificate'", slog.Any("request", updateCertificateReq), slog.Any("response", updateCertificateResp))
+	updateCertResp, err := d.sdkClient.UpdateCert(d.config.CertificateId, updateCertReq)
+	d.logger.Debug("sdk request 'cdnfly.UpdateCert'", slog.String("certId", d.config.CertificateId), slog.Any("request", updateCertReq), slog.Any("response", updateCertResp))
 	if err != nil {
-		return fmt.Errorf("failed to execute sdk request 'cdnfly.UpdateCertificate': %w", err)
+		return fmt.Errorf("failed to execute sdk request 'cdnfly.UpdateCert': %w", err)
 	}
 
 	return nil
 }
 
-func createSdkClient(serverUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cfsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid cachefly server url")
+func createSdkClient(serverUrl, apiKey, apiSecret string, skipTlsVerify bool) (*cdnflysdk.Client, error) {
+	client, err := cdnflysdk.NewClient(serverUrl, apiKey, apiSecret)
+	if err != nil {
+		return nil, err
 	}
 
-	if apiKey == "" {
-		return nil, errors.New("invalid cachefly api key")
-	}
-
-	if apiSecret == "" {
-		return nil, errors.New("invalid cachefly api secret")
-	}
-
-	client := cfsdk.NewClient(serverUrl, apiKey, apiSecret)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

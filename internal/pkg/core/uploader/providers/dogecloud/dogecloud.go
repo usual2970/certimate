@@ -58,8 +58,13 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 
 	// 上传新证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-upload
-	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(certName, certPEM, privkeyPEM)
-	u.logger.Debug("sdk request 'cdn.UploadCdnCert'", slog.Any("response", uploadSslCertResp))
+	uploadSslCertReq := &dogesdk.UploadCdnCertRequest{
+		Note:        certName,
+		Certificate: certPEM,
+		PrivateKey:  privkeyPEM,
+	}
+	uploadSslCertResp, err := u.sdkClient.UploadCdnCert(uploadSslCertReq)
+	u.logger.Debug("sdk request 'cdn.UploadCdnCert'", slog.Any("request", uploadSslCertReq), slog.Any("response", uploadSslCertResp))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'cdn.UploadCdnCert': %w", err)
 	}
@@ -72,6 +77,5 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKey, secretKey string) (*dogesdk.Client, error) {
-	client := dogesdk.NewClient(accessKey, secretKey)
-	return client, nil
+	return dogesdk.NewClient(accessKey, secretKey)
 }

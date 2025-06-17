@@ -12,7 +12,7 @@ type ShowListenerRequest struct {
 }
 
 type ShowListenerResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj []*ListenerRecord `json:"returnObj,omitempty"`
 }

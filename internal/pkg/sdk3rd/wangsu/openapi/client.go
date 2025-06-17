@@ -23,11 +23,14 @@ type Client struct {
 	client *resty.Client
 }
 
-type Result interface {
-	SetRequestId(requestId string)
-}
+func NewClient(accessKey, secretKey string) (*Client, error) {
+	if accessKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset accessKey")
+	}
+	if secretKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset secretKey")
+	}
 
-func NewClient(accessKey, secretKey string) *Client {
 	client := resty.New().
 		SetBaseURL("https://open.chinanetcenter.com").
 		SetHeader("Accept", "application/json").
@@ -125,67 +128,64 @@ func NewClient(accessKey, secretKey string) *Client {
 		accessKey: accessKey,
 		secretKey: secretKey,
 		client:    client,
-	}
+	}, nil
 }
 
-func (c *Client) WithTimeout(timeout time.Duration) *Client {
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *Client) sendRequest(method string, path string, params interface{}, configureReq ...func(req *resty.Request)) (*resty.Response, error) {
+func (c *Client) NewRequest(method string, path string) (*resty.Request, error) {
+	if method == "" {
+		return nil, fmt.Errorf("sdkerr: unset method")
+	}
+	if path == "" {
+		return nil, fmt.Errorf("sdkerr: unset path")
+	}
+
 	req := c.client.R()
-	if strings.EqualFold(method, http.MethodGet) {
-		qs := make(map[string]string)
-		if params != nil {
-			temp := make(map[string]any)
-			jsonb, _ := json.Marshal(params)
-			json.Unmarshal(jsonb, &temp)
-			for k, v := range temp {
-				if v != nil {
-					qs[k] = fmt.Sprintf("%v", v)
-				}
-			}
-		}
+	req.Method = method
+	req.URL = path
+	return req, nil
+}
 
-		req = req.SetQueryParams(qs)
-	} else {
-		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
+func (c *Client) DoRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
-	if configureReq != nil {
-		for _, fn := range configureReq {
-			fn(req)
-		}
-	}
+	// WARN:
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
 
-	resp, err := req.Execute(method, path)
+	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("wangsu api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("wangsu api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) SendRequestWithResult(method string, path string, params interface{}, result Result, configureReq ...func(req *resty.Request)) (*resty.Response, error) {
-	resp, err := c.sendRequest(method, path, params, configureReq...)
+func (c *Client) DoRequestWithResult(req *resty.Request, res any) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	resp, err := c.DoRequest(req)
 	if err != nil {
 		if resp != nil {
-			json.Unmarshal(resp.Body(), &result)
-			result.SetRequestId(resp.Header().Get("X-CNC-Request-Id"))
+			json.Unmarshal(resp.Body(), &res)
 		}
 		return resp, err
 	}
 
-	respBody := resp.Body()
-	if len(respBody) != 0 {
-		if err := json.Unmarshal(respBody, &result); err != nil {
-			return resp, fmt.Errorf("wangsu api error: failed to unmarshal response: %w", err)
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
 		}
 	}
 
-	result.SetRequestId(resp.Header().Get("X-CNC-Request-Id"))
 	return resp, nil
 }

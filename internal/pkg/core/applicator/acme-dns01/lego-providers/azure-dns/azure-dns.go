@@ -6,7 +6,7 @@ import (
 	"github.com/go-acme/lego/v4/challenge"
 	"github.com/go-acme/lego/v4/providers/dns/azuredns"
 
-	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
+	azenv "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/env"
 )
 
 type ChallengeProviderConfig struct {
@@ -28,7 +28,7 @@ func NewChallengeProvider(config *ChallengeProviderConfig) (challenge.Provider, 
 	providerConfig.ClientID = config.ClientId
 	providerConfig.ClientSecret = config.ClientSecret
 	if config.CloudName != "" {
-		env, err := azcommon.GetCloudEnvironmentConfiguration(config.CloudName)
+		env, err := azenv.GetCloudEnvConfiguration(config.CloudName)
 		if err != nil {
 			return nil, err
 		}

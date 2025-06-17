@@ -3,8 +3,6 @@ package rainyun
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"strings"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -14,57 +12,80 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(apiKey string) *Client {
+func NewClient(apiKey string) (*Client, error) {
+	if apiKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset apiKey")
+	}
+
 	client := resty.New().
 		SetBaseURL("https://api.v2.rainyun.com").
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "certimate").
 		SetHeader("X-API-Key", apiKey)
 
-	return &Client{
-		client: client,
-	}
+	return &Client{client}, nil
 }
 
-func (c *Client) WithTimeout(timeout time.Duration) *Client {
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R()
-	if strings.EqualFold(method, http.MethodGet) {
-		if params != nil {
-			jsonb, _ := json.Marshal(params)
-			req = req.SetQueryParam("options", string(jsonb))
-		}
-	} else {
-		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
+func (c *Client) newRequest(method string, path string) (*resty.Request, error) {
+	if method == "" {
+		return nil, fmt.Errorf("sdkerr: unset method")
+	}
+	if path == "" {
+		return nil, fmt.Errorf("sdkerr: unset path")
 	}
 
-	resp, err := req.Execute(method, path)
+	req := c.client.R()
+	req.Method = method
+	req.URL = path
+	return req, nil
+}
+
+func (c *Client) doRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	// WARN:
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
+
+	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("rainyun api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("rainyun api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
-	resp, err := c.sendRequest(method, path, params)
+func (c *Client) doRequestWithResult(req *resty.Request, res apiResponse) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	resp, err := c.doRequest(req)
 	if err != nil {
 		if resp != nil {
-			json.Unmarshal(resp.Body(), &result)
+			json.Unmarshal(resp.Body(), &res)
 		}
-		return err
+		return resp, err
 	}
 
-	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("rainyun api error: failed to unmarshal response: %w", err)
-	} else if errcode := result.GetCode(); errcode/100 != 2 {
-		return fmt.Errorf("rainyun api error: code='%d', message='%s'", errcode, result.GetMessage())
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
+		} else {
+			if tcode := res.GetCode(); tcode/100 != 2 {
+				return resp, fmt.Errorf("sdkerr: code='%d', message='%s'", tcode, res.GetMessage())
+			}
+		}
 	}
 
-	return nil
+	return resp, nil
 }

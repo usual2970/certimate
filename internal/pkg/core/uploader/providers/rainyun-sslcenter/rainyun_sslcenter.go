@@ -76,7 +76,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	if res, err := u.findCertIfExists(ctx, certPEM); err != nil {
 		return nil, err
 	} else if res == nil {
-		return nil, errors.New("rainyun sslcenter: no certificate found")
+		return nil, errors.New("no ssl certificate found, may be upload failed")
 	} else {
 		return res, nil
 	}
@@ -166,10 +166,5 @@ func (u *UploaderProvider) findCertIfExists(ctx context.Context, certPEM string)
 }
 
 func createSdkClient(apiKey string) (*rainyunsdk.Client, error) {
-	if apiKey == "" {
-		return nil, errors.New("invalid rainyun api key")
-	}
-
-	client := rainyunsdk.NewClient(apiKey)
-	return client, nil
+	return rainyunsdk.NewClient(apiKey)
 }

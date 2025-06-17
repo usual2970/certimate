@@ -24,7 +24,7 @@ type UploaderConfig struct {
 type UploaderProvider struct {
 	config    *UploaderConfig
 	logger    *slog.Logger
-	sdkClient *qiniusdk.Client
+	sdkClient *qiniusdk.CdnManager
 }
 
 var _ uploader.Uploader = (*UploaderProvider)(nil)
@@ -81,7 +81,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	}, nil
 }
 
-func createSdkClient(accessKey, secretKey string) (*qiniusdk.Client, error) {
+func createSdkClient(accessKey, secretKey string) (*qiniusdk.CdnManager, error) {
 	if secretKey == "" {
 		return nil, errors.New("invalid qiniu access key")
 	}
@@ -91,6 +91,6 @@ func createSdkClient(accessKey, secretKey string) (*qiniusdk.Client, error) {
 	}
 
 	credential := auth.New(accessKey, secretKey)
-	client := qiniusdk.NewClient(credential)
+	client := qiniusdk.NewCdnManager(credential)
 	return client, nil
 }

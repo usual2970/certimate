@@ -88,14 +88,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(username, password string) (*unisdk.Client, error) {
-	if username == "" {
-		return nil, errors.New("invalid unicloud username")
-	}
-
-	if password == "" {
-		return nil, errors.New("invalid unicloud password")
-	}
-
-	client := unisdk.NewClient(username, password)
-	return client, nil
+	return unisdk.NewClient(username, password)
 }

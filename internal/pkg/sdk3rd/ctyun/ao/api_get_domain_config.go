@@ -11,7 +11,7 @@ type GetDomainConfigRequest struct {
 }
 
 type GetDomainConfigResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj *struct {
 		Domain      string                  `json:"domain"`
@@ -35,13 +35,7 @@ func (c *Client) GetDomainConfigWithContext(ctx context.Context, req *GetDomainC
 	if err != nil {
 		return nil, err
 	} else {
-		if req.Domain != nil {
-			httpreq.SetQueryParam("domain", *req.Domain)
-		}
-		if req.ProductCode != nil {
-			httpreq.SetQueryParam("product_code", *req.ProductCode)
-		}
-
+		httpreq.SetBody(req)
 		httpreq.SetContext(ctx)
 	}
 

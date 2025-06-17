@@ -35,7 +35,10 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client := dogesdk.NewClient(config.AccessKey, config.SecretKey)
+	client, err := createSdkClient(config.AccessKey, config.SecretKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+	}
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,
@@ -64,6 +67,10 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
+	if d.config.Domain == "" {
+		return nil, fmt.Errorf("config `domain` is required")
+	}
+
 	// 上传证书到 CDN
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
@@ -75,11 +82,19 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 绑定证书
 	// REF: https://docs.dogecloud.com/cdn/api-cert-bind
 	bindCdnCertId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	bindCdnCertResp, err := d.sdkClient.BindCdnCertWithDomain(bindCdnCertId, d.config.Domain)
-	d.logger.Debug("sdk request 'cdn.BindCdnCert'", slog.Int64("request.certId", bindCdnCertId), slog.String("request.domain", d.config.Domain), slog.Any("response", bindCdnCertResp))
+	bindCdnCertReq := &dogesdk.BindCdnCertRequest{
+		CertId: bindCdnCertId,
+		Domain: d.config.Domain,
+	}
+	bindCdnCertResp, err := d.sdkClient.BindCdnCert(bindCdnCertReq)
+	d.logger.Debug("sdk request 'cdn.BindCdnCert'", slog.Any("request", bindCdnCertReq), slog.Any("response", bindCdnCertResp))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'cdn.BindCdnCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
+}
+
+func createSdkClient(accessKey, secretKey string) (*dogesdk.Client, error) {
+	return dogesdk.NewClient(accessKey, secretKey)
 }

@@ -98,7 +98,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	if err != nil {
 		return nil, fmt.Errorf("failed to encrypt private key: %w", err)
 	}
-	certificateNewVersionInfo := &wangsucdn.CertificateVersion{
+	certificateNewVersionInfo := &wangsucdn.CertificateVersionInfo{
 		PrivateKey:  xtypes.ToPtr(encryptedPrivateKey),
 		Certificate: xtypes.ToPtr(certPEM),
 		IdentificationInfo: &wangsucdn.CertificateVersionIdentificationInfo{
@@ -131,7 +131,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			return nil, fmt.Errorf("failed to execute sdk request 'cdnpro.CreateCertificate': %w", err)
 		}
 
-		wangsuCertUrl = createCertificateResp.CertificateUrl
+		wangsuCertUrl = createCertificateResp.CertificateLocation
 		d.logger.Info("ssl certificate uploaded", slog.Any("certUrl", wangsuCertUrl))
 
 		wangsuCertIdMatches := regexp.MustCompile(`/certificates/([a-zA-Z0-9-]+)`).FindStringSubmatch(wangsuCertUrl)
@@ -154,7 +154,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 			return nil, fmt.Errorf("failed to execute sdk request 'cdnpro.UpdateCertificate': %w", err)
 		}
 
-		wangsuCertUrl = updateCertificateResp.CertificateUrl
+		wangsuCertUrl = updateCertificateResp.CertificateLocation
 		d.logger.Info("ssl certificate uploaded", slog.Any("certUrl", wangsuCertUrl))
 
 		wangsuCertIdMatches := regexp.MustCompile(`/certificates/([a-zA-Z0-9-]+)`).FindStringSubmatch(wangsuCertUrl)
@@ -174,7 +174,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	createDeploymentTaskReq := &wangsucdn.CreateDeploymentTaskRequest{
 		Name:   xtypes.ToPtr(fmt.Sprintf("certimate_%d", time.Now().UnixMilli())),
 		Target: xtypes.ToPtr(d.config.Environment),
-		Actions: &[]wangsucdn.DeploymentTaskAction{
+		Actions: &[]wangsucdn.DeploymentTaskActionInfo{
 			{
 				Action:        xtypes.ToPtr("deploy_cert"),
 				CertificateId: xtypes.ToPtr(wangsuCertId),
@@ -194,7 +194,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	// 循环获取部署任务详细信息，等待任务状态变更
 	// REF: https://www.wangsu.com/document/api-doc/27038
 	var wangsuTaskId string
-	wangsuTaskMatches := regexp.MustCompile(`/deploymentTasks/([a-zA-Z0-9-]+)`).FindStringSubmatch(createDeploymentTaskResp.DeploymentTaskUrl)
+	wangsuTaskMatches := regexp.MustCompile(`/deploymentTasks/([a-zA-Z0-9-]+)`).FindStringSubmatch(createDeploymentTaskResp.DeploymentTaskLocation)
 	if len(wangsuTaskMatches) > 1 {
 		wangsuTaskId = wangsuTaskMatches[1]
 	}
@@ -225,15 +225,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKeyId, accessKeySecret string) (*wangsucdn.Client, error) {
-	if accessKeyId == "" {
-		return nil, errors.New("invalid wangsu access key id")
-	}
-
-	if accessKeySecret == "" {
-		return nil, errors.New("invalid wangsu access key secret")
-	}
-
-	return wangsucdn.NewClient(accessKeyId, accessKeySecret), nil
+	return wangsucdn.NewClient(accessKeyId, accessKeySecret)
 }
 
 func encryptPrivateKey(privkeyPEM string, apiKey string, timestamp int64) (string, error) {

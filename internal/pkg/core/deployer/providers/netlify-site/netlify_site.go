@@ -80,10 +80,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(apiToken string) (*netlifysdk.Client, error) {
-	if apiToken == "" {
-		return nil, errors.New("invalid netlify api token")
-	}
-
-	client := netlifysdk.NewClient(apiToken)
-	return client, nil
+	return netlifysdk.NewClient(apiToken)
 }

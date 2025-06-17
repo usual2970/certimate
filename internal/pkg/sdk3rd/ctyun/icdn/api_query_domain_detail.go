@@ -12,7 +12,7 @@ type QueryDomainDetailRequest struct {
 }
 
 type QueryDomainDetailResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj *struct {
 		Domain      string `json:"domain"`

@@ -10,6 +10,7 @@ import (
 	"github.com/go-acme/lego/v4/platform/config/env"
 
 	gnamesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/gname"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 const (
@@ -68,8 +69,12 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 		return nil, errors.New("gname: the configuration of the DNS provider is nil")
 	}
 
-	client := gnamesdk.NewClient(config.AppID, config.AppKey).
-		WithTimeout(config.HTTPTimeout)
+	client, err := gnamesdk.NewClient(config.AppID, config.AppKey)
+	if err != nil {
+		return nil, err
+	} else {
+		client.SetTimeout(config.HTTPTimeout)
+	}
 
 	return &DNSProvider{
 		client: client,
@@ -121,14 +126,15 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) findDNSRecord(zoneName, subDomain string) (*gnamesdk.ResolutionRecord, error) {
+func (d *DNSProvider) findDNSRecord(zoneName, subDomain string) (*gnamesdk.DomainResolutionRecordord, error) {
 	page := int32(1)
 	pageSize := int32(20)
 	for {
-		request := &gnamesdk.ListDomainResolutionRequest{}
-		request.ZoneName = zoneName
-		request.Page = &page
-		request.PageSize = &pageSize
+		request := &gnamesdk.ListDomainResolutionRequest{
+			ZoneName: xtypes.ToPtr(zoneName),
+			Page:     xtypes.ToPtr(page),
+			PageSize: xtypes.ToPtr(pageSize),
+		}
 
 		response, err := d.client.ListDomainResolution(request)
 		if err != nil {
@@ -162,23 +168,23 @@ func (d *DNSProvider) addOrUpdateDNSRecord(zoneName, subDomain, value string) er
 
 	if record == nil {
 		request := &gnamesdk.AddDomainResolutionRequest{
-			ZoneName:    zoneName,
-			RecordType:  "TXT",
-			RecordName:  subDomain,
-			RecordValue: value,
-			TTL:         int32(d.config.TTL),
+			ZoneName:    xtypes.ToPtr(zoneName),
+			RecordType:  xtypes.ToPtr("TXT"),
+			RecordName:  xtypes.ToPtr(subDomain),
+			RecordValue: xtypes.ToPtr(value),
+			TTL:         xtypes.ToPtr(int32(d.config.TTL)),
 		}
 		_, err := d.client.AddDomainResolution(request)
 		return err
 	} else {
 		recordId, _ := record.ID.Int64()
 		request := &gnamesdk.ModifyDomainResolutionRequest{
-			ID:          recordId,
-			ZoneName:    zoneName,
-			RecordType:  "TXT",
-			RecordName:  subDomain,
-			RecordValue: value,
-			TTL:         int32(d.config.TTL),
+			ID:          xtypes.ToPtr(recordId),
+			ZoneName:    xtypes.ToPtr(zoneName),
+			RecordType:  xtypes.ToPtr("TXT"),
+			RecordName:  xtypes.ToPtr(subDomain),
+			RecordValue: xtypes.ToPtr(value),
+			TTL:         xtypes.ToPtr(int32(d.config.TTL)),
 		}
 		_, err := d.client.ModifyDomainResolution(request)
 		return err
@@ -197,8 +203,8 @@ func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
 
 	recordId, _ := record.ID.Int64()
 	request := &gnamesdk.DeleteDomainResolutionRequest{
-		ZoneName: zoneName,
-		RecordID: recordId,
+		ZoneName: xtypes.ToPtr(zoneName),
+		RecordID: xtypes.ToPtr(recordId),
 	}
 	_, err = d.client.DeleteDomainResolution(request)
 	return err

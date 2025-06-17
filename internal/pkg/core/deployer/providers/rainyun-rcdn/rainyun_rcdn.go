@@ -2,7 +2,6 @@ package rainyunrcdn
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"strconv"
@@ -92,10 +91,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(apiKey string) (*rainyunsdk.Client, error) {
-	if apiKey == "" {
-		return nil, errors.New("invalid rainyun api key")
-	}
-
-	client := rainyunsdk.NewClient(apiKey)
-	return client, nil
+	return rainyunsdk.NewClient(apiKey)
 }

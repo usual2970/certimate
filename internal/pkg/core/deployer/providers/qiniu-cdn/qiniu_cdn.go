@@ -26,7 +26,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *qiniusdk.Client
+	sdkClient   *qiniusdk.CdnManager
 	sslUploader uploader.Uploader
 }
 
@@ -37,7 +37,7 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
-	client := qiniusdk.NewClient(auth.New(config.AccessKey, config.SecretKey))
+	client := qiniusdk.NewCdnManager(auth.New(config.AccessKey, config.SecretKey))
 
 	uploader, err := uploadersp.NewUploader(&uploadersp.UploaderConfig{
 		AccessKey: config.AccessKey,

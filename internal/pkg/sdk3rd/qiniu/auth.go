@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/qiniu/go-sdk/v7/auth"
+	"github.com/qiniu/go-sdk/v7/client"
 )
 
 type transport struct {
@@ -13,7 +14,7 @@ type transport struct {
 
 func newTransport(mac *auth.Credentials, tr http.RoundTripper) *transport {
 	if tr == nil {
-		tr = http.DefaultTransport
+		tr = client.DefaultTransport
 	}
 	return &transport{tr, mac}
 }

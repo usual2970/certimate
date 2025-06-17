@@ -6,14 +6,14 @@ import (
 	"strconv"
 )
 
-type baseResultInterface interface {
+type apiResponse interface {
 	GetStatusCode() string
 	GetMessage() string
 	GetError() string
 	GetErrorMessage() string
 }
 
-type baseResult struct {
+type apiResponseBase struct {
 	StatusCode   json.RawMessage `json:"statusCode,omitempty"`
 	Message      *string         `json:"message,omitempty"`
 	Error        *string         `json:"error,omitempty"`
@@ -21,7 +21,7 @@ type baseResult struct {
 	RequestId    *string         `json:"requestId,omitempty"`
 }
 
-func (r *baseResult) GetStatusCode() string {
+func (r *apiResponseBase) GetStatusCode() string {
 	if r.StatusCode == nil {
 		return ""
 	}
@@ -44,7 +44,7 @@ func (r *baseResult) GetStatusCode() string {
 	}
 }
 
-func (r *baseResult) GetMessage() string {
+func (r *apiResponseBase) GetMessage() string {
 	if r.Message == nil {
 		return ""
 	}
@@ -52,7 +52,7 @@ func (r *baseResult) GetMessage() string {
 	return *r.Message
 }
 
-func (r *baseResult) GetError() string {
+func (r *apiResponseBase) GetError() string {
 	if r.Error == nil {
 		return ""
 	}
@@ -60,7 +60,7 @@ func (r *baseResult) GetError() string {
 	return *r.Error
 }
 
-func (r *baseResult) GetErrorMessage() string {
+func (r *apiResponseBase) GetErrorMessage() string {
 	if r.ErrorMessage == nil {
 		return ""
 	}
@@ -68,7 +68,7 @@ func (r *baseResult) GetErrorMessage() string {
 	return *r.ErrorMessage
 }
 
-var _ baseResultInterface = (*baseResult)(nil)
+var _ apiResponse = (*apiResponseBase)(nil)
 
 type CertificateRecord struct {
 	Id                  string `json:"id"`

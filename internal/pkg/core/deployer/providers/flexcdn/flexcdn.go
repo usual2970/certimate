@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 	"time"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
@@ -120,25 +119,13 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 }
 
 func createSdkClient(serverUrl, apiRole, accessKeyId, accessKey string, skipTlsVerify bool) (*flexcdnsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid flexcdn server url")
+	client, err := flexcdnsdk.NewClient(serverUrl, apiRole, accessKeyId, accessKey)
+	if err != nil {
+		return nil, err
 	}
 
-	if apiRole != "user" && apiRole != "admin" {
-		return nil, errors.New("invalid flexcdn api role")
-	}
-
-	if accessKeyId == "" {
-		return nil, errors.New("invalid flexcdn access key id")
-	}
-
-	if accessKey == "" {
-		return nil, errors.New("invalid flexcdn access key")
-	}
-
-	client := flexcdnsdk.NewClient(serverUrl, apiRole, accessKeyId, accessKey)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

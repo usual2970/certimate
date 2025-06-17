@@ -16,7 +16,7 @@ type ListListenersRequest struct {
 }
 
 type ListListenersResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj []*ListenerRecord `json:"returnObj,omitempty"`
 }

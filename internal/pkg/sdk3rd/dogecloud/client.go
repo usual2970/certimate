@@ -8,176 +8,124 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
-	"strings"
+	"time"
+
+	"github.com/go-resty/resty/v2"
 )
 
-const dogeHost = "https://api.dogecloud.com"
-
 type Client struct {
-	accessKey string
-	secretKey string
+	client *resty.Client
 }
 
-func NewClient(accessKey, secretKey string) *Client {
-	return &Client{accessKey: accessKey, secretKey: secretKey}
+func NewClient(accessKey, secretKey string) (*Client, error) {
+	if accessKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset accessKey")
+	}
+	if secretKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset secretKey")
+	}
+
+	client := resty.New().
+		SetBaseURL("https://api.dogecloud.com").
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate").
+		SetPreRequestHook(func(ctx *resty.Client, req *http.Request) error {
+			requestUrl := req.URL.Path
+			requestQuery := req.URL.Query().Encode()
+			if requestQuery != "" {
+				requestUrl += "?" + requestQuery
+			}
+
+			payload := ""
+			if req.Body != nil {
+				reader, err := req.GetBody()
+				if err != nil {
+					return err
+				}
+
+				defer reader.Close()
+
+				payloadb, err := io.ReadAll(reader)
+				if err != nil {
+					return err
+				}
+
+				payload = string(payloadb)
+			}
+
+			stringToSign := fmt.Sprintf("%s\n%s", requestUrl, payload)
+			mac := hmac.New(sha1.New, []byte(secretKey))
+			mac.Write([]byte(stringToSign))
+			sign := hex.EncodeToString(mac.Sum(nil))
+
+			req.Header.Set("Authorization", fmt.Sprintf("TOKEN %s:%s", accessKey, sign))
+
+			return nil
+		})
+
+	return &Client{client}, nil
 }
 
-func (c *Client) UploadCdnCert(note, cert, private string) (*UploadCdnCertResponse, error) {
-	req := &UploadCdnCertRequest{
-		Note:        note,
-		Certificate: cert,
-		PrivateKey:  private,
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
+	c.client.SetTimeout(timeout)
+	return c
+}
+
+func (c *Client) newRequest(method string, path string) (*resty.Request, error) {
+	if method == "" {
+		return nil, fmt.Errorf("sdkerr: unset method")
+	}
+	if path == "" {
+		return nil, fmt.Errorf("sdkerr: unset path")
 	}
 
-	reqBts, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
+	req := c.client.R()
+	req.Method = method
+	req.URL = path
+	return req, nil
+}
+
+func (c *Client) doRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
-	reqMap := make(map[string]interface{})
-	err = json.Unmarshal(reqBts, &reqMap)
-	if err != nil {
-		return nil, err
-	}
+	// WARN:
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
 
-	respBts, err := c.sendReq(http.MethodPost, "cdn/cert/upload.json", reqMap, true)
+	resp, err := req.Send()
 	if err != nil {
-		return nil, err
-	}
-
-	resp := &UploadCdnCertResponse{}
-	err = json.Unmarshal(respBts, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("dogecloud api error, code: %d, msg: %s", *resp.Code, *resp.Message)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
+	} else if resp.IsError() {
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) BindCdnCertWithDomain(certId int64, domain string) (*BindCdnCertResponse, error) {
-	req := &BindCdnCertRequest{
-		CertId: certId,
-		Domain: &domain,
+func (c *Client) doRequestWithResult(req *resty.Request, res apiResponse) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
-	reqBts, err := json.Marshal(req)
+	resp, err := c.doRequest(req)
 	if err != nil {
-		return nil, err
-	}
-
-	reqMap := make(map[string]interface{})
-	err = json.Unmarshal(reqBts, &reqMap)
-	if err != nil {
-		return nil, err
-	}
-
-	respBts, err := c.sendReq(http.MethodPost, "cdn/cert/bind.json", reqMap, true)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &BindCdnCertResponse{}
-	err = json.Unmarshal(respBts, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("dogecloud api error, code: %d, msg: %s", *resp.Code, *resp.Message)
-	}
-
-	return resp, nil
-}
-
-func (c *Client) BindCdnCertWithDomainId(certId int64, domainId int64) (*BindCdnCertResponse, error) {
-	req := &BindCdnCertRequest{
-		CertId:   certId,
-		DomainId: &domainId,
-	}
-
-	reqBts, err := json.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	reqMap := make(map[string]interface{})
-	err = json.Unmarshal(reqBts, &reqMap)
-	if err != nil {
-		return nil, err
-	}
-
-	respBts, err := c.sendReq(http.MethodPost, "cdn/cert/bind.json", reqMap, true)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &BindCdnCertResponse{}
-	err = json.Unmarshal(respBts, resp)
-	if err != nil {
-		return nil, err
-	}
-	if resp.Code != nil && *resp.Code != 0 && *resp.Code != 200 {
-		return nil, fmt.Errorf("dogecloud api error, code: %d, msg: %s", *resp.Code, *resp.Message)
-	}
-
-	return resp, nil
-}
-
-// 调用多吉云的 API。
-// https://docs.dogecloud.com/cdn/api-access-token?id=go
-//
-// 入参：
-//   - method：GET 或 POST
-//   - path：是调用的 API 接口地址，包含 URL 请求参数 QueryString，例如：/console/vfetch/add.json?url=xxx&a=1&b=2
-//   - data：POST 的数据，对象，例如 {a: 1, b: 2}，传递此参数表示不是 GET 请求而是 POST 请求
-//   - jsonMode：数据 data 是否以 JSON 格式请求，默认为 false 则使用表单形式（a=1&b=2）
-func (c *Client) sendReq(method string, path string, data map[string]interface{}, jsonMode bool) ([]byte, error) {
-	body := ""
-	mime := ""
-	if jsonMode {
-		_body, err := json.Marshal(data)
-		if err != nil {
-			return nil, err
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &res)
 		}
-		body = string(_body)
-		mime = "application/json"
-	} else {
-		values := url.Values{}
-		for k, v := range data {
-			values.Set(k, v.(string))
+		return resp, err
+	}
+
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
+		} else {
+			if tcode := res.GetCode(); tcode != 0 && tcode != 200 {
+				return resp, fmt.Errorf("sdkerr: code='%d', msg='%s'", tcode, res.GetMessage())
+			}
 		}
-		body = values.Encode()
-		mime = "application/x-www-form-urlencoded"
 	}
 
-	path = strings.TrimPrefix(path, "/")
-	signStr := "/" + path + "\n" + body
-	hmacObj := hmac.New(sha1.New, []byte(c.secretKey))
-	hmacObj.Write([]byte(signStr))
-	sign := hex.EncodeToString(hmacObj.Sum(nil))
-	auth := fmt.Sprintf("TOKEN %s:%s", c.accessKey, sign)
-
-	req, err := http.NewRequest(method, fmt.Sprintf("%s/%s", dogeHost, path), strings.NewReader(body))
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Set("Content-Type", mime)
-	req.Header.Set("Authorization", auth)
-
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	return bytes, nil
+	return resp, nil
 }

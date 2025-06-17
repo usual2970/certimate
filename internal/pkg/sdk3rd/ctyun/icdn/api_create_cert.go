@@ -12,7 +12,7 @@ type CreateCertRequest struct {
 }
 
 type CreateCertResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj *struct {
 		Id int64 `json:"id"`

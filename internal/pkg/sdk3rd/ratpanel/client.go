@@ -1,4 +1,4 @@
-package ratpanelsdk
+package ratpanel
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -20,7 +21,20 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(serverUrl string, accessTokenId int32, accessToken string) *Client {
+func NewClient(serverUrl string, accessTokenId int32, accessToken string) (*Client, error) {
+	if serverUrl == "" {
+		return nil, fmt.Errorf("sdkerr: unset serverUrl")
+	}
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, fmt.Errorf("sdkerr: invalid serverUrl: %w", err)
+	}
+	if accessTokenId == 0 {
+		return nil, fmt.Errorf("sdkerr: unset accessTokenId")
+	}
+	if accessToken == "" {
+		return nil, fmt.Errorf("sdkerr: unset accessToken")
+	}
+
 	client := resty.New().
 		SetBaseURL(strings.TrimRight(serverUrl, "/")+"/api").
 		SetHeader("Accept", "application/json").
@@ -50,7 +64,7 @@ func NewClient(serverUrl string, accessTokenId int32, accessToken string) *Clien
 				req.Method,
 				canonicalPath,
 				req.URL.Query().Encode(),
-				sha256Sum(string(body)))
+				sumSha256(string(body)))
 
 			timestamp := time.Now().Unix()
 			req.Header.Set("X-Timestamp", fmt.Sprintf("%d", timestamp))
@@ -58,84 +72,92 @@ func NewClient(serverUrl string, accessTokenId int32, accessToken string) *Clien
 			stringToSign := fmt.Sprintf("%s\n%d\n%s",
 				"HMAC-SHA256",
 				timestamp,
-				sha256Sum(canonicalRequest))
-			signature := hmacSha256(stringToSign, accessToken)
+				sumSha256(canonicalRequest))
+			signature := sumHmacSha256(stringToSign, accessToken)
 			req.Header.Set("Authorization", fmt.Sprintf("HMAC-SHA256 Credential=%d, Signature=%s", accessTokenId, signature))
 
 			return nil
 		})
 
-	return &Client{
-		client: client,
-	}
+	return &Client{client}, nil
 }
 
-func (c *Client) WithTimeout(timeout time.Duration) *Client {
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *Client) WithTLSConfig(config *tls.Config) *Client {
+func (c *Client) SetTLSConfig(config *tls.Config) *Client {
 	c.client.SetTLSClientConfig(config)
 	return c
 }
 
-func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R()
-	if strings.EqualFold(method, http.MethodGet) {
-		qs := make(map[string]string)
-		if params != nil {
-			temp := make(map[string]any)
-			jsonb, _ := json.Marshal(params)
-			json.Unmarshal(jsonb, &temp)
-			for k, v := range temp {
-				if v != nil {
-					qs[k] = fmt.Sprintf("%v", v)
-				}
-			}
-		}
-
-		req = req.SetQueryParams(qs)
-	} else {
-		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
+func (c *Client) newRequest(method string, path string) (*resty.Request, error) {
+	if method == "" {
+		return nil, fmt.Errorf("sdkerr: unset method")
+	}
+	if path == "" {
+		return nil, fmt.Errorf("sdkerr: unset path")
 	}
 
-	resp, err := req.Execute(method, path)
+	req := c.client.R()
+	req.Method = method
+	req.URL = path
+	return req, nil
+}
+
+func (c *Client) doRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	// WARN:
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
+
+	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("ratpanel api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("ratpanel api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.Body())
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
-	resp, err := c.sendRequest(method, path, params)
+func (c *Client) doRequestWithResult(req *resty.Request, res apiResponse) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	resp, err := c.doRequest(req)
 	if err != nil {
 		if resp != nil {
-			json.Unmarshal(resp.Body(), &result)
+			json.Unmarshal(resp.Body(), &res)
 		}
-		return err
+		return resp, err
 	}
 
-	if err = json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("ratpanel api error: failed to unmarshal response: %w", err)
-	} else if errmsg := result.GetMessage(); errmsg != "success" {
-		return fmt.Errorf("ratpanel api error: message='%s'", errmsg)
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
+		} else {
+			if tmessage := res.GetMessage(); tmessage != "success" {
+				return resp, fmt.Errorf("sdkerr: message='%s'", tmessage)
+			}
+		}
 	}
 
-	return nil
+	return resp, nil
 }
 
-func sha256Sum(str string) string {
+func sumSha256(str string) string {
 	sum := sha256.Sum256([]byte(str))
 	dst := make([]byte, hex.EncodedLen(len(sum)))
 	hex.Encode(dst, sum[:])
 	return string(dst)
 }
 
-func hmacSha256(data string, secret string) string {
+func sumHmacSha256(data string, secret string) string {
 	h := hmac.New(sha256.New, []byte(secret))
 	h.Write([]byte(data))
 	return hex.EncodeToString(h.Sum(nil))

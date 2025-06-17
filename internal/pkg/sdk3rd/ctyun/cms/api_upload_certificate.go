@@ -16,7 +16,7 @@ type UploadCertificateRequest struct {
 }
 
 type UploadCertificateResponse struct {
-	baseResult
+	apiResponseBase
 }
 
 func (c *Client) UploadCertificate(req *UploadCertificateRequest) (*UploadCertificateResponse, error) {

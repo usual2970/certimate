@@ -32,10 +32,15 @@ func NewDeployer(config *DeployerConfig) (*DeployerProvider, error) {
 		panic("config is nil")
 	}
 
+	client, err := createSdkClient(config.ApiKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create sdk client: %w", err)
+	}
+
 	return &DeployerProvider{
 		config:    config,
 		logger:    slog.Default(),
-		sdkClient: bunnysdk.NewClient(config.ApiKey),
+		sdkClient: client,
 	}, nil
 }
 
@@ -49,18 +54,25 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 }
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
+	if d.config.PullZoneId == "" {
+		return nil, fmt.Errorf("config `pullZoneId` is required")
+	}
+
 	// 上传证书
 	createCertificateReq := &bunnysdk.AddCustomCertificateRequest{
 		Hostname:       d.config.Hostname,
-		PullZoneId:     d.config.PullZoneId,
 		Certificate:    base64.StdEncoding.EncodeToString([]byte(certPEM)),
 		CertificateKey: base64.StdEncoding.EncodeToString([]byte(privkeyPEM)),
 	}
-	createCertificateResp, err := d.sdkClient.AddCustomCertificate(createCertificateReq)
-	d.logger.Debug("sdk request 'bunny.AddCustomCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
+	err := d.sdkClient.AddCustomCertificate(d.config.PullZoneId, createCertificateReq)
+	d.logger.Debug("sdk request 'bunny.AddCustomCertificate'", slog.Any("request", createCertificateReq))
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute sdk request 'bunny.AddCustomCertificate': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
+}
+
+func createSdkClient(apiKey string) (*bunnysdk.Client, error) {
+	return bunnysdk.NewClient(apiKey)
 }

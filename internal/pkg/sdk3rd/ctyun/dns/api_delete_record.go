@@ -10,7 +10,7 @@ type DeleteRecordRequest struct {
 }
 
 type DeleteRecordResponse struct {
-	baseResult
+	apiResponseBase
 }
 
 func (c *Client) DeleteRecord(req *DeleteRecordRequest) (*DeleteRecordResponse, error) {

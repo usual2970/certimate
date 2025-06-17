@@ -32,19 +32,19 @@ func (c *Client) newRequest(method string, path string) (*resty.Request, error) 
 	return c.client.NewRequest(method, path)
 }
 
-func (c *Client) doRequest(request *resty.Request) (*resty.Response, error) {
-	return c.client.DoRequest(request)
+func (c *Client) doRequest(req *resty.Request) (*resty.Response, error) {
+	return c.client.DoRequest(req)
 }
 
-func (c *Client) doRequestWithResult(request *resty.Request, result baseResultInterface) (*resty.Response, error) {
-	response, err := c.client.DoRequestWithResult(request, result)
+func (c *Client) doRequestWithResult(req *resty.Request, res apiResponse) (*resty.Response, error) {
+	resp, err := c.client.DoRequestWithResult(req, res)
 	if err == nil {
-		statusCode := result.GetStatusCode()
-		errorCode := result.GetError()
+		statusCode := res.GetStatusCode()
+		errorCode := res.GetError()
 		if (statusCode != "" && statusCode != "200") || errorCode != "" {
-			return response, fmt.Errorf("sdkerr: api error, code='%s', message='%s', errorCode='%s', errorMessage='%s'", statusCode, result.GetMessage(), result.GetMessage(), result.GetErrorMessage())
+			return resp, fmt.Errorf("sdkerr: api error, code='%s', message='%s', errorCode='%s', errorMessage='%s'", statusCode, res.GetMessage(), res.GetMessage(), res.GetErrorMessage())
 		}
 	}
 
-	return response, err
+	return resp, err
 }

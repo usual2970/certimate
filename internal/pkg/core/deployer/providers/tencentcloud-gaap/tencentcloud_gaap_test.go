@@ -16,7 +16,6 @@ var (
 	fInputKeyPath  string
 	fSecretId      string
 	fSecretKey     string
-	fProxyGroupId  string
 	fProxyId       string
 	fListenerId    string
 )
@@ -28,7 +27,6 @@ func init() {
 	flag.StringVar(&fInputKeyPath, argsPrefix+"INPUTKEYPATH", "", "")
 	flag.StringVar(&fSecretId, argsPrefix+"SECRETID", "", "")
 	flag.StringVar(&fSecretKey, argsPrefix+"SECRETKEY", "", "")
-	flag.StringVar(&fProxyGroupId, argsPrefix+"PROXYGROUPID", "", "")
 	flag.StringVar(&fProxyId, argsPrefix+"PROXYID", "", "")
 	flag.StringVar(&fListenerId, argsPrefix+"LISTENERID", "", "")
 }
@@ -41,7 +39,6 @@ Shell command to run this test:
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_INPUTKEYPATH="/path/to/your-input-key.pem" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_SECRETID="your-secret-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_SECRETKEY="your-secret-key" \
-	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_PROXYGROUPID="your-gaap-group-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_PROXYID="your-gaap-group-id" \
 	--CERTIMATE_DEPLOYER_TENCENTCLOUDGAAP_LISTENERID="your-clb-listener-id"
 */
@@ -55,7 +52,6 @@ func TestDeploy(t *testing.T) {
 			fmt.Sprintf("INPUTKEYPATH: %v", fInputKeyPath),
 			fmt.Sprintf("SECRETID: %v", fSecretId),
 			fmt.Sprintf("SECRETKEY: %v", fSecretKey),
-			fmt.Sprintf("PROXYGROUPID: %v", fProxyGroupId),
 			fmt.Sprintf("PROXYID: %v", fProxyId),
 			fmt.Sprintf("LISTENERID: %v", fListenerId),
 		}, "\n"))
@@ -64,7 +60,6 @@ func TestDeploy(t *testing.T) {
 			SecretId:     fSecretId,
 			SecretKey:    fSecretKey,
 			ResourceType: provider.RESOURCE_TYPE_LISTENER,
-			ProxyGroupId: fProxyGroupId,
 			ProxyId:      fProxyId,
 			ListenerId:   fListenerId,
 		})

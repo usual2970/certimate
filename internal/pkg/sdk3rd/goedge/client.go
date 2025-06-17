@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -24,7 +25,26 @@ type Client struct {
 	client *resty.Client
 }
 
-func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) *Client {
+func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) (*Client, error) {
+	if serverUrl == "" {
+		return nil, fmt.Errorf("sdkerr: unset serverUrl")
+	}
+	if _, err := url.Parse(serverUrl); err != nil {
+		return nil, fmt.Errorf("sdkerr: invalid serverUrl: %w", err)
+	}
+	if apiRole == "" {
+		return nil, fmt.Errorf("sdkerr: unset apiRole")
+	}
+	if apiRole != "user" && apiRole != "admin" {
+		return nil, fmt.Errorf("sdkerr: invalid apiRole")
+	}
+	if accessKeyId == "" {
+		return nil, fmt.Errorf("sdkerr: unset accessKeyId")
+	}
+	if accessKey == "" {
+		return nil, fmt.Errorf("sdkerr: unset accessKey")
+	}
+
 	client := &Client{
 		apiRole:     apiRole,
 		accessKeyId: accessKeyId,
@@ -32,6 +52,8 @@ func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) *Client {
 	}
 	client.client = resty.New().
 		SetBaseURL(strings.TrimRight(serverUrl, "/")).
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.accessToken != "" {
@@ -41,62 +63,111 @@ func NewClient(serverUrl, apiRole, accessKeyId, accessKey string) *Client {
 			return nil
 		})
 
-	return client
+	return client, nil
 }
 
-func (c *Client) WithTimeout(timeout time.Duration) *Client {
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
 	c.client.SetTimeout(timeout)
 	return c
 }
 
-func (c *Client) WithTLSConfig(config *tls.Config) *Client {
+func (c *Client) SetTLSConfig(config *tls.Config) *Client {
 	c.client.SetTLSClientConfig(config)
 	return c
 }
 
-func (c *Client) sendRequest(method string, path string, params interface{}) (*resty.Response, error) {
-	req := c.client.R()
-	if strings.EqualFold(method, http.MethodGet) {
-		qs := make(map[string]string)
-		if params != nil {
-			temp := make(map[string]any)
-			jsonb, _ := json.Marshal(params)
-			json.Unmarshal(jsonb, &temp)
-			for k, v := range temp {
-				if v != nil {
-					qs[k] = fmt.Sprintf("%v", v)
-				}
-			}
-		}
-
-		req = req.SetQueryParams(qs)
-	} else {
-		req = req.SetHeader("Content-Type", "application/json").SetBody(params)
+func (c *Client) newRequest(method string, path string) (*resty.Request, error) {
+	if method == "" {
+		return nil, fmt.Errorf("sdkerr: unset method")
+	}
+	if path == "" {
+		return nil, fmt.Errorf("sdkerr: unset path")
 	}
 
-	resp, err := req.Execute(method, path)
+	req := c.client.R()
+	req.Method = method
+	req.URL = path
+	return req, nil
+}
+
+func (c *Client) doRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
+	}
+
+	// WARN:
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
+
+	resp, err := req.Send()
 	if err != nil {
-		return resp, fmt.Errorf("goedge api error: failed to send request: %w", err)
+		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
-		return resp, fmt.Errorf("goedge api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
+		return resp, fmt.Errorf("sdkerr: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
-	resp, err := c.sendRequest(method, path, params)
-	if err != nil {
-		if resp != nil {
-			json.Unmarshal(resp.Body(), &result)
-		}
-		return err
+func (c *Client) doRequestWithResult(req *resty.Request, res apiResponse) (*resty.Response, error) {
+	if req == nil {
+		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
-	if err := json.Unmarshal(resp.Body(), &result); err != nil {
-		return fmt.Errorf("goedge api error: failed to unmarshal response: %w", err)
-	} else if errcode := result.GetCode(); errcode != 200 {
-		return fmt.Errorf("goedge api error: code='%d', message='%s'", errcode, result.GetMessage())
+	resp, err := c.doRequest(req)
+	if err != nil {
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &res)
+		}
+		return resp, err
+	}
+
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
+		} else {
+			if tcode := res.GetCode(); tcode != 200 {
+				return resp, fmt.Errorf("sdkerr: code='%d', message='%s'", tcode, res.GetMessage())
+			}
+		}
+	}
+
+	return resp, nil
+}
+
+func (c *Client) ensureAccessTokenExists() error {
+	c.accessTokenMtx.Lock()
+	defer c.accessTokenMtx.Unlock()
+	if c.accessToken != "" && c.accessTokenExp.After(time.Now()) {
+		return nil
+	}
+
+	httpreq, err := c.newRequest(http.MethodPost, "/APIAccessTokenService/getAPIAccessToken")
+	if err != nil {
+		return err
+	} else {
+		httpreq.SetBody(map[string]string{
+			"type":        c.apiRole,
+			"accessKeyId": c.accessKeyId,
+			"accessKey":   c.accessKey,
+		})
+	}
+
+	type getAPIAccessTokenResponse struct {
+		apiResponseBase
+		Data *struct {
+			Token     string `json:"token"`
+			ExpiresAt int64  `json:"expiresAt"`
+		} `json:"data,omitempty"`
+	}
+
+	result := &getAPIAccessTokenResponse{}
+	if _, err := c.doRequestWithResult(httpreq, result); err != nil {
+		return err
+	} else if code := result.GetCode(); code != 200 {
+		return fmt.Errorf("sdkerr: failed to get goedge access token: code='%d', message='%s'", code, result.GetMessage())
+	} else {
+		c.accessToken = result.Data.Token
+		c.accessTokenExp = time.Unix(result.Data.ExpiresAt, 0)
 	}
 
 	return nil

@@ -6,13 +6,13 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 	"strconv"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/1panel-ssl"
 	onepanelsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
+	onepanelsdkv2 "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel/v2"
 )
 
 type DeployerConfig struct {
@@ -38,7 +38,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config      *DeployerConfig
 	logger      *slog.Logger
-	sdkClient   *onepanelsdk.Client
+	sdkClient   any
 	sslUploader uploader.Uploader
 }
 
@@ -107,16 +107,6 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 		return errors.New("config `websiteId` is required")
 	}
 
-	// 获取网站 HTTPS 配置
-	getHttpsConfReq := &onepanelsdk.GetHttpsConfRequest{
-		WebsiteID: d.config.WebsiteId,
-	}
-	getHttpsConfResp, err := d.sdkClient.GetHttpsConf(getHttpsConfReq)
-	d.logger.Debug("sdk request '1panel.GetHttpsConf'", slog.Any("request", getHttpsConfReq), slog.Any("response", getHttpsConfResp))
-	if err != nil {
-		return fmt.Errorf("failed to execute sdk request '1panel.GetHttpsConf': %w", err)
-	}
-
 	// 上传证书到面板
 	upres, err := d.sslUploader.Upload(ctx, certPEM, privkeyPEM)
 	if err != nil {
@@ -125,22 +115,65 @@ func (d *DeployerProvider) deployToWebsite(ctx context.Context, certPEM string, 
 		d.logger.Info("ssl certificate uploaded", slog.Any("result", upres))
 	}
 
-	// 修改网站 HTTPS 配置
-	certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
-	updateHttpsConfReq := &onepanelsdk.UpdateHttpsConfRequest{
-		WebsiteID:    d.config.WebsiteId,
-		Type:         "existed",
-		WebsiteSSLID: certId,
-		Enable:       getHttpsConfResp.Data.Enable,
-		HttpConfig:   getHttpsConfResp.Data.HttpConfig,
-		SSLProtocol:  getHttpsConfResp.Data.SSLProtocol,
-		Algorithm:    getHttpsConfResp.Data.Algorithm,
-		Hsts:         getHttpsConfResp.Data.Hsts,
-	}
-	updateHttpsConfResp, err := d.sdkClient.UpdateHttpsConf(updateHttpsConfReq)
-	d.logger.Debug("sdk request '1panel.UpdateHttpsConf'", slog.Any("request", updateHttpsConfReq), slog.Any("response", updateHttpsConfResp))
-	if err != nil {
-		return fmt.Errorf("failed to execute sdk request '1panel.UpdateHttpsConf': %w", err)
+	switch sdkClient := d.sdkClient.(type) {
+	case *onepanelsdk.Client:
+		{
+			// 获取网站 HTTPS 配置
+			getHttpsConfResp, err := sdkClient.GetHttpsConf(d.config.WebsiteId)
+			d.logger.Debug("sdk request '1panel.GetHttpsConf'", slog.Int64("websiteId", d.config.WebsiteId), slog.Any("response", getHttpsConfResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.GetHttpsConf': %w", err)
+			}
+
+			// 修改网站 HTTPS 配置
+			certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
+			updateHttpsConfReq := &onepanelsdk.UpdateHttpsConfRequest{
+				WebsiteID:    d.config.WebsiteId,
+				Type:         "existed",
+				WebsiteSSLID: certId,
+				Enable:       getHttpsConfResp.Data.Enable,
+				HttpConfig:   getHttpsConfResp.Data.HttpConfig,
+				SSLProtocol:  getHttpsConfResp.Data.SSLProtocol,
+				Algorithm:    getHttpsConfResp.Data.Algorithm,
+				Hsts:         getHttpsConfResp.Data.Hsts,
+			}
+			updateHttpsConfResp, err := sdkClient.UpdateHttpsConf(d.config.WebsiteId, updateHttpsConfReq)
+			d.logger.Debug("sdk request '1panel.UpdateHttpsConf'", slog.Int64("websiteId", d.config.WebsiteId), slog.Any("request", updateHttpsConfReq), slog.Any("response", updateHttpsConfResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.UpdateHttpsConf': %w", err)
+			}
+		}
+
+	case *onepanelsdkv2.Client:
+		{
+			// 获取网站 HTTPS 配置
+			getHttpsConfResp, err := sdkClient.GetHttpsConf(d.config.WebsiteId)
+			d.logger.Debug("sdk request '1panel.GetHttpsConf'", slog.Int64("websiteId", d.config.WebsiteId), slog.Any("response", getHttpsConfResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.GetHttpsConf': %w", err)
+			}
+
+			// 修改网站 HTTPS 配置
+			certId, _ := strconv.ParseInt(upres.CertId, 10, 64)
+			updateHttpsConfReq := &onepanelsdkv2.UpdateHttpsConfRequest{
+				WebsiteID:    d.config.WebsiteId,
+				Type:         "existed",
+				WebsiteSSLID: certId,
+				Enable:       getHttpsConfResp.Data.Enable,
+				HttpConfig:   getHttpsConfResp.Data.HttpConfig,
+				SSLProtocol:  getHttpsConfResp.Data.SSLProtocol,
+				Algorithm:    getHttpsConfResp.Data.Algorithm,
+				Hsts:         getHttpsConfResp.Data.Hsts,
+			}
+			updateHttpsConfResp, err := sdkClient.UpdateHttpsConf(d.config.WebsiteId, updateHttpsConfReq)
+			d.logger.Debug("sdk request '1panel.UpdateHttpsConf'", slog.Int64("websiteId", d.config.WebsiteId), slog.Any("request", updateHttpsConfReq), slog.Any("response", updateHttpsConfResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.UpdateHttpsConf': %w", err)
+			}
+		}
+
+	default:
+		panic("sdk client is not implemented")
 	}
 
 	return nil
@@ -151,50 +184,91 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 		return errors.New("config `certificateId` is required")
 	}
 
-	// 获取证书详情
-	getWebsiteSSLReq := &onepanelsdk.GetWebsiteSSLRequest{
-		SSLID: d.config.CertificateId,
-	}
-	getWebsiteSSLResp, err := d.sdkClient.GetWebsiteSSL(getWebsiteSSLReq)
-	d.logger.Debug("sdk request '1panel.GetWebsiteSSL'", slog.Any("request", getWebsiteSSLReq), slog.Any("response", getWebsiteSSLResp))
-	if err != nil {
-		return fmt.Errorf("failed to execute sdk request '1panel.GetWebsiteSSL': %w", err)
-	}
+	switch sdkClient := d.sdkClient.(type) {
+	case *onepanelsdk.Client:
+		{
+			// 获取证书详情
+			getWebsiteSSLResp, err := sdkClient.GetWebsiteSSL(d.config.CertificateId)
+			d.logger.Debug("sdk request '1panel.GetWebsiteSSL'", slog.Any("sslId", d.config.CertificateId), slog.Any("response", getWebsiteSSLResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.GetWebsiteSSL': %w", err)
+			}
 
-	// 更新证书
-	uploadWebsiteSSLReq := &onepanelsdk.UploadWebsiteSSLRequest{
-		Type:        "paste",
-		SSLID:       d.config.CertificateId,
-		Description: getWebsiteSSLResp.Data.Description,
-		Certificate: certPEM,
-		PrivateKey:  privkeyPEM,
-	}
-	uploadWebsiteSSLResp, err := d.sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
-	d.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))
-	if err != nil {
-		return fmt.Errorf("failed to execute sdk request '1panel.UploadWebsiteSSL': %w", err)
+			// 更新证书
+			uploadWebsiteSSLReq := &onepanelsdk.UploadWebsiteSSLRequest{
+				SSLID:       d.config.CertificateId,
+				Type:        "paste",
+				Description: getWebsiteSSLResp.Data.Description,
+				Certificate: certPEM,
+				PrivateKey:  privkeyPEM,
+			}
+			uploadWebsiteSSLResp, err := sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
+			d.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.UploadWebsiteSSL': %w", err)
+			}
+		}
+
+	case *onepanelsdkv2.Client:
+		{
+			// 获取证书详情
+			getWebsiteSSLResp, err := sdkClient.GetWebsiteSSL(d.config.CertificateId)
+			d.logger.Debug("sdk request '1panel.GetWebsiteSSL'", slog.Any("sslId", d.config.CertificateId), slog.Any("response", getWebsiteSSLResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.GetWebsiteSSL': %w", err)
+			}
+
+			// 更新证书
+			uploadWebsiteSSLReq := &onepanelsdkv2.UploadWebsiteSSLRequest{
+				SSLID:       d.config.CertificateId,
+				Type:        "paste",
+				Description: getWebsiteSSLResp.Data.Description,
+				Certificate: certPEM,
+				PrivateKey:  privkeyPEM,
+			}
+			uploadWebsiteSSLResp, err := sdkClient.UploadWebsiteSSL(uploadWebsiteSSLReq)
+			d.logger.Debug("sdk request '1panel.UploadWebsiteSSL'", slog.Any("request", uploadWebsiteSSLReq), slog.Any("response", uploadWebsiteSSLResp))
+			if err != nil {
+				return fmt.Errorf("failed to execute sdk request '1panel.UploadWebsiteSSL': %w", err)
+			}
+		}
+
+	default:
+		panic("sdk client is not implemented")
 	}
 
 	return nil
 }
 
-func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid 1panel server url")
+const (
+	sdkVersionV1 = "v1"
+	sdkVersionV2 = "v2"
+)
+
+func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (any, error) {
+	if apiVersion == sdkVersionV1 {
+		client, err := onepanelsdk.NewClient(serverUrl, apiKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if skipTlsVerify {
+			client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		}
+
+		return client, nil
+	} else if apiVersion == sdkVersionV2 {
+		client, err := onepanelsdkv2.NewClient(serverUrl, apiKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if skipTlsVerify {
+			client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		}
+
+		return client, nil
 	}
 
-	if apiVersion == "" {
-		return nil, errors.New("invalid 1panel api version")
-	}
-
-	if apiKey == "" {
-		return nil, errors.New("invalid 1panel api key")
-	}
-
-	client := onepanelsdk.NewClient(serverUrl, apiVersion, apiKey)
-	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
-	}
-
-	return client, nil
+	return nil, fmt.Errorf("invalid 1panel api version")
 }

@@ -69,8 +69,12 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 		return nil, errors.New("dnsla: the configuration of the DNS provider is nil")
 	}
 
-	client := dnslasdk.NewClient(config.APIId, config.APISecret).
-		WithTimeout(config.HTTPTimeout)
+	client, err := dnslasdk.NewClient(config.APIId, config.APISecret)
+	if err != nil {
+		return nil, err
+	} else {
+		client.SetTimeout(config.HTTPTimeout)
+	}
 
 	return &DNSProvider{
 		client: client,
@@ -122,13 +126,13 @@ func (d *DNSProvider) Timeout() (timeout, interval time.Duration) {
 	return d.config.PropagationTimeout, d.config.PollingInterval
 }
 
-func (d *DNSProvider) getDNSZone(zoneName string) (*dnslasdk.DomainInfo, error) {
-	pageIndex := 1
-	pageSize := 100
+func (d *DNSProvider) getDNSZone(zoneName string) (*dnslasdk.DomainRecord, error) {
+	pageIndex := int32(1)
+	pageSize := int32(100)
 	for {
 		request := &dnslasdk.ListDomainsRequest{
-			PageIndex: int32(pageIndex),
-			PageSize:  int32(pageSize),
+			PageIndex: &pageIndex,
+			PageSize:  &pageSize,
 		}
 		response, err := d.client.ListDomains(request)
 		if err != nil {
@@ -143,7 +147,7 @@ func (d *DNSProvider) getDNSZone(zoneName string) (*dnslasdk.DomainInfo, error) 
 			}
 		}
 
-		if response.Data == nil || len(response.Data.Results) < pageSize {
+		if response.Data == nil || len(response.Data.Results) < int(pageSize) {
 			break
 		}
 
@@ -153,20 +157,20 @@ func (d *DNSProvider) getDNSZone(zoneName string) (*dnslasdk.DomainInfo, error) 
 	return nil, fmt.Errorf("dnsla: zone %s not found", zoneName)
 }
 
-func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*dnslasdk.DomainInfo, *dnslasdk.RecordInfo, error) {
+func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*dnslasdk.DomainRecord, *dnslasdk.DnsRecord, error) {
 	zone, err := d.getDNSZone(zoneName)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	pageIndex := 1
-	pageSize := 100
+	pageIndex := int32(1)
+	pageSize := int32(100)
 	for {
 		request := &dnslasdk.ListRecordsRequest{
-			DomainId:  zone.Id,
+			DomainId:  &zone.Id,
 			Host:      &subDomain,
-			PageIndex: int32(pageIndex),
-			PageSize:  int32(pageSize),
+			PageIndex: &pageIndex,
+			PageSize:  &pageSize,
 		}
 		response, err := d.client.ListRecords(request)
 		if err != nil {
@@ -181,7 +185,7 @@ func (d *DNSProvider) getDNSZoneAndRecord(zoneName, subDomain string) (*dnslasdk
 			}
 		}
 
-		if response.Data == nil || len(response.Data.Results) < pageSize {
+		if response.Data == nil || len(response.Data.Results) < int(pageSize) {
 			break
 		}
 
@@ -231,10 +235,7 @@ func (d *DNSProvider) removeDNSRecord(zoneName, subDomain string) error {
 	if record == nil {
 		return nil
 	} else {
-		request := &dnslasdk.DeleteRecordRequest{
-			Id: record.Id,
-		}
-		_, err = d.client.DeleteRecord(request)
+		_, err = d.client.DeleteRecord(record.Id)
 		return err
 	}
 }

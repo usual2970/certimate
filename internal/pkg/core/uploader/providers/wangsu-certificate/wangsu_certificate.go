@@ -2,7 +2,6 @@ package wangsucertificate
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"regexp"
@@ -116,7 +115,7 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 	// 网宿云证书 URL 中包含证书 ID
 	// 格式：
 	//    https://open.chinanetcenter.com/api/certificate/100001
-	wangsuCertIdMatches := regexp.MustCompile(`/certificate/([0-9]+)`).FindStringSubmatch(createCertificateResp.CertificateUrl)
+	wangsuCertIdMatches := regexp.MustCompile(`/certificate/([0-9]+)`).FindStringSubmatch(createCertificateResp.CertificateLocation)
 	if len(wangsuCertIdMatches) > 1 {
 		certId = wangsuCertIdMatches[1]
 	} else {
@@ -130,13 +129,5 @@ func (u *UploaderProvider) Upload(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKeyId, accessKeySecret string) (*wangsusdk.Client, error) {
-	if accessKeyId == "" {
-		return nil, errors.New("invalid wangsu access key id")
-	}
-
-	if accessKeySecret == "" {
-		return nil, errors.New("invalid wangsu access key secret")
-	}
-
-	return wangsusdk.NewClient(accessKeyId, accessKeySecret), nil
+	return wangsusdk.NewClient(accessKeyId, accessKeySecret)
 }

@@ -13,7 +13,7 @@ type QueryCertListRequest struct {
 }
 
 type QueryCertListResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj *struct {
 		Results      []*CertRecord `json:"result,omitempty"`

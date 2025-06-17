@@ -24,7 +24,7 @@ func init() {
 	argsPrefix := "CERTIMATE_NOTIFIER_DISCORDBOT_"
 
 	flag.StringVar(&fApiToken, argsPrefix+"APITOKEN", "", "")
-	flag.StringVar(&fChannelId, argsPrefix+"CHANNELID", 0, "")
+	flag.StringVar(&fChannelId, argsPrefix+"CHANNELID", "", "")
 }
 
 /*

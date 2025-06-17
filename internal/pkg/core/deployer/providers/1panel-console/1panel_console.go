@@ -3,13 +3,13 @@ package onepanelconsole
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
+	"strconv"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	onepanelsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel"
+	onepanelsdkv2 "github.com/usual2970/certimate/internal/pkg/sdk3rd/1panel/v2"
 )
 
 type DeployerConfig struct {
@@ -29,7 +29,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *onepanelsdk.Client
+	sdkClient any
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -62,48 +62,75 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
-	SSLEnable := "enable"
-	if d.config.ApiVersion == "v2" {
-		SSLEnable = "Enable"
-	}
+	switch sdkClient := d.sdkClient.(type) {
+	case *onepanelsdk.Client:
+		{
+			updateSettingsSSLReq := &onepanelsdk.UpdateSettingsSSLRequest{
+				Cert:        certPEM,
+				Key:         privkeyPEM,
+				SSL:         "enable",
+				SSLType:     "import-paste",
+				AutoRestart: strconv.FormatBool(d.config.AutoRestart),
+			}
+			updateSystemSSLResp, err := sdkClient.UpdateSettingsSSL(updateSettingsSSLReq)
+			d.logger.Debug("sdk request '1panel.UpdateSettingsSSL'", slog.Any("request", updateSettingsSSLReq), slog.Any("response", updateSystemSSLResp))
+			if err != nil {
+				return nil, fmt.Errorf("failed to execute sdk request '1panel.UpdateSettingsSSL': %w", err)
+			}
+		}
 
-	updateSystemSSLReq := &onepanelsdk.UpdateSystemSSLRequest{
-		Cert:    certPEM,
-		Key:     privkeyPEM,
-		SSL:     SSLEnable,
-		SSLType: "import-paste",
-	}
-	if d.config.AutoRestart {
-		updateSystemSSLReq.AutoRestart = "true"
-	} else {
-		updateSystemSSLReq.AutoRestart = "false"
-	}
-	updateSystemSSLResp, err := d.sdkClient.UpdateSystemSSL(updateSystemSSLReq)
-	d.logger.Debug("sdk request '1panel.UpdateSystemSSL'", slog.Any("request", updateSystemSSLReq), slog.Any("response", updateSystemSSLResp))
-	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request '1panel.UpdateSystemSSL': %w", err)
+	case *onepanelsdkv2.Client:
+		{
+			updateCoreSettingsSSLReq := &onepanelsdkv2.UpdateCoreSettingsSSLRequest{
+				Cert:        certPEM,
+				Key:         privkeyPEM,
+				SSL:         "Enable",
+				SSLType:     "import-paste",
+				AutoRestart: strconv.FormatBool(d.config.AutoRestart),
+			}
+			updateCoreSystemSSLResp, err := sdkClient.UpdateCoreSettingsSSL(updateCoreSettingsSSLReq)
+			d.logger.Debug("sdk request '1panel.UpdateCoreSettingsSSL'", slog.Any("request", updateCoreSettingsSSLReq), slog.Any("response", updateCoreSystemSSLResp))
+			if err != nil {
+				return nil, fmt.Errorf("failed to execute sdk request '1panel.UpdateCoreSettingsSSL': %w", err)
+			}
+		}
+
+	default:
+		panic("sdk client is not implemented")
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (*onepanelsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid 1panel server url")
+const (
+	sdkVersionV1 = "v1"
+	sdkVersionV2 = "v2"
+)
+
+func createSdkClient(serverUrl, apiVersion, apiKey string, skipTlsVerify bool) (any, error) {
+	if apiVersion == sdkVersionV1 {
+		client, err := onepanelsdk.NewClient(serverUrl, apiKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if skipTlsVerify {
+			client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		}
+
+		return client, nil
+	} else if apiVersion == sdkVersionV2 {
+		client, err := onepanelsdkv2.NewClient(serverUrl, apiKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if skipTlsVerify {
+			client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		}
+
+		return client, nil
 	}
 
-	if apiVersion == "" {
-		return nil, errors.New("invalid 1panel api version")
-	}
-
-	if apiKey == "" {
-		return nil, errors.New("invalid 1panel api key")
-	}
-
-	client := onepanelsdk.NewClient(serverUrl, apiVersion, apiKey)
-	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
-	}
-
-	return client, nil
+	return nil, fmt.Errorf("invalid 1panel api version")
 }

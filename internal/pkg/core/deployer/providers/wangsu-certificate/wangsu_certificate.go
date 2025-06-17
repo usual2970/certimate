@@ -2,7 +2,6 @@ package wangsucertificate
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -97,13 +96,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(accessKeyId, accessKeySecret string) (*wangsusdk.Client, error) {
-	if accessKeyId == "" {
-		return nil, errors.New("invalid wangsu access key id")
-	}
-
-	if accessKeySecret == "" {
-		return nil, errors.New("invalid wangsu access key secret")
-	}
-
-	return wangsusdk.NewClient(accessKeyId, accessKeySecret), nil
+	return wangsusdk.NewClient(accessKeyId, accessKeySecret)
 }

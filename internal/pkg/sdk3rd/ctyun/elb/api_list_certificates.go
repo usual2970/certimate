@@ -14,7 +14,7 @@ type ListCertificatesRequest struct {
 }
 
 type ListCertificatesResponse struct {
-	baseResult
+	apiResponseBase
 
 	ReturnObj []*CertificateRecord `json:"returnObj,omitempty"`
 }

@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btpanel"
@@ -125,17 +124,13 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(serverUrl, apiKey string, skipTlsVerify bool) (*btsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid baota server url")
+	client, err := btsdk.NewClient(serverUrl, apiKey)
+	if err != nil {
+		return nil, err
 	}
 
-	if apiKey == "" {
-		return nil, errors.New("invalid baota api key")
-	}
-
-	client := btsdk.NewClient(serverUrl, apiKey)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

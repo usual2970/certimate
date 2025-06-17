@@ -28,10 +28,10 @@ func NewClient(endpoint, accessKeyId, secretAccessKey string) (*Client, error) {
 		return nil, fmt.Errorf("sdkerr: invalid endpoint: %w", err)
 	}
 	if accessKeyId == "" {
-		return nil, fmt.Errorf("sdkerr: unset accessKey")
+		return nil, fmt.Errorf("sdkerr: unset accessKeyId")
 	}
 	if secretAccessKey == "" {
-		return nil, fmt.Errorf("sdkerr: unset secretKey")
+		return nil, fmt.Errorf("sdkerr: unset secretAccessKey")
 	}
 
 	client := resty.New().
@@ -102,9 +102,7 @@ func NewClient(endpoint, accessKeyId, secretAccessKey string) (*Client, error) {
 			return nil
 		})
 
-	return &Client{
-		client: client,
-	}, nil
+	return &Client{client}, nil
 }
 
 func (c *Client) SetTimeout(timeout time.Duration) *Client {
@@ -126,15 +124,15 @@ func (c *Client) NewRequest(method string, path string) (*resty.Request, error) 
 	return req, nil
 }
 
-func (c *Client) DoRequest(request *resty.Request) (*resty.Response, error) {
-	if request == nil {
+func (c *Client) DoRequest(req *resty.Request) (*resty.Response, error) {
+	if req == nil {
 		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
 	// WARN:
-	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` here.
+	//   PLEASE DO NOT USE `req.SetResult` or `req.SetError` HERE! USE `doRequestWithResult` INSTEAD.
 
-	resp, err := request.Send()
+	resp, err := req.Send()
 	if err != nil {
 		return resp, fmt.Errorf("sdkerr: failed to send request: %w", err)
 	} else if resp.IsError() {
@@ -144,24 +142,24 @@ func (c *Client) DoRequest(request *resty.Request) (*resty.Response, error) {
 	return resp, nil
 }
 
-func (c *Client) DoRequestWithResult(request *resty.Request, result any) (*resty.Response, error) {
-	if request == nil {
+func (c *Client) DoRequestWithResult(req *resty.Request, res any) (*resty.Response, error) {
+	if req == nil {
 		return nil, fmt.Errorf("sdkerr: nil request")
 	}
 
-	response, err := c.DoRequest(request)
+	resp, err := c.DoRequest(req)
 	if err != nil {
-		if response != nil {
-			json.Unmarshal(response.Body(), &result)
+		if resp != nil {
+			json.Unmarshal(resp.Body(), &res)
 		}
-		return response, err
+		return resp, err
 	}
 
-	if len(response.Body()) != 0 {
-		if err := json.Unmarshal(response.Body(), &result); err != nil {
-			return response, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
+	if len(resp.Body()) != 0 {
+		if err := json.Unmarshal(resp.Body(), &res); err != nil {
+			return resp, fmt.Errorf("sdkerr: failed to unmarshal response: %w", err)
 		}
 	}
 
-	return response, nil
+	return resp, nil
 }

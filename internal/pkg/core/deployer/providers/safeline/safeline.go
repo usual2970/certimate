@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	safelinesdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/safeline"
@@ -84,7 +83,7 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 	updateCertificateReq := &safelinesdk.UpdateCertificateRequest{
 		Id:   d.config.CertificateId,
 		Type: 2,
-		Manual: &safelinesdk.UpdateCertificateRequestBodyManul{
+		Manual: &safelinesdk.CertificateManul{
 			Crt: certPEM,
 			Key: privkeyPEM,
 		},
@@ -99,17 +98,13 @@ func (d *DeployerProvider) deployToCertificate(ctx context.Context, certPEM stri
 }
 
 func createSdkClient(serverUrl, apiToken string, skipTlsVerify bool) (*safelinesdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid safeline server url")
+	client, err := safelinesdk.NewClient(serverUrl, apiToken)
+	if err != nil {
+		return nil, err
 	}
 
-	if apiToken == "" {
-		return nil, errors.New("invalid safeline api token")
-	}
-
-	client := safelinesdk.NewClient(serverUrl, apiToken)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

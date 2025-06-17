@@ -16,7 +16,7 @@ import (
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	"github.com/usual2970/certimate/internal/pkg/core/uploader"
 	uploadersp "github.com/usual2970/certimate/internal/pkg/core/uploader/providers/azure-keyvault"
-	azcommon "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/common"
+	azenv "github.com/usual2970/certimate/internal/pkg/sdk3rd/azure/env"
 	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 )
 
@@ -149,7 +149,7 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(tenantId, clientId, clientSecret, cloudName, keyvaultName string) (*azcertificates.Client, error) {
-	env, err := azcommon.GetCloudEnvironmentConfiguration(cloudName)
+	env, err := azenv.GetCloudEnvConfiguration(cloudName)
 	if err != nil {
 		return nil, err
 	}
@@ -162,9 +162,9 @@ func createSdkClient(tenantId, clientId, clientSecret, cloudName, keyvaultName s
 	}
 
 	endpoint := fmt.Sprintf("https://%s.vault.azure.net", keyvaultName)
-	if azcommon.IsEnvironmentGovernment(cloudName) {
+	if azenv.IsUSGovernmentEnv(cloudName) {
 		endpoint = fmt.Sprintf("https://%s.vault.usgovcloudapi.net", keyvaultName)
-	} else if azcommon.IsEnvironmentChina(cloudName) {
+	} else if azenv.IsChinaEnv(cloudName) {
 		endpoint = fmt.Sprintf("https://%s.vault.azure.cn", keyvaultName)
 	}
 

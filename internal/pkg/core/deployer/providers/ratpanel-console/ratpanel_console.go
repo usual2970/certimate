@@ -3,10 +3,8 @@ package ratpanelconsole
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	rpsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/ratpanel"
@@ -59,35 +57,27 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL 证书
-	settingCertReq := &rpsdk.SettingCertRequest{
+	setSettingCertReq := &rpsdk.SetSettingCertRequest{
 		Certificate: certPEM,
 		PrivateKey:  privkeyPEM,
 	}
-	settingCertResp, err := d.sdkClient.SettingCert(settingCertReq)
-	d.logger.Debug("sdk request 'ratpanel.SettingCert'", slog.Any("request", settingCertReq), slog.Any("response", settingCertResp))
+	setSettingCertResp, err := d.sdkClient.SetSettingCert(setSettingCertReq)
+	d.logger.Debug("sdk request 'ratpanel.SetSettingCert'", slog.Any("request", setSettingCertReq), slog.Any("response", setSettingCertResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.SettingCert': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.SetSettingCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
 func createSdkClient(serverUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid ratpanel server url")
+	client, err := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
+	if err != nil {
+		return nil, err
 	}
 
-	if accessTokenId == 0 {
-		return nil, errors.New("invalid ratpanel access token id")
-	}
-
-	if accessToken == "" {
-		return nil, errors.New("invalid ratpanel access token")
-	}
-
-	client := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

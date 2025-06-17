@@ -13,5 +13,6 @@ func NewClient(ak, sk, endPoint string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &Client{client}, nil
 }

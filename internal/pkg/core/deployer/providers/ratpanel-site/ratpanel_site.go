@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
 	rpsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/ratpanel"
@@ -65,36 +64,28 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	}
 
 	// 设置站点 SSL 证书
-	websiteCertReq := &rpsdk.WebsiteCertRequest{
+	setWebsiteCertReq := &rpsdk.SetWebsiteCertRequest{
 		SiteName:    d.config.SiteName,
 		Certificate: certPEM,
 		PrivateKey:  privkeyPEM,
 	}
-	websiteCertResp, err := d.sdkClient.WebsiteCert(websiteCertReq)
-	d.logger.Debug("sdk request 'ratpanel.WebsiteCert'", slog.Any("request", websiteCertReq), slog.Any("response", websiteCertResp))
+	setWebsiteCertResp, err := d.sdkClient.SetWebsiteCert(setWebsiteCertReq)
+	d.logger.Debug("sdk request 'ratpanel.SetWebsiteCert'", slog.Any("request", setWebsiteCertReq), slog.Any("response", setWebsiteCertResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.WebsiteCert': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'ratpanel.SetWebsiteCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
 func createSdkClient(serverUrl string, accessTokenId int32, accessToken string, skipTlsVerify bool) (*rpsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid ratpanel server url")
+	client, err := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
+	if err != nil {
+		return nil, err
 	}
 
-	if accessTokenId == 0 {
-		return nil, errors.New("invalid ratpanel access token id")
-	}
-
-	if accessToken == "" {
-		return nil, errors.New("invalid ratpanel access token")
-	}
-
-	client := rpsdk.NewClient(serverUrl, accessTokenId, accessToken)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"runtime"
 	"sort"
 	"strings"
@@ -43,14 +44,26 @@ const (
 	uniConsoleSpaceId       = "dc-6nfabcn6ada8d3dd"
 )
 
-func NewClient(username, password string) *Client {
+func NewClient(username, password string) (*Client, error) {
+	if username == "" {
+		return nil, fmt.Errorf("sdkerr: unset username")
+	}
+	if password == "" {
+		return nil, fmt.Errorf("sdkerr: unset password")
+	}
+
 	client := &Client{
 		username: username,
 		password: password,
 	}
-	client.serverlessClient = resty.New()
+	client.serverlessClient = resty.New().
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "certimate")
 	client.apiClient = resty.New().
 		SetBaseURL("https://unicloud-api.dcloud.net.cn/unicloud/api").
+		SetHeader("Accept", "application/json").
+		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "certimate").
 		SetPreRequestHook(func(c *resty.Client, req *http.Request) error {
 			if client.apiUserToken != "" {
@@ -60,35 +73,12 @@ func NewClient(username, password string) *Client {
 			return nil
 		})
 
-	return client
+	return client, nil
 }
 
-func (c *Client) WithTimeout(timeout time.Duration) *Client {
+func (c *Client) SetTimeout(timeout time.Duration) *Client {
 	c.serverlessClient.SetTimeout(timeout)
 	return c
-}
-
-func (c *Client) generateSignature(params map[string]any, secret string) string {
-	keys := make([]string, 0, len(params))
-	for k := range params {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	canonicalStr := ""
-	for i, k := range keys {
-		if i > 0 {
-			canonicalStr += "&"
-		}
-		canonicalStr += k + "=" + fmt.Sprintf("%v", params[k])
-	}
-
-	mac := hmac.New(md5.New, []byte(secret))
-	mac.Write([]byte(canonicalStr))
-	sign := mac.Sum(nil)
-	signHex := hex.EncodeToString(sign)
-
-	return signHex
 }
 
 func (c *Client) buildServerlessClientInfo(appId string) (_clientInfo map[string]any, _err error) {
@@ -171,7 +161,7 @@ func (c *Client) invokeServerless(endpoint, clientSecret, appId, spaceId, target
 	clientInfo, _ := c.buildServerlessClientInfo(appId)
 	clientInfoJsonb, _ := json.Marshal(clientInfo)
 
-	sign := c.generateSignature(payload, clientSecret)
+	sign := generateSignature(payload, clientSecret)
 
 	req := c.serverlessClient.R().
 		SetHeader("Content-Type", "application/json").
@@ -191,7 +181,7 @@ func (c *Client) invokeServerless(endpoint, clientSecret, appId, spaceId, target
 	return resp, nil
 }
 
-func (c *Client) invokeServerlessWithResult(endpoint, clientSecret, appId, spaceId, target, method, action string, params, data interface{}, result BaseResponse) error {
+func (c *Client) invokeServerlessWithResult(endpoint, clientSecret, appId, spaceId, target, method, action string, params, data interface{}, result apiResponse) error {
 	resp, err := c.invokeServerless(endpoint, clientSecret, appId, spaceId, target, method, action, params, data)
 	if err != nil {
 		if resp != nil {
@@ -239,7 +229,7 @@ func (c *Client) sendRequest(method string, path string, params interface{}) (*r
 	return resp, nil
 }
 
-func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result BaseResponse) error {
+func (c *Client) sendRequestWithResult(method string, path string, params interface{}, result apiResponse) error {
 	resp, err := c.sendRequest(method, path, params)
 	if err != nil {
 		if resp != nil {
@@ -255,4 +245,114 @@ func (c *Client) sendRequestWithResult(method string, path string, params interf
 	}
 
 	return nil
+}
+
+func (c *Client) ensureServerlessJwtTokenExists() error {
+	c.serverlessJwtTokenMtx.Lock()
+	defer c.serverlessJwtTokenMtx.Unlock()
+	if c.serverlessJwtToken != "" && c.serverlessJwtTokenExp.After(time.Now()) {
+		return nil
+	}
+
+	params := map[string]string{
+		"password": "password",
+	}
+	if regexp.MustCompile("^1\\d{10}$").MatchString(c.username) {
+		params["mobile"] = c.username
+	} else if regexp.MustCompile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$").MatchString(c.username) {
+		params["email"] = c.username
+	} else {
+		params["username"] = c.username
+	}
+
+	type loginResponse struct {
+		apiResponseBase
+		Data *struct {
+			Code     int32  `json:"errCode"`
+			UID      string `json:"uid"`
+			NewToken *struct {
+				Token        string `json:"token"`
+				TokenExpired int64  `json:"tokenExpired"`
+			} `json:"newToken,omitempty"`
+		} `json:"data,omitempty"`
+	}
+
+	resp := &loginResponse{}
+	if err := c.invokeServerlessWithResult(
+		uniIdentityEndpoint, uniIdentityClientSecret, uniIdentityAppId, uniIdentitySpaceId,
+		"uni-id-co", "login", "", params, nil,
+		resp); err != nil {
+		return err
+	} else if resp.Data == nil || resp.Data.NewToken == nil || resp.Data.NewToken.Token == "" {
+		return fmt.Errorf("unicloud api error: received empty token")
+	}
+
+	c.serverlessJwtToken = resp.Data.NewToken.Token
+	c.serverlessJwtTokenExp = time.UnixMilli(resp.Data.NewToken.TokenExpired)
+
+	return nil
+}
+
+func (c *Client) ensureApiUserTokenExists() error {
+	if err := c.ensureServerlessJwtTokenExists(); err != nil {
+		return err
+	}
+
+	c.apiUserTokenMtx.Lock()
+	defer c.apiUserTokenMtx.Unlock()
+	if c.apiUserToken != "" {
+		return nil
+	}
+
+	type getUserTokenResponse struct {
+		apiResponseBase
+		Data *struct {
+			Code int32 `json:"code"`
+			Data *struct {
+				Result      int32  `json:"ret"`
+				Description string `json:"desc"`
+				Data        *struct {
+					Email string `json:"email"`
+					Token string `json:"token"`
+				} `json:"data,omitempty"`
+			} `json:"data,omitempty"`
+		} `json:"data,omitempty"`
+	}
+
+	resp := &getUserTokenResponse{}
+	if err := c.invokeServerlessWithResult(
+		uniConsoleEndpoint, uniConsoleClientSecret, uniConsoleAppId, uniConsoleSpaceId,
+		"uni-cloud-kernel", "", "user/getUserToken", nil, map[string]any{"isLogin": true},
+		resp); err != nil {
+		return err
+	} else if resp.Data == nil || resp.Data.Data == nil || resp.Data.Data.Data == nil || resp.Data.Data.Data.Token == "" {
+		return fmt.Errorf("unicloud api error: received empty user token")
+	}
+
+	c.apiUserToken = resp.Data.Data.Data.Token
+
+	return nil
+}
+
+func generateSignature(params map[string]any, secret string) string {
+	keys := make([]string, 0, len(params))
+	for k := range params {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	canonicalStr := ""
+	for i, k := range keys {
+		if i > 0 {
+			canonicalStr += "&"
+		}
+		canonicalStr += k + "=" + fmt.Sprintf("%v", params[k])
+	}
+
+	mac := hmac.New(md5.New, []byte(secret))
+	mac.Write([]byte(canonicalStr))
+	sign := mac.Sum(nil)
+	signHex := hex.EncodeToString(sign)
+
+	return signHex
 }

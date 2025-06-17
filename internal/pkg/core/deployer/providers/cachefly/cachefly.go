@@ -2,12 +2,12 @@ package cachefly
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	cfsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cachefly"
+	cacheflysdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/cachefly"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -18,7 +18,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *cfsdk.Client
+	sdkClient *cacheflysdk.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -52,9 +52,9 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 上传证书
 	// REF: https://api.cachefly.com/api/2.5/docs#tag/Certificates/paths/~1certificates/post
-	createCertificateReq := &cfsdk.CreateCertificateRequest{
-		Certificate:    certPEM,
-		CertificateKey: privkeyPEM,
+	createCertificateReq := &cacheflysdk.CreateCertificateRequest{
+		Certificate:    xtypes.ToPtr(certPEM),
+		CertificateKey: xtypes.ToPtr(privkeyPEM),
 	}
 	createCertificateResp, err := d.sdkClient.CreateCertificate(createCertificateReq)
 	d.logger.Debug("sdk request 'cachefly.CreateCertificate'", slog.Any("request", createCertificateReq), slog.Any("response", createCertificateResp))
@@ -65,11 +65,6 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(apiToken string) (*cfsdk.Client, error) {
-	if apiToken == "" {
-		return nil, errors.New("invalid cachefly api token")
-	}
-
-	client := cfsdk.NewClient(apiToken)
-	return client, nil
+func createSdkClient(apiToken string) (*cacheflysdk.Client, error) {
+	return cacheflysdk.NewClient(apiToken)
 }

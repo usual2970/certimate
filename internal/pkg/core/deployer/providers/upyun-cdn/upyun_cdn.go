@@ -2,7 +2,6 @@ package upyuncdn
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log/slog"
 
@@ -116,14 +115,5 @@ func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPE
 }
 
 func createSdkClient(username, password string) (*upyunsdk.Client, error) {
-	if username == "" {
-		return nil, errors.New("invalid upyun username")
-	}
-
-	if password == "" {
-		return nil, errors.New("invalid upyun password")
-	}
-
-	client := upyunsdk.NewClient(username, password)
-	return client, nil
+	return upyunsdk.NewClient(username, password)
 }

@@ -3,13 +3,12 @@ package baotapanelconsole
 import (
 	"context"
 	"crypto/tls"
-	"errors"
 	"fmt"
 	"log/slog"
-	"net/url"
 
 	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	btsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btwaf"
+	btwafsdk "github.com/usual2970/certimate/internal/pkg/sdk3rd/btwaf"
+	xtypes "github.com/usual2970/certimate/internal/pkg/utils/types"
 )
 
 type DeployerConfig struct {
@@ -24,7 +23,7 @@ type DeployerConfig struct {
 type DeployerProvider struct {
 	config    *DeployerConfig
 	logger    *slog.Logger
-	sdkClient *btsdk.Client
+	sdkClient *btwafsdk.Client
 }
 
 var _ deployer.Deployer = (*DeployerProvider)(nil)
@@ -57,31 +56,27 @@ func (d *DeployerProvider) WithLogger(logger *slog.Logger) deployer.Deployer {
 
 func (d *DeployerProvider) Deploy(ctx context.Context, certPEM string, privkeyPEM string) (*deployer.DeployResult, error) {
 	// 设置面板 SSL
-	configSetSSLReq := &btsdk.ConfigSetSSLRequest{
-		CertContent: certPEM,
-		KeyContent:  privkeyPEM,
+	configSetCertReq := &btwafsdk.ConfigSetCertRequest{
+		CertContent: xtypes.ToPtr(certPEM),
+		KeyContent:  xtypes.ToPtr(privkeyPEM),
 	}
-	configSetSSLResp, err := d.sdkClient.ConfigSetSSL(configSetSSLReq)
-	d.logger.Debug("sdk request 'bt.ConfigSetSSL'", slog.Any("request", configSetSSLReq), slog.Any("response", configSetSSLResp))
+	configSetCertResp, err := d.sdkClient.ConfigSetCert(configSetCertReq)
+	d.logger.Debug("sdk request 'bt.ConfigSetCert'", slog.Any("request", configSetCertReq), slog.Any("response", configSetCertResp))
 	if err != nil {
-		return nil, fmt.Errorf("failed to execute sdk request 'bt.ConfigSetSSL': %w", err)
+		return nil, fmt.Errorf("failed to execute sdk request 'bt.ConfigSetCert': %w", err)
 	}
 
 	return &deployer.DeployResult{}, nil
 }
 
-func createSdkClient(serverUrl, apiKey string, skipTlsVerify bool) (*btsdk.Client, error) {
-	if _, err := url.Parse(serverUrl); err != nil {
-		return nil, errors.New("invalid baota server url")
+func createSdkClient(serverUrl, apiKey string, skipTlsVerify bool) (*btwafsdk.Client, error) {
+	client, err := btwafsdk.NewClient(serverUrl, apiKey)
+	if err != nil {
+		return nil, err
 	}
 
-	if apiKey == "" {
-		return nil, errors.New("invalid baota api key")
-	}
-
-	client := btsdk.NewClient(serverUrl, apiKey)
 	if skipTlsVerify {
-		client.WithTLSConfig(&tls.Config{InsecureSkipVerify: true})
+		client.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return client, nil

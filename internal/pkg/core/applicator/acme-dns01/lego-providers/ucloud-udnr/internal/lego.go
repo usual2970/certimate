@@ -71,6 +71,7 @@ func NewDNSProviderConfig(config *Config) (*DNSProvider, error) {
 	}
 
 	cfg := ucloud.NewConfig()
+	cfg.Timeout = config.HTTPTimeout
 	credential := auth.NewCredential()
 	credential.PrivateKey = config.PrivateKey
 	credential.PublicKey = config.PublicKey
