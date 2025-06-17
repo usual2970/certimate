@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	dogesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/dogecloud"
+	dogesdk "github.com/certimate-go/certimate/pkg/sdk3rd/dogecloud"
 )
 
 type SSLManagerProviderConfig struct {

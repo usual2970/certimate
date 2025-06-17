@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	bssdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/baishan"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	bssdk "github.com/certimate-go/certimate/pkg/sdk3rd/baishan"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

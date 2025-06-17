@@ -48,7 +48,7 @@ Certimate aims to provide users with a secure and user-friendly SSL certificate 
 
 **Deploy Certimate in 5 minutes!**
 
-Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/certimate-go/certimate/te/releases), extract and then execute:
+Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/certimate-go/certimate/releases), extract and then execute:
 
 ```bash
 ./certimate serve

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/domain/dtos"
+	"github.com/certimate-go/certimate/internal/domain/dtos"
 )
 
 // Deprecated: v0.4.x 将废弃

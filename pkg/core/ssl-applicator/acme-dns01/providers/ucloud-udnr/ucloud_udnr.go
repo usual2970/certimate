@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	"github.com/certimate-go/certimate/te/pkg/core/ssl-applicator/acme-dns01/providers/ucloud-udnr/internal"
+	"github.com/certimate-go/certimate/pkg/core/ssl-applicator/acme-dns01/providers/ucloud-udnr/internal"
 )
 
 type ChallengeProviderConfig struct {

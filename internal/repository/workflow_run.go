@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/certimate-go/certimate/internal/app"
-	"github.com/certimate-go/certimate/te/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain"
 	"github.com/pocketbase/dbx"
 	"github.com/pocketbase/pocketbase/core"
 )

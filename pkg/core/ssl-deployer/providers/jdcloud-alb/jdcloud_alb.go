@@ -14,8 +14,8 @@ import (
 	jdlbmodel "github.com/jdcloud-api/jdcloud-sdk-go/services/lb/models"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/jdcloud-ssl"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/jdcloud-ssl"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -10,9 +10,9 @@ import (
 	"golang.org/x/exp/maps"
 
 	"github.com/certimate-go/certimate/internal/applicant"
-	"github.com/certimate-go/certimate/te/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type applyNode struct {

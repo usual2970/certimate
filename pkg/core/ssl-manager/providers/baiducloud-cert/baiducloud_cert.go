@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	bdsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/baiducloud/cert"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	bdsdk "github.com/certimate-go/certimate/pkg/sdk3rd/baiducloud/cert"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

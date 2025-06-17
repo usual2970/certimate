@@ -17,8 +17,8 @@ import (
 	hcwafregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/waf/v1/region"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

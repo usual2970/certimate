@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	nodes "github.com/certimate-go/certimate/te/internal/workflow/node-processor"
-	"github.com/certimate-go/certimate/te/pkg/logging"
+	nodes "github.com/certimate-go/certimate/internal/workflow/node-processor"
+	"github.com/certimate-go/certimate/pkg/logging"
 )
 
 type workflowInvoker struct {

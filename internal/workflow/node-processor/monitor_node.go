@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	xhttp "github.com/certimate-go/certimate/te/pkg/utils/http"
+	xhttp "github.com/certimate-go/certimate/pkg/utils/http"
 )
 
 type monitorNode struct {

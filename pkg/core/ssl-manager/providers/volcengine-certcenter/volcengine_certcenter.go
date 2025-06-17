@@ -10,7 +10,7 @@ import (
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	veccsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/volcengine/certcenter"
+	veccsdk "github.com/certimate-go/certimate/pkg/sdk3rd/volcengine/certcenter"
 )
 
 type SSLManagerProviderConfig struct {

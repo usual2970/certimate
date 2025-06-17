@@ -14,7 +14,7 @@ import (
 	bytepluscdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

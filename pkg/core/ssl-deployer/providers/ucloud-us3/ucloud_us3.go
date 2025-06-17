@@ -10,8 +10,8 @@ import (
 	"github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/ucloud-ussl"
-	usdkFile "github.com/certimate-go/certimate/te/pkg/sdk3rd/ucloud/ufile"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/ucloud-ussl"
+	usdkFile "github.com/certimate-go/certimate/pkg/sdk3rd/ucloud/ufile"
 )
 
 type SSLDeployerProviderConfig struct {

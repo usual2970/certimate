@@ -14,11 +14,11 @@ import (
 	"github.com/pocketbase/dbx"
 
 	"github.com/certimate-go/certimate/internal/app"
-	"github.com/certimate-go/certimate/te/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/domain/dtos"
-	"github.com/certimate-go/certimate/te/internal/notify"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain/dtos"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 const (

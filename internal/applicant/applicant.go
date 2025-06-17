@@ -20,9 +20,9 @@ import (
 	"golang.org/x/time/rate"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
+	"github.com/certimate-go/certimate/internal/repository"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 type ApplyResult struct {

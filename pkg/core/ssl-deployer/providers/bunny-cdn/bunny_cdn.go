@@ -8,7 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	bunnysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/bunny"
+	bunnysdk "github.com/certimate-go/certimate/pkg/sdk3rd/bunny"
 )
 
 type SSLDeployerProviderConfig struct {

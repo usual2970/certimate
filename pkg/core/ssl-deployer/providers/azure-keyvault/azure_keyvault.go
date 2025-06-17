@@ -14,9 +14,9 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azcertificates"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/azure-keyvault"
-	azenv "github.com/certimate-go/certimate/te/pkg/sdk3rd/azure/env"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/azure-keyvault"
+	azenv "github.com/certimate-go/certimate/pkg/sdk3rd/azure/env"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

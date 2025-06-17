@@ -10,7 +10,7 @@ import (
 	bpcdn "github.com/byteplus-sdk/byteplus-sdk-golang/service/cdn"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/byteplus-cdn"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/byteplus-cdn"
 )
 
 type SSLDeployerProviderConfig struct {

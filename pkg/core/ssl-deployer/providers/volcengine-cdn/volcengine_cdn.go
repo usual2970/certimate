@@ -10,7 +10,7 @@ import (
 	vecdn "github.com/volcengine/volc-sdk-golang/service/cdn"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/volcengine-cdn"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/volcengine-cdn"
 )
 
 type SSLDeployerProviderConfig struct {

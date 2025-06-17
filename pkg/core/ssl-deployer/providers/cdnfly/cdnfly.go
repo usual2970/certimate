@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	cdnflysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/cdnfly"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	cdnflysdk "github.com/certimate-go/certimate/pkg/sdk3rd/cdnfly"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

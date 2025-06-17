@@ -7,8 +7,8 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	netlifysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/netlify"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	netlifysdk "github.com/certimate-go/certimate/pkg/sdk3rd/netlify"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

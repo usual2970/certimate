@@ -11,7 +11,7 @@ import (
 	"github.com/G-Core/gcorelabscdn-go/sslcerts"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	gcoresdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/gcore"
+	gcoresdk "github.com/certimate-go/certimate/pkg/sdk3rd/gcore"
 )
 
 type SSLManagerProviderConfig struct {

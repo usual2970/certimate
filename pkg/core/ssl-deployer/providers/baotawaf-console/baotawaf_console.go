@@ -8,8 +8,8 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	btwafsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/btwaf"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	btwafsdk "github.com/certimate-go/certimate/pkg/sdk3rd/btwaf"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

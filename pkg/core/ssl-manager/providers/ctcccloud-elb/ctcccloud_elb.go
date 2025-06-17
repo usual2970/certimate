@@ -10,9 +10,9 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	ctyunelb "github.com/certimate-go/certimate/te/pkg/sdk3rd/ctyun/elb"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	ctyunelb "github.com/certimate-go/certimate/pkg/sdk3rd/ctyun/elb"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

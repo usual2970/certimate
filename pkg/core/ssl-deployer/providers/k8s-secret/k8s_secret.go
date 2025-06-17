@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

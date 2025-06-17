@@ -13,7 +13,7 @@ import (
 	awsiam "github.com/aws/aws-sdk-go-v2/service/iam"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

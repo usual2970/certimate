@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/baiducloud-cert"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/baiducloud-cert"
 )
 
 type SSLDeployerProviderConfig struct {

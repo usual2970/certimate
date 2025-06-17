@@ -16,7 +16,7 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
 )
 
 type SSLDeployerProviderConfig struct {

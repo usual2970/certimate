@@ -12,8 +12,8 @@ import (
 	awsacm "github.com/aws/aws-sdk-go-v2/service/acm"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aws-acm"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/aws-acm"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

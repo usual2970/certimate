@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/internal/domain/expr"
-	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
 )
 
 const CollectionNameWorkflow = "workflow"

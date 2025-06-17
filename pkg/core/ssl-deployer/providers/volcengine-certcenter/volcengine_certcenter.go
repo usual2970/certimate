@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/volcengine-certcenter"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/volcengine-certcenter"
 )
 
 type SSLDeployerProviderConfig struct {

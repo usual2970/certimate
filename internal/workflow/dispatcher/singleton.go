@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type workflowRepository interface {

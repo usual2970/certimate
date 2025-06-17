@@ -16,8 +16,8 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {
@@ -105,7 +105,7 @@ func (m *SSLManagerProvider) Upload(ctx context.Context, certPEM string, privkey
 	certName := fmt.Sprintf("certimate_%d", time.Now().UnixMilli())
 
 	// 去除证书和私钥内容中的空白行，以符合阿里云 API 要求
-	// REF: https://github.com/certimate-go/certimate/te/issues/326
+	// REF: https://github.com/certimate-go/certimate/issues/326
 	re := regexp.MustCompile(`(?m)^\s*$\n?`)
 	certPEM = strings.TrimSpace(re.ReplaceAllString(certPEM, ""))
 	privkeyPEM = strings.TrimSpace(re.ReplaceAllString(privkeyPEM, ""))

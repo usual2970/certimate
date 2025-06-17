@@ -9,8 +9,8 @@ import (
 	"golang.org/x/exp/slices"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/upyun-ssl"
-	upyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/upyun/console"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/upyun-ssl"
+	upyunsdk "github.com/certimate-go/certimate/pkg/sdk3rd/upyun/console"
 )
 
 type SSLDeployerProviderConfig struct {

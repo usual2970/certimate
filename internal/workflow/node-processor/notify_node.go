@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/notify"
-	"github.com/certimate-go/certimate/te/internal/repository"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type notifyNode struct {

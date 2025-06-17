@@ -10,8 +10,8 @@ import (
 	"runtime"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xfile "github.com/certimate-go/certimate/te/pkg/utils/file"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xfile "github.com/certimate-go/certimate/pkg/utils/file"
 )
 
 type SSLDeployerProviderConfig struct {

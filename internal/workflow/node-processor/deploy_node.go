@@ -10,8 +10,8 @@ import (
 	"golang.org/x/exp/maps"
 
 	"github.com/certimate-go/certimate/internal/deployer"
-	"github.com/certimate-go/certimate/te/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type deployNode struct {

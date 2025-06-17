@@ -10,8 +10,8 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/qiniu-sslcert"
-	qiniusdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/qiniu"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/qiniu-sslcert"
+	qiniusdk "github.com/certimate-go/certimate/pkg/sdk3rd/qiniu"
 )
 
 type SSLDeployerProviderConfig struct {

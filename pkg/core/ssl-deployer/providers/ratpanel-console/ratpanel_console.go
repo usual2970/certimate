@@ -8,7 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	rpsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/ratpanel"
+	rpsdk "github.com/certimate-go/certimate/pkg/sdk3rd/ratpanel"
 )
 
 type SSLDeployerProviderConfig struct {

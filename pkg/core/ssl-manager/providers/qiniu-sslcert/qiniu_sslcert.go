@@ -10,8 +10,8 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	qiniusdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/qiniu"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	qiniusdk "github.com/certimate-go/certimate/pkg/sdk3rd/qiniu"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

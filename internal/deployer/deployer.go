@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	"github.com/certimate-go/certimate/te/pkg/core"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type Deployer interface {

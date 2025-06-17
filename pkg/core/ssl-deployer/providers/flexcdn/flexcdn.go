@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	flexcdnsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/flexcdn"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	flexcdnsdk "github.com/certimate-go/certimate/pkg/sdk3rd/flexcdn"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

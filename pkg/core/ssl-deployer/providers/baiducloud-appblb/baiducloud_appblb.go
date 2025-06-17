@@ -12,8 +12,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/baiducloud-cert"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/baiducloud-cert"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

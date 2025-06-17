@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	leclientsdkv3 "github.com/certimate-go/certimate/te/pkg/sdk3rd/lecdn/client-v3"
-	lemastersdkv3 "github.com/certimate-go/certimate/te/pkg/sdk3rd/lecdn/master-v3"
+	leclientsdkv3 "github.com/certimate-go/certimate/pkg/sdk3rd/lecdn/client-v3"
+	lemastersdkv3 "github.com/certimate-go/certimate/pkg/sdk3rd/lecdn/master-v3"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -8,11 +8,11 @@ import (
 	"github.com/pocketbase/pocketbase/tools/router"
 
 	"github.com/certimate-go/certimate/internal/certificate"
-	"github.com/certimate-go/certimate/te/internal/notify"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	"github.com/certimate-go/certimate/te/internal/rest/handlers"
-	"github.com/certimate-go/certimate/te/internal/statistics"
-	"github.com/certimate-go/certimate/te/internal/workflow"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/rest/handlers"
+	"github.com/certimate-go/certimate/internal/statistics"
+	"github.com/certimate-go/certimate/internal/workflow"
 )
 
 var (

@@ -17,7 +17,7 @@ import (
 	"golang.org/x/crypto/ssh"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type JumpServerConfig struct {

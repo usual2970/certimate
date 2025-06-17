@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/domain/expr"
+	"github.com/certimate-go/certimate/internal/domain/expr"
 )
 
 type conditionNode struct {

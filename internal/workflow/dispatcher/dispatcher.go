@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/internal/app"
-	"github.com/certimate-go/certimate/te/internal/domain"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
+	"github.com/certimate-go/certimate/internal/domain"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 var maxWorkers = 1

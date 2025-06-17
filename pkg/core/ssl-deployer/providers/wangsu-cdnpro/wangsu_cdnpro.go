@@ -17,9 +17,9 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	wangsucdn "github.com/certimate-go/certimate/te/pkg/sdk3rd/wangsu/cdnpro"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	wangsucdn "github.com/certimate-go/certimate/pkg/sdk3rd/wangsu/cdnpro"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

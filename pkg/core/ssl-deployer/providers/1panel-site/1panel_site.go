@@ -9,9 +9,9 @@ import (
 	"strconv"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/1panel-ssl"
-	onepanelsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/1panel"
-	onepanelsdkv2 "github.com/certimate-go/certimate/te/pkg/sdk3rd/1panel/v2"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/1panel-ssl"
+	onepanelsdk "github.com/certimate-go/certimate/pkg/sdk3rd/1panel"
+	onepanelsdkv2 "github.com/certimate-go/certimate/pkg/sdk3rd/1panel/v2"
 )
 
 type SSLDeployerProviderConfig struct {

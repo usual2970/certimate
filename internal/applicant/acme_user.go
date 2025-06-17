@@ -14,9 +14,9 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	"github.com/certimate-go/certimate/te/internal/repository"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
 )
 
 type acmeUser struct {

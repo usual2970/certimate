@@ -8,7 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	safelinesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/safeline"
+	safelinesdk "github.com/certimate-go/certimate/pkg/sdk3rd/safeline"
 )
 
 type SSLDeployerProviderConfig struct {

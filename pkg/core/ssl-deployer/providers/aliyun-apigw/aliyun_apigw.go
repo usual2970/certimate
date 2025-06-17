@@ -14,8 +14,8 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

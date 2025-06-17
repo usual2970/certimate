@@ -9,8 +9,8 @@ import (
 	"strconv"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	onepanelsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/1panel"
-	onepanelsdkv2 "github.com/certimate-go/certimate/te/pkg/sdk3rd/1panel/v2"
+	onepanelsdk "github.com/certimate-go/certimate/pkg/sdk3rd/1panel"
+	onepanelsdkv2 "github.com/certimate-go/certimate/pkg/sdk3rd/1panel/v2"
 )
 
 type SSLDeployerProviderConfig struct {

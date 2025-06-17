@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	goedgesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/goedge"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	goedgesdk "github.com/certimate-go/certimate/pkg/sdk3rd/goedge"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

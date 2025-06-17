@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sync/singleflight"
 
 	"github.com/certimate-go/certimate/internal/app"
-	"github.com/certimate-go/certimate/te/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type AcmeAccountRepository struct{}

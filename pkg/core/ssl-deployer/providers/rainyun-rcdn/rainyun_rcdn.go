@@ -8,8 +8,8 @@ import (
 	"strconv"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/rainyun-sslcenter"
-	rainyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/rainyun"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/rainyun-sslcenter"
+	rainyunsdk "github.com/certimate-go/certimate/pkg/sdk3rd/rainyun"
 )
 
 type SSLDeployerProviderConfig struct {

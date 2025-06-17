@@ -9,9 +9,9 @@ import (
 	"strings"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/wangsu-certificate"
-	wangsusdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/wangsu/cdn"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/wangsu-certificate"
+	wangsusdk "github.com/certimate-go/certimate/pkg/sdk3rd/wangsu/cdn"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

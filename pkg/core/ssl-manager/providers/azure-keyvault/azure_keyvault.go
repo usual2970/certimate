@@ -15,8 +15,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azcertificates"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	azenv "github.com/certimate-go/certimate/te/pkg/sdk3rd/azure/env"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	azenv "github.com/certimate-go/certimate/pkg/sdk3rd/azure/env"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

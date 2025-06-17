@@ -14,12 +14,12 @@ import (
 	"github.com/pocketbase/pocketbase/tools/hook"
 
 	"github.com/certimate-go/certimate/internal/app"
-	"github.com/certimate-go/certimate/te/internal/rest/routes"
-	"github.com/certimate-go/certimate/te/internal/scheduler"
-	"github.com/certimate-go/certimate/te/internal/workflow"
-	"github.com/certimate-go/certimate/te/ui"
+	"github.com/certimate-go/certimate/internal/rest/routes"
+	"github.com/certimate-go/certimate/internal/scheduler"
+	"github.com/certimate-go/certimate/internal/workflow"
+	"github.com/certimate-go/certimate/ui"
 
-	_ "github.com/certimate-go/certimate/te/migrations"
+	_ "github.com/certimate-go/certimate/migrations"
 )
 
 func main() {

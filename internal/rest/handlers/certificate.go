@@ -7,7 +7,7 @@ import (
 	"github.com/pocketbase/pocketbase/tools/router"
 
 	"github.com/certimate-go/certimate/internal/domain/dtos"
-	"github.com/certimate-go/certimate/te/internal/rest/resp"
+	"github.com/certimate-go/certimate/internal/rest/resp"
 )
 
 type certificateService interface {

@@ -8,7 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	btsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/btpanel"
+	btsdk "github.com/certimate-go/certimate/pkg/sdk3rd/btpanel"
 )
 
 type SSLDeployerProviderConfig struct {

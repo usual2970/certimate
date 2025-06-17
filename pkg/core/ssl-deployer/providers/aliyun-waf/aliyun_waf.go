@@ -12,9 +12,9 @@ import (
 	aliwaf "github.com/alibabacloud-go/waf-openapi-20211001/v5/client"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
-	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

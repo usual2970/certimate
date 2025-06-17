@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/certimate-go/certimate/internal/domain"
-	nodeprocessor "github.com/certimate-go/certimate/te/internal/workflow/node-processor"
+	nodeprocessor "github.com/certimate-go/certimate/internal/workflow/node-processor"
 )
 
 func Test_MonitorNode(t *testing.T) {

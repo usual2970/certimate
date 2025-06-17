@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	rainyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/rainyun"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	rainyunsdk "github.com/certimate-go/certimate/pkg/sdk3rd/rainyun"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

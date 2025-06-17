@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	upyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/upyun/console"
+	upyunsdk "github.com/certimate-go/certimate/pkg/sdk3rd/upyun/console"
 )
 
 type SSLManagerProviderConfig struct {

@@ -12,7 +12,7 @@ import (
 	"github.com/alibabacloud-go/tea/tea"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
 )
 
 type SSLDeployerProviderConfig struct {

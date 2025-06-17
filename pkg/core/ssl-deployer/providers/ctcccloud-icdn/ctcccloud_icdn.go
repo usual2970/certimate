@@ -7,9 +7,9 @@ import (
 	"log/slog"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/ctcccloud-icdn"
-	ctyunicdn "github.com/certimate-go/certimate/te/pkg/sdk3rd/ctyun/icdn"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/ctcccloud-icdn"
+	ctyunicdn "github.com/certimate-go/certimate/pkg/sdk3rd/ctyun/icdn"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

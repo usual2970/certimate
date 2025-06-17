@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	wangsusdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/wangsu/certificate"
-	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	wangsusdk "github.com/certimate-go/certimate/pkg/sdk3rd/wangsu/certificate"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

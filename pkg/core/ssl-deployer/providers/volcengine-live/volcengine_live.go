@@ -11,7 +11,7 @@ import (
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/volcengine-live"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/volcengine-live"
 )
 
 type SSLDeployerProviderConfig struct {

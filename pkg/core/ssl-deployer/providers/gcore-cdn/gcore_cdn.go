@@ -13,8 +13,8 @@ import (
 	"github.com/G-Core/gcorelabscdn-go/sslcerts"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/gcore-cdn"
-	gcoresdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/gcore"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/gcore-cdn"
+	gcoresdk "github.com/certimate-go/certimate/pkg/sdk3rd/gcore"
 )
 
 type SSLDeployerProviderConfig struct {

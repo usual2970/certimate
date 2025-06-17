@@ -10,7 +10,7 @@ import (
 	"github.com/go-acme/lego/v4/platform/config/env"
 
 	ctyundns "github.com/certimate-go/certimate/pkg/sdk3rd/ctyun/dns"
-	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
+	xtypes "github.com/certimate-go/certimate/pkg/utils/types"
 )
 
 const (

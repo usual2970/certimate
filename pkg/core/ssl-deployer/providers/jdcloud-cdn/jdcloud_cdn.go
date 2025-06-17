@@ -11,7 +11,7 @@ import (
 	jdcdnclient "github.com/jdcloud-api/jdcloud-sdk-go/services/cdn/client"
 
 	"github.com/certimate-go/certimate/pkg/core"
-	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/jdcloud-ssl"
+	sslmgrsp "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/jdcloud-ssl"
 )
 
 type SSLDeployerProviderConfig struct {
