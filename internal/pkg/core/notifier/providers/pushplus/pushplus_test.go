@@ -37,7 +37,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("TOKEN: %v", fToken),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			Token: fToken,
 		})
 		if err != nil {

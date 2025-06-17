@@ -43,7 +43,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("URL: %v", fWebhookUrl),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			WebhookUrl: fWebhookUrl,
 			Method:     "POST",
 			Headers: map[string]string{

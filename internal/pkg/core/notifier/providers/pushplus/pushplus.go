@@ -3,30 +3,31 @@ package pushplus
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	"github.com/usual2970/certimate/internal/pkg/core"
 )
 
-type NotifierConfig struct {
+type NotifierProviderConfig struct {
 	// PushPlus Token。
 	Token string `json:"token"`
 }
 
 type NotifierProvider struct {
-	config     *NotifierConfig
+	config     *NotifierProviderConfig
 	logger     *slog.Logger
 	httpClient *resty.Client
 }
 
-var _ notifier.Notifier = (*NotifierProvider)(nil)
+var _ core.Notifier = (*NotifierProvider)(nil)
 
-func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
+func NewNotifierProvider(config *NotifierProviderConfig) (*NotifierProvider, error) {
 	if config == nil {
-		panic("config is nil")
+		return nil, errors.New("the configuration of the notifier provider is nil")
 	}
 
 	client := resty.New()
@@ -38,16 +39,15 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	}, nil
 }
 
-func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
+func (n *NotifierProvider) SetLogger(logger *slog.Logger) {
 	if logger == nil {
 		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
-	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*core.NotifyResult, error) {
 	// REF: https://pushplus.plus/doc/guide/api.html#%E4%B8%80%E3%80%81%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF%E6%8E%A5%E5%8F%A3
 	req := n.httpClient.R().
 		SetContext(ctx).
@@ -75,5 +75,5 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		return nil, fmt.Errorf("pushplus api error: code='%d', message='%s'", errorResponse.Code, errorResponse.Message)
 	}
 
-	return &notifier.NotifyResult{}, nil
+	return &core.NotifyResult{}, nil
 }

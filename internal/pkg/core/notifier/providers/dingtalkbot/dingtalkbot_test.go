@@ -44,7 +44,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("SECRET: %v", fSecret),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			WebhookUrl: fWebhookUrl,
 			Secret:     fSecret,
 		})

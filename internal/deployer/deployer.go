@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/deployer"
+	"github.com/usual2970/certimate/internal/pkg/core"
 	"github.com/usual2970/certimate/internal/repository"
 )
 
@@ -46,20 +46,22 @@ func NewWithWorkflowNode(config DeployerWithWorkflowNodeConfig) (Deployer, error
 		}
 	}
 
-	deployerProvider, err := createDeployerProvider(options)
+	deployer, err := createSSLDeployerProvider(options)
 	if err != nil {
 		return nil, err
+	} else {
+		deployer.SetLogger(config.Logger)
 	}
 
 	return &deployerImpl{
-		provider:   deployerProvider.WithLogger(config.Logger),
+		provider:   deployer,
 		certPEM:    config.CertificatePEM,
 		privkeyPEM: config.PrivateKeyPEM,
 	}, nil
 }
 
 type deployerImpl struct {
-	provider   deployer.Deployer
+	provider   core.SSLDeployer
 	certPEM    string
 	privkeyPEM string
 }

@@ -64,7 +64,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("RECEIVERADDRESS: %v", fReceiverAddress),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			SmtpHost:        fSmtpHost,
 			SmtpPort:        int32(fSmtpPort),
 			SmtpTls:         fSmtpTLS,

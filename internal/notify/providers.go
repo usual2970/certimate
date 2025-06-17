@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	"github.com/usual2970/certimate/internal/pkg/core"
 	pDingTalkBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalkbot"
 	pDiscordBot "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/discordbot"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
@@ -25,7 +25,7 @@ type notifierProviderOptions struct {
 	ProviderServiceConfig map[string]any
 }
 
-func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier, error) {
+func createNotifierProvider(options *notifierProviderOptions) (core.Notifier, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
@@ -38,7 +38,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pDingTalkBot.NewNotifier(&pDingTalkBot.NotifierConfig{
+			return pDingTalkBot.NewNotifierProvider(&pDingTalkBot.NotifierProviderConfig{
 				WebhookUrl: access.WebhookUrl,
 				Secret:     access.Secret,
 			})
@@ -51,7 +51,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pDiscordBot.NewNotifier(&pDiscordBot.NotifierConfig{
+			return pDiscordBot.NewNotifierProvider(&pDiscordBot.NotifierProviderConfig{
 				BotToken:  access.BotToken,
 				ChannelId: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
@@ -64,7 +64,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pEmail.NewNotifier(&pEmail.NotifierConfig{
+			return pEmail.NewNotifierProvider(&pEmail.NotifierProviderConfig{
 				SmtpHost:        access.SmtpHost,
 				SmtpPort:        access.SmtpPort,
 				SmtpTls:         access.SmtpTls,
@@ -83,7 +83,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pLarkBot.NewNotifier(&pLarkBot.NotifierConfig{
+			return pLarkBot.NewNotifierProvider(&pLarkBot.NotifierProviderConfig{
 				WebhookUrl: access.WebhookUrl,
 			})
 		}
@@ -95,7 +95,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pMattermost.NewNotifier(&pMattermost.NotifierConfig{
+			return pMattermost.NewNotifierProvider(&pMattermost.NotifierProviderConfig{
 				ServerUrl: access.ServerUrl,
 				Username:  access.Username,
 				Password:  access.Password,
@@ -110,7 +110,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pSlackBot.NewNotifier(&pSlackBot.NotifierConfig{
+			return pSlackBot.NewNotifierProvider(&pSlackBot.NotifierProviderConfig{
 				BotToken:  access.BotToken,
 				ChannelId: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "channelId", access.DefaultChannelId),
 			})
@@ -123,7 +123,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pTelegramBot.NewNotifier(&pTelegramBot.NotifierConfig{
+			return pTelegramBot.NewNotifierProvider(&pTelegramBot.NotifierProviderConfig{
 				BotToken: access.BotToken,
 				ChatId:   xmaps.GetOrDefaultInt64(options.ProviderServiceConfig, "chatId", access.DefaultChatId),
 			})
@@ -156,7 +156,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				}
 			}
 
-			return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
+			return pWebhook.NewNotifierProvider(&pWebhook.NotifierProviderConfig{
 				WebhookUrl:               access.Url,
 				WebhookData:              xmaps.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForNotification),
 				Method:                   access.Method,
@@ -172,7 +172,7 @@ func createNotifierProvider(options *notifierProviderOptions) (notifier.Notifier
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			return pWeComBot.NewNotifier(&pWeComBot.NotifierConfig{
+			return pWeComBot.NewNotifierProvider(&pWeComBot.NotifierProviderConfig{
 				WebhookUrl: access.WebhookUrl,
 			})
 		}

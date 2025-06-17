@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	"github.com/usual2970/certimate/internal/pkg/core"
 	pBark "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/bark"
 	pDingTalk "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/dingtalkbot"
 	pEmail "github.com/usual2970/certimate/internal/pkg/core/notifier/providers/email"
@@ -21,26 +21,26 @@ import (
 )
 
 // Deprecated: v0.4.x 将废弃
-func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, channelConfig map[string]any) (notifier.Notifier, error) {
+func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, channelConfig map[string]any) (core.Notifier, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
 	*/
 	switch channel {
 	case domain.NotifyChannelTypeBark:
-		return pBark.NewNotifier(&pBark.NotifierConfig{
+		return pBark.NewNotifierProvider(&pBark.NotifierProviderConfig{
 			DeviceKey: xmaps.GetString(channelConfig, "deviceKey"),
 			ServerUrl: xmaps.GetString(channelConfig, "serverUrl"),
 		})
 
 	case domain.NotifyChannelTypeDingTalk:
-		return pDingTalk.NewNotifier(&pDingTalk.NotifierConfig{
+		return pDingTalk.NewNotifierProvider(&pDingTalk.NotifierProviderConfig{
 			WebhookUrl: "https://oapi.dingtalk.com/robot/send?access_token=" + xmaps.GetString(channelConfig, "accessToken"),
 			Secret:     xmaps.GetString(channelConfig, "secret"),
 		})
 
 	case domain.NotifyChannelTypeEmail:
-		return pEmail.NewNotifier(&pEmail.NotifierConfig{
+		return pEmail.NewNotifierProvider(&pEmail.NotifierProviderConfig{
 			SmtpHost:        xmaps.GetString(channelConfig, "smtpHost"),
 			SmtpPort:        xmaps.GetInt32(channelConfig, "smtpPort"),
 			SmtpTls:         xmaps.GetOrDefaultBool(channelConfig, "smtpTLS", true),
@@ -51,19 +51,19 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 		})
 
 	case domain.NotifyChannelTypeGotify:
-		return pGotify.NewNotifier(&pGotify.NotifierConfig{
+		return pGotify.NewNotifierProvider(&pGotify.NotifierProviderConfig{
 			ServerUrl: xmaps.GetString(channelConfig, "url"),
 			Token:     xmaps.GetString(channelConfig, "token"),
 			Priority:  xmaps.GetOrDefaultInt64(channelConfig, "priority", 1),
 		})
 
 	case domain.NotifyChannelTypeLark:
-		return pLark.NewNotifier(&pLark.NotifierConfig{
+		return pLark.NewNotifierProvider(&pLark.NotifierProviderConfig{
 			WebhookUrl: xmaps.GetString(channelConfig, "webhookUrl"),
 		})
 
 	case domain.NotifyChannelTypeMattermost:
-		return pMattermost.NewNotifier(&pMattermost.NotifierConfig{
+		return pMattermost.NewNotifierProvider(&pMattermost.NotifierProviderConfig{
 			ServerUrl: xmaps.GetString(channelConfig, "serverUrl"),
 			ChannelId: xmaps.GetString(channelConfig, "channelId"),
 			Username:  xmaps.GetString(channelConfig, "username"),
@@ -71,35 +71,35 @@ func createNotifierProviderUseGlobalSettings(channel domain.NotifyChannelType, c
 		})
 
 	case domain.NotifyChannelTypePushover:
-		return pPushover.NewNotifier(&pPushover.NotifierConfig{
+		return pPushover.NewNotifierProvider(&pPushover.NotifierProviderConfig{
 			Token: xmaps.GetString(channelConfig, "token"),
 			User:  xmaps.GetString(channelConfig, "user"),
 		})
 
 	case domain.NotifyChannelTypePushPlus:
-		return pPushPlus.NewNotifier(&pPushPlus.NotifierConfig{
+		return pPushPlus.NewNotifierProvider(&pPushPlus.NotifierProviderConfig{
 			Token: xmaps.GetString(channelConfig, "token"),
 		})
 
 	case domain.NotifyChannelTypeServerChan:
-		return pServerChan.NewNotifier(&pServerChan.NotifierConfig{
+		return pServerChan.NewNotifierProvider(&pServerChan.NotifierProviderConfig{
 			ServerUrl: xmaps.GetString(channelConfig, "url"),
 		})
 
 	case domain.NotifyChannelTypeTelegram:
-		return pTelegram.NewNotifier(&pTelegram.NotifierConfig{
+		return pTelegram.NewNotifierProvider(&pTelegram.NotifierProviderConfig{
 			BotToken: xmaps.GetString(channelConfig, "apiToken"),
 			ChatId:   xmaps.GetInt64(channelConfig, "chatId"),
 		})
 
 	case domain.NotifyChannelTypeWebhook:
-		return pWebhook.NewNotifier(&pWebhook.NotifierConfig{
+		return pWebhook.NewNotifierProvider(&pWebhook.NotifierProviderConfig{
 			WebhookUrl:               xmaps.GetString(channelConfig, "url"),
 			AllowInsecureConnections: xmaps.GetBool(channelConfig, "allowInsecureConnections"),
 		})
 
 	case domain.NotifyChannelTypeWeCom:
-		return pWeCom.NewNotifier(&pWeCom.NotifierConfig{
+		return pWeCom.NewNotifierProvider(&pWeCom.NotifierProviderConfig{
 			WebhookUrl: xmaps.GetString(channelConfig, "webhookUrl"),
 		})
 	}

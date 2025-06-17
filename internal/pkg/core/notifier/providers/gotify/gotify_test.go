@@ -47,7 +47,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("PRIORITY: %d", fPriority),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			ServerUrl: fUrl,
 			Token:     fToken,
 			Priority:  fPriority,

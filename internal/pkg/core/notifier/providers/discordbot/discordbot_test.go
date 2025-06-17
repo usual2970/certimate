@@ -44,7 +44,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("CHANNELID: %v", fChannelId),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			BotToken:  fApiToken,
 			ChannelId: fChannelId,
 		})

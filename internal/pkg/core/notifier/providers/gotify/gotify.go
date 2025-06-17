@@ -2,16 +2,17 @@ package gotify
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	"github.com/usual2970/certimate/internal/pkg/core"
 )
 
-type NotifierConfig struct {
+type NotifierProviderConfig struct {
 	// Gotify 服务地址。
 	ServerUrl string `json:"serverUrl"`
 	// Gotify Token。
@@ -21,16 +22,16 @@ type NotifierConfig struct {
 }
 
 type NotifierProvider struct {
-	config     *NotifierConfig
+	config     *NotifierProviderConfig
 	logger     *slog.Logger
 	httpClient *resty.Client
 }
 
-var _ notifier.Notifier = (*NotifierProvider)(nil)
+var _ core.Notifier = (*NotifierProvider)(nil)
 
-func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
+func NewNotifierProvider(config *NotifierProviderConfig) (*NotifierProvider, error) {
 	if config == nil {
-		panic("config is nil")
+		return nil, errors.New("the configuration of the notifier provider is nil")
 	}
 
 	client := resty.New()
@@ -42,16 +43,15 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	}, nil
 }
 
-func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
+func (n *NotifierProvider) SetLogger(logger *slog.Logger) {
 	if logger == nil {
 		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
-	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*core.NotifyResult, error) {
 	serverUrl := strings.TrimRight(n.config.ServerUrl, "/")
 
 	// REF: https://gotify.net/api-docs#/message/createMessage
@@ -72,5 +72,5 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		return nil, fmt.Errorf("gotify api error: unexpected status code: %d, resp: %s", resp.StatusCode(), resp.String())
 	}
 
-	return &notifier.NotifyResult{}, nil
+	return &core.NotifyResult{}, nil
 }

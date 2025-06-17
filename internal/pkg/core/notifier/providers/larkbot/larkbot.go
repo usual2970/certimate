@@ -2,29 +2,30 @@ package larkbot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 
 	"github.com/go-lark/lark"
 
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
+	"github.com/usual2970/certimate/internal/pkg/core"
 )
 
-type NotifierConfig struct {
+type NotifierProviderConfig struct {
 	// 飞书机器人 Webhook 地址。
 	WebhookUrl string `json:"webhookUrl"`
 }
 
 type NotifierProvider struct {
-	config *NotifierConfig
+	config *NotifierProviderConfig
 	logger *slog.Logger
 }
 
-var _ notifier.Notifier = (*NotifierProvider)(nil)
+var _ core.Notifier = (*NotifierProvider)(nil)
 
-func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
+func NewNotifierProvider(config *NotifierProviderConfig) (*NotifierProvider, error) {
 	if config == nil {
-		panic("config is nil")
+		return nil, errors.New("the configuration of the notifier provider is nil")
 	}
 
 	return &NotifierProvider{
@@ -33,16 +34,15 @@ func NewNotifier(config *NotifierConfig) (*NotifierProvider, error) {
 	}, nil
 }
 
-func (n *NotifierProvider) WithLogger(logger *slog.Logger) notifier.Notifier {
+func (n *NotifierProvider) SetLogger(logger *slog.Logger) {
 	if logger == nil {
 		n.logger = slog.New(slog.DiscardHandler)
 	} else {
 		n.logger = logger
 	}
-	return n
 }
 
-func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*notifier.NotifyResult, error) {
+func (n *NotifierProvider) Notify(ctx context.Context, subject string, message string) (*core.NotifyResult, error) {
 	bot := lark.NewNotificationBot(n.config.WebhookUrl)
 	content := lark.NewPostBuilder().
 		Title(subject).
@@ -56,5 +56,5 @@ func (n *NotifierProvider) Notify(ctx context.Context, subject string, message s
 		return nil, fmt.Errorf("lark api error: code='%d', message='%s'", resp.Code, resp.Msg)
 	}
 
-	return &notifier.NotifyResult{}, nil
+	return &core.NotifyResult{}, nil
 }

@@ -19,12 +19,12 @@ type SSLManager interface {
 	// 出参：
 	//   - res：上传结果。
 	//   - err: 错误。
-	Upload(ctx context.Context, certPEM string, privkeyPEM string) (_res *SSLUploadResult, _err error)
+	Upload(ctx context.Context, certPEM string, privkeyPEM string) (_res *SSLManageUploadResult, _err error)
 }
 
-// 表示证书上传结果的数据结构，包含上传后的证书 ID、名称和其他数据。
-type SSLUploadResult struct {
-	CertId       string         `json:"certId"`
+// 表示 SSL 证书管理上传结果的数据结构，包含上传后的证书 ID、名称和其他数据。
+type SSLManageUploadResult struct {
+	CertId       string         `json:"certId,omitempty"`
 	CertName     string         `json:"certName,omitempty"`
 	ExtendedData map[string]any `json:"extendedData,omitempty"`
 }

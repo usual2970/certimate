@@ -44,7 +44,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("DEVICEKEY: %v", fDeviceKey),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			ServerUrl: fServerUrl,
 			DeviceKey: fDeviceKey,
 		})

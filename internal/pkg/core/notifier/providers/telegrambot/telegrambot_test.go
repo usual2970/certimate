@@ -44,7 +44,7 @@ func TestNotify(t *testing.T) {
 			fmt.Sprintf("CHATID: %v", fChatId),
 		}, "\n"))
 
-		notifier, err := provider.NewNotifier(&provider.NotifierConfig{
+		notifier, err := provider.NewNotifierProvider(&provider.NotifierProviderConfig{
 			BotToken: fApiToken,
 			ChatId:   fChatId,
 		})
