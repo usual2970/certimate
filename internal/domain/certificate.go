@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
+	xcert "github.com/usual2970/certimate/pkg/utils/cert"
 )
 
 const CollectionNameCertificate = "certificate"

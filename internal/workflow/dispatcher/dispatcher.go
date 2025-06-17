@@ -14,7 +14,7 @@ import (
 
 	"github.com/usual2970/certimate/internal/app"
 	"github.com/usual2970/certimate/internal/domain"
-	xslices "github.com/usual2970/certimate/internal/pkg/utils/slices"
+	xslices "github.com/usual2970/certimate/pkg/utils/slices"
 )
 
 var maxWorkers = 1

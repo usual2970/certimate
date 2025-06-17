@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core"
 	"github.com/usual2970/certimate/internal/repository"
+	"github.com/usual2970/certimate/pkg/core"
 )
 
 type Deployer interface {

@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/usual2970/certimate/internal/domain"
-	xhttp "github.com/usual2970/certimate/internal/pkg/utils/http"
+	xhttp "github.com/usual2970/certimate/pkg/utils/http"
 )
 
 type monitorNode struct {

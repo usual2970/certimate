@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/usual2970/certimate/internal/domain/expr"
-	xmaps "github.com/usual2970/certimate/internal/pkg/utils/maps"
+	xmaps "github.com/usual2970/certimate/pkg/utils/maps"
 )
 
 const CollectionNameWorkflow = "workflow"

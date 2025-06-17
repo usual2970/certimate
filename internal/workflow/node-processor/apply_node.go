@@ -11,8 +11,8 @@ import (
 
 	"github.com/usual2970/certimate/internal/applicant"
 	"github.com/usual2970/certimate/internal/domain"
-	xcert "github.com/usual2970/certimate/internal/pkg/utils/cert"
 	"github.com/usual2970/certimate/internal/repository"
+	xcert "github.com/usual2970/certimate/pkg/utils/cert"
 )
 
 type applyNode struct {

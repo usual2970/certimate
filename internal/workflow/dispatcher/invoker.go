@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/logging"
 	nodes "github.com/usual2970/certimate/internal/workflow/node-processor"
+	"github.com/usual2970/certimate/pkg/logging"
 )
 
 type workflowInvoker struct {
