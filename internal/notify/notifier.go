@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/te/internal/repository"
+	"github.com/certimate-go/certimate/te/pkg/core"
 )
 
 type Notifier interface {

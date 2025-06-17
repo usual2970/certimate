@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/huaweicloud-scm"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/huaweicloud-scm"
 )
 
 type SSLDeployerProviderConfig struct {

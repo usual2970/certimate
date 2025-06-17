@@ -9,9 +9,9 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
-	xfile "github.com/usual2970/certimate/pkg/utils/file"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xfile "github.com/certimate-go/certimate/te/pkg/utils/file"
 )
 
 type SSLDeployerProviderConfig struct {

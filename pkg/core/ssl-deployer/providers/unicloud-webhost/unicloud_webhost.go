@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"net/url"
 
-	"github.com/usual2970/certimate/pkg/core"
-	unisdk "github.com/usual2970/certimate/pkg/sdk3rd/dcloud/unicloud"
+	"github.com/certimate-go/certimate/pkg/core"
+	unisdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/dcloud/unicloud"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -8,8 +8,8 @@ import (
 
 	"github.com/qiniu/go-sdk/v7/pili"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/qiniu-sslcert"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/qiniu-sslcert"
 )
 
 type SSLDeployerProviderConfig struct {

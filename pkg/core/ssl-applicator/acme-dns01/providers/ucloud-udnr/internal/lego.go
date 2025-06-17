@@ -11,7 +11,7 @@ import (
 	"github.com/ucloud/ucloud-sdk-go/ucloud"
 	"github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
-	"github.com/usual2970/certimate/pkg/sdk3rd/ucloud/udnr"
+	"github.com/certimate-go/certimate/pkg/sdk3rd/ucloud/udnr"
 )
 
 const (

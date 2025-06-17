@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/ucloud-ussl"
+	provider "github.com/certimate-go/certimate/pkg/core/ssl-manager/providers/ucloud-ussl"
 )
 
 var (

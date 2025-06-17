@@ -32,8 +32,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            usual2970/certimate
-            registry.cn-shanghai.aliyuncs.com/usual2970/certimate
+            certimate/certimate
+            registry.cn-shanghai.aliyuncs.com/certimate/certimate
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -61,4 +61,3 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-

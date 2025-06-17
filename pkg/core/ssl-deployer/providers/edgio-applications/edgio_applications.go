@@ -9,8 +9,8 @@ import (
 	edgio "github.com/Edgio/edgio-api/applications/v7"
 	edgiodtos "github.com/Edgio/edgio-api/applications/v7/dtos"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

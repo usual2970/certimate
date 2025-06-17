@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aws-iam"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aws-iam"
 )
 
 type SSLDeployerProviderConfig struct {

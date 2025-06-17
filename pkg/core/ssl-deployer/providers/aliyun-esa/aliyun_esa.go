@@ -12,8 +12,8 @@ import (
 	aliesa "github.com/alibabacloud-go/esa-20240910/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
 )
 
 type SSLDeployerProviderConfig struct {

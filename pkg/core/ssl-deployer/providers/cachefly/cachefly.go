@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	cacheflysdk "github.com/usual2970/certimate/pkg/sdk3rd/cachefly"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	cacheflysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/cachefly"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

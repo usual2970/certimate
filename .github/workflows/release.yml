@@ -61,7 +61,7 @@ jobs:
             if [ "$ARCH" == "armv7" ]; then
               export GOARM=7
             fi
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
           done
 
       - name: Upload Linux binaries
@@ -98,7 +98,7 @@ jobs:
         run: |
           mkdir -p dist/darwin
           for ARCH in amd64 arm64; do
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
           done
 
       - name: Upload macOS binaries
@@ -135,7 +135,7 @@ jobs:
         run: |
           mkdir -p dist/windows
           for ARCH in amd64 arm64; do
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
           done
 
       - name: Upload Windows binaries

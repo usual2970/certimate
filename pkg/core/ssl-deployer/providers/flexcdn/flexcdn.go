@@ -9,9 +9,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/usual2970/certimate/pkg/core"
-	flexcdnsdk "github.com/usual2970/certimate/pkg/sdk3rd/flexcdn"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	flexcdnsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/flexcdn"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

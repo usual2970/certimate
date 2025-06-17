@@ -10,7 +10,7 @@ import (
 	"github.com/go-acme/lego/v4/challenge/dns01"
 	"github.com/go-acme/lego/v4/platform/config/env"
 
-	dnslasdk "github.com/usual2970/certimate/pkg/sdk3rd/dnsla"
+	dnslasdk "github.com/certimate-go/certimate/pkg/sdk3rd/dnsla"
 )
 
 const (

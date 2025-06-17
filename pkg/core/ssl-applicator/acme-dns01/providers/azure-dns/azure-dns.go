@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-acme/lego/v4/providers/dns/azuredns"
 
-	"github.com/usual2970/certimate/pkg/core"
-	azenv "github.com/usual2970/certimate/pkg/sdk3rd/azure/env"
+	"github.com/certimate-go/certimate/pkg/core"
+	azenv "github.com/certimate-go/certimate/te/pkg/sdk3rd/azure/env"
 )
 
 type ChallengeProviderConfig struct {

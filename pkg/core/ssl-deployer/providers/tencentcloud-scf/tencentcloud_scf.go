@@ -10,8 +10,8 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcscf "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf/v20180416"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/tencentcloud-ssl"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/tencentcloud-ssl"
 )
 
 type SSLDeployerProviderConfig struct {

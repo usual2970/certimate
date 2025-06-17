@@ -7,9 +7,9 @@ import (
 	"log/slog"
 	"strconv"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/dogecloud"
-	dogesdk "github.com/usual2970/certimate/pkg/sdk3rd/dogecloud"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/dogecloud"
+	dogesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/dogecloud"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -11,7 +11,7 @@ import (
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 	alivod "github.com/alibabacloud-go/vod-20170321/v4/client"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

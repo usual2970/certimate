@@ -12,9 +12,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront/types"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrspacm "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aws-acm"
-	sslmgrspiam "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aws-iam"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrspacm "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aws-acm"
+	sslmgrspiam "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aws-iam"
 )
 
 type SSLDeployerProviderConfig struct {

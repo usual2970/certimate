@@ -11,7 +11,7 @@ import (
 	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdvodapi "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/apis"
 	jdvodclient "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/client"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

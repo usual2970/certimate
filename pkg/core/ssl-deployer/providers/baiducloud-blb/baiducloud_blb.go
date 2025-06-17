@@ -11,9 +11,9 @@ import (
 	bceblb "github.com/baidubce/bce-sdk-go/services/blb"
 	"github.com/google/uuid"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/baiducloud-cert"
-	xslices "github.com/usual2970/certimate/pkg/utils/slices"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/baiducloud-cert"
+	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

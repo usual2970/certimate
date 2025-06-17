@@ -1,6 +1,6 @@
 package applicant
 
-import "github.com/usual2970/certimate/internal/domain"
+import "github.com/certimate-go/certimate/internal/domain"
 
 const (
 	caLetsEncrypt         = string(domain.CAProviderTypeLetsEncrypt)

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/pkg/core/notifier/providers/slackbot"
+	provider "github.com/certimate-go/certimate/pkg/core/notifier/providers/slackbot"
 )
 
 const (

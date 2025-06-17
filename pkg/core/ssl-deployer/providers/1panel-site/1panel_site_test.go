@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	provider "github.com/usual2970/certimate/pkg/core/ssl-deployer/providers/1panel-site"
+	provider "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/1panel-site"
 )
 
 var (

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/usual2970/certimate/internal/domain"
-	nodes "github.com/usual2970/certimate/internal/workflow/node-processor"
-	"github.com/usual2970/certimate/pkg/logging"
+	"github.com/certimate-go/certimate/internal/domain"
+	nodes "github.com/certimate-go/certimate/te/internal/workflow/node-processor"
+	"github.com/certimate-go/certimate/te/pkg/logging"
 )
 
 type workflowInvoker struct {

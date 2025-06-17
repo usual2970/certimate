@@ -13,9 +13,9 @@ import (
 	aliopen "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

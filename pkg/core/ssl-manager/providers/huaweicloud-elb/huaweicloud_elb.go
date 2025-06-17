@@ -16,9 +16,9 @@ import (
 	hciammodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/model"
 	hciamregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/iam/v3/region"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

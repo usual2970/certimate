@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/usual2970/certimate/pkg/core"
-	"github.com/usual2970/certimate/pkg/core/ssl-applicator/acme-dns01/providers/dynv6/internal"
+	"github.com/certimate-go/certimate/pkg/core"
+	"github.com/certimate-go/certimate/te/pkg/core/ssl-applicator/acme-dns01/providers/dynv6/internal"
 )
 
 type ChallengeProviderConfig struct {

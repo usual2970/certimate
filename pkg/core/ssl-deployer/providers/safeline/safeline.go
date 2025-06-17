@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	safelinesdk "github.com/usual2970/certimate/pkg/sdk3rd/safeline"
+	"github.com/certimate-go/certimate/pkg/core"
+	safelinesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/safeline"
 )
 
 type SSLDeployerProviderConfig struct {

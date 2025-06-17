@@ -15,8 +15,8 @@ import (
 	jdsslclient "github.com/jdcloud-api/jdcloud-sdk-go/services/ssl/client"
 	"golang.org/x/exp/slices"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

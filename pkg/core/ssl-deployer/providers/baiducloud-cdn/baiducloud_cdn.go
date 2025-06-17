@@ -9,7 +9,7 @@ import (
 
 	bcecdn "github.com/baidubce/bce-sdk-go/services/cdn"
 	bcecdnapi "github.com/baidubce/bce-sdk-go/services/cdn/api"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

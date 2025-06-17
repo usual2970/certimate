@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	btwafsdk "github.com/usual2970/certimate/pkg/sdk3rd/btwaf"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	btwafsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/btwaf"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

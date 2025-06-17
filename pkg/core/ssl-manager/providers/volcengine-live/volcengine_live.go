@@ -11,8 +11,8 @@ import (
 	velive "github.com/volcengine/volc-sdk-golang/service/live/v20230101"
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

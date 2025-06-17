@@ -12,8 +12,8 @@ import (
 	awscred "github.com/aws/aws-sdk-go-v2/credentials"
 	awsiam "github.com/aws/aws-sdk-go-v2/service/iam"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

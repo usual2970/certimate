@@ -11,9 +11,9 @@ import (
 	aliga "github.com/alibabacloud-go/ga-20191120/v3/client"
 	"github.com/alibabacloud-go/tea/tea"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aliyun-cas"
-	xslices "github.com/usual2970/certimate/pkg/utils/slices"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aliyun-cas"
+	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

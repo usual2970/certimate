@@ -9,9 +9,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/usual2970/certimate/pkg/core"
-	cdnflysdk "github.com/usual2970/certimate/pkg/sdk3rd/cdnfly"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	cdnflysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/cdnfly"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLDeployerProviderConfig struct {

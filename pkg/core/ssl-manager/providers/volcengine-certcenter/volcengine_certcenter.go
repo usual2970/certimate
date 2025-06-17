@@ -9,8 +9,8 @@ import (
 	ve "github.com/volcengine/volcengine-go-sdk/volcengine"
 	vesession "github.com/volcengine/volcengine-go-sdk/volcengine/session"
 
-	"github.com/usual2970/certimate/pkg/core"
-	veccsdk "github.com/usual2970/certimate/pkg/sdk3rd/volcengine/certcenter"
+	"github.com/certimate-go/certimate/pkg/core"
+	veccsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/volcengine/certcenter"
 )
 
 type SSLManagerProviderConfig struct {

@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/usual2970/certimate/internal/domain"
-	xhttp "github.com/usual2970/certimate/pkg/utils/http"
+	"github.com/certimate-go/certimate/internal/domain"
+	xhttp "github.com/certimate-go/certimate/te/pkg/utils/http"
 )
 
 type monitorNode struct {

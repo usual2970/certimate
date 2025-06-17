@@ -9,7 +9,7 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLManagerProviderConfig struct {

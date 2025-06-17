@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/usual2970/certimate/internal/domain/expr"
-	xmaps "github.com/usual2970/certimate/pkg/utils/maps"
+	"github.com/certimate-go/certimate/internal/domain/expr"
+	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
 )
 
 const CollectionNameWorkflow = "workflow"

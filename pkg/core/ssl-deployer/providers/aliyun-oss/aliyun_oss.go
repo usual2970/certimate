@@ -7,7 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

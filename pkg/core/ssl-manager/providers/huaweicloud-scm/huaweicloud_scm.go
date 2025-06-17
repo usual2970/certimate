@@ -12,9 +12,9 @@ import (
 	hcscmmodel "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/model"
 	hcscmregion "github.com/huaweicloud/huaweicloud-sdk-go-v3/services/scm/v3/region"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

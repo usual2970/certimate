@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Forks](https://img.shields.io/github/forks/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Docker Pulls](https://img.shields.io/docker/pulls/usual2970/certimate?style=flat)](https://hub.docker.com/r/usual2970/certimate)
-[![Release](https://img.shields.io/github/v/release/usual2970/certimate?style=flat&sort=semver)](https://github.com/usual2970/certimate/releases)
-[![License](https://img.shields.io/github/license/usual2970/certimate?style=flat)](https://mit-license.org/)
+[![Stars](https://img.shields.io/github/stars/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Forks](https://img.shields.io/github/forks/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Docker Pulls](https://img.shields.io/docker/pulls/certimate/certimate?style=flat)](https://hub.docker.com/r/certimate/certimate)
+[![Release](https://img.shields.io/github/v/release/certimate-go/certimate?style=flat&sort=semver)](https://github.com/certimate-go/certimate/releases)
+[![License](https://img.shields.io/github/license/certimate-go/certimate?style=flat)](https://mit-license.org/)
 
 </div>
 
@@ -48,7 +48,7 @@ Certimate aims to provide users with a secure and user-friendly SSL certificate 
 
 **Deploy Certimate in 5 minutes!**
 
-Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/usual2970/certimate/releases), extract and then execute:
+Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/certimate-go/certimate/te/releases), extract and then execute:
 
 ```bash
 ./certimate serve
@@ -85,7 +85,7 @@ Certimate is a free and open-source project, licensed under the [MIT License](./
 You can support the development of Certimate in the following ways:
 
 - **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, [you can submit code to us](CONTRIBUTING_EN.md).
-- **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/usual2970/certimate/issues) to us.
+- **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/certimate-go/certimate/te/issues) to us.
 
 Support for more service providers, UI enhancements, bug fixes, and documentation improvements are all welcome. We encourage everyone to contribute.
 
@@ -106,4 +106,4 @@ This software is provided under the [MIT License](https://opensource.org/license
 
 ## 🚀 Star History
 
-[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
+[![Stargazers over time](https://starchart.cc/certimate-go/certimate.svg?variant=adaptive)](https://starchart.cc/certimate-go/certimate)

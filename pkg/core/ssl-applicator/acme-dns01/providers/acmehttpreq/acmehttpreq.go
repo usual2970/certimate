@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-acme/lego/v4/providers/dns/httpreq"
 
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type ChallengeProviderConfig struct {

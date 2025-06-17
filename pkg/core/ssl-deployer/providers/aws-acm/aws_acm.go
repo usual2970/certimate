@@ -11,9 +11,9 @@ import (
 	awscred "github.com/aws/aws-sdk-go-v2/credentials"
 	awsacm "github.com/aws/aws-sdk-go-v2/service/acm"
 
-	"github.com/usual2970/certimate/pkg/core"
-	sslmgrsp "github.com/usual2970/certimate/pkg/core/ssl-manager/providers/aws-acm"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	sslmgrsp "github.com/certimate-go/certimate/te/pkg/core/ssl-manager/providers/aws-acm"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/usual2970/certimate/pkg/core"
-	ctyunao "github.com/usual2970/certimate/pkg/sdk3rd/ctyun/ao"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
-	xtypes "github.com/usual2970/certimate/pkg/utils/types"
+	"github.com/certimate-go/certimate/pkg/core"
+	ctyunao "github.com/certimate-go/certimate/te/pkg/sdk3rd/ctyun/ao"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xtypes "github.com/certimate-go/certimate/te/pkg/utils/types"
 )
 
 type SSLManagerProviderConfig struct {

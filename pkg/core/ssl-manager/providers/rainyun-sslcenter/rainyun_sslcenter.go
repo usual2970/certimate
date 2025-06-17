@@ -7,9 +7,9 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/usual2970/certimate/pkg/core"
-	rainyunsdk "github.com/usual2970/certimate/pkg/sdk3rd/rainyun"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	rainyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/rainyun"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

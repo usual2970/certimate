@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Forks](https://img.shields.io/github/forks/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Docker Pulls](https://img.shields.io/docker/pulls/usual2970/certimate?style=flat)](https://hub.docker.com/r/usual2970/certimate)
-[![Release](https://img.shields.io/github/v/release/usual2970/certimate?sort=semver)](https://github.com/usual2970/certimate/releases)
-[![License](https://img.shields.io/github/license/usual2970/certimate)](https://mit-license.org/)
+[![Stars](https://img.shields.io/github/stars/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Forks](https://img.shields.io/github/forks/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Docker Pulls](https://img.shields.io/docker/pulls/certimate/certimate?style=flat)](https://hub.docker.com/r/certimate/certimate)
+[![Release](https://img.shields.io/github/v/release/certimate-go/certimate?sort=semver)](https://github.com/certimate-go/certimate/releases)
+[![License](https://img.shields.io/github/license/certimate-go/certimate)](https://mit-license.org/)
 
 </div>
 
@@ -48,7 +48,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 **5 分钟部署 Certimate！**
 
-以二进制部署为例，从 [GitHub Releases](https://github.com/usual2970/certimate/releases) 页面下载预先编译好的二进制可执行文件压缩包，解压缩后在终端中执行：
+以二进制部署为例，从 [GitHub Releases](https://github.com/certimate-go/certimate/te/releases) 页面下载预先编译好的二进制可执行文件压缩包，解压缩后在终端中执行：
 
 ```bash
 ./certimate serve
@@ -87,7 +87,7 @@ Certimate 是一个免费且开源的项目，采用 [MIT License](./LICENSE.md)
 你可以通过以下方式来支持 Certimate 的开发：
 
 - 提交代码：如果你发现了 Bug 或有新的功能需求，而你又有相关经验，可以[提交代码](CONTRIBUTING.md)给我们。
-- 提交 Issue：功能建议或者 Bug 可以[提交 Issue](https://github.com/usual2970/certimate/issues) 给我们。
+- 提交 Issue：功能建议或者 Bug 可以[提交 Issue](https://github.com/certimate-go/certimate/te/issues) 给我们。
 
 支持更多提供商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家参与贡献。
 
@@ -108,4 +108,4 @@ Certimate 基于 [MIT License](https://opensource.org/licenses/MIT) 发布，完
 
 ## 🚀 Star 趋势图
 
-[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
+[![Stargazers over time](https://starchart.cc/certimate-go/certimate.svg?variant=adaptive)](https://starchart.cc/certimate-go/certimate)

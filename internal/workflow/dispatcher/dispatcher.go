@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
-	xslices "github.com/usual2970/certimate/pkg/utils/slices"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/te/internal/domain"
+	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
 )
 
 var maxWorkers = 1

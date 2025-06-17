@@ -12,7 +12,7 @@ import (
 	alifc3 "github.com/alibabacloud-go/fc-20230330/v4/client"
 	alifc2 "github.com/alibabacloud-go/fc-open-20210406/v2/client"
 	"github.com/alibabacloud-go/tea/tea"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	upyunsdk "github.com/usual2970/certimate/pkg/sdk3rd/upyun/console"
+	"github.com/certimate-go/certimate/pkg/core"
+	upyunsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/upyun/console"
 )
 
 type SSLManagerProviderConfig struct {

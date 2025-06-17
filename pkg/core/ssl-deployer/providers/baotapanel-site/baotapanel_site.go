@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	btsdk "github.com/usual2970/certimate/pkg/sdk3rd/btpanel"
-	xslices "github.com/usual2970/certimate/pkg/utils/slices"
+	"github.com/certimate-go/certimate/pkg/core"
+	btsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/btpanel"
+	xslices "github.com/certimate-go/certimate/te/pkg/utils/slices"
 )
 
 type SSLDeployerProviderConfig struct {

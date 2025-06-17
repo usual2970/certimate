@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	bunnysdk "github.com/usual2970/certimate/pkg/sdk3rd/bunny"
+	"github.com/certimate-go/certimate/pkg/core"
+	bunnysdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/bunny"
 )
 
 type SSLDeployerProviderConfig struct {

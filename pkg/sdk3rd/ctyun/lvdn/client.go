@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/usual2970/certimate/pkg/sdk3rd/ctyun/openapi"
+	"github.com/certimate-go/certimate/pkg/sdk3rd/ctyun/openapi"
 )
 
 const endpoint = "https://ctlvdn-global.ctapi.ctyun.cn"

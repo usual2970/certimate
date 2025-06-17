@@ -1,4 +1,4 @@
-module github.com/usual2970/certimate
+module github.com/certimate-go/certimate
 
 go 1.24.0
 

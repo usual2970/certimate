@@ -12,8 +12,8 @@ import (
 
 	"github.com/luthermonson/go-proxmox"
 
-	"github.com/usual2970/certimate/pkg/core"
-	xhttp "github.com/usual2970/certimate/pkg/utils/http"
+	"github.com/certimate-go/certimate/pkg/core"
+	xhttp "github.com/certimate-go/certimate/te/pkg/utils/http"
 )
 
 type SSLDeployerProviderConfig struct {

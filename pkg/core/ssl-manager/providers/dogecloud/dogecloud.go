@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/usual2970/certimate/pkg/core"
-	dogesdk "github.com/usual2970/certimate/pkg/sdk3rd/dogecloud"
+	"github.com/certimate-go/certimate/pkg/core"
+	dogesdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/dogecloud"
 )
 
 type SSLManagerProviderConfig struct {

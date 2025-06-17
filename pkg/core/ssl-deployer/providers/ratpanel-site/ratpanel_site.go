@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/pkg/core"
-	rpsdk "github.com/usual2970/certimate/pkg/sdk3rd/ratpanel"
+	"github.com/certimate-go/certimate/pkg/core"
+	rpsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/ratpanel"
 )
 
 type SSLDeployerProviderConfig struct {

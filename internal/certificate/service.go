@@ -13,12 +13,12 @@ import (
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/pocketbase/dbx"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/domain/dtos"
-	"github.com/usual2970/certimate/internal/notify"
-	"github.com/usual2970/certimate/internal/repository"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/te/internal/domain"
+	"github.com/certimate-go/certimate/te/internal/domain/dtos"
+	"github.com/certimate-go/certimate/te/internal/notify"
+	"github.com/certimate-go/certimate/te/internal/repository"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 const (

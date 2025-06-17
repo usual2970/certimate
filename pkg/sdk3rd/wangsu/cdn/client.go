@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 
-	"github.com/usual2970/certimate/pkg/sdk3rd/wangsu/openapi"
+	"github.com/certimate-go/certimate/pkg/sdk3rd/wangsu/openapi"
 )
 
 type Client struct {

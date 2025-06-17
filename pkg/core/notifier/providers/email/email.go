@@ -11,7 +11,7 @@ import (
 
 	"github.com/domodwyer/mailyak/v3"
 
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type NotifierProviderConfig struct {

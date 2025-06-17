@@ -7,10 +7,10 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/pkg/core"
-	xmaps "github.com/usual2970/certimate/pkg/utils/maps"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/te/internal/repository"
+	"github.com/certimate-go/certimate/te/pkg/core"
+	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
 )
 
 // Deprecated: v0.4.x 将废弃

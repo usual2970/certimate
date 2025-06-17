@@ -13,10 +13,10 @@ import (
 	"github.com/go-acme/lego/v4/registration"
 	"golang.org/x/sync/singleflight"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/repository"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
-	xmaps "github.com/usual2970/certimate/pkg/utils/maps"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/te/internal/repository"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
+	xmaps "github.com/certimate-go/certimate/te/pkg/utils/maps"
 )
 
 type acmeUser struct {

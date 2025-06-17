@@ -15,9 +15,9 @@ import (
 	"github.com/ucloud/ucloud-sdk-go/ucloud"
 	ucloudauth "github.com/ucloud/ucloud-sdk-go/ucloud/auth"
 
-	"github.com/usual2970/certimate/pkg/core"
-	usslsdk "github.com/usual2970/certimate/pkg/sdk3rd/ucloud/ussl"
-	xcert "github.com/usual2970/certimate/pkg/utils/cert"
+	"github.com/certimate-go/certimate/pkg/core"
+	usslsdk "github.com/certimate-go/certimate/te/pkg/sdk3rd/ucloud/ussl"
+	xcert "github.com/certimate-go/certimate/te/pkg/utils/cert"
 )
 
 type SSLManagerProviderConfig struct {

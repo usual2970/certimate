@@ -9,7 +9,7 @@ import (
 	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdliveapi "github.com/jdcloud-api/jdcloud-sdk-go/services/live/apis"
 	jdliveclient "github.com/jdcloud-api/jdcloud-sdk-go/services/live/client"
-	"github.com/usual2970/certimate/pkg/core"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {
