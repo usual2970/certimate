@@ -1,83 +1,106 @@
-# Contributing to Certimate
+# Contribution Guide
 
-Thank you for taking the time to improve Certimate! Below is a guide for submitting a PR (Pull Request) to the main Certimate repository.
+Thank you for taking the time to improve Certimate! Below is a guide for submitting a PR (Pull Request) to the Certimate repository.
 
-- [Contributing to Certimate](#contributing-to-certimate)
+We need to be nimble and ship fast given where we are, but we also want to make sure that contributors like you get as smooth an experience at contributing as possible. We've assembled this contribution guide for that purpose, aiming at getting you familiarized with the codebase & how we work with contributors, so you could quickly jump to the fun part.
+
+Index:
+
+- [Development](#development)
   - [Prerequisites](#prerequisites)
-  - [Making Changes in the Go Code](#making-changes-in-the-go-code)
-  - [Making Changes in the Admin UI](#making-changes-in-the-admin-ui)
+  - [Backend Code](#backend-code)
+  - [Frontend Code](#frontend-code)
+- [Submitting PR](#submitting-pr)
+  - [Pull Request Process](#pull-request-process)
+- [Getting Help](#getting-help)
 
-## Prerequisites
+---
 
-- Go 1.24+ (for Go code changes)
-- Node 20+ (for Admin UI changes)
+## Development
 
-If you haven't done so already, you can fork the Certimate repository and clone your fork to work locally:
+### Prerequisites
 
-```bash
-git clone https://github.com/your_username/certimate.git
-```
+- Go 1.24+ (for backend code changes)
+- Node.js 22.0+ (for frontend code changes)
 
-> **Important:**
-> It is recommended to create a new branch from `main` for each bug fix or feature. If you plan to submit multiple PRs, ensure the changes are in separate branches for easier review and eventual merge.
-> Keep each PR focused on a single feature or fix.
+### Backend Code
 
-## Making Changes in the Go Code
+The backend code of Certimate is developed using Golang. It is a monolithic application based on [Pocketbase](https://github.com/pocketbase/pocketbase).
 
-Once you have made changes to the Go code in Certimate, follow these steps to run the project:
+Once you have made changes to the backend code in Certimate, follow these steps to run the project:
 
 1. Navigate to the root directory.
-
-2. Start the service by running:
-
+2. Install dependencies:
+   ```bash
+   go mod vendor
+   ```
+3. Start the local development server:
    ```bash
    go run main.go serve
    ```
 
-This will start a web server at `http://localhost:8090` using the prebuilt Admin UI located in `ui/dist`.
+This will start a web server at `http://localhost:8090` using the prebuilt WebUI located in `/ui/dist`.
 
-> if you encounter an error `ui/embed.go:10:12: pattern all:dist: no matching files found`, please refer to [build Admin UI](#making-changes-in-the-admin-ui)
+> If you encounter an error `ui/embed.go: pattern all:dist: no matching files found`, please refer to _[Frontend Code](#frontend-code)_ and build WebUI first.
 
-**Before submitting a PR to the main repository, consider:**
+**Before submitting a PR to the main repository, you should:**
 
-- Format your source code by using [gofumpt](https://github.com/mvdan/gofumpt).
+- Format your source code by using [gofumpt](https://github.com/mvdan/gofumpt). Recommended using VSCode and installing the gofumpt plugin to automatically format when saving.
+- Adding unit or integration tests for your changes (with go standard library `testing` package).
 
-- Adding unit or integration tests for your changes. Certimate uses Go’s standard `testing` package. You can run tests using the following command (while in the root project directory):
+### Frontend Code
 
-  ```bash
-  go test ./...
-  ```
+The frontend code of Certimate is developed using TypeScript. It is a SPA based on [React](https://github.com/facebook/react) and [Vite](https://github.com/vitejs/vite).
 
-## Making Changes in the Admin UI
+Once you have made changes to the backend code in Certimate, follow these steps to run the project:
 
-Certimate’s Admin UI is a single-page application (SPA) built using React and Vite.
-
-To start the Admin UI:
-
-1. Navigate to the `ui` project directory.
-
-2. Install the necessary dependencies by running:
-
+1. Navigate to the `/ui` directory.
+2. Install dependencies:
    ```bash
    npm install
    ```
-
-3. Start the Vite development server:
-
+3. Start the local development server:
    ```bash
    npm run dev
    ```
 
-You can now access the running Admin UI at `http://localhost:5173` in your browser.
+This will start a web server at `http://localhost:5173`. You can now access the WebUI in your browser.
 
-Since the Admin UI is a client-side application, you will also need to have the Certimate backend running. You can either manually run Certimate or use a prebuilt executable.
-
-Any changes you make in the Admin UI will be automatically reflected in the browser without requiring a page reload.
-
-After completing your changes, build the Admin UI so it can be embedded into the Go package:
+After completing your changes, build the WebUI so it can be embedded into the Go package:
 
 ```bash
 npm run build
 ```
 
-Once all steps are completed, you are ready to submit a PR to the main Certimate repository.
+**Before submitting a PR to the main repository, you should:**
+
+- Format your source code by using [ESLint](https://github.com/eslint/eslint). Recommended using VSCode and installing the ESLint plugin to automatically format when saving.
+
+## Submitting PR
+
+Before opening a Pull Request, please open an issue to discuss the change and get feedback from the maintainers. This will helps us:
+
+- To understand the context of the change.
+- To ensure it fits into Certimate's roadmap.
+- To prevent us from duplicating work.
+- To prevent you from spending time on a change that we may not be able to accept.
+
+### Pull Request Process
+
+1. Fork the repository.
+2. Before you draft a PR, please open an issue to discuss the changes you want to make.
+3. Create a new branch for your changes.
+4. Please add tests for your changes accordingly.
+5. Ensure your code passes the existing tests.
+6. Please link the issue in the PR description.
+7. Get merged!
+
+> [!IMPORTANT]
+>
+> It is recommended to create a new branch from `main` for each bug fix or feature. If you plan to submit multiple PRs, ensure the changes are in separate branches for easier review and eventual merge.
+>
+> Keep each PR focused on a single feature or fix.
+
+## Getting Help
+
+If you ever get stuck or get a burning question while contributing, simply shoot your queries our way via the GitHub issues.
