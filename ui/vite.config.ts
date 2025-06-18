@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { type SpawnSyncReturns, execFileSync } from "node:child_process";
 import path from "node:path";
 
 import legacyPlugin from "@vitejs/plugin-legacy";
@@ -6,7 +6,15 @@ import reactPlugin from "@vitejs/plugin-react";
 import fs from "fs-extra";
 import { type Plugin, defineConfig } from "vite";
 
-const appVersion = execFileSync("git", ["describe", "--match", "v[0-9]*", "--always", "--tags", "--abbrev=8"])?.toString();
+let appVersion = undefined;
+try {
+  appVersion = execFileSync("git", ["describe", "--match", "v[0-9]*", "--always", "--tags", "--abbrev=8"], {
+    stdio: [],
+  })?.toString();
+} catch (error) {
+  const err = error as SpawnSyncReturns<Buffer>;
+  console.warn("[Warn] failed to get version number through git", err?.stderr?.toString());
+}
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   return {
