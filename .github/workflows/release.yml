@@ -59,7 +59,11 @@ jobs:
           mkdir -p dist/linux
           for ARCH in amd64 arm64 armv7; do
             if [ "$ARCH" == "armv7" ]; then
-              export GOARM=7
+              go env -w GOARCH=arm
+              go env -w GOARM=7
+            else
+              go env -w GOARCH=$ARCH
+              go env -u GOARM
             fi
             go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
           done
@@ -98,6 +102,7 @@ jobs:
         run: |
           mkdir -p dist/darwin
           for ARCH in amd64 arm64; do
+            go env -w GOARCH=$ARCH
             go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
           done
 
@@ -135,6 +140,7 @@ jobs:
         run: |
           mkdir -p dist/windows
           for ARCH in amd64 arm64; do
+            go env -w GOARCH=$ARCH
             go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
           done
 
