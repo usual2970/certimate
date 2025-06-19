@@ -6,6 +6,7 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 	m "github.com/pocketbase/pocketbase/migrations"
+
 	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 

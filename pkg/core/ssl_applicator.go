@@ -1,4 +1,4 @@
-﻿package core
+package core
 
 import (
 	"github.com/go-acme/lego/v4/challenge"

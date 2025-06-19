@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/certimate-go/certimate/pkg/core"
 	jdcore "github.com/jdcloud-api/jdcloud-sdk-go/core"
 	jdvodapi "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/apis"
 	jdvodclient "github.com/jdcloud-api/jdcloud-sdk-go/services/vod/client"
-	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLDeployerProviderConfig struct {

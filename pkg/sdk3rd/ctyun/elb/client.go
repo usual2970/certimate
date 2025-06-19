@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/certimate-go/certimate/pkg/sdk3rd/ctyun/openapi"
+	"github.com/go-resty/resty/v2"
 )
 
 const endpoint = "https://ctelb-global.ctapi.ctyun.cn"

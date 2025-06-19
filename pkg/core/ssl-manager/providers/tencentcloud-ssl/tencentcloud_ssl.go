@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/certimate-go/certimate/pkg/core"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	tcssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
-	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type SSLManagerProviderConfig struct {
@@ -65,10 +65,8 @@ func (m *SSLManagerProvider) Upload(ctx context.Context, certPEM string, privkey
 		return nil, fmt.Errorf("failed to execute sdk request 'ssl.UploadCertificate': %w", err)
 	}
 
-	certId := *uploadCertificateResp.Response.CertificateId
 	return &core.SSLManageUploadResult{
-		CertId:   certId,
-		CertName: "",
+		CertId: *uploadCertificateResp.Response.CertificateId,
 	}, nil
 }
 
