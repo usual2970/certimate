@@ -7,10 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/usual2970/certimate/internal/deployer"
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/repository"
 	"golang.org/x/exp/maps"
+
+	"github.com/certimate-go/certimate/internal/deployer"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type deployNode struct {

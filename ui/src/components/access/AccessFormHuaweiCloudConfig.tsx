@@ -28,12 +28,10 @@ const AccessFormHuaweiCloudConfig = ({ form: formInst, formName, disabled, initi
   const formSchema = z.object({
     accessKeyId: z
       .string()
-      .trim()
       .min(1, t("access.form.huaweicloud_access_key_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretAccessKey: z
       .string()
-      .trim()
       .min(1, t("access.form.huaweicloud_secret_access_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     enterpriseProjectId: z.string().nullish(),

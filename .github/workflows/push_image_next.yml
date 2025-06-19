@@ -31,8 +31,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            usual2970/certimate
-            registry.cn-shanghai.aliyuncs.com/usual2970/certimate
+            certimate/certimate
+            registry.cn-shanghai.aliyuncs.com/certimate/certimate
           tags: |
             type=ref,event=tag,pattern={{version}}
           flavor: |

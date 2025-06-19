@@ -46,18 +46,15 @@ const DeployNodeConfigFormHuaweiCloudELBConfig = ({
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.huaweicloud_elb_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.huaweicloud_elb_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.huaweicloud_elb_region.placeholder")),
     certificateId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_CERTIFICATE || !!v?.trim(), t("workflow_node.deploy.form.huaweicloud_elb_certificate_id.placeholder")),
     loadbalancerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine(
         (v) => fieldResourceType !== RESOURCE_TYPE_LOADBALANCER || !!v?.trim(),
@@ -66,7 +63,6 @@ const DeployNodeConfigFormHuaweiCloudELBConfig = ({
     listenerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine((v) => fieldResourceType !== RESOURCE_TYPE_LISTENER || !!v?.trim(), t("workflow_node.deploy.form.huaweicloud_elb_listener_id.placeholder")),
   });

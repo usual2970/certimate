@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"testing"
 
-	"github.com/usual2970/certimate/internal/domain"
-	nodeprocessor "github.com/usual2970/certimate/internal/workflow/node-processor"
+	"github.com/certimate-go/certimate/internal/domain"
+	nodeprocessor "github.com/certimate-go/certimate/internal/workflow/node-processor"
 )
 
 func Test_MonitorNode(t *testing.T) {

@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Forks](https://img.shields.io/github/forks/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Docker Pulls](https://img.shields.io/docker/pulls/usual2970/certimate?style=flat)](https://hub.docker.com/r/usual2970/certimate)
-[![Release](https://img.shields.io/github/v/release/usual2970/certimate?sort=semver)](https://github.com/usual2970/certimate/releases)
-[![License](https://img.shields.io/github/license/usual2970/certimate)](https://mit-license.org/)
+[![Stars](https://img.shields.io/github/stars/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Forks](https://img.shields.io/github/forks/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Docker Pulls](https://img.shields.io/docker/pulls/certimate/certimate?style=flat)](https://hub.docker.com/r/certimate/certimate)
+[![Release](https://img.shields.io/github/v/release/certimate-go/certimate?style=flat&sort=semver)](https://github.com/certimate-go/certimate/releases)
+[![License](https://img.shields.io/github/license/certimate-go/certimate?style=flat)](https://mit-license.org/)
 
 </div>
 
@@ -48,7 +48,7 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 **5 分钟部署 Certimate！**
 
-以二进制部署为例，从 [GitHub Releases](https://github.com/usual2970/certimate/releases) 页面下载预先编译好的二进制可执行文件压缩包，解压缩后在终端中执行：
+以二进制部署为例，从 [GitHub Releases](https://github.com/certimate-go/certimate/releases) 页面下载预先编译好的二进制可执行文件压缩包，解压缩后在终端中执行：
 
 ```bash
 ./certimate serve
@@ -71,10 +71,10 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 相关文章：
 
-- [使用 CNAME 完成 ACME DNS-01 质询](https://docs.certimate.me/blog/cname)
-- [v0.3.0：第二个不向后兼容的大版本](https://docs.certimate.me/blog/v0.3.0)
-- [v0.2.0：第一个不向后兼容的大版本](https://docs.certimate.me/blog/v0.2.0)
-- [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
+- [《使用 CNAME 完成 ACME DNS-01 质询》](https://docs.certimate.me/blog/cname)
+- [《v0.3.0：第二个不向后兼容的大版本》](https://docs.certimate.me/blog/v0.3.0)
+- [《v0.2.0：第一个不向后兼容的大版本》](https://docs.certimate.me/blog/v0.2.0)
+- [《Why Certimate?》](https://docs.certimate.me/blog/why-certimate)
 
 ## ⭐ 运行界面
 
@@ -82,18 +82,19 @@ Certimate 旨在为用户提供一个安全、简便的 SSL 证书管理解决�
 
 ## 🤝 参与贡献
 
-Certimate 是一个免费且开源的项目，采用 [MIT License](./LICENSE.md)。你可以使用它做任何你想做的事，甚至把它当作一个付费服务提供给用户。
+Certimate 是一个免费且开源的项目。我们欢迎任何人为 Certimate 做出贡献，以帮助改善 Certimate。包括但不限于：提交代码、反馈缺陷、交流想法，或分享你基于 Certimate 的使用案例。同时，我们也欢迎用户在个人博客或社交媒体上分享 Certimate。
 
-你可以通过以下方式来支持 Certimate 的开发：
+如果你想要贡献代码，请先阅读我们的[贡献指南](./CONTRIBUTING.md)。
 
-- 提交代码：如果你发现了 Bug 或有新的功能需求，而你又有相关经验，可以[提交代码](CONTRIBUTING.md)给我们。
-- 提交 Issue：功能建议或者 Bug 可以[提交 Issue](https://github.com/usual2970/certimate/issues) 给我们。
+请在 https://github.com/certimate-go/certimate 提交 [Issues](https://github.com/certimate-go/certimate/issues) 和 [Pull Requests](https://github.com/certimate-go/certimate/pulls)。
 
-支持更多提供商、UI 的优化改进、Bug 修复、文档完善等，欢迎大家参与贡献。
+#### 感谢以下贡献者对 Certimate 做出的贡献：
+
+[![Contributors](https://contrib.rocks/image?repo=certimate-go/certimate)](https://github.com/certimate-go/certimate/graphs/contributors)
 
 ## ⛔ 免责声明
 
-Certimate 基于 [MIT License](https://opensource.org/licenses/MIT) 发布，完全免费提供，旨在“按现状”供用户使用。作者及贡献者不对使用本软件所产生的任何直接或间接后果承担责任，包括但不限于性能下降、数据丢失、服务中断、或任何其他类型的损害。
+Certimate 遵循 [MIT License](https://opensource.org/licenses/MIT) 开源协议，完全免费提供，旨在“按现状”供用户使用。作者及贡献者不对使用本软件所产生的任何直接或间接后果承担责任，包括但不限于性能下降、数据丢失、服务中断、或任何其他类型的损害。
 
 **无任何保证**：本软件不提供任何明示或暗示的保证，包括但不限于对特定用途的适用性、无侵权性、商用性及可靠性的保证。
 
@@ -104,8 +105,8 @@ Certimate 基于 [MIT License](https://opensource.org/licenses/MIT) 发布，完
 - [Telegram](https://t.me/+ZXphsppxUg41YmVl)
 - 微信群聊（超 200 人需邀请入群，可先加作者好友）
 
-  <img src="https://i.imgur.com/8xwsLTA.png" width="240"/>
+  <img src="https://i.imgur.com/8xwsLTA.png" width="200"/>
 
 ## 🚀 Star 趋势图
 
-[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
+[![Stargazers over time](https://starchart.cc/certimate-go/certimate.svg?variant=adaptive)](https://starchart.cc/certimate-go/certimate)

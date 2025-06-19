@@ -28,7 +28,7 @@ const Version = ({ className, style }: VersionProps) => {
       <Divider type="vertical" />
 
       <Badge styles={{ indicator: { transform: "scale(0.75) translate(50%, -50%)" } }} count={hasNewVersion ? "NEW" : undefined}>
-        <Typography.Link type="secondary" href="https://github.com/usual2970/certimate/releases" target="_blank">
+        <Typography.Link type="secondary" href="https://github.com/certimate-go/certimate/releases" target="_blank">
           {version}
         </Typography.Link>
       </Badge>

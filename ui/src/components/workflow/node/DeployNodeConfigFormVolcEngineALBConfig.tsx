@@ -46,12 +46,10 @@ const DeployNodeConfigFormVolcEngineALBConfig = ({
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.volcengine_alb_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.volcengine_alb_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.volcengine_alb_region.placeholder")),
     loadbalancerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine(
         (v) => ![RESOURCE_TYPE_LOADBALANCER].includes(fieldResourceType) || !!v?.trim(),
@@ -60,7 +58,6 @@ const DeployNodeConfigFormVolcEngineALBConfig = ({
     listenerId: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim()
       .nullish()
       .refine(
         (v) => ![RESOURCE_TYPE_LISTENER].includes(fieldResourceType) || !!v?.trim(),

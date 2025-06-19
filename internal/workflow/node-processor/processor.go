@@ -6,7 +6,7 @@ import (
 	"io"
 	"log/slog"
 
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type NodeProcessor interface {

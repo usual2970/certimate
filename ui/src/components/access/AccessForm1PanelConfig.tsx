@@ -32,8 +32,7 @@ const AccessForm1PanelConfig = ({ form: formInst, formName, disabled, initialVal
     apiKey: z
       .string()
       .min(1, t("access.form.1panel_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

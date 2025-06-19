@@ -5,7 +5,7 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type Response struct {

@@ -28,14 +28,12 @@ const AccessFormBytePlusConfig = ({ form: formInst, formName, disabled, initialV
   const formSchema = z.object({
     accessKey: z
       .string()
-      .trim()
       .min(1, t("access.form.byteplus_access_key.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     secretKey: z
       .string()
       .min(1, t("access.form.byteplus_secret_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

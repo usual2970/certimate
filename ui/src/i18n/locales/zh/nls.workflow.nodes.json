@@ -715,7 +715,7 @@
   "workflow_node.deploy.form.tencentcloud_scf_region.tooltip": "这是什么？请参阅 <a href=\"https://cloud.tencent.com/document/product/583/17299\" target=\"_blank\">https://cloud.tencent.com/document/product/583/17299</a>",
   "workflow_node.deploy.form.tencentcloud_scf_domain.label": "腾讯云 SCF 自定义域名",
   "workflow_node.deploy.form.tencentcloud_scf_domain.placeholder": "输入腾讯云 SCF 自定义域名",
-  "workflow_node.deploy.form.tencentcloud_scf_domain.tooltip": "这是什么？请参阅 <a href=\"https://console.tencentcloud.com/scf\" target=\"_blank\">https://console.tencentcloud.com/scf</a>",
+  "workflow_node.deploy.form.tencentcloud_scf_domain.tooltip": "这是什么？请参阅 <a href=\"https://console.cloud.tencent.com/scf\" target=\"_blank\">https://console.cloud.tencent.com/scf</a>",
   "workflow_node.deploy.form.tencentcloud_ssl_deploy.guide": "小贴士：由于腾讯云证书部署任务是异步的，此节点若执行成功仅代表已创建部署任务，实际部署结果需要你自行前往腾讯云控制台查询。",
   "workflow_node.deploy.form.tencentcloud_ssl_deploy_region.label": "腾讯云云产品地域",
   "workflow_node.deploy.form.tencentcloud_ssl_deploy_region.placeholder": "请输入腾讯云云产品地域（例如：ap-guangzhou）",

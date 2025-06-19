@@ -65,7 +65,7 @@ jobs:
               go env -w GOARCH=$ARCH
               go env -u GOARM
             fi
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/linux/certimate_${GITHUB_REF#refs/tags/}_linux_$ARCH
           done
 
       - name: Upload Linux binaries
@@ -103,7 +103,7 @@ jobs:
           mkdir -p dist/darwin
           for ARCH in amd64 arm64; do
             go env -w GOARCH=$ARCH
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/darwin/certimate_${GITHUB_REF#refs/tags/}_darwin_$ARCH
           done
 
       - name: Upload macOS binaries
@@ -141,7 +141,7 @@ jobs:
           mkdir -p dist/windows
           for ARCH in amd64 arm64; do
             go env -w GOARCH=$ARCH
-            go build -ldflags="-s -w -X github.com/usual2970/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
+            go build -ldflags="-s -w -X github.com/certimate-go/certimate.Version=${GITHUB_REF#refs/tags/}" -o dist/windows/certimate_${GITHUB_REF#refs/tags/}_windows_$ARCH.exe
           done
 
       - name: Upload Windows binaries
@@ -174,7 +174,6 @@ jobs:
 
           find dist -type f -not -name "*.exe" -exec chmod +x {} \;
 
-          # 为每个二进制文件创建 zip 包
           cd dist
           for bin in certimate_*; do
             if [[ "$bin" == *".exe" ]]; then
@@ -185,7 +184,7 @@ jobs:
 
             tmpdir=$(mktemp -d)
             cp "$bin" "${tmpdir}/${entrypoint}"
-            cp ../README.md ../LICENSE.md ../CHANGELOG.md "$tmpdir"
+            cp ../LICENSE ../README.md ../CHANGELOG.md "$tmpdir"
 
             if [[ "$bin" == *".exe" ]]; then
               zip -j "${bin%.exe}.zip" "$tmpdir"/*
@@ -196,7 +195,6 @@ jobs:
             rm -rf "$tmpdir"
           done
 
-          # 创建校验和文件
           sha256sum *.zip > checksums.txt
 
       - name: Create Release

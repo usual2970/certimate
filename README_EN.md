@@ -2,11 +2,11 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Forks](https://img.shields.io/github/forks/usual2970/certimate?style=flat)](https://github.com/usual2970/certimate)
-[![Docker Pulls](https://img.shields.io/docker/pulls/usual2970/certimate?style=flat)](https://hub.docker.com/r/usual2970/certimate)
-[![Release](https://img.shields.io/github/v/release/usual2970/certimate?style=flat&sort=semver)](https://github.com/usual2970/certimate/releases)
-[![License](https://img.shields.io/github/license/usual2970/certimate?style=flat)](https://mit-license.org/)
+[![Stars](https://img.shields.io/github/stars/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Forks](https://img.shields.io/github/forks/certimate-go/certimate?style=flat)](https://github.com/certimate-go/certimate)
+[![Docker Pulls](https://img.shields.io/docker/pulls/certimate/certimate?style=flat)](https://hub.docker.com/r/certimate/certimate)
+[![Release](https://img.shields.io/github/v/release/certimate-go/certimate?style=flat&sort=semver)](https://github.com/certimate-go/certimate/releases)
+[![License](https://img.shields.io/github/license/certimate-go/certimate?style=flat)](https://mit-license.org/)
 
 </div>
 
@@ -48,7 +48,7 @@ Certimate aims to provide users with a secure and user-friendly SSL certificate 
 
 **Deploy Certimate in 5 minutes!**
 
-Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/usual2970/certimate/releases), extract and then execute:
+Download the archived package of precompiled binary files directly from [GitHub Releases](https://github.com/certimate-go/certimate/releases), extract and then execute:
 
 ```bash
 ./certimate serve
@@ -65,14 +65,14 @@ Work with Certimate right now. Or read other content in the documentation to lea
 
 ## 📄 Documentation
 
-Please visit the documentation site [docs.certimate.me](https://docs.certimate.me/en/).
+For full documentation, please visit [docs.certimate.me](https://docs.certimate.me/en/).
 
 Related articles:
 
-- [使用 CNAME 完成 ACME DNS-01 质询](https://docs.certimate.me/blog/cname)
-- [v0.3.0：第二个不向后兼容的大版本](https://docs.certimate.me/blog/v0.3.0)
-- [v0.2.0：第一个不向后兼容的大版本](https://docs.certimate.me/blog/v0.2.0)
-- [Why Certimate?](https://docs.certimate.me/blog/why-certimate)
+- [_使用 CNAME 完成 ACME DNS-01 质询_](https://docs.certimate.me/blog/cname)
+- [_v0.3.0：第二个不向后兼容的大版本_](https://docs.certimate.me/blog/v0.3.0)
+- [_v0.2.0：第一个不向后兼容的大版本_](https://docs.certimate.me/blog/v0.2.0)
+- [_Why Certimate?_](https://docs.certimate.me/blog/why-certimate)
 
 ## ⭐ Screenshot
 
@@ -80,18 +80,19 @@ Related articles:
 
 ## 🤝 Contributing
 
-Certimate is a free and open-source project, licensed under the [MIT License](./LICENSE.md). You can use it for anything you want, even offering it as a paid service to users.
+Certimate is a free and open-source project, and your feedback and contributions are needed and always welcome. Contributions include but are not limited to: submitting code, reporting bugs, sharing ideas, or showcasing your use cases based on Certimate. We also encourage users to share Certimate on personal blogs or social media.
 
-You can support the development of Certimate in the following ways:
+For those who'd like to contribute code, see our [Contribution Guide](./CONTRIBUTING_EN.md).
 
-- **Submit Code**: If you find a bug or have new feature requests, and you have relevant experience, [you can submit code to us](CONTRIBUTING_EN.md).
-- **Submit an Issue**: For feature suggestions or bugs, you can [submit an issue](https://github.com/usual2970/certimate/issues) to us.
+[Issues](https://github.com/certimate-go/certimate/issues) and [Pull Requests](https://github.com/certimate-go/certimate/pulls) are opened at https://github.com/certimate-go/certimate.
 
-Support for more service providers, UI enhancements, bug fixes, and documentation improvements are all welcome. We encourage everyone to contribute.
+#### Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=certimate-go/certimate)](https://github.com/certimate-go/certimate/graphs/contributors)
 
 ## ⛔ Disclaimer
 
-This software is provided under the [MIT License](https://opensource.org/licenses/MIT) and distributed “as-is” without any warranty of any kind. The authors and contributors are not responsible for any damages or losses resulting from the use or inability to use this software, including but not limited to data loss, business interruption, or any other potential harm.
+This repository is available under the [MIT License](https://opensource.org/licenses/MIT), and distributed “as-is” without any warranty of any kind. The authors and contributors are not responsible for any damages or losses resulting from the use or inability to use this software, including but not limited to data loss, business interruption, or any other potential harm.
 
 **No Warranties**: This software comes without any express or implied warranties, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and non-infringement.
 
@@ -102,8 +103,8 @@ This software is provided under the [MIT License](https://opensource.org/license
 - [Telegram](https://t.me/+ZXphsppxUg41YmVl)
 - Wechat Group
 
-  <img src="https://i.imgur.com/zSHEoIm.png" width="240"/>
+  <img src="https://i.imgur.com/zSHEoIm.png" width="200"/>
 
 ## 🚀 Star History
 
-[![Stargazers over time](https://starchart.cc/usual2970/certimate.svg?variant=adaptive)](https://starchart.cc/usual2970/certimate)
+[![Stargazers over time](https://starchart.cc/certimate-go/certimate.svg?variant=adaptive)](https://starchart.cc/certimate-go/certimate)

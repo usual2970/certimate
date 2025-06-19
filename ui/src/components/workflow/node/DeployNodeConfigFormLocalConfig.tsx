@@ -166,46 +166,38 @@ const DeployNodeConfigFormLocalConfig = ({ form: formInst, formName, disabled, i
     certPath: z
       .string()
       .min(1, t("workflow_node.deploy.form.local_cert_path.tooltip"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     certPathForServerOnly: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
     certPathForIntermediaOnly: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
     keyPath: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PEM || !!v?.trim(), { message: t("workflow_node.deploy.form.local_key_path.tooltip") }),
     pfxPassword: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PFX || !!v?.trim(), { message: t("workflow_node.deploy.form.local_pfx_password.tooltip") }),
     jksAlias: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.local_jks_alias.tooltip") }),
     jksKeypass: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.local_jks_keypass.tooltip") }),
     jksStorepass: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.local_jks_storepass.tooltip") }),
     shellEnv: z.union([z.literal(SHELLENV_SH), z.literal(SHELLENV_CMD), z.literal(SHELLENV_POWERSHELL)], {

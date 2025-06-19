@@ -37,8 +37,7 @@ const DeployNodeConfigFormAliyunCASDeployConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_cas_deploy_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_cas_deploy_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_cas_deploy_region.placeholder")),
     resourceIds: z.string({ message: t("workflow_node.deploy.form.aliyun_cas_deploy_resource_ids.placeholder") }).refine((v) => {
       if (!v) return false;
       return String(v)

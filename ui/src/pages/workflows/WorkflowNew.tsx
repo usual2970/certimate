@@ -37,12 +37,10 @@ const WorkflowNew = () => {
     name: z
       .string({ message: t("workflow.new.modal.form.name.placeholder") })
       .min(1, t("workflow.new.modal.form.name.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     description: z
       .string({ message: t("workflow.new.modal.form.description.placeholder") })
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

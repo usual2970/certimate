@@ -13,12 +13,12 @@ import (
 	"github.com/go-acme/lego/v4/certcrypto"
 	"github.com/pocketbase/dbx"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/domain/dtos"
-	"github.com/usual2970/certimate/internal/notify"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain/dtos"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 const (
@@ -145,7 +145,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const pfxPassword = "certimate"
 
-			certPFX, err := certutil.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
+			certPFX, err := xcert.TransformCertificateFromPEMToPFX(certificate.Certificate, certificate.PrivateKey, pfxPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -183,7 +183,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 		{
 			const jksPassword = "certimate"
 
-			certJKS, err := certutil.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
+			certJKS, err := xcert.TransformCertificateFromPEMToJKS(certificate.Certificate, certificate.PrivateKey, jksPassword, jksPassword, jksPassword)
 			if err != nil {
 				return nil, err
 			}
@@ -223,7 +223,7 @@ func (s *CertificateService) ArchiveFile(ctx context.Context, req *dtos.Certific
 }
 
 func (s *CertificateService) ValidateCertificate(ctx context.Context, req *dtos.CertificateValidateCertificateReq) (*dtos.CertificateValidateCertificateResp, error) {
-	certX509, err := certutil.ParseCertificateFromPEM(req.Certificate)
+	certX509, err := xcert.ParseCertificateFromPEM(req.Certificate)
 	if err != nil {
 		return nil, err
 	} else if time.Now().After(certX509.NotAfter) {

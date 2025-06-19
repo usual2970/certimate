@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/usual2970/certimate/internal/domain/expr"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
+	"github.com/certimate-go/certimate/internal/domain/expr"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
 )
 
 const CollectionNameWorkflow = "workflow"
@@ -121,62 +121,62 @@ type WorkflowNodeConfigForCondition struct {
 
 func (n *WorkflowNode) GetConfigForApply() WorkflowNodeConfigForApply {
 	return WorkflowNodeConfigForApply{
-		Domains:               maputil.GetString(n.Config, "domains"),
-		ContactEmail:          maputil.GetString(n.Config, "contactEmail"),
-		Provider:              maputil.GetString(n.Config, "provider"),
-		ProviderAccessId:      maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:        maputil.GetKVMapAny(n.Config, "providerConfig"),
-		CAProvider:            maputil.GetString(n.Config, "caProvider"),
-		CAProviderAccessId:    maputil.GetString(n.Config, "caProviderAccessId"),
-		CAProviderConfig:      maputil.GetKVMapAny(n.Config, "caProviderConfig"),
-		KeyAlgorithm:          maputil.GetOrDefaultString(n.Config, "keyAlgorithm", string(CertificateKeyAlgorithmTypeRSA2048)),
-		Nameservers:           maputil.GetString(n.Config, "nameservers"),
-		DnsPropagationWait:    maputil.GetInt32(n.Config, "dnsPropagationWait"),
-		DnsPropagationTimeout: maputil.GetInt32(n.Config, "dnsPropagationTimeout"),
-		DnsTTL:                maputil.GetInt32(n.Config, "dnsTTL"),
-		DisableFollowCNAME:    maputil.GetBool(n.Config, "disableFollowCNAME"),
-		DisableARI:            maputil.GetBool(n.Config, "disableARI"),
-		SkipBeforeExpiryDays:  maputil.GetOrDefaultInt32(n.Config, "skipBeforeExpiryDays", 30),
+		Domains:               xmaps.GetString(n.Config, "domains"),
+		ContactEmail:          xmaps.GetString(n.Config, "contactEmail"),
+		Provider:              xmaps.GetString(n.Config, "provider"),
+		ProviderAccessId:      xmaps.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:        xmaps.GetKVMapAny(n.Config, "providerConfig"),
+		CAProvider:            xmaps.GetString(n.Config, "caProvider"),
+		CAProviderAccessId:    xmaps.GetString(n.Config, "caProviderAccessId"),
+		CAProviderConfig:      xmaps.GetKVMapAny(n.Config, "caProviderConfig"),
+		KeyAlgorithm:          xmaps.GetOrDefaultString(n.Config, "keyAlgorithm", string(CertificateKeyAlgorithmTypeRSA2048)),
+		Nameservers:           xmaps.GetString(n.Config, "nameservers"),
+		DnsPropagationWait:    xmaps.GetInt32(n.Config, "dnsPropagationWait"),
+		DnsPropagationTimeout: xmaps.GetInt32(n.Config, "dnsPropagationTimeout"),
+		DnsTTL:                xmaps.GetInt32(n.Config, "dnsTTL"),
+		DisableFollowCNAME:    xmaps.GetBool(n.Config, "disableFollowCNAME"),
+		DisableARI:            xmaps.GetBool(n.Config, "disableARI"),
+		SkipBeforeExpiryDays:  xmaps.GetOrDefaultInt32(n.Config, "skipBeforeExpiryDays", 30),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForUpload() WorkflowNodeConfigForUpload {
 	return WorkflowNodeConfigForUpload{
-		Certificate: maputil.GetString(n.Config, "certificate"),
-		PrivateKey:  maputil.GetString(n.Config, "privateKey"),
-		Domains:     maputil.GetString(n.Config, "domains"),
+		Certificate: xmaps.GetString(n.Config, "certificate"),
+		PrivateKey:  xmaps.GetString(n.Config, "privateKey"),
+		Domains:     xmaps.GetString(n.Config, "domains"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForMonitor() WorkflowNodeConfigForMonitor {
-	host := maputil.GetString(n.Config, "host")
+	host := xmaps.GetString(n.Config, "host")
 	return WorkflowNodeConfigForMonitor{
 		Host:        host,
-		Port:        maputil.GetOrDefaultInt32(n.Config, "port", 443),
-		Domain:      maputil.GetOrDefaultString(n.Config, "domain", host),
-		RequestPath: maputil.GetString(n.Config, "path"),
+		Port:        xmaps.GetOrDefaultInt32(n.Config, "port", 443),
+		Domain:      xmaps.GetOrDefaultString(n.Config, "domain", host),
+		RequestPath: xmaps.GetString(n.Config, "path"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForDeploy() WorkflowNodeConfigForDeploy {
 	return WorkflowNodeConfigForDeploy{
-		Certificate:         maputil.GetString(n.Config, "certificate"),
-		Provider:            maputil.GetString(n.Config, "provider"),
-		ProviderAccessId:    maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:      maputil.GetKVMapAny(n.Config, "providerConfig"),
-		SkipOnLastSucceeded: maputil.GetBool(n.Config, "skipOnLastSucceeded"),
+		Certificate:         xmaps.GetString(n.Config, "certificate"),
+		Provider:            xmaps.GetString(n.Config, "provider"),
+		ProviderAccessId:    xmaps.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:      xmaps.GetKVMapAny(n.Config, "providerConfig"),
+		SkipOnLastSucceeded: xmaps.GetBool(n.Config, "skipOnLastSucceeded"),
 	}
 }
 
 func (n *WorkflowNode) GetConfigForNotify() WorkflowNodeConfigForNotify {
 	return WorkflowNodeConfigForNotify{
-		Channel:              maputil.GetString(n.Config, "channel"),
-		Provider:             maputil.GetString(n.Config, "provider"),
-		ProviderAccessId:     maputil.GetString(n.Config, "providerAccessId"),
-		ProviderConfig:       maputil.GetKVMapAny(n.Config, "providerConfig"),
-		Subject:              maputil.GetString(n.Config, "subject"),
-		Message:              maputil.GetString(n.Config, "message"),
-		SkipOnAllPrevSkipped: maputil.GetBool(n.Config, "skipOnAllPrevSkipped"),
+		Channel:              xmaps.GetString(n.Config, "channel"),
+		Provider:             xmaps.GetString(n.Config, "provider"),
+		ProviderAccessId:     xmaps.GetString(n.Config, "providerAccessId"),
+		ProviderConfig:       xmaps.GetKVMapAny(n.Config, "providerConfig"),
+		Subject:              xmaps.GetString(n.Config, "subject"),
+		Message:              xmaps.GetString(n.Config, "message"),
+		SkipOnAllPrevSkipped: xmaps.GetBool(n.Config, "skipOnAllPrevSkipped"),
 	}
 }
 

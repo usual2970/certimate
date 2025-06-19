@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/domain/dtos"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain/dtos"
 )
 
 // Deprecated: v0.4.x 将废弃

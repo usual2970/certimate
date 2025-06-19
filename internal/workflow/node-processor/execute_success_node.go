@@ -3,7 +3,7 @@ package nodeprocessor
 import (
 	"context"
 
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type executeSuccessNode struct {

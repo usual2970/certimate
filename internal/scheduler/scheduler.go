@@ -1,10 +1,10 @@
 package scheduler
 
 import (
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/certificate"
-	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/internal/workflow"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/certificate"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/workflow"
 )
 
 func Register() {

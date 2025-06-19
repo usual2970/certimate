@@ -7,10 +7,10 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/pkg/core"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
 )
 
 // Deprecated: v0.4.x 将废弃
@@ -51,7 +51,7 @@ func SendToChannel(subject, message string, channel string, channelConfig map[st
 }
 
 // Deprecated: v0.4.x 将废弃
-func getEnabledNotifiers() ([]notifier.Notifier, error) {
+func getEnabledNotifiers() ([]core.Notifier, error) {
 	settingsRepo := repository.NewSettingsRepository()
 	settings, err := settingsRepo.GetByName(context.Background(), "notifyChannels")
 	if err != nil {
@@ -63,9 +63,9 @@ func getEnabledNotifiers() ([]notifier.Notifier, error) {
 		return nil, fmt.Errorf("unmarshal notifyChannels error: %w", err)
 	}
 
-	notifiers := make([]notifier.Notifier, 0)
+	notifiers := make([]core.Notifier, 0)
 	for k, v := range rs {
-		if !maputil.GetBool(v, "enabled") {
+		if !xmaps.GetBool(v, "enabled") {
 			continue
 		}
 

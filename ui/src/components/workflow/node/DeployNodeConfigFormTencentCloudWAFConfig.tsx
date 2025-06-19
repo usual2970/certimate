@@ -36,19 +36,16 @@ const DeployNodeConfigFormTencentCloudWAFConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_waf_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_region.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_waf_domain.placeholder") })
       .refine((v) => validDomainName(v), t("common.errmsg.domain_invalid")),
     domainId: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_waf_domain_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_domain_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_domain_id.placeholder")),
     instanceId: z
       .string({ message: t("workflow_node.deploy.form.tencentcloud_waf_instance_id.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_instance_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.tencentcloud_waf_instance_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

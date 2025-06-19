@@ -28,8 +28,7 @@ const DeployNodeConfigFormAWSIAMConfig = ({ form: formInst, formName, disabled, 
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aws_iam_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aws_iam_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aws_iam_region.placeholder")),
     certificatePath: z
       .string()
       .nullish()

@@ -27,7 +27,7 @@ const AccessFormBaotaPanelConfig = ({ form: formInst, formName, disabled, initia
 
   const formSchema = z.object({
     serverUrl: z.string().url(t("common.errmsg.url_invalid")),
-    apiKey: z.string().nonempty(t("access.form.baotapanel_api_key.placeholder")).trim(),
+    apiKey: z.string().nonempty(t("access.form.baotapanel_api_key.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

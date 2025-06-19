@@ -38,7 +38,7 @@ const compareVersions = (a: string, b: string) => {
 const useVersionChecker = () => {
   const { data, refresh } = useRequest(
     async () => {
-      const releases = await fetch("https://api.github.com/repos/usual2970/certimate/releases")
+      const releases = await fetch("https://api.github.com/repos/certimate-go/certimate/releases")
         .then((res) => res.json())
         .then((res) => Array.from(res));
 

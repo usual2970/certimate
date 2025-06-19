@@ -31,8 +31,7 @@ const DeployNodeConfigFormVolcEngineCertCenterConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.volcengine_certcenter_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.volcengine_certcenter_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.volcengine_certcenter_region.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

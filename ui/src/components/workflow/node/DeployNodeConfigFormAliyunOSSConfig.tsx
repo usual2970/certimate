@@ -35,12 +35,10 @@ const DeployNodeConfigFormAliyunOSSConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_oss_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_oss_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_oss_region.placeholder")),
     bucket: z
       .string({ message: t("workflow_node.deploy.form.aliyun_oss_bucket.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_oss_bucket.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_oss_bucket.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.aliyun_oss_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),

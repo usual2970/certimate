@@ -11,8 +11,8 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"golang.org/x/sync/singleflight"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type AcmeAccountRepository struct{}

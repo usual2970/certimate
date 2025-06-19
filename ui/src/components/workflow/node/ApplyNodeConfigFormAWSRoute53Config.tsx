@@ -35,12 +35,10 @@ const ApplyNodeConfigFormAWSRoute53Config = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.apply.form.aws_route53_region.placeholder") })
-      .nonempty(t("workflow_node.apply.form.aws_route53_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.apply.form.aws_route53_region.placeholder")),
     hostedZoneId: z
       .string({ message: t("workflow_node.apply.form.aws_route53_hosted_zone_id.placeholder") })
-      .nonempty(t("workflow_node.apply.form.aws_route53_hosted_zone_id.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.apply.form.aws_route53_hosted_zone_id.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

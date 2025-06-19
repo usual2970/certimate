@@ -28,8 +28,7 @@ const AccessFormBaishanConfig = ({ form: formInst, formName, disabled, initialVa
     apiToken: z
       .string()
       .min(1, t("access.form.baishan_api_token.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

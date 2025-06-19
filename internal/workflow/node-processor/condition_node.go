@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/domain/expr"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain/expr"
 )
 
 type conditionNode struct {

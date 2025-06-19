@@ -1,4 +1,4 @@
-module github.com/usual2970/certimate
+module github.com/certimate-go/certimate
 
 go 1.24.0
 
@@ -219,8 +219,8 @@ require (
 	modernc.org/sqlite v1.37.1 // indirect
 )
 
-replace github.com/Edgio/edgio-api v0.0.0-workspace => ./internal/pkg/sdk3rd/edgio/edgio-api@v0.0.0-workspace
+replace github.com/Edgio/edgio-api v0.0.0-workspace => ./pkg/sdk3rd/edgio/edgio-api@v0.0.0-workspace
 
-replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./internal/pkg/sdk3rd/cmcc/ecloudsdkcore@v1.0.0
+replace gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.0 => ./pkg/sdk3rd/cmcc/ecloudsdkcore@v1.0.0
 
-replace gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 => ./internal/pkg/sdk3rd/cmcc/ecloudsdkclouddns@v1.0.1
+replace gitlab.ecloud.com/ecloud/ecloudsdkclouddns v1.0.1 => ./pkg/sdk3rd/cmcc/ecloudsdkclouddns@v1.0.1

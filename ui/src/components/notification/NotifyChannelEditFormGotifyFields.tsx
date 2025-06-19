@@ -9,7 +9,12 @@ const NotifyChannelEditFormGotifyFields = () => {
   const formSchema = z.object({
     url: z.string({ message: t("settings.notification.channel.form.gotify_url.placeholder") }).url({ message: t("common.errmsg.url_invalid") }),
     token: z.string({ message: t("settings.notification.channel.form.gotify_token.placeholder") }),
-    priority: z.preprocess(val => Number(val), z.number({ message: t("settings.notification.channel.form.gotify_priority.placeholder") }).gte(0, { message: t("settings.notification.channel.form.gotify_priority.error.gte0") })),
+    priority: z.preprocess(
+      (val) => Number(val),
+      z
+        .number({ message: t("settings.notification.channel.form.gotify_priority.placeholder") })
+        .gte(0, { message: t("settings.notification.channel.form.gotify_priority.error.gte0") })
+    ),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

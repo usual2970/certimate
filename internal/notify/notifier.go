@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/notifier"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/pkg/core"
 )
 
 type Notifier interface {
@@ -46,20 +46,22 @@ func NewWithWorkflowNode(config NotifierWithWorkflowNodeConfig) (Notifier, error
 		}
 	}
 
-	notifierProvider, err := createNotifierProvider(options)
+	notifier, err := createNotifierProvider(options)
 	if err != nil {
 		return nil, err
+	} else {
+		notifier.SetLogger(config.Logger)
 	}
 
 	return &notifierImpl{
-		provider: notifierProvider.WithLogger(config.Logger),
+		provider: notifier,
 		subject:  config.Subject,
 		message:  config.Message,
 	}, nil
 }
 
 type notifierImpl struct {
-	provider notifier.Notifier
+	provider core.Notifier
 	subject  string
 	message  string
 }

@@ -29,13 +29,11 @@ const AccessFormZeroSSLConfig = ({ form: formInst, formName, disabled, initialVa
     eabKid: z
       .string()
       .min(1, t("access.form.zerossl_eab_kid.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     eabHmacKey: z
       .string()
       .min(1, t("access.form.zerossl_eab_hmac_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

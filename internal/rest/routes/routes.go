@@ -7,12 +7,12 @@ import (
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/tools/router"
 
-	"github.com/usual2970/certimate/internal/certificate"
-	"github.com/usual2970/certimate/internal/notify"
-	"github.com/usual2970/certimate/internal/repository"
-	"github.com/usual2970/certimate/internal/rest/handlers"
-	"github.com/usual2970/certimate/internal/statistics"
-	"github.com/usual2970/certimate/internal/workflow"
+	"github.com/certimate-go/certimate/internal/certificate"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/rest/handlers"
+	"github.com/certimate-go/certimate/internal/statistics"
+	"github.com/certimate-go/certimate/internal/workflow"
 )
 
 var (

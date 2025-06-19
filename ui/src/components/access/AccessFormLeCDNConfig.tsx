@@ -33,8 +33,8 @@ const AccessFormLeCDNConfig = ({ form: formInst, formName, disabled, initialValu
     role: z.union([z.literal("client"), z.literal("master")], {
       message: t("access.form.lecdn_api_role.placeholder"),
     }),
-    username: z.string().nonempty(t("access.form.lecdn_username.placeholder")).trim(),
-    password: z.string().nonempty(t("access.form.lecdn_password.placeholder")).trim(),
+    username: z.string().nonempty(t("access.form.lecdn_username.placeholder")),
+    password: z.string().nonempty(t("access.form.lecdn_password.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

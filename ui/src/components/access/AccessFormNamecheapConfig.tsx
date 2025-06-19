@@ -29,13 +29,11 @@ const AccessFormNamecheapConfig = ({ form: formInst, formName, disabled, initial
     username: z
       .string()
       .min(1, t("access.form.namecheap_username.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     apiKey: z
       .string()
       .min(1, t("access.form.namecheap_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

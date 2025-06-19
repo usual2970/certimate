@@ -26,8 +26,7 @@ const DeployNodeConfigFormAWSACMConfig = ({ form: formInst, formName, disabled, 
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aws_acm_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aws_acm_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aws_acm_region.placeholder")),
     certificateArn: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

@@ -25,7 +25,7 @@ const AccessFormDigitalOceanConfig = ({ form: formInst, formName, disabled, init
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    accessToken: z.string().nonempty(t("access.form.digitalocean_access_token.placeholder")).trim(),
+    accessToken: z.string().nonempty(t("access.form.digitalocean_access_token.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

@@ -31,8 +31,7 @@ const DeployNodeConfigFormAliyunCASConfig = ({
   const formSchema = z.object({
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_cas_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_cas_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_cas_region.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

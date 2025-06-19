@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/domain"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 var maxWorkers = 1
@@ -126,7 +126,7 @@ func (d *WorkflowDispatcher) Cancel(runId string) {
 
 	// 移除排队中的 WorkflowRun
 	d.queueMutex.Lock()
-	d.queue = sliceutil.Filter(d.queue, func(d *WorkflowWorkerData) bool {
+	d.queue = xslices.Filter(d.queue, func(d *WorkflowWorkerData) bool {
 		return d.RunId != runId
 	})
 	d.queueMutex.Unlock()

@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"strconv"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/notify"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/notify"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type notifyNode struct {

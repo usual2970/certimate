@@ -41,28 +41,23 @@ const DeployNodeConfigFormKubernetesSecretConfig = ({
     namespace: z
       .string({ message: t("workflow_node.deploy.form.k8s_namespace.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_namespace.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     secretName: z
       .string({ message: t("workflow_node.deploy.form.k8s_secret_name.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_secret_name.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     secretType: z
       .string({ message: t("workflow_node.deploy.form.k8s_secret_type.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_secret_type.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     secretDataKeyForCrt: z
       .string({ message: t("workflow_node.deploy.form.k8s_secret_data_key_for_crt.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_secret_data_key_for_crt.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     secretDataKeyForKey: z
       .string({ message: t("workflow_node.deploy.form.k8s_secret_data_key_for_key.placeholder") })
       .nonempty(t("workflow_node.deploy.form.k8s_secret_data_key_for_key.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

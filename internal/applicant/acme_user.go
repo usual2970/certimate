@@ -13,10 +13,10 @@ import (
 	"github.com/go-acme/lego/v4/registration"
 	"golang.org/x/sync/singleflight"
 
-	"github.com/usual2970/certimate/internal/domain"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
 )
 
 type acmeUser struct {
@@ -51,7 +51,7 @@ func newAcmeUser(ca, caAccessId, email string) (*acmeUser, error) {
 			return nil, err
 		}
 
-		keyPEM, err := certutil.ConvertECPrivateKeyToPEM(key)
+		keyPEM, err := xcert.ConvertECPrivateKeyToPEM(key)
 		if err != nil {
 			return nil, err
 		}
@@ -75,7 +75,7 @@ func (u acmeUser) GetRegistration() *registration.Resource {
 }
 
 func (u *acmeUser) GetPrivateKey() crypto.PrivateKey {
-	rs, _ := certutil.ParseECPrivateKeyFromPEM(u.privkey)
+	rs, _ := xcert.ParseECPrivateKeyFromPEM(u.privkey)
 	return rs
 }
 
@@ -120,7 +120,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 	case caGoogleTrustServices:
 		{
 			access := domain.AccessConfigForGoogleTrustServices{}
-			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+			if err := xmaps.Populate(userRegisterOptions, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -134,7 +134,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 	case caSSLCom:
 		{
 			access := domain.AccessConfigForSSLCom{}
-			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+			if err := xmaps.Populate(userRegisterOptions, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -148,7 +148,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 	case caZeroSSL:
 		{
 			access := domain.AccessConfigForZeroSSL{}
-			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+			if err := xmaps.Populate(userRegisterOptions, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -162,7 +162,7 @@ func registerAcmeUser(client *lego.Client, user *acmeUser, userRegisterOptions m
 	case caCustom:
 		{
 			access := domain.AccessConfigForACMECA{}
-			if err := maputil.Populate(userRegisterOptions, &access); err != nil {
+			if err := xmaps.Populate(userRegisterOptions, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 

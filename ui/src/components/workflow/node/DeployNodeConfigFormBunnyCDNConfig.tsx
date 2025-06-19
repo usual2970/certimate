@@ -25,11 +25,9 @@ const DeployNodeConfigFormBunnyCDNConfig = ({ form: formInst, formName, disabled
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    pullZoneId: z
-      .union([z.string(), z.number().int()])
-      .refine((v) => {
-        return /^\d+$/.test(v + "") && +v! > 0;
-      }, t("workflow_node.deploy.form.bunny_cdn_pull_zone_id.placeholder")),
+    pullZoneId: z.union([z.string(), z.number().int()]).refine((v) => {
+      return /^\d+$/.test(v + "") && +v! > 0;
+    }, t("workflow_node.deploy.form.bunny_cdn_pull_zone_id.placeholder")),
     hostname: z
       .string({ message: t("workflow_node.deploy.form.bunny_cdn_hostname.placeholder") })
       .nonempty(t("workflow_node.deploy.form.bunny_cdn_hostname.placeholder"))

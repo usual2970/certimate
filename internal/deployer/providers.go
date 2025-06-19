@@ -5,106 +5,106 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/pkg/core/deployer"
-	p1PanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-console"
-	p1PanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/1panel-site"
-	pAliyunALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-alb"
-	pAliyunAPIGW "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-apigw"
-	pAliyunCAS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas"
-	pAliyunCASDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cas-deploy"
-	pAliyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-cdn"
-	pAliyunCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-clb"
-	pAliyunDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-dcdn"
-	pAliyunDDoS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-ddos"
-	pAliyunESA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-esa"
-	pAliyunFC "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-fc"
-	pAliyunGA "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-ga"
-	pAliyunLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-live"
-	pAliyunNLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-nlb"
-	pAliyunOSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-oss"
-	pAliyunVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-vod"
-	pAliyunWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aliyun-waf"
-	pAPISIX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/apisix"
-	pAWSACM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-acm"
-	pAWSCloudFront "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-cloudfront"
-	pAWSIAM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/aws-iam"
-	pAzureKeyVault "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/azure-keyvault"
-	pBaiduCloudAppBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-appblb"
-	pBaiduCloudBLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-blb"
-	pBaiduCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cdn"
-	pBaiduCloudCert "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baiducloud-cert"
-	pBaishanCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baishan-cdn"
-	pBaotaPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-console"
-	pBaotaPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotapanel-site"
-	pBaotaWAFConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotawaf-console"
-	pBaotaWAFSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/baotawaf-site"
-	pBunnyCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/bunny-cdn"
-	pBytePlusCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/byteplus-cdn"
-	pCacheFly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cachefly"
-	pCdnfly "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/cdnfly"
-	pCTCCCloudAO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-ao"
-	pCTCCCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cdn"
-	pCTCCCloudCMS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-cms"
-	pCTCCCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-elb"
-	pCTCCCloudICDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-icdn"
-	pCTCCCloudLVDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ctcccloud-lvdn"
-	pDogeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/dogecloud-cdn"
-	pEdgioApplications "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/edgio-applications"
-	pFlexCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/flexcdn"
-	pGcoreCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/gcore-cdn"
-	pGoEdge "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/goedge"
-	pHuaweiCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-cdn"
-	pHuaweiCloudELB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-elb"
-	pHuaweiCloudSCM "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-scm"
-	pHuaweiCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/huaweicloud-waf"
-	pJDCloudALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-alb"
-	pJDCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-cdn"
-	pJDCloudLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-live"
-	pJDCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/jdcloud-vod"
-	pK8sSecret "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/k8s-secret"
-	pLeCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/lecdn"
-	pLocal "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/local"
-	pNetlifySite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/netlify-site"
-	pProxmoxVE "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/proxmoxve"
-	pQiniuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-cdn"
-	pQiniuPili "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/qiniu-pili"
-	pRainYunRCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/rainyun-rcdn"
-	pRatPanelConsole "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-console"
-	pRatPanelSite "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ratpanel-site"
-	pSafeLine "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/safeline"
-	pSSH "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ssh"
-	pTencentCloudCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cdn"
-	pTencentCloudCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-clb"
-	pTencentCloudCOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-cos"
-	pTencentCloudCSS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-css"
-	pTencentCloudECDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ecdn"
-	pTencentCloudEO "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-eo"
-	pTencentCloudGAAP "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-gaap"
-	pTencentCloudSCF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-scf"
-	pTencentCloudSSL "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl"
-	pTencentCloudSSLDeploy "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-ssl-deploy"
-	pTencentCloudVOD "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-vod"
-	pTencentCloudWAF "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/tencentcloud-waf"
-	pUCloudUCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-ucdn"
-	pUCloudUS3 "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/ucloud-us3"
-	pUniCloudWebHost "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/unicloud-webhost"
-	pUpyunCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/upyun-cdn"
-	pVolcEngineALB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-alb"
-	pVolcEngineCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-cdn"
-	pVolcEngineCertCenter "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-certcenter"
-	pVolcEngineCLB "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-clb"
-	pVolcEngineDCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-dcdn"
-	pVolcEngineImageX "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-imagex"
-	pVolcEngineLive "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-live"
-	pVolcEngineTOS "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/volcengine-tos"
-	pWangsuCDN "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdn"
-	pWangsuCDNPro "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-cdnpro"
-	pWangsuCertificate "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/wangsu-certificate"
-	pWebhook "github.com/usual2970/certimate/internal/pkg/core/deployer/providers/webhook"
-	httputil "github.com/usual2970/certimate/internal/pkg/utils/http"
-	maputil "github.com/usual2970/certimate/internal/pkg/utils/map"
-	sliceutil "github.com/usual2970/certimate/internal/pkg/utils/slice"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/pkg/core"
+	p1PanelConsole "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/1panel-console"
+	p1PanelSite "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/1panel-site"
+	pAliyunALB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-alb"
+	pAliyunAPIGW "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-apigw"
+	pAliyunCAS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-cas"
+	pAliyunCASDeploy "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-cas-deploy"
+	pAliyunCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-cdn"
+	pAliyunCLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-clb"
+	pAliyunDCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-dcdn"
+	pAliyunDDoS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-ddos"
+	pAliyunESA "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-esa"
+	pAliyunFC "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-fc"
+	pAliyunGA "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-ga"
+	pAliyunLive "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-live"
+	pAliyunNLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-nlb"
+	pAliyunOSS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-oss"
+	pAliyunVOD "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-vod"
+	pAliyunWAF "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aliyun-waf"
+	pAPISIX "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/apisix"
+	pAWSACM "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aws-acm"
+	pAWSCloudFront "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aws-cloudfront"
+	pAWSIAM "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/aws-iam"
+	pAzureKeyVault "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/azure-keyvault"
+	pBaiduCloudAppBLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baiducloud-appblb"
+	pBaiduCloudBLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baiducloud-blb"
+	pBaiduCloudCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baiducloud-cdn"
+	pBaiduCloudCert "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baiducloud-cert"
+	pBaishanCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baishan-cdn"
+	pBaotaPanelConsole "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baotapanel-console"
+	pBaotaPanelSite "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baotapanel-site"
+	pBaotaWAFConsole "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baotawaf-console"
+	pBaotaWAFSite "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/baotawaf-site"
+	pBunnyCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/bunny-cdn"
+	pBytePlusCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/byteplus-cdn"
+	pCacheFly "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/cachefly"
+	pCdnfly "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/cdnfly"
+	pCTCCCloudAO "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-ao"
+	pCTCCCloudCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-cdn"
+	pCTCCCloudCMS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-cms"
+	pCTCCCloudELB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-elb"
+	pCTCCCloudICDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-icdn"
+	pCTCCCloudLVDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ctcccloud-lvdn"
+	pDogeCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/dogecloud-cdn"
+	pEdgioApplications "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/edgio-applications"
+	pFlexCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/flexcdn"
+	pGcoreCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/gcore-cdn"
+	pGoEdge "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/goedge"
+	pHuaweiCloudCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/huaweicloud-cdn"
+	pHuaweiCloudELB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/huaweicloud-elb"
+	pHuaweiCloudSCM "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/huaweicloud-scm"
+	pHuaweiCloudWAF "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/huaweicloud-waf"
+	pJDCloudALB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/jdcloud-alb"
+	pJDCloudCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/jdcloud-cdn"
+	pJDCloudLive "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/jdcloud-live"
+	pJDCloudVOD "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/jdcloud-vod"
+	pK8sSecret "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/k8s-secret"
+	pLeCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/lecdn"
+	pLocal "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/local"
+	pNetlifySite "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/netlify-site"
+	pProxmoxVE "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/proxmoxve"
+	pQiniuCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/qiniu-cdn"
+	pQiniuPili "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/qiniu-pili"
+	pRainYunRCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/rainyun-rcdn"
+	pRatPanelConsole "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ratpanel-console"
+	pRatPanelSite "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ratpanel-site"
+	pSafeLine "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/safeline"
+	pSSH "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ssh"
+	pTencentCloudCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-cdn"
+	pTencentCloudCLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-clb"
+	pTencentCloudCOS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-cos"
+	pTencentCloudCSS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-css"
+	pTencentCloudECDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-ecdn"
+	pTencentCloudEO "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-eo"
+	pTencentCloudGAAP "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-gaap"
+	pTencentCloudSCF "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-scf"
+	pTencentCloudSSL "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-ssl"
+	pTencentCloudSSLDeploy "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-ssl-deploy"
+	pTencentCloudVOD "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-vod"
+	pTencentCloudWAF "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/tencentcloud-waf"
+	pUCloudUCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ucloud-ucdn"
+	pUCloudUS3 "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/ucloud-us3"
+	pUniCloudWebHost "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/unicloud-webhost"
+	pUpyunCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/upyun-cdn"
+	pVolcEngineALB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-alb"
+	pVolcEngineCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-cdn"
+	pVolcEngineCertCenter "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-certcenter"
+	pVolcEngineCLB "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-clb"
+	pVolcEngineDCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-dcdn"
+	pVolcEngineImageX "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-imagex"
+	pVolcEngineLive "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-live"
+	pVolcEngineTOS "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/volcengine-tos"
+	pWangsuCDN "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/wangsu-cdn"
+	pWangsuCDNPro "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/wangsu-cdnpro"
+	pWangsuCertificate "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/wangsu-certificate"
+	pWebhook "github.com/certimate-go/certimate/pkg/core/ssl-deployer/providers/webhook"
+	xhttp "github.com/certimate-go/certimate/pkg/utils/http"
+	xmaps "github.com/certimate-go/certimate/pkg/utils/maps"
+	xslices "github.com/certimate-go/certimate/pkg/utils/slices"
 )
 
 type deployerProviderOptions struct {
@@ -113,7 +113,7 @@ type deployerProviderOptions struct {
 	ProviderServiceConfig map[string]any
 }
 
-func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer, error) {
+func createSSLDeployerProvider(options *deployerProviderOptions) (core.SSLDeployer, error) {
 	/*
 	  注意：如果追加新的常量值，请保持以 ASCII 排序。
 	  NOTICE: If you add new constant, please keep ASCII order.
@@ -122,30 +122,30 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderType1PanelConsole, domain.DeploymentProviderType1PanelSite:
 		{
 			access := domain.AccessConfigFor1Panel{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderType1PanelConsole:
-				deployer, err := p1PanelConsole.NewDeployer(&p1PanelConsole.DeployerConfig{
+				deployer, err := p1PanelConsole.NewSSLDeployerProvider(&p1PanelConsole.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
+					AutoRestart:              xmaps.GetBool(options.ProviderServiceConfig, "autoRestart"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderType1PanelSite:
-				deployer, err := p1PanelSite.NewDeployer(&p1PanelSite.DeployerConfig{
+				deployer, err := p1PanelSite.NewSSLDeployerProvider(&p1PanelSite.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiVersion:               access.ApiVersion,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					ResourceType:             p1PanelSite.ResourceType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
-					WebsiteId:                maputil.GetInt64(options.ProviderServiceConfig, "websiteId"),
-					CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
+					ResourceType:             p1PanelSite.ResourceType(xmaps.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(p1PanelSite.RESOURCE_TYPE_WEBSITE))),
+					WebsiteId:                xmaps.GetInt64(options.ProviderServiceConfig, "websiteId"),
+					CertificateId:            xmaps.GetInt64(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -157,181 +157,181 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeAliyunALB, domain.DeploymentProviderTypeAliyunAPIGW, domain.DeploymentProviderTypeAliyunCAS, domain.DeploymentProviderTypeAliyunCASDeploy, domain.DeploymentProviderTypeAliyunCDN, domain.DeploymentProviderTypeAliyunCLB, domain.DeploymentProviderTypeAliyunDCDN, domain.DeploymentProviderTypeAliyunDDoS, domain.DeploymentProviderTypeAliyunESA, domain.DeploymentProviderTypeAliyunFC, domain.DeploymentProviderTypeAliyunGA, domain.DeploymentProviderTypeAliyunLive, domain.DeploymentProviderTypeAliyunNLB, domain.DeploymentProviderTypeAliyunOSS, domain.DeploymentProviderTypeAliyunVOD, domain.DeploymentProviderTypeAliyunWAF:
 		{
 			access := domain.AccessConfigForAliyun{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeAliyunALB:
-				deployer, err := pAliyunALB.NewDeployer(&pAliyunALB.DeployerConfig{
+				deployer, err := pAliyunALB.NewSSLDeployerProvider(&pAliyunALB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pAliyunALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunALB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunAPIGW:
-				deployer, err := pAliyunAPIGW.NewDeployer(&pAliyunAPIGW.DeployerConfig{
+				deployer, err := pAliyunAPIGW.NewSSLDeployerProvider(&pAliyunAPIGW.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ServiceType:     pAliyunAPIGW.ServiceType(maputil.GetString(options.ProviderServiceConfig, "serviceType")),
-					GatewayId:       maputil.GetString(options.ProviderServiceConfig, "gatewayId"),
-					GroupId:         maputil.GetString(options.ProviderServiceConfig, "groupId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ServiceType:     pAliyunAPIGW.ServiceType(xmaps.GetString(options.ProviderServiceConfig, "serviceType")),
+					GatewayId:       xmaps.GetString(options.ProviderServiceConfig, "gatewayId"),
+					GroupId:         xmaps.GetString(options.ProviderServiceConfig, "groupId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunCAS:
-				deployer, err := pAliyunCAS.NewDeployer(&pAliyunCAS.DeployerConfig{
+				deployer, err := pAliyunCAS.NewSSLDeployerProvider(&pAliyunCAS.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunCASDeploy:
-				deployer, err := pAliyunCASDeploy.NewDeployer(&pAliyunCASDeploy.DeployerConfig{
+				deployer, err := pAliyunCASDeploy.NewSSLDeployerProvider(&pAliyunCASDeploy.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceIds:     sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
-					ContactIds:      sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceIds:     xslices.Filter(strings.Split(xmaps.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					ContactIds:      xslices.Filter(strings.Split(xmaps.GetString(options.ProviderServiceConfig, "contactIds"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunCDN:
-				deployer, err := pAliyunCDN.NewDeployer(&pAliyunCDN.DeployerConfig{
+				deployer, err := pAliyunCDN.NewSSLDeployerProvider(&pAliyunCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunCLB:
-				deployer, err := pAliyunCLB.NewDeployer(&pAliyunCLB.DeployerConfig{
+				deployer, err := pAliyunCLB.NewSSLDeployerProvider(&pAliyunCLB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pAliyunCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetOrDefaultInt32(options.ProviderServiceConfig, "listenerPort", 443),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunCLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    xmaps.GetOrDefaultInt32(options.ProviderServiceConfig, "listenerPort", 443),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunDCDN:
-				deployer, err := pAliyunDCDN.NewDeployer(&pAliyunDCDN.DeployerConfig{
+				deployer, err := pAliyunDCDN.NewSSLDeployerProvider(&pAliyunDCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunDDoS:
-				deployer, err := pAliyunDDoS.NewDeployer(&pAliyunDDoS.DeployerConfig{
+				deployer, err := pAliyunDDoS.NewSSLDeployerProvider(&pAliyunDDoS.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunESA:
-				deployer, err := pAliyunESA.NewDeployer(&pAliyunESA.DeployerConfig{
+				deployer, err := pAliyunESA.NewSSLDeployerProvider(&pAliyunESA.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					SiteId:          maputil.GetInt64(options.ProviderServiceConfig, "siteId"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					SiteId:          xmaps.GetInt64(options.ProviderServiceConfig, "siteId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunFC:
-				deployer, err := pAliyunFC.NewDeployer(&pAliyunFC.DeployerConfig{
+				deployer, err := pAliyunFC.NewSSLDeployerProvider(&pAliyunFC.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ServiceVersion:  xmaps.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunGA:
-				deployer, err := pAliyunGA.NewDeployer(&pAliyunGA.DeployerConfig{
+				deployer, err := pAliyunGA.NewSSLDeployerProvider(&pAliyunGA.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					ResourceType:    pAliyunGA.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					AcceleratorId:   maputil.GetString(options.ProviderServiceConfig, "acceleratorId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					ResourceType:    pAliyunGA.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					AcceleratorId:   xmaps.GetString(options.ProviderServiceConfig, "acceleratorId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunLive:
-				deployer, err := pAliyunLive.NewDeployer(&pAliyunLive.DeployerConfig{
+				deployer, err := pAliyunLive.NewSSLDeployerProvider(&pAliyunLive.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunNLB:
-				deployer, err := pAliyunNLB.NewDeployer(&pAliyunNLB.DeployerConfig{
+				deployer, err := pAliyunNLB.NewSSLDeployerProvider(&pAliyunNLB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pAliyunNLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pAliyunNLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunOSS:
-				deployer, err := pAliyunOSS.NewDeployer(&pAliyunOSS.DeployerConfig{
+				deployer, err := pAliyunOSS.NewSSLDeployerProvider(&pAliyunOSS.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Bucket:          maputil.GetString(options.ProviderServiceConfig, "bucket"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:          xmaps.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunVOD:
-				deployer, err := pAliyunVOD.NewDeployer(&pAliyunVOD.DeployerConfig{
+				deployer, err := pAliyunVOD.NewSSLDeployerProvider(&pAliyunVOD.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAliyunWAF:
-				deployer, err := pAliyunWAF.NewDeployer(&pAliyunWAF.DeployerConfig{
+				deployer, err := pAliyunWAF.NewSSLDeployerProvider(&pAliyunWAF.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ResourceGroupId: access.ResourceGroupId,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ServiceVersion:  maputil.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
-					InstanceId:      maputil.GetString(options.ProviderServiceConfig, "instanceId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ServiceVersion:  xmaps.GetOrDefaultString(options.ProviderServiceConfig, "serviceVersion", "3.0"),
+					InstanceId:      xmaps.GetString(options.ProviderServiceConfig, "instanceId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -343,16 +343,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeAPISIX:
 		{
 			access := domain.AccessConfigForAPISIX{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pAPISIX.NewDeployer(&pAPISIX.DeployerConfig{
+			deployer, err := pAPISIX.NewSSLDeployerProvider(&pAPISIX.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiKey:                   access.ApiKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pAPISIX.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+				ResourceType:             pAPISIX.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -360,36 +360,36 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeAWSACM, domain.DeploymentProviderTypeAWSCloudFront, domain.DeploymentProviderTypeAWSIAM:
 		{
 			access := domain.AccessConfigForAWS{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeAWSACM:
-				deployer, err := pAWSACM.NewDeployer(&pAWSACM.DeployerConfig{
+				deployer, err := pAWSACM.NewSSLDeployerProvider(&pAWSACM.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					CertificateArn:  maputil.GetString(options.ProviderServiceConfig, "certificateArn"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					CertificateArn:  xmaps.GetString(options.ProviderServiceConfig, "certificateArn"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAWSCloudFront:
-				deployer, err := pAWSCloudFront.NewDeployer(&pAWSCloudFront.DeployerConfig{
+				deployer, err := pAWSCloudFront.NewSSLDeployerProvider(&pAWSCloudFront.SSLDeployerProviderConfig{
 					AccessKeyId:       access.AccessKeyId,
 					SecretAccessKey:   access.SecretAccessKey,
-					Region:            maputil.GetString(options.ProviderServiceConfig, "region"),
-					DistributionId:    maputil.GetString(options.ProviderServiceConfig, "distributionId"),
-					CertificateSource: maputil.GetOrDefaultString(options.ProviderServiceConfig, "certificateSource", "ACM"),
+					Region:            xmaps.GetString(options.ProviderServiceConfig, "region"),
+					DistributionId:    xmaps.GetString(options.ProviderServiceConfig, "distributionId"),
+					CertificateSource: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "certificateSource", "ACM"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeAWSIAM:
-				deployer, err := pAWSIAM.NewDeployer(&pAWSIAM.DeployerConfig{
+				deployer, err := pAWSIAM.NewSSLDeployerProvider(&pAWSIAM.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					CertificatePath: maputil.GetOrDefaultString(options.ProviderServiceConfig, "certificatePath", "/"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					CertificatePath: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "certificatePath", "/"),
 				})
 				return deployer, err
 
@@ -401,19 +401,19 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeAzureKeyVault:
 		{
 			access := domain.AccessConfigForAzure{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeAzureKeyVault:
-				deployer, err := pAzureKeyVault.NewDeployer(&pAzureKeyVault.DeployerConfig{
+				deployer, err := pAzureKeyVault.NewSSLDeployerProvider(&pAzureKeyVault.SSLDeployerProviderConfig{
 					TenantId:        access.TenantId,
 					ClientId:        access.ClientId,
 					ClientSecret:    access.ClientSecret,
 					CloudName:       access.CloudName,
-					KeyVaultName:    maputil.GetString(options.ProviderServiceConfig, "keyvaultName"),
-					CertificateName: maputil.GetString(options.ProviderServiceConfig, "certificateName"),
+					KeyVaultName:    xmaps.GetString(options.ProviderServiceConfig, "keyvaultName"),
+					CertificateName: xmaps.GetString(options.ProviderServiceConfig, "certificateName"),
 				})
 				return deployer, err
 
@@ -425,45 +425,45 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBaiduCloudAppBLB, domain.DeploymentProviderTypeBaiduCloudBLB, domain.DeploymentProviderTypeBaiduCloudCDN, domain.DeploymentProviderTypeBaiduCloudCert:
 		{
 			access := domain.AccessConfigForBaiduCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaiduCloudAppBLB:
-				deployer, err := pBaiduCloudAppBLB.NewDeployer(&pBaiduCloudAppBLB.DeployerConfig{
+				deployer, err := pBaiduCloudAppBLB.NewSSLDeployerProvider(&pBaiduCloudAppBLB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pBaiduCloudAppBLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetInt32(options.ProviderServiceConfig, "listenerPort"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pBaiduCloudAppBLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    xmaps.GetInt32(options.ProviderServiceConfig, "listenerPort"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeBaiduCloudBLB:
-				deployer, err := pBaiduCloudBLB.NewDeployer(&pBaiduCloudBLB.DeployerConfig{
+				deployer, err := pBaiduCloudBLB.NewSSLDeployerProvider(&pBaiduCloudBLB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pBaiduCloudBLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerPort:    maputil.GetInt32(options.ProviderServiceConfig, "listenerPort"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pBaiduCloudBLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerPort:    xmaps.GetInt32(options.ProviderServiceConfig, "listenerPort"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeBaiduCloudCDN:
-				deployer, err := pBaiduCloudCDN.NewDeployer(&pBaiduCloudCDN.DeployerConfig{
+				deployer, err := pBaiduCloudCDN.NewSSLDeployerProvider(&pBaiduCloudCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeBaiduCloudCert:
-				deployer, err := pBaiduCloudCert.NewDeployer(&pBaiduCloudCert.DeployerConfig{
+				deployer, err := pBaiduCloudCert.NewSSLDeployerProvider(&pBaiduCloudCert.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 				})
@@ -477,16 +477,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBaishanCDN:
 		{
 			access := domain.AccessConfigForBaishan{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaishanCDN:
-				deployer, err := pBaishanCDN.NewDeployer(&pBaishanCDN.DeployerConfig{
+				deployer, err := pBaishanCDN.NewSSLDeployerProvider(&pBaishanCDN.SSLDeployerProviderConfig{
 					ApiToken:      access.ApiToken,
-					Domain:        maputil.GetString(options.ProviderServiceConfig, "domain"),
-					CertificateId: maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					Domain:        xmaps.GetString(options.ProviderServiceConfig, "domain"),
+					CertificateId: xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -498,28 +498,28 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBaotaPanelConsole, domain.DeploymentProviderTypeBaotaPanelSite:
 		{
 			access := domain.AccessConfigForBaotaPanel{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaotaPanelConsole:
-				deployer, err := pBaotaPanelConsole.NewDeployer(&pBaotaPanelConsole.DeployerConfig{
+				deployer, err := pBaotaPanelConsole.NewSSLDeployerProvider(&pBaotaPanelConsole.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
+					AutoRestart:              xmaps.GetBool(options.ProviderServiceConfig, "autoRestart"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeBaotaPanelSite:
-				deployer, err := pBaotaPanelSite.NewDeployer(&pBaotaPanelSite.DeployerConfig{
+				deployer, err := pBaotaPanelSite.NewSSLDeployerProvider(&pBaotaPanelSite.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					SiteType:                 maputil.GetOrDefaultString(options.ProviderServiceConfig, "siteType", "other"),
-					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
-					SiteNames:                sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
+					SiteType:                 xmaps.GetOrDefaultString(options.ProviderServiceConfig, "siteType", "other"),
+					SiteName:                 xmaps.GetString(options.ProviderServiceConfig, "siteName"),
+					SiteNames:                xslices.Filter(strings.Split(xmaps.GetString(options.ProviderServiceConfig, "siteNames"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
@@ -531,13 +531,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBaotaWAFConsole, domain.DeploymentProviderTypeBaotaWAFSite:
 		{
 			access := domain.AccessConfigForBaotaWAF{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBaotaWAFConsole:
-				deployer, err := pBaotaWAFConsole.NewDeployer(&pBaotaWAFConsole.DeployerConfig{
+				deployer, err := pBaotaWAFConsole.NewSSLDeployerProvider(&pBaotaWAFConsole.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
@@ -545,12 +545,12 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				return deployer, err
 
 			case domain.DeploymentProviderTypeBaotaWAFSite:
-				deployer, err := pBaotaWAFSite.NewDeployer(&pBaotaWAFSite.DeployerConfig{
+				deployer, err := pBaotaWAFSite.NewSSLDeployerProvider(&pBaotaWAFSite.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					ApiKey:                   access.ApiKey,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
-					SitePort:                 maputil.GetOrDefaultInt32(options.ProviderServiceConfig, "sitePort", 443),
+					SiteName:                 xmaps.GetString(options.ProviderServiceConfig, "siteName"),
+					SitePort:                 xmaps.GetOrDefaultInt32(options.ProviderServiceConfig, "sitePort", 443),
 				})
 				return deployer, err
 
@@ -562,14 +562,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBunnyCDN:
 		{
 			access := domain.AccessConfigForBunny{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pBunnyCDN.NewDeployer(&pBunnyCDN.DeployerConfig{
+			deployer, err := pBunnyCDN.NewSSLDeployerProvider(&pBunnyCDN.SSLDeployerProviderConfig{
 				ApiKey:     access.ApiKey,
-				PullZoneId: maputil.GetString(options.ProviderServiceConfig, "pullZoneId"),
-				Hostname:   maputil.GetString(options.ProviderServiceConfig, "hostname"),
+				PullZoneId: xmaps.GetString(options.ProviderServiceConfig, "pullZoneId"),
+				Hostname:   xmaps.GetString(options.ProviderServiceConfig, "hostname"),
 			})
 			return deployer, err
 		}
@@ -577,16 +577,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeBytePlusCDN:
 		{
 			access := domain.AccessConfigForBytePlus{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeBytePlusCDN:
-				deployer, err := pBytePlusCDN.NewDeployer(&pBytePlusCDN.DeployerConfig{
+				deployer, err := pBytePlusCDN.NewSSLDeployerProvider(&pBytePlusCDN.SSLDeployerProviderConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -598,11 +598,11 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeCacheFly:
 		{
 			access := domain.AccessConfigForCacheFly{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pCacheFly.NewDeployer(&pCacheFly.DeployerConfig{
+			deployer, err := pCacheFly.NewSSLDeployerProvider(&pCacheFly.SSLDeployerProviderConfig{
 				ApiToken: access.ApiToken,
 			})
 			return deployer, err
@@ -611,18 +611,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeCdnfly:
 		{
 			access := domain.AccessConfigForCdnfly{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pCdnfly.NewDeployer(&pCdnfly.DeployerConfig{
+			deployer, err := pCdnfly.NewSSLDeployerProvider(&pCdnfly.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiKey:                   access.ApiKey,
 				ApiSecret:                access.ApiSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pCdnfly.ResourceType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
-				SiteId:                   maputil.GetString(options.ProviderServiceConfig, "siteId"),
-				CertificateId:            maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+				ResourceType:             pCdnfly.ResourceType(xmaps.GetOrDefaultString(options.ProviderServiceConfig, "resourceType", string(pCdnfly.RESOURCE_TYPE_SITE))),
+				SiteId:                   xmaps.GetString(options.ProviderServiceConfig, "siteId"),
+				CertificateId:            xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -630,58 +630,58 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeCTCCCloudAO, domain.DeploymentProviderTypeCTCCCloudCDN, domain.DeploymentProviderTypeCTCCCloudCMS, domain.DeploymentProviderTypeCTCCCloudELB, domain.DeploymentProviderTypeCTCCCloudICDN, domain.DeploymentProviderTypeCTCCCloudLVDN:
 		{
 			access := domain.AccessConfigForCTCCCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeCTCCCloudAO:
-				deployer, err := pCTCCCloudAO.NewDeployer(&pCTCCCloudAO.DeployerConfig{
+				deployer, err := pCTCCCloudAO.NewSSLDeployerProvider(&pCTCCCloudAO.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeCTCCCloudCDN:
-				deployer, err := pCTCCCloudCDN.NewDeployer(&pCTCCCloudCDN.DeployerConfig{
+				deployer, err := pCTCCCloudCDN.NewSSLDeployerProvider(&pCTCCCloudCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeCTCCCloudCMS:
-				deployer, err := pCTCCCloudCMS.NewDeployer(&pCTCCCloudCMS.DeployerConfig{
+				deployer, err := pCTCCCloudCMS.NewSSLDeployerProvider(&pCTCCCloudCMS.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeCTCCCloudELB:
-				deployer, err := pCTCCCloudELB.NewDeployer(&pCTCCCloudELB.DeployerConfig{
+				deployer, err := pCTCCCloudELB.NewSSLDeployerProvider(&pCTCCCloudELB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					RegionId:        maputil.GetString(options.ProviderServiceConfig, "regionId"),
-					ResourceType:    pCTCCCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					RegionId:        xmaps.GetString(options.ProviderServiceConfig, "regionId"),
+					ResourceType:    pCTCCCloudELB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeCTCCCloudICDN:
-				deployer, err := pCTCCCloudICDN.NewDeployer(&pCTCCCloudICDN.DeployerConfig{
+				deployer, err := pCTCCCloudICDN.NewSSLDeployerProvider(&pCTCCCloudICDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeCTCCCloudLVDN:
-				deployer, err := pCTCCCloudLVDN.NewDeployer(&pCTCCCloudLVDN.DeployerConfig{
+				deployer, err := pCTCCCloudLVDN.NewSSLDeployerProvider(&pCTCCCloudLVDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					SecretAccessKey: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -693,14 +693,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeDogeCloudCDN:
 		{
 			access := domain.AccessConfigForDogeCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pDogeCDN.NewDeployer(&pDogeCDN.DeployerConfig{
+			deployer, err := pDogeCDN.NewSSLDeployerProvider(&pDogeCDN.SSLDeployerProviderConfig{
 				AccessKey: access.AccessKey,
 				SecretKey: access.SecretKey,
-				Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+				Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 			})
 			return deployer, err
 		}
@@ -708,14 +708,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeEdgioApplications:
 		{
 			access := domain.AccessConfigForEdgio{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pEdgioApplications.NewDeployer(&pEdgioApplications.DeployerConfig{
+			deployer, err := pEdgioApplications.NewSSLDeployerProvider(&pEdgioApplications.SSLDeployerProviderConfig{
 				ClientId:      access.ClientId,
 				ClientSecret:  access.ClientSecret,
-				EnvironmentId: maputil.GetString(options.ProviderServiceConfig, "environmentId"),
+				EnvironmentId: xmaps.GetString(options.ProviderServiceConfig, "environmentId"),
 			})
 			return deployer, err
 		}
@@ -723,18 +723,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeFlexCDN:
 		{
 			access := domain.AccessConfigForFlexCDN{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pFlexCDN.NewDeployer(&pFlexCDN.DeployerConfig{
+			deployer, err := pFlexCDN.NewSSLDeployerProvider(&pFlexCDN.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pFlexCDN.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
+				ResourceType:             pFlexCDN.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            xmaps.GetInt64(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -742,16 +742,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeGcoreCDN:
 		{
 			access := domain.AccessConfigForGcore{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeGcoreCDN:
-				deployer, err := pGcoreCDN.NewDeployer(&pGcoreCDN.DeployerConfig{
+				deployer, err := pGcoreCDN.NewSSLDeployerProvider(&pGcoreCDN.SSLDeployerProviderConfig{
 					ApiToken:      access.ApiToken,
-					ResourceId:    maputil.GetInt64(options.ProviderServiceConfig, "resourceId"),
-					CertificateId: maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
+					ResourceId:    xmaps.GetInt64(options.ProviderServiceConfig, "resourceId"),
+					CertificateId: xmaps.GetInt64(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -763,18 +763,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeGoEdge:
 		{
 			access := domain.AccessConfigForGoEdge{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pGoEdge.NewDeployer(&pGoEdge.DeployerConfig{
+			deployer, err := pGoEdge.NewSSLDeployerProvider(&pGoEdge.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiRole:                  access.ApiRole,
 				AccessKeyId:              access.AccessKeyId,
 				AccessKey:                access.AccessKey,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pGoEdge.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
+				ResourceType:             pGoEdge.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            xmaps.GetInt64(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -782,36 +782,36 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeHuaweiCloudCDN, domain.DeploymentProviderTypeHuaweiCloudELB, domain.DeploymentProviderTypeHuaweiCloudSCM, domain.DeploymentProviderTypeHuaweiCloudWAF:
 		{
 			access := domain.AccessConfigForHuaweiCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeHuaweiCloudCDN:
-				deployer, err := pHuaweiCloudCDN.NewDeployer(&pHuaweiCloudCDN.DeployerConfig{
+				deployer, err := pHuaweiCloudCDN.NewSSLDeployerProvider(&pHuaweiCloudCDN.SSLDeployerProviderConfig{
 					AccessKeyId:         access.AccessKeyId,
 					SecretAccessKey:     access.SecretAccessKey,
 					EnterpriseProjectId: access.EnterpriseProjectId,
-					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:              maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:              xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Domain:              xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudELB:
-				deployer, err := pHuaweiCloudELB.NewDeployer(&pHuaweiCloudELB.DeployerConfig{
+				deployer, err := pHuaweiCloudELB.NewSSLDeployerProvider(&pHuaweiCloudELB.SSLDeployerProviderConfig{
 					AccessKeyId:         access.AccessKeyId,
 					SecretAccessKey:     access.SecretAccessKey,
 					EnterpriseProjectId: access.EnterpriseProjectId,
-					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:        pHuaweiCloudELB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					CertificateId:       maputil.GetString(options.ProviderServiceConfig, "certificateId"),
-					LoadbalancerId:      maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:          maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Region:              xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:        pHuaweiCloudELB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:       xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
+					LoadbalancerId:      xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:          xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudSCM:
-				deployer, err := pHuaweiCloudSCM.NewDeployer(&pHuaweiCloudSCM.DeployerConfig{
+				deployer, err := pHuaweiCloudSCM.NewSSLDeployerProvider(&pHuaweiCloudSCM.SSLDeployerProviderConfig{
 					AccessKeyId:         access.AccessKeyId,
 					SecretAccessKey:     access.SecretAccessKey,
 					EnterpriseProjectId: access.EnterpriseProjectId,
@@ -819,14 +819,14 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				return deployer, err
 
 			case domain.DeploymentProviderTypeHuaweiCloudWAF:
-				deployer, err := pHuaweiCloudWAF.NewDeployer(&pHuaweiCloudWAF.DeployerConfig{
+				deployer, err := pHuaweiCloudWAF.NewSSLDeployerProvider(&pHuaweiCloudWAF.SSLDeployerProviderConfig{
 					AccessKeyId:         access.AccessKeyId,
 					SecretAccessKey:     access.SecretAccessKey,
 					EnterpriseProjectId: access.EnterpriseProjectId,
-					Region:              maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:        pHuaweiCloudWAF.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					CertificateId:       maputil.GetString(options.ProviderServiceConfig, "certificateId"),
-					Domain:              maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:              xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:        pHuaweiCloudWAF.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					CertificateId:       xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
+					Domain:              xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -838,43 +838,43 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeJDCloudALB, domain.DeploymentProviderTypeJDCloudCDN, domain.DeploymentProviderTypeJDCloudLive, domain.DeploymentProviderTypeJDCloudVOD:
 		{
 			access := domain.AccessConfigForJDCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeJDCloudALB:
-				deployer, err := pJDCloudALB.NewDeployer(&pJDCloudALB.DeployerConfig{
+				deployer, err := pJDCloudALB.NewSSLDeployerProvider(&pJDCloudALB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					RegionId:        maputil.GetString(options.ProviderServiceConfig, "regionId"),
-					ResourceType:    pJDCloudALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					RegionId:        xmaps.GetString(options.ProviderServiceConfig, "regionId"),
+					ResourceType:    pJDCloudALB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeJDCloudCDN:
-				deployer, err := pJDCloudCDN.NewDeployer(&pJDCloudCDN.DeployerConfig{
+				deployer, err := pJDCloudCDN.NewSSLDeployerProvider(&pJDCloudCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeJDCloudLive:
-				deployer, err := pJDCloudLive.NewDeployer(&pJDCloudLive.DeployerConfig{
+				deployer, err := pJDCloudLive.NewSSLDeployerProvider(&pJDCloudLive.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeJDCloudVOD:
-				deployer, err := pJDCloudVOD.NewDeployer(&pJDCloudVOD.DeployerConfig{
+				deployer, err := pJDCloudVOD.NewSSLDeployerProvider(&pJDCloudVOD.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -886,39 +886,39 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeLeCDN:
 		{
 			access := domain.AccessConfigForLeCDN{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pLeCDN.NewDeployer(&pLeCDN.DeployerConfig{
+			deployer, err := pLeCDN.NewSSLDeployerProvider(&pLeCDN.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiVersion:               access.ApiVersion,
 				ApiRole:                  access.ApiRole,
 				Username:                 access.Username,
 				Password:                 access.Password,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pLeCDN.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-				CertificateId:            maputil.GetInt64(options.ProviderServiceConfig, "certificateId"),
-				ClientId:                 maputil.GetInt64(options.ProviderServiceConfig, "clientId"),
+				ResourceType:             pLeCDN.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            xmaps.GetInt64(options.ProviderServiceConfig, "certificateId"),
+				ClientId:                 xmaps.GetInt64(options.ProviderServiceConfig, "clientId"),
 			})
 			return deployer, err
 		}
 
 	case domain.DeploymentProviderTypeLocal:
 		{
-			deployer, err := pLocal.NewDeployer(&pLocal.DeployerConfig{
-				ShellEnv:                 pLocal.ShellEnvType(maputil.GetString(options.ProviderServiceConfig, "shellEnv")),
-				PreCommand:               maputil.GetString(options.ProviderServiceConfig, "preCommand"),
-				PostCommand:              maputil.GetString(options.ProviderServiceConfig, "postCommand"),
-				OutputFormat:             pLocal.OutputFormatType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:           maputil.GetString(options.ProviderServiceConfig, "certPath"),
-				OutputServerCertPath:     maputil.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
-				OutputIntermediaCertPath: maputil.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
-				OutputKeyPath:            maputil.GetString(options.ProviderServiceConfig, "keyPath"),
-				PfxPassword:              maputil.GetString(options.ProviderServiceConfig, "pfxPassword"),
-				JksAlias:                 maputil.GetString(options.ProviderServiceConfig, "jksAlias"),
-				JksKeypass:               maputil.GetString(options.ProviderServiceConfig, "jksKeypass"),
-				JksStorepass:             maputil.GetString(options.ProviderServiceConfig, "jksStorepass"),
+			deployer, err := pLocal.NewSSLDeployerProvider(&pLocal.SSLDeployerProviderConfig{
+				ShellEnv:                 pLocal.ShellEnvType(xmaps.GetString(options.ProviderServiceConfig, "shellEnv")),
+				PreCommand:               xmaps.GetString(options.ProviderServiceConfig, "preCommand"),
+				PostCommand:              xmaps.GetString(options.ProviderServiceConfig, "postCommand"),
+				OutputFormat:             pLocal.OutputFormatType(xmaps.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pLocal.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           xmaps.GetString(options.ProviderServiceConfig, "certPath"),
+				OutputServerCertPath:     xmaps.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: xmaps.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            xmaps.GetString(options.ProviderServiceConfig, "keyPath"),
+				PfxPassword:              xmaps.GetString(options.ProviderServiceConfig, "pfxPassword"),
+				JksAlias:                 xmaps.GetString(options.ProviderServiceConfig, "jksAlias"),
+				JksKeypass:               xmaps.GetString(options.ProviderServiceConfig, "jksKeypass"),
+				JksStorepass:             xmaps.GetString(options.ProviderServiceConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}
@@ -926,17 +926,17 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeKubernetesSecret:
 		{
 			access := domain.AccessConfigForKubernetes{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pK8sSecret.NewDeployer(&pK8sSecret.DeployerConfig{
+			deployer, err := pK8sSecret.NewSSLDeployerProvider(&pK8sSecret.SSLDeployerProviderConfig{
 				KubeConfig:          access.KubeConfig,
-				Namespace:           maputil.GetOrDefaultString(options.ProviderServiceConfig, "namespace", "default"),
-				SecretName:          maputil.GetString(options.ProviderServiceConfig, "secretName"),
-				SecretType:          maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretType", "kubernetes.io/tls"),
-				SecretDataKeyForCrt: maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForCrt", "tls.crt"),
-				SecretDataKeyForKey: maputil.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForKey", "tls.key"),
+				Namespace:           xmaps.GetOrDefaultString(options.ProviderServiceConfig, "namespace", "default"),
+				SecretName:          xmaps.GetString(options.ProviderServiceConfig, "secretName"),
+				SecretType:          xmaps.GetOrDefaultString(options.ProviderServiceConfig, "secretType", "kubernetes.io/tls"),
+				SecretDataKeyForCrt: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForCrt", "tls.crt"),
+				SecretDataKeyForKey: xmaps.GetOrDefaultString(options.ProviderServiceConfig, "secretDataKeyForKey", "tls.key"),
 			})
 			return deployer, err
 		}
@@ -944,13 +944,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeNetlifySite:
 		{
 			access := domain.AccessConfigForNetlify{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pNetlifySite.NewDeployer(&pNetlifySite.DeployerConfig{
+			deployer, err := pNetlifySite.NewSSLDeployerProvider(&pNetlifySite.SSLDeployerProviderConfig{
 				ApiToken: access.ApiToken,
-				SiteId:   maputil.GetString(options.ProviderServiceConfig, "siteId"),
+				SiteId:   xmaps.GetString(options.ProviderServiceConfig, "siteId"),
 			})
 			return deployer, err
 		}
@@ -958,17 +958,17 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeProxmoxVE:
 		{
 			access := domain.AccessConfigForProxmoxVE{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pProxmoxVE.NewDeployer(&pProxmoxVE.DeployerConfig{
+			deployer, err := pProxmoxVE.NewSSLDeployerProvider(&pProxmoxVE.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiToken:                 access.ApiToken,
 				ApiTokenSecret:           access.ApiTokenSecret,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				NodeName:                 maputil.GetString(options.ProviderServiceConfig, "nodeName"),
-				AutoRestart:              maputil.GetBool(options.ProviderServiceConfig, "autoRestart"),
+				NodeName:                 xmaps.GetString(options.ProviderServiceConfig, "nodeName"),
+				AutoRestart:              xmaps.GetBool(options.ProviderServiceConfig, "autoRestart"),
 			})
 			return deployer, err
 		}
@@ -976,25 +976,25 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeQiniuCDN, domain.DeploymentProviderTypeQiniuKodo, domain.DeploymentProviderTypeQiniuPili:
 		{
 			access := domain.AccessConfigForQiniu{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeQiniuCDN, domain.DeploymentProviderTypeQiniuKodo:
-				deployer, err := pQiniuCDN.NewDeployer(&pQiniuCDN.DeployerConfig{
+				deployer, err := pQiniuCDN.NewSSLDeployerProvider(&pQiniuCDN.SSLDeployerProviderConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeQiniuPili:
-				deployer, err := pQiniuPili.NewDeployer(&pQiniuPili.DeployerConfig{
+				deployer, err := pQiniuPili.NewSSLDeployerProvider(&pQiniuPili.SSLDeployerProviderConfig{
 					AccessKey: access.AccessKey,
 					SecretKey: access.SecretKey,
-					Hub:       maputil.GetString(options.ProviderServiceConfig, "hub"),
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Hub:       xmaps.GetString(options.ProviderServiceConfig, "hub"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1006,16 +1006,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeRainYunRCDN:
 		{
 			access := domain.AccessConfigForRainYun{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeTencentCloudCDN:
-				deployer, err := pRainYunRCDN.NewDeployer(&pRainYunRCDN.DeployerConfig{
+				deployer, err := pRainYunRCDN.NewSSLDeployerProvider(&pRainYunRCDN.SSLDeployerProviderConfig{
 					ApiKey:     access.ApiKey,
-					InstanceId: maputil.GetInt32(options.ProviderServiceConfig, "instanceId"),
-					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
+					InstanceId: xmaps.GetInt32(options.ProviderServiceConfig, "instanceId"),
+					Domain:     xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1027,13 +1027,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeRatPanelConsole, domain.DeploymentProviderTypeRatPanelSite:
 		{
 			access := domain.AccessConfigForRatPanel{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeRatPanelConsole:
-				deployer, err := pRatPanelConsole.NewDeployer(&pRatPanelConsole.DeployerConfig{
+				deployer, err := pRatPanelConsole.NewSSLDeployerProvider(&pRatPanelConsole.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					AccessTokenId:            access.AccessTokenId,
 					AccessToken:              access.AccessToken,
@@ -1042,12 +1042,12 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				return deployer, err
 
 			case domain.DeploymentProviderTypeRatPanelSite:
-				deployer, err := pRatPanelSite.NewDeployer(&pRatPanelSite.DeployerConfig{
+				deployer, err := pRatPanelSite.NewSSLDeployerProvider(&pRatPanelSite.SSLDeployerProviderConfig{
 					ServerUrl:                access.ServerUrl,
 					AccessTokenId:            access.AccessTokenId,
 					AccessToken:              access.AccessToken,
 					AllowInsecureConnections: access.AllowInsecureConnections,
-					SiteName:                 maputil.GetString(options.ProviderServiceConfig, "siteName"),
+					SiteName:                 xmaps.GetString(options.ProviderServiceConfig, "siteName"),
 				})
 				return deployer, err
 
@@ -1059,16 +1059,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeSafeLine:
 		{
 			access := domain.AccessConfigForSafeLine{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pSafeLine.NewDeployer(&pSafeLine.DeployerConfig{
+			deployer, err := pSafeLine.NewSSLDeployerProvider(&pSafeLine.SSLDeployerProviderConfig{
 				ServerUrl:                access.ServerUrl,
 				ApiToken:                 access.ApiToken,
 				AllowInsecureConnections: access.AllowInsecureConnections,
-				ResourceType:             pSafeLine.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-				CertificateId:            maputil.GetInt32(options.ProviderServiceConfig, "certificateId"),
+				ResourceType:             pSafeLine.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+				CertificateId:            xmaps.GetInt32(options.ProviderServiceConfig, "certificateId"),
 			})
 			return deployer, err
 		}
@@ -1076,7 +1076,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeSSH:
 		{
 			access := domain.AccessConfigForSSH{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
@@ -1093,7 +1093,7 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				}
 			}
 
-			deployer, err := pSSH.NewDeployer(&pSSH.DeployerConfig{
+			deployer, err := pSSH.NewSSLDeployerProvider(&pSSH.SSLDeployerProviderConfig{
 				SshHost:                  access.Host,
 				SshPort:                  access.Port,
 				SshAuthMethod:            access.AuthMethod,
@@ -1102,18 +1102,18 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				SshKey:                   access.Key,
 				SshKeyPassphrase:         access.KeyPassphrase,
 				JumpServers:              jumpServers,
-				UseSCP:                   maputil.GetBool(options.ProviderServiceConfig, "useSCP"),
-				PreCommand:               maputil.GetString(options.ProviderServiceConfig, "preCommand"),
-				PostCommand:              maputil.GetString(options.ProviderServiceConfig, "postCommand"),
-				OutputFormat:             pSSH.OutputFormatType(maputil.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
-				OutputCertPath:           maputil.GetString(options.ProviderServiceConfig, "certPath"),
-				OutputServerCertPath:     maputil.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
-				OutputIntermediaCertPath: maputil.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
-				OutputKeyPath:            maputil.GetString(options.ProviderServiceConfig, "keyPath"),
-				PfxPassword:              maputil.GetString(options.ProviderServiceConfig, "pfxPassword"),
-				JksAlias:                 maputil.GetString(options.ProviderServiceConfig, "jksAlias"),
-				JksKeypass:               maputil.GetString(options.ProviderServiceConfig, "jksKeypass"),
-				JksStorepass:             maputil.GetString(options.ProviderServiceConfig, "jksStorepass"),
+				UseSCP:                   xmaps.GetBool(options.ProviderServiceConfig, "useSCP"),
+				PreCommand:               xmaps.GetString(options.ProviderServiceConfig, "preCommand"),
+				PostCommand:              xmaps.GetString(options.ProviderServiceConfig, "postCommand"),
+				OutputFormat:             pSSH.OutputFormatType(xmaps.GetOrDefaultString(options.ProviderServiceConfig, "format", string(pSSH.OUTPUT_FORMAT_PEM))),
+				OutputCertPath:           xmaps.GetString(options.ProviderServiceConfig, "certPath"),
+				OutputServerCertPath:     xmaps.GetString(options.ProviderServiceConfig, "certPathForServerOnly"),
+				OutputIntermediaCertPath: xmaps.GetString(options.ProviderServiceConfig, "certPathForIntermediaOnly"),
+				OutputKeyPath:            xmaps.GetString(options.ProviderServiceConfig, "keyPath"),
+				PfxPassword:              xmaps.GetString(options.ProviderServiceConfig, "pfxPassword"),
+				JksAlias:                 xmaps.GetString(options.ProviderServiceConfig, "jksAlias"),
+				JksKeypass:               xmaps.GetString(options.ProviderServiceConfig, "jksKeypass"),
+				JksStorepass:             xmaps.GetString(options.ProviderServiceConfig, "jksStorepass"),
 			})
 			return deployer, err
 		}
@@ -1121,118 +1121,118 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeTencentCloudCDN, domain.DeploymentProviderTypeTencentCloudCLB, domain.DeploymentProviderTypeTencentCloudCOS, domain.DeploymentProviderTypeTencentCloudCSS, domain.DeploymentProviderTypeTencentCloudECDN, domain.DeploymentProviderTypeTencentCloudEO, domain.DeploymentProviderTypeTencentCloudGAAP, domain.DeploymentProviderTypeTencentCloudSCF, domain.DeploymentProviderTypeTencentCloudSSL, domain.DeploymentProviderTypeTencentCloudSSLDeploy, domain.DeploymentProviderTypeTencentCloudVOD, domain.DeploymentProviderTypeTencentCloudWAF:
 		{
 			access := domain.AccessConfigForTencentCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeTencentCloudCDN:
-				deployer, err := pTencentCloudCDN.NewDeployer(&pTencentCloudCDN.DeployerConfig{
+				deployer, err := pTencentCloudCDN.NewSSLDeployerProvider(&pTencentCloudCDN.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudCLB:
-				deployer, err := pTencentCloudCLB.NewDeployer(&pTencentCloudCLB.DeployerConfig{
+				deployer, err := pTencentCloudCLB.NewSSLDeployerProvider(&pTencentCloudCLB.SSLDeployerProviderConfig{
 					SecretId:       access.SecretId,
 					SecretKey:      access.SecretKey,
-					Region:         maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:   pTencentCloudCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId: maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:     maputil.GetString(options.ProviderServiceConfig, "listenerId"),
-					Domain:         maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:         xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:   pTencentCloudCLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId: xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:     xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:         xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudCOS:
-				deployer, err := pTencentCloudCOS.NewDeployer(&pTencentCloudCOS.DeployerConfig{
+				deployer, err := pTencentCloudCOS.NewSSLDeployerProvider(&pTencentCloudCOS.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Region:    maputil.GetString(options.ProviderServiceConfig, "region"),
-					Bucket:    maputil.GetString(options.ProviderServiceConfig, "bucket"),
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:    xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:    xmaps.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudCSS:
-				deployer, err := pTencentCloudCSS.NewDeployer(&pTencentCloudCSS.DeployerConfig{
+				deployer, err := pTencentCloudCSS.NewSSLDeployerProvider(&pTencentCloudCSS.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudECDN:
-				deployer, err := pTencentCloudECDN.NewDeployer(&pTencentCloudECDN.DeployerConfig{
+				deployer, err := pTencentCloudECDN.NewSSLDeployerProvider(&pTencentCloudECDN.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudEO:
-				deployer, err := pTencentCloudEO.NewDeployer(&pTencentCloudEO.DeployerConfig{
+				deployer, err := pTencentCloudEO.NewSSLDeployerProvider(&pTencentCloudEO.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					ZoneId:    maputil.GetString(options.ProviderServiceConfig, "zoneId"),
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					ZoneId:    xmaps.GetString(options.ProviderServiceConfig, "zoneId"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudGAAP:
-				deployer, err := pTencentCloudGAAP.NewDeployer(&pTencentCloudGAAP.DeployerConfig{
+				deployer, err := pTencentCloudGAAP.NewSSLDeployerProvider(&pTencentCloudGAAP.SSLDeployerProviderConfig{
 					SecretId:     access.SecretId,
 					SecretKey:    access.SecretKey,
-					ResourceType: pTencentCloudGAAP.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					ProxyId:      maputil.GetString(options.ProviderServiceConfig, "proxyId"),
-					ListenerId:   maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					ResourceType: pTencentCloudGAAP.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					ProxyId:      xmaps.GetString(options.ProviderServiceConfig, "proxyId"),
+					ListenerId:   xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudSCF:
-				deployer, err := pTencentCloudSCF.NewDeployer(&pTencentCloudSCF.DeployerConfig{
+				deployer, err := pTencentCloudSCF.NewSSLDeployerProvider(&pTencentCloudSCF.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					Region:    maputil.GetString(options.ProviderServiceConfig, "region"),
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:    xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudSSL:
-				deployer, err := pTencentCloudSSL.NewDeployer(&pTencentCloudSSL.DeployerConfig{
+				deployer, err := pTencentCloudSSL.NewSSLDeployerProvider(&pTencentCloudSSL.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudSSLDeploy:
-				deployer, err := pTencentCloudSSLDeploy.NewDeployer(&pTencentCloudSSLDeploy.DeployerConfig{
+				deployer, err := pTencentCloudSSLDeploy.NewSSLDeployerProvider(&pTencentCloudSSLDeploy.SSLDeployerProviderConfig{
 					SecretId:     access.SecretId,
 					SecretKey:    access.SecretKey,
-					Region:       maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType: maputil.GetString(options.ProviderServiceConfig, "resourceType"),
-					ResourceIds:  sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
+					Region:       xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType: xmaps.GetString(options.ProviderServiceConfig, "resourceType"),
+					ResourceIds:  xslices.Filter(strings.Split(xmaps.GetString(options.ProviderServiceConfig, "resourceIds"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudVOD:
-				deployer, err := pTencentCloudVOD.NewDeployer(&pTencentCloudVOD.DeployerConfig{
+				deployer, err := pTencentCloudVOD.NewSSLDeployerProvider(&pTencentCloudVOD.SSLDeployerProviderConfig{
 					SecretId:  access.SecretId,
 					SecretKey: access.SecretKey,
-					SubAppId:  maputil.GetInt64(options.ProviderServiceConfig, "subAppId"),
-					Domain:    maputil.GetString(options.ProviderServiceConfig, "domain"),
+					SubAppId:  xmaps.GetInt64(options.ProviderServiceConfig, "subAppId"),
+					Domain:    xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeTencentCloudWAF:
-				deployer, err := pTencentCloudWAF.NewDeployer(&pTencentCloudWAF.DeployerConfig{
+				deployer, err := pTencentCloudWAF.NewSSLDeployerProvider(&pTencentCloudWAF.SSLDeployerProviderConfig{
 					SecretId:   access.SecretId,
 					SecretKey:  access.SecretKey,
-					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
-					DomainId:   maputil.GetString(options.ProviderServiceConfig, "domainId"),
-					InstanceId: maputil.GetString(options.ProviderServiceConfig, "instanceId"),
+					Domain:     xmaps.GetString(options.ProviderServiceConfig, "domain"),
+					DomainId:   xmaps.GetString(options.ProviderServiceConfig, "domainId"),
+					InstanceId: xmaps.GetString(options.ProviderServiceConfig, "instanceId"),
 				})
 				return deployer, err
 
@@ -1244,28 +1244,28 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeUCloudUCDN, domain.DeploymentProviderTypeUCloudUS3:
 		{
 			access := domain.AccessConfigForUCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeUCloudUCDN:
-				deployer, err := pUCloudUCDN.NewDeployer(&pUCloudUCDN.DeployerConfig{
+				deployer, err := pUCloudUCDN.NewSSLDeployerProvider(&pUCloudUCDN.SSLDeployerProviderConfig{
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
 					ProjectId:  access.ProjectId,
-					DomainId:   maputil.GetString(options.ProviderServiceConfig, "domainId"),
+					DomainId:   xmaps.GetString(options.ProviderServiceConfig, "domainId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeUCloudUS3:
-				deployer, err := pUCloudUS3.NewDeployer(&pUCloudUS3.DeployerConfig{
+				deployer, err := pUCloudUS3.NewSSLDeployerProvider(&pUCloudUS3.SSLDeployerProviderConfig{
 					PrivateKey: access.PrivateKey,
 					PublicKey:  access.PublicKey,
 					ProjectId:  access.ProjectId,
-					Region:     maputil.GetString(options.ProviderServiceConfig, "region"),
-					Bucket:     maputil.GetString(options.ProviderServiceConfig, "bucket"),
-					Domain:     maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:     xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:     xmaps.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:     xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1277,16 +1277,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeUniCloudWebHost:
 		{
 			access := domain.AccessConfigForUniCloud{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
-			deployer, err := pUniCloudWebHost.NewDeployer(&pUniCloudWebHost.DeployerConfig{
+			deployer, err := pUniCloudWebHost.NewSSLDeployerProvider(&pUniCloudWebHost.SSLDeployerProviderConfig{
 				Username:      access.Username,
 				Password:      access.Password,
-				SpaceProvider: maputil.GetString(options.ProviderServiceConfig, "spaceProvider"),
-				SpaceId:       maputil.GetString(options.ProviderServiceConfig, "spaceId"),
-				Domain:        maputil.GetString(options.ProviderServiceConfig, "domain"),
+				SpaceProvider: xmaps.GetString(options.ProviderServiceConfig, "spaceProvider"),
+				SpaceId:       xmaps.GetString(options.ProviderServiceConfig, "spaceId"),
+				Domain:        xmaps.GetString(options.ProviderServiceConfig, "domain"),
 			})
 			return deployer, err
 		}
@@ -1294,16 +1294,16 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeUpyunCDN, domain.DeploymentProviderTypeUpyunFile:
 		{
 			access := domain.AccessConfigForUpyun{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeUpyunCDN, domain.DeploymentProviderTypeUpyunFile:
-				deployer, err := pUpyunCDN.NewDeployer(&pUpyunCDN.DeployerConfig{
+				deployer, err := pUpyunCDN.NewSSLDeployerProvider(&pUpyunCDN.SSLDeployerProviderConfig{
 					Username: access.Username,
 					Password: access.Password,
-					Domain:   maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:   xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1315,83 +1315,83 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeVolcEngineALB, domain.DeploymentProviderTypeVolcEngineCDN, domain.DeploymentProviderTypeVolcEngineCertCenter, domain.DeploymentProviderTypeVolcEngineCLB, domain.DeploymentProviderTypeVolcEngineDCDN, domain.DeploymentProviderTypeVolcEngineImageX, domain.DeploymentProviderTypeVolcEngineLive, domain.DeploymentProviderTypeVolcEngineTOS:
 		{
 			access := domain.AccessConfigForVolcEngine{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeVolcEngineALB:
-				deployer, err := pVolcEngineALB.NewDeployer(&pVolcEngineALB.DeployerConfig{
+				deployer, err := pVolcEngineALB.NewSSLDeployerProvider(&pVolcEngineALB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pVolcEngineALB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pVolcEngineALB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineCDN:
-				deployer, err := pVolcEngineCDN.NewDeployer(&pVolcEngineCDN.DeployerConfig{
+				deployer, err := pVolcEngineCDN.NewSSLDeployerProvider(&pVolcEngineCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineCertCenter:
-				deployer, err := pVolcEngineCertCenter.NewDeployer(&pVolcEngineCertCenter.DeployerConfig{
+				deployer, err := pVolcEngineCertCenter.NewSSLDeployerProvider(&pVolcEngineCertCenter.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineCLB:
-				deployer, err := pVolcEngineCLB.NewDeployer(&pVolcEngineCLB.DeployerConfig{
+				deployer, err := pVolcEngineCLB.NewSSLDeployerProvider(&pVolcEngineCLB.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ResourceType:    pVolcEngineCLB.ResourceType(maputil.GetString(options.ProviderServiceConfig, "resourceType")),
-					LoadbalancerId:  maputil.GetString(options.ProviderServiceConfig, "loadbalancerId"),
-					ListenerId:      maputil.GetString(options.ProviderServiceConfig, "listenerId"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ResourceType:    pVolcEngineCLB.ResourceType(xmaps.GetString(options.ProviderServiceConfig, "resourceType")),
+					LoadbalancerId:  xmaps.GetString(options.ProviderServiceConfig, "loadbalancerId"),
+					ListenerId:      xmaps.GetString(options.ProviderServiceConfig, "listenerId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineDCDN:
-				deployer, err := pVolcEngineDCDN.NewDeployer(&pVolcEngineDCDN.DeployerConfig{
+				deployer, err := pVolcEngineDCDN.NewSSLDeployerProvider(&pVolcEngineDCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineImageX:
-				deployer, err := pVolcEngineImageX.NewDeployer(&pVolcEngineImageX.DeployerConfig{
+				deployer, err := pVolcEngineImageX.NewSSLDeployerProvider(&pVolcEngineImageX.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					ServiceId:       maputil.GetString(options.ProviderServiceConfig, "serviceId"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					ServiceId:       xmaps.GetString(options.ProviderServiceConfig, "serviceId"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineLive:
-				deployer, err := pVolcEngineLive.NewDeployer(&pVolcEngineLive.DeployerConfig{
+				deployer, err := pVolcEngineLive.NewSSLDeployerProvider(&pVolcEngineLive.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeVolcEngineTOS:
-				deployer, err := pVolcEngineTOS.NewDeployer(&pVolcEngineTOS.DeployerConfig{
+				deployer, err := pVolcEngineTOS.NewSSLDeployerProvider(&pVolcEngineTOS.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.SecretAccessKey,
-					Region:          maputil.GetString(options.ProviderServiceConfig, "region"),
-					Bucket:          maputil.GetString(options.ProviderServiceConfig, "bucket"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
+					Region:          xmaps.GetString(options.ProviderServiceConfig, "region"),
+					Bucket:          xmaps.GetString(options.ProviderServiceConfig, "bucket"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
 				})
 				return deployer, err
 
@@ -1403,36 +1403,36 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeWangsuCDN, domain.DeploymentProviderTypeWangsuCDNPro, domain.DeploymentProviderTypeWangsuCertificate:
 		{
 			access := domain.AccessConfigForWangsu{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			switch options.Provider {
 			case domain.DeploymentProviderTypeWangsuCDN:
-				deployer, err := pWangsuCDN.NewDeployer(&pWangsuCDN.DeployerConfig{
+				deployer, err := pWangsuCDN.NewSSLDeployerProvider(&pWangsuCDN.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					Domains:         sliceutil.Filter(strings.Split(maputil.GetString(options.ProviderServiceConfig, "domains"), ";"), func(s string) bool { return s != "" }),
+					Domains:         xslices.Filter(strings.Split(xmaps.GetString(options.ProviderServiceConfig, "domains"), ";"), func(s string) bool { return s != "" }),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeWangsuCDNPro:
-				deployer, err := pWangsuCDNPro.NewDeployer(&pWangsuCDNPro.DeployerConfig{
+				deployer, err := pWangsuCDNPro.NewSSLDeployerProvider(&pWangsuCDNPro.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
 					ApiKey:          access.ApiKey,
-					Environment:     maputil.GetOrDefaultString(options.ProviderServiceConfig, "environment", "production"),
-					Domain:          maputil.GetString(options.ProviderServiceConfig, "domain"),
-					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
-					WebhookId:       maputil.GetString(options.ProviderServiceConfig, "webhookId"),
+					Environment:     xmaps.GetOrDefaultString(options.ProviderServiceConfig, "environment", "production"),
+					Domain:          xmaps.GetString(options.ProviderServiceConfig, "domain"),
+					CertificateId:   xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
+					WebhookId:       xmaps.GetString(options.ProviderServiceConfig, "webhookId"),
 				})
 				return deployer, err
 
 			case domain.DeploymentProviderTypeWangsuCertificate:
-				deployer, err := pWangsuCertificate.NewDeployer(&pWangsuCertificate.DeployerConfig{
+				deployer, err := pWangsuCertificate.NewSSLDeployerProvider(&pWangsuCertificate.SSLDeployerProviderConfig{
 					AccessKeyId:     access.AccessKeyId,
 					AccessKeySecret: access.AccessKeySecret,
-					CertificateId:   maputil.GetString(options.ProviderServiceConfig, "certificateId"),
+					CertificateId:   xmaps.GetString(options.ProviderServiceConfig, "certificateId"),
 				})
 				return deployer, err
 
@@ -1444,13 +1444,13 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 	case domain.DeploymentProviderTypeWebhook:
 		{
 			access := domain.AccessConfigForWebhook{}
-			if err := maputil.Populate(options.ProviderAccessConfig, &access); err != nil {
+			if err := xmaps.Populate(options.ProviderAccessConfig, &access); err != nil {
 				return nil, fmt.Errorf("failed to populate provider access config: %w", err)
 			}
 
 			mergedHeaders := make(map[string]string)
 			if defaultHeadersString := access.HeadersString; defaultHeadersString != "" {
-				h, err := httputil.ParseHeaders(defaultHeadersString)
+				h, err := xhttp.ParseHeaders(defaultHeadersString)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
 				}
@@ -1458,8 +1458,8 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 					mergedHeaders[http.CanonicalHeaderKey(key)] = h.Get(key)
 				}
 			}
-			if extendedHeadersString := maputil.GetString(options.ProviderServiceConfig, "headers"); extendedHeadersString != "" {
-				h, err := httputil.ParseHeaders(extendedHeadersString)
+			if extendedHeadersString := xmaps.GetString(options.ProviderServiceConfig, "headers"); extendedHeadersString != "" {
+				h, err := xhttp.ParseHeaders(extendedHeadersString)
 				if err != nil {
 					return nil, fmt.Errorf("failed to parse webhook headers: %w", err)
 				}
@@ -1468,9 +1468,9 @@ func createDeployerProvider(options *deployerProviderOptions) (deployer.Deployer
 				}
 			}
 
-			deployer, err := pWebhook.NewDeployer(&pWebhook.DeployerConfig{
+			deployer, err := pWebhook.NewSSLDeployerProvider(&pWebhook.SSLDeployerProviderConfig{
 				WebhookUrl:               access.Url,
-				WebhookData:              maputil.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForDeployment),
+				WebhookData:              xmaps.GetOrDefaultString(options.ProviderServiceConfig, "webhookData", access.DefaultDataForDeployment),
 				Method:                   access.Method,
 				Headers:                  mergedHeaders,
 				AllowInsecureConnections: access.AllowInsecureConnections,

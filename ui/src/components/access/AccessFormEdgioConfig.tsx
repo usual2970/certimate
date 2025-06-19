@@ -29,13 +29,11 @@ const AccessFormEdgioConfig = ({ form: formInst, formName, disabled, initialValu
     clientId: z
       .string()
       .min(1, t("access.form.edgio_client_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     clientSecret: z
       .string()
       .min(1, t("access.form.edgio_client_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

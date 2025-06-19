@@ -25,8 +25,8 @@ const AccessFormConstellixConfig = ({ form: formInst, formName, disabled, initia
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    apiKey: z.string().trim().nonempty(t("access.form.constellix_api_key.placeholder")),
-    secretKey: z.string().trim().nonempty(t("access.form.constellix_secret_key.placeholder")),
+    apiKey: z.string().nonempty(t("access.form.constellix_api_key.placeholder")),
+    secretKey: z.string().nonempty(t("access.form.constellix_secret_key.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

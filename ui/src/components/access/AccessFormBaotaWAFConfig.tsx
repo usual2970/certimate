@@ -27,7 +27,7 @@ const AccessFormBaotaWAFConfig = ({ form: formInst, formName, disabled, initialV
 
   const formSchema = z.object({
     serverUrl: z.string().url(t("common.errmsg.url_invalid")),
-    apiKey: z.string().nonempty(t("access.form.baotawaf_api_key.placeholder")).trim(),
+    apiKey: z.string().nonempty(t("access.form.baotawaf_api_key.placeholder")),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

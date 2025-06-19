@@ -35,7 +35,7 @@ const DeployNodeConfigFormBaotaWAFSiteConfig = ({
   const { t } = useTranslation();
 
   const formSchema = z.object({
-    siteName: z.string().nonempty(t("workflow_node.deploy.form.baotawaf_site_name.placeholder")).trim(),
+    siteName: z.string().nonempty(t("workflow_node.deploy.form.baotawaf_site_name.placeholder")),
     sitePort: z.preprocess(
       (v) => Number(v),
       z

@@ -30,18 +30,15 @@ const AccessFormAzureConfig = ({ form: formInst, formName, disabled, initialValu
     tenantId: z
       .string()
       .min(1, t("access.form.azure_tenant_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     clientId: z
       .string()
       .min(1, t("access.form.azure_client_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     clientSecret: z
       .string()
       .min(1, t("access.form.azure_client_secret.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     cloudName: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

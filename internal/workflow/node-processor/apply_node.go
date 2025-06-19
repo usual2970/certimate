@@ -9,10 +9,10 @@ import (
 
 	"golang.org/x/exp/maps"
 
-	"github.com/usual2970/certimate/internal/applicant"
-	"github.com/usual2970/certimate/internal/domain"
-	certutil "github.com/usual2970/certimate/internal/pkg/utils/cert"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/applicant"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
+	xcert "github.com/certimate-go/certimate/pkg/utils/cert"
 )
 
 type applyNode struct {
@@ -72,7 +72,7 @@ func (n *applyNode) Process(ctx context.Context) error {
 	}
 
 	// 解析证书并生成实体
-	certX509, err := certutil.ParseCertificateFromPEM(applyResult.FullChainCertificate)
+	certX509, err := xcert.ParseCertificateFromPEM(applyResult.FullChainCertificate)
 	if err != nil {
 		n.logger.Warn("failed to parse certificate, may be the CA responded error")
 		return err

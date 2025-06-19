@@ -44,8 +44,7 @@ const DeployNodeConfigFormAliyunAPIGWConfig = ({
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_apigw_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_apigw_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_apigw_region.placeholder")),
     gatewayId: z
       .string()
       .nullish()

@@ -13,13 +13,13 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 	"github.com/pocketbase/pocketbase/tools/hook"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/rest/routes"
-	"github.com/usual2970/certimate/internal/scheduler"
-	"github.com/usual2970/certimate/internal/workflow"
-	"github.com/usual2970/certimate/ui"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/rest/routes"
+	"github.com/certimate-go/certimate/internal/scheduler"
+	"github.com/certimate-go/certimate/internal/workflow"
+	"github.com/certimate-go/certimate/ui"
 
-	_ "github.com/usual2970/certimate/migrations"
+	_ "github.com/certimate-go/certimate/migrations"
 )
 
 func main() {

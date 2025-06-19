@@ -109,7 +109,6 @@ const AccessForm = forwardRef<AccessFormInstance, AccessFormProps>(({ className,
   const formSchema = z.object({
     name: z
       .string({ message: t("access.form.name.placeholder") })
-      .trim()
       .min(1, t("access.form.name.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     provider: z.nativeEnum(ACCESS_PROVIDERS, {

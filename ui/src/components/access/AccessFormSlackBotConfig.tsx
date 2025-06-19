@@ -28,8 +28,7 @@ const AccessFormSlackBotConfig = ({ form: formInst, formName, disabled, initialV
     botToken: z
       .string({ message: t("access.form.slackbot_token.placeholder") })
       .min(1, t("access.form.slackbot_token.placeholder"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     defaultChannelId: z.string().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

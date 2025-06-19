@@ -28,8 +28,7 @@ const AccessFormNS1Config = ({ form: formInst, formName, disabled, initialValues
     apiKey: z
       .string()
       .min(1, t("access.form.ns1_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

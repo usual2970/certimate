@@ -28,14 +28,12 @@ const AccessFormClouDNSConfig = ({ form: formInst, formName, disabled, initialVa
   const formSchema = z.object({
     authId: z
       .string()
-      .trim()
       .min(1, t("access.form.cloudns_auth_id.placeholder"))
       .max(64, t("common.errmsg.string_max", { max: 64 })),
     authPassword: z
       .string()
       .min(1, t("access.form.cloudns_auth_password.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
 

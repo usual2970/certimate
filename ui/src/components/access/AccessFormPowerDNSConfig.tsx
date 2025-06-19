@@ -30,8 +30,7 @@ const AccessFormPowerDNSConfig = ({ form: formInst, formName, disabled, initialV
     apiKey: z
       .string()
       .min(1, t("access.form.powerdns_api_key.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     allowInsecureConnections: z.boolean().nullish(),
   });
   const formRule = createSchemaFieldRule(formSchema);

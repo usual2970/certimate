@@ -32,8 +32,7 @@ const DeployNodeConfigFormAzureKeyVaultConfig = ({
   const formSchema = z.object({
     keyvaultName: z
       .string({ message: t("workflow_node.deploy.form.azure_keyvault_name.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.azure_keyvault_name.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.azure_keyvault_name.placeholder")),
     certificateName: z
       .string()
       .nullish()

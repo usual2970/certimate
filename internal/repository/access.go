@@ -8,8 +8,8 @@ import (
 
 	"github.com/pocketbase/pocketbase/core"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/domain"
 )
 
 type AccessRepository struct{}

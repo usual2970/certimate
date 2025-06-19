@@ -34,8 +34,7 @@ const DeployNodeConfigFormAliyunFCConfig = ({ form: formInst, formName, disabled
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.aliyun_fc_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.aliyun_fc_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.aliyun_fc_region.placeholder")),
     domain: z
       .string({ message: t("workflow_node.deploy.form.aliyun_fc_domain.placeholder") })
       .refine((v) => validDomainName(v, { allowWildcard: true }), t("common.errmsg.domain_invalid")),

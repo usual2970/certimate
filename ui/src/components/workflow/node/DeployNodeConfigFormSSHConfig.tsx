@@ -198,46 +198,38 @@ const DeployNodeConfigFormSSHConfig = ({ form: formInst, formName, disabled, ini
     certPath: z
       .string()
       .min(1, t("workflow_node.deploy.form.ssh_cert_path.tooltip"))
-      .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim(),
+      .max(256, t("common.errmsg.string_max", { max: 256 })),
     keyPath: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PEM || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_key_path.tooltip") }),
     certPathForServerOnly: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
     certPathForIntermediaOnly: z
       .string()
       .max(256, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish(),
     pfxPassword: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_PFX || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_pfx_password.tooltip") }),
     jksAlias: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_jks_alias.tooltip") }),
     jksKeypass: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_jks_keypass.tooltip") }),
     jksStorepass: z
       .string()
       .max(64, t("common.errmsg.string_max", { max: 256 }))
-      .trim()
       .nullish()
       .refine((v) => fieldFormat !== FORMAT_JKS || !!v?.trim(), { message: t("workflow_node.deploy.form.ssh_jks_storepass.tooltip") }),
     preCommand: z

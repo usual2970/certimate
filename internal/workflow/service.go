@@ -9,10 +9,10 @@ import (
 
 	"github.com/pocketbase/dbx"
 
-	"github.com/usual2970/certimate/internal/app"
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/domain/dtos"
-	"github.com/usual2970/certimate/internal/workflow/dispatcher"
+	"github.com/certimate-go/certimate/internal/app"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/domain/dtos"
+	"github.com/certimate-go/certimate/internal/workflow/dispatcher"
 )
 
 type workflowRepository interface {

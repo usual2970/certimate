@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/usual2970/certimate/internal/domain"
-	"github.com/usual2970/certimate/internal/repository"
+	"github.com/certimate-go/certimate/internal/domain"
+	"github.com/certimate-go/certimate/internal/repository"
 )
 
 type workflowRepository interface {

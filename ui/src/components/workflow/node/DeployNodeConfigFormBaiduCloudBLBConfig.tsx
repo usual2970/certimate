@@ -47,13 +47,11 @@ const DeployNodeConfigFormBaiduCloudBLBConfig = ({
     }),
     region: z
       .string({ message: t("workflow_node.deploy.form.baiducloud_blb_region.placeholder") })
-      .nonempty(t("workflow_node.deploy.form.baiducloud_blb_region.placeholder"))
-      .trim(),
+      .nonempty(t("workflow_node.deploy.form.baiducloud_blb_region.placeholder")),
     loadbalancerId: z
       .string({ message: t("workflow_node.deploy.form.baiducloud_blb_loadbalancer_id.placeholder") })
       .min(1, t("workflow_node.deploy.form.baiducloud_blb_loadbalancer_id.placeholder"))
-      .max(64, t("common.errmsg.string_max", { max: 64 }))
-      .trim(),
+      .max(64, t("common.errmsg.string_max", { max: 64 })),
     listenerPort: z.preprocess(
       (v) => (v == null || v === "" ? undefined : Number(v)),
       z

@@ -27,13 +27,11 @@ const NotifyTemplateForm = ({ className, style }: NotifyTemplateFormProps) => {
     subject: z
       .string()
       .min(1, t("settings.notification.template.form.subject.placeholder"))
-      .max(1000, t("common.errmsg.string_max", { max: 1000 }))
-      .trim(),
+      .max(1000, t("common.errmsg.string_max", { max: 1000 })),
     message: z
       .string()
       .min(1, t("settings.notification.template.form.message.placeholder"))
-      .max(1000, t("common.errmsg.string_max", { max: 1000 }))
-      .trim(),
+      .max(1000, t("common.errmsg.string_max", { max: 1000 })),
   });
   const formRule = createSchemaFieldRule(formSchema);
   const {

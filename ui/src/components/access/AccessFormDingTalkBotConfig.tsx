@@ -27,7 +27,7 @@ const AccessFormDingTalkBotConfig = ({ form: formInst, formName, disabled, initi
 
   const formSchema = z.object({
     webhookUrl: z.string().url(t("common.errmsg.url_invalid")),
-    secret: z.string().nonempty(t("access.form.dingtalkbot_secret.placeholder")).trim(),
+    secret: z.string().nonempty(t("access.form.dingtalkbot_secret.placeholder")),
   });
   const formRule = createSchemaFieldRule(formSchema);
 
