@@ -1,9 +1,10 @@
+import { type SpawnSyncReturns, execFileSync } from "node:child_process";
 import path from "node:path";
 
 import legacyPlugin from "@vitejs/plugin-legacy";
 import reactPlugin from "@vitejs/plugin-react";
 import fs from "fs-extra";
-import { type Plugin, defineConfig } from "vite";
+import { type Plugin, defineConfig, loadEnv } from "vite";
 
 const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   return {
@@ -32,22 +33,40 @@ const preserveFilesPlugin = (filesToPreserve: string[]): Plugin => {
   };
 };
 
-export default defineConfig({
-  plugins: [
-    reactPlugin({}),
-    legacyPlugin({
-      targets: ["defaults", "not IE 11"],
-    }),
-    preserveFilesPlugin(["dist/.gitkeep"]),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+export default defineConfig(({ mode }) => {
+  const envs = loadEnv(mode, process.cwd());
+  let appVersion = undefined;
+  if (!envs?.VITE_APP_VERSION) {
+    try {
+      appVersion = execFileSync("git", ["describe", "--match", "v[0-9]*", "--tags", "--abbrev=8"], {
+        stdio: [],
+      })?.toString();
+    } catch (error) {
+      const err = error as SpawnSyncReturns<Buffer>;
+      console.warn("[Warn] failed to get version number through git", err?.stderr?.toString());
+    }
+  }
+
+  return {
+    define: {
+      __APP_VERSION__: JSON.stringify(appVersion),
     },
-  },
-  server: {
-    proxy: {
-      "/api": "http://127.0.0.1:8090",
+    plugins: [
+      reactPlugin({}),
+      legacyPlugin({
+        targets: ["defaults", "not IE 11"],
+      }),
+      preserveFilesPlugin(["dist/.gitkeep"]),
+    ],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
     },
-  },
+    server: {
+      proxy: {
+        "/api": "http://127.0.0.1:8090",
+      },
+    },
+  };
 });
